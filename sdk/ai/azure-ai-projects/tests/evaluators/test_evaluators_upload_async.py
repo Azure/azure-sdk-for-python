@@ -25,7 +25,7 @@ class TestEvaluatorsUploadAsync:
     def _create_operations(self):
         """Create a mock async BetaEvaluatorsOperations instance with mocked service calls."""
         ops = object.__new__(BetaEvaluatorsOperations)
-        ops.pending_upload = AsyncMock()
+        ops.start_pending_upload = AsyncMock()
         ops.list_versions = MagicMock()
         ops.create_version = AsyncMock()
         return ops
@@ -93,7 +93,7 @@ class TestEvaluatorsUploadAsync:
         ops = self._create_operations()
 
         ops.list_versions.side_effect = ResourceNotFoundError("Not found")
-        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.start_pending_upload.return_value = self._mock_pending_upload_response()
 
         empty_dir = tempfile.mkdtemp()
 
@@ -161,7 +161,7 @@ class TestEvaluatorsUploadAsync:
     @pytest.mark.asyncio
     async def test_start_pending_upload_raises_if_no_blob_ref(self):
         ops = self._create_operations()
-        ops.pending_upload.return_value = {}
+        ops.start_pending_upload.return_value = {}
 
         with pytest.raises(ValueError, match="Blob reference is not present"):
             await ops._start_pending_upload_and_get_container_client("test", "1")
@@ -169,7 +169,7 @@ class TestEvaluatorsUploadAsync:
     @pytest.mark.asyncio
     async def test_start_pending_upload_raises_if_no_credential(self):
         ops = self._create_operations()
-        ops.pending_upload.return_value = {
+        ops.start_pending_upload.return_value = {
             "blobReferenceForConsumption": {
                 "blobUri": "https://storage.blob.core.windows.net/container",
             }
@@ -181,7 +181,7 @@ class TestEvaluatorsUploadAsync:
     @pytest.mark.asyncio
     async def test_start_pending_upload_raises_if_no_sas_uri(self):
         ops = self._create_operations()
-        ops.pending_upload.return_value = {
+        ops.start_pending_upload.return_value = {
             "blobReferenceForConsumption": {
                 "blobUri": "https://storage.blob.core.windows.net/container",
                 "credential": {"type": "SAS"},
@@ -194,7 +194,7 @@ class TestEvaluatorsUploadAsync:
     @pytest.mark.asyncio
     async def test_start_pending_upload_raises_if_no_blob_uri(self):
         ops = self._create_operations()
-        ops.pending_upload.return_value = {
+        ops.start_pending_upload.return_value = {
             "blobReferenceForConsumption": {
                 "credential": {
                     "sasUri": "https://storage.blob.core.windows.net/container?sig=fake",
@@ -208,12 +208,12 @@ class TestEvaluatorsUploadAsync:
     @pytest.mark.asyncio
     async def test_start_pending_upload_passes_connection_name(self):
         ops = self._create_operations()
-        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.start_pending_upload.return_value = self._mock_pending_upload_response()
 
         with patch("azure.ai.projects.aio.operations._patch_evaluators_async.ContainerClient"):
             await ops._start_pending_upload_and_get_container_client("test", "1", connection_name="my-connection")
 
-        ops.pending_upload.assert_called_once_with(
+        ops.start_pending_upload.assert_called_once_with(
             name="test",
             version="1",
             pending_upload_request={"connectionName": "my-connection"},
@@ -229,7 +229,7 @@ class TestEvaluatorsUploadAsync:
         ops = self._create_operations()
 
         ops.list_versions.side_effect = ResourceNotFoundError("Not found")
-        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.start_pending_upload.return_value = self._mock_pending_upload_response()
         ops.create_version.return_value = {"name": "test", "version": "1"}
 
         folder = self._create_temp_folder({"evaluator.py": b"class Eval: pass"})
@@ -257,7 +257,7 @@ class TestEvaluatorsUploadAsync:
         ops = self._create_operations()
 
         ops.list_versions.side_effect = ResourceNotFoundError("Not found")
-        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.start_pending_upload.return_value = self._mock_pending_upload_response()
         ops.create_version.return_value = {"name": "test", "version": "1"}
 
         folder = self._create_temp_folder(
@@ -291,7 +291,7 @@ class TestEvaluatorsUploadAsync:
         ops = self._create_operations()
 
         ops.list_versions.side_effect = ResourceNotFoundError("Not found")
-        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.start_pending_upload.return_value = self._mock_pending_upload_response()
         ops.create_version.return_value = {"name": "test", "version": "1"}
 
         folder = self._create_temp_folder(
@@ -331,7 +331,7 @@ class TestEvaluatorsUploadAsync:
         ops = self._create_operations()
 
         ops.list_versions.side_effect = ResourceNotFoundError("Not found")
-        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.start_pending_upload.return_value = self._mock_pending_upload_response()
         ops.create_version.return_value = {"name": "test", "version": "1"}
 
         folder = self._create_temp_folder(
@@ -368,7 +368,7 @@ class TestEvaluatorsUploadAsync:
 
         ops.list_versions.side_effect = ResourceNotFoundError("Not found")
         blob_uri = "https://storage.blob.core.windows.net/container-1"
-        ops.pending_upload.return_value = self._mock_pending_upload_response(blob_uri=blob_uri)
+        ops.start_pending_upload.return_value = self._mock_pending_upload_response(blob_uri=blob_uri)
         ops.create_version.return_value = {"name": "test", "version": "1"}
 
         folder = self._create_temp_folder()
@@ -395,7 +395,7 @@ class TestEvaluatorsUploadAsync:
 
         ops.list_versions.side_effect = ResourceNotFoundError("Not found")
         blob_uri = "https://storage.blob.core.windows.net/container-1"
-        ops.pending_upload.return_value = self._mock_pending_upload_response(blob_uri=blob_uri)
+        ops.start_pending_upload.return_value = self._mock_pending_upload_response(blob_uri=blob_uri)
         ops.create_version.return_value = {"name": "test", "version": "1"}
 
         folder = self._create_temp_folder()
@@ -427,7 +427,7 @@ class TestEvaluatorsUploadAsync:
         ops = self._create_operations()
 
         ops.list_versions.side_effect = ResourceNotFoundError("Not found")
-        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.start_pending_upload.return_value = self._mock_pending_upload_response()
         ops.create_version.return_value = {"name": "my_eval", "version": "1"}
 
         folder = self._create_temp_folder()
@@ -461,7 +461,7 @@ class TestEvaluatorsUploadAsync:
                 yield v
 
         ops.list_versions.return_value = _version_gen()
-        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.start_pending_upload.return_value = self._mock_pending_upload_response()
         ops.create_version.return_value = {"name": "my_eval", "version": "3"}
 
         folder = self._create_temp_folder()
@@ -478,7 +478,7 @@ class TestEvaluatorsUploadAsync:
                 folder=folder,
             )
 
-            ops.pending_upload.assert_called_once_with(
+            ops.start_pending_upload.assert_called_once_with(
                 name="my_eval",
                 version="3",
                 pending_upload_request={},
@@ -494,7 +494,7 @@ class TestEvaluatorsUploadAsync:
         ops = self._create_operations()
 
         ops.list_versions.side_effect = ResourceNotFoundError("Not found")
-        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.start_pending_upload.return_value = self._mock_pending_upload_response()
 
         folder = self._create_temp_folder()
 
@@ -522,7 +522,7 @@ class TestEvaluatorsUploadAsync:
         ops = self._create_operations()
 
         ops.list_versions.side_effect = ResourceNotFoundError("Not found")
-        ops.pending_upload.return_value = self._mock_pending_upload_response()
+        ops.start_pending_upload.return_value = self._mock_pending_upload_response()
 
         folder = self._create_temp_folder()
 

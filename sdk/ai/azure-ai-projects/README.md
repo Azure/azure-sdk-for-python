@@ -75,46 +75,9 @@ pip show azure-ai-projects
 
 ## Key concepts
 
-### Create and authenticate the client with API key
-
-To construct a synchronous client using a context manager:
-
-```python
-import os
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.projects import AIProjectClient
-
-endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-api_key = os.environ["FOUNDRY_PROJECT_API_KEY"]
-
-with (
-    AIProjectClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as project_client
-):
-```
-
-To construct an asynchronous client, install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
-
-```bash
-pip install aiohttp
-```
-
-and run:
-
-```python
-import os
-import asyncio
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.projects.aio import AIProjectClient
-
-endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-api_key = os.environ["FOUNDRY_PROJECT_API_KEY"]
-
-async with (
-    AIProjectClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as project_client
-):
-```
-
 ### Create and authenticate the client with Entra ID
+
+Entra ID is the only authentication method supported at the moment by the client.
 
 To construct a synchronous client using a context manager:
 
@@ -123,11 +86,9 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
-endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    AIProjectClient(endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential) as project_client,
 ):
 ```
 
@@ -145,11 +106,9 @@ import asyncio
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 
-endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-
 async with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    AIProjectClient(endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"], credential=credential) as project_client,
 ):
 ```
 

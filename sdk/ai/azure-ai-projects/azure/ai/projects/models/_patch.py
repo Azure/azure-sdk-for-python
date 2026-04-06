@@ -30,7 +30,7 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "memory_stores": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
     "red_teams": _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
     "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
-    "toolsets": _FoundryFeaturesOptInKeys.TOOLSET_V1_PREVIEW.value,
+    "toolboxes": _FoundryFeaturesOptInKeys.TOOLBOXES_V1_PREVIEW.value,
 }
 """Foundry-Features header values keyed by beta sub-client property name."""
 

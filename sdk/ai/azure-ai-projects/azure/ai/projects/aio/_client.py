@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING, Union
+from typing import Any, Awaitable, Optional, TYPE_CHECKING
 from typing_extensions import Self
 
 from azure.core import AsyncPipelineClient
-from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
@@ -25,6 +24,7 @@ from .operations import (
     DeploymentsOperations,
     EvaluationRulesOperations,
     IndexesOperations,
+    ToolboxesOperations,
 )
 
 if TYPE_CHECKING:
@@ -48,16 +48,16 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :vartype deployments: azure.ai.projects.aio.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
+    :ivar toolboxes: ToolboxesOperations operations
+    :vartype toolboxes: azure.ai.projects.aio.operations.ToolboxesOperations
     :param endpoint: Foundry Project endpoint in the form
      "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
      only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
      the form "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project".
      Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a key
-     credential type or a token credential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials_async.AsyncTokenCredential
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param allow_preview: Whether to enable preview features. Must be specified and set to True to
      enable preview features. Default value is None.
     :type allow_preview: bool
@@ -67,11 +67,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     """
 
     def __init__(
-        self,
-        endpoint: str,
-        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
-        allow_preview: Optional[bool] = None,
-        **kwargs: Any
+        self, endpoint: str, credential: "AsyncTokenCredential", allow_preview: Optional[bool] = None, **kwargs: Any
     ) -> None:
         _endpoint = "{endpoint}"
         self._config = AIProjectClientConfiguration(
@@ -109,6 +105,7 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.toolboxes = ToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

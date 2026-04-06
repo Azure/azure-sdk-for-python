@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.2 (Unreleased)
+## 2.1.0 (Unreleased)
 
 ### Features Added
 
@@ -25,7 +25,10 @@
 * Added CSV evaluation sample (`sample_evaluations_builtin_with_csv.py`) demonstrating evaluation with an uploaded CSV dataset.
 * Added synthetic data evaluation samples (`sample_synthetic_data_agent_evaluation.py`) and (`sample_synthetic_data_model_evaluation.py`).
 * Added Chat Completions basic samples (`sample_chat_completions_basic.py`, `sample_chat_completions_basic_async.py`) demonstrating chat completions calls using `AIProjectClient` + the OpenAI-compatible client.
-* Added Toolsets CRUD samples (`sample_toolsets_crud.py`, `sample_toolsets_crud_async.py`) demonstrating `project_client.beta.toolsets` create/get/update/list/delete.
+* Added Toolboxes CRUD samples (`sample_toolboxes_crud.py`, `sample_toolboxes_crud_async.py`) demonstrating `project_client.beta.toolboxes` create/get/update/list/delete.
+* Simplified `sample_memory_basic.py` and `sample_agent_memory_search.py` (and their async equivalent) by removing 
+`options=MemoryStoreDefaultOptions(user_profile_enabled=True, chat_summary_enabled=True)` when constructing `MemoryStoreDefaultDefinition`,
+since this is now redundant (it's the service default).
 
 ### Other Changes
 

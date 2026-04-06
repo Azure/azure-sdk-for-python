@@ -33,9 +33,12 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
+from ..._utils.utils import prepare_multipart_form_data
 from ...operations._operations import (
+    build_agents_create_agent_from_code_request,
+    build_agents_create_agent_version_from_code_request,
     build_agents_create_version_from_manifest_request,
     build_agents_create_version_request,
     build_agents_delete_request,
@@ -44,6 +47,8 @@ from ...operations._operations import (
     build_agents_get_version_request,
     build_agents_list_request,
     build_agents_list_versions_request,
+    build_agents_patch_agent_object_request,
+    build_agents_update_agent_from_code_request,
     build_beta_evaluation_taxonomies_create_request,
     build_beta_evaluation_taxonomies_delete_request,
     build_beta_evaluation_taxonomies_get_request,
@@ -55,7 +60,7 @@ from ...operations._operations import (
     build_beta_evaluators_get_version_request,
     build_beta_evaluators_list_request,
     build_beta_evaluators_list_versions_request,
-    build_beta_evaluators_pending_upload_request,
+    build_beta_evaluators_start_pending_upload_request,
     build_beta_evaluators_update_version_request,
     build_beta_insights_generate_request,
     build_beta_insights_get_request,
@@ -77,11 +82,11 @@ from ...operations._operations import (
     build_beta_schedules_get_run_request,
     build_beta_schedules_list_request,
     build_beta_schedules_list_runs_request,
-    build_beta_toolsets_create_request,
-    build_beta_toolsets_delete_request,
-    build_beta_toolsets_get_request,
-    build_beta_toolsets_list_request,
-    build_beta_toolsets_update_request,
+    build_beta_toolboxes_create_request,
+    build_beta_toolboxes_delete_request,
+    build_beta_toolboxes_get_request,
+    build_beta_toolboxes_list_request,
+    build_beta_toolboxes_update_request,
     build_connections_get_request,
     build_connections_get_with_credentials_request,
     build_connections_list_request,
@@ -103,6 +108,9 @@ from ...operations._operations import (
     build_indexes_get_request,
     build_indexes_list_request,
     build_indexes_list_versions_request,
+    build_toolboxes_delete_toolbox_version_request,
+    build_toolboxes_get_toolbox_version_request,
+    build_toolboxes_list_toolbox_versions_request,
 )
 from .._configuration import AIProjectClientConfiguration
 
@@ -138,7 +146,7 @@ class BetaOperations:  # pylint: disable=too-many-instance-attributes
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         self.red_teams = BetaRedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.schedules = BetaSchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.toolsets = BetaToolsetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.toolboxes = BetaToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
 class AgentsOperations:
@@ -184,6 +192,285 @@ class AgentsOperations:
         _request = build_agents_get_request(
             agent_name=agent_name,
             api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentDetails, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_agent_from_code(
+        self, body: _models.CreateAgentFromCodeContent, *, agent_name: str, code_zip_sha256: str, **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Creates a new code-based agent. Uploads the code zip and creates the agent in a single call.
+        The agent name is provided in the ``x-ms-agent-name`` header since POST /agents has no name in
+        the URL path. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
+        header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
+        part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
+
+        :param body: Required.
+        :type body: ~azure.ai.projects.models.CreateAgentFromCodeContent
+        :keyword agent_name: The unique name that identifies the agent. Max 63 chars, must start and
+         end with alphanumeric, hyphens allowed in the middle. Required.
+        :paramtype agent_name: str
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_agent_from_code(
+        self, body: JSON, *, agent_name: str, code_zip_sha256: str, **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Creates a new code-based agent. Uploads the code zip and creates the agent in a single call.
+        The agent name is provided in the ``x-ms-agent-name`` header since POST /agents has no name in
+        the URL path. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
+        header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
+        part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword agent_name: The unique name that identifies the agent. Max 63 chars, must start and
+         end with alphanumeric, hyphens allowed in the middle. Required.
+        :paramtype agent_name: str
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_agent_from_code(
+        self,
+        body: Union[_models.CreateAgentFromCodeContent, JSON],
+        *,
+        agent_name: str,
+        code_zip_sha256: str,
+        **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Creates a new code-based agent. Uploads the code zip and creates the agent in a single call.
+        The agent name is provided in the ``x-ms-agent-name`` header since POST /agents has no name in
+        the URL path. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
+        header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
+        part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
+
+        :param body: Is either a CreateAgentFromCodeContent type or a JSON type. Required.
+        :type body: ~azure.ai.projects.models.CreateAgentFromCodeContent or JSON
+        :keyword agent_name: The unique name that identifies the agent. Max 63 chars, must start and
+         end with alphanumeric, hyphens allowed in the middle. Required.
+        :paramtype agent_name: str
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
+
+        _body = body.as_dict() if isinstance(body, _Model) else body
+        _file_fields: list[str] = ["code"]
+        _data_fields: list[str] = ["metadata"]
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+
+        _request = build_agents_create_agent_from_code_request(
+            agent_name=agent_name,
+            code_zip_sha256=code_zip_sha256,
+            api_version=self._config.api_version,
+            files=_files,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentDetails, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update_agent_from_code(
+        self, agent_name: str, body: _models.CreateAgentVersionFromCodeContent, *, code_zip_sha256: str, **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates a code-based agent by uploading new code and creating a new version. If the code and
+        definition are unchanged (matched by x-ms-code-zip-sha256 header), returns the existing
+        version. The request body is multipart/form-data with a JSON metadata part and a binary code
+        part (part order is irrelevant). Maximum upload size is 250 MB.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_agent_from_code(
+        self, agent_name: str, body: JSON, *, code_zip_sha256: str, **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates a code-based agent by uploading new code and creating a new version. If the code and
+        definition are unchanged (matched by x-ms-code-zip-sha256 header), returns the existing
+        version. The request body is multipart/form-data with a JSON metadata part and a binary code
+        part (part order is irrelevant). Maximum upload size is 250 MB.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update_agent_from_code(
+        self,
+        agent_name: str,
+        body: Union[_models.CreateAgentVersionFromCodeContent, JSON],
+        *,
+        code_zip_sha256: str,
+        **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates a code-based agent by uploading new code and creating a new version. If the code and
+        definition are unchanged (matched by x-ms-code-zip-sha256 header), returns the existing
+        version. The request body is multipart/form-data with a JSON metadata part and a binary code
+        part (part order is irrelevant). Maximum upload size is 250 MB.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param body: Is either a CreateAgentVersionFromCodeContent type or a JSON type. Required.
+        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent or JSON
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
+
+        _body = body.as_dict() if isinstance(body, _Model) else body
+        _file_fields: list[str] = ["code"]
+        _data_fields: list[str] = ["metadata"]
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+
+        _request = build_agents_update_agent_from_code_request(
+            agent_name=agent_name,
+            code_zip_sha256=code_zip_sha256,
+            api_version=self._config.api_version,
+            files=_files,
             headers=_headers,
             params=_params,
         )
@@ -392,6 +679,7 @@ class AgentsOperations:
         content_type: str = "application/json",
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
+        blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
@@ -418,6 +706,8 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
+        :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
+        :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -478,6 +768,7 @@ class AgentsOperations:
         definition: _models.AgentDefinition = _Unset,
         metadata: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
+        blueprint_reference: Optional[_models.AgentBlueprintReference] = None,
         **kwargs: Any
     ) -> _models.AgentVersionDetails:
         """Create a new agent version.
@@ -503,6 +794,8 @@ class AgentsOperations:
         :paramtype metadata: dict[str, str]
         :keyword description: A human-readable description of the agent. Default value is None.
         :paramtype description: str
+        :keyword blueprint_reference: The blueprint reference for the agent. Default value is None.
+        :paramtype blueprint_reference: ~azure.ai.projects.models.AgentBlueprintReference
         :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -524,7 +817,12 @@ class AgentsOperations:
         if body is _Unset:
             if definition is _Unset:
                 raise TypeError("missing required argument: definition")
-            body = {"definition": definition, "description": description, "metadata": metadata}
+            body = {
+                "blueprint_reference": blueprint_reference,
+                "definition": definition,
+                "description": description,
+                "metadata": metadata,
+            }
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -1016,6 +1314,295 @@ class AgentsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+    @overload
+    async def patch_agent_object(
+        self,
+        agent_name: str,
+        *,
+        content_type: str = "application/merge-patch+json",
+        agent_endpoint: Optional[_models.AgentEndpoint] = None,
+        agent_card: Optional[_models.AgentCard] = None,
+        **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates an agent endpoint.
+
+        :param agent_name: The name of the agent to retrieve. Required.
+        :type agent_name: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
+        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpoint
+        :keyword agent_card: Optional agent card for the agent. Default value is None.
+        :paramtype agent_card: ~azure.ai.projects.models.AgentCard
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def patch_agent_object(
+        self, agent_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates an agent endpoint.
+
+        :param agent_name: The name of the agent to retrieve. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def patch_agent_object(
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates an agent endpoint.
+
+        :param agent_name: The name of the agent to retrieve. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def patch_agent_object(
+        self,
+        agent_name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        agent_endpoint: Optional[_models.AgentEndpoint] = None,
+        agent_card: Optional[_models.AgentCard] = None,
+        **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates an agent endpoint.
+
+        :param agent_name: The name of the agent to retrieve. Required.
+        :type agent_name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
+        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpoint
+        :keyword agent_card: Optional agent card for the agent. Default value is None.
+        :paramtype agent_card: ~azure.ai.projects.models.AgentCard
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"agent_card": agent_card, "agent_endpoint": agent_endpoint}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_patch_agent_object_request(
+            agent_name=agent_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentDetails, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def create_agent_version_from_code(
+        self, agent_name: str, body: _models.CreateAgentVersionFromCodeContent, *, code_zip_sha256: str, **kwargs: Any
+    ) -> _models.AgentVersionDetails:
+        """create_agent_version_from_code.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_agent_version_from_code(
+        self, agent_name: str, body: JSON, *, code_zip_sha256: str, **kwargs: Any
+    ) -> _models.AgentVersionDetails:
+        """create_agent_version_from_code.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_agent_version_from_code(
+        self,
+        agent_name: str,
+        body: Union[_models.CreateAgentVersionFromCodeContent, JSON],
+        *,
+        code_zip_sha256: str,
+        **kwargs: Any
+    ) -> _models.AgentVersionDetails:
+        """create_agent_version_from_code.
+
+        :param agent_name: The unique name that identifies the agent. Name can be used to
+         retrieve/update/delete the agent.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :type agent_name: str
+        :param body: Is either a CreateAgentVersionFromCodeContent type or a JSON type. Required.
+        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent or JSON
+        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
+         detection (dedup) and integrity verification. Required.
+        :paramtype code_zip_sha256: str
+        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentVersionDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
+
+        _body = body.as_dict() if isinstance(body, _Model) else body
+        _file_fields: list[str] = ["code"]
+        _data_fields: list[str] = ["metadata"]
+        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
+
+        _request = build_agents_create_agent_version_from_code_request(
+            agent_name=agent_name,
+            code_zip_sha256=code_zip_sha256,
+            api_version=self._config.api_version,
+            files=_files,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentVersionDetails, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
 
 class EvaluationRulesOperations:
@@ -2964,6 +3551,241 @@ class IndexesOperations:
         return deserialized  # type: ignore
 
 
+class ToolboxesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`toolboxes` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace
+    def list_toolbox_versions(
+        self,
+        toolbox_name: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.ToolboxVersionObject"]:
+        """List all versions of a toolbox.
+
+        :param toolbox_name: The name of the toolbox to list versions for. Required.
+        :type toolbox_name: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of ToolboxVersionObject
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ToolboxVersionObject]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ToolboxVersionObject]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_toolboxes_list_toolbox_versions_request(
+                toolbox_name=toolbox_name,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ToolboxVersionObject],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_toolbox_version(self, toolbox_name: str, version: str, **kwargs: Any) -> _models.ToolboxVersionObject:
+        """Retrieve a specific version of a toolbox.
+
+        :param toolbox_name: The name of the toolbox. Required.
+        :type toolbox_name: str
+        :param version: The version identifier to retrieve. Required.
+        :type version: str
+        :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolboxVersionObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ToolboxVersionObject] = kwargs.pop("cls", None)
+
+        _request = build_toolboxes_get_toolbox_version_request(
+            toolbox_name=toolbox_name,
+            version=version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ToolboxVersionObject, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_toolbox_version(self, toolbox_name: str, version: str, **kwargs: Any) -> None:
+        """Delete a specific version of a toolbox.
+
+        :param toolbox_name: The name of the toolbox. Required.
+        :type toolbox_name: str
+        :param version: The version identifier to delete. Required.
+        :type version: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_toolboxes_delete_toolbox_version_request(
+            toolbox_name=toolbox_name,
+            version=version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
 class BetaEvaluationTaxonomiesOperations:
     """
     .. warning::
@@ -4082,7 +4904,7 @@ class BetaEvaluatorsOperations:
         return deserialized  # type: ignore
 
     @overload
-    async def pending_upload(
+    async def start_pending_upload(
         self,
         name: str,
         version: str,
@@ -4093,7 +4915,7 @@ class BetaEvaluatorsOperations:
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of an evaluator for a specific version.
 
-        :param name: The name of the resource. Required.
+        :param name: Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -4108,7 +4930,7 @@ class BetaEvaluatorsOperations:
         """
 
     @overload
-    async def pending_upload(
+    async def start_pending_upload(
         self,
         name: str,
         version: str,
@@ -4119,7 +4941,7 @@ class BetaEvaluatorsOperations:
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of an evaluator for a specific version.
 
-        :param name: The name of the resource. Required.
+        :param name: Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -4134,7 +4956,7 @@ class BetaEvaluatorsOperations:
         """
 
     @overload
-    async def pending_upload(
+    async def start_pending_upload(
         self,
         name: str,
         version: str,
@@ -4145,7 +4967,7 @@ class BetaEvaluatorsOperations:
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of an evaluator for a specific version.
 
-        :param name: The name of the resource. Required.
+        :param name: Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -4160,7 +4982,7 @@ class BetaEvaluatorsOperations:
         """
 
     @distributed_trace_async
-    async def pending_upload(
+    async def start_pending_upload(
         self,
         name: str,
         version: str,
@@ -4169,7 +4991,7 @@ class BetaEvaluatorsOperations:
     ) -> _models.PendingUploadResponse:
         """Start a new or get an existing pending upload of an evaluator for a specific version.
 
-        :param name: The name of the resource. Required.
+        :param name: Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -4202,7 +5024,7 @@ class BetaEvaluatorsOperations:
         else:
             _content = json.dumps(pending_upload_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_evaluators_pending_upload_request(
+        _request = build_beta_evaluators_start_pending_upload_request(
             name=name,
             version=version,
             content_type=content_type,
@@ -4231,7 +5053,11 @@ class BetaEvaluatorsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -4255,7 +5081,7 @@ class BetaEvaluatorsOperations:
     ) -> _models.DatasetCredential:
         """Get the SAS credential to access the storage account associated with an Evaluator version.
 
-        :param name: The name of the resource. Required.
+        :param name: Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -4281,7 +5107,7 @@ class BetaEvaluatorsOperations:
     ) -> _models.DatasetCredential:
         """Get the SAS credential to access the storage account associated with an Evaluator version.
 
-        :param name: The name of the resource. Required.
+        :param name: Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -4307,7 +5133,7 @@ class BetaEvaluatorsOperations:
     ) -> _models.DatasetCredential:
         """Get the SAS credential to access the storage account associated with an Evaluator version.
 
-        :param name: The name of the resource. Required.
+        :param name: Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -4331,7 +5157,7 @@ class BetaEvaluatorsOperations:
     ) -> _models.DatasetCredential:
         """Get the SAS credential to access the storage account associated with an Evaluator version.
 
-        :param name: The name of the resource. Required.
+        :param name: Required.
         :type name: str
         :param version: The specific version id of the EvaluatorVersion to operate on. Required.
         :type version: str
@@ -4393,7 +5219,11 @@ class BetaEvaluatorsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -6592,14 +7422,14 @@ class BetaSchedulesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
 
-class BetaToolsetsOperations:
+class BetaToolboxesOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.ai.projects.aio.AIProjectClient`'s
-        :attr:`toolsets` attribute.
+        :attr:`toolboxes` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -6612,91 +7442,105 @@ class BetaToolsetsOperations:
     @overload
     async def create(
         self,
+        toolbox_name: str,
         *,
-        name: str,
         tools: List[_models.Tool],
         content_type: str = "application/json",
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
+        policies: Optional[_models.ToolboxPolicies] = None,
         **kwargs: Any
-    ) -> _models.ToolsetObject:
-        """Create a toolset.
+    ) -> _models.ToolboxVersionObject:
+        """Create a new version of a toolbox. If the toolbox does not exist, it will be created.
 
-        :keyword name: The name of the toolset. Required.
-        :paramtype name: str
-        :keyword tools: The list of tools to include in the toolset. Required.
+        :param toolbox_name: The name of the toolbox. If the toolbox does not exist, it will be
+         created. Required.
+        :type toolbox_name: str
+        :keyword tools: The list of tools to include in this version. Required.
         :paramtype tools: list[~azure.ai.projects.models.Tool]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword description: A human-readable description of the toolset. Default value is None.
+        :keyword description: A human-readable description of the toolbox. Default value is None.
         :paramtype description: str
-        :keyword metadata: Arbitrary key-value metadata to associate with the toolset. Default value is
+        :keyword metadata: Arbitrary key-value metadata to associate with the toolbox. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolsetObject
+        :keyword policies: Policy configuration for this toolbox version. Default value is None.
+        :paramtype policies: ~azure.ai.projects.models.ToolboxPolicies
+        :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolboxVersionObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ToolsetObject:
-        """Create a toolset.
+        self, toolbox_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ToolboxVersionObject:
+        """Create a new version of a toolbox. If the toolbox does not exist, it will be created.
 
+        :param toolbox_name: The name of the toolbox. If the toolbox does not exist, it will be
+         created. Required.
+        :type toolbox_name: str
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolsetObject
+        :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolboxVersionObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def create(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ToolsetObject:
-        """Create a toolset.
+        self, toolbox_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ToolboxVersionObject:
+        """Create a new version of a toolbox. If the toolbox does not exist, it will be created.
 
+        :param toolbox_name: The name of the toolbox. If the toolbox does not exist, it will be
+         created. Required.
+        :type toolbox_name: str
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolsetObject
+        :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolboxVersionObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def create(
         self,
+        toolbox_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
-        name: str = _Unset,
         tools: List[_models.Tool] = _Unset,
         description: Optional[str] = None,
         metadata: Optional[dict[str, str]] = None,
+        policies: Optional[_models.ToolboxPolicies] = None,
         **kwargs: Any
-    ) -> _models.ToolsetObject:
-        """Create a toolset.
+    ) -> _models.ToolboxVersionObject:
+        """Create a new version of a toolbox. If the toolbox does not exist, it will be created.
 
+        :param toolbox_name: The name of the toolbox. If the toolbox does not exist, it will be
+         created. Required.
+        :type toolbox_name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
-        :keyword name: The name of the toolset. Required.
-        :paramtype name: str
-        :keyword tools: The list of tools to include in the toolset. Required.
+        :keyword tools: The list of tools to include in this version. Required.
         :paramtype tools: list[~azure.ai.projects.models.Tool]
-        :keyword description: A human-readable description of the toolset. Default value is None.
+        :keyword description: A human-readable description of the toolbox. Default value is None.
         :paramtype description: str
-        :keyword metadata: Arbitrary key-value metadata to associate with the toolset. Default value is
+        :keyword metadata: Arbitrary key-value metadata to associate with the toolbox. Default value is
          None.
         :paramtype metadata: dict[str, str]
-        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolsetObject
+        :keyword policies: Policy configuration for this toolbox version. Default value is None.
+        :paramtype policies: ~azure.ai.projects.models.ToolboxPolicies
+        :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolboxVersionObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6711,14 +7555,12 @@ class BetaToolsetsOperations:
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ToolsetObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ToolboxVersionObject] = kwargs.pop("cls", None)
 
         if body is _Unset:
-            if name is _Unset:
-                raise TypeError("missing required argument: name")
             if tools is _Unset:
                 raise TypeError("missing required argument: tools")
-            body = {"description": description, "metadata": metadata, "name": name, "tools": tools}
+            body = {"description": description, "metadata": metadata, "policies": policies, "tools": tools}
             body = {k: v for k, v in body.items() if v is not None}
         content_type = content_type or "application/json"
         _content = None
@@ -6727,7 +7569,8 @@ class BetaToolsetsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_toolsets_create_request(
+        _request = build_beta_toolboxes_create_request(
+            toolbox_name=toolbox_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6763,171 +7606,7 @@ class BetaToolsetsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.ToolsetObject, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def update(
-        self,
-        tool_set_name: str,
-        *,
-        tools: List[_models.Tool],
-        content_type: str = "application/json",
-        description: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.ToolsetObject:
-        """Update a toolset.
-
-        :param tool_set_name: The name of the toolset to update. Required.
-        :type tool_set_name: str
-        :keyword tools: The list of tools to include in the toolset. Required.
-        :paramtype tools: list[~azure.ai.projects.models.Tool]
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword description: A human-readable description of the toolset. Default value is None.
-        :paramtype description: str
-        :keyword metadata: Arbitrary key-value metadata to associate with the toolset. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolsetObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self, tool_set_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ToolsetObject:
-        """Update a toolset.
-
-        :param tool_set_name: The name of the toolset to update. Required.
-        :type tool_set_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolsetObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update(
-        self, tool_set_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ToolsetObject:
-        """Update a toolset.
-
-        :param tool_set_name: The name of the toolset to update. Required.
-        :type tool_set_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolsetObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update(
-        self,
-        tool_set_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        tools: List[_models.Tool] = _Unset,
-        description: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-        **kwargs: Any
-    ) -> _models.ToolsetObject:
-        """Update a toolset.
-
-        :param tool_set_name: The name of the toolset to update. Required.
-        :type tool_set_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword tools: The list of tools to include in the toolset. Required.
-        :paramtype tools: list[~azure.ai.projects.models.Tool]
-        :keyword description: A human-readable description of the toolset. Default value is None.
-        :paramtype description: str
-        :keyword metadata: Arbitrary key-value metadata to associate with the toolset. Default value is
-         None.
-        :paramtype metadata: dict[str, str]
-        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolsetObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ToolsetObject] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if tools is _Unset:
-                raise TypeError("missing required argument: tools")
-            body = {"description": description, "metadata": metadata, "tools": tools}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_toolsets_update_request(
-            tool_set_name=tool_set_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ToolsetObject, response.json())
+            deserialized = _deserialize(_models.ToolboxVersionObject, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -6935,13 +7614,13 @@ class BetaToolsetsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, tool_set_name: str, **kwargs: Any) -> _models.ToolsetObject:
-        """Retrieve a toolset.
+    async def get(self, toolbox_name: str, **kwargs: Any) -> _models.ToolboxObject:
+        """Retrieve a toolbox.
 
-        :param tool_set_name: The name of the toolset to retrieve. Required.
-        :type tool_set_name: str
-        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolsetObject
+        :param toolbox_name: The name of the toolbox to retrieve. Required.
+        :type toolbox_name: str
+        :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolboxObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -6955,10 +7634,10 @@ class BetaToolsetsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.ToolsetObject] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ToolboxObject] = kwargs.pop("cls", None)
 
-        _request = build_beta_toolsets_get_request(
-            tool_set_name=tool_set_name,
+        _request = build_beta_toolboxes_get_request(
+            toolbox_name=toolbox_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6992,7 +7671,7 @@ class BetaToolsetsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.ToolsetObject, response.json())
+            deserialized = _deserialize(_models.ToolboxObject, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -7007,8 +7686,8 @@ class BetaToolsetsOperations:
         order: Optional[Union[str, _models.PageOrder]] = None,
         before: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncItemPaged["_models.ToolsetObject"]:
-        """List all toolsets.
+    ) -> AsyncItemPaged["_models.ToolboxObject"]:
+        """List all toolboxes.
 
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
@@ -7024,14 +7703,14 @@ class BetaToolsetsOperations:
          subsequent call can include before=obj_foo in order to fetch the previous page of the list.
          Default value is None.
         :paramtype before: str
-        :return: An iterator like instance of ToolsetObject
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ToolsetObject]
+        :return: An iterator like instance of ToolboxObject
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ToolboxObject]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.ToolsetObject]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ToolboxObject]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -7043,7 +7722,7 @@ class BetaToolsetsOperations:
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_toolsets_list_request(
+            _request = build_beta_toolboxes_list_request(
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -7061,7 +7740,7 @@ class BetaToolsetsOperations:
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.ToolsetObject],
+                List[_models.ToolboxObject],
                 deserialized.get("data", []),
             )
             if cls:
@@ -7089,14 +7768,76 @@ class BetaToolsetsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    @distributed_trace_async
-    async def delete(self, tool_set_name: str, **kwargs: Any) -> _models.DeleteToolsetResponse:
-        """Delete a toolset.
+    @overload
+    async def update(
+        self, toolbox_name: str, *, default_version: str, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ToolboxObject:
+        """Update a toolbox to point to a specific version.
 
-        :param tool_set_name: The name of the toolset to delete. Required.
-        :type tool_set_name: str
-        :return: DeleteToolsetResponse. The DeleteToolsetResponse is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.DeleteToolsetResponse
+        :param toolbox_name: The name of the toolbox to update. Required.
+        :type toolbox_name: str
+        :keyword default_version: The version identifier that the toolbox should point to. When set,
+         the toolbox's default version will resolve to this version instead of the latest. Required.
+        :paramtype default_version: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolboxObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self, toolbox_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ToolboxObject:
+        """Update a toolbox to point to a specific version.
+
+        :param toolbox_name: The name of the toolbox to update. Required.
+        :type toolbox_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolboxObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self, toolbox_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ToolboxObject:
+        """Update a toolbox to point to a specific version.
+
+        :param toolbox_name: The name of the toolbox to update. Required.
+        :type toolbox_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolboxObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update(
+        self, toolbox_name: str, body: Union[JSON, IO[bytes]] = _Unset, *, default_version: str = _Unset, **kwargs: Any
+    ) -> _models.ToolboxObject:
+        """Update a toolbox to point to a specific version.
+
+        :param toolbox_name: The name of the toolbox to update. Required.
+        :type toolbox_name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword default_version: The version identifier that the toolbox should point to. When set,
+         the toolbox's default version will resolve to this version instead of the latest. Required.
+        :paramtype default_version: str
+        :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolboxObject
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -7107,14 +7848,29 @@ class BetaToolsetsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DeleteToolsetResponse] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ToolboxObject] = kwargs.pop("cls", None)
 
-        _request = build_beta_toolsets_delete_request(
-            tool_set_name=tool_set_name,
+        if body is _Unset:
+            if default_version is _Unset:
+                raise TypeError("missing required argument: default_version")
+            body = {"default_version": default_version}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_toolboxes_update_request(
+            toolbox_name=toolbox_name,
+            content_type=content_type,
             api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -7147,9 +7903,61 @@ class BetaToolsetsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.DeleteToolsetResponse, response.json())
+            deserialized = _deserialize(_models.ToolboxObject, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete(self, toolbox_name: str, **kwargs: Any) -> None:
+        """Delete a toolbox and all its versions.
+
+        :param toolbox_name: The name of the toolbox to delete. Required.
+        :type toolbox_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_toolboxes_delete_request(
+            toolbox_name=toolbox_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore

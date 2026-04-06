@@ -124,59 +124,6 @@ class TestAgentResponsesCrudAsync(TestBase):
             print("Agent deleted")
 
     # To run this test:
-    # pytest tests/agents/test_agent_responses_crud_async.py::TestAgentResponsesCrudAsync::test_aget_response_curd_api_key_auth_async -s
-    @servicePreparer()
-    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_aget_response_curd_api_key_auth_async(self, **kwargs):
-
-        model = kwargs.get("foundry_model_name")
-        project_client = self.create_async_client(operation_group="agents", use_api_key=True, **kwargs)
-        openai_client = project_client.get_openai_client()
-
-        async with project_client:
-
-            agent = await project_client.agents.create_version(
-                agent_name="MyAgent",
-                definition=PromptAgentDefinition(
-                    model=model,
-                    instructions="You are a helpful assistant that answers general questions",
-                ),
-            )
-            print(f"\nAgent created (id: {agent.id}, name: {agent.name}, version: {agent.version})")
-
-            conversation = await openai_client.conversations.create(
-                items=[{"type": "message", "role": "user", "content": "How many feet in a mile?"}]
-            )
-            print(f"Created conversation with initial user message (id: {conversation.id})")
-
-            response = await openai_client.responses.create(
-                conversation=conversation.id,
-                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-            )
-            print(f"Response id: {response.id}, output text: {response.output_text}")
-            assert "5280" in response.output_text or "5,280" in response.output_text
-
-            await openai_client.conversations.items.create(
-                conversation_id=conversation.id,
-                items=[{"type": "message", "role": "user", "content": "And how many meters?"}],
-            )
-            print("Added a second user message to the conversation")
-
-            response = await openai_client.responses.create(
-                conversation=conversation.id,
-                extra_body={"agent_reference": {"name": agent.name, "type": "agent_reference"}},
-            )
-            print(f"Response id: {response.id}, output text: {response.output_text}")
-            assert "1609" in response.output_text or "1,609" in response.output_text
-
-            # Teardown
-            await openai_client.conversations.delete(conversation_id=conversation.id)
-            print("Conversation deleted")
-
-            await project_client.agents.delete_version(agent_name=agent.name, agent_version=agent.version)
-            print("Agent deleted")
-
-    # To run this test:
     # pytest tests\agents\test_agent_responses_crud_async.py::TestAgentResponsesCrudAsync::test_agent_responses_with_structured_output_async -s
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
