@@ -134,8 +134,7 @@ class ConversationBot:
                     self.conversation_starter = conversation_starter_content
                 else:
                     try:
-                        _starter_env = SandboxedEnvironment(undefined=jinja2.StrictUndefined)
-                        self.conversation_starter = _starter_env.from_string(conversation_starter_content)
+                        self.conversation_starter = _sandbox_env.from_string(conversation_starter_content)
                     except jinja2.exceptions.TemplateSyntaxError as e:  # noqa: F841
                         self.conversation_starter = conversation_starter_content
             else:
