@@ -31,6 +31,7 @@ from ..streaming._helpers import (
     _coerce_handler_event,
     _extract_response_snapshot_from_events,
 )
+from ..streaming._state_machine import EventStreamValidator, LifecycleStateMachineError
 from .._options import ResponsesServerOptions
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ._event_subject import _ResponseEventSubject
@@ -189,6 +190,7 @@ async def _run_background_non_stream(
     """
     record.transition_to("in_progress")
     handler_events: list[dict[str, Any]] = []
+    validator = EventStreamValidator()
 
     try:
         try:
@@ -213,6 +215,7 @@ async def _run_background_non_stream(
                     agent_session_id=agent_session_id,
                 )
                 handler_events.append(normalized)
+                validator.validate_next(normalized)
                 if not first_event_processed:
                     first_event_processed = True
                     # Set initial response snapshot for POST response body without
@@ -336,12 +339,13 @@ class _PipelineState:
     to ``_ExecutionContext``.
     """
 
-    __slots__ = ("handler_events", "bg_record", "captured_error")
+    __slots__ = ("handler_events", "bg_record", "captured_error", "validator")
 
     def __init__(self) -> None:
         self.handler_events: list[dict[str, Any]] = []
         self.bg_record: ResponseExecution | None = None
         self.captured_error: Exception | None = None
+        self.validator: EventStreamValidator = EventStreamValidator()
 
 
 class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
@@ -425,6 +429,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             agent_session_id=ctx.agent_session_id,
         )
         state.handler_events.append(normalized)
+        state.validator.validate_next(normalized)
         if state.bg_record is not None:
             state.bg_record.apply_event(normalized, state.handler_events)
             if state.bg_record.subject is not None:
@@ -636,6 +641,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             return
 
         state.handler_events.append(first_normalized)
+        state.validator.validate_next(first_normalized)
 
         # bg+store: create and register the execution record after the first event.
         if ctx.background and ctx.store:
