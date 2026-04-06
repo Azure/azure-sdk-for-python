@@ -13,7 +13,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
 from .. import models as _models
-from ..models._enums import _AgentDefinitionOptInKeys, _FoundryFeaturesOptInKeys
+from ..models._enums import _AgentDefinitionOptInKeys
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 
 """
