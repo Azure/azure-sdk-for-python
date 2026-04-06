@@ -293,7 +293,6 @@ stages:
                     SparseCheckoutPaths:
                       - docs-ref-services/
                       - metadata/
-                    PackageSourceOverride: ${{parameters.PackageSourceOverride}}
 
           - job: UpdatePackageVersion
             displayName: "Update Package Version"
