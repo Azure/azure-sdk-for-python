@@ -29,7 +29,7 @@ class QueuesClient(_QueuesClient):
             # When a pre-built pipeline is provided, skip the generated credential/policy setup.
             _endpoint = "{url}"
             self._config = QueuesClientConfiguration.__new__(QueuesClientConfiguration)
-            version = kwargs.pop("version", "2026-04-06")
+            version = kwargs.pop("version", "2026-06-06")
             self._config.url = url
             self._config.credential = credential
             self._config.version = version
