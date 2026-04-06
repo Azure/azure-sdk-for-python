@@ -156,7 +156,8 @@ class PathClient(StorageAccountHostsMixin):
 
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
-            url, base_url=url, file_system=self.file_system_name, path=self.path_name, version=self._api_version, pipeline=self._pipeline
+            url, base_url=url, file_system=self.file_system_name, path=self.path_name,
+             version=self._api_version, pipeline=self._pipeline
         )
         return client
 
