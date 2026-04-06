@@ -43,7 +43,7 @@ class TestCustomerSdkStats(unittest.TestCase):
         # Create a mock exporter
         mock_exporter = mock.Mock()
         mock_exporter._connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
-        mock_exporter._credential = mock.Mock()
+        mock_exporter._credential = None
 
         # Collect customer SDK stats
         collect_customer_sdkstats(mock_exporter)
@@ -61,7 +61,7 @@ class TestCustomerSdkStats(unittest.TestCase):
 
         mock_exporter = mock.Mock()
         mock_exporter._connection_string = "InstrumentationKey=12345678-1234-5678-abcd-12345678abcd"
-        mock_exporter._credential = None
+        mock_exporter._credential = mock.Mock()
 
         collect_customer_sdkstats(mock_exporter)
 
