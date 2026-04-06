@@ -11,7 +11,7 @@ from azure.ai.agentserver.core._config import (
     resolve_agent_version,
     resolve_appinsights_connection_string,
 )
-from azure.ai.agentserver.core._constants import Constants
+
 
 
 # ------------------------------------------------------------------ #
@@ -24,21 +24,21 @@ class TestTracingToggle:
 
     def test_tracing_disabled_when_no_endpoints(self) -> None:
         env = os.environ.copy()
-        env.pop(Constants.APPLICATIONINSIGHTS_CONNECTION_STRING, None)
-        env.pop(Constants.OTEL_EXPORTER_OTLP_ENDPOINT, None)
+        env.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
+        env.pop("OTEL_EXPORTER_OTLP_ENDPOINT", None)
         with mock.patch.dict(os.environ, env, clear=True):
             mock_configure = mock.MagicMock()
             AgentServerHost(configure_tracing=mock_configure)
             mock_configure.assert_not_called()
 
     def test_tracing_enabled_via_appinsights_env_var(self) -> None:
-        with mock.patch.dict(os.environ, {Constants.APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=test"}):
+        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
             mock_configure = mock.MagicMock()
             AgentServerHost(configure_tracing=mock_configure)
             mock_configure.assert_called_once()
 
     def test_tracing_enabled_via_otlp_env_var(self) -> None:
-        with mock.patch.dict(os.environ, {Constants.OTEL_EXPORTER_OTLP_ENDPOINT: "http://localhost:4318"}):
+        with mock.patch.dict(os.environ, {"OTEL_EXPORTER_OTLP_ENDPOINT": "http://localhost:4318"}):
             mock_configure = mock.MagicMock()
             AgentServerHost(configure_tracing=mock_configure)
             mock_configure.assert_called_once()
@@ -53,7 +53,7 @@ class TestTracingToggle:
 
     def test_tracing_disabled_when_configure_tracing_is_none(self) -> None:
         """Passing configure_tracing=None disables tracing entirely."""
-        with mock.patch.dict(os.environ, {Constants.APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=test"}):
+        with mock.patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
             # Should not raise even with App Insights configured
             AgentServerHost(configure_tracing=None)
 
@@ -72,20 +72,20 @@ class TestAppInsightsConnectionString:
     def test_env_var(self) -> None:
         with mock.patch.dict(
             os.environ,
-            {Constants.APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=env"},
+            {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=env"},
         ):
             assert resolve_appinsights_connection_string(None) == "InstrumentationKey=env"
 
     def test_none_when_unset(self) -> None:
         env = os.environ.copy()
-        env.pop(Constants.APPLICATIONINSIGHTS_CONNECTION_STRING, None)
+        env.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
         with mock.patch.dict(os.environ, env, clear=True):
             assert resolve_appinsights_connection_string(None) is None
 
     def test_explicit_overrides_env_var(self) -> None:
         with mock.patch.dict(
             os.environ,
-            {Constants.APPLICATIONINSIGHTS_CONNECTION_STRING: "InstrumentationKey=env"},
+            {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=env"},
         ):
             result = resolve_appinsights_connection_string("InstrumentationKey=explicit")
             assert result == "InstrumentationKey=explicit"
@@ -146,22 +146,22 @@ class TestAgentIdentityResolution:
     """Tests for resolve_agent_name() and resolve_agent_version()."""
 
     def test_agent_name_from_env(self) -> None:
-        with mock.patch.dict(os.environ, {Constants.FOUNDRY_AGENT_NAME: "my-agent"}):
+        with mock.patch.dict(os.environ, {"FOUNDRY_AGENT_NAME": "my-agent"}):
             assert resolve_agent_name() == "my-agent"
 
     def test_agent_name_default_empty(self) -> None:
         env = os.environ.copy()
-        env.pop(Constants.FOUNDRY_AGENT_NAME, None)
+        env.pop("FOUNDRY_AGENT_NAME", None)
         with mock.patch.dict(os.environ, env, clear=True):
             assert resolve_agent_name() == ""
 
     def test_agent_version_from_env(self) -> None:
-        with mock.patch.dict(os.environ, {Constants.FOUNDRY_AGENT_VERSION: "2.0"}):
+        with mock.patch.dict(os.environ, {"FOUNDRY_AGENT_VERSION": "2.0"}):
             assert resolve_agent_version() == "2.0"
 
     def test_agent_version_default_empty(self) -> None:
         env = os.environ.copy()
-        env.pop(Constants.FOUNDRY_AGENT_VERSION, None)
+        env.pop("FOUNDRY_AGENT_VERSION", None)
         with mock.patch.dict(os.environ, env, clear=True):
             assert resolve_agent_version() == ""
 

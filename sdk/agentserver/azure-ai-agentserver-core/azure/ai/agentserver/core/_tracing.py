@@ -18,6 +18,11 @@ from collections.abc import AsyncIterable, AsyncIterator, Mapping  # pylint: dis
 from contextlib import contextmanager
 from typing import Any, Iterator, Optional, Union
 
+from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
+from opentelemetry.baggage.propagation import W3CBaggagePropagator
+from opentelemetry.propagate import composite
+from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+
 from . import _config
 
 _Content = Union[str, bytes, memoryview]
@@ -41,10 +46,11 @@ _GEN_AI_PROVIDER_NAME_VALUE = "AzureAI Hosted Agents"
 
 logger = logging.getLogger("azure.ai.agentserver")
 
-from opentelemetry import trace
-from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
-
-_propagator = TraceContextTextMapPropagator()
+# Composite propagator handles both traceparent/tracestate AND baggage
+_propagator = composite.CompositePropagator([
+    TraceContextTextMapPropagator(),
+    W3CBaggagePropagator(),
+])
 
 
 # ======================================================================
@@ -127,7 +133,7 @@ def request_span(
 
     # Build attributes
     attrs: dict[str, str] = {
-        _ATTR_SERVICE_NAME: _SERVICE_NAME_VALUE,
+        _ATTR_SERVICE_NAME: agent_name or _SERVICE_NAME_VALUE,
         _ATTR_GEN_AI_SYSTEM: _GEN_AI_SYSTEM_VALUE,
         _ATTR_GEN_AI_PROVIDER_NAME: _GEN_AI_PROVIDER_NAME_VALUE,
         _ATTR_GEN_AI_RESPONSE_ID: request_id,
@@ -144,14 +150,18 @@ def request_span(
     if project_id:
         attrs[_ATTR_FOUNDRY_PROJECT_ID] = project_id
 
-    # Propagate platform request correlation ID
+    # Propagate platform request correlation ID as span attribute AND baggage
     x_request_id = headers.get("x-request-id")
     if x_request_id:
         attrs["x_request_id"] = x_request_id
 
-    # Extract W3C trace context
+    # Extract W3C trace context (traceparent + tracestate + baggage)
     carrier = _extract_w3c_carrier(headers)
     ctx = _propagator.extract(carrier=carrier) if carrier else None
+
+    # Add x-request-id to baggage for downstream propagation
+    if x_request_id:
+        ctx = _otel_baggage.set_baggage("x_request_id", x_request_id, context=ctx)
 
     with tracer.start_as_current_span(
         name=name,
@@ -259,6 +269,32 @@ class _FoundryEnrichmentSpanProcessor:
         return True
 
 
+class _BaggageLogRecordProcessor:
+    """OTel log record processor that copies W3C Baggage entries into log attributes.
+
+    Per container-image-spec §6.1, all baggage key-value pairs from the
+    current span context should appear as attributes on every log record
+    for end-to-end correlation.
+    """
+
+    def on_emit(self, log_data: Any) -> None:  # pylint: disable=unused-argument
+        """Copy baggage entries into the log record's attributes."""
+        try:
+            ctx = _otel_context.get_current()
+            entries = _otel_baggage.get_all(context=ctx)
+            if entries and hasattr(log_data, 'log_record') and log_data.log_record:
+                for key, value in entries.items():
+                    log_data.log_record.attributes[key] = value  # type: ignore[index]
+        except Exception:  # pylint: disable=broad-except
+            pass
+
+    def shutdown(self) -> None:
+        pass
+
+    def force_flush(self, timeout_millis: int = 30000) -> bool:  # pylint: disable=unused-argument
+        return True
+
+
 # ======================================================================
 # Internal: resource, provider, exporters
 # ======================================================================
@@ -349,6 +385,7 @@ def _setup_log_export(resource: Any, connection_string: str) -> None:
     set_logger_provider(log_provider)
     log_provider.add_log_record_processor(BatchLogRecordProcessor(
         AzureMonitorLogExporter(connection_string=connection_string)))
+    log_provider.add_log_record_processor(_BaggageLogRecordProcessor())
     logging.getLogger().addHandler(LoggingHandler(logger_provider=log_provider))
     _az_log_configured = True
     logger.info("Application Insights log exporter configured.")
@@ -390,6 +427,7 @@ def _setup_otlp_log_export(resource: Any, endpoint: str) -> None:
         set_logger_provider(log_provider)
     log_provider.add_log_record_processor(BatchLogRecordProcessor(
         OTLPLogExporter(endpoint=endpoint)))  # type: ignore[union-attr]
+    log_provider.add_log_record_processor(_BaggageLogRecordProcessor())
     # Note: LoggingHandler is NOT added here to avoid duplicating the
     # handler already installed by _setup_log_export. The OTel LoggerProvider
     # receives log records via the handler added there (or from direct OTel

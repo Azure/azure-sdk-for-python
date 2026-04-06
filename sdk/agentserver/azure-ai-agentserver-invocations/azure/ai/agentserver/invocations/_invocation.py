@@ -6,29 +6,27 @@
 Provides the invocation protocol endpoints and handler decorators
 as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 """
+import contextvars
 import inspect
 import logging
-import os
 import re
 import threading
 import uuid
 from collections.abc import Awaitable, Callable  # pylint: disable=import-error
 from typing import Any, Optional
 
+from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 from starlette.routing import Route
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
-    Constants,
     create_error_response,
     end_span,
     record_error,
     trace_stream,
 )
-
-from opentelemetry import baggage as _otel_baggage, context as _otel_context
 
 from ._constants import InvocationConstants
 
@@ -38,8 +36,6 @@ logger = logging.getLogger("azure.ai.agentserver")
 _MAX_ID_LENGTH = 256
 _VALID_ID_RE = re.compile(r"^[a-zA-Z0-9\-_.:]+$")
 
-
-import contextvars
 
 # Context variables for structured logging — concurrency-safe alternative to logger filters.
 _invocation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("invocation_id", default="")
@@ -320,7 +316,7 @@ class InvocationAgentServerHost(AgentServerHost):
         # Session ID: query param overrides env var / generated UUID
         raw_session_id = (
             request.query_params.get("agent_session_id")
-            or os.environ.get(Constants.FOUNDRY_AGENT_SESSION_ID)
+            or self.config.session_id
             or ""
         )
         session_id = _sanitize_id(raw_session_id, str(uuid.uuid4()))
@@ -420,7 +416,7 @@ class InvocationAgentServerHost(AgentServerHost):
 
         with self.request_span(
             request.headers, invocation_id, span_operation,
-            session_id=session_id,
+            operation_name=span_operation, session_id=session_id,
         ) as _otel_span:
             self._safe_set_attrs(_otel_span, {
                 InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
