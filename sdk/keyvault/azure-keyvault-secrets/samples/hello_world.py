@@ -6,7 +6,7 @@
 import datetime
 import os
 
-from azure.keyvault.secrets import SecretClient
+from azure.keyvault.secrets import SecretClient, ContentType
 from azure.identity import DefaultAzureCredential
 
 # ----------------------------------------------------------------------------------------------------------
@@ -55,6 +55,10 @@ bank_secret = client.get_secret(secret.name)
 assert bank_secret.properties.expires_on
 print(f"Secret with name '{bank_secret.name}' was found with value '{bank_secret.value}'.")
 
+# For certificate-backed secrets, we can retrieve the secret in a different encoding format using secret_encoding.
+# For example, to get a PFX-backed certificate secret in PEM format:
+# pem_secret = client.get_secret(secret.name, secret_encoding=ContentType.PEM)
+
 # After one year, the bank account is still active, we need to update the expiry time of the secret.
 # The update method can be used to update the expiry attribute of the secret. It cannot be used to update
 # the value of the secret.
@@ -69,6 +73,11 @@ print(f"Secret with name '{secret.name}' was updated to expire on '{updated_secr
 # change the value of the secret.
 new_secret = client.set_secret(secret.name, "newSecretValue")
 print(f"Secret with name '{new_secret.name}' created with value '{new_secret.value}'")
+
+# For secrets created after June 1, 2025, previous_version tracks version history.
+# This is useful for certificate-backed secrets.
+if new_secret.properties.previous_version:
+    print(f"Secret's previous version is '{new_secret.properties.previous_version}'")
 
 # The bank account was closed, need to delete its credentials from the Key Vault.
 print("\n.. Deleting Secret...")
