@@ -14,6 +14,7 @@ OpenTelemetry is a required dependency — these functions always create
 real spans.  Azure Monitor export is optional (lazy-imported).
 """
 import logging
+import os
 from collections.abc import AsyncIterable, AsyncIterator, Mapping  # pylint: disable=import-error
 from contextlib import contextmanager
 from typing import Any, Iterator, Optional, Union
@@ -306,7 +307,10 @@ def _create_resource() -> Any:
     except ImportError:
         logger.warning("OTel SDK not installed — tracing resource creation failed.")
         return None
-    return Resource.create({_ATTR_SERVICE_NAME: _SERVICE_NAME_VALUE})
+    # service.name maps to cloud_RoleName in App Insights
+    agent_name = os.environ.get(_config._ENV_FOUNDRY_AGENT_NAME, "")  # pylint: disable=protected-access
+    service_name = agent_name or _SERVICE_NAME_VALUE
+    return Resource.create({_ATTR_SERVICE_NAME: service_name})
 
 
 def _ensure_trace_provider(resource: Any) -> Any:
