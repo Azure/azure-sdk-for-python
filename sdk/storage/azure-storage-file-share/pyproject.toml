@@ -12,7 +12,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "azure-storage-file-share"
 authors = [
-  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+  { name = "Microsoft Corporation", email = "ascl@microsoft.com" },
 ]
 description = "Microsoft Corporation Azure Storage File Share Client Library for Python"
 license = "MIT"
