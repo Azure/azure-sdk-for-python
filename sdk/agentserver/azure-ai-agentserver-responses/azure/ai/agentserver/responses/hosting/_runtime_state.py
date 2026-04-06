@@ -9,6 +9,7 @@ from copy import deepcopy
 from typing import Any
 
 from ..models.runtime import ResponseExecution
+from ..streaming._helpers import strip_nulls
 
 
 class _RuntimeState:
@@ -134,10 +135,14 @@ class _RuntimeState:
             result.setdefault("response_id", execution.response_id)
             result.setdefault("object", "response")
             result["status"] = execution.status
-            return result
+            return strip_nulls(result)
         return {
             "id": execution.response_id,
             "response_id": execution.response_id,
             "object": "response",
             "status": execution.status,
+            "created_at": int(execution.created_at.timestamp()),
+            "output": [],
+            "model": execution.initial_model,
+            "agent_reference": deepcopy(execution.initial_agent_reference) or {},
         }

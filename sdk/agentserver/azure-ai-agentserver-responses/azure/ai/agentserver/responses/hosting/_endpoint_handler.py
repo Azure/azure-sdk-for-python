@@ -12,6 +12,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import contextvars
 import logging
+import threading
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any
 
@@ -64,12 +65,58 @@ if TYPE_CHECKING:
 
 from opentelemetry import baggage as _otel_baggage, context as _otel_context
 
+from ..models.errors import RequestValidationError
+
 logger = logging.getLogger("azure.ai.agentserver")
+
+# OTel span attribute keys for error tagging (§7.2)
+_ATTR_ERROR_CODE = "azure.ai.agentserver.responses.error.code"
+_ATTR_ERROR_MESSAGE = "azure.ai.agentserver.responses.error.message"
+
+
+def _classify_error_code(exc: Exception) -> str:
+    """Return an error code string for an exception, matching API error classification."""
+    if isinstance(exc, RequestValidationError):
+        return exc.code
+    if isinstance(exc, ValueError):
+        return "invalid_request"
+    return "internal_error"
 
 # Structured log scope context variables (spec §7.4)
 _response_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("ResponseId", default="")
 _conversation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("ConversationId", default="")
 _streaming_var: contextvars.ContextVar[str] = contextvars.ContextVar("Streaming", default="")
+
+
+class _ResponseLogFilter(logging.Filter):
+    """Attach response-scope IDs to every log record from context vars.
+
+    Reads from ``contextvars`` rather than instance state, so a single
+    filter instance can be installed once on the logger (not per-request).
+    """
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        record.response_id = _response_id_var.get("")  # type: ignore[attr-defined]
+        record.conversation_id = _conversation_id_var.get("")  # type: ignore[attr-defined]
+        record.streaming = _streaming_var.get("")  # type: ignore[attr-defined]
+        return True
+
+
+# Install once on first request — no per-request add/remove needed.
+_log_filter_lock = threading.Lock()
+_log_filter_installed = False
+
+
+def _ensure_response_log_filter() -> None:
+    """Install the response log filter on first use (lazy, thread-safe)."""
+    global _log_filter_installed  # pylint: disable=global-statement
+    if _log_filter_installed:
+        return
+    with _log_filter_lock:
+        if _log_filter_installed:
+            return
+        logger.addFilter(_ResponseLogFilter())
+        _log_filter_installed = True
 
 
 class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
@@ -412,6 +459,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             baggage_token = _otel_context.attach(bag_ctx)
 
             # Set structured log scope per spec §7.4
+            _ensure_response_log_filter()
             rid_token = _response_id_var.set(response_id)
             cid_token = _conversation_id_var.set(ctx.conversation_id or "")
             str_token = _streaming_var.set(str(ctx.stream).lower())
@@ -447,24 +495,41 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     return wrapped
 
                 if not ctx.background:
+                    disconnect_task = asyncio.create_task(
+                        self._monitor_disconnect(request, ctx.cancellation_signal)
+                    )
                     try:
                         snapshot = await self._orchestrator.run_sync(ctx)
                         end_span(otel_span)
                         return JSONResponse(snapshot, status_code=200)
                     except _HandlerError as exc:
                         logger.error("Handler error in sync create (response_id=%s)", ctx.response_id, exc_info=exc.original)
+                        self._safe_set_attrs(otel_span, {
+                            _ATTR_ERROR_CODE: _classify_error_code(exc.original),
+                            _ATTR_ERROR_MESSAGE: str(exc.original),
+                        })
                         end_span(otel_span, exc=exc.original)
                         return _error_response(exc.original, {})
+                    finally:
+                        disconnect_task.cancel()
 
                 snapshot = await self._orchestrator.run_background(ctx)
                 end_span(otel_span)
                 return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
             except _HandlerError as exc:
                 logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=exc.original)
+                self._safe_set_attrs(otel_span, {
+                    _ATTR_ERROR_CODE: _classify_error_code(exc.original),
+                    _ATTR_ERROR_MESSAGE: str(exc.original),
+                })
                 end_span(otel_span, exc=exc)
                 return _error_response(exc.original, self._response_headers)
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
+                self._safe_set_attrs(otel_span, {
+                    _ATTR_ERROR_CODE: _classify_error_code(exc),
+                    _ATTR_ERROR_MESSAGE: str(exc),
+                })
                 end_span(otel_span, exc=exc)
                 raise
             finally:

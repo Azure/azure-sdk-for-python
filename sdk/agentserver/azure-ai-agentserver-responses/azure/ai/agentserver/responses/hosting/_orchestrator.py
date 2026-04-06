@@ -939,6 +939,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             previous_response_id=ctx.previous_response_id,
             response_context=ctx.context,
             cancel_signal=ctx.cancellation_signal,
+            initial_model=ctx.model,
+            initial_agent_reference=ctx.agent_reference,
         )
 
         # Always register so GET can observe in-flight state

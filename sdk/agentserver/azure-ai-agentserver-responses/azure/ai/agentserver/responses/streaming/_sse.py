@@ -104,13 +104,6 @@ def _build_sse_frame(event_type: str, payload: dict[str, Any]) -> str:
     :rtype: str
     """
     lines = [f"event: {event_type}"]
-
-    # Emit multiline text as data lines for readability, then emit canonical
-    # JSON payload for deterministic parsers.
-    text_value = payload.get("text")
-    if isinstance(text_value, str) and "\n" in text_value:
-        lines.extend(f"data: {line}" for line in text_value.splitlines())
-
     lines.append(f"data: {json.dumps(payload)}")
     lines.append("")
     lines.append("")

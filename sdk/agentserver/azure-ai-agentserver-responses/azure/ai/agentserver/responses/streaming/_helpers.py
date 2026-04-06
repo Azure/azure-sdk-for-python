@@ -16,6 +16,25 @@ from ..models import _generated as generated_models
 EVENT_TYPE = generated_models.ResponseStreamEventType
 
 
+def strip_nulls(d: dict) -> dict:
+    """Recursively remove keys whose values are ``None`` from a dict.
+
+    Only dict values are recursed into; lists and other containers are
+    left untouched so that ``0``, ``False``, ``""``, and ``[]`` are
+    preserved.
+
+    :param d: The dictionary to strip.
+    :type d: dict
+    :returns: A new dictionary with ``None``-valued keys removed.
+    :rtype: dict
+    """
+    return {
+        k: strip_nulls(v) if isinstance(v, dict) else v
+        for k, v in d.items()
+        if v is not None
+    }
+
+
 def _build_events(
     response_id: str,
     *,
@@ -196,7 +215,7 @@ def _extract_response_snapshot_from_events(
                 snapshot["agent_session_id"] = agent_session_id
             if remove_sequence_number:
                 snapshot.pop("sequence_number", None)
-            return snapshot
+            return strip_nulls(snapshot)
 
     fallback_events = _build_events(
         response_id,
@@ -211,4 +230,4 @@ def _extract_response_snapshot_from_events(
         fallback_payload["agent_session_id"] = agent_session_id
     if remove_sequence_number:
         fallback_payload.pop("sequence_number", None)
-    return fallback_payload
+    return strip_nulls(fallback_payload)

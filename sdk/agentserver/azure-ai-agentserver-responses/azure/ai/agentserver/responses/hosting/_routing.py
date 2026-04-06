@@ -9,6 +9,7 @@ as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 from __future__ import annotations
 
 import logging
+import os
 import types
 from typing import Any, AsyncIterator, Callable, Optional
 
@@ -93,6 +94,14 @@ class ResponsesAgentServerHost(AgentServerHost):
             "cache-control": "no-cache",
             "x-accel-buffering": "no",
         }
+
+        if provider is None:
+            project_endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT")
+            if project_endpoint:
+                from ..store._foundry_provider import FoundryStorageProvider
+                from ..store._foundry_settings import FoundryStorageSettings
+                settings = FoundryStorageSettings.from_env()
+                provider = FoundryStorageProvider(settings)
 
         resolved_provider: ResponseProviderProtocol = provider if provider is not None \
                                                         else InMemoryResponseProvider()

@@ -23,12 +23,14 @@ def test_sse_writer__encodes_event_and_data_lines_with_separator() -> None:
     assert encoded.endswith("\n\n")
 
 
-def test_sse_writer__encodes_multiline_data_as_multiple_data_lines() -> None:
+def test_sse_writer__encodes_multiline_text_as_single_data_line() -> None:
     event = _FakeEvent(type="response.output_text.delta", sequence_number=1, text="line1\nline2")
 
     encoded = _sse.encode_sse_event(event)  # type: ignore[arg-type]
-    assert "data: line1" in encoded
-    assert "data: line2" in encoded
+    # Spec requires a single data: line with JSON payload — no extra data: lines
+    assert encoded.count("data: ") == 1
+    assert "data: line1" not in encoded
+    assert r"line1\nline2" in encoded
 
 
 def test_sse_writer__keep_alive_comment_frame_format() -> None:

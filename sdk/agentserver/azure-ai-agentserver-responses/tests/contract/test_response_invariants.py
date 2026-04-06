@@ -529,8 +529,8 @@ def _output_item_handler(request: Any, context: Any, cancellation_signal: Any):
     return _events()
 
 
-def test_output_item__no_response_id_on_item() -> None:
-    """Output items do not carry response_id — that field belongs on the Response only."""
+def test_output_item__response_id_stamped_on_item() -> None:
+    """B20 — Output items carry response_id stamped from the parent Response."""
     client = _build_client(_output_item_handler)
 
     response = client.post(
@@ -548,15 +548,49 @@ def test_output_item__no_response_id_on_item() -> None:
     assert payload["status"] == "completed"
     assert len(payload.get("output", [])) == 1
     item = payload["output"][0]
-    assert "response_id" not in item, (
-        f"response_id must not appear on output items (belongs on Response only), got: {item!r}"
+    assert item.get("response_id") == payload["id"], (
+        f"B20: response_id on output item must match parent Response id, got: {item!r}"
     )
 
 
-def test_output_item__agent_reference_on_response_not_item() -> None:
-    """agent_reference from the request is present on the Response but not on individual output items."""
+def test_output_item__agent_reference_stamped_on_item() -> None:
+    """B21 — agent_reference from the request is stamped on output items when the stream knows about it."""
+
+    def _handler_with_agent_ref(request: Any, context: Any, cancellation_signal: Any):
+        """Handler that creates a stream with agent_reference and emits a message item."""
+        agent_ref = None
+        if hasattr(request, "agent_reference") and request.agent_reference is not None:
+            agent_ref_raw = request.agent_reference
+            if hasattr(agent_ref_raw, "as_dict"):
+                agent_ref = agent_ref_raw.as_dict()
+            elif isinstance(agent_ref_raw, dict):
+                agent_ref = agent_ref_raw
+
+        async def _events():
+            stream = ResponseEventStream(
+                response_id=context.response_id,
+                model=getattr(request, "model", None),
+                agent_reference=agent_ref,
+            )
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
+
+            message_item = stream.add_output_item_message()
+            yield message_item.emit_added()
+
+            text_content = message_item.add_text_content()
+            yield text_content.emit_added()
+            yield text_content.emit_delta("hi")
+            yield text_content.emit_done()
+            yield message_item.emit_content_done(text_content)
+            yield message_item.emit_done()
+
+            yield stream.emit_completed()
+
+        return _events()
+
     app = ResponsesAgentServerHost()
-    app.create_handler(_output_item_handler)
+    app.create_handler(_handler_with_agent_ref)
     client = TestClient(app)
 
     agent_ref = {"type": "agent_reference", "name": "my-agent", "version": "v2"}
@@ -578,12 +612,14 @@ def test_output_item__agent_reference_on_response_not_item() -> None:
     # agent_reference is propagated to the Response
     assert payload.get("agent_reference", {}).get("name") == "my-agent"
     assert payload.get("agent_reference", {}).get("version") == "v2"
-    # agent_reference does NOT appear on individual output items
+    # B21: agent_reference is also stamped on individual output items
     assert len(payload.get("output", [])) == 1
     item = payload["output"][0]
-    assert "agent_reference" not in item, (
-        f"agent_reference must not appear on output items (belongs on Response only), got: {item!r}"
+    assert item.get("agent_reference") is not None, (
+        f"B21: agent_reference must be stamped on output items, got: {item!r}"
     )
+    assert item["agent_reference"].get("name") == "my-agent"
+    assert item["agent_reference"].get("version") == "v2"
 
 
 # ════════════════════════════════════════════════════════

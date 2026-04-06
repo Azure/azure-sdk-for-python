@@ -77,6 +77,8 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         input_items: list[dict[str, Any]] | None = None,
         previous_response_id: str | None = None,
         response_context: Any | None = None,
+        initial_model: str | None = None,
+        initial_agent_reference: dict[str, Any] | None = None,
     ) -> None:
         self.response_id = response_id
         self.mode_flags = mode_flags
@@ -94,6 +96,8 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         self.input_items: list[dict[str, Any]] = input_items if input_items is not None else []
         self.previous_response_id = previous_response_id
         self.response_context = response_context
+        self.initial_model = initial_model
+        self.initial_agent_reference = initial_agent_reference or {}
         self.response_created_signal: asyncio.Event = asyncio.Event()
         self.response_failed_before_events: bool = False
 
