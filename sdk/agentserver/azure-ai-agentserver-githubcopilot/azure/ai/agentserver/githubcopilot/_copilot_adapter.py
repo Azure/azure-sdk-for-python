@@ -29,13 +29,13 @@ from copilot import CopilotClient
 from copilot.generated.session_events import SessionEventType
 from copilot.session import PermissionRequestResult, ProviderConfig
 
-from azure.ai.agentserver.core import AgentServerHost
+from azure.ai.agentserver.core import AgentServerHost  # noqa: F401 (re-exported for subclasses)
 from azure.ai.agentserver.responses import (
     ResponseEventStream,
     ResponsesServerOptions,
     get_input_text,
 )
-from azure.ai.agentserver.responses.hosting import ResponseHandler
+from azure.ai.agentserver.responses.hosting import ResponsesAgentServerHost
 
 from ._tool_acl import ToolAcl
 
@@ -266,8 +266,7 @@ class CopilotAdapter:
             self._credential = None
 
         # Server components (built lazily in run())
-        self._server: Optional[AgentHost] = None
-        self._responses: Optional[ResponseHandler] = None
+        self._server: Optional[ResponsesAgentServerHost] = None
 
     def _refresh_token_if_needed(self) -> Dict[str, Any]:
         """Return the session config, refreshing the bearer token if using Foundry."""
@@ -342,12 +341,9 @@ class CopilotAdapter:
     # ------------------------------------------------------------------
 
     def _setup_server(self):
-        """Build the AgentHost + ResponseHandler and wire up the create handler."""
-        self._server = AgentHost()
-
+        """Build the ResponsesAgentServerHost and wire up the create handler."""
         keepalive = int(os.getenv("AZURE_AI_RESPONSES_SERVER_SSE_KEEPALIVE_INTERVAL", "5"))
-        self._responses = ResponseHandler(
-            self._server,
+        self._server = ResponsesAgentServerHost(
             options=ResponsesServerOptions(
                 sse_keep_alive_interval_seconds=keepalive,
             ),
@@ -358,7 +354,7 @@ class CopilotAdapter:
         # that returns one. We use `async for` to delegate to _handle_create.
         adapter = self
 
-        @self._responses.create_handler
+        @self._server.create_handler
         async def handle_create(request, context, cancellation_signal):
             async for event in adapter._handle_create(request, context, cancellation_signal):
                 yield event
