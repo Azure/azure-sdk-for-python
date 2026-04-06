@@ -337,5 +337,7 @@ def install_packages(packages: List[str], req_file: str, python_executable: str,
     if req_file:
         commands.extend(["-r", req_file])
 
+    import pprint
+    logger.info("Environment variables:\n%s", pprint.pformat(dict(os.environ)))
     logger.info("Installing packages. Command: %s", commands)
     subprocess.check_call(commands, cwd=cwd)
