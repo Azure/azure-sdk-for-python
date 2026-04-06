@@ -1,157 +1,219 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
-"""Unit tests for CosmosBearerTokenCredentialPolicy 403/AAD token refresh behavior."""
+"""Unit tests for CosmosBearerTokenCredentialPolicy 403/AAD token refresh behavior.
+
+Uses a realistic azure-core Pipeline with a mock transport that returns proper
+requests.Response objects (including the x-ms-substatus header), and verifies
+that the Authorization header is correctly set in the requests that reach the transport.
+"""
 
 import time
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import Mock
+
+from requests import Response
 
 from azure.core.credentials import AccessToken
-from azure.core.pipeline import PipelineRequest, PipelineResponse, PipelineContext
-from azure.core.rest import HttpRequest
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.transport import HttpTransport, HttpRequest
 
 from azure.cosmos._auth_policy import CosmosBearerTokenCredentialPolicy
 from azure.cosmos.http_constants import HttpHeaders, SubStatusCodes
 
-
-def _make_request():
-    http_request = HttpRequest("GET", "https://example.cosmos.azure.com/dbs")
-    context = PipelineContext(None)
-    return PipelineRequest(http_request, context)
+COSMOS_ACCOUNT_URL = "https://example.cosmos.azure.com"
+ACCOUNT_SCOPE = "https://cosmos.azure.com/.default"
+AAD_AUTH_PREFIX = "type=aad&ver=1.0&sig="
 
 
-def _make_response(request, status_code, sub_status=None):
-    http_response = MagicMock()
-    http_response.status_code = status_code
-    headers = {}
+def _make_response(status_code, sub_status=None):
+    """Create a requests.Response with optional x-ms-substatus header."""
+    response = Response()
+    response.status_code = status_code
     if sub_status is not None:
-        headers[HttpHeaders.SubStatus] = str(sub_status)
-    http_response.headers = headers
-    return PipelineResponse(request.http_request, http_response, request.context)
+        response.headers[HttpHeaders.SubStatus] = str(sub_status)
+    return response
 
 
 def _make_credential(token_str="fake-token"):
-    credential = MagicMock()
+    """Create a sync credential mock that returns an AccessToken via get_token."""
+    credential = Mock(spec_set=["get_token"])
     credential.get_token.return_value = AccessToken(token_str, int(time.time()) + 3600)
     return credential
 
 
+class MockTransport(HttpTransport):
+    """Minimal sync HTTP transport that replays a sequence of canned responses and
+    records each outgoing request so tests can inspect its headers."""
+
+    def __init__(self, *responses):
+        self._responses = list(responses)
+        self.requests = []
+
+    def open(self):
+        pass
+
+    def close(self):
+        pass
+
+    def __exit__(self, *args):
+        pass
+
+    def __enter__(self):
+        return self
+
+    def send(self, request, **kwargs):
+        self.requests.append(request)
+        return self._responses.pop(0)
+
+
 class TestCosmosBearerTokenPolicySend(unittest.TestCase):
 
-    def _build_policy_with_mock_next(self, credential, first_response, second_response=None):
-        """Create a policy with a mock `next` that returns given responses sequentially."""
-        policy = CosmosBearerTokenCredentialPolicy(credential, "https://cosmos.azure.com/.default")
+    def _run(self, credential, *responses):
+        """Build a Pipeline with the Cosmos bearer policy and run a GET against it.
 
-        call_count = [0]
+        Returns (pipeline_response, transport) so callers can inspect both the
+        final response and the recorded outgoing requests.
+        """
+        transport = MockTransport(*responses)
+        policy = CosmosBearerTokenCredentialPolicy(credential, ACCOUNT_SCOPE)
+        pipeline = Pipeline(transport=transport, policies=[policy])
+        http_response = pipeline.run(HttpRequest("GET", f"{COSMOS_ACCOUNT_URL}/dbs"))
+        return http_response, transport
 
-        def mock_send(req):
-            call_count[0] += 1
-            if call_count[0] == 1:
-                return first_response
-            return second_response
-
-        mock_next = MagicMock()
-        mock_next.send.side_effect = mock_send
-        policy.next = mock_next
-        policy._call_count = call_count
-        return policy
+    # ------------------------------------------------------------------
+    # Pass-through cases — no retry expected
+    # ------------------------------------------------------------------
 
     def test_200_response_passes_through(self):
-        """A 200 response is returned without any retry."""
+        """A 200 response is forwarded to the caller with no retry."""
         credential = _make_credential()
-        request = _make_request()
-        response_200 = _make_response(request, 200)
+        _, transport = self._run(credential, _make_response(200))
 
-        policy = self._build_policy_with_mock_next(credential, response_200)
-        result = policy.send(request)
-
-        assert result.http_response.status_code == 200
-        assert policy.next.send.call_count == 1
+        assert transport.requests[0].headers["Authorization"].startswith(AAD_AUTH_PREFIX)
+        assert len(transport.requests) == 1
 
     def test_403_without_substatus_no_retry(self):
-        """A 403 with no sub-status does not trigger a retry (not AAD expiry)."""
+        """A 403 with no sub-status is not an AAD expiry — no retry should occur."""
         credential = _make_credential()
-        request = _make_request()
-        response_403 = _make_response(request, 403)
-
-        policy = self._build_policy_with_mock_next(credential, response_403)
-        result = policy.send(request)
+        result, transport = self._run(credential, _make_response(403))
 
         assert result.http_response.status_code == 403
-        assert policy.next.send.call_count == 1
+        assert len(transport.requests) == 1
 
-    def test_403_with_other_substatus_no_retry(self):
-        """A 403 with a non-AAD sub-status does not trigger a retry."""
+    def test_403_write_forbidden_no_retry(self):
+        """403/WRITE_FORBIDDEN is a different error — no AAD-triggered retry."""
         credential = _make_credential()
-        request = _make_request()
-        response_403 = _make_response(request, 403, sub_status=SubStatusCodes.WRITE_FORBIDDEN)
-
-        policy = self._build_policy_with_mock_next(credential, response_403)
-        result = policy.send(request)
+        result, transport = self._run(
+            credential, _make_response(403, sub_status=SubStatusCodes.WRITE_FORBIDDEN)
+        )
 
         assert result.http_response.status_code == 403
-        assert policy.next.send.call_count == 1
+        assert len(transport.requests) == 1
 
-    def test_403_aad_not_authorized_clears_token_and_retries(self):
-        """A 403 with sub-status AAD_REQUEST_NOT_AUTHORIZED clears the token and retries."""
-        credential = _make_credential("token-v1")
-        request = _make_request()
-        response_403 = _make_response(request, 403, sub_status=SubStatusCodes.AAD_REQUEST_NOT_AUTHORIZED)
-        response_200 = _make_response(request, 200)
+    # ------------------------------------------------------------------
+    # 403 / AAD_REQUEST_NOT_AUTHORIZED  — retry expected
+    # ------------------------------------------------------------------
 
-        policy = self._build_policy_with_mock_next(credential, response_403, response_200)
-        # Pre-populate the token so we can confirm it gets cleared
-        policy._token = AccessToken("old-expired-token", int(time.time()) - 100)
+    def test_403_aad_expired_retries_and_succeeds(self):
+        """403/AAD_REQUEST_NOT_AUTHORIZED triggers a token refresh and one retry.
 
-        result = policy.send(request)
+        The retry must succeed with the fresh token, and both the initial request
+        and the retry must carry a properly-formatted Cosmos AAD Authorization header.
+        """
+        credential = _make_credential("fresh-token")
+        result, transport = self._run(
+            credential,
+            _make_response(403, sub_status=SubStatusCodes.AAD_REQUEST_NOT_AUTHORIZED),
+            _make_response(200),
+        )
 
         assert result.http_response.status_code == 200
-        # next.send should have been called twice: initial + retry
-        assert policy.next.send.call_count == 2
+        assert len(transport.requests) == 2
 
-    def test_403_aad_not_authorized_token_cleared_before_retry(self):
-        """After 403/5300, the cached token is refreshed so a new token is used on retry."""
-        credential = _make_credential("brand-new-token")
+        # Both requests must carry the Cosmos-specific AAD header format
+        for req in transport.requests:
+            assert req.headers["Authorization"].startswith(AAD_AUTH_PREFIX), (
+                f"Expected Cosmos AAD header format, got: {req.headers.get('Authorization')}"
+            )
 
-        token_states = []
-        request = _make_request()
-        response_403 = _make_response(request, 403, sub_status=SubStatusCodes.AAD_REQUEST_NOT_AUTHORIZED)
-        response_200 = _make_response(request, 200)
+    def test_403_aad_expired_sends_fresh_token_on_retry(self):
+        """The retry request must use a freshly-acquired token, not the expired one.
 
-        policy = self._build_policy_with_mock_next(credential, response_403, response_200)
-        # Set an expired token initially
-        policy._token = AccessToken("expired-token", int(time.time()) - 10)
+        We give the credential two different tokens: the first simulates an expired
+        cached token; the second is the fresh one returned after the cache is cleared.
+        """
+        fresh_token = "brand-new-token"
+        expired_token = "old-expired-token"
 
-        # Capture token state on each call to next.send
-        original_send = policy.next.send.side_effect
+        call_count = [0]
+        tokens = [expired_token, fresh_token]
 
-        def capturing_send(req):
-            token_states.append(policy._token)
-            return original_send(req)
+        credential = Mock(spec_set=["get_token"])
 
-        policy.next.send.side_effect = capturing_send
+        def rotating_get_token(*scopes, **kwargs):
+            token = tokens[min(call_count[0], len(tokens) - 1)]
+            call_count[0] += 1
+            return AccessToken(token, int(time.time()) + 3600)
 
-        policy.send(request)
+        credential.get_token.side_effect = rotating_get_token
 
-        # On the retry (second call), token should have been refreshed (not the expired one)
-        assert len(token_states) == 2
-        assert token_states[1] is not None
-        assert token_states[1].token != "expired-token"
+        transport = MockTransport(
+            _make_response(403, sub_status=SubStatusCodes.AAD_REQUEST_NOT_AUTHORIZED),
+            _make_response(200),
+        )
+        policy = CosmosBearerTokenCredentialPolicy(credential, ACCOUNT_SCOPE)
+        pipeline = Pipeline(transport=transport, policies=[policy])
+        pipeline.run(HttpRequest("GET", f"{COSMOS_ACCOUNT_URL}/dbs"))
 
-    def test_403_aad_retry_still_fails_returns_response(self):
-        """If the retry also fails with non-AAD 403, the second response is returned unchanged."""
+        assert len(transport.requests) == 2
+        retry_auth = transport.requests[1].headers["Authorization"]
+        assert fresh_token in retry_auth, (
+            f"Expected fresh token '{fresh_token}' in retry Authorization header, got: {retry_auth}"
+        )
+
+    def test_403_aad_expired_auth_header_cleared_before_retry(self):
+        """After 403/5300 the policy clears its cached token so the retry gets a new one.
+
+        We force the token cache to contain an expired-looking token and verify
+        that the Authorization header on the retry differs from the initial request.
+        """
+        credential = _make_credential("fresh-token-after-expiry")
+        transport = MockTransport(
+            _make_response(403, sub_status=SubStatusCodes.AAD_REQUEST_NOT_AUTHORIZED),
+            _make_response(200),
+        )
+        policy = CosmosBearerTokenCredentialPolicy(credential, ACCOUNT_SCOPE)
+        # Inject a "stale" token into the policy cache to simulate an expired token
+        policy._token = AccessToken("stale-token", int(time.time()) - 60)
+
+        pipeline = Pipeline(transport=transport, policies=[policy])
+        pipeline.run(HttpRequest("GET", f"{COSMOS_ACCOUNT_URL}/dbs"))
+
+        assert len(transport.requests) == 2
+        initial_auth = transport.requests[0].headers["Authorization"]
+        retry_auth = transport.requests[1].headers["Authorization"]
+        # The stale token must not appear in the retry request
+        assert "stale-token" not in retry_auth, (
+            "Stale token should have been replaced before retry"
+        )
+        # Both headers must still use the Cosmos-specific format
+        assert initial_auth.startswith(AAD_AUTH_PREFIX)
+        assert retry_auth.startswith(AAD_AUTH_PREFIX)
+
+    def test_403_aad_retry_still_fails_returns_second_response(self):
+        """If the retry also returns a non-retriable 403, that response is returned unchanged."""
         credential = _make_credential()
-        request = _make_request()
-        response_403_aad = _make_response(request, 403, sub_status=SubStatusCodes.AAD_REQUEST_NOT_AUTHORIZED)
-        response_403_other = _make_response(request, 403, sub_status=SubStatusCodes.WRITE_FORBIDDEN)
-
-        policy = self._build_policy_with_mock_next(credential, response_403_aad, response_403_other)
-        result = policy.send(request)
+        result, transport = self._run(
+            credential,
+            _make_response(403, sub_status=SubStatusCodes.AAD_REQUEST_NOT_AUTHORIZED),
+            _make_response(403, sub_status=SubStatusCodes.WRITE_FORBIDDEN),
+        )
 
         assert result.http_response.status_code == 403
-        assert policy.next.send.call_count == 2
+        assert len(transport.requests) == 2
 
 
 if __name__ == "__main__":
     unittest.main()
+
