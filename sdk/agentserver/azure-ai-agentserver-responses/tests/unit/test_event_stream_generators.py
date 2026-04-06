@@ -207,3 +207,92 @@ def test_sequence_numbers_are_continuous_across_generators() -> None:
 
     seq_numbers = [e["payload"]["sequence_number"] for e in all_events]
     assert seq_numbers == list(range(len(all_events)))
+
+
+# ---- Async generator variants ----
+
+import pytest
+
+
+async def _collect(async_iter):
+    """Collect all items from an async iterator."""
+    result = []
+    async for item in async_iter:
+        result.append(item)
+    return result
+
+
+@pytest.mark.asyncio
+async def test_astart_yields_same_as_start() -> None:
+    stream = _make_stream()
+    sync_events = list(stream.start())
+
+    stream2 = _make_stream()
+    async_events = await _collect(stream2.astart())
+
+    assert len(async_events) == len(sync_events)
+    for s, a in zip(sync_events, async_events):
+        assert s["type"] == a["type"]
+
+
+@pytest.mark.asyncio
+async def test_atext_message_yields_same_as_text_message() -> None:
+    stream = _started_stream()
+    sync_events = list(stream.text_message("hello async"))
+
+    stream2 = _started_stream()
+    async_events = await _collect(stream2.atext_message("hello async"))
+
+    assert len(async_events) == len(sync_events)
+    for s, a in zip(sync_events, async_events):
+        assert s["type"] == a["type"]
+
+
+@pytest.mark.asyncio
+async def test_acomplete_yields_same_as_complete() -> None:
+    stream = _started_stream()
+    sync_events = list(stream.complete())
+
+    stream2 = _started_stream()
+    async_events = await _collect(stream2.acomplete())
+
+    assert len(async_events) == len(sync_events)
+    assert async_events[0]["type"] == "response.completed"
+
+
+@pytest.mark.asyncio
+async def test_afail_yields_same_as_fail() -> None:
+    stream = _started_stream()
+    sync_events = list(stream.fail())
+
+    stream2 = _started_stream()
+    async_events = await _collect(stream2.afail())
+
+    assert len(async_events) == len(sync_events)
+    assert async_events[0]["type"] == "response.failed"
+
+
+@pytest.mark.asyncio
+async def test_afunction_call_yields_same_as_function_call() -> None:
+    stream = _started_stream()
+    sync_events = list(stream.function_call("fn", "call_1", '{"x":1}'))
+
+    stream2 = _started_stream()
+    async_events = await _collect(stream2.afunction_call("fn", "call_1", '{"x":1}'))
+
+    assert len(async_events) == len(sync_events)
+    for s, a in zip(sync_events, async_events):
+        assert s["type"] == a["type"]
+
+
+@pytest.mark.asyncio
+async def test_areasoning_yields_same_as_reasoning() -> None:
+    stream = _started_stream()
+    sync_events = list(stream.reasoning("thinking..."))
+
+    stream2 = _started_stream()
+    async_events = await _collect(stream2.areasoning("thinking..."))
+
+    assert len(async_events) == len(sync_events)
+    for s, a in zip(sync_events, async_events):
+        assert s["type"] == a["type"]

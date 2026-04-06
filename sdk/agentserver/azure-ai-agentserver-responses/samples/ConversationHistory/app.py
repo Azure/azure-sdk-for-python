@@ -33,14 +33,18 @@ server = ResponsesAgentServerHost(options=ResponsesServerOptions(default_fetch_h
 @server.create_handler
 async def create(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
     stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-    yield from stream.start()
+
+    async for event in stream.astart():
+        yield event
 
     history = await context.get_history()
     current_input = get_input_text(request)
     reply = _build_reply(current_input, history)
 
-    yield from stream.text_message(reply)
-    yield from stream.complete()
+    async for event in stream.atext_message(reply):
+        yield event
+    async for event in stream.acomplete():
+        yield event
 
 
 

@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from datetime import datetime, timezone
-from typing import Any, Iterator
+from typing import Any, AsyncIterator, Iterator
 
 from . import _internals
 from ._builders import (
@@ -601,6 +601,49 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         yield part.emit_done()
         item.emit_summary_part_done(part)
         yield item.emit_done()
+
+    # ---- Async generator convenience methods ----
+    # Async equivalents for use in async handlers where `yield from` is illegal.
+
+    async def astart(self, *, status: str = "in_progress") -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`start` for use in async handlers."""
+        for event in self.start(status=status):
+            yield event
+
+    async def acomplete(self, **kwargs: Any) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`complete` for use in async handlers."""
+        for event in self.complete(**kwargs):
+            yield event
+
+    async def afail(self, code: str = "server_error", message: str = "An internal server error occurred.", **kwargs: Any) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`fail` for use in async handlers."""
+        for event in self.fail(code=code, message=message, **kwargs):
+            yield event
+
+    async def aincomplete(self, reason: str | None = None, **kwargs: Any) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`incomplete` for use in async handlers."""
+        for event in self.incomplete(reason=reason, **kwargs):
+            yield event
+
+    async def atext_message(self, text: str) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`text_message` for use in async handlers."""
+        for event in self.text_message(text):
+            yield event
+
+    async def afunction_call(self, name: str, call_id: str, arguments: str) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`function_call` for use in async handlers."""
+        for event in self.function_call(name, call_id, arguments):
+            yield event
+
+    async def afunction_call_output(self, call_id: str, output: str) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`function_call_output` for use in async handlers."""
+        for event in self.function_call_output(call_id, output):
+            yield event
+
+    async def areasoning(self, summary_text: str) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`reasoning` for use in async handlers."""
+        for event in self.reasoning(summary_text):
+            yield event
 
     # ---- Private helpers ----
 
