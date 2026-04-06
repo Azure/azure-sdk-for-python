@@ -8,15 +8,15 @@ REM
 REM Then run this script to "fix" the emitted code.
 REM
 
-REM Revert this, as we want to keep some edits to these file.
+REM Revert emitted pyprojects.toml, since it overrides the following changes:
+REM - We added "Programming Language :: Python :: 3.14". The emitter removes it.
+REM - The emitter uses lower case "i" in "Ai". I want to keep it upper case in the description field: "Microsoft Corporation Azure AI Projects Client Library for Python".
+REM - We want a vanity link for the "repository" value, deep linking to the SDK folder (not root of repo): https://aka.ms/azsdk/azure-ai-projects-v2/python/code
 git restore pyproject.toml
 
 REM Rename `"items_property": items`, to `"items": items` in search_memories and begin_update_memories methods. "items" is specified in TypeSpec, but Python emitter does not allow it.
 powershell -Command "(Get-Content azure\ai\projects\aio\operations\_operations.py) -replace '\"items_property\": items', '\"items\": items' | Set-Content azure\ai\projects\aio\operations\_operations.py"
 powershell -Command "(Get-Content azure\ai\projects\operations\_operations.py) -replace '\"items_property\": items', '\"items\": items' | Set-Content azure\ai\projects\operations\_operations.py"
-
-REM Fix content type annotation: replace `content: Union[str, list[...]]` with `content: Union["str", list[...]]`. Otherwise serialization fails.
-powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'content: Union\[str, list\[\"_models\.InputContent\"\]\]', 'content: Union[\"str\", list[\"_models.InputContent\"]]' | Set-Content azure\ai\projects\models\_models.py"
 
 REM Rename WEB_SEARCH_PREVIEW2025_03_11 enum member to WEB_SEARCH_PREVIEW_2025_03_11, to match actual string value
 powershell -Command "(Get-Content azure\ai\projects\models\_enums.py) -replace 'WEB_SEARCH_PREVIEW2025_03_11', 'WEB_SEARCH_PREVIEW_2025_03_11' | Set-Content azure\ai\projects\models\_enums.py"

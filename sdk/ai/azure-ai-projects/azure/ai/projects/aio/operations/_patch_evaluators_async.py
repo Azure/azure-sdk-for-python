@@ -9,15 +9,16 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 import os
+import re
 import logging
-from typing import Any, IO, Tuple, Optional, Union
+from typing import Any, Final, IO, Tuple, Optional, Union
 from pathlib import Path
 from urllib.parse import urlsplit
 from azure.storage.blob.aio import ContainerClient
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from ._operations import BetaEvaluatorsOperations as BetaEvaluatorsOperationsGenerated, JSON
-from ...models._enums import FoundryFeaturesOptInKeys
+from ...models._enums import _FoundryFeaturesOptInKeys
 from ...models._patch import _FOUNDRY_FEATURES_HEADER_NAME
 from ...models._models import (
     CodeBasedEvaluatorDefinition,
@@ -26,7 +27,7 @@ from ...models._models import (
 
 logger = logging.getLogger(__name__)
 
-_EVALUATORS_FOUNDRY_FEATURES_VALUE = FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
+_EVALUATORS_FOUNDRY_FEATURES_VALUE: Final[str] = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value
 
 
 class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
@@ -43,29 +44,43 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
     async def _upload_folder_to_blob(
         container_client: ContainerClient,
         folder: str,
+        file_pattern: Optional[re.Pattern] = None,
+        folder_exclusions_pattern: Optional[re.Pattern] = None,
         **kwargs: Any,
     ) -> None:
         """Walk *folder* and upload every eligible file to the blob container.
 
-        Skips ``__pycache__``, ``.git``, ``.venv``, ``venv``, ``node_modules``
-        directories and ``.pyc`` / ``.pyo`` files.
+        By default all files and directories are included. Use *file_pattern*
+        and *folder_exclusions_pattern* to control what gets uploaded.
+
+        Recommended excludes for typical Python evaluator projects::
+
+            file_pattern = re.compile(r"^(?!\\.).+(?<!\\.pyc)(?<!\\.pyo)$")
+            folder_exclusions_pattern = re.compile(
+                r"^(\\..*|__pycache__|venv|node_modules)$"
+            )
 
         :param container_client: The blob container client to upload files to.
         :type container_client: ~azure.storage.blob.ContainerClient
         :param folder: Path to the local folder containing files to upload.
         :type folder: str
+        :param file_pattern: Optional regex pattern to filter files. Only files
+         whose name matches this pattern will be uploaded.
+        :type file_pattern: Optional[re.Pattern]
+        :param folder_exclusions_pattern: Optional regex pattern to exclude
+         directories. Directories whose name matches this pattern will be skipped.
+        :type folder_exclusions_pattern: Optional[re.Pattern]
         :raises ValueError: If the folder contains no uploadable files.
         :raises HttpResponseError: Re-raised with a friendlier message on
-            ``AuthorizationPermissionMismatch``.
+         ``AuthorizationPermissionMismatch``.
         """
-        skip_dirs = {"__pycache__", ".git", ".venv", "venv", "node_modules"}
-        skip_extensions = {".pyc", ".pyo"}
         files_uploaded = False
 
         for root, dirs, files in os.walk(folder):
-            dirs[:] = [d for d in dirs if d not in skip_dirs]
+            if folder_exclusions_pattern:
+                dirs[:] = [d for d in dirs if not folder_exclusions_pattern.search(d)]
             for file_name in files:
-                if any(file_name.endswith(ext) for ext in skip_extensions):
+                if file_pattern and not file_pattern.search(file_name):
                     continue
                 file_path = os.path.join(root, file_name)
                 blob_name = os.path.relpath(file_path, folder).replace("\\", "/")
@@ -203,6 +218,8 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         *,
         folder: str,
         connection_name: Optional[str] = None,
+        file_pattern: Optional[re.Pattern] = None,
+        folder_exclusions_pattern: Optional[re.Pattern] = None,
         **kwargs: Any,
     ) -> EvaluatorVersion:
         """Upload all files in a folder to blob storage and create a code-based evaluator version
@@ -212,6 +229,15 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         to blob storage, then creates an evaluator version referencing the uploaded blob.
 
         The version is automatically determined by incrementing the latest existing version.
+
+        By default all files and directories are uploaded. Use *file_pattern* and
+        *folder_exclusions_pattern* to control what gets included. Recommended excludes
+        for typical Python evaluator projects::
+
+            file_pattern = re.compile(r"^(?!\\.).+(?<!\\.pyc)(?<!\\.pyo)$")
+            folder_exclusions_pattern = re.compile(
+                r"^(\\..*|__pycache__|venv|node_modules)$"
+            )
 
         :param name: The name of the evaluator. Required.
         :type name: str
@@ -225,6 +251,12 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
          should be uploaded. If not specified, the default Azure Storage Account connection will be
          used. Optional.
         :paramtype connection_name: str
+        :keyword file_pattern: Optional regex pattern to filter files. Only files whose name
+         matches this pattern will be uploaded. Optional.
+        :paramtype file_pattern: Optional[re.Pattern]
+        :keyword folder_exclusions_pattern: Optional regex pattern to exclude directories.
+         Directories whose name matches this pattern will be skipped during upload. Optional.
+        :paramtype folder_exclusions_pattern: Optional[re.Pattern]
         :return: The created evaluator version.
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError: If an error occurs during the HTTP request.
@@ -246,7 +278,9 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         )
 
         async with container_client:
-            await self._upload_folder_to_blob(container_client, folder, **kwargs)
+            await self._upload_folder_to_blob(
+                container_client, folder, file_pattern, folder_exclusions_pattern, **kwargs
+            )
             self._set_blob_uri(evaluator_version, blob_uri)
 
             result = await self.create_version(

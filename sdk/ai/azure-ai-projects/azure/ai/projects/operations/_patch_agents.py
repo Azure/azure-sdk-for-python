@@ -13,7 +13,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import AgentsOperations as GeneratedAgentsOperations, JSON, _Unset
 from .. import models as _models
-from ..models._enums import AgentDefinitionOptInKeys, FoundryFeaturesOptInKeys
+from ..models._enums import _AgentDefinitionOptInKeys, _FoundryFeaturesOptInKeys
 from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 
 """
@@ -37,11 +37,11 @@ _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE: Final = (
     "when calling the AIProjectClient constructor. "
     "\nNote that preview features are under development and subject to change."
 )
-_AGENT_OPERATION_FEATURE_HEADERS: str = ",".join(
+_AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
     [
-        AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
-        AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
-        FoundryFeaturesOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
+        _FoundryFeaturesOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
     ]
 )
 

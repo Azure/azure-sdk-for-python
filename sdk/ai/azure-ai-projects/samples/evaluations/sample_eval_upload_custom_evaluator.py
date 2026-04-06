@@ -81,8 +81,8 @@ with (
             entry_point="answer_length_evaluator:AnswerLengthEvaluator",
             init_parameters={
                 "type": "object",
-                "properties": {"model_config": {"type": "string"}},
-                "required": ["model_config"],
+                "properties": {"config": {"type": "string"}, "threshold": {"type": "number"}},
+                "required": ["config", "threshold"],
             },
             data_schema={
                 "type": "object",
@@ -93,7 +93,7 @@ with (
                 "required": ["query", "response"],
             },
             metrics={
-                "score": EvaluatorMetric(
+                "result": EvaluatorMetric(
                     type=EvaluatorMetricType.ORDINAL,
                     desirable_direction=EvaluatorMetricDirection.INCREASE,
                     min_value=1,
@@ -138,7 +138,8 @@ with (
             "name": evaluator_name,
             "evaluator_name": evaluator_name,
             "initialization_parameters": {
-                "model_config": f"{model_deployment_name}",
+                "config": "example config value",
+                "threshold": 3,
             },
         }
     ]

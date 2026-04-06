@@ -41,12 +41,18 @@ from .policies import (
     StorageHosts,
     StorageRequestHook,
 )
-from .policies_async import AsyncStorageBearerTokenCredentialPolicy, AsyncStorageResponseHook
+from .policies_async import (
+    AsyncStorageBearerTokenCredentialPolicy,
+    AsyncStorageResponseHook,
+)
 from .response_handlers import PartialBatchErrorException, process_storage_error
 from .._shared_access_signature import _is_credential_sastoken
 
 if TYPE_CHECKING:
-    from azure.core.pipeline.transport import HttpRequest, HttpResponse  # pylint: disable=C4756
+    from azure.core.pipeline.transport import (  # pylint: disable=C4756
+        HttpRequest,
+        HttpResponse,
+    )
 _LOGGER = logging.getLogger(__name__)
 
 _SERVICE_PARAMS = {
@@ -63,12 +69,27 @@ class AsyncStorageAccountHostsMixin(object):
         self,
         sas_token: Optional[str],
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", AsyncTokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                AsyncTokenCredential,
+            ]
         ],
         snapshot: Optional[str] = None,
         share_snapshot: Optional[str] = None,
     ) -> Tuple[
-        str, Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", AsyncTokenCredential]]
+        str,
+        Optional[
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                AsyncTokenCredential,
+            ]
+        ],
     ]:
         query_str = "?"
         if snapshot:
@@ -89,12 +110,22 @@ class AsyncStorageAccountHostsMixin(object):
     def _create_pipeline(
         self,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                AsyncTokenCredential,
+            ]
         ] = None,
         **kwargs: Any,
     ) -> Tuple[StorageConfiguration, AsyncPipeline]:
         self._credential_policy: Optional[
-            Union[AsyncStorageBearerTokenCredentialPolicy, SharedKeyCredentialPolicy, AzureSasCredentialPolicy]
+            Union[
+                AsyncStorageBearerTokenCredentialPolicy,
+                SharedKeyCredentialPolicy,
+                AzureSasCredentialPolicy,
+            ]
         ] = None
         if hasattr(credential, "get_token"):
             if kwargs.get("audience"):
@@ -198,12 +229,28 @@ class AsyncStorageAccountHostsMixin(object):
 
 def parse_connection_str(
     conn_str: str,
-    credential: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]],
+    credential: Optional[
+        Union[
+            str,
+            Dict[str, str],
+            AzureNamedKeyCredential,
+            AzureSasCredential,
+            AsyncTokenCredential,
+        ]
+    ],
     service: str,
 ) -> Tuple[
     str,
     Optional[str],
-    Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]],
+    Optional[
+        Union[
+            str,
+            Dict[str, str],
+            AzureNamedKeyCredential,
+            AzureSasCredential,
+            AsyncTokenCredential,
+        ]
+    ],
 ]:
     conn_str = conn_str.rstrip(";")
     conn_settings_list = [s.split("=", 1) for s in conn_str.split(";")]
@@ -217,7 +264,10 @@ def parse_connection_str(
     secondary = None
     if not credential:
         try:
-            credential = {"account_name": conn_settings["ACCOUNTNAME"], "account_key": conn_settings["ACCOUNTKEY"]}
+            credential = {
+                "account_name": conn_settings["ACCOUNTNAME"],
+                "account_key": conn_settings["ACCOUNTKEY"],
+            }
         except KeyError:
             credential = conn_settings.get("SHAREDACCESSSIGNATURE")
     if endpoints["primary"] in conn_settings:

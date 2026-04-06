@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import List, Dict, Mapping, Optional, Any, Tuple
+from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -21,7 +21,7 @@ from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
 from ._enums import FoundryFeaturesOptInKeys
 from ._patch_jobs import CommandJob, CommandJobLimits, load_job
 
-_FOUNDRY_FEATURES_HEADER_NAME: str = "Foundry-Features"
+_FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
 """The HTTP header name used to opt in to Foundry preview features."""
 
 _BETA_OPERATION_FEATURE_HEADERS: dict = {
@@ -98,8 +98,8 @@ class CustomCredential(CustomCredentialGenerated, discriminator="CustomKeys"):
             self.credential_keys = {}
 
 
-_FINISHED = frozenset(["completed", "superseded", "failed"])
-_FAILED = frozenset(["failed"])
+_FINISHED: Final[FrozenSet[str]] = frozenset(["completed", "superseded", "failed"])
+_FAILED: Final[FrozenSet[str]] = frozenset(["failed"])
 
 
 class _UpdateMemoriesLROPollingMethod(LROBasePolling):
