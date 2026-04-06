@@ -83,7 +83,7 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         if (
             response.http_response.status_code == 403
             and int(response.http_response.headers.get(HttpHeaders.SubStatus, 0))
-                == SubStatusCodes.AAD_REQUEST_NOT_AUTHORIZED
+            == SubStatusCodes.AAD_REQUEST_NOT_AUTHORIZED
         ):
             self._token = None  # cached token is invalid
             self.on_request(request)
