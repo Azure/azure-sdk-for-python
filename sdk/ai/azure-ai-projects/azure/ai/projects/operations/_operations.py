@@ -1377,7 +1377,7 @@ def build_beta_insights_generate_request(**kwargs: Any) -> HttpRequest:
 
 
 def build_beta_insights_get_request(
-    id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any
+    insight_id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1388,7 +1388,7 @@ def build_beta_insights_get_request(
     # Construct URL
     _url = "/insights/{id}"
     path_format_arguments = {
-        "id": _SERIALIZER.url("id", id, "str"),
+        "id": _SERIALIZER.url("insight_id", insight_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -7266,11 +7266,11 @@ class BetaInsightsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get(self, id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any) -> _models.Insight:
+    def get(self, insight_id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any) -> _models.Insight:
         """Get a specific insight by Id.
 
-        :param id: The unique identifier for the insights report. Required.
-        :type id: str
+        :param insight_id: The unique identifier for the insights report. Required.
+        :type insight_id: str
         :keyword include_coordinates: Whether to include coordinates for visualization in the response.
          Defaults to false. Default value is None.
         :paramtype include_coordinates: bool
@@ -7292,7 +7292,7 @@ class BetaInsightsOperations:
         cls: ClsType[_models.Insight] = kwargs.pop("cls", None)
 
         _request = build_beta_insights_get_request(
-            id=id,
+            insight_id=insight_id,
             include_coordinates=include_coordinates,
             api_version=self._config.api_version,
             headers=_headers,

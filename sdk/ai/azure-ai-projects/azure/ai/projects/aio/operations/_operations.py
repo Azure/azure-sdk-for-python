@@ -5380,11 +5380,13 @@ class BetaInsightsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any) -> _models.Insight:
+    async def get(
+        self, insight_id: str, *, include_coordinates: Optional[bool] = None, **kwargs: Any
+    ) -> _models.Insight:
         """Get a specific insight by Id.
 
-        :param id: The unique identifier for the insights report. Required.
-        :type id: str
+        :param insight_id: The unique identifier for the insights report. Required.
+        :type insight_id: str
         :keyword include_coordinates: Whether to include coordinates for visualization in the response.
          Defaults to false. Default value is None.
         :paramtype include_coordinates: bool
@@ -5406,7 +5408,7 @@ class BetaInsightsOperations:
         cls: ClsType[_models.Insight] = kwargs.pop("cls", None)
 
         _request = build_beta_insights_get_request(
-            id=id,
+            insight_id=insight_id,
             include_coordinates=include_coordinates,
             api_version=self._config.api_version,
             headers=_headers,
