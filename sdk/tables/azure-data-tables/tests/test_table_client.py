@@ -10,7 +10,7 @@ import time
 
 from datetime import datetime, timedelta
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from azure.data.tables import (
     TableServiceClient,
@@ -1050,62 +1050,24 @@ class TestTableClientUnitTests(TableTestCase):
         assert tsc._secondary_endpoint == "http://127.0.0.1:10002/devstoreaccount1-secondary"
         assert not tsc._cosmos_endpoint
 
-    def test_list_entities_query_filter_not_leaked(self):
-        """Regression test: query_filter must not leak through kwargs to transport."""
+    def test_list_entities_rejects_query_filter(self):
+        """Regression test: list_entities raises ValueError for query_filter instead of leaking to transport."""
         credential = AzureNamedKeyCredential(
             "fake_account", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
         )
         client = TableClient("https://fake_account.table.core.windows.net", "testtable", credential=credential)
 
-        captured = {}
-
-        def mock_query_entities(*args, **kwargs):
-            if "query_filter" in kwargs:
-                raise TypeError("query_filter leaked to transport layer")
-            captured.update(kwargs)
-            resp = MagicMock()
-            resp.value = []
-            return None, resp, {"x-ms-continuation-NextPartitionKey": None, "x-ms-continuation-NextRowKey": None}
-
-        client._client.table.query_entities = mock_query_entities
-
-        pager = client.list_entities(query_filter="PartitionKey eq 'mypartition'")
-        pages = pager.by_page()
-        for _ in pages:
-            break
-
-        assert "query_filter" not in captured
-        assert captured.get("filter") == "PartitionKey eq 'mypartition'"
+        with pytest.raises(ValueError, match="query_filter"):
+            client.list_entities(query_filter="PartitionKey eq 'pk001'")
         client.close()
 
-    def test_list_entities_query_filter_with_parameters(self):
-        """Regression test: query_filter with parameter substitution in list_entities."""
+    def test_list_entities_rejects_query_filter_with_parameters(self):
+        """Regression test: list_entities raises ValueError when query_filter is passed with parameters."""
         credential = AzureNamedKeyCredential(
             "fake_account", "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw=="
         )
         client = TableClient("https://fake_account.table.core.windows.net", "testtable", credential=credential)
 
-        captured = {}
-
-        def mock_query_entities(*args, **kwargs):
-            if "query_filter" in kwargs or "parameters" in kwargs:
-                raise TypeError("SDK kwargs leaked to transport layer")
-            captured.update(kwargs)
-            resp = MagicMock()
-            resp.value = []
-            return None, resp, {"x-ms-continuation-NextPartitionKey": None, "x-ms-continuation-NextRowKey": None}
-
-        client._client.table.query_entities = mock_query_entities
-
-        pager = client.list_entities(
-            query_filter="PartitionKey eq @pk",
-            parameters={"pk": "mypartition"},
-        )
-        pages = pager.by_page()
-        for _ in pages:
-            break
-
-        assert "query_filter" not in captured
-        assert "parameters" not in captured
-        assert captured.get("filter") == "PartitionKey eq 'mypartition'"
+        with pytest.raises(ValueError, match="query_entities"):
+            client.list_entities(query_filter="PartitionKey eq @pk", parameters={"pk": "pk001"})
         client.close()
