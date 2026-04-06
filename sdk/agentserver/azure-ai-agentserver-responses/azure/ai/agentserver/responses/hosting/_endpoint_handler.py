@@ -433,8 +433,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         # Extract X-Request-Id header for request ID propagation (truncated to 256 chars).
         request_id = extract_request_id(request.headers)
+        _project_id = getattr(getattr(self._host, 'config', None), 'project_id', "") or ""
 
-        span.set_tags(build_create_span_tags(ctx, request_id=request_id, project_id=self._host._project_id))
+        span.set_tags(build_create_span_tags(ctx, request_id=request_id, project_id=_project_id))
 
         # Start OTel request span using host's request_span context manager.
         with self._host.request_span(
@@ -443,7 +444,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             session_id=agent_session_id or "",
             end_on_exit=False,
         ) as otel_span:
-            self._safe_set_attrs(otel_span, build_create_otel_attrs(ctx, request_id=request_id, project_id=self._host._project_id))
+            self._safe_set_attrs(otel_span, build_create_otel_attrs(ctx, request_id=request_id, project_id=_project_id))
 
             # Set W3C baggage per spec §7.3
             bag_ctx = _otel_context.get_current()
