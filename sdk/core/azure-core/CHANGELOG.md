@@ -1,5 +1,17 @@
 # Release History
 
+## 1.39.1 (Unreleased)
+
+### Features Added
+
+- Added support for per-operation `http_logging_level` overrides in `HttpLoggingPolicy`. #44115
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.39.0 (2026-03-18)
 
 ### Breaking Changes
