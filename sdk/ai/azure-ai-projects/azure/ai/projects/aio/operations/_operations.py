@@ -39,13 +39,17 @@ from ..._utils.utils import prepare_multipart_form_data
 from ...operations._operations import (
     build_agents_create_agent_from_code_request,
     build_agents_create_agent_version_from_code_request,
+    build_agents_create_session_request,
     build_agents_create_version_from_manifest_request,
     build_agents_create_version_request,
     build_agents_delete_request,
+    build_agents_delete_session_request,
     build_agents_delete_version_request,
     build_agents_get_request,
+    build_agents_get_session_request,
     build_agents_get_version_request,
     build_agents_list_request,
+    build_agents_list_sessions_request,
     build_agents_list_versions_request,
     build_agents_patch_agent_object_request,
     build_agents_update_agent_from_code_request,
@@ -1632,6 +1636,415 @@ class AgentsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
+
+    @overload
+    async def create_session(
+        self,
+        agent_name: str,
+        *,
+        isolation_key: str,
+        version_indicator: _models.VersionIndicator,
+        content_type: str = "application/json",
+        agent_session_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.AgentSessionResource:
+        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
+        from ``version_indicator`` and enforces session ownership using the provided isolation key for
+        session-mutating operations.
+
+        :param agent_name: The name of the agent to create a session for. Required.
+        :type agent_name: str
+        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
+         for session-mutating operations. Required.
+        :paramtype isolation_key: str
+        :keyword version_indicator: Determines which agent version backs the session. Required.
+        :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword agent_session_id: Optional caller-provided session ID. If specified, it must be unique
+         within the agent endpoint. Auto-generated if omitted. Default value is None.
+        :paramtype agent_session_id: str
+        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentSessionResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_session(
+        self, agent_name: str, body: JSON, *, isolation_key: str, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentSessionResource:
+        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
+        from ``version_indicator`` and enforces session ownership using the provided isolation key for
+        session-mutating operations.
+
+        :param agent_name: The name of the agent to create a session for. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
+         for session-mutating operations. Required.
+        :paramtype isolation_key: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentSessionResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_session(
+        self,
+        agent_name: str,
+        body: IO[bytes],
+        *,
+        isolation_key: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AgentSessionResource:
+        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
+        from ``version_indicator`` and enforces session ownership using the provided isolation key for
+        session-mutating operations.
+
+        :param agent_name: The name of the agent to create a session for. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
+         for session-mutating operations. Required.
+        :paramtype isolation_key: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentSessionResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_session(
+        self,
+        agent_name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        isolation_key: str,
+        version_indicator: _models.VersionIndicator = _Unset,
+        agent_session_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.AgentSessionResource:
+        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
+        from ``version_indicator`` and enforces session ownership using the provided isolation key for
+        session-mutating operations.
+
+        :param agent_name: The name of the agent to create a session for. Required.
+        :type agent_name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
+         for session-mutating operations. Required.
+        :paramtype isolation_key: str
+        :keyword version_indicator: Determines which agent version backs the session. Required.
+        :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
+        :keyword agent_session_id: Optional caller-provided session ID. If specified, it must be unique
+         within the agent endpoint. Auto-generated if omitted. Default value is None.
+        :paramtype agent_session_id: str
+        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentSessionResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentSessionResource] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if version_indicator is _Unset:
+                raise TypeError("missing required argument: version_indicator")
+            body = {"agent_session_id": agent_session_id, "version_indicator": version_indicator}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_agents_create_session_request(
+            agent_name=agent_name,
+            isolation_key=isolation_key,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentSessionResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_session(self, agent_name: str, session_id: str, **kwargs: Any) -> _models.AgentSessionResource:
+        """Retrieves a session by ID.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session identifier. Required.
+        :type session_id: str
+        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentSessionResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentSessionResource] = kwargs.pop("cls", None)
+
+        _request = build_agents_get_session_request(
+            agent_name=agent_name,
+            session_id=session_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentSessionResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_session(self, agent_name: str, session_id: str, *, isolation_key: str, **kwargs: Any) -> None:
+        """Deletes a session synchronously. Returns 204 No Content when the session is deleted or does not
+        exist.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session identifier. Required.
+        :type session_id: str
+        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
+         for session-mutating operations. Required.
+        :paramtype isolation_key: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_agents_delete_session_request(
+            agent_name=agent_name,
+            session_id=session_id,
+            isolation_key=isolation_key,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def list_sessions(
+        self,
+        agent_name: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.AgentSessionResource"]:
+        """Returns a list of sessions for the specified agent.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of AgentSessionResource
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentSessionResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentSessionResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_agents_list_sessions_request(
+                agent_name=agent_name,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentSessionResource],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
 
 
 class EvaluationRulesOperations:
@@ -8783,8 +9196,9 @@ class BetaAgentInvocationsOperations:
         :type agent_name: str
         :param request: The request body. Required.
         :type request: any
-        :keyword agent_session_id: Optional session ID to group related invocations. If not provided, a
-         new session ID will be auto-generated. Default value is None.
+        :keyword agent_session_id: Optional session ID returned by the session CRUD APIs to reuse an
+         existing sandbox. If not provided, a new session ID will be auto-generated. Default value is
+         None.
         :paramtype agent_session_id: str
         :return: any
         :rtype: any

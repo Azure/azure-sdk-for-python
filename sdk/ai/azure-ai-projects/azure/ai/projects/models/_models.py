@@ -43,6 +43,7 @@ from ._enums import (
     ToolChoiceParamType,
     ToolType,
     TriggerType,
+    VersionIndicatorType,
     VersionSelectorType,
 )
 
@@ -701,6 +702,66 @@ class AgentObjectVersions(_Model):
         self,
         *,
         latest: "_models.AgentVersionDetails",
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AgentSessionResource(_Model):
+    """An agent session providing a long-lived compute sandbox for hosted agent invocations.
+
+    :ivar agent_session_id: The session identifier. Required.
+    :vartype agent_session_id: str
+    :ivar version_indicator: The version indicator determining which agent version backs this
+     session. Required.
+    :vartype version_indicator: ~azure.ai.projects.models.VersionIndicator
+    :ivar status: The current status of the session. Required. Known values are: "creating",
+     "active", "idle", "updating", "failed", "deleting", "deleted", and "expired".
+    :vartype status: str or ~azure.ai.projects.models.AgentSessionStatus
+    :ivar created_at: The Unix timestamp (in seconds) when the session was created. Required.
+    :vartype created_at: ~datetime.datetime
+    :ivar last_accessed_at: The Unix timestamp (in seconds) when the session was last accessed.
+     Required.
+    :vartype last_accessed_at: ~datetime.datetime
+    :ivar expires_at: The Unix timestamp (in seconds) when the session expires (rolling, 30 days
+     from last activity). Required.
+    :vartype expires_at: ~datetime.datetime
+    """
+
+    agent_session_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The session identifier. Required."""
+    version_indicator: "_models.VersionIndicator" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The version indicator determining which agent version backs this session. Required."""
+    status: Union[str, "_models.AgentSessionStatus"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current status of the session. Required. Known values are: \"creating\", \"active\",
+     \"idle\", \"updating\", \"failed\", \"deleting\", \"deleted\", and \"expired\"."""
+    created_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The Unix timestamp (in seconds) when the session was created. Required."""
+    last_accessed_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The Unix timestamp (in seconds) when the session was last accessed. Required."""
+    expires_at: datetime.datetime = rest_field(visibility=["read"], format="unix-timestamp")
+    """The Unix timestamp (in seconds) when the session expires (rolling, 30 days from last activity).
+     Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        agent_session_id: str,
+        version_indicator: "_models.VersionIndicator",
+        status: Union[str, "_models.AgentSessionStatus"],
     ) -> None: ...
 
     @overload
@@ -10065,6 +10126,72 @@ class UserProfileMemoryItem(MemoryItem, discriminator="user_profile"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.kind = MemoryItemKind.USER_PROFILE  # type: ignore
+
+
+class VersionIndicator(_Model):
+    """Version indicator determining which agent version backs the session.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VersionRefIndicator
+
+    :ivar type: The type of version indicator. Required. "version_ref"
+    :vartype type: str or ~azure.ai.projects.models.VersionIndicatorType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The type of version indicator. Required. \"version_ref\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class VersionRefIndicator(VersionIndicator, discriminator="version_ref"):
+    """Version indicator that references a specific agent version by name.
+
+    :ivar type: Discriminator value for version_ref. Required. Direct reference to a specific agent
+     version.
+    :vartype type: str or ~azure.ai.projects.models.VERSION_REF
+    :ivar agent_version: The agent version identifier returned by the agent version APIs. Required.
+    :vartype agent_version: str
+    """
+
+    type: Literal[VersionIndicatorType.VERSION_REF] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Discriminator value for version_ref. Required. Direct reference to a specific agent version."""
+    agent_version: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The agent version identifier returned by the agent version APIs. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        agent_version: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = VersionIndicatorType.VERSION_REF  # type: ignore
 
 
 class VersionSelector(_Model):

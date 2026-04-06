@@ -55,7 +55,6 @@ class BetaOperations(GeneratedBetaOperations):
     skills: BetaSkillsOperations
     """:class:`~azure.ai.projects.aio.operations.BetaSkillsOperations` operations"""
 
-
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         # Replace with patched class that includes upload()

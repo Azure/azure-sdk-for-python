@@ -44,8 +44,7 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "skills": "Skills=V1Preview",
     "agent_invocations": "HostedAgents=V1Preview",
     "agent_session_files": "HostedAgents=V1Preview",
-    "managed_agent_identity_blueprints": "AgentEndpoints=V1Preview"
-
+    "managed_agent_identity_blueprints": "AgentEndpoints=V1Preview",
 }
 
 # Shared test cases for non-beta methods that optionally send the Foundry-Features header.
