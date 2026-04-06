@@ -211,11 +211,21 @@ class TestRunOutputDirectory:
 
         def fake_apistub_run(exe, cmds, **kwargs):
             captured_cmds.append(cmds)
+            # Create the token JSON so the markdown generation branch can proceed
+            out_idx = cmds.index("--out-path")
+            out_dir = cmds[out_idx + 1]
+            os.makedirs(out_dir, exist_ok=True)
+            open(os.path.join(out_dir, "azure-core_python.json"), "w").close()
+
+        def fake_pwsh(cmd, **kwargs):
+            return MagicMock(returncode=0, stdout=None)
 
         with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
             stub, "get_executable", return_value=(sys.executable, staging)
         ), patch.object(stub, "install_dev_reqs"), patch.object(stub, "pip_freeze"), patch.object(
             stub, "run_venv_command", side_effect=fake_apistub_run
+        ), patch(
+            "azpysdk.apistub.run", side_effect=fake_pwsh
         ):
             stub.run(self._make_args(generate_md=True))
 
