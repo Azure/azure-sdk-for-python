@@ -1,5 +1,5 @@
 ---
-name: search-documents-python
+name: azure-search-documents
 description: 'Post-regeneration customization guide for azure-search-documents. Verifies _patch.py imports, ApiVersion, enum aliases, mypy/pylint, and changelog after codegen. USE WHEN: running tsp-client update, regenerating from TypeSpec, fixing _patch.py breaks, bumping ApiVersion, adding operation wrappers, or updating search SDK documentation.'
 ---
 
