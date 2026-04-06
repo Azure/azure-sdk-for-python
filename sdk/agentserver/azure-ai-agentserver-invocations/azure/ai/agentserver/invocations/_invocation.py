@@ -416,7 +416,7 @@ class InvocationAgentServerHost(AgentServerHost):
 
         with self.request_span(
             request.headers, invocation_id, span_operation,
-            session_id=session_id,
+            operation_name=span_operation, session_id=session_id,
         ) as _otel_span:
             self._safe_set_attrs(_otel_span, {
                 InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,

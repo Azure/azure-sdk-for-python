@@ -133,7 +133,7 @@ def request_span(
 
     # Build attributes
     attrs: dict[str, str] = {
-        _ATTR_SERVICE_NAME: _SERVICE_NAME_VALUE,
+        _ATTR_SERVICE_NAME: agent_name or _SERVICE_NAME_VALUE,
         _ATTR_GEN_AI_SYSTEM: _GEN_AI_SYSTEM_VALUE,
         _ATTR_GEN_AI_PROVIDER_NAME: _GEN_AI_PROVIDER_NAME_VALUE,
         _ATTR_GEN_AI_RESPONSE_ID: request_id,
