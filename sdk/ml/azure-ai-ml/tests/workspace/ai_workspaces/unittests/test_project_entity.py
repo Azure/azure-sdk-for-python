@@ -11,7 +11,7 @@ class TestProjectEntity:
         project = load_workspace(source="./tests/test_configs/workspace/ai_workspaces/test_project.yml")
 
         assert project is not None
-        assert type(project) == Project
+        assert isinstance(project, Project)
         assert project.name == "test_project"
         assert project.description == "A test project for unit tests"
         assert (
