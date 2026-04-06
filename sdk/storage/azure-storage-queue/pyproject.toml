@@ -12,7 +12,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "azure-storage-queue"
 authors = [
-  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+  { name = "Microsoft Corporation", email = "ascl@microsoft.com" },
 ]
 description = "Microsoft Corporation Azure Storage Queue Client Library for Python"
 license = "MIT"
@@ -34,9 +34,15 @@ dependencies = [
     "isodate>=0.6.1",
     "azure-core>=1.38.3",
     "typing-extensions>=4.6.0",
+    "cryptography>=2.1.4",
 ]
 dynamic = [
 "version", "readme"
+]
+
+[project.optional-dependencies]
+aio = [
+    "azure-core[aio]>=1.38.3",
 ]
 
 [project.urls]
