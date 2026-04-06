@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed multi-turn and crescendo red team strategies producing output items identical to their baseline counterparts. The Foundry execution path was writing all strategies' conversations to a single shared JSONL file, causing each strategy to read all conversations and mislabel them. Now writes per-strategy JSONL files using PyRIT's scenario result grouping.
+
 ### Other Changes
 
 ## 1.16.4 (2026-04-03)
