@@ -308,7 +308,7 @@ def _create_resource() -> Any:
         logger.warning("OTel SDK not installed — tracing resource creation failed.")
         return None
     # service.name maps to cloud_RoleName in App Insights
-    agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "")
+    agent_name = os.environ.get(_config._ENV_FOUNDRY_AGENT_NAME, "")  # pylint: disable=protected-access
     service_name = agent_name or _SERVICE_NAME_VALUE
     return Resource.create({_ATTR_SERVICE_NAME: service_name})
 
