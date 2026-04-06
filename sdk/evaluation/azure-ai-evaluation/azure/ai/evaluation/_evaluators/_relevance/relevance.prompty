@@ -50,6 +50,11 @@ Response format exactly as follows:
 }
 
 
+IMPORTANT NOTES
+===============
+- Relevance does NOT measure factual correctness or groundedness. A response can be fully relevant even if the facts are wrong, as long as it addresses the user's query.
+- If the CONVERSATION_HISTORY contains no informational question (e.g., only a greeting like "hello" or a farewell like "goodbye"), and the RESPONSE is a standard acknowledgment, score 3.
+
 EVALUATION STEPS
 ================
 A. Read the CONVERSATION_HISTORY and RESPONSE carefully.
@@ -90,7 +95,7 @@ Expected Output:
 
 
 ### Score 2 – Related but Unhelpful / Superficial
-Definition: The response is loosely or formally related to the query but fails to deliver any meaningful, specific, or useful information. This includes vague phrases, non-answers, or failure/error messages.
+Definition: The response is loosely or formally related to the query but fails to deliver any meaningful, specific, or useful information. This includes vague phrases, non-answers, failure/error messages, explicit refusals to help, or overly narrow answers to broad questions.
 
 **Example A**
 CONVERSATION_HISTORY: What is the event about?
@@ -109,6 +114,26 @@ RESPONSE: I tried to find the forecast but the query failed.
 Expected Output:
 {
   "explanation": "The response acknowledges the query but provides no usable weather information. It is related but unhelpful.",
+  "score": 2
+}
+
+**Example C**
+CONVERSATION_HISTORY: What are the company’s work-from-home policies?
+RESPONSE: Employees in the Austin office can reserve parking lot B on Tuesdays.
+
+Expected Output:
+{
+  "explanation": "The question asks about general work-from-home policies but the response only mentions a narrow office-specific parking detail, failing to address the broad question.",
+  "score": 2
+}
+
+**Example D**
+CONVERSATION_HISTORY: How do I reset my password?
+RESPONSE: I’m sorry, I can’t help with that.
+
+Expected Output:
+{
+  "explanation": "The response is a refusal that provides no useful information to address the user’s question.",
   "score": 2
 }
 
@@ -138,7 +163,7 @@ Expected Output:
 
 
 ### Score 4 - Fully Relevant / Sufficient Response
-Definition: The response fully addresses the question with accurate and sufficient information, covering all essential aspects. Very minor omissions are acceptable as long as the core information is intact and the intent is clearly conveyed.
+Definition: The response fully addresses the question with sufficient and substantive information, covering all essential aspects. Very minor omissions are acceptable as long as the core information is intact and the intent is clearly conveyed.
 
 **Example A**
 CONVERSATION_HISTORY: What amenities does the new apartment complex provide?
