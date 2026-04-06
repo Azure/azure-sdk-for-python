@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0b5 (Unreleased)
+## 1.2.0b5 (2026-04-06)
 
 ### Features Added
 
@@ -45,10 +45,6 @@
   - Session-level: `gen_ai.voice.mcp.call_count` and `gen_ai.voice.mcp.list_tools_count` counters
     flushed on session close.
   - Nested item extraction is guarded by event type to prevent forward-compatibility issues.
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 
