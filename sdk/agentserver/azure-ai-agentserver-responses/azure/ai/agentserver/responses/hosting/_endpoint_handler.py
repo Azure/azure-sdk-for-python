@@ -510,7 +510,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                             _ATTR_ERROR_MESSAGE: str(exc.original),
                         })
                         end_span(otel_span, exc=exc.original)
-                        return _error_response(exc.original, {})
+                        # Handler errors are server-side faults, not client errors
+                        return JSONResponse(
+                            {"error": {"message": "internal server error", "type": "server_error", "code": "internal_error", "param": None}},
+                            status_code=500,
+                        )
                     finally:
                         disconnect_task.cancel()
 
@@ -524,7 +528,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     _ATTR_ERROR_MESSAGE: str(exc.original),
                 })
                 end_span(otel_span, exc=exc)
-                return _error_response(exc.original, self._response_headers)
+                # Handler errors are server-side faults, not client errors
+                return JSONResponse(
+                    {"error": {"message": "internal server error", "type": "server_error", "code": "internal_error", "param": None}},
+                    status_code=500,
+                    headers=self._response_headers,
+                )
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
                 self._safe_set_attrs(otel_span, {
@@ -574,6 +583,19 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 replay_response = await self._try_replay_persisted_stream(request, response_id)
                 if replay_response is not None:
                     return replay_response
+
+                # Response may exist in storage but wasn't replay-eligible
+                # (e.g., created without background=true, stream=true, store=true).
+                try:
+                    await self._provider.get_response(response_id)
+                    return _invalid_mode(
+                        "stream replay is not available for this response; to enable SSE replay, "
+                        + "create the response with background=true, stream=true, and store=true",
+                        {},
+                        param="stream",
+                    )
+                except Exception:  # pylint: disable=broad-exception-caught
+                    pass  # Response doesn't exist in provider either — fall through to 404
 
             return _not_found(response_id, {})
 

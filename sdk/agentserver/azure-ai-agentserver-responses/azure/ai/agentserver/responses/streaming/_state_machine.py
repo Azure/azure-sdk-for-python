@@ -17,6 +17,11 @@ _TERMINAL_EVENT_TYPES = {
     EVENT_TYPE.RESPONSE_FAILED.value,
     EVENT_TYPE.RESPONSE_INCOMPLETE.value,
 }
+_TERMINAL_TYPE_STATUS: dict[str, set[str]] = {
+    "response.completed": {"completed"},
+    "response.failed": {"failed", "cancelled"},
+    "response.incomplete": {"incomplete"},
+}
 _OUTPUT_ITEM_EVENT_TYPES = {
     EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value,
     OUTPUT_ITEM_DELTA_EVENT_TYPE,
@@ -75,6 +80,15 @@ class EventStreamValidator:
                 self._terminal_count += 1
                 if self._terminal_count > 1:
                     raise LifecycleStateMachineError("multiple terminal lifecycle events are not allowed")
+                allowed_statuses = _TERMINAL_TYPE_STATUS.get(event_type)
+                if allowed_statuses is not None:
+                    payload = event.get("payload", {})
+                    actual_status = payload.get("status") if isinstance(payload, dict) else None
+                    if actual_status and actual_status not in allowed_statuses:
+                        expected = " or ".join(sorted(allowed_statuses))
+                        raise LifecycleStateMachineError(
+                            f"terminal event '{event_type}' has status '{actual_status}', expected {expected}"
+                        )
                 self._terminal_seen = True
             self._last_stage = stage
             return

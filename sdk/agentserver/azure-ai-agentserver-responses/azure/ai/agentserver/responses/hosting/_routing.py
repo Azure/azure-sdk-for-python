@@ -100,8 +100,13 @@ class ResponsesAgentServerHost(AgentServerHost):
             if project_endpoint:
                 from ..store._foundry_provider import FoundryStorageProvider
                 from ..store._foundry_settings import FoundryStorageSettings
-                settings = FoundryStorageSettings.from_env()
-                provider = FoundryStorageProvider(settings)
+                try:
+                    from azure.identity.aio import DefaultAzureCredential
+                except ImportError:
+                    logger.warning("azure-identity not installed; Foundry auto-activation disabled")
+                else:
+                    settings = FoundryStorageSettings.from_env()
+                    provider = FoundryStorageProvider(DefaultAzureCredential(), settings)
 
         resolved_provider: ResponseProviderProtocol = provider if provider is not None \
                                                         else InMemoryResponseProvider()
