@@ -29,7 +29,7 @@ from copilot import CopilotClient
 from copilot.generated.session_events import SessionEventType
 from copilot.session import PermissionRequestResult, ProviderConfig
 
-from azure.ai.agentserver.core import AgentHost
+from azure.ai.agentserver.core import AgentServerHost
 from azure.ai.agentserver.responses import (
     ResponseEventStream,
     ResponsesServerOptions,
