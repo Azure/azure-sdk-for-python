@@ -112,6 +112,10 @@ class AgentServerHost(Starlette):
             setattr(_console, _CONSOLE_HANDLER_ATTR, True)
             logger.addHandler(_console)
 
+        # Suppress noisy Azure SDK and OTel exporter logs
+        logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
+        logging.getLogger("azure.monitor.opentelemetry.exporter").setLevel(logging.WARNING)
+
         # Resolved configuration (accessible as self.config)
         self.config = _config.AgentConfig.from_env()
 
