@@ -4009,6 +4009,39 @@ class DeleteMemoryStoreResult(_Model):
         super().__init__(*args, **kwargs)
 
 
+class DeleteSkillResponse(_Model):
+    """A deleted skill Object.
+
+    :ivar name: The unique name of the skill. Required.
+    :vartype name: str
+    :ivar deleted: Whether the skill was successfully deleted. Required.
+    :vartype deleted: bool
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique name of the skill. Required."""
+    deleted: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the skill was successfully deleted. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        deleted: bool,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Deployment(_Model):
     """Model Deployment Definition.
 
@@ -6391,6 +6424,17 @@ class LocalSkillParam(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ManagedAgentIdentityBlueprint(_Model):
+    """ManagedAgentIdentityBlueprint.
+
+    :ivar name: Required.
+    :vartype name: str
+    """
+
+    name: str = rest_field(visibility=["read"])
+    """Required."""
+
+
 class ManagedAgentIdentityBlueprintReference(AgentBlueprintReference, discriminator="ManagedAgentIdentityBlueprint"):
     """ManagedAgentIdentityBlueprintReference.
 
@@ -7853,6 +7897,41 @@ class OpenApiTool(Tool, discriminator="openapi"):
         self.type = ToolType.OPENAPI  # type: ignore
 
 
+class PagedManagedAgentIdentityBlueprint(_Model):
+    """Paged collection of ManagedAgentIdentityBlueprint items.
+
+    :ivar value: The ManagedAgentIdentityBlueprint items on this page. Required.
+    :vartype value: list[~azure.ai.projects.models.ManagedAgentIdentityBlueprint]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
+    """
+
+    value: list["_models.ManagedAgentIdentityBlueprint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ManagedAgentIdentityBlueprint items on this page. Required."""
+    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
+    """The link to the next page of items."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.ManagedAgentIdentityBlueprint"],
+        next_link: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class PendingUploadRequest(_Model):
     """Represents a request for a pending upload.
 
@@ -8654,6 +8733,120 @@ class ScheduleRun(_Model):
         super().__init__(*args, **kwargs)
 
 
+class SessionDirectoryEntry(_Model):
+    """A single entry in a directory listing.
+
+    :ivar name: The name of the file or directory. Required.
+    :vartype name: str
+    :ivar size: The size in bytes (0 for directories). Required.
+    :vartype size: int
+    :ivar is_directory: Whether this entry is a directory. Required.
+    :vartype is_directory: bool
+    :ivar modified_time: The last modification time in UTC (ISO 8601). Required.
+    :vartype modified_time: ~datetime.datetime
+    """
+
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the file or directory. Required."""
+    size: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The size in bytes (0 for directories). Required."""
+    is_directory: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether this entry is a directory. Required."""
+    modified_time: datetime.datetime = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The last modification time in UTC (ISO 8601). Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        name: str,
+        size: int,
+        is_directory: bool,
+        modified_time: datetime.datetime,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SessionDirectoryListResponse(_Model):
+    """Response from listing a directory in a session sandbox.
+
+    :ivar path: The path that was listed, relative to the session home directory. Required.
+    :vartype path: str
+    :ivar entries: The directory entries. Required.
+    :vartype entries: list[~azure.ai.projects.models.SessionDirectoryEntry]
+    """
+
+    path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The path that was listed, relative to the session home directory. Required."""
+    entries: list["_models.SessionDirectoryEntry"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The directory entries. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        path: str,
+        entries: list["_models.SessionDirectoryEntry"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SessionFileWriteResponse(_Model):
+    """Response from uploading a file to a session sandbox.
+
+    :ivar path: The path where the file was written, relative to the session home directory.
+     Required.
+    :vartype path: str
+    :ivar bytes_written: Number of bytes written. Required.
+    :vartype bytes_written: int
+    """
+
+    path: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The path where the file was written, relative to the session home directory. Required."""
+    bytes_written: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Number of bytes written. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        path: str,
+        bytes_written: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class SharepointGroundingToolParameters(_Model):
     """The sharepoint grounding tool parameters.
 
@@ -8722,6 +8915,64 @@ class SharepointPreviewTool(Tool, discriminator="sharepoint_grounding_preview"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.SHAREPOINT_GROUNDING_PREVIEW  # type: ignore
+
+
+class SkillObject(_Model):
+    """A skill object.
+
+    :ivar skill_id: The unique identifier of the skill. Required.
+    :vartype skill_id: str
+    :ivar has_blob: Whether the skill was created from a gzip blob package. Required.
+    :vartype has_blob: bool
+    :ivar name: The unique name of the skill. Required.
+    :vartype name: str
+    :ivar description: A human-readable description of the skill.
+    :vartype description: str
+    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
+     useful for storing additional information about the object in a structured
+     format, and querying for objects via API or the dashboard.
+
+     Keys are strings with a maximum length of 64 characters. Values are strings
+     with a maximum length of 512 characters.
+    :vartype metadata: dict[str, str]
+    """
+
+    skill_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique identifier of the skill. Required."""
+    has_blob: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether the skill was created from a gzip blob package. Required."""
+    name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The unique name of the skill. Required."""
+    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable description of the skill."""
+    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Set of 16 key-value pairs that can be attached to an object. This can be
+     useful for storing additional information about the object in a structured
+     format, and querying for objects via API or the dashboard.
+     
+     Keys are strings with a maximum length of 64 characters. Values are strings
+     with a maximum length of 512 characters."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        skill_id: str,
+        has_blob: bool,
+        name: str,
+        description: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class SkillReferenceParam(ContainerSkill, discriminator="skill_reference"):

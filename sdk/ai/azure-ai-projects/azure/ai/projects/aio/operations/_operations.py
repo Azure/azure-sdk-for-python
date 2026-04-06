@@ -49,6 +49,14 @@ from ...operations._operations import (
     build_agents_list_versions_request,
     build_agents_patch_agent_object_request,
     build_agents_update_agent_from_code_request,
+    build_beta_agent_invocations_cancel_agent_invocation_request,
+    build_beta_agent_invocations_create_agent_invocation_request,
+    build_beta_agent_invocations_get_agent_invocation_open_api_spec_request,
+    build_beta_agent_invocations_get_agent_invocation_request,
+    build_beta_agent_session_files_delete_session_file_request,
+    build_beta_agent_session_files_download_session_file_request,
+    build_beta_agent_session_files_list_session_files_request,
+    build_beta_agent_session_files_upload_session_file_request,
     build_beta_evaluation_taxonomies_create_request,
     build_beta_evaluation_taxonomies_delete_request,
     build_beta_evaluation_taxonomies_get_request,
@@ -65,6 +73,10 @@ from ...operations._operations import (
     build_beta_insights_generate_request,
     build_beta_insights_get_request,
     build_beta_insights_list_request,
+    build_beta_managed_agent_identity_blueprints_create_or_update_managed_agent_identity_blueprint_request,
+    build_beta_managed_agent_identity_blueprints_delete_managed_agent_identity_blueprint_request,
+    build_beta_managed_agent_identity_blueprints_get_managed_agent_identity_blueprint_request,
+    build_beta_managed_agent_identity_blueprints_list_managed_agent_identity_blueprints_request,
     build_beta_memory_stores_create_request,
     build_beta_memory_stores_delete_request,
     build_beta_memory_stores_delete_scope_request,
@@ -82,10 +94,20 @@ from ...operations._operations import (
     build_beta_schedules_get_run_request,
     build_beta_schedules_list_request,
     build_beta_schedules_list_runs_request,
+    build_beta_skills_create_skill_from_package_request,
+    build_beta_skills_create_skill_request,
+    build_beta_skills_delete_skill_request,
+    build_beta_skills_download_skill_request,
+    build_beta_skills_get_skill_request,
+    build_beta_skills_list_skills_request,
+    build_beta_skills_update_skill_request,
     build_beta_toolboxes_create_request,
     build_beta_toolboxes_delete_request,
+    build_beta_toolboxes_delete_toolbox_version_request,
     build_beta_toolboxes_get_request,
+    build_beta_toolboxes_get_toolbox_version_request,
     build_beta_toolboxes_list_request,
+    build_beta_toolboxes_list_toolbox_versions_request,
     build_beta_toolboxes_update_request,
     build_connections_get_request,
     build_connections_get_with_credentials_request,
@@ -108,9 +130,6 @@ from ...operations._operations import (
     build_indexes_get_request,
     build_indexes_list_request,
     build_indexes_list_versions_request,
-    build_toolboxes_delete_toolbox_version_request,
-    build_toolboxes_get_toolbox_version_request,
-    build_toolboxes_list_toolbox_versions_request,
 )
 from .._configuration import AIProjectClientConfiguration
 
@@ -147,6 +166,16 @@ class BetaOperations:  # pylint: disable=too-many-instance-attributes
         self.red_teams = BetaRedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.schedules = BetaSchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.toolboxes = BetaToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.skills = BetaSkillsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.agent_invocations = BetaAgentInvocationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.agent_session_files = BetaAgentSessionFilesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.managed_agent_identity_blueprints = BetaManagedAgentIdentityBlueprintsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
 
 class AgentsOperations:
@@ -3549,241 +3578,6 @@ class IndexesOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-
-class ToolboxesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.aio.AIProjectClient`'s
-        :attr:`toolboxes` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def list_toolbox_versions(
-        self,
-        toolbox_name: str,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.ToolboxVersionObject"]:
-        """List all versions of a toolbox.
-
-        :param toolbox_name: The name of the toolbox to list versions for. Required.
-        :type toolbox_name: str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of ToolboxVersionObject
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ToolboxVersionObject]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.ToolboxVersionObject]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_toolboxes_list_toolbox_versions_request(
-                toolbox_name=toolbox_name,
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.ToolboxVersionObject],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
-
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace_async
-    async def get_toolbox_version(self, toolbox_name: str, version: str, **kwargs: Any) -> _models.ToolboxVersionObject:
-        """Retrieve a specific version of a toolbox.
-
-        :param toolbox_name: The name of the toolbox. Required.
-        :type toolbox_name: str
-        :param version: The version identifier to retrieve. Required.
-        :type version: str
-        :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.ToolboxVersionObject
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ToolboxVersionObject] = kwargs.pop("cls", None)
-
-        _request = build_toolboxes_get_toolbox_version_request(
-            toolbox_name=toolbox_name,
-            version=version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ToolboxVersionObject, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete_toolbox_version(self, toolbox_name: str, version: str, **kwargs: Any) -> None:
-        """Delete a specific version of a toolbox.
-
-        :param toolbox_name: The name of the toolbox. Required.
-        :type toolbox_name: str
-        :param version: The version identifier to delete. Required.
-        :type version: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_toolboxes_delete_toolbox_version_request(
-            toolbox_name=toolbox_name,
-            version=version,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
 
 
 class BetaEvaluationTaxonomiesOperations:
@@ -7768,6 +7562,168 @@ class BetaToolboxesOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
+    @distributed_trace
+    def list_toolbox_versions(
+        self,
+        toolbox_name: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.ToolboxVersionObject"]:
+        """List all versions of a toolbox.
+
+        :param toolbox_name: The name of the toolbox to list versions for. Required.
+        :type toolbox_name: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of ToolboxVersionObject
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ToolboxVersionObject]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ToolboxVersionObject]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_beta_toolboxes_list_toolbox_versions_request(
+                toolbox_name=toolbox_name,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ToolboxVersionObject],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def get_toolbox_version(self, toolbox_name: str, version: str, **kwargs: Any) -> _models.ToolboxVersionObject:
+        """Retrieve a specific version of a toolbox.
+
+        :param toolbox_name: The name of the toolbox. Required.
+        :type toolbox_name: str
+        :param version: The version identifier to retrieve. Required.
+        :type version: str
+        :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolboxVersionObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ToolboxVersionObject] = kwargs.pop("cls", None)
+
+        _request = build_beta_toolboxes_get_toolbox_version_request(
+            toolbox_name=toolbox_name,
+            version=version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ToolboxVersionObject, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
     @overload
     async def update(
         self, toolbox_name: str, *, default_version: str, content_type: str = "application/json", **kwargs: Any
@@ -7961,3 +7917,1782 @@ class BetaToolboxesOperations:
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def delete_toolbox_version(self, toolbox_name: str, version: str, **kwargs: Any) -> None:
+        """Delete a specific version of a toolbox.
+
+        :param toolbox_name: The name of the toolbox. Required.
+        :type toolbox_name: str
+        :param version: The version identifier to delete. Required.
+        :type version: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_toolboxes_delete_toolbox_version_request(
+            toolbox_name=toolbox_name,
+            version=version,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class BetaSkillsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`skills` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    async def create_skill(
+        self,
+        *,
+        name: str,
+        content_type: str = "application/json",
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.SkillObject:
+        """Creates a skill.
+
+        :keyword name: The unique name of the skill. Required.
+        :paramtype name: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword description: A human-readable description of the skill. Default value is None.
+        :paramtype description: str
+        :keyword instructions: Instructions that define the behavior of the skill. Default value is
+         None.
+        :paramtype instructions: str
+        :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
+         useful for storing additional information about the object in a structured
+         format, and querying for objects via API or the dashboard.
+
+         Keys are strings with a maximum length of 64 characters. Values are strings
+         with a maximum length of 512 characters. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :return: SkillObject. The SkillObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_skill(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.SkillObject:
+        """Creates a skill.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SkillObject. The SkillObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_skill(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.SkillObject:
+        """Creates a skill.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SkillObject. The SkillObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_skill(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        name: str = _Unset,
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.SkillObject:
+        """Creates a skill.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword name: The unique name of the skill. Required.
+        :paramtype name: str
+        :keyword description: A human-readable description of the skill. Default value is None.
+        :paramtype description: str
+        :keyword instructions: Instructions that define the behavior of the skill. Default value is
+         None.
+        :paramtype instructions: str
+        :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
+         useful for storing additional information about the object in a structured
+         format, and querying for objects via API or the dashboard.
+
+         Keys are strings with a maximum length of 64 characters. Values are strings
+         with a maximum length of 512 characters. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :return: SkillObject. The SkillObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SkillObject] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if name is _Unset:
+                raise TypeError("missing required argument: name")
+            body = {"description": description, "instructions": instructions, "metadata": metadata, "name": name}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_skills_create_skill_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SkillObject, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def create_skill_from_package(self, body: bytes, **kwargs: Any) -> _models.SkillObject:
+        """Creates a skill from a gzip package.
+
+        :param body: The gzip package used to create the skill. Required.
+        :type body: bytes
+        :return: SkillObject. The SkillObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/gzip"))
+        cls: ClsType[_models.SkillObject] = kwargs.pop("cls", None)
+
+        _content = body
+
+        _request = build_beta_skills_create_skill_from_package_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SkillObject, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_skill(self, skill_name: str, **kwargs: Any) -> _models.SkillObject:
+        """Retrieves a skill.
+
+        :param skill_name: The unique name of the skill. Required.
+        :type skill_name: str
+        :return: SkillObject. The SkillObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SkillObject] = kwargs.pop("cls", None)
+
+        _request = build_beta_skills_get_skill_request(
+            skill_name=skill_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SkillObject, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def download_skill(self, skill_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+        """Downloads a skill package.
+
+        :param skill_name: The unique name of the skill. Required.
+        :type skill_name: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_beta_skills_download_skill_request(
+            skill_name=skill_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list_skills(
+        self,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.SkillObject"]:
+        """Returns the list of all skills.
+
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of SkillObject
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.SkillObject]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.SkillObject]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_beta_skills_list_skills_request(
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.SkillObject],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @overload
+    async def update_skill(
+        self,
+        skill_name: str,
+        *,
+        content_type: str = "application/json",
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.SkillObject:
+        """Updates an existing skill.
+
+        :param skill_name: The unique name of the skill. Required.
+        :type skill_name: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword description: A human-readable description of the skill. Default value is None.
+        :paramtype description: str
+        :keyword instructions: Instructions that define the behavior of the skill. Default value is
+         None.
+        :paramtype instructions: str
+        :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
+         useful for storing additional information about the object in a structured
+         format, and querying for objects via API or the dashboard.
+
+         Keys are strings with a maximum length of 64 characters. Values are strings
+         with a maximum length of 512 characters. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :return: SkillObject. The SkillObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_skill(
+        self, skill_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.SkillObject:
+        """Updates an existing skill.
+
+        :param skill_name: The unique name of the skill. Required.
+        :type skill_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SkillObject. The SkillObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update_skill(
+        self, skill_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.SkillObject:
+        """Updates an existing skill.
+
+        :param skill_name: The unique name of the skill. Required.
+        :type skill_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: SkillObject. The SkillObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update_skill(
+        self,
+        skill_name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        description: Optional[str] = None,
+        instructions: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.SkillObject:
+        """Updates an existing skill.
+
+        :param skill_name: The unique name of the skill. Required.
+        :type skill_name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword description: A human-readable description of the skill. Default value is None.
+        :paramtype description: str
+        :keyword instructions: Instructions that define the behavior of the skill. Default value is
+         None.
+        :paramtype instructions: str
+        :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
+         useful for storing additional information about the object in a structured
+         format, and querying for objects via API or the dashboard.
+
+         Keys are strings with a maximum length of 64 characters. Values are strings
+         with a maximum length of 512 characters. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :return: SkillObject. The SkillObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SkillObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.SkillObject] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"description": description, "instructions": instructions, "metadata": metadata}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_skills_update_skill_request(
+            skill_name=skill_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SkillObject, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_skill(self, skill_name: str, **kwargs: Any) -> _models.DeleteSkillResponse:
+        """Deletes a skill.
+
+        :param skill_name: The unique name of the skill. Required.
+        :type skill_name: str
+        :return: DeleteSkillResponse. The DeleteSkillResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DeleteSkillResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DeleteSkillResponse] = kwargs.pop("cls", None)
+
+        _request = build_beta_skills_delete_skill_request(
+            skill_name=skill_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DeleteSkillResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class BetaAgentInvocationsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`agent_invocations` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def get_agent_invocation_open_api_spec(self, agent_name: str, **kwargs: Any) -> dict[str, Any]:
+        """Retrieves the OpenAPI specification for an agent version's invocation contract. Returns 404 if
+        the agent does not expose an OpenAPI specification.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :return: dict mapping str to any
+        :rtype: dict[str, any]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
+
+        _request = build_beta_agent_invocations_get_agent_invocation_open_api_spec_request(
+            agent_name=agent_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(dict[str, Any], response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def create_agent_invocation(
+        self, agent_name: str, request: Any, *, agent_session_id: Optional[str] = None, **kwargs: Any
+    ) -> Any:
+        """Creates an invocation for the specified agent version.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param request: The request body. Required.
+        :type request: any
+        :keyword agent_session_id: Optional session ID to group related invocations. If not provided, a
+         new session ID will be auto-generated. Default value is None.
+        :paramtype agent_session_id: str
+        :return: any
+        :rtype: any
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type")
+        cls: ClsType[Any] = kwargs.pop("cls", None)
+
+        _content = request
+
+        _request = build_beta_agent_invocations_create_agent_invocation_request(
+            agent_name=agent_name,
+            agent_session_id=agent_session_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-agent-invocation-id"] = self._deserialize(
+            "str", response.headers.get("x-agent-invocation-id")
+        )
+        response_headers["x-agent-session-id"] = self._deserialize("str", response.headers.get("x-agent-session-id"))
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(Any, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_agent_invocation(self, agent_name: str, invocation_id: str, **kwargs: Any) -> Any:
+        """Retrieves the invocation with the given ID. Returns 404 if the agent does not support this
+        operation or if the invocation ID is not found.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param invocation_id: The unique identifier of the invocation. Required.
+        :type invocation_id: str
+        :return: any
+        :rtype: any
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[Any] = kwargs.pop("cls", None)
+
+        _request = build_beta_agent_invocations_get_agent_invocation_request(
+            agent_name=agent_name,
+            invocation_id=invocation_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(Any, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def cancel_agent_invocation(
+        self, agent_name: str, invocation_id: str, request: Optional[Any] = None, **kwargs: Any
+    ) -> Any:
+        """Cancels an invocation. Returns 404 if the agent does not support this operation or if the
+        invocation ID is not found.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param invocation_id: The unique identifier of the invocation to cancel. Required.
+        :type invocation_id: str
+        :param request: Optional request body. Default value is None.
+        :type request: any
+        :return: any
+        :rtype: any
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("content-type", None))
+        content_type = content_type if request else None
+        cls: ClsType[Any] = kwargs.pop("cls", None)
+
+        if request is not None:
+            _content = request
+        else:
+            _content = None
+
+        _request = build_beta_agent_invocations_cancel_agent_invocation_request(
+            agent_name=agent_name,
+            invocation_id=invocation_id,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(Any, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class BetaAgentSessionFilesOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`agent_session_files` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def upload_session_file(
+        self, agent_name: str, session_id: str, content: bytes, *, path: str, **kwargs: Any
+    ) -> _models.SessionFileWriteResponse:
+        """Upload a file to the session sandbox via binary stream. Maximum file size is 50 MB. Uploads
+        exceeding this limit return 413 Payload Too Large.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :param content: Required.
+        :type content: bytes
+        :keyword path: The destination file path within the sandbox, relative to the session home
+         directory. Required.
+        :paramtype path: str
+        :return: SessionFileWriteResponse. The SessionFileWriteResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.SessionFileWriteResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        cls: ClsType[_models.SessionFileWriteResponse] = kwargs.pop("cls", None)
+
+        _content = content
+
+        _request = build_beta_agent_session_files_upload_session_file_request(
+            agent_name=agent_name,
+            session_id=session_id,
+            path=path,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SessionFileWriteResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def download_session_file(
+        self, agent_name: str, session_id: str, *, path: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Download a file from the session sandbox as a binary stream.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :keyword path: The file path to download from the sandbox, relative to the session home
+         directory. Required.
+        :paramtype path: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_beta_agent_session_files_download_session_file_request(
+            agent_name=agent_name,
+            session_id=session_id,
+            path=path,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def list_session_files(
+        self, agent_name: str, session_id: str, *, path: str, **kwargs: Any
+    ) -> _models.SessionDirectoryListResponse:
+        """List files and directories at a given path in the session sandbox. Returns only the immediate
+        children of the specified directory (non-recursive).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :keyword path: The directory path to list, relative to the session home directory. Required.
+        :paramtype path: str
+        :return: SessionDirectoryListResponse. The SessionDirectoryListResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.SessionDirectoryListResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SessionDirectoryListResponse] = kwargs.pop("cls", None)
+
+        _request = build_beta_agent_session_files_list_session_files_request(
+            agent_name=agent_name,
+            session_id=session_id,
+            path=path,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SessionDirectoryListResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_session_file(
+        self, agent_name: str, session_id: str, *, path: str, recursive: Optional[bool] = None, **kwargs: Any
+    ) -> None:
+        """Delete a file or directory from the session sandbox. If ``recursive`` is false (default) and
+        the target is a non-empty directory, the API returns 409 Conflict.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :keyword path: The file or directory path to delete, relative to the session home directory.
+         Required.
+        :paramtype path: str
+        :keyword recursive: Whether to recursively delete directory contents. Defaults to false.
+         Default value is None.
+        :paramtype recursive: bool
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_agent_session_files_delete_session_file_request(
+            agent_name=agent_name,
+            session_id=session_id,
+            path=path,
+            recursive=recursive,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+
+class BetaManagedAgentIdentityBlueprintsOperations:  # pylint: disable=name-too-long
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`managed_agent_identity_blueprints` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    async def create_or_update_managed_agent_identity_blueprint(  # pylint: disable=name-too-long
+        self, blueprint_name: str, *, name: str, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ManagedAgentIdentityBlueprint:
+        """create_or_update_managed_agent_identity_blueprint.
+
+        :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
+        :type blueprint_name: str
+        :keyword name: The unique name that identifies the managed agent identity blueprint.
+         Name can be used to retrieve/update/delete the managed agent identity blueprint.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :paramtype name: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update_managed_agent_identity_blueprint(  # pylint: disable=name-too-long
+        self, blueprint_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ManagedAgentIdentityBlueprint:
+        """create_or_update_managed_agent_identity_blueprint.
+
+        :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
+        :type blueprint_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update_managed_agent_identity_blueprint(  # pylint: disable=name-too-long
+        self, blueprint_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ManagedAgentIdentityBlueprint:
+        """create_or_update_managed_agent_identity_blueprint.
+
+        :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
+        :type blueprint_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_or_update_managed_agent_identity_blueprint(  # pylint: disable=name-too-long
+        self, blueprint_name: str, body: Union[JSON, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any
+    ) -> _models.ManagedAgentIdentityBlueprint:
+        """create_or_update_managed_agent_identity_blueprint.
+
+        :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
+        :type blueprint_name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword name: The unique name that identifies the managed agent identity blueprint.
+         Name can be used to retrieve/update/delete the managed agent identity blueprint.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :paramtype name: str
+        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ManagedAgentIdentityBlueprint] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if name is _Unset:
+                raise TypeError("missing required argument: name")
+            body = {"name": name}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = (
+            build_beta_managed_agent_identity_blueprints_create_or_update_managed_agent_identity_blueprint_request(
+                blueprint_name=blueprint_name,
+                content_type=content_type,
+                api_version=self._config.api_version,
+                content=_content,
+                headers=_headers,
+                params=_params,
+            )
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ManagedAgentIdentityBlueprint, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_managed_agent_identity_blueprint(
+        self, blueprint_name: str, **kwargs: Any
+    ) -> _models.ManagedAgentIdentityBlueprint:
+        """Retrieves a managed agent identity blueprint by name.
+
+        :param blueprint_name: The name of the managed agent identity blueprint to retrieve. Required.
+        :type blueprint_name: str
+        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ManagedAgentIdentityBlueprint] = kwargs.pop("cls", None)
+
+        _request = build_beta_managed_agent_identity_blueprints_get_managed_agent_identity_blueprint_request(
+            blueprint_name=blueprint_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ManagedAgentIdentityBlueprint, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_managed_agent_identity_blueprint(self, blueprint_name: str, **kwargs: Any) -> None:
+        """Deletes a managed agent identity blueprint by name.
+
+        :param blueprint_name: The name of the managed agent identity blueprint to delete. Required.
+        :type blueprint_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_managed_agent_identity_blueprints_delete_managed_agent_identity_blueprint_request(
+            blueprint_name=blueprint_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def list_managed_agent_identity_blueprints(
+        self, *, order: Optional[Union[str, _models.PageOrder]] = None, limit: Optional[int] = None, **kwargs: Any
+    ) -> _models.PagedManagedAgentIdentityBlueprint:
+        """list_managed_agent_identity_blueprints.
+
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :return: PagedManagedAgentIdentityBlueprint. The PagedManagedAgentIdentityBlueprint is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PagedManagedAgentIdentityBlueprint
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PagedManagedAgentIdentityBlueprint] = kwargs.pop("cls", None)
+
+        _request = build_beta_managed_agent_identity_blueprints_list_managed_agent_identity_blueprints_request(
+            order=order,
+            limit=limit,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PagedManagedAgentIdentityBlueprint, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
