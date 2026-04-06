@@ -29,7 +29,7 @@ from ..streaming._sse import encode_sse_payload
 from ..streaming._state_machine import LifecycleStateMachineError, normalize_lifecycle_events
 from ._orchestrator import _refresh_background_status
 from ._execution_context import _ExecutionContext
-from ..models.runtime import build_cancelled_response
+from ..models.runtime import build_cancelled_response, build_failed_response
 from ._validation import (
     deleted_response as _deleted_response,
     error_response as _error_response,
@@ -387,7 +387,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # Extract X-Request-Id header for request ID propagation (truncated to 256 chars).
         request_id = extract_request_id(request.headers)
 
-        span.set_tags(build_create_span_tags(ctx, request_id=request_id))
+        span.set_tags(build_create_span_tags(ctx, request_id=request_id, project_id=self._host._project_id))
 
         # Start OTel request span using host's request_span context manager.
         with self._host.request_span(
@@ -396,7 +396,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             session_id=agent_session_id or "",
             end_on_exit=False,
         ) as otel_span:
-            self._safe_set_attrs(otel_span, build_create_otel_attrs(ctx, request_id=request_id))
+            self._safe_set_attrs(otel_span, build_create_otel_attrs(ctx, request_id=request_id, project_id=self._host._project_id))
 
             # Set W3C baggage per spec §7.3
             bag_ctx = _otel_context.get_current()
@@ -518,7 +518,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if not record.replay_enabled:
                 return _invalid_mode(
                     "stream replay is not available for this response; to enable SSE replay, "
-                    + "create the response with background=true",
+                    + "create the response with background=true, stream=true, and store=true",
                     {},
                     param="stream",
                 )
@@ -778,9 +778,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
             if record.mode_flags.background and record.status in {"queued", "in_progress"}:
                 record.set_response_snapshot(
-                    build_cancelled_response(record.response_id, record.agent_reference, record.model)
+                    build_failed_response(record.response_id, record.agent_reference, record.model)
                 )
-                record.transition_to("cancelled")
+                record.transition_to("failed")
 
         deadline = asyncio.get_running_loop().time() + float(
             self._runtime_options.shutdown_grace_period_seconds

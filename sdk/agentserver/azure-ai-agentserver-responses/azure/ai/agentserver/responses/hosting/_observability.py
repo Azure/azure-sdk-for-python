@@ -138,6 +138,7 @@ def build_create_span_tags(
     ctx: "_ExecutionContext",
     *,
     request_id: str | None = None,
+    project_id: str = "",
 ) -> dict[str, Any]:
     """Build a GenAI tag set for create spans from an execution context.
 
@@ -145,6 +146,8 @@ def build_create_span_tags(
     :type ctx: _ExecutionContext
     :keyword request_id: Truncated ``X-Request-Id`` value, or ``None``.
     :keyword type request_id: str | None
+    :keyword project_id: Foundry project ARM resource ID.
+    :keyword type project_id: str
     :return: Dictionary of OpenTelemetry-style GenAI span tags.
     :rtype: dict[str, Any]
     """
@@ -157,12 +160,14 @@ def build_create_span_tags(
         "gen_ai.response.id": ctx.response_id,
         "gen_ai.request.model": ctx.model,
         "gen_ai.agent.name": agent_name,
-        "gen_ai.agent.id": agent_id,
+        "gen_ai.agent.id": agent_id if agent_id is not None else "",
         # Namespaced tags per spec §7.2
         "azure.ai.agentserver.responses.response_id": ctx.response_id,
         "azure.ai.agentserver.responses.conversation_id": ctx.conversation_id or "",
         "azure.ai.agentserver.responses.streaming": ctx.stream,
     }
+    if project_id:
+        tags["microsoft.foundry.project.id"] = project_id
     if agent_version is not None:
         tags["gen_ai.agent.version"] = agent_version
     if ctx.conversation_id is not None:
@@ -226,34 +231,38 @@ def build_create_otel_attrs(
     ctx: "_ExecutionContext",
     *,
     request_id: str | None,
-) -> dict[str, str]:
+    project_id: str = "",
+) -> dict[str, Any]:
     """Build the OTel span attribute dict for ``POST /responses``.
 
     :param ctx: Current execution context.
     :type ctx: _ExecutionContext
     :keyword request_id: Truncated ``X-Request-Id`` value, or ``None``.
     :keyword type request_id: str | None
+    :keyword project_id: Foundry project ARM resource ID.
+    :keyword type project_id: str
     :return: Attribute dict ready to be set on an OTel span.
-    :rtype: dict[str, str]
+    :rtype: dict[str, Any]
     """
     agent_name, agent_version, agent_id = _resolve_agent_fields(ctx.agent_reference)
-    attrs: dict[str, str] = {
+    attrs: dict[str, Any] = {
         "gen_ai.response.id": ctx.response_id,
         "gen_ai.provider.name": _PROVIDER_NAME,
         "service.name": _SERVICE_NAME,
         "gen_ai.operation.name": "invoke_agent",
         "gen_ai.request.model": ctx.model or "",
+        "gen_ai.agent.id": agent_id if agent_id is not None else "",
         # Namespaced tags per spec §7.2
         "azure.ai.agentserver.responses.response_id": ctx.response_id,
         "azure.ai.agentserver.responses.conversation_id": ctx.conversation_id or "",
-        "azure.ai.agentserver.responses.streaming": str(ctx.stream).lower(),
+        "azure.ai.agentserver.responses.streaming": ctx.stream,
     }
+    if project_id:
+        attrs["microsoft.foundry.project.id"] = project_id
     if ctx.conversation_id:
         attrs["gen_ai.conversation.id"] = ctx.conversation_id
     if agent_name:
         attrs["gen_ai.agent.name"] = agent_name
-    if agent_id:
-        attrs["gen_ai.agent.id"] = agent_id
     if agent_version:
         attrs["gen_ai.agent.version"] = agent_version
     if request_id:

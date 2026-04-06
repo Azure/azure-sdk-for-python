@@ -26,7 +26,7 @@ from ._foundry_serializer import (
 from ._foundry_settings import FoundryStorageSettings
 
 _FOUNDRY_TOKEN_SCOPE = "https://ai.azure.com/.default"
-_JSON_CONTENT_TYPE = "application/json"
+_JSON_CONTENT_TYPE = "application/json; charset=utf-8"
 
 
 def _encode(value: str) -> str:

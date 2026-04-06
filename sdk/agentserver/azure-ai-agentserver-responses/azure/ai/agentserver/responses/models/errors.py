@@ -52,7 +52,6 @@ class RequestValidationError(ValueError):
             message=self.message,
             param=self.param,
             type=self.error_type,
-            debug_info=self.debug_info,
             details=detail_errors,
         )
 

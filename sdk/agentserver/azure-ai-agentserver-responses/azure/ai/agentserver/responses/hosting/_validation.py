@@ -32,7 +32,7 @@ def parse_create_response(payload: Mapping[str, Any]) -> CreateResponse:
             {
                 "code": "invalid_value",
                 "message": e.get("message", ""),
-                "param": e.get("path", "").lstrip("."),
+                "param": ("$" + e.get("path", "")) if e.get("path", "").startswith(".") else e.get("path", ""),
             }
             for e in validation_errors
         ]
@@ -201,7 +201,7 @@ def build_not_found_error_response(
         message=f"{resource_name} '{resource_id}' was not found",
         code="not_found",
         param=param,
-        error_type="not_found_error",
+        error_type="invalid_request_error",
     )
 
 
@@ -249,7 +249,6 @@ def to_api_error_response(error: Exception) -> ApiErrorResponse:
         message="internal server error",
         code="internal_error",
         error_type="server_error",
-        debug_info={"exception_type": type(error).__name__},
     )
 
 

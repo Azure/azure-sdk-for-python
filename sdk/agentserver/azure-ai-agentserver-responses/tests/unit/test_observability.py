@@ -103,7 +103,7 @@ def test_observability__build_create_span_tags_omits_agent_version_when_absent()
     tags = build_create_span_tags(ctx)
 
     assert tags["gen_ai.agent.name"] == "my-agent"
-    assert tags["gen_ai.agent.id"] is None
+    assert tags["gen_ai.agent.id"] == ""
     assert "gen_ai.agent.version" not in tags
 
 
@@ -191,6 +191,7 @@ def test_observability__build_create_otel_attrs_omits_optional_fields_when_absen
 
     assert "gen_ai.conversation.id" not in attrs
     assert "gen_ai.agent.name" not in attrs
+    assert attrs["gen_ai.agent.id"] == ""
     assert "gen_ai.agent.version" not in attrs
     assert "request.id" not in attrs
     assert attrs["gen_ai.request.model"] == ""
