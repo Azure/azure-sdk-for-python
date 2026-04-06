@@ -528,6 +528,11 @@ class TableClient(TablesBaseClient):
         :rtype: An iterator of custom entity type.
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
+        query_filter = kwargs.pop("query_filter", None)
+        parameters = kwargs.pop("parameters", None)
+        if query_filter is not None:
+            query_filter = _parameter_filter_substitution(parameters, query_filter)
+
         if select and not isinstance(select, str):
             select = ",".join(select)
 
@@ -536,6 +541,7 @@ class TableClient(TablesBaseClient):
             command,
             table=self.table_name,
             results_per_page=results_per_page,
+            filter=query_filter,
             select=select,
             decoder=self.decoder,
             page_iterator_class=TableEntityPropertiesPaged,
