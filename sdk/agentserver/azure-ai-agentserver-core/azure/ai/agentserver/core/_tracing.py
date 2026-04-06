@@ -189,6 +189,34 @@ def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
     span.end()
 
 
+def flush_spans(timeout_millis: int = 5000) -> None:
+    """Flush all pending spans from the TracerProvider.
+
+    The ``BatchSpanProcessor`` buffers spans and exports them on a timer
+    (default 5 seconds).  In hosted sandbox environments the platform may
+    suspend the process immediately after an HTTP response is sent, before
+    the batch timer fires.  Calling this function after ending the request
+    span ensures that all child spans — including short-lived ones created
+    by third-party tracers (e.g. LangChain/LangGraph per-node spans) — are
+    exported before the sandbox is frozen.
+
+    No-op when the OTel SDK is not installed or the provider does not
+    support ``force_flush``.
+
+    :param timeout_millis: Maximum time to wait for the flush, in
+        milliseconds.  Defaults to 5000 (5 seconds).
+    """
+    if not _HAS_OTEL:
+        return
+    provider = trace.get_tracer_provider()
+    flush = getattr(provider, "force_flush", None)
+    if flush is not None:
+        try:
+            flush(timeout_millis)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug("TracerProvider.force_flush() failed", exc_info=True)
+
+
 def record_error(span: Any, exc: BaseException) -> None:
     """Record an exception and ERROR status on a span.
 
@@ -225,6 +253,7 @@ async def trace_stream(
         raise
     finally:
         end_span(span, exc=error)
+        flush_spans()
 
 
 # ======================================================================
