@@ -65,6 +65,83 @@ def _check_first_event_contract(normalized: dict[str, Any], response_id: str) ->
     return None
 
 
+_CANCEL_WINDDOWN_TIMEOUT: float = 10.0
+
+
+async def _iter_with_winddown(
+    aiter: Any,
+    cancel_signal: asyncio.Event,
+    timeout: float = _CANCEL_WINDDOWN_TIMEOUT,
+) -> AsyncIterator:
+    """Yield items from *aiter*, enforcing a winddown timeout after cancellation.
+
+    Once *cancel_signal* is set a countdown of *timeout* seconds begins.
+    If the iterator does not stop within the budget, iteration is terminated
+    so that the caller can finalise the response without hanging indefinitely.
+
+    :param aiter: The async iterator to wrap.
+    :type aiter: Any
+    :param cancel_signal: Event signalling that cancellation was requested.
+    :type cancel_signal: asyncio.Event
+    :param timeout: Maximum seconds to wait after cancellation before forcing stop.
+    :type timeout: float
+    :return: Async iterator of items from *aiter*.
+    :rtype: AsyncIterator
+    """
+    deadline: float | None = None
+    while True:
+        if cancel_signal.is_set() and deadline is None:
+            deadline = asyncio.get_event_loop().time() + timeout
+
+        try:
+            if deadline is not None:
+                remaining = deadline - asyncio.get_event_loop().time()
+                if remaining <= 0:
+                    return
+                item = await asyncio.wait_for(aiter.__anext__(), timeout=remaining)
+            else:
+                item = await aiter.__anext__()
+        except StopAsyncIteration:
+            return
+        except asyncio.TimeoutError:
+            return
+
+        yield item
+
+
+_OUTPUT_ITEM_EVENT_TYPES: frozenset[str] = frozenset({
+    EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value,
+    EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value,
+})
+
+
+def _validate_handler_event(coerced: dict[str, Any]) -> str | None:
+    """Return an error message if a coerced handler event has invalid structure, else None.
+
+    Lightweight structural checks (B30):
+    - ``payload`` must be a dict.
+    - For ``response.output_item.*`` events the payload must contain ``output_index``
+      and at least one of ``item_id`` or ``item``.
+
+    :param coerced: Coerced event dict (``{"type": ..., "payload": ...}``).
+    :type coerced: dict[str, Any]
+    :return: Violation message string, or ``None`` if valid.
+    :rtype: str | None
+    """
+    payload = coerced.get("payload")
+    if not isinstance(payload, dict):
+        return f"B30: event payload must be a dict, got {type(payload).__name__}"
+
+    event_type = coerced.get("type", "")
+    if event_type in _OUTPUT_ITEM_EVENT_TYPES:
+        if "output_index" not in payload:
+            return f"B30: {event_type} payload missing required field 'output_index'"
+        if "item_id" not in payload and "item" not in payload:
+            return f"B30: {event_type} payload must include 'item_id' or 'item'"
+
+    return None
+
+
 async def _run_background_non_stream(
     *,
     create_fn: Any,
@@ -116,12 +193,17 @@ async def _run_background_non_stream(
     try:
         try:
             first_event_processed = False
-            async for handler_event in create_fn(parsed, context, cancellation_signal):
+            async for handler_event in _iter_with_winddown(
+                create_fn(parsed, context, cancellation_signal), cancellation_signal
+            ):
                 if cancellation_signal.is_set():
                     record.transition_to("cancelled")
                     return
 
                 coerced = _coerce_handler_event(handler_event)
+                b30_err = _validate_handler_event(coerced)
+                if b30_err:
+                    raise ValueError(b30_err)
                 normalized = _apply_stream_event_defaults(
                     coerced,
                     response_id=response_id,
@@ -313,9 +395,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
     async def _normalize_and_append(
         self, ctx: _ExecutionContext, state: _PipelineState, handler_event: Any
     ) -> dict[str, Any]:
-        """Coerce, normalise, and append a handler event to the pipeline state.
+        """Coerce, validate, normalise, and append a handler event to the pipeline state.
 
         Also propagates the event into the background record and its subject when active.
+        Raises ``ValueError`` on structural validation failure (B30) so that
+        :meth:`_process_handler_events` can emit ``response.failed`` (streaming)
+        or propagate as :class:`_HandlerError` (sync → HTTP 500).
 
         :param ctx: Current execution context (immutable inputs).
         :type ctx: _ExecutionContext
@@ -325,8 +410,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :type handler_event: Any
         :return: The normalised event dictionary.
         :rtype: dict[str, Any]
+        :raises ValueError: If the coerced event fails structural validation (B30).
         """
         coerced = _coerce_handler_event(handler_event)
+        violation = _validate_handler_event(coerced)
+        if violation:
+            raise ValueError(violation)
         normalized = _apply_stream_event_defaults(
             coerced,
             response_id=ctx.response_id,
@@ -512,8 +601,20 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         # Normalise the first event manually (before _normalize_and_append so we
         # can set up the bg record with the correct sequence number).
+        first_coerced = _coerce_handler_event(first_raw)
+
+        # B30: structural validation of the first event.
+        b30_violation = _validate_handler_event(first_coerced)
+        if b30_violation:
+            state.captured_error = ValueError(b30_violation)
+            yield {
+                "type": EVENT_TYPE.ERROR.value,
+                "payload": {"message": "An internal server error occurred.", "param": None, "code": None},
+            }
+            return
+
         first_normalized = _apply_stream_event_defaults(
-            _coerce_handler_event(first_raw),
+            first_coerced,
             response_id=ctx.response_id,
             agent_reference=ctx.agent_reference,
             model=ctx.model,
@@ -544,7 +645,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         # --- Remaining events ---
         try:
-            async for raw in handler_iterator:
+            async for raw in _iter_with_winddown(handler_iterator, ctx.cancellation_signal):
                 normalized = await self._normalize_and_append(ctx, state, raw)
                 yield normalized
         except Exception as exc:  # pylint: disable=broad-exception-caught

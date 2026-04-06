@@ -419,3 +419,104 @@ def test_cancel__from_queued_or_early_in_progress_succeeds() -> None:
     assert payload.get("output") == [], (
         f"output must be cleared for a cancelled response, got: {payload.get('output')}"
     )
+
+
+# ══════════════════════════════════════════════════════════
+# B-11 winddown: cancel timeout forces termination
+# ══════════════════════════════════════════════════════════
+
+
+def _stubborn_handler(request: Any, context: Any, cancellation_signal: Any):
+    """Handler that ignores the cancellation signal entirely."""
+    async def _events():
+        yield {
+            "type": "response.created",
+            "payload": {
+                "status": "in_progress",
+                "output": [],
+            },
+        }
+        # Block forever, ignoring the cancellation signal
+        while True:
+            await asyncio.sleep(0.01)
+
+    return _events()
+
+
+def test_cancel__winddown_forces_termination_when_handler_ignores_signal() -> None:
+    """B-11 winddown — if the handler ignores the cancellation signal, the
+    background task still reaches a terminal state within the winddown timeout."""
+    import azure.ai.agentserver.responses.hosting._orchestrator as _orch
+    original = _orch._CANCEL_WINDDOWN_TIMEOUT
+    _orch._CANCEL_WINDDOWN_TIMEOUT = 0.5  # shorten for test speed
+    try:
+        client = _build_client(_stubborn_handler)
+        response_id = _create_background_response(client)
+
+        cancel_response = client.post(f"/responses/{response_id}/cancel")
+        assert cancel_response.status_code == 200
+
+        # The background task should terminate within the winddown timeout
+        _wait_for_status(client, response_id, "cancelled", timeout_s=5.0)
+    finally:
+        _orch._CANCEL_WINDDOWN_TIMEOUT = original
+
+
+# ══════════════════════════════════════════════════════════
+# B-12: Cancel fallback for stored terminal responses after restart
+# ══════════════════════════════════════════════════════════
+
+
+def test_cancel__provider_fallback_returns_400_for_completed_after_restart() -> None:
+    """B-12 — cancel on a completed response whose runtime record was lost
+    (simulated restart) returns 400 instead of 404."""
+    from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
+
+    provider = InMemoryResponseProvider()
+
+    # First app instance: create and complete a response
+    app1 = ResponsesAgentServerHost(provider=provider)
+    app1.create_handler(_noop_response_handler)
+    client1 = TestClient(app1)
+    response_id = _create_background_response(client1)
+    _wait_for_status(client1, response_id, "completed")
+
+    # Second app instance (simulating restart): fresh runtime state, same provider
+    app2 = ResponsesAgentServerHost(provider=provider)
+    app2.create_handler(_noop_response_handler)
+    client2 = TestClient(app2)
+
+    cancel_response = client2.post(f"/responses/{response_id}/cancel")
+    _assert_error(
+        cancel_response,
+        expected_status=400,
+        expected_type="invalid_request_error",
+        expected_message="Cannot cancel a completed response.",
+    )
+
+
+def test_cancel__provider_fallback_returns_400_for_failed_after_restart() -> None:
+    """B-12 — cancel on a failed response whose runtime record was lost returns 400."""
+    from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
+
+    provider = InMemoryResponseProvider()
+
+    # First app instance: create a response that fails
+    app1 = ResponsesAgentServerHost(provider=provider)
+    app1.create_handler(_raising_response_handler)
+    client1 = TestClient(app1)
+    response_id = _create_background_response(client1)
+    _wait_for_status(client1, response_id, "failed")
+
+    # Second app instance (simulating restart)
+    app2 = ResponsesAgentServerHost(provider=provider)
+    app2.create_handler(_noop_response_handler)
+    client2 = TestClient(app2)
+
+    cancel_response = client2.post(f"/responses/{response_id}/cancel")
+    _assert_error(
+        cancel_response,
+        expected_status=400,
+        expected_type="invalid_request_error",
+        expected_message="Cannot cancel a failed response.",
+    )

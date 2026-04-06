@@ -709,6 +709,42 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         response_id = request.path_params["response_id"]
         record = await self._runtime_state.get(response_id)
         if record is None:
+            # Provider fallback: after a restart, stored terminal responses lose
+            # their runtime records.  Check the provider so we return the correct
+            # 400 error instead of a misleading 404.
+            try:
+                response_obj = await self._provider.get_response(response_id)
+                stored_status = response_obj.as_dict().get("status")
+                if stored_status == "completed":
+                    return _invalid_request(
+                        "Cannot cancel a completed response.",
+                        {},
+                        param="response_id",
+                    )
+                if stored_status == "failed":
+                    return _invalid_request(
+                        "Cannot cancel a failed response.",
+                        {},
+                        param="response_id",
+                    )
+                if stored_status == "cancelled":
+                    return _invalid_request(
+                        "Cannot cancel an already cancelled response.",
+                        {},
+                        param="response_id",
+                    )
+                if stored_status == "incomplete":
+                    return _invalid_request(
+                        "Cannot cancel an incomplete response.",
+                        {},
+                        param="response_id",
+                    )
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.debug(
+                    "Provider fallback failed for cancel response_id=%s",
+                    response_id,
+                    exc_info=True,
+                )
             return _not_found(response_id, {})
 
         _refresh_background_status(record)

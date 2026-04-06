@@ -18,6 +18,10 @@ from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatu
 from ._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 
 
+_DEFAULT_REPLAY_EVENT_TTL_SECONDS: int = 600
+"""Minimum per-event replay TTL (10 minutes) per spec B35."""
+
+
 @dataclass
 class _StoreEntry:
     """Container for one response execution and its replay state."""
@@ -30,6 +34,7 @@ class _StoreEntry:
     history_item_ids: list[str] | None = None
     deleted: bool = False
     expires_at: datetime | None = None
+    replay_event_ttl_seconds: int = _DEFAULT_REPLAY_EVENT_TTL_SECONDS
 
 
 class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderProtocol):
@@ -431,7 +436,10 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             return True
 
     async def get_replay_events(self, response_id: str) -> list[StreamEventRecord] | None:
-        """Get defensive copies of all replay events for ``response_id``.
+        """Get defensive copies of replay events for ``response_id``, filtering out expired events.
+
+        Events older than the entry's ``replay_event_ttl_seconds`` (default 600s / 10 minutes,
+        per spec B35) are excluded from the returned list.
 
         :param response_id: The unique identifier of the response whose events to retrieve.
         :type response_id: str
@@ -442,7 +450,9 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             entry = self._entries.get(response_id)
             if entry is None:
                 return None
-            return deepcopy(entry.replay.events)
+            cutoff = datetime.now(timezone.utc) - timedelta(seconds=entry.replay_event_ttl_seconds)
+            live = [e for e in entry.replay.events if e.emitted_at >= cutoff]
+            return deepcopy(live)
 
     async def delete(self, response_id: str) -> bool:
         """Delete all state for a response ID if present.
@@ -466,20 +476,32 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
     ) -> None:
         """Persist the complete ordered list of SSE events for ``response_id``.
 
+        Each event is stamped with ``_saved_at`` (UTC) so that :meth:`get_stream_events`
+        can enforce per-event replay TTL (B35).
+
         :param response_id: The unique identifier of the response.
         :type response_id: str
         :param events: Ordered list of normalised SSE event dicts.
         :type events: list[dict[str, Any]]
         :rtype: None
         """
+        now = datetime.now(timezone.utc)
+        stamped: list[dict[str, Any]] = []
+        for ev in events:
+            copy = deepcopy(ev)
+            copy.setdefault("_saved_at", now)
+            stamped.append(copy)
         async with self._locked():
-            self._stream_events[response_id] = deepcopy(events)
+            self._stream_events[response_id] = stamped
 
     async def get_stream_events(
         self,
         response_id: str,
     ) -> list[dict[str, Any]] | None:
-        """Retrieve the persisted SSE events for ``response_id``.
+        """Retrieve the persisted SSE events for ``response_id``, excluding expired events.
+
+        Events older than the entry's ``replay_event_ttl_seconds`` (default 600s / 10 minutes,
+        per spec B35) are filtered out.
 
         :param response_id: The unique identifier of the response whose events to retrieve.
         :type response_id: str
@@ -490,7 +512,11 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             events = self._stream_events.get(response_id)
             if events is None:
                 return None
-            return deepcopy(events)
+            entry = self._entries.get(response_id)
+            ttl = entry.replay_event_ttl_seconds if entry is not None else _DEFAULT_REPLAY_EVENT_TTL_SECONDS
+            cutoff = datetime.now(timezone.utc) - timedelta(seconds=ttl)
+            live = [e for e in events if e.get("_saved_at", cutoff) >= cutoff]
+            return deepcopy(live)
 
     async def purge_expired(self, *, now: datetime | None = None) -> int:
         """Remove expired entries and return count.
