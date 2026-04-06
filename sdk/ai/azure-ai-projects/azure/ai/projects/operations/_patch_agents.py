@@ -41,7 +41,7 @@ _AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
     [
         _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
         _AgentDefinitionOptInKeys.WORKFLOW_AGENTS_V1_PREVIEW.value,
-        _FoundryFeaturesOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
+        _AgentDefinitionOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
     ]
 )
 

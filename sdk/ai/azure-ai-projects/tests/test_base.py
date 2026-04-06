@@ -312,9 +312,7 @@ class TestBase(AzureRecordedTestCase):
         return client
 
     # helper function: create async projects client using environment variables
-    def create_async_client(
-        self, *, allow_preview: bool = False, **kwargs
-    ) -> AsyncAIProjectClient:
+    def create_async_client(self, *, allow_preview: bool = False, **kwargs) -> AsyncAIProjectClient:
         # fetch environment variables
         endpoint = kwargs.pop("foundry_project_endpoint")
         credential = self.get_credential(AsyncAIProjectClient, is_async=True)

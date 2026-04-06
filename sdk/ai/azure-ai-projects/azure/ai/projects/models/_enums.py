@@ -19,6 +19,10 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """WORKFLOW_AGENTS_V1_PREVIEW."""
     CONTAINER_AGENTS_V1_PREVIEW = "ContainerAgents=V1Preview"
     """CONTAINER_AGENTS_V1_PREVIEW."""
+    AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
+    """AGENT_ENDPOINT_V1_PREVIEW."""
+    CODE_AGENTS_V1_PREVIEW = "CodeAgents=V1Preview"
+    """CODE_AGENTS_V1_PREVIEW."""
 
 
 class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -38,6 +42,37 @@ class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """MEMORY_STORES_V1_PREVIEW."""
     TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
     """TOOLBOXES_V1_PREVIEW."""
+
+
+class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentBlueprintReferenceType."""
+
+    MANAGED_AGENT_IDENTITY_BLUEPRINT = "ManagedAgentIdentityBlueprint"
+    """MANAGED_AGENT_IDENTITY_BLUEPRINT."""
+
+
+class AgentEndpointAuthorizationSchemeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentEndpointAuthorizationSchemeType."""
+
+    ENTRA = "Entra"
+    """ENTRA."""
+    BOT_SERVICE = "BotService"
+    """BOT_SERVICE."""
+    BOT_SERVICE_RBAC = "BotServiceRbac"
+    """BOT_SERVICE_RBAC."""
+
+
+class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentEndpointProtocol."""
+
+    ACTIVITY = "activity"
+    """ACTIVITY."""
+    RESPONSES = "responses"
+    """RESPONSES."""
+    A2_A = "a2a"
+    """A2_A."""
+    INVOCATIONS = "invocations"
+    """INVOCATIONS."""
 
 
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -447,6 +482,15 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Evaluation Comparison."""
 
 
+class IsolationKeySourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of IsolationKeySourceKind."""
+
+    ENTRA = "Entra"
+    """ENTRA."""
+    HEADER = "Header"
+    """HEADER."""
+
+
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Memory item kind."""
 
@@ -755,3 +799,10 @@ class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recurrence based trigger."""
     ONE_TIME = "OneTime"
     """One-time trigger."""
+
+
+class VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of VersionSelectorType."""
+
+    FIXED_RATIO = "FixedRatio"
+    """FIXED_RATIO."""
