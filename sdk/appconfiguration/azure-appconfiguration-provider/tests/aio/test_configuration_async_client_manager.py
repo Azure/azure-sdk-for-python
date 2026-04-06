@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-from unittest.mock import patch, call, AsyncMock, Mock, MagicMock
+from unittest.mock import patch, call, Mock, MagicMock
 import pytest
 from azure.appconfiguration.provider.aio._async_client_manager import (
     AsyncConfigurationClientManager,
@@ -360,7 +360,7 @@ async def test_check_page_etags_snapshot_first_then_keys():
     ]
     page_etags = [[], ["etag1"]]
 
-    async def empty_pages(*args, **kwargs):
+    async def empty_pages():
         return
         yield  # noqa: unreachable
 
@@ -388,7 +388,7 @@ async def test_check_page_etags_keys_first_then_snapshot():
     ]
     page_etags = [["etag1"], []]
 
-    async def empty_pages(*args, **kwargs):
+    async def empty_pages():
         return
         yield  # noqa: unreachable
 
