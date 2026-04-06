@@ -16,7 +16,6 @@ from devtools_testutils import (
     add_uri_string_sanitizer,
     test_proxy,
     remove_batch_sanitizers,
-    add_remove_header_sanitizer,
     set_custom_default_matcher,
 )
 
@@ -45,6 +44,7 @@ def add_sanitizers(test_proxy):
     #  - AZSDK3493: $..name
     remove_batch_sanitizers(["AZSDK3493"])
 
-    add_remove_header_sanitizer(headers="Accept")
-    add_remove_header_sanitizer(headers="Content-Type")
-    set_custom_default_matcher(ignore_query_ordering=True)
+    set_custom_default_matcher(
+        ignore_query_ordering=True,
+        excluded_headers="Accept",
+    )
