@@ -516,7 +516,7 @@ class QueueClient(  # type: ignore [misc]
                     if s.access_policy
                     else AccessPolicy()
                 )
-                for s in identifiers.items_property
+                for s in (identifiers.items_property or [])
             }
             if identifiers
             else {}

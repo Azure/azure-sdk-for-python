@@ -501,7 +501,7 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
                     if s.access_policy
                     else AccessPolicy()
                 )
-                for s in identifiers.items_property
+                for s in (identifiers.items_property or [])
             }
             if identifiers
             else {}
