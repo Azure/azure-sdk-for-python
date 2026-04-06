@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Added credential authentication support for customer sdkstats
+  ([#46143](https://github.com/Azure/azure-sdk-for-python/pull/46143))
 
 ### Other Changes
 
