@@ -8,8 +8,8 @@ class AnswerLengthEvaluator:
     def __call__(self, *args, **kwargs):
         length = evaluate_answer_length(kwargs.get("response"))
         return {
-            "score": length,
-            "label": "Short" if length > 50 else "Long",
+            "result": length,
+            "reason": "Short answer" if length <= 50 else "Long answer",
         }
 
 
