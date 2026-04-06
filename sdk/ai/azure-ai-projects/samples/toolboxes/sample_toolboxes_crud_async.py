@@ -64,7 +64,7 @@ async def main() -> None:
         ]
 
         created = await project_client.beta.toolboxes.create(
-            name=toolbox_name,
+            toolbox_name=toolbox_name,
             description="Example toolbox created by the azure-ai-projects sample.",
             metadata={"status": "created"},
             tools=tools,
@@ -72,24 +72,25 @@ async def main() -> None:
         status = created.metadata.get("status", "unknown status") if created.metadata else "unknown status"
         print(f"Toolbox: {created.name} (tools: {len(created.tools)}) (status: {status})")
 
-        fetched = await project_client.beta.toolboxes.get(toolbox_name)
+        fetched = await project_client.beta.toolboxes.get(toolbox_name=toolbox_name)
         print(f"Retrieved toolbox: {fetched.name} ({fetched.id})")
 
-        updated = await project_client.beta.toolboxes.update(
-            toolbox_name,
-            description="Updated description for the sample toolbox.",
-            metadata={"status": "updated"},
-            tools=tools,
-        )
-        status = updated.metadata.get("status", "unknown status") if updated.metadata else "unknown status"
-        print(f"Toolbox: {updated.name} (tools: {len(updated.tools)}) (status: {status})")
+        # TODO: Restore this
+        # updated = await project_client.beta.toolboxes.update(
+        #     toolbox_name=toolbox_name,
+        #     description="Updated description for the sample toolbox.",
+        #     metadata={"status": "updated"},
+        #     tools=tools,
+        # )
+        # status = updated.metadata.get("status", "unknown status") if updated.metadata else "unknown status"
+        # print(f"Toolbox: {updated.name} (tools: {len(updated.tools)}) (status: {status})")
 
         toolboxes: list[str] = []
         async for item in project_client.beta.toolboxes.list(limit=10):
             toolboxes.append(item.name)
         print(f"Found {len(toolboxes)} toolboxes")
 
-        await project_client.beta.toolboxes.delete(toolbox_name)
+        await project_client.beta.toolboxes.delete(toolbox_name=toolbox_name)
         print("Toolbox deleted")
 
 

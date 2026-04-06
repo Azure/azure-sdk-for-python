@@ -12,6 +12,7 @@
     "closefd",
     "cogsvc",
     "CSDL",
+    "dedup",
     "evals",
     "FineTuning",
     "fspath",

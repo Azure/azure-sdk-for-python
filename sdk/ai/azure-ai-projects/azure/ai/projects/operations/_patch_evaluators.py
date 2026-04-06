@@ -154,7 +154,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         if connection_name:
             request_body["connectionName"] = connection_name
 
-        pending_upload_response = self.pending_upload(
+        pending_upload_response = self.start_pending_upload(
             name=name,
             version=version,
             pending_upload_request=request_body,
