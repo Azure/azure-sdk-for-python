@@ -154,7 +154,7 @@ class FileSystemClient(StorageAccountHostsMixin):
 
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
-            url, base_url=url, file_system=self.file_system_name, pipeline=self._pipeline
+            url, base_url=url, file_system=self.file_system_name, version=self._api_version, pipeline=self._pipeline
         )
         return client
 
