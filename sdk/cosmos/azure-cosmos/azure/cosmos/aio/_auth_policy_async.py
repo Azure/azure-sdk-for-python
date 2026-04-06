@@ -13,7 +13,7 @@ from azure.core.rest import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import HttpResponseError
 
-from ..http_constants import HttpHeaders
+from ..http_constants import HttpHeaders, SubStatusCodes
 from .._constants import _Constants as Constants
 
 HTTPRequestType = TypeVar("HTTPRequestType", HttpRequest, LegacyHttpRequest)
@@ -67,6 +67,33 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
                     tried_fallback = True
                     continue
                 raise
+
+    async def send(self, request: PipelineRequest[HTTPRequestType]):  # type: ignore[override]
+        """Authorize request with a bearer token and send it to the next policy.
+
+        If Cosmos DB returns HTTP 403 with sub-status AAD_REQUEST_NOT_AUTHORIZED (5300), the cached
+        token is cleared and a single retry is performed with a fresh token. This handles the case
+        where an AAD token has expired and Cosmos DB returns 403 instead of 401.
+
+        :param request: The pipeline request object
+        :type request: ~azure.core.pipeline.PipelineRequest
+        :return: The pipeline response object
+        :rtype: ~azure.core.pipeline.PipelineResponse
+        """
+        response = await super().send(request)
+        if (
+            response.http_response.status_code == 403
+            and int(response.http_response.headers.get(HttpHeaders.SubStatus, 0))
+                == SubStatusCodes.AAD_REQUEST_NOT_AUTHORIZED
+        ):
+            self._token = None  # cached token is invalid
+            await self.on_request(request)
+            try:
+                response = await self.next.send(request)
+            except Exception:
+                self.on_exception(request)
+                raise
+        return response
 
     async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
         """Acquire a token from the credential and authorize the request with it.
