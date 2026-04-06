@@ -7,6 +7,12 @@ import datetime
 import os
 
 from azure.keyvault.secrets import SecretClient, ContentType
+from azure.keyvault.certificates import (
+    CertificateClient,
+    CertificatePolicy,
+    CertificateContentType,
+    WellKnownIssuerNames,
+)
 from azure.identity import DefaultAzureCredential
 
 # ----------------------------------------------------------------------------------------------------------
@@ -30,6 +36,10 @@ from azure.identity import DefaultAzureCredential
 #
 # 4. Delete a secret (begin_delete_secret)
 #
+# 5. Get a certificate-backed secret with out_content_type (get_secret with out_content_type)
+#
+# 6. Check previous_version on a secret with multiple versions
+#
 # ----------------------------------------------------------------------------------------------------------
 
 # Instantiate a secret client that will be used to call the service.
@@ -43,7 +53,7 @@ client = SecretClient(vault_url=VAULT_URL, credential=credential)
 # Let's create a secret holding bank account credentials valid for 1 year.
 # if the secret already exists in the Key Vault, then a new version of the secret is created.
 print("\n.. Create Secret")
-expires = datetime.datetime.utcnow() + datetime.timedelta(days=365)
+expires = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(days=365)
 secret = client.set_secret("helloWorldSecretName", "helloWorldSecretValue", expires_on=expires)
 assert secret.name
 print(f"Secret with name '{secret.name}' created with value '{secret.value}'")
@@ -54,10 +64,6 @@ print("\n.. Get a Secret by name")
 bank_secret = client.get_secret(secret.name)
 assert bank_secret.properties.expires_on
 print(f"Secret with name '{bank_secret.name}' was found with value '{bank_secret.value}'.")
-
-# For certificate-backed secrets, we can retrieve the secret in a different encoding format using secret_encoding.
-# For example, to get a PFX-backed certificate secret in PEM format:
-# pem_secret = client.get_secret(secret.name, secret_encoding=ContentType.PEM)
 
 # After one year, the bank account is still active, we need to update the expiry time of the secret.
 # The update method can be used to update the expiry attribute of the secret. It cannot be used to update
@@ -74,12 +80,45 @@ print(f"Secret with name '{secret.name}' was updated to expire on '{updated_secr
 new_secret = client.set_secret(secret.name, "newSecretValue")
 print(f"Secret with name '{new_secret.name}' created with value '{new_secret.value}'")
 
-# For secrets created after June 1, 2025, previous_version tracks version history.
-# This is useful for certificate-backed secrets.
-if new_secret.properties.previous_version:
-    print(f"Secret's previous version is '{new_secret.properties.previous_version}'")
+# When a new version of a secret is created, the service may return `previous_version` to track
+# version history. This is especially useful for certificate-backed secrets.
+print(f"Secret's previous version: {new_secret.properties.previous_version}")
 
 # The bank account was closed, need to delete its credentials from the Key Vault.
 print("\n.. Deleting Secret...")
 client.begin_delete_secret(secret.name)
 print(f"Secret with name '{secret.name}' was deleted.")
+
+# --------------------------------------------------------------------------------------------------------
+# Demonstrate out_content_type: retrieve a certificate-backed secret in a different encoding format.
+# When a certificate is stored in PFX (PKCS#12) format, you can retrieve its secret value as PEM.
+# --------------------------------------------------------------------------------------------------------
+print("\n.. Create a PFX certificate to demonstrate out_content_type")
+cert_client = CertificateClient(vault_url=VAULT_URL, credential=credential)
+cert_name = "outContentTypeSampleCert"
+cert_policy = CertificatePolicy(
+    issuer_name=WellKnownIssuerNames.self,
+    subject="CN=outContentTypeDemo",
+    content_type=CertificateContentType.pkcs12,
+)
+cert = cert_client.begin_create_certificate(certificate_name=cert_name, policy=cert_policy).result()
+print(f"Certificate '{cert.name}' created (PFX format)")
+
+# Get the certificate-backed secret in its default format (PFX/base64)
+# [START get_secret_with_out_content_type]
+pfx_secret = client.get_secret(cert_name)
+print(f"Default secret content type: {pfx_secret.properties.content_type}")
+
+# Now retrieve the same secret as PEM using out_content_type
+pem_secret = client.get_secret(cert_name, out_content_type=ContentType.PEM)
+print(f"PEM secret content type: {pem_secret.properties.content_type}")
+assert pem_secret.value and "-----BEGIN" in pem_secret.value
+print("Successfully retrieved certificate secret in PEM format")
+# [END get_secret_with_out_content_type]
+
+# Clean up the certificate
+print("\n.. Deleting certificate...")
+cert_client.begin_delete_certificate(cert_name).result()
+print(f"Certificate '{cert_name}' was deleted.")
+
+print("\nrun_sample done")
