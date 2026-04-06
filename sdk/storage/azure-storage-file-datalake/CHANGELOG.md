@@ -5,7 +5,7 @@
 ### Features Added
 
 ### Other Changes
-- Content-Type for append_data has changed from application/json to octect-stream
+- Content-Type for append_data has changed from application/json to octet-stream
 
 ## 12.25.0b1 (2026-04-01)
 
