@@ -329,7 +329,7 @@ def install_packages(packages: List[str], req_file: str, python_executable: str,
     commands.append("install")
 
     if commands[0] == "uv":
-        commands.extend(["--python", python_exe])
+        commands.extend(["--python", python_exe, "-vv"])
 
     if packages:
         commands.extend(packages)
