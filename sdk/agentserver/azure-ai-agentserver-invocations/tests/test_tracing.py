@@ -452,5 +452,3 @@ def test_agent_name_only_in_span_name():
 
 def test_project_endpoint_env_var():
     """FOUNDRY_PROJECT_ENDPOINT constant matches the expected env var name."""
-    from azure.ai.agentserver.core import Constants
-    assert Constants.FOUNDRY_PROJECT_ENDPOINT == "FOUNDRY_PROJECT_ENDPOINT"

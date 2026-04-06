@@ -112,21 +112,13 @@ class AgentServerHost(Starlette):
             setattr(_console, _CONSOLE_HANDLER_ATTR, True)
             logger.addHandler(_console)
 
-        # Agent identity (used by request_span for span attributes)
-        self._agent_name = _config.resolve_agent_name()
-        self._agent_version = _config.resolve_agent_version()
-        self._project_id = _config.resolve_project_id()
-        if self._agent_name and self._agent_version:
-            self._agent_id = f"{self._agent_name}:{self._agent_version}"
-        elif self._agent_name:
-            self._agent_id = self._agent_name
-        else:
-            self._agent_id = ""
+        # Resolved configuration (accessible as self.config)
+        self.config = _config.AgentConfig.from_env()
 
         # Tracing — overridable setup function
-        _conn_str = _config.resolve_appinsights_connection_string(applicationinsights_connection_string)
+        _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
         if configure_tracing is not None:
-            _tracing_on = bool(_conn_str or _config.resolve_otlp_endpoint())
+            _tracing_on = bool(_conn_str or self.config.otlp_endpoint)
             if _tracing_on:
                 try:
                     configure_tracing(connection_string=_conn_str)
@@ -215,10 +207,10 @@ class AgentServerHost(Starlette):
             headers,
             request_id,
             operation,
-            agent_id=self._agent_id,
-            agent_name=self._agent_name,
-            agent_version=self._agent_version,
-            project_id=self._project_id,
+            agent_id=self.config.agent_id,
+            agent_name=self.config.agent_name,
+            agent_version=self.config.agent_version,
+            project_id=self.config.project_id,
             operation_name=operation_name,
             session_id=session_id,
             end_on_exit=end_on_exit,

@@ -9,7 +9,6 @@ as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 import contextvars
 import inspect
 import logging
-import os
 import re
 import threading
 import uuid
@@ -23,7 +22,6 @@ from starlette.routing import Route
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
-    Constants,
     create_error_response,
     end_span,
     record_error,
@@ -318,7 +316,7 @@ class InvocationAgentServerHost(AgentServerHost):
         # Session ID: query param overrides env var / generated UUID
         raw_session_id = (
             request.query_params.get("agent_session_id")
-            or os.environ.get(Constants.FOUNDRY_AGENT_SESSION_ID)
+            or self.config.session_id
             or ""
         )
         session_id = _sanitize_id(raw_session_id, str(uuid.uuid4()))
