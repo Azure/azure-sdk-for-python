@@ -31,6 +31,7 @@ from ._evaluators._xpia import IndirectAttackEvaluator
 from ._evaluators._code_vulnerability import CodeVulnerabilityEvaluator
 from ._evaluators._ungrounded_attributes import UngroundedAttributesEvaluator
 from ._evaluators._tool_call_accuracy import ToolCallAccuracyEvaluator
+from ._evaluators._quality_grader import QualityGraderEvaluator
 from ._evaluators._document_retrieval import DocumentRetrievalEvaluator
 from ._evaluators._tool_output_utilization import _ToolOutputUtilizationEvaluator
 from ._evaluators._tool_call_success import _ToolCallSuccessEvaluator
@@ -141,6 +142,7 @@ __all__ = [
     "AzureOpenAITextSimilarityGrader",
     "AzureOpenAIScoreModelGrader",
     "AzureOpenAIPythonGrader",
+    "QualityGraderEvaluator",
 ]
 
 __all__.extend([p for p in _patch_all if p not in __all__])
