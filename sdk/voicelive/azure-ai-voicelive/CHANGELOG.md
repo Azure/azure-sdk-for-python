@@ -46,10 +46,6 @@
     flushed on session close.
   - Nested item extraction is guarded by event type to prevent forward-compatibility issues.
 
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 
 - Updated default API version to `2026-01-01-preview`.
