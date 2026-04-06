@@ -274,11 +274,11 @@ stages:
 
                 - download: current
 
-                # py2docfx requires Python >= 3.11
+                # py2docfx requires Python >= 3.12.x, match docs pipeline version specification
                 - task: UsePythonVersion@0
-                  displayName: 'Use Python 3.11'
+                  displayName: 'Use Python 3.12.x'
                   inputs:
-                    versionSpec: '3.11'
+                    versionSpec: '3.12.x'
 
                 - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
@@ -293,7 +293,6 @@ stages:
                     SparseCheckoutPaths:
                       - docs-ref-services/
                       - metadata/
-                    PackageSourceOverride: ${{parameters.PackageSourceOverride}}
 
           - job: UpdatePackageVersion
             displayName: "Update Package Version"
