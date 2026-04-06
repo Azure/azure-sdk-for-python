@@ -152,8 +152,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_synthetic_data_agent_evaluation.py",  # Synthetic data gen is long-running preview feature
                 "sample_synthetic_data_model_evaluation.py",  # Synthetic data gen is long-running preview feature
                 "sample_eval_catalog_prompt_based_evaluators.py",  # For some reason fails with 500 (Internal server error)
-                "sample_eval_upload_custom_evaluator.py",  # TODO: Need to add recordings
-                "sample_eval_upload_friendly_evaluator.py",  # TODO: Need to add recordings
+                "sample_custom_eval_upload_simple.py",  # TODO: Need to add recordings
+                "sample_custom_eval_upload_advanced.py",  # TODO: Need to add recordings
             ],
         ),
     )

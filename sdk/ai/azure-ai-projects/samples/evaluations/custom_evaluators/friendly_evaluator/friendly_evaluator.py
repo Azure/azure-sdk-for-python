@@ -1,66 +1,42 @@
 """Custom evaluator that uses an LLM to assess the friendliness of a response."""
 
-from openai import AzureOpenAI
-from common_util.util import build_evaluation_messages, parse_evaluation_result
+from openai import OpenAI
+from common_util.util import build_evaluation_instructions, build_evaluation_input, parse_evaluation_result
 
 
 class FriendlyEvaluator:
     """Evaluates how friendly and approachable a response is using an LLM judge.
 
-    This evaluator sends the query and response to an LLM, which returns a
-    friendliness score (1-5), a pass/fail label, a reason, and a detailed explanation.
+    This evaluator sends the query and response to an LLM via the OpenAI Responses
+    API, which returns a friendliness score (1-5), a pass/fail label, a reason,
+    and a detailed explanation.
 
-    :param model_config: A dict containing Azure OpenAI connection info. Expected keys:
-        - azure_endpoint: The Azure OpenAI endpoint URL.
-        - azure_deployment: The deployment/model name.
-        - api_version: The API version (default: "2024-06-01").
-        - api_key: (Optional) The API key. If not provided, DefaultAzureCredential is used.
+    :param api_key: The OpenAI API key.
+    :param model_name: The model_name to use for evaluation (e.g. "gpt-4o").
     :param threshold: The minimum score (1-5) to be considered "Pass" (default: 3).
     """
 
-    def __init__(self, *, model_config: dict, threshold: int = 3, **kwargs):
-        self.model_config = model_config
+    def __init__(self, *, api_key: str, model_name: str, threshold: int = 3, **kwargs):
+        self.client = OpenAI(api_key=api_key)
+        self.model_name = model_name
         self.threshold = threshold
-        api_key = model_config.get("api_key")
-
-        if api_key:
-            self.client = AzureOpenAI(
-                azure_endpoint=model_config["azure_endpoint"],
-                api_key=api_key,
-                api_version=model_config.get("api_version", "2024-06-01"),
-            )
-        else:
-            from azure.identity import DefaultAzureCredential, get_bearer_token_provider
-
-            token_provider = get_bearer_token_provider(
-                DefaultAzureCredential(),
-                "https://cognitiveservices.azure.com/.default",
-            )
-            self.client = AzureOpenAI(
-                azure_endpoint=model_config["azure_endpoint"],
-                azure_ad_token_provider=token_provider,
-                api_version=model_config.get("api_version", "2024-06-01"),
-            )
-
-        self.deployment = model_config["azure_deployment"]
 
     def __call__(self, *, query: str, response: str, **kwargs) -> dict:
         """Evaluate the friendliness of a response.
 
         :param query: The original user query.
         :param response: The response to evaluate.
-        :return: A dict with score, label, reason, and explanation.
+        :return: A dict with score, label, reason, threshold, and properties.
         """
-        messages = build_evaluation_messages(query, response)
-
-        completion = self.client.chat.completions.create(
-            model=self.deployment,
-            messages=messages,
+        result = self.client.responses.create(
+            model=self.model_name,
+            instructions=build_evaluation_instructions(),
+            input=build_evaluation_input(query, response),
             temperature=0.0,
-            max_tokens=500,
+            max_output_tokens=500,
         )
 
-        raw_result = completion.choices[0].message.content
+        raw_result = result.output_text
         if raw_result is None:
-            raise ValueError("No content in completion response")
+            raise ValueError("No content in response")
         return parse_evaluation_result(raw_result, self.threshold)

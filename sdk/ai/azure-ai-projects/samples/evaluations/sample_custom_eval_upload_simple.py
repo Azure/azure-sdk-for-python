@@ -13,11 +13,11 @@ DESCRIPTION:
       3. Run the evaluation with inline data and poll for results.
 
 USAGE:
-    python sample_eval_upload_custom_evaluator.py
+    python sample_custom_eval_upload_simple.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" azure-storage-blob python-dotenv azure-identity openai
+    pip install "azure-ai-projects>=2.0.0" azure-storage-blob python-dotenv azure-identity openai
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
@@ -81,8 +81,8 @@ with (
             entry_point="answer_length_evaluator:AnswerLengthEvaluator",
             init_parameters={
                 "type": "object",
-                "properties": {"config": {"type": "string"}, "threshold": {"type": "number"}},
-                "required": ["config", "threshold"],
+                "properties": {},
+                "required": [],
             },
             data_schema={
                 "type": "object",
@@ -96,8 +96,6 @@ with (
                 "result": EvaluatorMetric(
                     type=EvaluatorMetricType.ORDINAL,
                     desirable_direction=EvaluatorMetricDirection.INCREASE,
-                    min_value=1,
-                    max_value=5,
                 )
             },
         ),
@@ -137,10 +135,7 @@ with (
             "type": "azure_ai_evaluator",
             "name": evaluator_name,
             "evaluator_name": evaluator_name,
-            "initialization_parameters": {
-                "config": "example config value",
-                "threshold": 3,
-            },
+            "initialization_parameters": {},
         }
     ]
 
@@ -212,13 +207,13 @@ with (
         print("Waiting for evaluation run to complete...")
 
     # ---------------------------------------------------------------
-    # 5. Cleanup (uncomment to delete)
+    # 5. Cleanup
     # ---------------------------------------------------------------
-    # print("\nCleaning up...")
-    # project_client.beta.evaluators.delete_version(
-    #     name=code_evaluator.name,
-    #     version=code_evaluator.version,
-    # )
-    # client.evals.delete(eval_id=eval_object.id)
-    # print("Cleanup done.")
+    print("\nCleaning up...")
+    project_client.beta.evaluators.delete_version(
+        name=code_evaluator.name,
+        version=code_evaluator.version,
+    )
+    client.evals.delete(eval_id=eval_object.id)
+    print("Cleanup done.")
     print("\nDone - upload, eval creation, and eval run verified successfully.")

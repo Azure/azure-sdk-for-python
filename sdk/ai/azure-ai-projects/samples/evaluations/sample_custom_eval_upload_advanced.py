@@ -7,27 +7,31 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to:
-      1. Upload a custom LLM-based evaluator (FriendlyEvaluator) with nested
-         folder structure (common_util/) using `evaluators.upload()`.
-      2. Create an evaluation (eval) that references the uploaded evaluator.
-      3. Run the evaluation with inline data and poll for results.
+      1. Run the FriendlyEvaluator standalone to verify it works locally.
+      2. Upload the evaluator code (with nested folder structure) using
+         ``evaluators.upload()``.
+      3. Create an evaluation (eval) that references the uploaded evaluator.
+      4. Run the evaluation with inline data and poll for results.
 
-    The FriendlyEvaluator calls Azure OpenAI to judge the friendliness of a
-    response and returns score, label, reason, and explanation.
+    The FriendlyEvaluator calls OpenAI Responses API to judge the friendliness
+    of a response and returns score, label, reason, and explanation.
 
 USAGE:
-    python sample_eval_upload_friendly_evaluator.py
+    python sample_custom_eval_upload_advanced.py
 
     Before running the sample:
 
-    pip install "azure-ai-projects>=2.0.0b4" azure-storage-blob python-dotenv azure-identity openai
+    pip install "azure-ai-projects>=2.0.0" azure-storage-blob python-dotenv azure-identity openai
 
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint.
-    2) FOUNDRY_MODEL_NAME - Optional. The name of the model deployment to use for evaluation.
+    2) OPENAI_API_KEY           - Required. The OpenAI API key.
+    3) OPENAI_MODEL             - Optional. The model to use (default: gpt-4o).
 """
 
 import os
+import sys
+import json
 import time
 import random
 import string
@@ -55,13 +59,50 @@ from azure.ai.projects.models import (
 
 load_dotenv()
 
-endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME")
-azure_openai_endpoint = os.environ["AZURE_OPENAI_ENDPOINT"]
-azure_openai_api_key = os.environ["AZURE_OPENAI_API_KEY"]
+endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "")
+openai_api_key = os.environ.get("OPENAI_API_KEY", "")
+openai_model = os.environ.get("OPENAI_MODEL", "")
 
-# The folder containing the FriendlyEvaluator code, including common_util/ subfolder
-local_upload_folder = str(Path(__file__).parent / "custom_evaluators" / "friendly_evaluator")
+# Add the evaluator folder to sys.path so we can import it for local testing
+evaluator_folder = str(Path(__file__).parent / "custom_evaluators" / "friendly_evaluator")
+sys.path.insert(0, evaluator_folder)
+
+from friendly_evaluator import FriendlyEvaluator  # noqa: E402
+
+# ---------------------------------------------------------------
+# 1. Run FriendlyEvaluator standalone to verify it works locally
+# ---------------------------------------------------------------
+print(f"=== Step 1: Standalone FriendlyEvaluator test (model={openai_model}) ===\n")
+
+evaluator = FriendlyEvaluator(api_key=openai_api_key, model_name=openai_model, threshold=3)
+
+test_cases = [
+    {
+        "query": "How do I reset my password?",
+        "response": "Go to settings. Click reset. Done.",
+    },
+    {
+        "query": "How do I reset my password?",
+        "response": (
+            "Great question! I'd be happy to help you reset your password. "
+            "Just head over to Settings > Security > Reset Password, and follow "
+            "the prompts. If you run into any trouble, feel free to ask — I'm here to help! 😊"
+        ),
+    },
+    {
+        "query": "Can you help me with my order?",
+        "response": "Read the FAQ.",
+    },
+]
+
+for i, tc in enumerate(test_cases, 1):
+    print(f"--- Test Case {i} ---")
+    print(f"Query:    {tc['query']}")
+    print(f"Response: {tc['response'][:80]}...")
+    result = evaluator(query=tc["query"], response=tc["response"])
+    print(f"Result:   {json.dumps(result, indent=2)}\n")
+
+print("Standalone test complete.\n")
 
 with (
     DefaultAzureCredential() as credential,
@@ -69,7 +110,7 @@ with (
     project_client.get_openai_client() as client,
 ):
     # ---------------------------------------------------------------
-    # 1. Upload evaluator code and create evaluator version
+    # 2. Upload evaluator code and create evaluator version
     #    The folder structure uploaded is:
     #      friendly_evaluator/
     #        friendly_evaluator.py          <- entry point
@@ -79,6 +120,8 @@ with (
     # ---------------------------------------------------------------
     suffix = "".join(random.choices(string.ascii_lowercase, k=5))
     evaluator_name = f"friendly_evaluator_{suffix}"
+
+    print(f"=== Step 2: Upload evaluator as '{evaluator_name}' ===\n")
 
     evaluator_version = EvaluatorVersion(
         evaluator_type=EvaluatorType.CUSTOM,
@@ -90,19 +133,17 @@ with (
             init_parameters={
                 "type": "object",
                 "properties": {
-                    "model_config": {
-                        "type": "object",
-                        "description": "Azure OpenAI configuration for the LLM judge",
-                        "properties": {
-                            "azure_endpoint": {"type": "string"},
-                            "api_version": {"type": "string"},
-                            "api_key": {"type": "string"},
-                        },
-                        "required": ["azure_endpoint", "api_key"],
+                    "api_key": {
+                        "type": "string",
+                        "description": "OpenAI API key for the LLM judge",
+                    },
+                    "model_name": {
+                        "type": "string",
+                        "description": "Model name to use for evaluation (e.g. gpt-4o)",
                     },
                     "threshold": {"type": "number"},
                 },
-                "required": ["model_config", "threshold"],
+                "required": ["api_key", "model_name", "threshold"],
             },
             data_schema={
                 "type": "object",
@@ -123,33 +164,32 @@ with (
         ),
     )
 
-    print("Uploading FriendlyEvaluator (with nested common_util folder)...")
     friendly_evaluator = project_client.beta.evaluators.upload(
         name=evaluator_name,
         evaluator_version=evaluator_version,
-        folder=local_upload_folder,
+        folder=evaluator_folder,
     )
 
-    print(f"\nEvaluator created: name={friendly_evaluator.name}, version={friendly_evaluator.version}")
+    print(f"Evaluator created: name={friendly_evaluator.name}, version={friendly_evaluator.version}")
     print(f"Evaluator ID: {friendly_evaluator.id}")
     pprint(friendly_evaluator)
 
     # ---------------------------------------------------------------
-    # 2. Create an evaluation referencing the uploaded evaluator
+    # 3. Create an evaluation referencing the uploaded evaluator
     # ---------------------------------------------------------------
+    print(f"\n=== Step 3: Create evaluation ===\n")
+
     data_source_config = DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string"},
-                    "response": {"type": "string"},
-                },
-                "required": ["query", "response"],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "query": {"type": "string"},
+                "response": {"type": "string"},
             },
-            "include_sample_schema": True,
-        }
+            "required": ["query", "response"],
+        },
+        include_sample_schema=True,
     )
 
     testing_criteria = [
@@ -158,13 +198,13 @@ with (
             "name": evaluator_name,
             "evaluator_name": evaluator_name,
             "initialization_parameters": {
-                "deployment_name": f"{model_deployment_name}",  # provide model_config or, deployment name passed is used to construct the model_config for the evaluator.
+                "api_key": openai_api_key,
+                "model_name": openai_model,
                 "threshold": 3,
             },
         }
     ]
 
-    print("\nCreating evaluation...")
     eval_object = client.evals.create(
         name=f"Friendliness Evaluation - {suffix}",
         data_source_config=data_source_config,
@@ -173,9 +213,10 @@ with (
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
     # ---------------------------------------------------------------
-    # 3. Run the evaluation with inline data
+    # 4. Run the evaluation with inline data
     # ---------------------------------------------------------------
-    print("\nCreating evaluation run with inline data...")
+    print(f"\n=== Step 4: Create evaluation run ===\n")
+
     eval_run_object = client.evals.runs.create(
         eval_id=eval_object.id,
         name=f"Friendliness Eval Run - {suffix}",
@@ -218,12 +259,14 @@ with (
     pprint(eval_run_object)
 
     # ---------------------------------------------------------------
-    # 4. Poll for evaluation run completion
+    # 5. Poll for evaluation run completion
     # ---------------------------------------------------------------
+    print("\n=== Step 5: Polling for results ===\n")
+
     while True:
         run = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
         if run.status in ("completed", "failed"):
-            print(f"\nEvaluation run finished with status: {run.status}")
+            print(f"Evaluation run finished with status: {run.status}")
             output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
             pprint(output_items)
             print(f"\nEvaluation run Report URL: {run.report_url}")
@@ -232,13 +275,13 @@ with (
         print("Waiting for evaluation run to complete...")
 
     # ---------------------------------------------------------------
-    # 5. Cleanup (uncomment to delete)
+    # 6. Cleanup
     # ---------------------------------------------------------------
-    # print("\nCleaning up...")
-    # project_client.beta.evaluators.delete_version(
-    #     name=friendly_evaluator.name,
-    #     version=friendly_evaluator.version,
-    # )
-    # client.evals.delete(eval_id=eval_object.id)
-    # print("Cleanup done.")
-    print("\nDone - FriendlyEvaluator upload, eval creation, and eval run verified successfully.")
+    print("\nCleaning up...")
+    project_client.beta.evaluators.delete_version(
+        name=friendly_evaluator.name,
+        version=friendly_evaluator.version,
+    )
+    client.evals.delete(eval_id=eval_object.id)
+    print("Cleanup done.")
+    print("\nDone - FriendlyEvaluator standalone test, upload, eval creation, and eval run verified successfully.")
