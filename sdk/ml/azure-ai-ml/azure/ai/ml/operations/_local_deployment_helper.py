@@ -207,7 +207,7 @@ class _LocalDeploymentHelper(object):
             model_name,
             model_version,
             model_directory_path,
-        ) = get_model_artifacts(  # type: ignore[misc]
+        ) = get_model_artifacts(  # type: ignore[misc, str-unpack]
             endpoint_name=endpoint_name,
             deployment=deployment,
             model_operations=self._model_operations,

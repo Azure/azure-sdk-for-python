@@ -9,7 +9,7 @@ import os
 import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import TYPE_CHECKING, Dict, Optional, Tuple, TypeVar, Union
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, TypeVar, Union, cast
 
 from typing_extensions import Literal
 
@@ -300,7 +300,7 @@ def download_artifact(
     datastore_name = _get_datastore_name(datastore_name=datastore_name)
     if datastore_info is None:
         datastore_info = get_datastore_info(datastore_operation, datastore_name)
-    storage_client = get_storage_client(**datastore_info)
+    storage_client = get_storage_client(**cast(Dict[str, Any], datastore_info))
     storage_client.download(starts_with=starts_with, destination=destination)
     return destination
 
@@ -369,7 +369,7 @@ def aml_datastore_path_exists(
     """
     parsed_uri = AzureMLDatastorePathUri(uri)
     datastore_info = datastore_info or get_datastore_info(datastore_operation, parsed_uri.datastore)
-    return get_storage_client(**datastore_info).exists(parsed_uri.path)
+    return get_storage_client(**cast(Dict[str, Any], datastore_info)).exists(parsed_uri.path)
 
 
 def _upload_to_datastore(
@@ -509,7 +509,7 @@ def _check_and_upload_path(
         path = (
             Path(artifact.path)
             if hasattr(artifact, "path") and artifact.path is not None
-            else Path(artifact.local_path)
+            else Path(getattr(artifact, "local_path"))
         )
         if not path.is_absolute():
             path = Path(artifact.base_path, path).resolve()
