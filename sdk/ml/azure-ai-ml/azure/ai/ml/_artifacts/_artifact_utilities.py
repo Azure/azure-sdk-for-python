@@ -9,9 +9,7 @@ import os
 import uuid
 from datetime import datetime, timedelta
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, TypeVar, Union, cast
-
-from typing_extensions import Literal
+from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple, TypeVar, Union
 
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
@@ -82,7 +80,7 @@ def get_datastore_info(
     *,
     credential=None,
     **kwargs,
-) -> Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]:
+) -> Dict[str, Any]:
     """Get datastore account, type, and auth information.
 
     :param operations: DatastoreOperations object
@@ -94,9 +92,9 @@ def get_datastore_info(
         if necessary.
     :paramtype credential: str
     :return: The dictionary with datastore info
-    :rtype: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]
+    :rtype: Dict[str, Any]
     """
-    datastore_info: Dict = {}
+    datastore_info: Dict[str, Any] = {}
     datastore = operations.get(name) if name else operations.get_default()
 
     storage_endpoint = _get_storage_endpoint_from_metadata()
@@ -135,7 +133,7 @@ def get_datastore_info(
 
 
 def list_logs_in_datastore(
-    ds_info: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str],
+    ds_info: Dict[str, Any],
     prefix: str,
     legacy_log_folder_name: str,
 ) -> Dict[str, str]:
@@ -143,7 +141,7 @@ def list_logs_in_datastore(
     RunDetails.logFiles.
 
     :param ds_info: The datastore info
-    :type ds_info: Dict[Literal["storage_type", "storage_account", "account_url", "container_name", "credential"], str]
+    :type ds_info: Dict[str, Any]
     :param prefix: A prefix used to filter logs by path
     :type prefix: str
     :param legacy_log_folder_name: the name of the folder in the datastore that contains the logs
@@ -300,7 +298,7 @@ def download_artifact(
     datastore_name = _get_datastore_name(datastore_name=datastore_name)
     if datastore_info is None:
         datastore_info = get_datastore_info(datastore_operation, datastore_name)
-    storage_client = get_storage_client(**cast(Dict[str, Any], datastore_info))
+    storage_client = get_storage_client(**datastore_info)
     storage_client.download(starts_with=starts_with, destination=destination)
     return destination
 
@@ -369,7 +367,7 @@ def aml_datastore_path_exists(
     """
     parsed_uri = AzureMLDatastorePathUri(uri)
     datastore_info = datastore_info or get_datastore_info(datastore_operation, parsed_uri.datastore)
-    return get_storage_client(**cast(Dict[str, Any], datastore_info)).exists(parsed_uri.path)
+    return get_storage_client(**datastore_info).exists(parsed_uri.path)
 
 
 def _upload_to_datastore(
