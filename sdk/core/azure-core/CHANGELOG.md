@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added support for per-operation `http_logging_level` overrides in `HttpLoggingPolicy`. #44115
+
 ### Breaking Changes
 
 ### Bugs Fixed
