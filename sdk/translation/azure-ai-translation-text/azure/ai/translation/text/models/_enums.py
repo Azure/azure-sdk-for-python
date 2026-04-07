@@ -23,7 +23,7 @@ class ProfanityAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Translator profanity actions."""
 
     NO_ACTION = "NoAction"
-    """No Action is taken on profanity"""
+    """No Action is taken on profanity."""
     MARKED = "Marked"
     """Profanity is marked."""
     DELETED = "Deleted"

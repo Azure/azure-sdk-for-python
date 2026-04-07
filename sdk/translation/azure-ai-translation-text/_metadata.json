@@ -1,3 +1,10 @@
 {
-  "apiVersion": "2025-10-01-preview"
+  "apiVersion": "2026-06-06",
+  "apiVersions": {
+    "TextTranslation": "2026-06-06"
+  },
+  "commit": "745dcab5c32d0b8c5d88d8424c3acd5630be8e51",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/translation/data-plane/TextTranslation",
+  "emitterVersion": "0.61.2"
 }
