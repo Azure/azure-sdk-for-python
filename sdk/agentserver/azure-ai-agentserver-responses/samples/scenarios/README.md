@@ -31,3 +31,8 @@ python sample_01_getting_started.py
 | 04 | [sample_04_function_calling.py](sample_04_function_calling.py) | Two-turn function calling: emit `function_call`, consume `function_call_output`. |
 | 05 | [sample_05_conversation_history.py](sample_05_conversation_history.py) | Multi-turn with `context.get_history()` and `ResponsesServerOptions`. |
 | 06 | [sample_06_multi_output.py](sample_06_multi_output.py) | Reasoning item + text message in a single response. |
+| 07 | [sample_07_customization.py](sample_07_customization.py) | Custom `ResponsesServerOptions`, default model, debug logging. |
+| 08 | [sample_08_mixin_composition.py](sample_08_mixin_composition.py) | Multi-protocol server via cooperative mixin inheritance. |
+| 09 | [sample_09_self_hosting.py](sample_09_self_hosting.py) | Mount responses into an existing Starlette app under `/api`. |
+| 10 | [sample_10_streaming_upstream.py](sample_10_streaming_upstream.py) | Forward to upstream streaming LLM via `aoutput_item_message`. |
+| 11 | [sample_11_non_streaming_upstream.py](sample_11_non_streaming_upstream.py) | Forward to upstream non-streaming LLM, emit output items. |

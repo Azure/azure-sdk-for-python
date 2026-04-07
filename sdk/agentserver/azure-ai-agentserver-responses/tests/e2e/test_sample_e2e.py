@@ -1,11 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""End-to-end tests matching .NET SampleEndToEndTests (Samples 1-6)."""
+"""End-to-end tests matching .NET SampleEndToEndTests (Samples 1-11)."""
 
 from __future__ import annotations
 
 import json
 from typing import Any
+
+import pytest
 
 from starlette.testclient import TestClient
 
@@ -489,3 +491,310 @@ def test_sample6_non_streaming_both_output_items() -> None:
     assert output[1]["type"] == "message"
     text_parts = [p for p in output[1]["content"] if p.get("type") == "output_text"]
     assert "deep thought" in text_parts[0]["text"]
+
+
+# ---------------------------------------------------------------------------
+# Sample 7: Customization — Default model via options
+# ---------------------------------------------------------------------------
+
+
+def _sample7_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+    """Handler that reports which model is used."""
+
+    async def _events():
+        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+        yield stream.emit_created()
+
+        msg = stream.add_output_item_message()
+        yield msg.emit_added()
+
+        text_content = msg.add_text_content()
+        yield text_content.emit_added()
+
+        yield text_content.emit_delta(f"[model={request.model}]")
+        yield text_content.emit_done()
+        yield msg.emit_content_done(text_content)
+        yield msg.emit_done()
+
+        yield stream.emit_completed()
+
+    return _events()
+
+
+def test_sample7_custom_options_applied() -> None:
+    """Default model is applied when request omits model."""
+    opts = ResponsesServerOptions(
+        default_model="gpt-4o",
+        sse_keep_alive_interval_seconds=5,
+        shutdown_grace_period_seconds=15,
+    )
+    client = _make_app(_sample7_handler, options=opts)
+
+    # POST without model — server should fill in "gpt-4o" from options
+    payload: dict[str, Any] = {"input": "hello", "stream": False}
+    resp = _post_json(client, payload)
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["status"] == "completed"
+    text_parts = [p for p in body["output"][0]["content"] if p.get("type") == "output_text"]
+    assert "gpt-4o" in text_parts[0]["text"]
+
+
+def test_sample7_explicit_model_overrides_default() -> None:
+    """Explicit model in request overrides default_model."""
+    opts = ResponsesServerOptions(default_model="gpt-4o")
+    client = _make_app(_sample7_handler, options=opts)
+
+    resp = _post_json(client, _base_payload("hello", model="custom-model"))
+
+    body = resp.json()
+    text_parts = [p for p in body["output"][0]["content"] if p.get("type") == "output_text"]
+    assert "custom-model" in text_parts[0]["text"]
+
+
+# ---------------------------------------------------------------------------
+# Sample 8: Mixin Composition — Both protocols on one server
+# ---------------------------------------------------------------------------
+
+
+def _sample8_response_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+    """Responses handler for the mixin test."""
+
+    async def _events():
+        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+        yield stream.emit_created()
+
+        msg = stream.add_output_item_message()
+        yield msg.emit_added()
+
+        text_content = msg.add_text_content()
+        yield text_content.emit_added()
+
+        user_text = get_input_text(request)
+        yield text_content.emit_delta(f"[Response] Echo: {user_text}")
+        yield text_content.emit_done()
+        yield msg.emit_content_done(text_content)
+        yield msg.emit_done()
+
+        yield stream.emit_completed()
+
+    return _events()
+
+
+def test_sample8_mixin_composition_both_protocols() -> None:
+    """Both /responses and /invocations endpoints work."""
+    invocations = pytest.importorskip(
+        "azure.ai.agentserver.invocations",
+        reason="azure-ai-agentserver-invocations not installed",
+    )
+    InvocationAgentServerHost = invocations.InvocationAgentServerHost
+
+    from starlette.requests import Request
+    from starlette.responses import JSONResponse, Response
+
+    class MyHost(InvocationAgentServerHost, ResponsesAgentServerHost):
+        pass
+
+    host = MyHost()
+
+    @host.invoke_handler
+    async def handle_invoke(request: Request) -> Response:
+        data = await request.json()
+        invocation_id = request.state.invocation_id
+        return JSONResponse({
+            "invocation_id": invocation_id,
+            "status": "completed",
+            "output": f"[Invocation] Echo: {data.get('message', '')}",
+        })
+
+    host.create_handler(_sample8_response_handler)
+
+    client = TestClient(host)
+
+    # Test invocations endpoint
+    inv_resp = client.post("/invocations", json={"message": "Hello invocations"})
+    assert inv_resp.status_code == 200
+    inv_body = inv_resp.json()
+    assert inv_body["status"] == "completed"
+    assert "Hello invocations" in inv_body["output"]
+
+    # Test responses endpoint
+    resp = client.post(
+        "/responses",
+        json={"model": "test-model", "input": "Hello responses", "stream": False},
+    )
+    assert resp.status_code == 200
+    resp_body = resp.json()
+    assert resp_body["status"] == "completed"
+    text_parts = [p for p in resp_body["output"][0]["content"] if p.get("type") == "output_text"]
+    assert "Hello responses" in text_parts[0]["text"]
+
+
+# ---------------------------------------------------------------------------
+# Sample 9: Self-Hosting — Mount under /api prefix
+# ---------------------------------------------------------------------------
+
+
+def test_sample9_self_hosted_responses_under_prefix() -> None:
+    """Responses endpoints work under /api prefix."""
+    from starlette.applications import Starlette
+    from starlette.routing import Mount
+
+    responses_app = ResponsesAgentServerHost()
+
+    def _handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+        async def _events():
+            stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+            yield stream.emit_created()
+
+            msg = stream.add_output_item_message()
+            yield msg.emit_added()
+
+            text_content = msg.add_text_content()
+            yield text_content.emit_added()
+
+            yield text_content.emit_delta(f"Self-hosted: {get_input_text(request)}")
+            yield text_content.emit_done()
+            yield msg.emit_content_done(text_content)
+            yield msg.emit_done()
+
+            yield stream.emit_completed()
+
+        return _events()
+
+    responses_app.create_handler(_handler)
+
+    parent_app = Starlette(routes=[
+        Mount("/api", app=responses_app),
+    ])
+
+    client = TestClient(parent_app)
+    resp = client.post(
+        "/api/responses",
+        json={"model": "test-model", "input": "mounted test", "stream": False},
+    )
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["status"] == "completed"
+    text_parts = [p for p in body["output"][0]["content"] if p.get("type") == "output_text"]
+    assert "mounted test" in text_parts[0]["text"]
+
+
+# ---------------------------------------------------------------------------
+# Sample 10: Streaming Upstream — Forward from async generator
+# ---------------------------------------------------------------------------
+
+
+def _sample10_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+    """Streaming upstream handler: streams tokens from a mock upstream."""
+
+    async def _mock_upstream(prompt: str):
+        tokens = ["Upstream says: ", "Hello", ", ", prompt, "!"]
+        for token in tokens:
+            yield token
+
+    async def _events():
+        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+        yield stream.emit_created()
+
+        user_text = get_input_text(request) or "world"
+        upstream_tokens = _mock_upstream(user_text)
+
+        async for event in stream.aoutput_item_message(upstream_tokens):
+            yield event
+
+        yield stream.emit_completed()
+
+    return _events()
+
+
+def test_sample10_streaming_upstream_emits_deltas() -> None:
+    """Streaming upstream produces delta events."""
+    client = _make_app(_sample10_handler)
+    events = _post_stream(client, _base_payload("Alice"))
+
+    event_types = [e["type"] for e in events]
+    # Verify full lifecycle
+    assert "response.created" in event_types
+    assert "response.output_item.added" in event_types
+    assert "response.output_text.done" in event_types
+    assert "response.output_item.done" in event_types
+    assert "response.completed" in event_types
+
+    delta_events = [e for e in events if e["type"] == "response.output_text.delta"]
+    assert len(delta_events) == 5
+    joined = "".join(e["data"]["delta"] for e in delta_events)
+    assert "Alice" in joined
+    assert "Upstream says" in joined
+
+
+def test_sample10_streaming_upstream_non_streaming_returns_full_text() -> None:
+    """Non-streaming fallback reassembles all deltas."""
+    client = _make_app(_sample10_handler)
+    resp = _post_json(client, _base_payload("Bob"))
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["status"] == "completed"
+    text_parts = [p for p in body["output"][0]["content"] if p.get("type") == "output_text"]
+    assert "Bob" in text_parts[0]["text"]
+    assert "Upstream says" in text_parts[0]["text"]
+
+
+# ---------------------------------------------------------------------------
+# Sample 11: Non-Streaming Upstream — Forward complete response
+# ---------------------------------------------------------------------------
+
+
+def _sample11_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+    """Non-streaming upstream handler: calls mock upstream, emits result."""
+
+    def _mock_upstream_call(prompt: str) -> str:
+        return f"Upstream non-streaming reply to: {prompt}"
+
+    async def _events():
+        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+        yield stream.emit_created()
+
+        user_text = get_input_text(request) or "world"
+        upstream_reply = _mock_upstream_call(user_text)
+
+        for event in stream.output_item_message(upstream_reply):
+            yield event
+
+        yield stream.emit_completed()
+
+    return _events()
+
+
+def test_sample11_non_streaming_upstream_returns_output() -> None:
+    """Non-streaming upstream returns completed response."""
+    client = _make_app(_sample11_handler)
+    resp = _post_json(client, _base_payload("Charlie"))
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["status"] == "completed"
+    output = body["output"]
+    assert len(output) == 1
+    assert output[0]["type"] == "message"
+    text_parts = [p for p in output[0]["content"] if p.get("type") == "output_text"]
+    assert "Upstream non-streaming reply to: Charlie" in text_parts[0]["text"]
+
+
+def test_sample11_non_streaming_upstream_streaming_events() -> None:
+    """Streaming mode still emits proper lifecycle events."""
+    client = _make_app(_sample11_handler)
+    events = _post_stream(client, _base_payload("Dana"))
+
+    event_types = [e["type"] for e in events]
+    assert "response.created" in event_types
+    assert "response.output_item.added" in event_types
+    assert "response.output_text.delta" in event_types
+    assert "response.completed" in event_types
+
+    delta_events = [e for e in events if e["type"] == "response.output_text.delta"]
+    joined = "".join(e["data"]["delta"] for e in delta_events)
+    assert "Dana" in joined
