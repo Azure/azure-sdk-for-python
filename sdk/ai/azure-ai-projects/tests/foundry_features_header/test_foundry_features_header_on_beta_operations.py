@@ -217,7 +217,7 @@ class TestFoundryFeaturesHeaderOnBetaOperations(FoundryFeaturesHeaderTestBase):
         method = getattr(sc, method_name)
         extra_kwargs: dict[str, Any] = {}
         if method_name == "create_agent_invocation":
-            extra_kwargs["content_type"] = "application/json"
+            extra_kwargs["content_type"] = "some-content-type"
         self._assert_header(label, self._make_fake_call(method, extra_kwargs=extra_kwargs), expected_header_value)
 
 

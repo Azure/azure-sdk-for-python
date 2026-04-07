@@ -15,6 +15,7 @@ test_required_header_async.py (async):
   - FoundryFeaturesHeaderTestBase with utility/assertion class methods
 """
 
+from __future__ import annotations  # To make `dict[str, Any] | None` work on Python 3.9
 import inspect
 import pytest
 import tempfile
