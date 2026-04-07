@@ -15,7 +15,7 @@ misconfiguration is surfaced at startup rather than silently masked.
 """
 import os
 from dataclasses import dataclass
-from typing import Optional
+from typing import Optional, Self
 
 # ======================================================================
 # Environment variable keys (internal — users access values via AgentConfig)
