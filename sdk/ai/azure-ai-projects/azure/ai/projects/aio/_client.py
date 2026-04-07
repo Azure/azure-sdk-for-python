@@ -24,7 +24,6 @@ from .operations import (
     DeploymentsOperations,
     EvaluationRulesOperations,
     IndexesOperations,
-    ToolboxesOperations,
 )
 
 if TYPE_CHECKING:
@@ -48,8 +47,6 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
     :vartype deployments: azure.ai.projects.aio.operations.DeploymentsOperations
     :ivar indexes: IndexesOperations operations
     :vartype indexes: azure.ai.projects.aio.operations.IndexesOperations
-    :ivar toolboxes: ToolboxesOperations operations
-    :vartype toolboxes: azure.ai.projects.aio.operations.ToolboxesOperations
     :param endpoint: Foundry Project endpoint in the form
      "https://{ai-services-account-name}.services.ai.azure.com/api/projects/{project-name}". If you
      only have one Project in your Foundry Hub, or to target the default Project in your Hub, use
@@ -105,7 +102,6 @@ class AIProjectClient:  # pylint: disable=too-many-instance-attributes
         self.datasets = DatasetsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.deployments = DeploymentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.indexes = IndexesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.toolboxes = ToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

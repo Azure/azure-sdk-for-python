@@ -69,8 +69,8 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ACTIVITY."""
     RESPONSES = "responses"
     """RESPONSES."""
-    A2_A = "a2a"
-    """A2_A."""
+    A2A = "a2a"
+    """A2A."""
     INVOCATIONS = "invocations"
     """INVOCATIONS."""
 
@@ -110,6 +110,27 @@ class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """RESPONSES."""
     INVOCATIONS = "invocations"
     """INVOCATIONS."""
+
+
+class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of an agent session."""
+
+    CREATING = "creating"
+    """Session initialization is in progress."""
+    ACTIVE = "active"
+    """Session is running and operational."""
+    IDLE = "idle"
+    """Session sandbox is auto-suspended; resumes on next invocation."""
+    UPDATING = "updating"
+    """Reserved for future session re-parenting flows."""
+    FAILED = "failed"
+    """Session initialization or lifecycle handling failed and requires delete to recover."""
+    DELETING = "deleting"
+    """Session is being deleted (cleanup in progress)."""
+    DELETED = "deleted"
+    """Session has been explicitly deleted."""
+    EXPIRED = "expired"
+    """Session TTL exceeded (30 days from last activity)."""
 
 
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -799,6 +820,13 @@ class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recurrence based trigger."""
     ONE_TIME = "OneTime"
     """One-time trigger."""
+
+
+class VersionIndicatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of version indicator used to determine the agent version backing a session."""
+
+    VERSION_REF = "version_ref"
+    """Direct reference to a specific agent version."""
 
 
 class VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
