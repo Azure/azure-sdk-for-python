@@ -271,16 +271,25 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
 
                 # Check if this result matches our evaluator's metric
                 # Handle both exact match ("violence") and prefixed format ("builtin.violence")
-                # Use case-insensitive comparison since the service may return capitalized metric names
-                # (e.g., "Violence") while SDK constants use lowercase (e.g., "violence")
+                # Normalize comparison: lowercase and strip underscores so both snake_case
+                # (e.g., "self_harm") and PascalCase (e.g., "SelfHarm") service responses match.
                 expected_metric = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
-                metric_name_lower = metric_name.lower()
-                expected_metric_lower = expected_metric.lower()
+
+                def _normalize(name: str) -> str:
+                    """Lowercase and remove underscores for flexible metric matching."""
+                    return name.lower().replace("_", "")
+
+                normalized_metric = _normalize(metric_name)
+                normalized_expected = _normalize(expected_metric)
+                # Strip optional "builtin." prefix before comparing
+                normalized_metric_no_prefix = (
+                    normalized_metric[len("builtin."):] if normalized_metric.startswith("builtin.") else normalized_metric
+                )
                 if (
-                    metric_name_lower == expected_metric_lower
-                    or metric_name_lower == f"builtin.{expected_metric_lower}"
-                    or metric_name_lower
-                    == (self._eval_metric.lower() if isinstance(self._eval_metric, str) else self._eval_metric)
+                    normalized_metric_no_prefix == normalized_expected
+                    or normalized_metric == normalized_expected
+                    or normalized_metric_no_prefix
+                    == _normalize(self._eval_metric if isinstance(self._eval_metric, str) else "")
                 ):
                     # Extract common fields
                     score = result_dict.get("score", 0)

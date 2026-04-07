@@ -891,34 +891,93 @@ class TestParseEvalResult:
         assert result["self_harm_reason"] == "Low self-harm content detected."
 
     def test_parse_eval_result_case_insensitive_label_evaluator(self):
-        """Test case-insensitive matching for label-type evaluators like protected_material."""
+        """Test case-insensitive and PascalCase matching for label-type evaluators like protected_material."""
         from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
         from azure.ai.evaluation._common.constants import EvaluationMetrics
 
-        eval_result = {
-            "results": [
-                {
-                    "name": "protected_material",
-                    "type": "azure_ai_evaluator",
-                    "metric": "Protected_Material",
-                    "score": 0.0,
-                    "reason": "No protected material detected.",
-                    "properties": {
-                        "scoreProperties": {
-                            "label": "false",
+        metric_variants = ["Protected_Material", "ProtectedMaterial", "builtin.ProtectedMaterial"]
+        for variant in metric_variants:
+            eval_result = {
+                "results": [
+                    {
+                        "name": "protected_material",
+                        "type": "azure_ai_evaluator",
+                        "metric": variant,
+                        "score": 0.0,
+                        "reason": "No protected material detected.",
+                        "properties": {
+                            "scoreProperties": {
+                                "label": "false",
+                            },
                         },
-                    },
+                    }
+                ],
+            }
+
+            evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+            evaluator._eval_metric = EvaluationMetrics.PROTECTED_MATERIAL
+
+            result = evaluator._parse_eval_result(eval_result)
+
+            assert result["protected_material_label"] is False, f"Failed for metric name variant: {variant}"
+            assert (
+                result["protected_material_reason"] == "No protected material detected."
+            ), f"Failed for metric name variant: {variant}"
+
+    def test_parse_eval_result_case_insensitive_pascal_case_underscore_metrics(self):
+        """Test PascalCase service-model metric names, with and without builtin prefix, for underscore metrics."""
+        from azure.ai.evaluation._evaluators._common._base_rai_svc_eval import RaiServiceEvaluatorBase
+        from azure.ai.evaluation._common.constants import EvaluationMetrics
+
+        test_cases = [
+            (
+                EvaluationMetrics.SELF_HARM,
+                "self_harm",
+                ["SelfHarm", "builtin.SelfHarm"],
+                2,
+                "Low self-harm content detected.",
+                {
+                    "self_harm": "Low",
+                    "self_harm_score": 2,
+                    "self_harm_reason": "Low self-harm content detected.",
+                },
+            ),
+            (
+                EvaluationMetrics.HATE_UNFAIRNESS,
+                "hate_unfairness",
+                ["HateUnfairness", "builtin.HateUnfairness"],
+                0.0,
+                "No hate/unfairness content.",
+                {
+                    "hate_unfairness": "Very low",
+                    "hate_unfairness_score": 0.0,
+                    "hate_unfairness_reason": "No hate/unfairness content.",
+                },
+            ),
+        ]
+
+        for eval_metric, name, metric_variants, score, reason, expected in test_cases:
+            for variant in metric_variants:
+                eval_result = {
+                    "results": [
+                        {
+                            "name": name,
+                            "type": "azure_ai_evaluator",
+                            "metric": variant,
+                            "score": score,
+                            "reason": reason,
+                            "properties": {},
+                        }
+                    ],
                 }
-            ],
-        }
 
-        evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
-        evaluator._eval_metric = EvaluationMetrics.PROTECTED_MATERIAL
+                evaluator = RaiServiceEvaluatorBase.__new__(RaiServiceEvaluatorBase)
+                evaluator._eval_metric = eval_metric
 
-        result = evaluator._parse_eval_result(eval_result)
+                result = evaluator._parse_eval_result(eval_result)
 
-        assert result["protected_material_label"] is False
-        assert result["protected_material_reason"] == "No protected material detected."
+                for key, value in expected.items():
+                    assert result.get(key) == value, f"Failed for metric name variant: {variant}"
 
     def test_parse_eval_result_case_insensitive_mixed_case(self):
         """Test various mixed-case metric name variants that the service might return."""
