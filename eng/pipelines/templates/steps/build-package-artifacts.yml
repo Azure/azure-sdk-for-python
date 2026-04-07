@@ -79,11 +79,6 @@ steps:
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
 
-  - pwsh: |
-      uv pip install ruff==0.12.4 -vv
-    displayName: "Try installing using pip directly"
-    continueOnError: true
-
   - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}
@@ -104,7 +99,7 @@ steps:
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
       which python
-      $(PIP_EXE) install -r eng/ci_tools.txt -vv
+      $(PIP_EXE) install -r eng/ci_tools.txt
 
       if ($env:AGENT_OS -eq "Linux") {
         Write-Host "Installing release reqs"
