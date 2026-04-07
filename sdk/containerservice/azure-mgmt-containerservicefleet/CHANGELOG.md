@@ -1,5 +1,14 @@
 # Release History
 
+## 4.0.0b4 (2026-04-07)
+
+### Breaking Changes
+
+  - Model `UpdateGroup` deleted or renamed its instance variable `max_concurrency`
+  - Model `UpdateGroupStatus` deleted or renamed its instance variable `max_concurrency`
+  - Model `UpdateStage` deleted or renamed its instance variable `max_concurrency`
+  - Model `UpdateStageStatus` deleted or renamed its instance variable `max_concurrency`
+
 ## 4.0.0b3 (2026-03-24)
 
 ### Features Added

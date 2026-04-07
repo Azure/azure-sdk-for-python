@@ -143,7 +143,6 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
                                                     },
                                                 }
                                             ],
-                                            "maxConcurrency": 0,
                                             "members": [
                                                 {
                                                     "clusterResourceId": "str",
@@ -179,7 +178,6 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
                                             },
                                         }
                                     ],
-                                    "maxConcurrency": 0,
                                     "name": "str",
                                     "status": {
                                         "completedTime": "2020-02-20 00:00:00",
@@ -220,10 +218,8 @@ class TestContainerServiceFleetMgmtUpdateRunsOperationsAsync(AzureMgmtRecordedTe
                                             "name": "str",
                                             "afterGates": [{"type": "str", "displayName": "str"}],
                                             "beforeGates": [{"type": "str", "displayName": "str"}],
-                                            "maxConcurrency": "str",
                                         }
                                     ],
-                                    "maxConcurrency": "str",
                                 }
                             ]
                         },

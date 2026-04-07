@@ -583,7 +583,6 @@ class FleetsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def _begin_update_initial(
@@ -802,7 +801,6 @@ class FleetsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def begin_update(
@@ -1715,7 +1713,6 @@ class FleetMembersOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def _begin_update_initial(
@@ -1949,7 +1946,6 @@ class FleetMembersOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def begin_update(
@@ -2345,7 +2341,7 @@ class FleetManagedNamespacesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
+        api_versions_list=["2025-08-01-preview"],
     )
     async def get(
         self, resource_group_name: str, fleet_name: str, managed_namespace_name: str, **kwargs: Any
@@ -2436,7 +2432,7 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
+        api_versions_list=["2025-08-01-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -2661,7 +2657,7 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
+        api_versions_list=["2025-08-01-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -2766,7 +2762,7 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
+        api_versions_list=["2025-08-01-preview"],
     )
     async def _delete_initial(
         self,
@@ -2859,7 +2855,7 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
+        api_versions_list=["2025-08-01-preview"],
     )
     async def begin_delete(
         self,
@@ -2942,7 +2938,7 @@ class FleetManagedNamespacesOperations:
         params_added_on={
             "2025-08-01-preview": ["api_version", "subscription_id", "resource_group_name", "fleet_name", "accept"]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
+        api_versions_list=["2025-08-01-preview"],
     )
     def list_by_fleet(
         self, resource_group_name: str, fleet_name: str, **kwargs: Any
@@ -3058,7 +3054,7 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
+        api_versions_list=["2025-08-01-preview"],
     )
     async def _update_initial(
         self,
@@ -3281,7 +3277,7 @@ class FleetManagedNamespacesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-08-01-preview", "2026-02-01-preview"],
+        api_versions_list=["2025-08-01-preview"],
     )
     async def begin_update(
         self,
@@ -3406,7 +3402,7 @@ class GatesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-08-01-preview"],
     )
     async def get(self, resource_group_name: str, fleet_name: str, gate_name: str, **kwargs: Any) -> _models.Gate:
         """Get a Gate.
@@ -3495,7 +3491,7 @@ class GatesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-08-01-preview"],
     )
     async def _update_initial(
         self,
@@ -3715,7 +3711,7 @@ class GatesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-08-01-preview"],
     )
     async def begin_update(
         self,
@@ -3820,7 +3816,7 @@ class GatesOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview"],
+        api_versions_list=["2025-04-01-preview", "2025-08-01-preview"],
     )
     def list_by_fleet(
         self,
@@ -3981,7 +3977,6 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def get(
@@ -4084,7 +4079,6 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -4315,7 +4309,6 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def begin_create_or_update(
@@ -4430,7 +4423,6 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def _delete_initial(
@@ -4535,7 +4527,6 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def begin_delete(
@@ -4638,7 +4629,6 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     def list_by_fleet(
@@ -4778,7 +4768,6 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def _start_initial(
@@ -4884,7 +4873,6 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def begin_start(
@@ -4997,7 +4985,6 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def _stop_initial(
@@ -5103,7 +5090,6 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def begin_stop(
@@ -5213,7 +5199,6 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def _skip_initial(
@@ -5441,7 +5426,6 @@ class UpdateRunsOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def begin_skip(
@@ -5578,7 +5562,6 @@ class FleetUpdateStrategiesOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def get(
@@ -5679,7 +5662,6 @@ class FleetUpdateStrategiesOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def _create_or_update_initial(
@@ -5911,7 +5893,6 @@ class FleetUpdateStrategiesOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def begin_create_or_update(
@@ -6026,7 +6007,6 @@ class FleetUpdateStrategiesOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def _delete_initial(
@@ -6129,7 +6109,6 @@ class FleetUpdateStrategiesOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     async def begin_delete(
@@ -6230,7 +6209,6 @@ class FleetUpdateStrategiesOperations:
             "2025-03-01",
             "2025-04-01-preview",
             "2025-08-01-preview",
-            "2026-02-01-preview",
         ],
     )
     def list_by_fleet(
@@ -6378,13 +6356,7 @@ class AutoUpgradeProfilesOperations:
                 "accept",
             ]
         },
-        api_versions_list=[
-            "2024-05-02-preview",
-            "2025-03-01",
-            "2025-04-01-preview",
-            "2025-08-01-preview",
-            "2026-02-01-preview",
-        ],
+        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
     )
     async def get(
         self, resource_group_name: str, fleet_name: str, auto_upgrade_profile_name: str, **kwargs: Any
@@ -6475,13 +6447,7 @@ class AutoUpgradeProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=[
-            "2024-05-02-preview",
-            "2025-03-01",
-            "2025-04-01-preview",
-            "2025-08-01-preview",
-            "2026-02-01-preview",
-        ],
+        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
     )
     async def _create_or_update_initial(
         self,
@@ -6706,13 +6672,7 @@ class AutoUpgradeProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=[
-            "2024-05-02-preview",
-            "2025-03-01",
-            "2025-04-01-preview",
-            "2025-08-01-preview",
-            "2026-02-01-preview",
-        ],
+        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
     )
     async def begin_create_or_update(
         self,
@@ -6817,13 +6777,7 @@ class AutoUpgradeProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=[
-            "2024-05-02-preview",
-            "2025-03-01",
-            "2025-04-01-preview",
-            "2025-08-01-preview",
-            "2026-02-01-preview",
-        ],
+        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
     )
     async def _delete_initial(
         self,
@@ -6916,13 +6870,7 @@ class AutoUpgradeProfilesOperations:
                 "match_condition",
             ]
         },
-        api_versions_list=[
-            "2024-05-02-preview",
-            "2025-03-01",
-            "2025-04-01-preview",
-            "2025-08-01-preview",
-            "2026-02-01-preview",
-        ],
+        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
     )
     async def begin_delete(
         self,
@@ -7013,13 +6961,7 @@ class AutoUpgradeProfilesOperations:
                 "accept",
             ]
         },
-        api_versions_list=[
-            "2024-05-02-preview",
-            "2025-03-01",
-            "2025-04-01-preview",
-            "2025-08-01-preview",
-            "2026-02-01-preview",
-        ],
+        api_versions_list=["2024-05-02-preview", "2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
     )
     def list_by_fleet(
         self,
@@ -7165,7 +7107,7 @@ class AutoUpgradeProfileOperationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-01", "2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview"],
+        api_versions_list=["2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
     )
     async def _generate_update_run_initial(
         self, resource_group_name: str, fleet_name: str, auto_upgrade_profile_name: str, **kwargs: Any
@@ -7245,7 +7187,7 @@ class AutoUpgradeProfileOperationsOperations:
                 "accept",
             ]
         },
-        api_versions_list=["2025-03-01", "2025-04-01-preview", "2025-08-01-preview", "2026-02-01-preview"],
+        api_versions_list=["2025-03-01", "2025-04-01-preview", "2025-08-01-preview"],
     )
     async def begin_generate_update_run(
         self, resource_group_name: str, fleet_name: str, auto_upgrade_profile_name: str, **kwargs: Any
