@@ -275,13 +275,8 @@ with (
         print("Waiting for evaluation run to complete...")
 
     # ---------------------------------------------------------------
-    # 6. Cleanup
+    # 6. Done (cleanup skipped to allow later verification)
     # ---------------------------------------------------------------
-    print("\nCleaning up...")
-    project_client.beta.evaluators.delete_version(
-        name=friendly_evaluator.name,
-        version=friendly_evaluator.version,
-    )
-    client.evals.delete(eval_id=eval_object.id)
-    print("Cleanup done.")
     print("\nDone - FriendlyEvaluator standalone test, upload, eval creation, and eval run verified successfully.")
+    print(f"Evaluator '{friendly_evaluator.name}' (version {friendly_evaluator.version}) retained.")
+    print(f"Evaluation '{eval_object.name}' (id: {eval_object.id}) retained.")

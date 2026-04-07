@@ -1,10 +1,10 @@
-"""Custom evaluator that uses Azure OpenAI to assess the friendliness of a response."""
+"""Azure OpenAI custom evaluator that assesses the friendliness of a response."""
 
 from openai import AzureOpenAI
 from common_util.util import build_evaluation_instructions, build_evaluation_input, parse_evaluation_result
 
 
-class MoreFriendlyEvaluator:
+class AzureFriendlyEvaluator:
     """Evaluates how friendly and approachable a response is using an Azure OpenAI LLM judge.
 
     This evaluator receives a ``model_config`` dict that is automatically injected

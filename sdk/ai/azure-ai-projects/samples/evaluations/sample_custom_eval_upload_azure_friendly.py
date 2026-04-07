@@ -7,7 +7,7 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to:
-      1. Upload the MoreFriendlyEvaluator code (which uses AzureOpenAI)
+      1. Upload the AzureFriendlyEvaluator code (which uses AzureOpenAI)
          using ``evaluators.upload()``.
       2. Create an evaluation (eval) that references the uploaded evaluator,
          passing only ``deployment_name`` — the service automatically resolves
@@ -16,7 +16,7 @@ DESCRIPTION:
       3. Run the evaluation with inline data and poll for results.
 
 USAGE:
-    python sample_custom_eval_upload_more_friendly.py
+    python sample_custom_eval_upload_azure_friendly.py
 
     Before running the sample:
 
@@ -58,8 +58,8 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
 
-# The folder containing the MoreFriendlyEvaluator code
-evaluator_folder = str(Path(__file__).parent / "custom_evaluators" / "more_friendly_evaluator")
+# The folder containing the AzureFriendlyEvaluator code
+evaluator_folder = str(Path(__file__).parent / "custom_evaluators" / "azure_friendly_evaluator")
 
 with (
     DefaultAzureCredential() as credential,
@@ -70,17 +70,17 @@ with (
     # 1. Upload evaluator code and create evaluator version
     # ---------------------------------------------------------------
     suffix = "".join(random.choices(string.ascii_lowercase, k=5))
-    evaluator_name = f"more_friendly_evaluator_{suffix}"
+    evaluator_name = f"azure_friendly_evaluator_{suffix}"
 
     print(f"=== Step 1: Upload evaluator as '{evaluator_name}' ===\n")
 
     evaluator_version = EvaluatorVersion(
         evaluator_type=EvaluatorType.CUSTOM,
         categories=[EvaluatorCategory.QUALITY],
-        display_name="More Friendly Evaluator",
+        display_name="Azure Friendly Evaluator",
         description="Azure-OpenAI-based evaluator that scores how friendly a response is (1-5)",
         definition=CodeBasedEvaluatorDefinition(
-            entry_point="more_friendly_evaluator:MoreFriendlyEvaluator",
+            entry_point="azure_friendly_evaluator:AzureFriendlyEvaluator",
             init_parameters={
                 "type": "object",
                 "properties": {
@@ -111,15 +111,15 @@ with (
         ),
     )
 
-    more_friendly_evaluator = project_client.beta.evaluators.upload(
+    azure_friendly_evaluator = project_client.beta.evaluators.upload(
         name=evaluator_name,
         evaluator_version=evaluator_version,
         folder=evaluator_folder,
     )
 
-    print(f"Evaluator created: name={more_friendly_evaluator.name}, version={more_friendly_evaluator.version}")
-    print(f"Evaluator ID: {more_friendly_evaluator.id}")
-    pprint(more_friendly_evaluator)
+    print(f"Evaluator created: name={azure_friendly_evaluator.name}, version={azure_friendly_evaluator.version}")
+    print(f"Evaluator ID: {azure_friendly_evaluator.id}")
+    pprint(azure_friendly_evaluator)
 
     # ---------------------------------------------------------------
     # 2. Create an evaluation referencing the uploaded evaluator
@@ -154,7 +154,7 @@ with (
     ]
 
     eval_object = client.evals.create(
-        name=f"More Friendly Evaluation - {suffix}",
+        name=f"Azure Friendly Evaluation - {suffix}",
         data_source_config=data_source_config,
         testing_criteria=testing_criteria,  # type: ignore
     )
@@ -167,8 +167,8 @@ with (
 
     eval_run_object = client.evals.runs.create(
         eval_id=eval_object.id,
-        name=f"More Friendly Eval Run - {suffix}",
-        metadata={"team": "eval-exp", "scenario": "more-friendliness-v1"},
+        name=f"Azure Friendly Eval Run - {suffix}",
+        metadata={"team": "eval-exp", "scenario": "azure-friendliness-v1"},
         data_source=CreateEvalJSONLRunDataSourceParam(
             type="jsonl",
             source=SourceFileContent(
@@ -222,6 +222,6 @@ with (
         time.sleep(5)
         print("Waiting for evaluation run to complete...")
 
-    print("\nDone - MoreFriendlyEvaluator upload, eval creation, and eval run verified successfully.")
-    print(f"Evaluator '{more_friendly_evaluator.name}' (version {more_friendly_evaluator.version}) retained.")
+    print("\nDone - AzureFriendlyEvaluator upload, eval creation, and eval run verified successfully.")
+    print(f"Evaluator '{azure_friendly_evaluator.name}' (version {azure_friendly_evaluator.version}) retained.")
     print(f"Evaluation '{eval_object.name}' (id: {eval_object.id}) retained.")

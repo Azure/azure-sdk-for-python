@@ -41,7 +41,7 @@ The bug bash scenarios are based on the following SDK samples:
 - Advanced custom evaluator upload sample:
   [sample_custom_eval_upload_advanced.py](https://github.com/Azure/azure-sdk-for-python/blob/bug-bash/custom-evaluator/sdk/ai/azure-ai-projects/samples/evaluations/sample_custom_eval_upload_advanced.py)
 - Azure OpenAI custom evaluator upload sample (uses `AzureOpenAI` client with service-injected `model_config`):
-  [sample_custom_eval_upload_more_friendly.py](https://github.com/Azure/azure-sdk-for-python/blob/bug-bash/custom-evaluator/sdk/ai/azure-ai-projects/samples/evaluations/sample_custom_eval_upload_more_friendly.py)
+  [sample_custom_eval_upload_azure_friendly.py](https://github.com/Azure/azure-sdk-for-python/blob/bug-bash/custom-evaluator/sdk/ai/azure-ai-projects/samples/evaluations/sample_custom_eval_upload_azure_friendly.py)
 
 ## Instructions
 
@@ -244,7 +244,7 @@ Configure:
 - incorrect threshold application
 - result payloads that do not match the evaluator definition
 
-### Scenario 3: Upload Azure OpenAI Custom Evaluator via SDK (MoreFriendlyEvaluator)
+### Scenario 3: Upload Azure OpenAI Custom Evaluator via SDK (AzureFriendlyEvaluator)
 
 #### Goal
 Validate uploading a custom evaluator that uses `AzureOpenAI` (instead of the plain OpenAI client) with a service-injected `model_config`. The evaluator's `__init__` accepts `model_config: dict`, and the evaluation run only passes `deployment_name` — the service automatically resolves it into a full `model_config` dict containing `azure_endpoint`, `api_key`, `api_version`, and `azure_deployment`.
@@ -253,7 +253,7 @@ Validate uploading a custom evaluator that uses `AzureOpenAI` (instead of the pl
 Open the sample:
 
 ```bash
-python sample_custom_eval_upload_more_friendly.py
+python sample_custom_eval_upload_azure_friendly.py
 ```
 
 Configure:
