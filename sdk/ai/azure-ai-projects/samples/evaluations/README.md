@@ -65,6 +65,9 @@ These samples require additional setup or Azure services:
 | [sample_scheduled_evaluations.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_scheduled_evaluations.py) | Schedule recurring evaluations | RBAC setup |
 | [sample_continuous_evaluation_rule.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_continuous_evaluation_rule.py) | Set up continuous evaluation rules | RBAC Setup |
 | [sample_evaluations_score_model_grader_with_image.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_score_model_grader_with_image.py) | Evaluate with image data | Image file |
+| [sample_evaluations_score_model_grader_with_image_model_target.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_score_model_grader_with_image_model_target.py) | Evaluate image data using a model as the target | Image file, vision-capable model deployment |
+| [sample_evaluations_score_model_grader_with_audio.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_score_model_grader_with_audio.py) | Evaluate with audio data | Audio file, audio-capable model deployment |
+| [sample_evaluations_score_model_grader_with_audio_model_target.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_score_model_grader_with_audio_model_target.py) | Evaluate audio data using a model as the target | Audio file, audio-capable model deployment |
 | [sample_evaluations_builtin_with_inline_data_oai.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_inline_data_oai.py) | Use OpenAI client directly | OpenAI SDK |
 
 ### Evaluator Types
@@ -74,10 +77,10 @@ These samples require additional setup or Azure services:
 | [sample_evaluations_graders.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_graders.py) | OpenAI graders: label_model, text_similarity, string_check, score_model |
 | [sample_evaluations_graders_async.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_graders_async.py) | Async version of OpenAI graders: label_model, text_similarity, string_check, score_model |
 | [sample_evaluations_ai_assisted.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_ai_assisted.py) | AI-assisted and NLP-based evaluators: Similarity, ROUGE, METEOR, GLEU, F1, BLEU |
-| [sample_eval_catalog_code_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_code_based_evaluators.py) | Custom code-based (python) evaluators |
+| [sample_eval_catalog_code_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_code_based_evaluators.py) | Custom code-based (inline) evaluators |
 | [sample_eval_catalog_prompt_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_prompt_based_evaluators.py) | Custom prompt-based evaluators |
-| [sample_eval_upload_custom_evaluator.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_upload_custom_evaluator.py) | Upload a custom code-based evaluator and run an evaluation |
-| [sample_eval_upload_friendly_evaluator.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_upload_friendly_evaluator.py) | Upload a custom LLM-based evaluator (FriendlyEvaluator) and run an evaluation |
+| [sample_custom_eval_upload_simple.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_custom_eval_upload_simple.py) | Custom code-based evaluator with upload — simple example (AnswerLength) |
+| [sample_custom_eval_upload_advanced.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_custom_eval_upload_advanced.py) | Custom code-based evaluator with upload — advanced example (FriendlyEvaluator with LLM judge) |
 
 ### Agentic Evaluators
 

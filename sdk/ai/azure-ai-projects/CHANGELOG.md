@@ -1,6 +1,6 @@
 # Release History
 
-## 2.0.2 (Unreleased)
+## 2.1.0 (Unreleased)
 
 ### Features Added
 
@@ -33,7 +33,10 @@ classes to help you author the input to these methods. See new TypedDict classes
 * Added CSV evaluation sample (`sample_evaluations_builtin_with_csv.py`) demonstrating evaluation with an uploaded CSV dataset.
 * Added synthetic data evaluation samples (`sample_synthetic_data_agent_evaluation.py`) and (`sample_synthetic_data_model_evaluation.py`).
 * Added Chat Completions basic samples (`sample_chat_completions_basic.py`, `sample_chat_completions_basic_async.py`) demonstrating chat completions calls using `AIProjectClient` + the OpenAI-compatible client.
-* Added Toolsets CRUD samples (`sample_toolsets_crud.py`, `sample_toolsets_crud_async.py`) demonstrating `project_client.beta.toolsets` create/get/update/list/delete.
+* Added Toolboxes CRUD samples (`sample_toolboxes_crud.py`, `sample_toolboxes_crud_async.py`) demonstrating `project_client.beta.toolboxes` create/get/update/list/delete.
+* Simplified `sample_memory_basic.py` and `sample_agent_memory_search.py` (and their async equivalent) by removing 
+`options=MemoryStoreDefaultOptions(user_profile_enabled=True, chat_summary_enabled=True)` when constructing `MemoryStoreDefaultDefinition`,
+since this is now redundant (it's the service default).
 
 ### Other Changes
 
@@ -83,8 +86,9 @@ to `datetime.datetime` with format="rfc3339".
 ### Other Changes
 
 * The input `items` argument in the methods `.beta.memory_stores.begin_update_memories()` and `.beta.memory_stores.search_memories`
-was change from type `Optional[List[dict[str, Any]]]` to `Optional[Union[str, ResponseInputParam]]`. The class `ResponseInputParam`
-can be imported using `from openai.types.responses import EasyInputMessageParam`. This is not a breaking change, since the caller
+was changed from type `Optional[List[dict[str, Any]]]` to `Optional[Union[str, ResponseInputParam]]`, where `ResponseInputParam`
+is defined in the openai package. This allows passing in, for example, a list of `EasyInputMessageParam`. Import it using
+`from openai.types.responses import EasyInputMessageParam`. This is not a breaking change, since the caller
 can still pass in `List[dict[str, Any]`.
 
 ## 2.0.0b4 (2026-02-24)

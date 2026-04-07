@@ -154,7 +154,7 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         if connection_name:
             request_body["connectionName"] = connection_name
 
-        pending_upload_response = await self.pending_upload(
+        pending_upload_response = await self.start_pending_upload(
             name=name,
             version=version,
             pending_upload_request=request_body,
@@ -278,7 +278,9 @@ class BetaEvaluatorsOperations(BetaEvaluatorsOperationsGenerated):
         )
 
         async with container_client:
-            await self._upload_folder_to_blob(container_client, folder, file_pattern, folder_exclusions_pattern, **kwargs)
+            await self._upload_folder_to_blob(
+                container_client, folder, file_pattern, folder_exclusions_pattern, **kwargs
+            )
             self._set_blob_uri(evaluator_version, blob_uri)
 
             result = await self.create_version(

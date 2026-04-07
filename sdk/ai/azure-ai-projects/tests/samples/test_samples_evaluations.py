@@ -142,6 +142,9 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_evaluations_builtin_with_inline_data_oai.py",  # 401 AuthenticationError (invalid subscription key or API endpoint)
                 "sample_evaluations_builtin_with_traces.py",  # Missing required env var APPINSIGHTS_RESOURCE_ID (KeyError)
                 "sample_evaluations_score_model_grader_with_image.py",  # Eval fails: image inputs not supported for configured grader model
+                "sample_evaluations_score_model_grader_with_image_model_target.py",  # Eval fails: image inputs not supported for configured grader model
+                "sample_evaluations_score_model_grader_with_audio.py",  # Eval fails: audio inputs not supported for configured grader model
+                "sample_evaluations_score_model_grader_with_audio_model_target.py",  # Eval fails: audio inputs not supported for configured grader model
                 "sample_scheduled_evaluations.py",  # Missing dependency azure.mgmt.resource (ModuleNotFoundError)
                 "sample_evaluations_builtin_with_dataset_id.py",  # Requires dataset upload / Blob Storage prerequisite
                 "sample_continuous_evaluation_rule.py",  # Requires manual RBAC assignment in Azure Portal
@@ -149,8 +152,8 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_synthetic_data_agent_evaluation.py",  # Synthetic data gen is long-running preview feature
                 "sample_synthetic_data_model_evaluation.py",  # Synthetic data gen is long-running preview feature
                 "sample_eval_catalog_prompt_based_evaluators.py",  # For some reason fails with 500 (Internal server error)
-                "sample_eval_upload_custom_evaluator.py",  # TODO: Need to add recordings
-                "sample_eval_upload_friendly_evaluator.py",  # TODO: Need to add recordings
+                "sample_custom_eval_upload_simple.py",  # TODO: Need to add recordings
+                "sample_custom_eval_upload_advanced.py",  # TODO: Need to add recordings
             ],
         ),
     )

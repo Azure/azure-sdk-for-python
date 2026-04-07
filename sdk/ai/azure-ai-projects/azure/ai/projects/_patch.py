@@ -11,10 +11,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import os
 import re
 import logging
-from typing import List, Any, Union
+from typing import List, Any
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
 from openai import OpenAI
-from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials import TokenCredential
 from azure.identity import get_bearer_token_provider
@@ -47,10 +46,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
      the form "https://{ai-services-account-name}.services.ai.azure.com/api/projects/_project".
      Required.
     :type endpoint: str
-    :param credential: Credential used to authenticate requests to the service. Is either a key
-     credential type or a token credential type. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or
-     ~azure.core.credentials.TokenCredential
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials.TokenCredential
     :param allow_preview: Whether to enable preview features. Optional, default is False.
      Set this to True to create a Hosted Agent (using :class:`~azure.ai.projects.models.HostedAgentDefinition`)
      or a Workflow Agent (using :class:`~azure.ai.projects.models.WorkflowAgentDefinition`).
@@ -68,7 +65,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     def __init__(
         self,
         endpoint: str,
-        credential: Union[AzureKeyCredential, "TokenCredential"],
+        credential: TokenCredential,
         *,
         allow_preview: bool = False,
         **kwargs: Any,
@@ -139,17 +136,13 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             base_url,
         )
 
-        # Allow caller to override api_key, otherwise use api-key or token provider given during AIProjectClient constructor
+        # Allow caller to override api_key, otherwise use token provider
         if "api_key" in kwargs:
             api_key = kwargs.pop("api_key")
         else:
-            api_key = (
-                self._config.credential.key  # pylint: disable=protected-access
-                if isinstance(self._config.credential, AzureKeyCredential)
-                else get_bearer_token_provider(
-                    self._config.credential,  # pylint: disable=protected-access
-                    "https://ai.azure.com/.default",
-                )
+            api_key = get_bearer_token_provider(
+                self._config.credential,  # pylint: disable=protected-access
+                "https://ai.azure.com/.default",
             )
 
         if "http_client" in kwargs:
