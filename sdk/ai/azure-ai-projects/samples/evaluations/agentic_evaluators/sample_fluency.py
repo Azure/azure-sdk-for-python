@@ -37,6 +37,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
@@ -53,25 +54,23 @@ def main() -> None:
         project_client.get_openai_client() as client,
     ):
         data_source_config = DataSourceConfigCustom(
-            {
-                "type": "custom",
-                "item_schema": {
-                    "type": "object",
-                    "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
-                    "required": ["response"],
-                },
-                "include_sample_schema": True,
-            }
+            type="custom",
+            item_schema={
+                "type": "object",
+                "properties": {"query": {"type": "string"}, "response": {"type": "string"}},
+                "required": ["response"],
+            },
+            include_sample_schema=True,
         )
 
         testing_criteria = [
-            {
-                "type": "azure_ai_evaluator",
-                "name": "fluency",
-                "evaluator_name": "builtin.fluency",
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
-                "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-            }
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name="fluency",
+                evaluator_name="builtin.fluency",
+                initialization_parameters={"deployment_name": f"{model_deployment_name}"},
+                data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
+            )
         ]
 
         print("Creating Evaluation")

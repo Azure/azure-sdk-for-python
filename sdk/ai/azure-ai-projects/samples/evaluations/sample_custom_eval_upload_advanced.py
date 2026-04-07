@@ -49,6 +49,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     CodeBasedEvaluatorDefinition,
+    TestingCriterionAzureAIEvaluator,
     EvaluatorCategory,
     EvaluatorMetric,
     EvaluatorMetricType,
@@ -193,22 +194,22 @@ with (
     )
 
     testing_criteria = [
-        {
-            "type": "azure_ai_evaluator",
-            "name": evaluator_name,
-            "evaluator_name": evaluator_name,
-            "initialization_parameters": {
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name=evaluator_name,
+            evaluator_name=evaluator_name,
+            initialization_parameters={
                 "api_key": openai_api_key,
                 "model_name": openai_model,
                 "threshold": 3,
             },
-        }
+        )
     ]
 
     eval_object = client.evals.create(
         name=f"Friendliness Evaluation - {suffix}",
         data_source_config=data_source_config,
-        testing_criteria=testing_criteria,  # type: ignore
+        testing_criteria=testing_criteria,
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 

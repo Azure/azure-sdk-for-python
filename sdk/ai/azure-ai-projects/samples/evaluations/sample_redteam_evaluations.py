@@ -31,9 +31,12 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AgentVersionDetails,
+    AzureAIDataSourceConfig,
     EvaluationTaxonomy,
     AzureAIAgentTarget,
     AgentTaxonomyInput,
+    TestingCriterionAzureAIEvaluator,
+    RedTeamEvalRunDataSource,
     RiskCategory,
 )
 import json
@@ -63,7 +66,7 @@ def main() -> None:  # pylint: disable=too-many-statements
 
         eval_group_name = "Red Team Agent Safety Evaluation -" + str(int(time.time()))
         eval_run_name = f"Red Team Agent Safety Eval Run for {agent_name} -" + str(int(time.time()))
-        data_source_config = {"type": "azure_ai_source", "scenario": "red_team"}
+        data_source_config = AzureAIDataSourceConfig(type="azure_ai_source", scenario="red_team")
 
         testing_criteria = _get_agent_safety_evaluation_criteria()
         print("Defining testing criteria for red teaming for agent target")
@@ -72,8 +75,8 @@ def main() -> None:  # pylint: disable=too-many-statements
         print("Creating red teaming evaluation")
         eval_object = client.evals.create(
             name=eval_group_name,
-            data_source_config=data_source_config,  # type: ignore
-            testing_criteria=testing_criteria,  # type: ignore
+            data_source_config=data_source_config,
+            testing_criteria=testing_criteria,
         )
         print(f"Evaluation created for red teaming: {eval_group_name}")
 
@@ -102,16 +105,16 @@ def main() -> None:  # pylint: disable=too-many-statements
         eval_run_object = client.evals.runs.create(
             eval_id=eval_object.id,
             name=eval_run_name,
-            data_source={  # type: ignore
-                "type": "azure_ai_red_team",
-                "item_generation_params": {
+            data_source=RedTeamEvalRunDataSource(
+                type="azure_ai_red_team",
+                item_generation_params={
                     "type": "red_team_taxonomy",
                     "attack_strategies": ["Flip", "Base64"],
                     "num_turns": 5,
                     "source": {"type": "file_id", "id": taxonomy.id},
                 },
-                "target": target.as_dict(),
-            },
+                target=target.as_dict(),
+            ),
         )
 
         print(f"Eval Run created for red teaming: {eval_run_name}")
@@ -171,43 +174,45 @@ def _get_tool_descriptions(agent: AgentVersionDetails):
 
 def _get_agent_safety_evaluation_criteria():
     return [
-        {
-            "type": "azure_ai_evaluator",
-            "name": "Prohibited Actions",
-            "evaluator_name": "builtin.prohibited_actions",
-            "evaluator_version": "1",
-        },
-        {
-            "type": "azure_ai_evaluator",
-            "name": "Task Adherence",
-            "evaluator_name": "builtin.task_adherence",
-            "evaluator_version": "1",
-        },
-        {
-            "type": "azure_ai_evaluator",
-            "name": "Sensitive Data Leakage",
-            "evaluator_name": "builtin.sensitive_data_leakage",
-            "evaluator_version": "1",
-        },
-        {
-            "type": "azure_ai_evaluator",
-            "name": "Self Harm",
-            "evaluator_name": "builtin.self_harm",
-            "evaluator_version": "1",
-        },
-        {
-            "type": "azure_ai_evaluator",
-            "name": "Violence",
-            "evaluator_name": "builtin.violence",
-            "evaluator_version": "1",
-        },
-        {"type": "azure_ai_evaluator", "name": "Sexual", "evaluator_name": "builtin.sexual", "evaluator_version": "1"},
-        {
-            "type": "azure_ai_evaluator",
-            "name": "Hate Unfairness",
-            "evaluator_name": "builtin.hate_unfairness",
-            "evaluator_version": "1",
-        },
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="Prohibited Actions",
+            evaluator_name="builtin.prohibited_actions",
+            evaluator_version="1",
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="Task Adherence",
+            evaluator_name="builtin.task_adherence",
+            evaluator_version="1",
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="Sensitive Data Leakage",
+            evaluator_name="builtin.sensitive_data_leakage",
+            evaluator_version="1",
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="Self Harm",
+            evaluator_name="builtin.self_harm",
+            evaluator_version="1",
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="Violence",
+            evaluator_name="builtin.violence",
+            evaluator_version="1",
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator", name="Sexual", evaluator_name="builtin.sexual", evaluator_version="1"
+        ),
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="Hate Unfairness",
+            evaluator_name="builtin.hate_unfairness",
+            evaluator_version="1",
+        ),
     ]
 
 

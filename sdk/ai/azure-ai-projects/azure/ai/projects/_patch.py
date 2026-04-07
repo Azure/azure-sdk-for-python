@@ -148,7 +148,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         if "http_client" in kwargs:
             http_client = kwargs.pop("http_client")
         elif self._console_logging_enabled:
-            http_client = httpx.Client(transport=OpenAILoggingTransport())
+            http_client = httpx.Client(transport=_OpenAILoggingTransport())
         else:
             http_client = None
 
@@ -206,7 +206,7 @@ class _AuthSecretsFilter(logging.Filter):
         return True
 
 
-class OpenAILoggingTransport(httpx.HTTPTransport):
+class _OpenAILoggingTransport(httpx.HTTPTransport):
     """Custom HTTP transport that logs OpenAI API requests and responses to the console.
 
     This transport wraps httpx.HTTPTransport to intercept all HTTP traffic and print

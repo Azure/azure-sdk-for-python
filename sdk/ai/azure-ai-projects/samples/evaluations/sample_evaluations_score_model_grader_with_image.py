@@ -32,14 +32,15 @@ from PIL import Image
 from dotenv import load_dotenv
 from openai.types.evals.create_eval_completions_run_data_source_param import (
     CreateEvalCompletionsRunDataSourceParam,
-    SourceFileContent,
-    SourceFileContentContent,
     InputMessagesTemplate,
     InputMessagesTemplateTemplateEvalItem,
     InputMessagesTemplateTemplateEvalItemContentInputImage,
+    SamplingParams,
+    SourceFileContent,
+    SourceFileContentContent,
 )
 from openai.types.responses import EasyInputMessageParam
-from openai.types.eval_create_params import DataSourceConfigCustom
+from openai.types.eval_create_params import DataSourceConfigCustom, TestingCriterionScoreModel
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 
@@ -67,29 +68,27 @@ with (
 ):
 
     data_source_config = DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "image_url": {"type": "string", "description": "The URL of the image to be evaluated."},
-                    "caption": {"type": "string", "description": "The caption describing the image."},
-                },
-                "required": [
-                    "image_url",
-                    "caption",
-                ],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "image_url": {"type": "string", "description": "The URL of the image to be evaluated."},
+                "caption": {"type": "string", "description": "The caption describing the image."},
             },
-            "include_sample_schema": True,
-        }
+            "required": [
+                "image_url",
+                "caption",
+            ],
+        },
+        include_sample_schema=True,
     )
 
     testing_criteria = [
-        {
-            "type": "score_model",
-            "name": "score_grader",
-            "model": model_deployment_name,
-            "input": [
+        TestingCriterionScoreModel(
+            type="score_model",
+            name="score_grader",
+            model=model_deployment_name,
+            input=[
                 {
                     "role": "system",
                     "content": "You are an expert grader. Judge how well the model response {{sample.output_text}} describes the image as well as matches the caption {{item.caption}}. Output a score of 1 if it's an excellent match with both. If it's somewhat compatible, output a score around 0.5. Otherwise, give a score of 0.",
@@ -103,16 +102,16 @@ with (
                     },
                 },
             ],
-            "range": [0.0, 1.0],
-            "pass_threshold": 0.5,
-        },
+            range=[0.0, 1.0],
+            pass_threshold=0.5,
+        ),
     ]
 
     print("Creating evaluation")
     eval_object = client.evals.create(
         name="OpenAI graders test",
         data_source_config=data_source_config,
-        testing_criteria=testing_criteria,  # type: ignore
+        testing_criteria=testing_criteria,
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
@@ -167,9 +166,9 @@ with (
             source=source_file_content,
             model=model_deployment_name,
             input_messages=input_messages,
-            sampling_params={
-                "temperature": 0.8,
-            },
+            sampling_params=SamplingParams(
+                temperature=0.8,
+            ),
         ),
     )
     print(f"Eval Run created (id: {eval_run_object.id}, name: {eval_run_object.name})")

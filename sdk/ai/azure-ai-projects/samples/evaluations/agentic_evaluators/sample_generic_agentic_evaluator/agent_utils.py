@@ -17,6 +17,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
@@ -40,13 +41,13 @@ def run_evaluator(
         print("Creating an OpenAI client from the AI Project client")
 
         testing_criteria = [
-            {
-                "type": "azure_ai_evaluator",
-                "name": f"{evaluator_name}",
-                "evaluator_name": f"builtin.{evaluator_name}",
-                "initialization_parameters": initialization_parameters,
-                "data_mapping": data_mapping,
-            }
+            TestingCriterionAzureAIEvaluator(
+                type="azure_ai_evaluator",
+                name=f"{evaluator_name}",
+                evaluator_name=f"builtin.{evaluator_name}",
+                initialization_parameters=initialization_parameters,
+                data_mapping=data_mapping,
+            )
         ]
 
         print("Creating Evaluation")

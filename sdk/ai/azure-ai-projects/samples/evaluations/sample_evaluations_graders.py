@@ -24,17 +24,20 @@ USAGE:
 """
 
 import os
-
 import time
 from pprint import pprint
-
 from dotenv import load_dotenv
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
     SourceFileContentContent,
 )
-from openai.types.eval_create_params import DataSourceConfigCustom
+from openai.types.graders import StringCheckGraderParam
+from openai.types.eval_create_params import (
+    DataSourceConfigCustom,
+    TestingCriterionLabelModel,
+    TestingCriterionTextSimilarity,
+)
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 
@@ -50,53 +53,51 @@ with (
 ):
 
     data_source_config = DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string"},
-                    "response": {"type": "string"},
-                    "context": {"type": "string"},
-                    "ground_truth": {"type": "string"},
-                },
-                "required": [],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "query": {"type": "string"},
+                "response": {"type": "string"},
+                "context": {"type": "string"},
+                "ground_truth": {"type": "string"},
             },
-            "include_sample_schema": True,
-        }
+            "required": [],
+        },
+        include_sample_schema=True,
     )
 
     testing_criteria = [
-        {
-            "type": "label_model",
-            "model": model_deployment_name,
-            "input": [
+        TestingCriterionLabelModel(
+            type="label_model",
+            model=model_deployment_name,
+            input=[
                 {
                     "role": "developer",
                     "content": "Classify the sentiment of the following statement as one of 'positive', 'neutral', or 'negative'",
                 },
                 {"role": "user", "content": "Statement: {{item.query}}"},
             ],
-            "passing_labels": ["positive", "neutral"],
-            "labels": ["positive", "neutral", "negative"],
-            "name": "label_grader",
-        },
-        {
-            "type": "text_similarity",
-            "input": "{{item.ground_truth}}",
-            "evaluation_metric": "bleu",
-            "reference": "{{item.response}}",
-            "pass_threshold": 1,
-            "name": "text_check_grader",
-        },
-        {
-            "type": "string_check",
-            "input": "{{item.ground_truth}}",
-            "reference": "{{item.ground_truth}}",
-            "operation": "eq",
-            "name": "string_check_grader",
-        },
-        {
+            passing_labels=["positive", "neutral"],
+            labels=["positive", "neutral", "negative"],
+            name="label_grader",
+        ),
+        TestingCriterionTextSimilarity(
+            type="text_similarity",
+            input="{{item.ground_truth}}",
+            evaluation_metric="bleu",
+            reference="{{item.response}}",
+            pass_threshold=1,
+            name="text_check_grader",
+        ),
+        StringCheckGraderParam(
+            type="string_check",
+            input="{{item.ground_truth}}",
+            reference="{{item.ground_truth}}",
+            operation="eq",
+            name="string_check_grader",
+        ),
+        {  # TODO: Use TestingCriterionScoreModel once the image_tag issue is resolved
             "type": "score_model",
             "name": "score",
             "model": model_deployment_name,
@@ -116,7 +117,7 @@ with (
     eval_object = client.evals.create(
         name="OpenAI graders test",
         data_source_config=data_source_config,
-        testing_criteria=testing_criteria,  # type: ignore
+        testing_criteria=testing_criteria,
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 

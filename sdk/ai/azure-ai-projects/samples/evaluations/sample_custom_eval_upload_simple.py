@@ -43,6 +43,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     CodeBasedEvaluatorDefinition,
+    TestingCriterionAzureAIEvaluator,
     EvaluatorCategory,
     EvaluatorMetric,
     EvaluatorMetricType,
@@ -116,27 +117,25 @@ with (
     # 2. Create an evaluation referencing the uploaded evaluator
     # ---------------------------------------------------------------
     data_source_config = DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string"},
-                    "response": {"type": "string"},
-                },
-                "required": ["query", "response"],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "query": {"type": "string"},
+                "response": {"type": "string"},
             },
-            "include_sample_schema": True,
-        }
+            "required": ["query", "response"],
+        },
+        include_sample_schema=True,
     )
 
     testing_criteria = [
-        {
-            "type": "azure_ai_evaluator",
-            "name": evaluator_name,
-            "evaluator_name": evaluator_name,
-            "initialization_parameters": {},
-        }
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name=evaluator_name,
+            evaluator_name=evaluator_name,
+            initialization_parameters={},
+        )
     ]
 
     print("\nCreating evaluation...")
