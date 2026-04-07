@@ -29,9 +29,6 @@ class _CollectorExporter(SpanExporter):
         return SpanExportResult.SUCCESS
 
     def shutdown(self):
-        pass
-
-    def shutdown(self):
         return True
 
     def force_flush(self, timeout_millis=30000):
