@@ -39,7 +39,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AzureAIModelTargetTyped,
-    EvalGraderAzureAIEvaluator,
+    TestingCriterionAzureAIEvaluator,
     ModelSamplingParamsTyped,
     TargetCompletionEvalRunDataSource,
 )
@@ -61,7 +61,7 @@ with (
     # Notes: for data_mapping:
     # {{sample.output_text}} is the string output of the provide model target for the given input in {{item.query}}
     testing_criteria = [
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="violence_detection",
             evaluator_name="builtin.violence",

@@ -35,7 +35,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import EvalGraderAzureAIEvaluator
+from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
@@ -62,14 +62,14 @@ with (
     )
 
     testing_criteria = [
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="Similarity",
             evaluator_name="builtin.similarity",
             data_mapping={"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
             initialization_parameters={"deployment_name": f"{model_deployment_name}", "threshold": 3},
         ),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="ROUGEScore",
             evaluator_name="builtin.rouge_score",
@@ -81,28 +81,28 @@ with (
                 "recall_threshold": 0.5,
             },
         ),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="METEORScore",
             evaluator_name="builtin.meteor_score",
             data_mapping={"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
             initialization_parameters={"threshold": 0.5},
         ),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="GLEUScore",
             evaluator_name="builtin.gleu_score",
             data_mapping={"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
             initialization_parameters={"threshold": 0.5},
         ),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="F1Score",
             evaluator_name="builtin.f1_score",
             data_mapping={"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
             initialization_parameters={"threshold": 0.5},
         ),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="BLEUScore",
             evaluator_name="builtin.bleu_score",

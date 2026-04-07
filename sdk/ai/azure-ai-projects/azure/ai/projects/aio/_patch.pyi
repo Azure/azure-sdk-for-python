@@ -37,7 +37,7 @@ from ..models import (
     AzureAIDataSourceConfig,
     AzureAIResponsesEvalRunDataSource,
     EvalCsvRunDataSource,
-    EvalGraderAzureAIEvaluator,
+    TestingCriterionAzureAIEvaluator,
     RedTeamEvalRunDataSource,
     TargetCompletionEvalRunDataSource,
     TracesPreviewEvalRunDataSource,
@@ -81,7 +81,7 @@ class _AzureAsyncEvals(AsyncEvals):
                 TestingCriterionTextSimilarity,
                 TestingCriterionPython,
                 TestingCriterionScoreModel,
-                EvalGraderAzureAIEvaluator,
+                TestingCriterionAzureAIEvaluator,
             ]
         ],
         metadata: Optional[Metadata] | Omit | None = ...,

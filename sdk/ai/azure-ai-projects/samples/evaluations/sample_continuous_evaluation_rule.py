@@ -42,7 +42,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AzureAIDataSourceConfig,
-    EvalGraderAzureAIEvaluator,
+    TestingCriterionAzureAIEvaluator,
     PromptAgentDefinition,
     EvaluationRule,
     ContinuousEvaluationRuleAction,
@@ -75,7 +75,7 @@ with (
 
     data_source_config = AzureAIDataSourceConfig(type="azure_ai_source", scenario="responses")
     testing_criteria = [
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator", name="violence_detection", evaluator_name="builtin.violence"
         )
     ]

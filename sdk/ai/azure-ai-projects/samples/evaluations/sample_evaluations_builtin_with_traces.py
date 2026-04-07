@@ -40,7 +40,7 @@ from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AzureAIDataSourceConfig,
-    EvalGraderAzureAIEvaluator,
+    TestingCriterionAzureAIEvaluator,
     TracesPreviewEvalRunDataSource,
 )
 
@@ -56,9 +56,9 @@ model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
 trace_query_hours = int(os.environ.get("TRACE_LOOKBACK_HOURS", "1"))
 
 
-def _build_evaluator_config(name: str, evaluator_name: str) -> EvalGraderAzureAIEvaluator:
+def _build_evaluator_config(name: str, evaluator_name: str) -> TestingCriterionAzureAIEvaluator:
     """Create a standard Azure AI evaluator configuration block for trace evaluations."""
-    return EvalGraderAzureAIEvaluator(
+    return TestingCriterionAzureAIEvaluator(
         type="azure_ai_evaluator",
         name=name,
         evaluator_name=evaluator_name,

@@ -9,7 +9,7 @@ get the OpenAI client using `get_openai_client()` method of `AIProjectClient`. T
 classes to help you author the input to these methods. See new TypedDict classes `ModelSamplingParamsTyped`, 
 `ToolDescriptionTyped`, `AzureAIAgentTargetTyped`, `AzureAIModelTargetTyped`,
 `ResponseRetrievalItemGenerationParams`, `AzureAIResponsesEvalRunDataSource`, `AzureAIDataSourceConfig`,
-`TargetCompletionEvalRunDataSource`, `EvalGraderAzureAIEvaluator`, `AzureAIBenchmarkPreviewEvalRunDataSource`,
+`TargetCompletionEvalRunDataSource`, `TestingCriterionAzureAIEvaluator`, `AzureAIBenchmarkPreviewEvalRunDataSource`,
 `EvalCsvFileIdSource`, `EvalCsvRunDataSource`, `RedTeamEvalRunDataSource`, `TracesPreviewEvalRunDataSource`.
 
 

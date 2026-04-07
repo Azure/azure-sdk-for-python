@@ -784,20 +784,20 @@ with (
     # sample.output_text is the string output of the agent
     # sample.output_items is the structured JSON output of the agent, including tool calls information
     testing_criteria = [
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="violence_detection",
             evaluator_name="builtin.violence",
             data_mapping={"query": "{{item.query}}", "response": "{{sample.output_text}}"},
         ),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="fluency",
             evaluator_name="builtin.fluency",
             initialization_parameters={"deployment_name": f"{model_deployment_name}"},
             data_mapping={"query": "{{item.query}}", "response": "{{sample.output_text}}"},
         ),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="task_adherence",
             evaluator_name="builtin.task_adherence",

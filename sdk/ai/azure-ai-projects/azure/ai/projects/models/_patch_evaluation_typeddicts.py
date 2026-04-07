@@ -132,7 +132,7 @@ class TargetCompletionEvalRunDataSource(TypedDict, total=False):
     """Input messages configuration."""
 
 
-class EvalGraderAzureAIEvaluator(TypedDict, total=False):
+class TestingCriterionAzureAIEvaluator(TypedDict, total=False):
     """AzureAIEvaluatorGrader."""
 
     type: Required[Literal["azure_ai_evaluator"]]

@@ -39,7 +39,7 @@ from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     AzureAIDataSourceConfig,
     AzureAIResponsesEvalRunDataSource,
-    EvalGraderAzureAIEvaluator,
+    TestingCriterionAzureAIEvaluator,
     PromptAgentDefinition,
     ResponseRetrievalItemGenerationParams,
 )
@@ -76,7 +76,7 @@ with (
 
     data_source_config = AzureAIDataSourceConfig(type="azure_ai_source", scenario="responses")
     testing_criteria = [
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator", name="violence_detection", evaluator_name="builtin.violence"
         )
     ]

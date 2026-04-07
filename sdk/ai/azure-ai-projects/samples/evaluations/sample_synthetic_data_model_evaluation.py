@@ -44,7 +44,7 @@ from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import AzureAIDataSourceConfig, EvalGraderAzureAIEvaluator
+from azure.ai.projects.models import AzureAIDataSourceConfig, TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
@@ -64,7 +64,7 @@ with (
     # {{item.query}} references the synthetically generated query.
     # {{sample.output_text}} references the model's response.
     testing_criteria = [
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="coherence",
             evaluator_name="builtin.coherence",
@@ -76,7 +76,7 @@ with (
                 "response": "{{sample.output_text}}",
             },
         ),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="violence",
             evaluator_name="builtin.violence",

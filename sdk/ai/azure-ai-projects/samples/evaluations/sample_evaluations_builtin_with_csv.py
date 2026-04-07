@@ -43,7 +43,7 @@ from azure.ai.projects.models import (
     DatasetVersion,
     EvalCsvFileIdSource,
     EvalCsvRunDataSource,
-    EvalGraderAzureAIEvaluator,
+    TestingCriterionAzureAIEvaluator,
 )
 
 load_dotenv()
@@ -89,15 +89,15 @@ with (
     )
 
     testing_criteria = [
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="violence",
             evaluator_name="builtin.violence",
             data_mapping={"query": "{{item.query}}", "response": "{{item.response}}"},
             initialization_parameters={"deployment_name": f"{model_deployment_name}"},
         ),
-        EvalGraderAzureAIEvaluator(type="azure_ai_evaluator", name="f1", evaluator_name="builtin.f1_score"),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(type="azure_ai_evaluator", name="f1", evaluator_name="builtin.f1_score"),
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="coherence",
             evaluator_name="builtin.coherence",

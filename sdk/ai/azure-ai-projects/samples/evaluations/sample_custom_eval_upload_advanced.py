@@ -49,7 +49,7 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     CodeBasedEvaluatorDefinition,
-    EvalGraderAzureAIEvaluator,
+    TestingCriterionAzureAIEvaluator,
     EvaluatorCategory,
     EvaluatorMetric,
     EvaluatorMetricType,
@@ -194,7 +194,7 @@ with (
     )
 
     testing_criteria = [
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name=evaluator_name,
             evaluator_name=evaluator_name,

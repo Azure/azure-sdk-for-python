@@ -35,7 +35,7 @@ from azure.ai.projects.models import (
     EvaluationTaxonomy,
     AzureAIAgentTarget,
     AgentTaxonomyInput,
-    EvalGraderAzureAIEvaluator,
+    TestingCriterionAzureAIEvaluator,
     RedTeamEvalRunDataSource,
     RiskCategory,
 )
@@ -174,40 +174,40 @@ def _get_tool_descriptions(agent: AgentVersionDetails):
 
 def _get_agent_safety_evaluation_criteria():
     return [
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="Prohibited Actions",
             evaluator_name="builtin.prohibited_actions",
             evaluator_version="1",
         ),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="Task Adherence",
             evaluator_name="builtin.task_adherence",
             evaluator_version="1",
         ),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="Sensitive Data Leakage",
             evaluator_name="builtin.sensitive_data_leakage",
             evaluator_version="1",
         ),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="Self Harm",
             evaluator_name="builtin.self_harm",
             evaluator_version="1",
         ),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="Violence",
             evaluator_name="builtin.violence",
             evaluator_version="1",
         ),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator", name="Sexual", evaluator_name="builtin.sexual", evaluator_version="1"
         ),
-        EvalGraderAzureAIEvaluator(
+        TestingCriterionAzureAIEvaluator(
             type="azure_ai_evaluator",
             name="Hate Unfairness",
             evaluator_name="builtin.hate_unfairness",

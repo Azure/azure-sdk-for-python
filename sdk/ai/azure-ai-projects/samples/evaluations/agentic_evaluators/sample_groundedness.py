@@ -37,7 +37,7 @@ from openai.types.evals.create_eval_jsonl_run_data_source_param import (
 from openai.types.eval_create_params import DataSourceConfigCustom
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import EvalGraderAzureAIEvaluator
+from azure.ai.projects.models import TestingCriterionAzureAIEvaluator
 
 load_dotenv()
 
@@ -75,7 +75,7 @@ def main() -> None:  # pylint: disable=too-many-locals
         )
 
         testing_criteria = [
-            EvalGraderAzureAIEvaluator(
+            TestingCriterionAzureAIEvaluator(
                 type="azure_ai_evaluator",
                 name="groundedness",
                 evaluator_name="builtin.groundedness",
