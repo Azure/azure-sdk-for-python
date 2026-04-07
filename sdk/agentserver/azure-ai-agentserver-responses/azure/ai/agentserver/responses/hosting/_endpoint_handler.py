@@ -19,7 +19,7 @@ from typing import TYPE_CHECKING, Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.core import end_span, trace_stream
+from azure.ai.agentserver.core import end_span, flush_spans, trace_stream
 from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse
 
 from .._response_context import ResponseContext, IsolationContext
@@ -566,6 +566,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 _response_id_var.reset(rid_token)
                 _conversation_id_var.reset(cid_token)
                 _streaming_var.reset(str_token)
+                # Flush pending spans before the response is sent.
+                # BatchSpanProcessor exports on a timer; in hosted sandboxes
+                # the platform may freeze the process after the HTTP response,
+                # losing any buffered spans (e.g. LangGraph per-node spans).
+                flush_spans()
                 try:
                     _otel_context.detach(baggage_token)
                 except ValueError:
