@@ -6,6 +6,10 @@
 
 - Added support for evaluator `properties` passthrough in AOAI evaluation results. When an evaluator returns a `properties` dict, it is included alongside `score`, `label`, `reason`, `threshold`, and `passed` in the result object.
 
+### Bugs Fixed
+
+- Fixed unsandboxed Jinja2 template rendering in `_legacy/prompty/_utils.py` and `simulator/_conversation/__init__.py` that allowed Server-Side Template Injection (SSTI) leading to potential Remote Code Execution. Templates now use `jinja2.sandbox.SandboxedEnvironment` by default, matching the PromptFlow sandboxing pattern. Set `PF_USE_SANDBOX_FOR_JINJA=false` to opt out (not recommended).
+
 ## 1.16.3 (2026-04-01)
 
 ### Features Added

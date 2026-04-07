@@ -5,12 +5,14 @@
 
 import copy
 import logging
+import os
 import time
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union, cast
 import base64
 import re
 import jinja2
+from jinja2.sandbox import SandboxedEnvironment
 
 from azure.ai.evaluation._exceptions import ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._http_utils import AsyncHttpPipeline
@@ -18,6 +20,18 @@ from .._model_tools import LLMBase, OpenAIChatCompletionsModel, RAIClient
 from azure.ai.evaluation._common.onedp._client import ProjectsClient as AIProjectClient
 from .._model_tools._template_handler import TemplateParameters
 from .constants import ConversationRole
+
+
+def _create_jinja_template(template_content: str) -> jinja2.Template:
+    """Create a Jinja2 template, using SandboxedEnvironment by default to prevent SSTI attacks.
+
+    Set env var PF_USE_SANDBOX_FOR_JINJA=false to opt out (not recommended).
+    """
+    use_sandbox = os.environ.get("PF_USE_SANDBOX_FOR_JINJA", "true")
+    if use_sandbox.lower() == "false":
+        return jinja2.Template(template_content, undefined=jinja2.StrictUndefined)
+    sandbox_env = SandboxedEnvironment(undefined=jinja2.StrictUndefined)
+    return sandbox_env.from_string(template_content)
 
 
 @dataclass
@@ -115,9 +129,7 @@ class ConversationBot:
     ) -> None:
         self.role = role
         self.conversation_template_orig = conversation_template
-        self.conversation_template: jinja2.Template = jinja2.Template(
-            conversation_template, undefined=jinja2.StrictUndefined
-        )
+        self.conversation_template: jinja2.Template = _create_jinja_template(conversation_template)
         self.persona_template_args = instantiation_parameters
         if self.role == ConversationRole.USER:
             self.name: str = cast(str, self.persona_template_args.get("name", role.value))
@@ -134,9 +146,7 @@ class ConversationBot:
                     self.conversation_starter = conversation_starter_content
                 else:
                     try:
-                        self.conversation_starter = jinja2.Template(
-                            conversation_starter_content, undefined=jinja2.StrictUndefined
-                        )
+                        self.conversation_starter = _create_jinja_template(conversation_starter_content)
                     except jinja2.exceptions.TemplateSyntaxError as e:  # noqa: F841
                         self.conversation_starter = conversation_starter_content
             else:
