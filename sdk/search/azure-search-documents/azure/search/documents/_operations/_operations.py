@@ -357,7 +357,7 @@ def build_search_autocomplete_get_request(
     *,
     search_text: str,
     suggester_name: str,
-    autocomplete_mode: Optional[Union[str, _models1._enums.AutocompleteMode]] = None,
+    autocomplete_mode: Optional[Union[str, _models1.AutocompleteMode]] = None,
     filter: Optional[str] = None,
     use_fuzzy_matching: Optional[bool] = None,
     highlight_post_tag: Optional[str] = None,
@@ -538,7 +538,7 @@ class _SearchClientOperationsMixin(
         semantic_query: Optional[str] = None,
         debug: Optional[Union[str, _models1.QueryDebugMode]] = None,
         **kwargs: Any
-    ) -> _models1.SearchDocumentsResult:
+    ) -> _models1._models.SearchDocumentsResult:
         """Searches for documents in the index.
 
         :keyword search_text: A full-text search query expression; Use "*" or omit this parameter to
@@ -663,7 +663,7 @@ class _SearchClientOperationsMixin(
          "all". Default value is None.
         :paramtype debug: str or ~azure.search.documents.models.QueryDebugMode
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.SearchDocumentsResult
+        :rtype: ~azure.search.documents.models._models.SearchDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -677,7 +677,7 @@ class _SearchClientOperationsMixin(
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models1.SearchDocumentsResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models1._models.SearchDocumentsResult] = kwargs.pop("cls", None)
 
         _request = build_search_search_get_request(
             index_name=self._config.index_name,
@@ -740,7 +740,9 @@ class _SearchClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models1.SearchDocumentsResult, response.json())
+            deserialized = _deserialize(
+                _models1._models.SearchDocumentsResult, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -781,15 +783,15 @@ class _SearchClientOperationsMixin(
         vector_queries: Optional[list[_models1.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models1.VectorFilterMode]] = None,
         **kwargs: Any
-    ) -> _models1.SearchDocumentsResult: ...
+    ) -> _models1._models.SearchDocumentsResult: ...
     @overload
     def _search_post(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models1.SearchDocumentsResult: ...
+    ) -> _models1._models.SearchDocumentsResult: ...
     @overload
     def _search_post(
         self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models1.SearchDocumentsResult: ...
+    ) -> _models1._models.SearchDocumentsResult: ...
 
     @distributed_trace
     def _search_post(  # pylint: disable=too-many-locals
@@ -825,7 +827,7 @@ class _SearchClientOperationsMixin(
         vector_queries: Optional[list[_models1.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models1.VectorFilterMode]] = None,
         **kwargs: Any
-    ) -> _models1.SearchDocumentsResult:
+    ) -> _models1._models.SearchDocumentsResult:
         """Searches for documents in the index.
 
         :param body: Is either a JSON type or a IO[bytes] type. Required.
@@ -946,7 +948,7 @@ class _SearchClientOperationsMixin(
          "postFilter", "preFilter", and "strictPostFilter". Default value is None.
         :paramtype vector_filter_mode: str or ~azure.search.documents.models.VectorFilterMode
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
-        :rtype: ~azure.search.documents.models.SearchDocumentsResult
+        :rtype: ~azure.search.documents.models._models.SearchDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -961,7 +963,7 @@ class _SearchClientOperationsMixin(
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models1.SearchDocumentsResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models1._models.SearchDocumentsResult] = kwargs.pop("cls", None)
 
         if body is _Unset:
             body = {
@@ -1039,7 +1041,9 @@ class _SearchClientOperationsMixin(
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models1.SearchDocumentsResult, response.json())
+            deserialized = _deserialize(
+                _models1._models.SearchDocumentsResult, response.json()  # pylint: disable=protected-access
+            )
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -1535,7 +1539,7 @@ class _SearchClientOperationsMixin(
         *,
         search_text: str,
         suggester_name: str,
-        autocomplete_mode: Optional[Union[str, _models1._enums.AutocompleteMode]] = None,
+        autocomplete_mode: Optional[Union[str, _models1.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
@@ -1661,7 +1665,7 @@ class _SearchClientOperationsMixin(
         search_text: str,
         suggester_name: str,
         content_type: str = "application/json",
-        autocomplete_mode: Optional[Union[str, _models1._enums.AutocompleteMode]] = None,
+        autocomplete_mode: Optional[Union[str, _models1.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
@@ -1687,7 +1691,7 @@ class _SearchClientOperationsMixin(
         *,
         search_text: str = _Unset,
         suggester_name: str = _Unset,
-        autocomplete_mode: Optional[Union[str, _models1._enums.AutocompleteMode]] = None,
+        autocomplete_mode: Optional[Union[str, _models1.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,

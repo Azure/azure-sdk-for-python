@@ -29,6 +29,8 @@ class KnowledgeBaseRetrievalClientConfiguration:  # pylint: disable=too-many-ins
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials_async.AsyncTokenCredential
+    :param knowledge_base_name: The name of the knowledge base. Required.
+    :type knowledge_base_name: str
     :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
      and None. Default value is "2026-04-01". Note that overriding this default value may result in
      unsupported behavior.
@@ -36,7 +38,11 @@ class KnowledgeBaseRetrievalClientConfiguration:  # pylint: disable=too-many-ins
     """
 
     def __init__(
-        self, endpoint: str, credential: Union[AzureKeyCredential, "AsyncTokenCredential"], **kwargs: Any
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "AsyncTokenCredential"],
+        knowledge_base_name: str,
+        **kwargs: Any,
     ) -> None:
         api_version: str = kwargs.pop("api_version", "2026-04-01")
 
@@ -44,9 +50,12 @@ class KnowledgeBaseRetrievalClientConfiguration:  # pylint: disable=too-many-ins
             raise ValueError("Parameter 'endpoint' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
+        if knowledge_base_name is None:
+            raise ValueError("Parameter 'knowledge_base_name' must not be None.")
 
         self.endpoint = endpoint
         self.credential = credential
+        self.knowledge_base_name = knowledge_base_name
         self.api_version = api_version
         self.credential_scopes = kwargs.pop("credential_scopes", ["https://search.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "search-documents/{}".format(VERSION))

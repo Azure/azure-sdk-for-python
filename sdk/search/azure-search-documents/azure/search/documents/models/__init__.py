@@ -15,7 +15,6 @@ if TYPE_CHECKING:
 
 from ._models import (  # type: ignore
     AutocompleteItem,
-    DebugInfo,
     DocumentDebugInfo,
     ErrorAdditionalInfo,
     ErrorDetail,
@@ -28,8 +27,6 @@ from ._models import (  # type: ignore
     QueryAnswerResult,
     QueryCaptionResult,
     QueryResultDocumentSubscores,
-    SearchDocumentsResult,
-    SearchRequest,
     SearchResult,
     SingleVectorFieldResult,
     SuggestResult,
@@ -43,6 +40,7 @@ from ._models import (  # type: ignore
 )
 
 from ._enums import (  # type: ignore
+    AutocompleteMode,
     IndexActionType,
     QueryAnswerType,
     QueryCaptionType,
@@ -62,7 +60,6 @@ from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
     "AutocompleteItem",
-    "DebugInfo",
     "DocumentDebugInfo",
     "ErrorAdditionalInfo",
     "ErrorDetail",
@@ -75,8 +72,6 @@ __all__ = [
     "QueryAnswerResult",
     "QueryCaptionResult",
     "QueryResultDocumentSubscores",
-    "SearchDocumentsResult",
-    "SearchRequest",
     "SearchResult",
     "SingleVectorFieldResult",
     "SuggestResult",
@@ -87,6 +82,7 @@ __all__ = [
     "VectorizableTextQuery",
     "VectorizedQuery",
     "VectorsDebugInfo",
+    "AutocompleteMode",
     "IndexActionType",
     "QueryAnswerType",
     "QueryCaptionType",

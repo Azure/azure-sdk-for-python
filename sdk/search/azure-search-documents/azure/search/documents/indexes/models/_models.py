@@ -2191,12 +2191,12 @@ class CustomAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Cus
      underscores, can only start and end with alphanumeric characters, and is limited to 128
      characters. Required.
     :vartype name: str
-    :ivar tokenizer: The name of the tokenizer to use to divide continuous text into a sequence of
-     tokens, such as breaking a sentence into words. Required. Known values are: "classic",
-     "edgeNGram", "keyword_v2", "letter", "lowercase", "microsoft_language_tokenizer",
+    :ivar tokenizer_name: The name of the tokenizer to use to divide continuous text into a
+     sequence of tokens, such as breaking a sentence into words. Required. Known values are:
+     "classic", "edgeNGram", "keyword_v2", "letter", "lowercase", "microsoft_language_tokenizer",
      "microsoft_language_stemming_tokenizer", "nGram", "path_hierarchy_v2", "pattern",
      "standard_v2", "uax_url_email", and "whitespace".
-    :vartype tokenizer: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
+    :vartype tokenizer_name: str or ~azure.search.documents.indexes.models.LexicalTokenizerName
     :ivar token_filters: A list of token filters used to filter out or modify the tokens generated
      by a tokenizer. For example, you can specify a lowercase filter that converts all characters to
      lowercase. The filters are run in the order in which they are listed.
@@ -2210,8 +2210,8 @@ class CustomAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Cus
     :vartype odata_type: str
     """
 
-    tokenizer: Union[str, "_models.LexicalTokenizerName"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    tokenizer_name: Union[str, "_models.LexicalTokenizerName"] = rest_field(
+        name="tokenizer", visibility=["read", "create", "update", "delete", "query"]
     )
     """The name of the tokenizer to use to divide continuous text into a sequence of tokens, such as
      breaking a sentence into words. Required. Known values are: \"classic\", \"edgeNGram\",
@@ -2239,7 +2239,7 @@ class CustomAnalyzer(LexicalAnalyzer, discriminator="#Microsoft.Azure.Search.Cus
         self,
         *,
         name: str,
-        tokenizer: Union[str, "_models.LexicalTokenizerName"],
+        tokenizer_name: Union[str, "_models.LexicalTokenizerName"],
         token_filters: Optional[list[Union[str, "_models.TokenFilterName"]]] = None,
         char_filters: Optional[list[Union[str, "_models.CharFilterName"]]] = None,
     ) -> None: ...
@@ -8768,8 +8768,9 @@ class SearchIndexResponse(_Model):
      creation time and cannot be modified on existing indexes. If null, the ClassicSimilarity
      algorithm is used.
     :vartype similarity: ~azure.search.documents.indexes.models.SimilarityAlgorithm
-    :ivar semantic: Defines parameters for a search index that influence semantic capabilities.
-    :vartype semantic: ~azure.search.documents.indexes.models.SemanticSearch
+    :ivar semantic_search: Defines parameters for a search index that influence semantic
+     capabilities.
+    :vartype semantic_search: ~azure.search.documents.indexes.models.SemanticSearch
     :ivar vector_search: Contains configuration options related to vector search.
     :vartype vector_search: ~azure.search.documents.indexes.models.VectorSearch
     :ivar e_tag: The ETag of the index.
@@ -8838,8 +8839,8 @@ class SearchIndexResponse(_Model):
     """The type of similarity algorithm to be used when scoring and ranking the documents matching a
      search query. The similarity algorithm can only be defined at index creation time and cannot be
      modified on existing indexes. If null, the ClassicSimilarity algorithm is used."""
-    semantic: Optional["_models.SemanticSearch"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
+    semantic_search: Optional["_models.SemanticSearch"] = rest_field(
+        name="semantic", visibility=["read", "create", "update", "delete", "query"]
     )
     """Defines parameters for a search index that influence semantic capabilities."""
     vector_search: Optional["_models.VectorSearch"] = rest_field(
@@ -8867,7 +8868,7 @@ class SearchIndexResponse(_Model):
         normalizers: Optional[list["_models.LexicalNormalizer"]] = None,
         encryption_key: Optional["_models.SearchResourceEncryptionKey"] = None,
         similarity: Optional["_models.SimilarityAlgorithm"] = None,
-        semantic: Optional["_models.SemanticSearch"] = None,
+        semantic_search: Optional["_models.SemanticSearch"] = None,
         vector_search: Optional["_models.VectorSearch"] = None,
         e_tag: Optional[str] = None,
     ) -> None: ...

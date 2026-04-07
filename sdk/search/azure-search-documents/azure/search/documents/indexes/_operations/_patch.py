@@ -48,7 +48,7 @@ def _convert_index_response(response: _SearchIndexResponse) -> _models.SearchInd
         normalizers=response.normalizers,
         encryption_key=response.encryption_key,
         similarity=response.similarity,
-        semantic_search=response.semantic,
+        semantic_search=response.semantic_search,
         vector_search=response.vector_search,
         e_tag=response.e_tag,
     )

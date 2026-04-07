@@ -19,6 +19,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._operations import _SearchClientOperationsMixin as _SearchClientOperationsMixinGenerated
 from ..models._patch import RequestEntityTooLargeError
 from .. import models as _models
+from ..models._models import SearchDocumentsResult, SearchRequest
 
 
 def _convert_search_result(result: _models.SearchResult) -> Dict[str, Any]:
@@ -38,7 +39,7 @@ def _convert_search_result(result: _models.SearchResult) -> Dict[str, Any]:
     return ret
 
 
-def _pack_continuation_token(response: _models.SearchDocumentsResult, api_version: str) -> Optional[bytes]:
+def _pack_continuation_token(response: SearchDocumentsResult, api_version: str) -> Optional[bytes]:
     """Pack continuation token from search response.
     :param ~azure.search.documents.models.SearchDocumentsResult response: The search response.
     :param str api_version: The API version used in the request.
@@ -64,7 +65,7 @@ def _unpack_continuation_token(token: bytes) -> tuple:
     unpacked_token = json.loads(base64.b64decode(token))
     next_link = unpacked_token["nextLink"]
     next_page_parameters = unpacked_token["nextPageParameters"]
-    next_page_request = _models.SearchRequest._deserialize(next_page_parameters, [])  # pylint: disable=protected-access
+    next_page_request = SearchRequest._deserialize(next_page_parameters, [])  # pylint: disable=protected-access
     return next_link, next_page_request
 
 
@@ -120,7 +121,7 @@ def _build_search_request(
     semantic_error_mode: Optional[Union[str, _models.SemanticErrorMode]] = None,
     semantic_max_wait_in_milliseconds: Optional[int] = None,
     debug: Optional[Union[str, _models.QueryDebugMode]] = None,
-) -> _models.SearchRequest:
+) -> SearchRequest:
     # pylint:disable=too-many-locals
     """Build a SearchRequest from search parameters.
 
@@ -187,7 +188,7 @@ def _build_search_request(
         highlight_fields_list = [f.strip() for f in highlight_fields.split(",") if f.strip()]
 
     # Build and return the search request
-    return _models.SearchRequest(  # type: ignore[misc]
+    return SearchRequest(  # type: ignore[misc]
         search_text=search_text,
         include_total_count=include_total_count,
         facets=facets,
@@ -222,7 +223,7 @@ def _build_search_request(
 class SearchPageIterator(PageIterator):
     """An iterator over search result pages."""
 
-    def __init__(self, client, initial_request: _models.SearchRequest, kwargs, continuation_token=None) -> None:
+    def __init__(self, client, initial_request: SearchRequest, kwargs, continuation_token=None) -> None:
         super(SearchPageIterator, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,
@@ -243,7 +244,7 @@ class SearchPageIterator(PageIterator):
         _next_link, next_page_request = _unpack_continuation_token(continuation_token)
         return self._client._search_post(body=next_page_request, **self._kwargs)  # pylint:disable=protected-access
 
-    def _extract_data_cb(self, response: _models.SearchDocumentsResult):
+    def _extract_data_cb(self, response: SearchDocumentsResult):
         continuation_token = _pack_continuation_token(response, api_version=self._api_version)
         results = [_convert_search_result(r) for r in response.results]
         return continuation_token, results
@@ -251,7 +252,7 @@ class SearchPageIterator(PageIterator):
     @_ensure_response
     def get_facets(self) -> Optional[Dict[str, Any]]:
         self.continuation_token = None
-        response = cast(_models.SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._response)
         if response.facets is not None and self._facets is None:
             self._facets = {
                 k: [x.as_dict() if hasattr(x, "as_dict") else dict(x) for x in v] for k, v in response.facets.items()
@@ -261,19 +262,19 @@ class SearchPageIterator(PageIterator):
     @_ensure_response
     def get_coverage(self) -> Optional[float]:
         self.continuation_token = None
-        response = cast(_models.SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._response)
         return response.coverage
 
     @_ensure_response
     def get_count(self) -> Optional[int]:
         self.continuation_token = None
-        response = cast(_models.SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._response)
         return response.count
 
     @_ensure_response
     def get_answers(self) -> Optional[List[_models.QueryAnswerResult]]:
         self.continuation_token = None
-        response = cast(_models.SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._response)
         return cast(Optional[List[_models.QueryAnswerResult]], response.answers)
 
 

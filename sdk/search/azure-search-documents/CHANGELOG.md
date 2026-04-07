@@ -1,6 +1,6 @@
 # Release History
 
-## 11.7.0 (2026-04-01)
+## 12.0.0 (2026-04-01)
 
 ### Features Added
 
@@ -34,8 +34,9 @@
 
 The following changes are due to the migration from AutoRest to TypeSpec code generation and affect all users:
 
-- `SentimentSkillVersion` and `EntityRecognitionSkillVersion` are removed. Only the latest skill versions are supported.
 - Model `serialize` and `deserialize` methods are removed. Use `as_dict` and constructor instead.
+- `EntityRecognitionSkill`, `EntityRecognitionSkillLanguage`, `EntityRecognitionSkillVersion`, `SentimentSkill`, and `SentimentSkillVersion` are removed. Only the latest skill versions (V3) are supported.
+- `PathHierarchyTokenizer` is renamed to `PathHierarchyTokenizerV2`.
 
 > The following changes do not impact the API of stable versions such as 11.6.0.
 > Only code written against a beta version such as 11.7.0b2 may be affected.
@@ -57,7 +58,6 @@ The following changes are due to the migration from AutoRest to TypeSpec code ge
   - `azure.search.documents.indexes.models.KnowledgeRetrievalOutputMode`
   - `azure.search.documents.indexes.models.PermissionFilter`
   - `azure.search.documents.indexes.models.SearchIndexerCache`
-  - `azure.search.documents.indexes.models.SearchIndexerKnowledgeStoreParameters`
   - `azure.search.documents.indexes.models.SearchIndexPermissionFilterOption`
   - `azure.search.documents.indexes.models.ServiceIndexersRuntime`
   - `azure.search.documents.indexes.models.SplitSkillEncoderModelName`
@@ -69,6 +69,7 @@ The following changes are due to the migration from AutoRest to TypeSpec code ge
   - `azure.search.documents.knowledgebases.models.KnowledgeBaseModelQueryPlanningActivityRecord`
   - `azure.search.documents.knowledgebases.models.KnowledgeBaseRemoteSharePointReference`
   - `azure.search.documents.knowledgebases.models.RemoteSharePointKnowledgeSourceParams`
+  - `azure.search.documents.models.DebugInfo`
   - `azure.search.documents.models.HybridCountAndFacetMode`
   - `azure.search.documents.models.HybridSearch`
   - `azure.search.documents.models.QueryLanguage`
@@ -79,6 +80,7 @@ The following changes are due to the migration from AutoRest to TypeSpec code ge
   - `azure.search.documents.models.QueryRewritesType`
   - `azure.search.documents.models.QueryRewritesValuesDebugInfo`
   - `azure.search.documents.models.QuerySpellerType`
+  - `azure.search.documents.models.SearchDocumentsResult`
   - `azure.search.documents.models.SearchScoreThreshold`
   - `azure.search.documents.models.SemanticDebugInfo`
   - `azure.search.documents.models.SemanticFieldState`
@@ -171,6 +173,7 @@ The following changes are due to the migration from AutoRest to TypeSpec code ge
 ### Other Changes
 
 - Updated default API version to `2026-04-01`.
+- Some boolean model properties (e.g., `use_query_mode`, `ignore_case`, `only_longest_match`) now default to `None` instead of `False`. There is no behavioral change — the server applies the same default when the property is omitted.
 
 ## 11.7.0b2 (2025-11-13)
 

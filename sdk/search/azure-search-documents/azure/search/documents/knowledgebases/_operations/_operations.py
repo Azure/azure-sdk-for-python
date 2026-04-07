@@ -78,7 +78,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     @overload
     def retrieve(
         self,
-        knowledge_base_name: str,
         retrieval_request: _models1.KnowledgeBaseRetrievalRequest,
         *,
         content_type: str = "application/json",
@@ -86,8 +85,6 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
     ) -> _models1.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request:
          ~azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest
@@ -102,17 +99,10 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
 
     @overload
     def retrieve(
-        self,
-        knowledge_base_name: str,
-        retrieval_request: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, retrieval_request: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -126,17 +116,10 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
 
     @overload
     def retrieve(
-        self,
-        knowledge_base_name: str,
-        retrieval_request: IO[bytes],
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, retrieval_request: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models1.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Required.
         :type retrieval_request: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -150,15 +133,10 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
 
     @distributed_trace
     def retrieve(
-        self,
-        knowledge_base_name: str,
-        retrieval_request: Union[_models1.KnowledgeBaseRetrievalRequest, JSON, IO[bytes]],
-        **kwargs: Any
+        self, retrieval_request: Union[_models1.KnowledgeBaseRetrievalRequest, JSON, IO[bytes]], **kwargs: Any
     ) -> _models1.KnowledgeBaseRetrievalResponse:
         """KnowledgeBase retrieves relevant data from backing stores.
 
-        :param knowledge_base_name: The name of the knowledge base. Required.
-        :type knowledge_base_name: str
         :param retrieval_request: The retrieval request to process. Is one of the following types:
          KnowledgeBaseRetrievalRequest, JSON, IO[bytes] Required.
         :type retrieval_request:
@@ -191,7 +169,7 @@ class _KnowledgeBaseRetrievalClientOperationsMixin(
             _content = json.dumps(retrieval_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_knowledge_base_retrieval_retrieve_request(
-            knowledge_base_name=knowledge_base_name,
+            knowledge_base_name=self._config.knowledge_base_name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

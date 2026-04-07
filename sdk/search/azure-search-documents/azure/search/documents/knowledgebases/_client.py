@@ -32,15 +32,25 @@ class KnowledgeBaseRetrievalClient(_KnowledgeBaseRetrievalClientOperationsMixin)
      credential type or a token credential type. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential or
      ~azure.core.credentials.TokenCredential
+    :param knowledge_base_name: The name of the knowledge base. Required.
+    :type knowledge_base_name: str
     :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
      and None. Default value is "2026-04-01". Note that overriding this default value may result in
      unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureKeyCredential, "TokenCredential"], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        endpoint: str,
+        credential: Union[AzureKeyCredential, "TokenCredential"],
+        knowledge_base_name: str,
+        **kwargs: Any
+    ) -> None:
         _endpoint = "{endpoint}"
-        self._config = KnowledgeBaseRetrievalClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = KnowledgeBaseRetrievalClientConfiguration(
+            endpoint=endpoint, credential=credential, knowledge_base_name=knowledge_base_name, **kwargs
+        )
 
         _policies = kwargs.pop("policies", None)
         if _policies is None:

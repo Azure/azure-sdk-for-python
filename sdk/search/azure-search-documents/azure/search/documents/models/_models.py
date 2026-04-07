@@ -349,7 +349,7 @@ class SearchDocumentsResult(_Model):
     :vartype answers: list[~azure.search.documents.models.QueryAnswerResult]
     :ivar next_page_parameters: Continuation JSON payload returned when the query can't return all
      the requested results in a single response. You can use this JSON along with.
-    :vartype next_page_parameters: ~azure.search.documents.models.SearchRequest
+    :vartype next_page_parameters: ~azure.search.documents.models._models.SearchRequest
     :ivar results: The sequence of results returned by the query. Required.
     :vartype results: list[~azure.search.documents.models.SearchResult]
     :ivar next_link: Continuation URL returned when the query can't return all the requested
@@ -382,7 +382,7 @@ class SearchDocumentsResult(_Model):
     answers: Optional[list["_models.QueryAnswerResult"]] = rest_field(name="@search.answers", visibility=["read"])
     """The answers query results for the search operation; null if the answers query parameter was not
      specified or set to 'none'."""
-    next_page_parameters: Optional["_models.SearchRequest"] = rest_field(
+    next_page_parameters: Optional["_models._models.SearchRequest"] = rest_field(
         name="@search.nextPageParameters", visibility=["read"]
     )
     """Continuation JSON payload returned when the query can't return all the requested results in a

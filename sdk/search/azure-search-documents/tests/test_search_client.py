@@ -12,9 +12,11 @@ from azure.search.documents._operations._patch import SearchPageIterator
 
 from azure.search.documents.models import (
     FacetResult,
-    SearchDocumentsResult,
     SearchResult,
 )
+
+# Internal type used to mock the wire response from _search_post
+from azure.search.documents.models._models import SearchDocumentsResult
 
 from azure.search.documents import (
     IndexDocumentsBatch,

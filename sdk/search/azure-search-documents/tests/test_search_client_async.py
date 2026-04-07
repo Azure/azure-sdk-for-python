@@ -7,9 +7,11 @@ from azure.core.credentials import AzureKeyCredential
 from azure.search.documents.aio._operations._patch import AsyncSearchPageIterator
 from azure.search.documents.models import (
     FacetResult,
-    SearchDocumentsResult,
     SearchResult,
 )
+
+# Internal type used to mock the wire response from _search_post
+from azure.search.documents.models._models import SearchDocumentsResult
 from azure.search.documents.aio import SearchClient
 from test_search_index_client_async import await_prepared_test
 

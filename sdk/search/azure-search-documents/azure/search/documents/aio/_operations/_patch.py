@@ -21,6 +21,7 @@ from ..._operations._patch import (
 )
 from ...models._patch import RequestEntityTooLargeError
 from ... import models as _models
+from ...models._models import SearchDocumentsResult, SearchRequest
 
 
 def _ensure_response(f):
@@ -44,7 +45,7 @@ def _ensure_response(f):
 class AsyncSearchPageIterator(AsyncPageIterator):
     """An async iterator over search result pages."""
 
-    def __init__(self, client, initial_request: _models.SearchRequest, kwargs, continuation_token=None) -> None:
+    def __init__(self, client, initial_request: SearchRequest, kwargs, continuation_token=None) -> None:
         super(AsyncSearchPageIterator, self).__init__(
             get_next=self._get_next_cb,
             extract_data=self._extract_data_cb,
@@ -67,7 +68,7 @@ class AsyncSearchPageIterator(AsyncPageIterator):
             body=next_page_request, **self._kwargs
         )
 
-    async def _extract_data_cb(self, response: _models.SearchDocumentsResult):
+    async def _extract_data_cb(self, response: SearchDocumentsResult):
         continuation_token = _pack_continuation_token(response, api_version=self._api_version)
         results = [_convert_search_result(r) for r in response.results]
         return continuation_token, results
@@ -75,7 +76,7 @@ class AsyncSearchPageIterator(AsyncPageIterator):
     @_ensure_response
     async def get_facets(self) -> Optional[Dict[str, Any]]:
         self.continuation_token = None
-        response = cast(_models.SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._response)
         if response.facets is not None and self._facets is None:
             self._facets = {
                 k: [x.as_dict() if hasattr(x, "as_dict") else dict(x) for x in v] for k, v in response.facets.items()
@@ -85,19 +86,19 @@ class AsyncSearchPageIterator(AsyncPageIterator):
     @_ensure_response
     async def get_coverage(self) -> Optional[float]:
         self.continuation_token = None
-        response = cast(_models.SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._response)
         return response.coverage
 
     @_ensure_response
     async def get_count(self) -> Optional[int]:
         self.continuation_token = None
-        response = cast(_models.SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._response)
         return response.count
 
     @_ensure_response
     async def get_answers(self) -> Optional[List[_models.QueryAnswerResult]]:
         self.continuation_token = None
-        response = cast(_models.SearchDocumentsResult, self._response)
+        response = cast(SearchDocumentsResult, self._response)
         return response.answers
 
 
