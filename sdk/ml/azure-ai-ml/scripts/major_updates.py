@@ -1,21 +1,19 @@
-import ast
 import requests
+
+try:
+    import tomllib
+except ModuleNotFoundError:
+    import tomli as tomllib
+
 from packaging.requirements import Requirement
 from packaging.version import Version
 
 
-def fetch_dependencies_from_setup(file_path):
-    with open(file_path, "r") as file:
-        tree = ast.parse(file.read(), filename=file_path)
+def fetch_dependencies_from_pyproject(file_path):
+    with open(file_path, "rb") as file:
+        data = tomllib.load(file)
 
-    dependencies = []
-    for node in ast.walk(tree):
-        if isinstance(node, ast.Call) and getattr(node.func, "id", None) == "setup":
-            for keyword in node.keywords:
-                if keyword.arg == "install_requires":
-                    dependencies = [elt.s for elt in keyword.value.elts]
-                    break
-    return dependencies
+    return data.get("project", {}).get("dependencies", [])
 
 
 def list_versions(package_name):
@@ -31,8 +29,8 @@ def is_major_update(previous, latest):
 
 
 def check_for_major_updates():
-    setup_file_path = "sdk/ml/azure-ai-ml/setup.py"
-    deps_list = fetch_dependencies_from_setup(setup_file_path)
+    pyproject_file_path = "sdk/ml/azure-ai-ml/pyproject.toml"
+    deps_list = fetch_dependencies_from_pyproject(pyproject_file_path)
     deps = [Requirement(line) for line in deps_list if line.strip() and not line.strip().startswith("#")]
 
     with open("updates.txt", "w") as f:

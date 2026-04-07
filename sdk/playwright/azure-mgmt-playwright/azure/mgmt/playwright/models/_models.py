@@ -9,7 +9,7 @@
 # pylint: disable=useless-super-delegation
 
 import datetime
-from typing import Any, Dict, List, Mapping, Optional, TYPE_CHECKING, Union, overload
+from typing import Any, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_field
 
@@ -130,9 +130,9 @@ class ErrorDetail(_Model):
     """The error message."""
     target: Optional[str] = rest_field(visibility=["read"])
     """The error target."""
-    details: Optional[List["_models.ErrorDetail"]] = rest_field(visibility=["read"])
+    details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -182,6 +182,58 @@ class FreeTrialProperties(_Model):
     state: Union[str, "_models.FreeTrialState"] = rest_field(visibility=["read"])
     """The free trial state. Required. Known values are: \"Active\", \"Expired\", and
      \"NotApplicable\"."""
+
+
+class ManagedServiceIdentity(_Model):
+    """Managed service identity (system assigned and/or user assigned identities).
+
+    :ivar principal_id: The service principal ID of the system assigned identity. This property
+     will only be provided for a system assigned identity.
+    :vartype principal_id: str
+    :ivar tenant_id: The tenant ID of the system assigned identity. This property will only be
+     provided for a system assigned identity.
+    :vartype tenant_id: str
+    :ivar type: The type of managed identity assigned to this resource. Required. Known values are:
+     "None", "SystemAssigned", "UserAssigned", and "SystemAssigned,UserAssigned".
+    :vartype type: str or ~azure.mgmt.playwright.models.ManagedServiceIdentityType
+    :ivar user_assigned_identities: The identities assigned to this resource by the user.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.playwright.models.UserAssignedIdentity]
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The service principal ID of the system assigned identity. This property will only be provided
+     for a system assigned identity."""
+    tenant_id: Optional[str] = rest_field(name="tenantId", visibility=["read"])
+    """The tenant ID of the system assigned identity. This property will only be provided for a system
+     assigned identity."""
+    type: Union[str, "_models.ManagedServiceIdentityType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of managed identity assigned to this resource. Required. Known values are: \"None\",
+     \"SystemAssigned\", \"UserAssigned\", and \"SystemAssigned,UserAssigned\"."""
+    user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = rest_field(
+        name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identities assigned to this resource by the user."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Union[str, "_models.ManagedServiceIdentityType"],
+        user_assigned_identities: Optional[dict[str, "_models.UserAssignedIdentity"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class Operation(_Model):
@@ -242,7 +294,7 @@ class Operation(_Model):
 
 
 class OperationDisplay(_Model):
-    """Localized display information for and operation.
+    """Localized display information for an operation.
 
     :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
      Monitoring Insights" or "Microsoft Compute".
@@ -397,7 +449,7 @@ class TrackedResource(Resource):
     :vartype location: str
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     location: str = rest_field(visibility=["read", "create"])
     """The geo-location where the resource lives. Required."""
@@ -407,7 +459,7 @@ class TrackedResource(Resource):
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
     ) -> None: ...
 
     @overload
@@ -441,20 +493,27 @@ class PlaywrightWorkspace(TrackedResource):
     :vartype location: str
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.playwright.models.PlaywrightWorkspaceProperties
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.playwright.models.ManagedServiceIdentity
     """
 
     properties: Optional["_models.PlaywrightWorkspaceProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The resource-specific properties for this resource."""
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
 
     @overload
     def __init__(
         self,
         *,
         location: str,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.PlaywrightWorkspaceProperties"] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
     ) -> None: ...
 
     @overload
@@ -514,6 +573,13 @@ class PlaywrightWorkspaceProperties(_Model):
     :vartype local_auth: str or ~azure.mgmt.playwright.models.EnablementStatus
     :ivar workspace_id: The workspace ID in GUID format.
     :vartype workspace_id: str
+    :ivar reporting: Indicates whether reporting is enabled for the workspace. When set to true,
+     reports will be generated and available for the workspace. Known values are: "Enabled" and
+     "Disabled".
+    :vartype reporting: str or ~azure.mgmt.playwright.models.EnablementStatus
+    :ivar storage_uri: The URI of the Azure storage account used to store workspace artifacts, test
+     results, and reports.
+    :vartype storage_uri: str
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -537,6 +603,16 @@ class PlaywrightWorkspaceProperties(_Model):
      Known values are: \"Enabled\" and \"Disabled\"."""
     workspace_id: Optional[str] = rest_field(name="workspaceId", visibility=["read"])
     """The workspace ID in GUID format."""
+    reporting: Optional[Union[str, "_models.EnablementStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether reporting is enabled for the workspace. When set to true, reports will be
+     generated and available for the workspace. Known values are: \"Enabled\" and \"Disabled\"."""
+    storage_uri: Optional[str] = rest_field(
+        name="storageUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the Azure storage account used to store workspace artifacts, test results, and
+     reports."""
 
     @overload
     def __init__(
@@ -544,6 +620,8 @@ class PlaywrightWorkspaceProperties(_Model):
         *,
         regional_affinity: Optional[Union[str, "_models.EnablementStatus"]] = None,
         local_auth: Optional[Union[str, "_models.EnablementStatus"]] = None,
+        reporting: Optional[Union[str, "_models.EnablementStatus"]] = None,
+        storage_uri: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -622,13 +700,19 @@ class PlaywrightWorkspaceQuotaProperties(_Model):
 class PlaywrightWorkspaceUpdate(_Model):
     """The type used for update operations of the PlaywrightWorkspace.
 
+    :ivar identity: The managed service identities assigned to this resource.
+    :vartype identity: ~azure.mgmt.playwright.models.ManagedServiceIdentity
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar properties: The resource-specific properties for this resource.
     :vartype properties: ~azure.mgmt.playwright.models.PlaywrightWorkspaceUpdateProperties
     """
 
-    tags: Optional[Dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    identity: Optional["_models.ManagedServiceIdentity"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The managed service identities assigned to this resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Resource tags."""
     properties: Optional["_models.PlaywrightWorkspaceUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
@@ -639,7 +723,8 @@ class PlaywrightWorkspaceUpdate(_Model):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        identity: Optional["_models.ManagedServiceIdentity"] = None,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.PlaywrightWorkspaceUpdateProperties"] = None,
     ) -> None: ...
 
@@ -665,6 +750,13 @@ class PlaywrightWorkspaceUpdateProperties(_Model):
     :ivar local_auth: Enables the workspace to use local authentication through service access
      tokens for operations. Known values are: "Enabled" and "Disabled".
     :vartype local_auth: str or ~azure.mgmt.playwright.models.EnablementStatus
+    :ivar reporting: Indicates whether reporting is enabled for the workspace. When set to true,
+     reports will be generated and available for the workspace. Known values are: "Enabled" and
+     "Disabled".
+    :vartype reporting: str or ~azure.mgmt.playwright.models.EnablementStatus
+    :ivar storage_uri: The URI of the Azure storage account used to store workspace artifacts, test
+     results, and reports.
+    :vartype storage_uri: str
     """
 
     regional_affinity: Optional[Union[str, "_models.EnablementStatus"]] = rest_field(
@@ -679,6 +771,16 @@ class PlaywrightWorkspaceUpdateProperties(_Model):
     )
     """Enables the workspace to use local authentication through service access tokens for operations.
      Known values are: \"Enabled\" and \"Disabled\"."""
+    reporting: Optional[Union[str, "_models.EnablementStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Indicates whether reporting is enabled for the workspace. When set to true, reports will be
+     generated and available for the workspace. Known values are: \"Enabled\" and \"Disabled\"."""
+    storage_uri: Optional[str] = rest_field(
+        name="storageUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The URI of the Azure storage account used to store workspace artifacts, test results, and
+     reports."""
 
     @overload
     def __init__(
@@ -686,6 +788,8 @@ class PlaywrightWorkspaceUpdateProperties(_Model):
         *,
         regional_affinity: Optional[Union[str, "_models.EnablementStatus"]] = None,
         local_auth: Optional[Union[str, "_models.EnablementStatus"]] = None,
+        reporting: Optional[Union[str, "_models.EnablementStatus"]] = None,
+        storage_uri: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -764,3 +868,18 @@ class SystemData(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class UserAssignedIdentity(_Model):
+    """User assigned identity properties.
+
+    :ivar principal_id: The principal ID of the assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client ID of the assigned identity.
+    :vartype client_id: str
+    """
+
+    principal_id: Optional[str] = rest_field(name="principalId", visibility=["read"])
+    """The principal ID of the assigned identity."""
+    client_id: Optional[str] = rest_field(name="clientId", visibility=["read"])
+    """The client ID of the assigned identity."""

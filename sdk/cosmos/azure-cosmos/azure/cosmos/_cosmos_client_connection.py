@@ -23,6 +23,7 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+import logging
 import os
 import urllib.parse
 import uuid
@@ -33,6 +34,7 @@ from urllib3.util.retry import Retry
 
 from azure.core import PipelineClient
 from azure.core.credentials import TokenCredential
+from azure.core.exceptions import ServiceRequestError, ServiceResponseError
 from azure.core.paging import ItemPaged
 from azure.core.pipeline.policies import (
     HTTPPolicy,
@@ -82,6 +84,8 @@ from .partition_key import (
     _SequentialPartitionKeyType,
     _return_undefined_or_empty_partition_key,
 )
+
+_LOGGER = logging.getLogger(__name__)
 
 class CredentialDict(TypedDict, total=False):
     masterKey: str
@@ -1267,7 +1271,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             if collection_link in self.__container_properties_cache:
                 # TODO: This will make deep copy. Check if this has any performance impact
                 new_options = dict(options)
-                new_options["containerRID"] = self.__container_properties_cache[collection_link]["_rid"]
+                new_options[Constants.ContainerRID] = self.__container_properties_cache[collection_link]["_rid"]
                 options = new_options
             return self.__QueryFeed(
                 path,
@@ -3225,6 +3229,8 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if timeout is not None:
             kwargs.setdefault("timeout", timeout)
 
+        internal_headers_capture = kwargs.pop("_internal_response_headers_capture", None)
+
         if query:
             __GetBodiesFromQueryResult = result_fn
         else:
@@ -3275,6 +3281,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
             result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
             self.last_response_headers = last_response_headers
+            if internal_headers_capture is not None:
+                internal_headers_capture.clear()
+                internal_headers_capture.update(last_response_headers)
             if response_headers_list is not None:
                 response_headers_list.append(last_response_headers.copy())
             if response_hook:
@@ -3368,6 +3377,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     path, request_params, query, req_headers, **kwargs
                 )
                 self.last_response_headers = last_response_headers
+                if internal_headers_capture is not None:
+                    internal_headers_capture.clear()
+                    internal_headers_capture.update(last_response_headers)
                 self._UpdateSessionIfRequired(req_headers, partial_result, last_response_headers)
                 # Introducing a temporary complex function into a critical path to handle aggregated queries
                 # during splits, as a precaution falling back to the original logic if anything goes wrong
@@ -3397,6 +3409,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         result, last_response_headers = self.__Post(path, request_params, query, req_headers, **kwargs)
         self.last_response_headers = last_response_headers
+        if internal_headers_capture is not None:
+            internal_headers_capture.clear()
+            internal_headers_capture.update(last_response_headers)
         self._UpdateSessionIfRequired(req_headers, result, last_response_headers)
         if last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
             INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization
@@ -3556,8 +3571,63 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             return _return_undefined_or_empty_partition_key(is_system_key)
         return partitionKey
 
-    def refresh_routing_map_provider(self) -> None:
-        # re-initializes the routing map provider, effectively refreshing the current partition key range cache
+    def refresh_routing_map_provider(
+            self,
+            collection_link: Optional[str] = None,
+            previous_routing_map: Optional[Any] = None,
+            feed_options: Optional[dict[str, Any]] = None) -> None:
+        """Refreshes routing map provider.
+
+        If collection_link is provided, refreshes only that collection.
+        When previous_routing_map is provided this is incremental; otherwise this is a collection-scoped repopulation.
+        Without collection_link, it creates a new provider instance for a full refresh.
+
+        :param str collection_link: The collection link.
+        :param object previous_routing_map: The routing map that is considered stale.
+        :param dict feed_options: The feed options for the request.
+        """
+        if collection_link:
+            try:
+                # Force a refresh for a specific collection.
+                self._routing_map_provider.get_routing_map(
+                    collection_link,
+                    feed_options=feed_options if feed_options is not None else {},
+                    force_refresh=True,
+                    previous_routing_map=previous_routing_map
+                )
+                return
+            except (ServiceRequestError, ServiceResponseError):
+                # Transport failures during targeted refresh should degrade to full refresh.
+                _LOGGER.warning(
+                    "Targeted routing-map refresh failed for collection '%s' due to transport error. "
+                    "Falling back to full refresh.",
+                    collection_link,
+                )
+            except exceptions.CosmosHttpResponseError as e:
+                status_code = e.status_code
+                is_transient = (
+                    status_code in (http_constants.StatusCodes.REQUEST_TIMEOUT,
+                                    http_constants.StatusCodes.TOO_MANY_REQUESTS,
+                                    http_constants.StatusCodes.GONE)
+                    or (
+                        status_code is not None
+                        and status_code >= http_constants.StatusCodes.INTERNAL_SERVER_ERROR
+                    )
+                )
+                if not is_transient:
+                    raise
+                _LOGGER.warning(
+                    "Targeted routing-map refresh failed for collection '%s' with transient status code %s. "
+                    "Falling back to full refresh.",
+                    collection_link,
+                    status_code,
+                )
+        else:
+            # Full refresh - create a new provider instance. This clears all cached routing maps.
+            self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
+            return
+
+        # Fallback to full refresh when targeted refresh fails transiently.
         self._routing_map_provider = routing_map_provider.SmartRoutingMapProvider(self)
 
     def _refresh_container_properties_cache(self, container_link: str):

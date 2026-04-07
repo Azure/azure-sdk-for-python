@@ -37,6 +37,7 @@ def main():
         endpoint={
             "properties": {
                 "description": "Example NFS Mount Endpoint Description",
+                "endpointKind": "Source",
                 "endpointType": "NfsMount",
                 "export": "examples-exportName",
                 "host": "0.0.0.0",
@@ -46,6 +47,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2025-07-01/Endpoints_CreateOrUpdate_NfsMount.json
+# x-ms-original-file: 2025-12-01/Endpoints_CreateOrUpdate_NfsMount.json
 if __name__ == "__main__":
     main()
