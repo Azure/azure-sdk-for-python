@@ -15,7 +15,8 @@ misconfiguration is surfaced at startup rather than silently masked.
 """
 import os
 from dataclasses import dataclass
-from typing import Optional, Self
+from typing import Optional
+from typing_extensions import Self
 
 # ======================================================================
 # Environment variable keys (internal — users access values via AgentConfig)
@@ -75,7 +76,7 @@ class AgentConfig:
     sse_keepalive_interval: int
 
     @classmethod
-    def from_env(cls) -> Self
+    def from_env(cls) -> Self:
         """Create an ``AgentConfig`` by reading all platform environment variables.
 
         :return: A frozen config with resolved values.

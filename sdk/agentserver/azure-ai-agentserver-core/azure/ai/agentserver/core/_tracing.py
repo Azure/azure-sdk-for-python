@@ -206,8 +206,6 @@ def flush_spans(timeout_millis: int = 5000) -> None:
     :param timeout_millis: Maximum time to wait for the flush, in
         milliseconds.  Defaults to 5000 (5 seconds).
     """
-    if not _HAS_OTEL:
-        return
     provider = trace.get_tracer_provider()
     flush = getattr(provider, "force_flush", None)
     if flush is not None:
