@@ -148,8 +148,8 @@ class _CallbackChatTarget(PromptChatTarget):
                 # prior conversation messages so sensitive context does not leak into
                 # chat history. When a tool_name is present, extract it for the
                 # context dict used by the callback to build FunctionTool injections.
-                pm = getattr(piece, "prompt_metadata", None) or {}
-                if pm.get("is_context"):
+                pm = getattr(piece, "prompt_metadata", None)
+                if isinstance(pm, dict) and pm.get("is_context") is True:
                     if pm.get("tool_name"):
                         extracted_contexts.append(
                             {

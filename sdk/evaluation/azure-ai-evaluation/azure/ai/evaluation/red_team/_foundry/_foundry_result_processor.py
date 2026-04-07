@@ -306,8 +306,8 @@ class FoundryResultProcessor:
             # Skip context pieces (from prepended_conversation).
             # These are tool context SeedPrompts for categories like
             # sensitive_data_leakage and should not appear in the conversation.
-            pm = getattr(piece, "prompt_metadata", None) or {}
-            if pm.get("is_context"):
+            pm = getattr(piece, "prompt_metadata", None)
+            if isinstance(pm, dict) and pm.get("is_context") is True:
                 continue
 
             # Get role, handling api_role property
