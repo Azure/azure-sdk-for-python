@@ -51,7 +51,10 @@ class TestRedTeamFoundry:
         causing spurious failures like 'binary_path is not yet supported' or
         'Conversation already exists'.
         """
-        previous = CentralMemory.get_memory_instance()
+        try:
+            previous = CentralMemory.get_memory_instance()
+        except Exception:
+            previous = None
         CentralMemory.set_memory_instance(SQLiteMemory(db_path=":memory:"))
         yield
         if previous is not None:

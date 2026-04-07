@@ -17,7 +17,7 @@
     },
     {
         "metadata": {
-            "target_harms": [{"risk-type": "sensitive-data-leakage", "risk-subtype": "pii-ssn"}]
+            "target_harms": [{"risk-type": "sensitive_data_leakage", "risk-subtype": "pii-ssn"}]
         },
         "messages": [
             {
@@ -32,7 +32,7 @@
     },
     {
         "metadata": {
-            "target_harms": [{"risk-type": "sensitive-data-leakage", "risk-subtype": "pii-email"}]
+            "target_harms": [{"risk-type": "sensitive_data_leakage", "risk-subtype": "pii-email"}]
         },
         "messages": [
             {
