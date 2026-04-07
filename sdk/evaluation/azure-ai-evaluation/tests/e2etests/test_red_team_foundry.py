@@ -46,19 +46,15 @@ class TestRedTeamFoundry:
         """Reset PyRIT's shared SQLite memory between tests.
 
         PyRIT uses a process-wide CentralMemory singleton backed by a file-based
-        SQLite database. Without resetting, binary_path pieces, conversation
-        history, and system prompts from earlier tests leak into later ones,
-        causing spurious failures like 'binary_path is not yet supported' or
-        'Conversation already exists'.
+        SQLite database (pyrit.db). Without resetting, conversation pieces from
+        earlier tests leak into later ones via shared conversation IDs or stale
+        data. RedTeam.__init__ creates a new SQLiteMemory() each scan, but the
+        underlying file persists. Reset the database to ensure test isolation.
         """
-        try:
-            previous = CentralMemory.get_memory_instance()
-        except Exception:
-            previous = None
-        CentralMemory.set_memory_instance(SQLiteMemory(db_path=":memory:"))
+        CentralMemory.set_memory_instance(SQLiteMemory())
+        memory = CentralMemory.get_memory_instance()
+        memory.reset_database()
         yield
-        if previous is not None:
-            CentralMemory.set_memory_instance(previous)
 
     @staticmethod
     def _validate_attack_details(
