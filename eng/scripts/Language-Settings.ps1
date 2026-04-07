@@ -166,13 +166,13 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     # Use ‘uv pip install’ if uv is on PATH, otherwise fall back to python -m pip
     if (Get-Command uv -ErrorAction SilentlyContinue) {
       Write-Host "Using uv pip install"
-      $installerOutput = uv pip install "$pathToBuild" cibuildwheel==2.23.3 -vv
+      $installerOutput = uv pip install "$pathToBuild" -vv
       Write-Host $installerOutput
       $freezeOutput = uv pip freeze
       Write-Host "Pip freeze output: $freezeOutput"
     } else {
       Write-Host "Using python -m pip install"
-      $null = python -m pip install "$pathToBuild" cibuildwheel==2.23.3 -q -I
+      $null = python -m pip install "$pathToBuild" -q -I
     }
 
     $scriptLoc = Join-path $RepoRoot eng scripts get_package_properties.py
