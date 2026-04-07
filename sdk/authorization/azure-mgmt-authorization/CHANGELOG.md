@@ -1,6 +1,6 @@
 # Release History
 
-## 5.0.0b2 (2026-04-03)
+## 5.0.0b2 (2026-04-07)
 
 skip changelog generation
 
