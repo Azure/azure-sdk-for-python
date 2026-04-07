@@ -12,9 +12,30 @@ from ci_tools.logging import logger
 _CHRONUS_PACKAGE = "@chronus/chronus"
 _CHRONUS_MODULE_PATH = os.path.join("node_modules", "@chronus", "chronus")
 
-# Valid change kinds from .chronus/config.yaml.  Kept in sync manually
-# so the CLI can validate before calling out to chronus.
-_CHANGE_KINDS = ["breaking", "feature", "deprecation", "fix", "dependencies", "internal"]
+_FALLBACK_CHANGE_KINDS = ["breaking", "feature", "deprecation", "fix", "dependencies", "internal"]
+
+
+def _load_change_kinds() -> List[str]:
+    """Read valid change kinds from ``.chronus/config.yaml``.
+
+    Falls back to a hardcoded list if the config file is missing or
+    cannot be parsed (e.g. pyyaml not installed).
+    """
+    config_path = os.path.join(REPO_ROOT, ".chronus", "config.yaml")
+    try:
+        import yaml
+
+        with open(config_path) as f:
+            config = yaml.safe_load(f)
+        kinds = list(config.get("changeKinds", {}).keys())
+        if kinds:
+            return kinds
+    except Exception:
+        pass
+    return list(_FALLBACK_CHANGE_KINDS)
+
+
+_CHANGE_KINDS = _load_change_kinds()
 
 
 class changelog(Check):
@@ -28,6 +49,7 @@ class changelog(Check):
 
     def __init__(self) -> None:
         super().__init__()
+        self._parser: Optional[argparse.ArgumentParser] = None
 
     def register(
         self, subparsers: "argparse._SubParsersAction", parent_parsers: Optional[List[argparse.ArgumentParser]] = None
@@ -42,6 +64,7 @@ class changelog(Check):
             "changelog",
             help="Manage changelogs with Chronus (add, verify, create, status)",
         )
+        self._parser = p
 
         changelog_sub = p.add_subparsers(title="changelog commands", dest="changelog_command")
 
@@ -93,7 +116,7 @@ class changelog(Check):
         status_p.set_defaults(func=self._run_status)
 
         # Default behaviour when no subcommand is given
-        p.set_defaults(func=self._no_subcommand, _changelog_parser=p)
+        p.set_defaults(func=self._no_subcommand)
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -101,7 +124,7 @@ class changelog(Check):
 
     def _no_subcommand(self, args: argparse.Namespace) -> int:
         """Print help when no changelog subcommand is provided."""
-        args._changelog_parser.print_help()
+        self._parser.print_help()
         return 1
 
     def _get_npx(self) -> str:
@@ -153,7 +176,15 @@ class changelog(Check):
                 logger.info("Skipped Chronus installation.")
                 raise SystemExit(1)
         else:
-            logger.info("Chronus not installed — running 'npm install' automatically (non-interactive).")
+            if not os.environ.get("AZPYSDK_AUTO_INSTALL"):
+                logger.error(
+                    "Chronus is not installed and running in non-interactive mode.\n"
+                    "Set AZPYSDK_AUTO_INSTALL=1 to allow automatic installation, or run:\n\n"
+                    f"    cd {REPO_ROOT}\n"
+                    "    npm install\n"
+                )
+                raise SystemExit(1)
+            logger.info("AZPYSDK_AUTO_INSTALL set — running 'npm install' automatically.")
        
         logger.info(f"Running: npm install  (cwd: {REPO_ROOT})")
         rc = subprocess.call([npm, "install"], cwd=REPO_ROOT)
@@ -224,7 +255,7 @@ class changelog(Check):
         ``azpysdk changelog add --kind breaking -m "Removed foo API"``).
         """
         chronus_args = ["add"]
-        package = getattr(args, "package", None)
+        package = args.package
         if not package:
             package = self._detect_package_from_cwd()
             if package:
@@ -232,13 +263,11 @@ class changelog(Check):
         if package:
             chronus_args.append(package)
 
-        kind = getattr(args, "kind", None)
-        if kind:
-            chronus_args.extend(["--kind", kind])
+        if args.kind:
+            chronus_args.extend(["--kind", args.kind])
 
-        message = getattr(args, "message", None)
-        if message:
-            chronus_args.extend(["--message", message])
+        if args.message:
+            chronus_args.extend(["--message", args.message])
 
         return self._run_chronus(chronus_args)
 

@@ -7,7 +7,14 @@ from unittest.mock import patch, MagicMock, call
 
 import pytest
 
-from azpysdk.changelog import changelog, REPO_ROOT, _CHRONUS_MODULE_PATH, _CHANGE_KINDS
+from azpysdk.changelog import (
+    changelog,
+    REPO_ROOT,
+    _CHRONUS_MODULE_PATH,
+    _CHANGE_KINDS,
+    _FALLBACK_CHANGE_KINDS,
+    _load_change_kinds,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -105,6 +112,37 @@ class TestChangelogRegistration:
         # func should be the _no_subcommand method
         result = args.func(args)
         assert result == 1
+
+
+# ---------------------------------------------------------------------------
+# _load_change_kinds tests
+# ---------------------------------------------------------------------------
+
+
+class TestLoadChangeKinds:
+    """Verify that change kinds are loaded dynamically from config."""
+
+    def test_loaded_kinds_match_config_file(self):
+        """_CHANGE_KINDS should match the keys in .chronus/config.yaml."""
+        import yaml
+
+        config_path = os.path.join(REPO_ROOT, ".chronus", "config.yaml")
+        with open(config_path) as f:
+            config = yaml.safe_load(f)
+        expected = list(config["changeKinds"].keys())
+        assert _CHANGE_KINDS == expected
+
+    def test_fallback_when_config_missing(self):
+        """When the config file doesn't exist, fall back to hardcoded list."""
+        with patch("builtins.open", side_effect=FileNotFoundError):
+            kinds = _load_change_kinds()
+        assert kinds == _FALLBACK_CHANGE_KINDS
+
+    def test_fallback_when_yaml_parse_fails(self):
+        """When YAML parsing fails, fall back to hardcoded list."""
+        with patch("builtins.open", side_effect=Exception("bad yaml")):
+            kinds = _load_change_kinds()
+        assert kinds == _FALLBACK_CHANGE_KINDS
 
 
 # ---------------------------------------------------------------------------
@@ -366,14 +404,28 @@ class TestEnsureChronusInstalled:
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
     @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npm")
     @patch("azpysdk.changelog.sys.stdin")
-    def test_non_interactive_installs_automatically(self, mock_stdin, mock_which, mock_call, mock_installed):
-        """In non-interactive mode, npm install runs without prompting."""
+    def test_non_interactive_with_auto_install_env(self, mock_stdin, mock_which, mock_call, mock_installed):
+        """In non-interactive mode with AZPYSDK_AUTO_INSTALL=1, npm install runs."""
         mock_stdin.isatty.return_value = False
         c = changelog()
-        c._ensure_chronus_installed()  # should not raise
+        with patch.dict(os.environ, {"AZPYSDK_AUTO_INSTALL": "1"}):
+            c._ensure_chronus_installed()  # should not raise
         mock_call.assert_called_once()
         cmd = mock_call.call_args[0][0]
         assert cmd == ["/usr/bin/npm", "install"]
+
+    @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=False)
+    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npm")
+    @patch("azpysdk.changelog.sys.stdin")
+    def test_non_interactive_without_env_exits(self, mock_stdin, mock_which, mock_installed):
+        """In non-interactive mode without AZPYSDK_AUTO_INSTALL, exit with error."""
+        mock_stdin.isatty.return_value = False
+        c = changelog()
+        with patch.dict(os.environ, {}, clear=False):
+            # Ensure AZPYSDK_AUTO_INSTALL is not set
+            os.environ.pop("AZPYSDK_AUTO_INSTALL", None)
+            with pytest.raises(SystemExit):
+                c._ensure_chronus_installed()
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", side_effect=[False, True])
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
@@ -406,8 +458,9 @@ class TestEnsureChronusInstalled:
         """If npm install succeeds but chronus isn't found, exit with error."""
         mock_stdin.isatty.return_value = False
         c = changelog()
-        with pytest.raises(SystemExit):
-            c._ensure_chronus_installed()
+        with patch.dict(os.environ, {"AZPYSDK_AUTO_INSTALL": "1"}):
+            with pytest.raises(SystemExit):
+                c._ensure_chronus_installed()
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=False)
     @patch("azpysdk.changelog.subprocess.call", return_value=1)
@@ -417,8 +470,9 @@ class TestEnsureChronusInstalled:
         """If npm install fails, exit with the npm exit code."""
         mock_stdin.isatty.return_value = False
         c = changelog()
-        with pytest.raises(SystemExit):
-            c._ensure_chronus_installed()
+        with patch.dict(os.environ, {"AZPYSDK_AUTO_INSTALL": "1"}):
+            with pytest.raises(SystemExit):
+                c._ensure_chronus_installed()
 
     def test_is_chronus_installed_checks_node_modules(self):
         """_is_chronus_installed should check for the chronus directory in node_modules."""
