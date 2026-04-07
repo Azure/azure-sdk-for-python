@@ -69,8 +69,8 @@ class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ACTIVITY."""
     RESPONSES = "responses"
     """RESPONSES."""
-    A2_A = "a2a"
-    """A2_A."""
+    A2A = "a2a"
+    """A2A."""
     INVOCATIONS = "invocations"
     """INVOCATIONS."""
 
