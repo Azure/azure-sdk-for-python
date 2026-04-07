@@ -10,7 +10,7 @@
     "Microsoft.RoleDefinitions": "2022-05-01-preview",
     "Microsoft.RoleManagementAlerts": "2022-08-01-preview"
   },
-  "commit": "26811e0e102f2d86d8bde40a31fbc6ce1fcd6e72",
+  "commit": "97f1ddd0cd8e72f9a4a308de2fa9825cb1892dcf",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/authorization/resource-manager/Microsoft.Authorization/Authorization",
   "emitterVersion": "0.61.2"

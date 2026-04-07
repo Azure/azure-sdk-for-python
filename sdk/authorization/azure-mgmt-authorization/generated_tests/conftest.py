@@ -21,14 +21,22 @@ load_dotenv()
 # For security, please avoid record sensitive identity information in recordings
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
-    combine_subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
-    combine_tenant_id = os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
-    combine_client_id = os.environ.get("AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
-    combine_client_secret = os.environ.get("AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=combine_subscription_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=combine_tenant_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=combine_client_id, value="00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=combine_client_secret, value="00000000-0000-0000-0000-000000000000")
+    authorizationmanagement_subscription_id = os.environ.get(
+        "AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000"
+    )
+    authorizationmanagement_tenant_id = os.environ.get("AZURE_TENANT_ID", "00000000-0000-0000-0000-000000000000")
+    authorizationmanagement_client_id = os.environ.get("AZURE_CLIENT_ID", "00000000-0000-0000-0000-000000000000")
+    authorizationmanagement_client_secret = os.environ.get(
+        "AZURE_CLIENT_SECRET", "00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(
+        regex=authorizationmanagement_subscription_id, value="00000000-0000-0000-0000-000000000000"
+    )
+    add_general_regex_sanitizer(regex=authorizationmanagement_tenant_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(regex=authorizationmanagement_client_id, value="00000000-0000-0000-0000-000000000000")
+    add_general_regex_sanitizer(
+        regex=authorizationmanagement_client_secret, value="00000000-0000-0000-0000-000000000000"
+    )
 
     add_header_regex_sanitizer(key="Set-Cookie", value="[set-cookie;]")
     add_header_regex_sanitizer(key="Cookie", value="cookie;")

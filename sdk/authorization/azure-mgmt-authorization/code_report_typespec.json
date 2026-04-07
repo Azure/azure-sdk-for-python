@@ -1,7 +1,7 @@
 {
   "azure.mgmt.authorization": {
     "class_nodes": {
-      "CombineClient": {
+      "AuthorizationManagementClient": {
         "type": null,
         "methods": {
           "__init__": {
@@ -17634,7 +17634,6 @@
         "methods": {},
         "properties": {
           "GROUP": "GROUP",
-          "SERVICE_PRINCIPAL": "SERVICE_PRINCIPAL",
           "USER": "USER",
           "capitalize": "capitalize",
           "casefold": "casefold",
@@ -35683,7 +35682,7 @@
                     "param_type": "positional_or_keyword"
                   },
                   "user_type": {
-                    "type": "Optional[Union[str, _models.UserType]]",
+                    "type": "Optional[Union[str, _models.CommonUserType]]",
                     "default": null,
                     "param_type": "keyword_only"
                   },
@@ -35883,6 +35882,7 @@
         "methods": {},
         "properties": {
           "GROUP": "GROUP",
+          "SERVICE_PRINCIPAL": "SERVICE_PRINCIPAL",
           "USER": "USER",
           "capitalize": "capitalize",
           "casefold": "casefold",
@@ -35961,7 +35961,7 @@
                     "param_type": "positional_or_keyword"
                   },
                   "type": {
-                    "type": "Optional[Union[str, _models.CommonUserType]]",
+                    "type": "Optional[Union[str, _models.UserType]]",
                     "default": null,
                     "param_type": "keyword_only"
                   },
@@ -36155,7 +36155,7 @@
   },
   "azure.mgmt.authorization.aio": {
     "class_nodes": {
-      "CombineClient": {
+      "AuthorizationManagementClient": {
         "type": null,
         "methods": {
           "__init__": {

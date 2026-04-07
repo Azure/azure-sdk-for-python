@@ -164,7 +164,7 @@ from ...operations._operations import (
     build_scope_access_review_schedule_definitions_stop_request,
     build_tenant_level_access_review_instance_contacted_reviewers_list_request,
 )
-from .._configuration import CombineClientConfiguration
+from .._configuration import AuthorizationManagementClientConfiguration
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
@@ -178,14 +178,16 @@ class AttributeNamespacesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`attribute_namespaces` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -459,14 +461,16 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -556,14 +560,16 @@ class AccessReviewHistoryDefinitionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`access_review_history_definitions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -730,14 +736,16 @@ class ScopeAccessReviewHistoryDefinitionsOperations:  # pylint: disable=name-too
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`scope_access_review_history_definitions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -910,14 +918,16 @@ class AccessReviewScheduleDefinitionsOperations:  # pylint: disable=name-too-lon
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`access_review_schedule_definitions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1347,14 +1357,16 @@ class ScopeAccessReviewScheduleDefinitionsOperations:  # pylint: disable=name-to
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`scope_access_review_schedule_definitions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1811,14 +1823,16 @@ class AccessReviewInstancesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`access_review_instances` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2159,14 +2173,16 @@ class ScopeAccessReviewInstancesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`scope_access_review_instances` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2525,14 +2541,16 @@ class AccessReviewInstancesAssignedForMyApprovalOperations:  # pylint: disable=n
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`access_review_instances_assigned_for_my_approval` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2703,14 +2721,16 @@ class ScopeAccessReviewDefaultSettingsOperations:  # pylint: disable=name-too-lo
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`scope_access_review_default_settings` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2933,14 +2953,16 @@ class RoleAssignmentSchedulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`role_assignment_schedules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3116,14 +3138,16 @@ class RoleAssignmentScheduleInstancesOperations:  # pylint: disable=name-too-lon
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`role_assignment_schedule_instances` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3300,14 +3324,16 @@ class RoleAssignmentScheduleRequestsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`role_assignment_schedule_requests` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3892,14 +3918,16 @@ class RoleEligibilitySchedulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`role_eligibility_schedules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4075,14 +4103,16 @@ class RoleEligibilityScheduleInstancesOperations:  # pylint: disable=name-too-lo
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`role_eligibility_schedule_instances` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4259,14 +4289,16 @@ class RoleEligibilityScheduleRequestsOperations:  # pylint: disable=name-too-lon
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`role_eligibility_schedule_requests` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4851,14 +4883,16 @@ class RoleManagementPoliciesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`role_management_policies` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5249,14 +5283,16 @@ class RoleManagementPolicyAssignmentsOperations:  # pylint: disable=name-too-lon
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`role_management_policy_assignments` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5655,14 +5691,16 @@ class DenyAssignmentsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`deny_assignments` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -6442,14 +6480,16 @@ class RoleAssignmentsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`role_assignments` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7497,14 +7537,16 @@ class RoleDefinitionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`role_definitions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -7980,14 +8022,16 @@ class AlertsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`alerts` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -8538,14 +8582,16 @@ class AlertConfigurationsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`alert_configurations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -8845,14 +8891,16 @@ class AlertDefinitionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`alert_definitions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9015,14 +9063,16 @@ class AlertIncidentsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`alert_incidents` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9249,14 +9299,16 @@ class AccessReviewHistoryDefinitionOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`access_review_history_definition` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9475,14 +9527,16 @@ class AccessReviewHistoryDefinitionInstanceOperations:  # pylint: disable=name-t
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`access_review_history_definition_instance` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9568,14 +9622,16 @@ class AccessReviewHistoryDefinitionInstancesOperations:  # pylint: disable=name-
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`access_review_history_definition_instances` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9670,14 +9726,16 @@ class ScopeAccessReviewHistoryDefinitionOperations:  # pylint: disable=name-too-
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`scope_access_review_history_definition` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -9915,14 +9973,16 @@ class ScopeAccessReviewHistoryDefinitionInstanceOperations:  # pylint: disable=n
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`scope_access_review_history_definition_instance` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10010,14 +10070,16 @@ class ScopeAccessReviewHistoryDefinitionInstancesOperations:  # pylint: disable=
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`scope_access_review_history_definition_instances` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10116,14 +10178,16 @@ class AccessReviewScheduleDefinitionsAssignedForMyApprovalOperations:  # pylint:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`access_review_schedule_definitions_assigned_for_my_approval` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10221,14 +10285,16 @@ class AccessReviewInstanceOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`access_review_instance` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10523,14 +10589,16 @@ class AccessReviewInstanceDecisionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`access_review_instance_decisions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10636,14 +10704,16 @@ class AccessReviewInstanceContactedReviewersOperations:  # pylint: disable=name-
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`access_review_instance_contacted_reviewers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -10743,14 +10813,16 @@ class ScopeAccessReviewInstanceOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`scope_access_review_instance` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -11164,14 +11236,16 @@ class ScopeAccessReviewInstanceDecisionsOperations:  # pylint: disable=name-too-
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`scope_access_review_instance_decisions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -11279,14 +11353,16 @@ class ScopeAccessReviewInstanceContactedReviewersOperations:  # pylint: disable=
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`scope_access_review_instance_contacted_reviewers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -11388,14 +11464,16 @@ class TenantLevelAccessReviewInstanceContactedReviewersOperations:  # pylint: di
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`tenant_level_access_review_instance_contacted_reviewers` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -11494,14 +11572,16 @@ class AccessReviewDefaultSettingsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`access_review_default_settings` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -11709,14 +11789,16 @@ class AccessReviewInstanceMyDecisionsOperations:  # pylint: disable=name-too-lon
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`access_review_instance_my_decisions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -12075,14 +12157,16 @@ class EligibleChildResourcesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`eligible_child_resources` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -12184,14 +12268,16 @@ class ClassicAdministratorsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`classic_administrators` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -12283,14 +12369,16 @@ class GlobalAdministratorOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`global_administrator` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -12351,14 +12439,16 @@ class ProviderOperationsMetadataOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`provider_operations_metadata` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -12526,14 +12616,16 @@ class PermissionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`permissions` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -12732,14 +12824,16 @@ class AlertOperationOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.authorization.aio.CombineClient`'s
+        :class:`~azure.mgmt.authorization.aio.AuthorizationManagementClient`'s
         :attr:`alert_operation` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: CombineClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: AuthorizationManagementClientConfiguration = (
+            input_args.pop(0) if input_args else kwargs.pop("config")
+        )
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.authorization import CombineClient
+from azure.mgmt.authorization import AuthorizationManagementClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.authorization import CombineClient
 
 
 def main():
-    client = CombineClient(
+    client = AuthorizationManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

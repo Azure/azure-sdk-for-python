@@ -261,8 +261,6 @@ class CommonUserType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """User."""
     GROUP = "Group"
     """Group."""
-    SERVICE_PRINCIPAL = "ServicePrincipal"
-    """ServicePrincipal."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -527,3 +525,5 @@ class UserType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """User."""
     GROUP = "Group"
     """Group."""
+    SERVICE_PRINCIPAL = "ServicePrincipal"
+    """ServicePrincipal."""

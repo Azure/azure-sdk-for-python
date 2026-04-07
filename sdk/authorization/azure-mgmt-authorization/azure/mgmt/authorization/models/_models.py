@@ -7063,7 +7063,7 @@ class UserSet(_Model):
     """The detail of a user.
 
     :ivar user_type: The type of user. Known values are: "User" and "Group".
-    :vartype user_type: str or ~azure.mgmt.authorization.models.UserType
+    :vartype user_type: str or ~azure.mgmt.authorization.models.CommonUserType
     :ivar is_backup: The value indicating whether the user is a backup fallback approver.
     :vartype is_backup: bool
     :ivar id: The object id of the user.
@@ -7072,7 +7072,7 @@ class UserSet(_Model):
     :vartype description: str
     """
 
-    user_type: Optional[Union[str, "_models.UserType"]] = rest_field(
+    user_type: Optional[Union[str, "_models.CommonUserType"]] = rest_field(
         name="userType", visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of user. Known values are: \"User\" and \"Group\"."""
@@ -7087,7 +7087,7 @@ class UserSet(_Model):
     def __init__(
         self,
         *,
-        user_type: Optional[Union[str, "_models.UserType"]] = None,
+        user_type: Optional[Union[str, "_models.CommonUserType"]] = None,
         is_backup: Optional[bool] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         description: Optional[str] = None,
@@ -7108,14 +7108,14 @@ class UsersOrServicePrincipalSet(_Model):
     """The detail of a subject.
 
     :ivar type: The type of user. Known values are: "User", "Group", and "ServicePrincipal".
-    :vartype type: str or ~azure.mgmt.authorization.models.CommonUserType
+    :vartype type: str or ~azure.mgmt.authorization.models.UserType
     :ivar id: The object id of the entity.
     :vartype id: str
     :ivar display_name: The display Name of the entity.
     :vartype display_name: str
     """
 
-    type: Optional[Union[str, "_models.CommonUserType"]] = rest_field(
+    type: Optional[Union[str, "_models.UserType"]] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of user. Known values are: \"User\", \"Group\", and \"ServicePrincipal\"."""
@@ -7130,7 +7130,7 @@ class UsersOrServicePrincipalSet(_Model):
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "_models.CommonUserType"]] = None,
+        type: Optional[Union[str, "_models.UserType"]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         display_name: Optional[str] = None,
     ) -> None: ...

@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import CombineClientConfiguration
+from ._configuration import AuthorizationManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     AccessReviewDefaultSettingsOperations,
@@ -74,8 +74,8 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class CombineClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
-    """CombineClient.
+class AuthorizationManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+    """AuthorizationManagementClient.
 
     :ivar attribute_namespaces: AttributeNamespacesOperations operations
     :vartype attribute_namespaces:
@@ -252,7 +252,7 @@ class CombineClient:  # pylint: disable=client-accepts-api-version-keyword,too-m
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = CombineClientConfiguration(
+        self._config = AuthorizationManagementClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),
