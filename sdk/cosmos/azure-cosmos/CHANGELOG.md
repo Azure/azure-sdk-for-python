@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug where HTTP 403 responses with sub-status 5300 (AAD_REQUEST_NOT_AUTHORIZED) did not trigger a token refresh and retry, causing AAD-authenticated requests to fail permanently after token expiry instead of recovering transparently. See [PR 46167](https://github.com/Azure/azure-sdk-for-python/pull/46167)
 
 #### Other Changes
 
