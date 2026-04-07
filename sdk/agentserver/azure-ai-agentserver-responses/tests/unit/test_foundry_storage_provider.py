@@ -16,8 +16,13 @@ from azure.ai.agentserver.responses.store._foundry_errors import (
     FoundryBadRequestError,
     FoundryResourceNotFoundError,
 )
-from azure.ai.agentserver.responses.store._foundry_provider import FoundryStorageProvider
+from azure.ai.agentserver.responses.store._foundry_provider import (
+    FoundryStorageProvider,
+    _CHAT_ISOLATION_HEADER,
+    _USER_ISOLATION_HEADER,
+)
 from azure.ai.agentserver.responses.store._foundry_settings import FoundryStorageSettings
+from azure.ai.agentserver.responses._response_context import IsolationContext
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -428,6 +433,121 @@ async def test_get_history_item_ids__omits_optional_params_when_none(credential:
     request = provider._client.send_request.call_args[0][0]
     assert "previous_response_id" not in request.url
     assert "conversation_id" not in request.url
+
+
+# ===========================================================================
+# Isolation headers (S-018)
+# ===========================================================================
+
+@pytest.mark.asyncio
+async def test_create_response__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+    provider = _make_provider(credential, settings, _make_response(200, {}))
+    from azure.ai.agentserver.responses.models._generated import ResponseObject
+
+    isolation = IsolationContext(user_key="u_key_1", chat_key="c_key_1")
+    await provider.create_response(ResponseObject(_RESPONSE_DICT), None, None, isolation=isolation)
+
+    request = provider._client.send_request.call_args[0][0]
+    assert request.headers[_USER_ISOLATION_HEADER] == "u_key_1"
+    assert request.headers[_CHAT_ISOLATION_HEADER] == "c_key_1"
+
+
+@pytest.mark.asyncio
+async def test_get_response__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+    provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
+
+    isolation = IsolationContext(user_key="u_key_2", chat_key="c_key_2")
+    await provider.get_response("resp_abc123", isolation=isolation)
+
+    request = provider._client.send_request.call_args[0][0]
+    assert request.headers[_USER_ISOLATION_HEADER] == "u_key_2"
+    assert request.headers[_CHAT_ISOLATION_HEADER] == "c_key_2"
+
+
+@pytest.mark.asyncio
+async def test_update_response__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+    provider = _make_provider(credential, settings, _make_response(200, {}))
+    from azure.ai.agentserver.responses.models._generated import ResponseObject
+
+    isolation = IsolationContext(user_key="u_key_3", chat_key="c_key_3")
+    await provider.update_response(ResponseObject(_RESPONSE_DICT), isolation=isolation)
+
+    request = provider._client.send_request.call_args[0][0]
+    assert request.headers[_USER_ISOLATION_HEADER] == "u_key_3"
+    assert request.headers[_CHAT_ISOLATION_HEADER] == "c_key_3"
+
+
+@pytest.mark.asyncio
+async def test_delete_response__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+    provider = _make_provider(credential, settings, _make_response(200, {}))
+
+    isolation = IsolationContext(user_key="u_key_4", chat_key="c_key_4")
+    await provider.delete_response("resp_abc123", isolation=isolation)
+
+    request = provider._client.send_request.call_args[0][0]
+    assert request.headers[_USER_ISOLATION_HEADER] == "u_key_4"
+    assert request.headers[_CHAT_ISOLATION_HEADER] == "c_key_4"
+
+
+@pytest.mark.asyncio
+async def test_get_input_items__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+    provider = _make_provider(credential, settings, _make_response(200, {"data": []}))
+
+    isolation = IsolationContext(user_key="u_key_5", chat_key="c_key_5")
+    await provider.get_input_items("resp_abc123", isolation=isolation)
+
+    request = provider._client.send_request.call_args[0][0]
+    assert request.headers[_USER_ISOLATION_HEADER] == "u_key_5"
+    assert request.headers[_CHAT_ISOLATION_HEADER] == "c_key_5"
+
+
+@pytest.mark.asyncio
+async def test_get_items__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+    provider = _make_provider(credential, settings, _make_response(200, [_OUTPUT_ITEM_DICT]))
+
+    isolation = IsolationContext(user_key="u_key_6", chat_key="c_key_6")
+    await provider.get_items(["item_out_001"], isolation=isolation)
+
+    request = provider._client.send_request.call_args[0][0]
+    assert request.headers[_USER_ISOLATION_HEADER] == "u_key_6"
+    assert request.headers[_CHAT_ISOLATION_HEADER] == "c_key_6"
+
+
+@pytest.mark.asyncio
+async def test_get_history_item_ids__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
+    provider = _make_provider(credential, settings, _make_response(200, []))
+
+    isolation = IsolationContext(user_key="u_key_7", chat_key="c_key_7")
+    await provider.get_history_item_ids(None, None, limit=10, isolation=isolation)
+
+    request = provider._client.send_request.call_args[0][0]
+    assert request.headers[_USER_ISOLATION_HEADER] == "u_key_7"
+    assert request.headers[_CHAT_ISOLATION_HEADER] == "c_key_7"
+
+
+@pytest.mark.asyncio
+async def test_isolation_headers__omitted_when_none(credential: Any, settings: FoundryStorageSettings) -> None:
+    """When isolation=None (default), no isolation headers are sent."""
+    provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
+
+    await provider.get_response("resp_abc123")
+
+    request = provider._client.send_request.call_args[0][0]
+    assert _USER_ISOLATION_HEADER not in request.headers
+    assert _CHAT_ISOLATION_HEADER not in request.headers
+
+
+@pytest.mark.asyncio
+async def test_isolation_headers__partial_keys_only_sends_present(credential: Any, settings: FoundryStorageSettings) -> None:
+    """When only user_key is set, only user header is added."""
+    provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
+
+    isolation = IsolationContext(user_key="u_only")
+    await provider.get_response("resp_abc123", isolation=isolation)
+
+    request = provider._client.send_request.call_args[0][0]
+    assert request.headers[_USER_ISOLATION_HEADER] == "u_only"
+    assert _CHAT_ISOLATION_HEADER not in request.headers
 
 
 # ===========================================================================

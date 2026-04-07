@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Sequence
 
@@ -14,6 +15,32 @@ from .models.runtime import ResponseModeFlags
 
 if TYPE_CHECKING:
     from .store._base import ResponseProviderProtocol
+
+
+@dataclass(frozen=True)
+class IsolationContext:
+    """Platform-injected isolation keys for multi-tenant state partitioning.
+
+    The Foundry hosting platform injects ``x-agent-user-isolation-key`` and
+    ``x-agent-chat-isolation-key`` headers on every protocol request (not on
+    health probes).  These opaque strings serve as partition keys:
+
+    - ``user_key`` — unique per user across all sessions; use for user-private state.
+    - ``chat_key`` — represents where conversation state lives; in 1:1 chats the
+      two keys are equal.
+
+    When the headers are absent (e.g. local development), both keys are ``None``.
+    When the platform sends the header with an empty value, the key is an empty
+    string.  Use ``is None`` to detect whether the header was present at all.
+    """
+
+    user_key: str | None = None
+    """Partition key for user-private state (from ``x-agent-user-isolation-key``).
+    ``None`` when the header was not sent."""
+
+    chat_key: str | None = None
+    """Partition key for conversation/shared state (from ``x-agent-chat-isolation-key``).
+    ``None`` when the header was not sent."""
 
 
 class ResponseContext:
@@ -40,6 +67,7 @@ class ResponseContext:
         history_limit: int = 100,
         client_headers: dict[str, str] | None = None,
         query_parameters: dict[str, str] | None = None,
+        isolation: IsolationContext | None = None,
     ) -> None:
         self.response_id = response_id
         self.mode_flags = mode_flags
@@ -49,6 +77,7 @@ class ResponseContext:
         self.is_shutdown_requested: bool = False
         self.client_headers: dict[str, str] = client_headers or {}
         self.query_parameters: dict[str, str] = query_parameters or {}
+        self.isolation: IsolationContext = isolation if isolation is not None else IsolationContext()
         self._provider: "ResponseProviderProtocol | None" = provider
         self._input_items: list[InputParam] = list(input_items) if input_items is not None else []
         self._previous_response_id: str | None = previous_response_id
@@ -82,12 +111,13 @@ class ResponseContext:
             return self._history_cache
 
         item_ids = await self._provider.get_history_item_ids(
-            self._previous_response_id, self.conversation_id, self._history_limit
+            self._previous_response_id, self.conversation_id, self._history_limit,
+            isolation=self.isolation,
         )
         if not item_ids:
             self._history_cache = ()
             return self._history_cache
 
-        items = await self._provider.get_items(item_ids)
+        items = await self._provider.get_items(item_ids, isolation=self.isolation)
         self._history_cache = tuple(item for item in items if item is not None)
         return self._history_cache

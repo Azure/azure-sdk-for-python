@@ -161,6 +161,15 @@ def _apply_stream_event_defaults(
     if not isinstance(payload, dict):
         payload = {}
         normalized["payload"] = payload
+    # Stamp response_id and agent_reference on output items (B20/B21)
+    event_type = normalized.get("type", "")
+    if event_type in ("response.output_item.added", "response.output_item.done"):
+        item = payload.get("item")
+        if isinstance(item, dict):
+            item.setdefault("response_id", response_id)
+            if agent_reference:
+                item.setdefault("agent_reference", agent_reference)
+
     if sequence_number is not None:
         payload["sequence_number"] = sequence_number
     else:

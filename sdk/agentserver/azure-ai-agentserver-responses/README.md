@@ -18,22 +18,17 @@ pip install azure-ai-agentserver-responses
 
 ```python
 import asyncio
-from collections.abc import AsyncIterable
-from typing import Any
 
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses import ResponseContext, CreateResponse, ResponseEventStream
-from azure.ai.agentserver.responses.hosting import ResponseHandler
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponseContext, CreateResponse, ResponseEventStream
 
 
-server = AgentHost()
-responses = ResponseHandler(server)
+app = ResponsesAgentServerHost()
 
 
-@responses.create_handler
+@app.create_handler
 def my_handler(
     request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
-) -> AsyncIterable[dict[str, Any]]:
+):
     stream = ResponseEventStream(
         response_id=context.response_id,
         model=request.model,
@@ -56,8 +51,7 @@ def my_handler(
     yield stream.emit_completed()
 
 
-
-server.run(host="127.0.0.1", port=5100)
+app.run(host="127.0.0.1", port=5100)
 ```
 
 Run:
@@ -109,10 +103,10 @@ ResponseEventStream                          → response.created / in_progress 
 Your handler must implement with this signature:
 
 ```python
-@responses.create_handler
+@app.create_handler
 def my_handler(
     request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
-) -> AsyncIterable[dict[str, Any]]:
+):
 ```
 
 The `ResponseContext` provides:
@@ -122,8 +116,11 @@ The `ResponseContext` provides:
 | `response_id` | Unique ID for this response |
 | `is_shutdown_requested` | Whether the server is draining |
 | `raw_body` | Raw request body (if needed) |
-| `get_input_items_async()` | Load input items for this request |
-| `get_history_async()` | Load conversation history items |
+| `isolation` | `IsolationContext` with `user_key` and `chat_key` for multi-tenant state partitioning (`None` when the header was not sent; empty string when sent with no value) |
+| `client_headers` | Dictionary of `x-client-*` headers forwarded from the platform |
+| `query_parameters` | Dictionary of query string parameters |
+| `get_input_items()` | Load input items for this request |
+| `get_history()` | Load conversation history items |
 
 ### Execution modes
 
@@ -148,9 +145,7 @@ The SDK automatically handles all combinations of `stream` and `background` flag
 ### Configuration
 
 ```python
-from azure.ai.agentserver.core import AgentHost
-from azure.ai.agentserver.responses import ResponsesServerOptions
-from azure.ai.agentserver.responses.hosting import ResponseHandler
+from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponsesServerOptions
 
 options = ResponsesServerOptions(
     default_model="gpt-4o",
@@ -159,8 +154,7 @@ options = ResponsesServerOptions(
     additional_server_identity="my-server/1.0",
 )
 
-responses = ResponseHandler(server, options=options)
-
+app = ResponsesAgentServerHost(options=options)
 ```
 
 Options can also be loaded from environment variables:
@@ -173,7 +167,7 @@ options = ResponsesServerOptions.from_env()
 
 ```python
 # Mount at a custom prefix
-responses = ResponseHandler(server, prefix="/openai/v1")
+app = ResponsesAgentServerHost(prefix="/openai/v1")
 # Routes become: /openai/v1/responses, /openai/v1/responses/{response_id}, etc.
 ```
 
@@ -187,25 +181,25 @@ from azure.ai.agentserver.responses import ResponseProviderProtocol
 class MyDurableProvider:
     """Implements ResponseProviderProtocol with database-backed storage."""
 
-    async def create_response_async(self, response, input_items, history_item_ids):
+    async def create_response(self, response, input_items, history_item_ids):
         ...
 
-    async def get_response_async(self, response_id):
+    async def get_response(self, response_id):
         ...
 
-    async def update_response_async(self, response):
+    async def update_response(self, response):
         ...
 
-    async def delete_response_async(self, response_id):
+    async def delete_response(self, response_id):
         ...
 
-    async def get_input_items_async(self, response_id, limit=20, ascending=False, after=None, before=None):
+    async def get_input_items(self, response_id, limit=20, ascending=False, after=None, before=None):
         ...
 
-    async def get_items_async(self, item_ids):
+    async def get_items(self, item_ids):
         ...
 
-    async def get_history_item_ids_async(self, previous_response_id, conversation_id, limit):
+    async def get_history_item_ids(self, previous_response_id, conversation_id, limit):
         ...
 ```
 
@@ -271,7 +265,7 @@ The `samples/` directory contains runnable Starlette servers demonstrating the S
 | GettingStarted | Minimal echo handler — text message in default, streaming, and background modes |
 | FunctionCalling | Two-turn conversation — server emits a function call, client submits output, server returns result |
 | MultiOutput | Multiple output items — reasoning followed by a text message |
-| ConversationHistory | Multi-turn with `previous_response_id` — demonstrates `get_history_async()` and conversation chaining |
+| ConversationHistory | Multi-turn with `previous_response_id` — demonstrates `get_history()` and conversation chaining |
 
 Each sample includes:
 - `app.py` — the sample Starlette server
@@ -304,7 +298,7 @@ azure/ai/agentserver/responses/
   ├─ store/                Persistence abstraction and in-memory provider
   ├─ streaming/            Event stream builders, SSE encoding, lifecycle state machine
   │    └─ _builders/       Scoped builder classes (message, function call, reasoning, etc.)
-  ├─ _handlers.py          Handler protocol and runtime context
+  ├─ _response_context.py  ResponseContext and IsolationContext
   ├─ _options.py           Server configuration (ResponsesServerOptions)
   └─ _id_generator.py      Deterministic ID generation
 samples/                   Runnable Starlette sample servers

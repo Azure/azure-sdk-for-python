@@ -4,7 +4,8 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any
+from collections.abc import AsyncIterable
+from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator
 
 from ._base import BaseOutputItemBuilder, EVENT_TYPE, _require_non_empty
 
@@ -208,6 +209,45 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
             }
         )
 
+    # ---- Sub-item convenience generators (S-053) ----
+
+    def code(self, code_text: str) -> Iterator[dict[str, Any]]:
+        """Yield the code delta and code done events.
+
+        Emits ``code_interpreter_call.code.delta`` followed by
+        ``code_interpreter_call.code.done``.
+
+        :param code_text: The complete code string.
+        :type code_text: str
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        yield self.emit_code_delta(code_text)
+        yield self.emit_code_done(code_text)
+
+    async def acode(self, code_text: str | AsyncIterable[str]) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`code` with streaming support.
+
+        When *code_text* is a string, behaves identically to :meth:`code`.
+        When *code_text* is an async iterable of string chunks, emits one
+        ``code_interpreter_call.code.delta`` per chunk in real time (S-055),
+        then ``code_interpreter_call.code.done`` with the accumulated text.
+
+        :param code_text: Complete code string or async iterable of chunks.
+        :type code_text: str | AsyncIterable[str]
+        :returns: An async iterator of event dicts.
+        :rtype: AsyncIterator[dict[str, Any]]
+        """
+        if isinstance(code_text, str):
+            for event in self.code(code_text):
+                yield event
+            return
+        accumulated: list[str] = []
+        async for chunk in code_text:
+            accumulated.append(chunk)
+            yield self.emit_code_delta(chunk)
+        yield self.emit_code_done("".join(accumulated))
+
 
 class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
     """Scoped builder for image generation tool call events."""
@@ -323,6 +363,7 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         self._server_label = _require_non_empty(server_label, "server_label")
         self._name = _require_non_empty(name, "name")
         self._final_arguments: str | None = None
+        self._terminal_status: str | None = None
 
     @property
     def server_label(self) -> str:
@@ -400,6 +441,7 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         :returns: The emitted event dict.
         :rtype: dict[str, Any]
         """
+        self._terminal_status = "completed"
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_MCP_CALL_COMPLETED.value)
 
     def emit_failed(self) -> dict[str, Any]:
@@ -408,10 +450,15 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         :returns: The emitted event dict.
         :rtype: dict[str, Any]
         """
+        self._terminal_status = "failed"
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_MCP_CALL_FAILED.value)
 
     def emit_done(self) -> dict[str, Any]:
         """Emit an ``output_item.done`` event for this MCP call.
+
+        The ``status`` field reflects the most recent terminal state event
+        (``emit_completed`` or ``emit_failed``). Defaults to ``"completed"``
+        if neither was called.
 
         :returns: The emitted event dict.
         :rtype: dict[str, Any]
@@ -423,9 +470,48 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
                 "server_label": self._server_label,
                 "name": self._name,
                 "arguments": self._final_arguments or "",
-                "status": "completed",
+                "status": self._terminal_status or "completed",
             }
         )
+
+    # ---- Sub-item convenience generators (S-053) ----
+
+    def arguments(self, args: str) -> Iterator[dict[str, Any]]:
+        """Yield the argument delta and done events.
+
+        Emits ``mcp_call_arguments.delta`` followed by
+        ``mcp_call_arguments.done``.
+
+        :param args: The complete arguments string.
+        :type args: str
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        yield self.emit_arguments_delta(args)
+        yield self.emit_arguments_done(args)
+
+    async def aarguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`arguments` with streaming support.
+
+        When *args* is a string, behaves identically to :meth:`arguments`.
+        When *args* is an async iterable of string chunks, emits one
+        ``mcp_call_arguments.delta`` per chunk in real time (S-055),
+        then ``mcp_call_arguments.done`` with the accumulated text.
+
+        :param args: Complete arguments string or async iterable of chunks.
+        :type args: str | AsyncIterable[str]
+        :returns: An async iterator of event dicts.
+        :rtype: AsyncIterator[dict[str, Any]]
+        """
+        if isinstance(args, str):
+            for event in self.arguments(args):
+                yield event
+            return
+        accumulated: list[str] = []
+        async for chunk in args:
+            accumulated.append(chunk)
+            yield self.emit_arguments_delta(chunk)
+        yield self.emit_arguments_done("".join(accumulated))
 
 
 class OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
@@ -615,3 +701,42 @@ class OutputItemCustomToolCallBuilder(BaseOutputItemBuilder):
                 "input": self._final_input or "",
             }
         )
+
+    # ---- Sub-item convenience generators (S-053) ----
+
+    def input(self, input_text: str) -> Iterator[dict[str, Any]]:
+        """Yield the input delta and input done events.
+
+        Emits ``custom_tool_call_input.delta`` followed by
+        ``custom_tool_call_input.done``.
+
+        :param input_text: The complete input text.
+        :type input_text: str
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        yield self.emit_input_delta(input_text)
+        yield self.emit_input_done(input_text)
+
+    async def ainput(self, input_text: str | AsyncIterable[str]) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`input` with streaming support.
+
+        When *input_text* is a string, behaves identically to :meth:`input`.
+        When *input_text* is an async iterable of string chunks, emits one
+        ``custom_tool_call_input.delta`` per chunk in real time (S-055),
+        then ``custom_tool_call_input.done`` with the accumulated text.
+
+        :param input_text: Complete input text or async iterable of chunks.
+        :type input_text: str | AsyncIterable[str]
+        :returns: An async iterator of event dicts.
+        :rtype: AsyncIterator[dict[str, Any]]
+        """
+        if isinstance(input_text, str):
+            for event in self.input(input_text):
+                yield event
+            return
+        accumulated: list[str] = []
+        async for chunk in input_text:
+            accumulated.append(chunk)
+            yield self.emit_input_delta(chunk)
+        yield self.emit_input_done("".join(accumulated))

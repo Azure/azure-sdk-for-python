@@ -12,6 +12,7 @@ from dataclasses import dataclass, field
 from datetime import datetime, timedelta, timezone
 from typing import Any, AsyncIterator, Dict, Iterable
 
+from .._response_context import IsolationContext
 from ..models._generated import ResponseObject
 from ..models._helpers import get_conversation_id
 from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, StreamReplayState
@@ -60,6 +61,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         response: ResponseObject,
         input_items: Iterable[Any] | None,
         history_item_ids: Iterable[str] | None,
+        *,
+        isolation: IsolationContext | None = None,
     ) -> None:
         """Persist a new response envelope and optional input/history references.
 
@@ -110,7 +113,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             if conversation_id is not None:
                 self._conversation_responses[conversation_id].append(response_id)
 
-    async def get_response(self, response_id: str) -> ResponseObject:
+    async def get_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> ResponseObject:
         """Retrieve one response envelope by identifier.
 
         :param response_id: The unique identifier of the response to retrieve.
@@ -125,7 +128,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
                 raise KeyError(f"response '{response_id}' not found")
             return deepcopy(entry.response)
 
-    async def update_response(self, response: ResponseObject) -> None:
+    async def update_response(self, response: ResponseObject, *, isolation: IsolationContext | None = None) -> None:
         """Update a stored response envelope.
 
         Replaces the stored response with a deep copy and updates
@@ -146,7 +149,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             entry.execution.set_response_snapshot(deepcopy(response))
             entry.output_item_ids = self._store_output_items_unlocked(response)
 
-    async def delete_response(self, response_id: str) -> None:
+    async def delete_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> None:
         """Delete a stored response envelope by identifier.
 
         Marks the entry as deleted and clears the response payload.
@@ -170,6 +173,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         ascending: bool = False,
         after: str | None = None,
         before: str | None = None,
+        *,
+        isolation: IsolationContext | None = None,
     ) -> list[Any]:
         """Retrieve input/history items for a response with basic cursor paging.
 
@@ -218,7 +223,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             safe_limit = max(1, min(100, int(limit)))
             return [deepcopy(self._item_store[item_id]) for item_id in ordered_ids[:safe_limit] if item_id in self._item_store]
 
-    async def get_items(self, item_ids: Iterable[str]) -> list[Any | None]:
+    async def get_items(self, item_ids: Iterable[str], *, isolation: IsolationContext | None = None) -> list[Any | None]:
         """Retrieve items by ID, preserving request order.
 
         Returns deep copies of stored items. Missing IDs produce ``None`` entries.
@@ -236,6 +241,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         previous_response_id: str | None,
         conversation_id: str | None,
         limit: int,
+        *,
+        isolation: IsolationContext | None = None,
     ) -> list[str]:
         """Resolve history item IDs from previous response and/or conversation scope.
 
@@ -473,6 +480,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         self,
         response_id: str,
         events: list[dict[str, Any]],
+        *,
+        isolation: IsolationContext | None = None,
     ) -> None:
         """Persist the complete ordered list of SSE events for ``response_id``.
 
@@ -497,6 +506,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
     async def get_stream_events(
         self,
         response_id: str,
+        *,
+        isolation: IsolationContext | None = None,
     ) -> list[dict[str, Any]] | None:
         """Retrieve the persisted SSE events for ``response_id``, excluding expired events.
 

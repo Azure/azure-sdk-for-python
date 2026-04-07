@@ -22,7 +22,7 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from azure.ai.agentserver.core import end_span, flush_spans, trace_stream
 from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse
 
-from .._response_context import ResponseContext
+from .._response_context import ResponseContext, IsolationContext
 from .._options import ResponsesServerOptions
 from ..models.runtime import ResponseModeFlags
 from ..streaming._helpers import _encode_sse
@@ -81,6 +81,20 @@ def _classify_error_code(exc: Exception) -> str:
     if isinstance(exc, ValueError):
         return "invalid_request"
     return "internal_error"
+
+
+def _extract_isolation(request: Request) -> IsolationContext:
+    """Build an ``IsolationContext`` from platform-injected request headers.
+
+    Returns the isolation keys from ``x-agent-user-isolation-key`` and
+    ``x-agent-chat-isolation-key``.  Keys are ``None`` when the header
+    is absent (e.g. local development) and empty string when sent
+    with no value.
+    """
+    return IsolationContext(
+        user_key=request.headers.get("x-agent-user-isolation-key"),
+        chat_key=request.headers.get("x-agent-chat-isolation-key"),
+    )
 
 # Structured log scope context variables (spec §7.4)
 _response_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("ResponseId", default="")
@@ -323,6 +337,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             agent_session_id=agent_session_id,
             span=span,
             parsed=parsed,
+            user_isolation_key=request.headers.get("x-agent-user-isolation-key"),
+            chat_isolation_key=request.headers.get("x-agent-chat-isolation-key"),
         )
 
         # Derive the public ResponseContext from the execution context.
@@ -367,6 +383,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             history_limit=self._runtime_options.default_fetch_history_count,
             client_headers=client_headers,
             query_parameters=dict(request.query_params),
+            isolation=IsolationContext(
+                user_key=ctx.user_isolation_key,
+                chat_key=ctx.chat_isolation_key,
+            ),
         )
         context.is_shutdown_requested = self._shutdown_requested.is_set()
         return context
@@ -510,7 +530,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                             _ATTR_ERROR_MESSAGE: str(exc.original),
                         })
                         end_span(otel_span, exc=exc.original)
-                        return _error_response(exc.original, {})
+                        # Handler errors are server-side faults, not client errors
+                        return JSONResponse(
+                            {"error": {"message": "internal server error", "type": "server_error", "code": "internal_error", "param": None}},
+                            status_code=500,
+                        )
                     finally:
                         disconnect_task.cancel()
 
@@ -524,7 +548,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     _ATTR_ERROR_MESSAGE: str(exc.original),
                 })
                 end_span(otel_span, exc=exc)
-                return _error_response(exc.original, self._response_headers)
+                # Handler errors are server-side faults, not client errors
+                return JSONResponse(
+                    {"error": {"message": "internal server error", "type": "server_error", "code": "internal_error", "param": None}},
+                    status_code=500,
+                    headers=self._response_headers,
+                )
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
                 self._safe_set_attrs(otel_span, {
@@ -564,21 +593,35 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if await self._runtime_state.is_deleted(response_id):
                 return _deleted_response(response_id, {})
 
+            _isolation = _extract_isolation(request)
             stream_replay = request.query_params.get("stream", "false").lower() == "true"
             if not stream_replay:
                 # Provider fallback: serve completed responses that are no longer in runtime state
                 # (e.g., after a process restart).
                 try:
-                    response_obj = await self._provider.get_response(response_id)
+                    response_obj = await self._provider.get_response(response_id, isolation=_isolation)
                     snapshot = response_obj.as_dict()
                     return JSONResponse(snapshot, status_code=200)
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Provider fallback failed for GET response_id=%s", response_id, exc_info=True)
             else:
                 # Stream provider fallback: replay persisted SSE events when runtime state is gone.
-                replay_response = await self._try_replay_persisted_stream(request, response_id)
+                replay_response = await self._try_replay_persisted_stream(request, response_id, isolation=_isolation)
                 if replay_response is not None:
                     return replay_response
+
+                # Response may exist in storage but wasn't replay-eligible
+                # (e.g., created without background=true, stream=true, store=true).
+                try:
+                    await self._provider.get_response(response_id, isolation=_isolation)
+                    return _invalid_mode(
+                        "stream replay is not available for this response; to enable SSE replay, "
+                        + "create the response with background=true, stream=true, and store=true",
+                        {},
+                        param="stream",
+                    )
+                except Exception:  # pylint: disable=broad-exception-caught
+                    pass  # Response doesn't exist in provider either — fall through to 404
 
             return _not_found(response_id, {})
 
@@ -637,7 +680,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         )
 
     async def _try_replay_persisted_stream(
-        self, request: Request, response_id: str
+        self, request: Request, response_id: str, *, isolation: IsolationContext | None = None
     ) -> Response | None:
         """Try to replay persisted SSE events from the stream provider.
 
@@ -648,7 +691,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if self._stream_provider is None:
             return None
         try:
-            replay_events = await self._stream_provider.get_stream_events(response_id)
+            replay_events = await self._stream_provider.get_stream_events(response_id, isolation=isolation)
             if replay_events is None:
                 return None
             parsed_cursor = self._parse_starting_after(request)
@@ -695,7 +738,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         if record.mode_flags.store:
             try:
-                await self._provider.delete_response(response_id)
+                await self._provider.delete_response(response_id, isolation=_extract_isolation(request))
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning("Best-effort provider delete failed for response_id=%s", response_id, exc_info=True)
 
@@ -719,7 +762,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # their runtime records.  Check the provider so we return the correct
             # 400 error instead of a misleading 404.
             try:
-                response_obj = await self._provider.get_response(response_id)
+                response_obj = await self._provider.get_response(response_id, isolation=_extract_isolation(request))
                 stored_status = response_obj.as_dict().get("status")
                 if stored_status == "completed":
                     return _invalid_request(
@@ -831,7 +874,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         try:
             items = await self._provider.get_input_items(
-                response_id, limit=100, ascending=True
+                response_id, limit=100, ascending=True, isolation=_extract_isolation(request)
             )
         except ValueError:
             return _deleted_response(response_id, {})

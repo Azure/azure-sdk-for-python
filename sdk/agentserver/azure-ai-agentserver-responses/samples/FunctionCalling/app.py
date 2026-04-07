@@ -34,15 +34,16 @@ def weather_handler(request: CreateResponse, context: ResponseContext, cancellat
     tool_output = _extract_function_call_output(request)
 
     stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-    yield from stream.start()
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
 
     if tool_output is not None:
-        yield from stream.text_message(f"The weather is: {tool_output}")
+        yield from stream.output_item_message(f"The weather is: {tool_output}")
     else:
         arguments = json.dumps({"location": "Seattle", "unit": "fahrenheit"})
-        yield from stream.function_call("get_weather", "call_weather_1", arguments)
+        yield from stream.output_item_function_call("get_weather", "call_weather_1", arguments)
 
-    yield from stream.complete()
+    yield stream.emit_completed()
 
 
 def main() -> None:

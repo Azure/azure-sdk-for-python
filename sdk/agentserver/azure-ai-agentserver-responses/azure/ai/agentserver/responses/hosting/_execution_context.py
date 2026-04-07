@@ -35,3 +35,5 @@ class _ExecutionContext:
     parsed: Any
     agent_session_id: str | None = None
     context: ResponseContext | None = None
+    user_isolation_key: str | None = None
+    chat_isolation_key: str | None = None
