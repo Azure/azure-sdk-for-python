@@ -38,9 +38,9 @@ from openai.types.evals.run_retrieve_response import RunRetrieveResponse
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
-    AzureAIModelTargetTyped,
+    AzureAIModelTargetParam,
     TestingCriterionAzureAIEvaluator,
-    ModelSamplingParamsTyped,
+    ModelSamplingConfigParam,
     TargetCompletionEvalRunDataSource,
 )
 
@@ -91,10 +91,10 @@ with (
                 {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
             ],
         },
-        target=AzureAIModelTargetTyped(
+        target=AzureAIModelTargetParam(
             type="azure_ai_model",
             model=model,
-            sampling_params=ModelSamplingParamsTyped(  # Note: model sampling parameters are optional and can differ per model
+            sampling_params=ModelSamplingConfigParam(  # Note: model sampling parameters are optional and can differ per model
                 top_p=1.0,
                 max_completion_tokens=2048,
             ),

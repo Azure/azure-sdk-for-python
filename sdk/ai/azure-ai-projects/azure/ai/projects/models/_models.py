@@ -1327,14 +1327,14 @@ class AzureAIModelTarget(Target, discriminator="azure_ai_model"):
     :vartype model: str
     :ivar sampling_params: The parameters used to control the sampling behavior of the model during
      text generation.
-    :vartype sampling_params: ~azure.ai.projects.models.ModelSamplingParams
+    :vartype sampling_params: ~azure.ai.projects.models.ModelSamplingConfig
     """
 
     type: Literal["azure_ai_model"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of target, always ``azure_ai_model``. Required. Default value is \"azure_ai_model\"."""
     model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique identifier of the Azure AI model."""
-    sampling_params: Optional["_models.ModelSamplingParams"] = rest_field(
+    sampling_params: Optional["_models.ModelSamplingConfig"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The parameters used to control the sampling behavior of the model during text generation."""
@@ -1344,7 +1344,7 @@ class AzureAIModelTarget(Target, discriminator="azure_ai_model"):
         self,
         *,
         model: Optional[str] = None,
-        sampling_params: Optional["_models.ModelSamplingParams"] = None,
+        sampling_params: Optional["_models.ModelSamplingConfig"] = None,
     ) -> None: ...
 
     @overload
@@ -7494,7 +7494,7 @@ class ModelDeploymentSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelSamplingParams(_Model):
+class ModelSamplingConfig(_Model):
     """Represents a set of parameters used to control the sampling behavior of a language model during
     text generation.
 

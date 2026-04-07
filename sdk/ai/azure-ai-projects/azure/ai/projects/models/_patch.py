@@ -17,19 +17,19 @@ from azure.core.polling.base_polling import (
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from ._patch_evaluation_typeddicts import (
-    AzureAIAgentTargetTyped,
+    AzureAIAgentTargetParam,
     AzureAIBenchmarkPreviewEvalRunDataSource,
     AzureAIDataSourceConfig,
-    AzureAIModelTargetTyped,
+    AzureAIModelTargetParam,
     AzureAIResponsesEvalRunDataSource,
     EvalCsvFileIdSource,
     EvalCsvRunDataSource,
     TestingCriterionAzureAIEvaluator,
-    ModelSamplingParamsTyped,
+    ModelSamplingConfigParam,
     RedTeamEvalRunDataSource,
     ResponseRetrievalItemGenerationParams,
     TargetCompletionEvalRunDataSource,
-    ToolDescriptionTyped,
+    ToolDescriptionParam,
     TracesPreviewEvalRunDataSource,
 )
 from ._models import CustomCredential as CustomCredentialGenerated
@@ -366,20 +366,20 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
 
 __all__: List[str] = [
     "AsyncUpdateMemoriesLROPoller",
-    "AzureAIAgentTargetTyped",
+    "AzureAIAgentTargetParam",
     "AzureAIBenchmarkPreviewEvalRunDataSource",
     "AzureAIDataSourceConfig",
-    "AzureAIModelTargetTyped",
+    "AzureAIModelTargetParam",
     "AzureAIResponsesEvalRunDataSource",
     "CustomCredential",
     "EvalCsvFileIdSource",
     "EvalCsvRunDataSource",
     "TestingCriterionAzureAIEvaluator",
-    "ModelSamplingParamsTyped",
+    "ModelSamplingConfigParam",
     "RedTeamEvalRunDataSource",
     "ResponseRetrievalItemGenerationParams",
     "TargetCompletionEvalRunDataSource",
-    "ToolDescriptionTyped",
+    "ToolDescriptionParam",
     "TracesPreviewEvalRunDataSource",
     "UpdateMemoriesLROPoller",
 ]  # Add all objects you want publicly available to users at this package level

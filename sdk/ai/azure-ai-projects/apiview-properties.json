@@ -173,7 +173,7 @@
         "azure.ai.projects.models.MicrosoftFabricPreviewTool": "Azure.AI.Projects.MicrosoftFabricPreviewTool",
         "azure.ai.projects.models.ModelDeployment": "Azure.AI.Projects.ModelDeployment",
         "azure.ai.projects.models.ModelDeploymentSku": "Azure.AI.Projects.Sku",
-        "azure.ai.projects.models.ModelSamplingParams": "Azure.AI.Projects.ModelSamplingParams",
+        "azure.ai.projects.models.ModelSamplingConfig": "Azure.AI.Projects.ModelSamplingParams",
         "azure.ai.projects.models.MonthlyRecurrenceSchedule": "Azure.AI.Projects.MonthlyRecurrenceSchedule",
         "azure.ai.projects.models.NoAuthenticationCredentials": "Azure.AI.Projects.NoAuthenticationCredentials",
         "azure.ai.projects.models.OneTimeTrigger": "Azure.AI.Projects.OneTimeTrigger",

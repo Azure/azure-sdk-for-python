@@ -6,8 +6,8 @@
 
 * Type hinting support for OpenAI client operations `.evals.create()` and `.evals.runs.create()`, when you
 get the OpenAI client using `get_openai_client()` method of `AIProjectClient`. This includes new TypedDicts
-classes to help you author the input to these methods. See new TypedDict classes `ModelSamplingParamsTyped`, 
-`ToolDescriptionTyped`, `AzureAIAgentTargetTyped`, `AzureAIModelTargetTyped`,
+classes to help you author the input to these methods. See new TypedDict classes `ModelSamplingConfigParam`, 
+`ToolDescriptionParam`, `AzureAIAgentTargetParam`, `AzureAIModelTargetParam`,
 `ResponseRetrievalItemGenerationParams`, `AzureAIResponsesEvalRunDataSource`, `AzureAIDataSourceConfig`,
 `TargetCompletionEvalRunDataSource`, `TestingCriterionAzureAIEvaluator`, `AzureAIBenchmarkPreviewEvalRunDataSource`,
 `EvalCsvFileIdSource`, `EvalCsvRunDataSource`, `RedTeamEvalRunDataSource`, `TracesPreviewEvalRunDataSource`.

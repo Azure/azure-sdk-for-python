@@ -827,7 +827,7 @@ with (
                 {"type": "message", "role": "user", "content": {"type": "input_text", "text": "{{item.query}}"}}
             ],
         },
-        target=AzureAIAgentTargetTyped(
+        target=AzureAIAgentTargetParam(
             type="azure_ai_agent",
             name=agent.name,
             version=agent.version,  # Version is optional. Defaults to latest version if not specified

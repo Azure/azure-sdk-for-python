@@ -15,12 +15,12 @@ from openai.types.evals.create_eval_completions_run_data_source_param import (
 
 # **************************************************************************************************
 # BEGIN - These are duplicates of full classes implementation in _models.py. Redefined here as TypedDicts
-# with "Typed" suffix, so they can be used in type annotations for "openai_client.evals" operations
+# with "Param" suffix, so they can be used in type annotations for "openai_client.evals" operations
 # **************************************************************************************************
 
 
 # Note all properties on this class where required. Sample code suggest they are all optional. Update it here.
-class ModelSamplingParamsTyped(TypedDict, total=False):
+class ModelSamplingConfigParam(TypedDict, total=False):
     """Represents a set of parameters used to control the sampling behavior of a language model
     during text generation.
     """
@@ -35,7 +35,7 @@ class ModelSamplingParamsTyped(TypedDict, total=False):
     """The maximum number of tokens allowed in the completion. Required."""
 
 
-class ToolDescriptionTyped(TypedDict, total=False):
+class ToolDescriptionParam(TypedDict, total=False):
     """Description of a tool that can be used by an agent."""
 
     name: str
@@ -44,7 +44,7 @@ class ToolDescriptionTyped(TypedDict, total=False):
     """A brief description of the tool's purpose."""
 
 
-class AzureAIAgentTargetTyped(TypedDict, total=False):
+class AzureAIAgentTargetParam(TypedDict, total=False):
     """Represents a target specifying an Azure AI agent."""
 
     type: Required[Literal["azure_ai_agent"]]
@@ -53,18 +53,18 @@ class AzureAIAgentTargetTyped(TypedDict, total=False):
     """The unique identifier of the Azure AI agent. Required."""
     version: str
     """The version of the Azure AI agent."""
-    tool_descriptions: List[ToolDescriptionTyped]
+    tool_descriptions: List[ToolDescriptionParam]
     """The parameters used to control the sampling behavior of the agent during text generation."""
 
 
-class AzureAIModelTargetTyped(TypedDict, total=False):
+class AzureAIModelTargetParam(TypedDict, total=False):
     """Represents a target specifying an Azure AI model for operations requiring model selection."""
 
     type: Required[Literal["azure_ai_model"]]
     """The type of target, always ``azure_ai_model``. Required. Default value is \"azure_ai_model\"."""
     model: str
     """The unique identifier of the Azure AI model."""
-    sampling_params: ModelSamplingParamsTyped
+    sampling_params: ModelSamplingConfigParam
     """The parameters used to control the sampling behavior of the model during text generation."""
 
 
@@ -126,7 +126,7 @@ class TargetCompletionEvalRunDataSource(TypedDict, total=False):
     source: Required[Union[SourceFileContent, SourceFileID]]
     """The source configuration for inline or file data. Required. Is either a
      SourceFileContent type or a SourceFileID type."""
-    target: Required[Union[AzureAIAgentTargetTyped, AzureAIModelTargetTyped, dict[str, Any]]]
+    target: Required[Union[AzureAIAgentTargetParam, AzureAIModelTargetParam, dict[str, Any]]]
     """The target configuration for the evaluation. Required."""
     input_messages: Required[InputMessagesItemReference]
     """Input messages configuration."""
@@ -156,11 +156,11 @@ class AzureAIBenchmarkPreviewEvalRunDataSource(TypedDict, total=False):
     type: Required[Literal["azure_ai_benchmark_preview"]]
     """The type of data source, always ``azure_ai_benchmark_preview``. Required. Default value is
      \"azure_ai_benchmark_preview\"."""
-    target: Required[Union[AzureAIModelTargetTyped, AzureAIAgentTargetTyped, dict[str, Any]]]
+    target: Required[Union[AzureAIModelTargetParam, AzureAIAgentTargetParam, dict[str, Any]]]
     """The target model or agent to evaluate against the benchmark. When using ``azure_ai_model``
      target, ``sampling_params`` must not be provided; inference parameters are auto-filled from the
      benchmark specification stored in eval group properties. Required. Is either a
-     AzureAIModelTargetTyped type or a AzureAIAgentTargetTyped type."""
+     AzureAIModelTargetParam type or a AzureAIAgentTargetParam type."""
     input_messages: InputMessagesItemReference
     """Input messages configuration."""
 
@@ -191,7 +191,7 @@ class RedTeamEvalRunDataSource(TypedDict, total=False):
      \"azure_ai_red_team\"."""
     item_generation_params: Required[Any]  # ItemGenerationParams
     """The parameters for item generation. Required."""
-    target: Required[Union[AzureAIModelTargetTyped, AzureAIAgentTargetTyped, dict[str, Any]]]
+    target: Required[Union[AzureAIModelTargetParam, AzureAIAgentTargetParam, dict[str, Any]]]
     """The target configuration for the evaluation. Required."""
 
 
