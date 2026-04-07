@@ -1,13 +1,96 @@
 # The MIT License (MIT)
 # Copyright (c) Microsoft Corporation. All rights reserved.
 
+import asyncio
 import unittest
 import os
+from unittest import mock
 
 import pytest
 
+from azure.cosmos import _session, http_constants
 from azure.cosmos._vector_session_token import VectorSessionToken
 from azure.cosmos.exceptions import CosmosHttpResponseError
+
+
+class _DummyCollectionRanges:
+    def __init__(self):
+        self._rangeById = {}
+
+
+class _DummyRoutingMapProvider:
+    def __init__(self, collection_link: str):
+        self._collection_routing_map_by_item = {collection_link: _DummyCollectionRanges()}
+
+
+class _DummySyncClient:
+    def __init__(self, collection_link: str):
+        self._routing_map_provider = _DummyRoutingMapProvider(collection_link)
+        self.refresh_calls = 0
+
+    def refresh_routing_map_provider(self):
+        self.refresh_calls += 1
+
+
+class _DummyAsyncClient:
+    def __init__(self, collection_link: str):
+        self._routing_map_provider = _DummyRoutingMapProvider(collection_link)
+        self.refresh_calls = 0
+
+    async def refresh_routing_map_provider(self):
+        self.refresh_calls += 1
+
+
+@pytest.mark.cosmosEmulator
+class TestSessionRefreshCompatibilityUnitTest(unittest.IsolatedAsyncioTestCase):
+    """Tests session refresh compatibility across sync and async client connections."""
+
+    async def test_set_session_token_schedules_async_refresh(self):
+        collection_link = "dbs/db1/colls/c1"
+        session_container = _session.SessionContainer()
+        async_client = _DummyAsyncClient(collection_link)
+
+        response_result = {"id": "doc1"}
+        response_headers = {
+            http_constants.HttpHeaders.AlternateContentPath: collection_link,
+            http_constants.HttpHeaders.PartitionKeyRangeID: "3",
+        }
+
+        session_container.set_session_token(async_client, response_result, response_headers)
+        await asyncio.sleep(0)
+
+        self.assertEqual(async_client.refresh_calls, 1)
+
+    async def test_set_session_token_calls_sync_refresh_directly(self):
+        collection_link = "dbs/db1/colls/c1"
+        session_container = _session.SessionContainer()
+        sync_client = _DummySyncClient(collection_link)
+
+        response_result = {"id": "doc1"}
+        response_headers = {
+            http_constants.HttpHeaders.AlternateContentPath: collection_link,
+            http_constants.HttpHeaders.PartitionKeyRangeID: "3",
+        }
+
+        session_container.set_session_token(sync_client, response_result, response_headers)
+
+        self.assertEqual(sync_client.refresh_calls, 1)
+
+    async def test_set_session_token_closes_coroutine_when_no_running_loop(self):
+        collection_link = "dbs/db1/colls/c1"
+        session_container = _session.SessionContainer()
+        async_client = _DummyAsyncClient(collection_link)
+
+        response_result = {"id": "doc1"}
+        response_headers = {
+            http_constants.HttpHeaders.AlternateContentPath: collection_link,
+            http_constants.HttpHeaders.PartitionKeyRangeID: "3",
+        }
+
+        with mock.patch("azure.cosmos._session.asyncio.get_running_loop", side_effect=RuntimeError):
+            session_container.set_session_token(async_client, response_result, response_headers)
+
+        self.assertEqual(async_client.refresh_calls, 0)
 
 
 @pytest.mark.cosmosEmulator

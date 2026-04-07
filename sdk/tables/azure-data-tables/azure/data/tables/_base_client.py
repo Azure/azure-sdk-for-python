@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -24,9 +25,10 @@ from azure.core.pipeline.policies import (
     NetworkTraceLoggingPolicy,
     CustomHookPolicy,
     RequestIdPolicy,
+    SansIOHTTPPolicy,
 )
 
-from ._generated import AzureTable
+from ._generated import AzureTableClient as _AzureTableClient
 from ._common_conversion import _is_cosmos_endpoint, _get_account
 from ._shared_access_signature import QueryStringConstants
 from ._constants import (
@@ -47,6 +49,11 @@ from ._sdk_moniker import SDK_MONIKER
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
 # cspell:disable-next-line
 _DEV_CONN_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1"  # pylint: disable=line-too-long
+
+
+class _NoOpCredential:
+    """Placeholder credential for SAS/connection-string authentication scenarios."""
+
 
 AudienceType = Union[
     str,
@@ -149,10 +156,16 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         if self._cosmos_endpoint:
             self._policies.insert(0, CosmosPatchTransformPolicy())
 
-        self._client = AzureTable(self.url, policies=kwargs.pop("policies", self._policies), **kwargs)
+        self._client = _AzureTableClient(
+            self.url,
+            credential=credential or _NoOpCredential(),  # type: ignore[arg-type]
+            policies=kwargs.pop("policies", self._policies),
+            authentication_policy=kwargs.pop("authentication_policy", SansIOHTTPPolicy()),
+            **kwargs,
+        )
         # Incompatible assignment when assigning a str value to a Literal type variable
-        self._client._config.version = get_api_version(
-            api_version, self._client._config.version
+        self._client._config.api_version = get_api_version(
+            api_version, self._client._config.api_version
         )  # type: ignore[assignment]
 
     @property
@@ -219,7 +232,7 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         :return: The Storage API version.
         :type: str
         """
-        return self._client._config.version  # pylint: disable=protected-access
+        return self._client._config.api_version  # pylint: disable=protected-access
 
     def __enter__(self) -> Self:
         self._client.__enter__()

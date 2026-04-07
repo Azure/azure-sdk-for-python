@@ -780,7 +780,10 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
             messages.append(m)
         list_result1 = messages[0]
         message = await queue_client.update_message(
-            list_result1.id, pop_receipt=list_result1.pop_receipt, visibility_timeout=0, content="new text"
+            list_result1.id,
+            pop_receipt=list_result1.pop_receipt,
+            visibility_timeout=0,
+            content="new text",
         )
         assert "new text" == message.content
 
@@ -872,7 +875,8 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
 
         with pytest.raises(ValueError):
             QueueServiceClient(
-                self.account_url(storage_account_name, "queue") + "?sig=foo", credential=AzureSasCredential("?foo=bar")
+                self.account_url(storage_account_name, "queue") + "?sig=foo",
+                credential=AzureSasCredential("?foo=bar"),
             )
 
     @pytest.mark.live_test_only
@@ -1221,7 +1225,11 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         # Act
         expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
         start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow() - timedelta(minutes=5))
-        access_policy = AccessPolicy(permission=QueueSasPermissions(read=True), expiry=expiry_time, start=start_time)
+        access_policy = AccessPolicy(
+            permission=QueueSasPermissions(read=True),
+            expiry=expiry_time,
+            start=start_time,
+        )
         identifiers = {"testid": access_policy}
 
         resp = await queue_client.set_queue_access_policy(signed_identifiers=identifiers)
@@ -1349,7 +1357,9 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         prefix = TEST_QUEUE_PREFIX
         queue_name = self.get_resource_name(prefix)
         async with QueueServiceClient(
-            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret, transport=transport
+            self.account_url(storage_account_name, "queue"),
+            credential=storage_account_key.secret,
+            transport=transport,
         ) as qsc:
             await qsc.get_service_properties()
             assert transport.session is not None
@@ -1409,7 +1419,11 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
 
         # Arrange
         queue_name = self.get_resource_name(TEST_QUEUE_PREFIX)
-        queue = QueueClient(self.account_url(storage_account_name, "queue"), queue_name, storage_account_key.secret)
+        queue = QueueClient(
+            self.account_url(storage_account_name, "queue"),
+            queue_name,
+            storage_account_key.secret,
+        )
         await queue.create_queue()
 
         # Act
@@ -1433,7 +1447,11 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
 
         # Arrange
         queue_name = self.get_resource_name(TEST_QUEUE_PREFIX)
-        queue = QueueClient(self.account_url(storage_account_name, "queue"), queue_name, storage_account_key.secret)
+        queue = QueueClient(
+            self.account_url(storage_account_name, "queue"),
+            queue_name,
+            storage_account_key.secret,
+        )
         await queue.create_queue()
 
         # Act
