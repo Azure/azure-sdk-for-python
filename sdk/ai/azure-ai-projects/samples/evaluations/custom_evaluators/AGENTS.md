@@ -10,6 +10,7 @@ When helping with this bug bash:
 - use these sample entry points when the user wants the provided samples:
   - `sample_custom_eval_upload_simple.py`
   - `sample_custom_eval_upload_advanced.py`
+  - `sample_custom_eval_upload_more_friendly.py`
 - if the user provides a custom evaluator, confirm it follows these naming rules:
   - class name format: `CustomNameEvaluator`
   - file name format: `custom_name_evaluator.py`
@@ -35,7 +36,7 @@ When asked to run the bug bash automatically, follow this sequence:
 2. Confirm the project is in the TIP environment hosted in West US 2.
 3. If the user does not have their own project, suggest the shared `np-wus2` project and provide its endpoint.
 4. Determine whether the user is using the provided samples or a user-defined custom evaluator.
-5. If using the provided samples, choose between `sample_custom_eval_upload_simple.py` and `sample_custom_eval_upload_advanced.py`.
+5. If using the provided samples, choose between `sample_custom_eval_upload_simple.py`, `sample_custom_eval_upload_advanced.py`, and `sample_custom_eval_upload_more_friendly.py`.
 6. Instruct the user to fetch the API key from the project URL and explicitly fill in `FOUNDRY_MODEL_NAME` and `OPENAI_MODEL` before running the samples.
 7. If using a custom evaluator, verify the class and file naming pattern.
 8. Collect the expected outputs for a small validation dataset.

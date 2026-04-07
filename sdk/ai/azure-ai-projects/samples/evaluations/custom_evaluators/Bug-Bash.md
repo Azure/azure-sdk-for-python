@@ -40,6 +40,8 @@ The bug bash scenarios are based on the following SDK samples:
   [sample_custom_eval_upload_simple.py](https://github.com/Azure/azure-sdk-for-python/blob/bug-bash/custom-evaluator/sdk/ai/azure-ai-projects/samples/evaluations/sample_custom_eval_upload_simple.py)
 - Advanced custom evaluator upload sample:
   [sample_custom_eval_upload_advanced.py](https://github.com/Azure/azure-sdk-for-python/blob/bug-bash/custom-evaluator/sdk/ai/azure-ai-projects/samples/evaluations/sample_custom_eval_upload_advanced.py)
+- Azure OpenAI custom evaluator upload sample (uses `AzureOpenAI` client with service-injected `model_config`):
+  [sample_custom_eval_upload_more_friendly.py](https://github.com/Azure/azure-sdk-for-python/blob/bug-bash/custom-evaluator/sdk/ai/azure-ai-projects/samples/evaluations/sample_custom_eval_upload_more_friendly.py)
 
 ## Instructions
 
@@ -242,7 +244,38 @@ Configure:
 - incorrect threshold application
 - result payloads that do not match the evaluator definition
 
-### Scenario 3: Run Evaluation via UI with SDK-Uploaded Evaluator
+### Scenario 3: Upload Azure OpenAI Custom Evaluator via SDK (MoreFriendlyEvaluator)
+
+#### Goal
+Validate uploading a custom evaluator that uses `AzureOpenAI` (instead of the plain OpenAI client) with a service-injected `model_config`. The evaluator's `__init__` accepts `model_config: dict`, and the evaluation run only passes `deployment_name` — the service automatically resolves it into a full `model_config` dict containing `azure_endpoint`, `api_key`, `api_version`, and `azure_deployment`.
+
+#### Steps
+Open the sample:
+
+```bash
+python sample_custom_eval_upload_more_friendly.py
+```
+
+Configure:
+
+- `FOUNDRY_PROJECT_ENDPOINT` — your project endpoint
+- `FOUNDRY_MODEL_NAME` — the model deployment name in the project (e.g. `gpt-4o-mini`)
+
+#### Expected Results
+- Evaluator upload completes without error.
+- The service resolves `deployment_name` into `model_config` and injects it into the evaluator.
+- The `AzureOpenAI` client is constructed successfully from the injected config.
+- Evaluation run completes with correct friendliness scores (1-5), labels (pass/fail at threshold=3), reasons, and properties (explanation, tone, confidence).
+- Results are consistent with the FriendlyEvaluator (Scenario 2) for the same test inputs.
+
+#### What to Test
+- verify `model_config` injection works end to end
+- test with different deployment names
+- confirm scores, labels, and properties match expected values
+- verify the evaluator appears in Azure AI Studio under Evaluators
+- compare results against the FriendlyEvaluator to ensure parity
+
+### Scenario 4: Run Evaluation via UI with SDK-Uploaded Evaluator
 
 #### Goal
 Ensure evaluators uploaded via SDK can be used in Azure AI Studio UI and that the final evaluation results are correct.
@@ -263,7 +296,7 @@ Ensure evaluators uploaded via SDK can be used in Azure AI Studio UI and that th
 - Metrics match expectations from evaluator logic.
 - Result fields are not missing, renamed incorrectly, or assigned incorrect values.
 
-### Scenario 4: Validate Result Correctness End to End
+### Scenario 5: Validate Result Correctness End to End
 
 #### Goal
 Confirm that evaluator execution returns the proper results defined in the evaluator definition, not just that the run succeeds.
