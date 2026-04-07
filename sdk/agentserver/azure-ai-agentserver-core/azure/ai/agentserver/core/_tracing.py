@@ -275,17 +275,31 @@ class _FoundryEnrichmentSpanProcessor:
         self.project_id = project_id
 
     def on_start(self, span: Any, parent_context: Any = None) -> None:  # pylint: disable=unused-argument
-        if self.agent_name:
-            span.set_attribute(_ATTR_GEN_AI_AGENT_NAME, self.agent_name)
-        if self.agent_version:
-            span.set_attribute(_ATTR_GEN_AI_AGENT_VERSION, self.agent_version)
-        if self.agent_id:
-            span.set_attribute(_ATTR_GEN_AI_AGENT_ID, self.agent_id)
         if self.project_id:
             span.set_attribute(_ATTR_FOUNDRY_PROJECT_ID, self.project_id)
 
-    def _on_ending(self, span: Any) -> None:  # pylint: disable=unused-argument
-        pass
+    def _on_ending(self, span: Any) -> None:
+        # Set agent identity attributes at span end so they cannot be
+        # overwritten by underlying frameworks (e.g. LangChain, Semantic Kernel).
+        #
+        # Workaround: opentelemetry-sdk <=1.40.0 sets _end_time before calling
+        # _on_ending, which causes set_attribute() to silently no-op despite the
+        # spec requiring mutability during OnEnding.  We write to _attributes
+        # directly until the SDK is fixed.  The try/except guards against future
+        # SDK changes that may rename or remove the internal field.
+        # TODO: switch to span.set_attribute() once the SDK honours the spec.
+        attrs = getattr(span, "_attributes", None)
+        if attrs is None:
+            return
+        try:
+            if self.agent_name:
+                attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
+            if self.agent_version:
+                attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
+            if self.agent_id:
+                attrs[_ATTR_GEN_AI_AGENT_ID] = self.agent_id
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug("Failed to enrich span attributes in _on_ending", exc_info=True)
 
     def on_end(self, span: Any) -> None:  # pylint: disable=unused-argument
         pass
