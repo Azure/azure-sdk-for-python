@@ -15,8 +15,8 @@
   - Added model `DeletedBackupVault`
   - Added model `DeletedBackupVaultResource`
   - Added model `ResourceDeletionInfo`
-  - Model `BackupVaultsOperations` added parameter `x_ms_deleted_vault_id` in method `begin_create_or_update`
-  - Added model `DeletedBackupVaultsOperations`
+  - Operation group `BackupVaultsOperations` added parameter `x_ms_deleted_vault_id` in method `begin_create_or_update`
+  - Added operation group `DeletedBackupVaultsOperations`
 
 ## 2.0.1 (2025-10-09)
 
