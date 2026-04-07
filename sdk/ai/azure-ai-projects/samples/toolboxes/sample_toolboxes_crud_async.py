@@ -63,7 +63,7 @@ async def main() -> None:
             )
         ]
 
-        created = await project_client.beta.toolboxes.create(
+        created = await project_client.beta.toolboxes.create_version(
             toolbox_name=toolbox_name,
             description="Example toolbox created by the azure-ai-projects sample.",
             metadata={"status": "created"},

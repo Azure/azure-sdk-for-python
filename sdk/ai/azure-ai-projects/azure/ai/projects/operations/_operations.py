@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression,too-many-lines
+# pylint: disable=too-many-lines
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -1909,7 +1909,9 @@ def build_beta_schedules_list_runs_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_toolboxes_create_request(toolbox_name: str, **kwargs: Any) -> HttpRequest:
+def build_beta_toolboxes_create_version_request(  # pylint: disable=name-too-long
+    toolbox_name: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1994,7 +1996,7 @@ def build_beta_toolboxes_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_toolboxes_list_toolbox_versions_request(  # pylint: disable=name-too-long
+def build_beta_toolboxes_list_versions_request(  # pylint: disable=name-too-long
     toolbox_name: str,
     *,
     limit: Optional[int] = None,
@@ -2034,9 +2036,7 @@ def build_beta_toolboxes_list_toolbox_versions_request(  # pylint: disable=name-
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_toolboxes_get_toolbox_version_request(  # pylint: disable=name-too-long
-    toolbox_name: str, version: str, **kwargs: Any
-) -> HttpRequest:
+def build_beta_toolboxes_get_version_request(toolbox_name: str, version: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -2106,7 +2106,7 @@ def build_beta_toolboxes_delete_request(toolbox_name: str, **kwargs: Any) -> Htt
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_beta_toolboxes_delete_toolbox_version_request(  # pylint: disable=name-too-long
+def build_beta_toolboxes_delete_version_request(  # pylint: disable=name-too-long
     toolbox_name: str, version: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2127,7 +2127,7 @@ def build_beta_toolboxes_delete_toolbox_version_request(  # pylint: disable=name
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_beta_skills_create_skill_request(**kwargs: Any) -> HttpRequest:
+def build_beta_skills_create_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -2149,7 +2149,7 @@ def build_beta_skills_create_skill_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_skills_create_skill_from_package_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
+def build_beta_skills_create_from_package_request(**kwargs: Any) -> HttpRequest:  # pylint: disable=name-too-long
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -2170,7 +2170,7 @@ def build_beta_skills_create_skill_from_package_request(**kwargs: Any) -> HttpRe
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_skills_get_skill_request(skill_name: str, **kwargs: Any) -> HttpRequest:
+def build_beta_skills_get_request(skill_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -2194,7 +2194,7 @@ def build_beta_skills_get_skill_request(skill_name: str, **kwargs: Any) -> HttpR
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_skills_download_skill_request(skill_name: str, **kwargs: Any) -> HttpRequest:
+def build_beta_skills_download_request(skill_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -2218,7 +2218,7 @@ def build_beta_skills_download_skill_request(skill_name: str, **kwargs: Any) -> 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_skills_list_skills_request(
+def build_beta_skills_list_request(
     *,
     limit: Optional[int] = None,
     order: Optional[Union[str, _models.PageOrder]] = None,
@@ -2252,7 +2252,7 @@ def build_beta_skills_list_skills_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_skills_update_skill_request(skill_name: str, **kwargs: Any) -> HttpRequest:
+def build_beta_skills_update_request(skill_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -2279,7 +2279,7 @@ def build_beta_skills_update_skill_request(skill_name: str, **kwargs: Any) -> Ht
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_skills_delete_skill_request(skill_name: str, **kwargs: Any) -> HttpRequest:
+def build_beta_skills_delete_request(skill_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -2303,7 +2303,7 @@ def build_beta_skills_delete_skill_request(skill_name: str, **kwargs: Any) -> Ht
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_agent_invocations_get_agent_invocation_open_api_spec_request(  # pylint: disable=name-too-long
+def build_beta_agent_invocations_get_open_api_spec_request(  # pylint: disable=name-too-long
     agent_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2329,7 +2329,7 @@ def build_beta_agent_invocations_get_agent_invocation_open_api_spec_request(  # 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_agent_invocations_create_agent_invocation_request(  # pylint: disable=name-too-long
+def build_beta_agent_invocations_create_request(  # pylint: disable=name-too-long
     agent_name: str, *, agent_session_id: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2359,9 +2359,7 @@ def build_beta_agent_invocations_create_agent_invocation_request(  # pylint: dis
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_agent_invocations_get_agent_invocation_request(  # pylint: disable=name-too-long
-    agent_name: str, invocation_id: str, **kwargs: Any
-) -> HttpRequest:
+def build_beta_agent_invocations_get_request(agent_name: str, invocation_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -2386,7 +2384,7 @@ def build_beta_agent_invocations_get_agent_invocation_request(  # pylint: disabl
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_agent_invocations_cancel_agent_invocation_request(  # pylint: disable=name-too-long
+def build_beta_agent_invocations_cancel_request(  # pylint: disable=name-too-long
     agent_name: str, invocation_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2416,7 +2414,7 @@ def build_beta_agent_invocations_cancel_agent_invocation_request(  # pylint: dis
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_agent_session_files_upload_session_file_request(  # pylint: disable=name-too-long
+def build_beta_agent_session_files_upload_request(  # pylint: disable=name-too-long
     agent_name: str, session_id: str, *, path: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2446,7 +2444,7 @@ def build_beta_agent_session_files_upload_session_file_request(  # pylint: disab
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_agent_session_files_download_session_file_request(  # pylint: disable=name-too-long
+def build_beta_agent_session_files_download_request(  # pylint: disable=name-too-long
     agent_name: str, session_id: str, *, path: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2474,7 +2472,7 @@ def build_beta_agent_session_files_download_session_file_request(  # pylint: dis
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_agent_session_files_list_session_files_request(  # pylint: disable=name-too-long
+def build_beta_agent_session_files_list_request(  # pylint: disable=name-too-long
     agent_name: str, session_id: str, *, path: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2502,7 +2500,7 @@ def build_beta_agent_session_files_list_session_files_request(  # pylint: disabl
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_agent_session_files_delete_session_file_request(  # pylint: disable=name-too-long
+def build_beta_agent_session_files_delete_request(  # pylint: disable=name-too-long
     agent_name: str, session_id: str, *, path: str, recursive: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2526,7 +2524,7 @@ def build_beta_agent_session_files_delete_session_file_request(  # pylint: disab
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_beta_managed_agent_identity_blueprints_create_or_update_managed_agent_identity_blueprint_request(  # pylint: disable=name-too-long
+def build_beta_managed_agent_identity_blueprints_create_or_update_request(  # pylint: disable=name-too-long
     blueprint_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2555,7 +2553,7 @@ def build_beta_managed_agent_identity_blueprints_create_or_update_managed_agent_
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_managed_agent_identity_blueprints_get_managed_agent_identity_blueprint_request(  # pylint: disable=name-too-long
+def build_beta_managed_agent_identity_blueprints_get_request(  # pylint: disable=name-too-long
     blueprint_name: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2581,7 +2579,7 @@ def build_beta_managed_agent_identity_blueprints_get_managed_agent_identity_blue
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_beta_managed_agent_identity_blueprints_delete_managed_agent_identity_blueprint_request(  # pylint: disable=name-too-long
+def build_beta_managed_agent_identity_blueprints_delete_request(  # pylint: disable=name-too-long
     blueprint_name: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -2601,7 +2599,7 @@ def build_beta_managed_agent_identity_blueprints_delete_managed_agent_identity_b
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_beta_managed_agent_identity_blueprints_list_managed_agent_identity_blueprints_request(  # pylint: disable=name-too-long
+def build_beta_managed_agent_identity_blueprints_list_request(  # pylint: disable=name-too-long
     *, order: Optional[Union[str, _models.PageOrder]] = None, limit: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -10122,7 +10120,7 @@ class BetaToolboxesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    def create(
+    def create_version(
         self,
         toolbox_name: str,
         *,
@@ -10156,7 +10154,7 @@ class BetaToolboxesOperations:
         """
 
     @overload
-    def create(
+    def create_version(
         self, toolbox_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ToolboxVersionObject:
         """Create a new version of a toolbox. If the toolbox does not exist, it will be created.
@@ -10175,7 +10173,7 @@ class BetaToolboxesOperations:
         """
 
     @overload
-    def create(
+    def create_version(
         self, toolbox_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ToolboxVersionObject:
         """Create a new version of a toolbox. If the toolbox does not exist, it will be created.
@@ -10194,7 +10192,7 @@ class BetaToolboxesOperations:
         """
 
     @distributed_trace
-    def create(
+    def create_version(
         self,
         toolbox_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -10251,7 +10249,7 @@ class BetaToolboxesOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_toolboxes_create_request(
+        _request = build_beta_toolboxes_create_version_request(
             toolbox_name=toolbox_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -10451,7 +10449,7 @@ class BetaToolboxesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def list_toolbox_versions(
+    def list_versions(
         self,
         toolbox_name: str,
         *,
@@ -10497,7 +10495,7 @@ class BetaToolboxesOperations:
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_toolboxes_list_toolbox_versions_request(
+            _request = build_beta_toolboxes_list_versions_request(
                 toolbox_name=toolbox_name,
                 limit=limit,
                 order=order,
@@ -10545,7 +10543,7 @@ class BetaToolboxesOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_toolbox_version(self, toolbox_name: str, version: str, **kwargs: Any) -> _models.ToolboxVersionObject:
+    def get_version(self, toolbox_name: str, version: str, **kwargs: Any) -> _models.ToolboxVersionObject:
         """Retrieve a specific version of a toolbox.
 
         :param toolbox_name: The name of the toolbox. Required.
@@ -10569,7 +10567,7 @@ class BetaToolboxesOperations:
 
         cls: ClsType[_models.ToolboxVersionObject] = kwargs.pop("cls", None)
 
-        _request = build_beta_toolboxes_get_toolbox_version_request(
+        _request = build_beta_toolboxes_get_version_request(
             toolbox_name=toolbox_name,
             version=version,
             api_version=self._config.api_version,
@@ -10807,7 +10805,7 @@ class BetaToolboxesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def delete_toolbox_version(  # pylint: disable=inconsistent-return-statements
+    def delete_version(  # pylint: disable=inconsistent-return-statements
         self, toolbox_name: str, version: str, **kwargs: Any
     ) -> None:
         """Delete a specific version of a toolbox.
@@ -10833,7 +10831,7 @@ class BetaToolboxesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_beta_toolboxes_delete_toolbox_version_request(
+        _request = build_beta_toolboxes_delete_version_request(
             toolbox_name=toolbox_name,
             version=version,
             api_version=self._config.api_version,
@@ -10882,7 +10880,7 @@ class BetaSkillsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    def create_skill(
+    def create(
         self,
         *,
         name: str,
@@ -10917,7 +10915,7 @@ class BetaSkillsOperations:
         """
 
     @overload
-    def create_skill(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.SkillObject:
+    def create(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> _models.SkillObject:
         """Creates a skill.
 
         :param body: Required.
@@ -10931,9 +10929,7 @@ class BetaSkillsOperations:
         """
 
     @overload
-    def create_skill(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.SkillObject:
+    def create(self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any) -> _models.SkillObject:
         """Creates a skill.
 
         :param body: Required.
@@ -10947,7 +10943,7 @@ class BetaSkillsOperations:
         """
 
     @distributed_trace
-    def create_skill(
+    def create(
         self,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
@@ -11005,7 +11001,7 @@ class BetaSkillsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_skills_create_skill_request(
+        _request = build_beta_skills_create_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -11049,7 +11045,7 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def create_skill_from_package(self, body: bytes, **kwargs: Any) -> _models.SkillObject:
+    def create_from_package(self, body: bytes, **kwargs: Any) -> _models.SkillObject:
         """Creates a skill from a gzip package.
 
         :param body: The gzip package used to create the skill. Required.
@@ -11074,7 +11070,7 @@ class BetaSkillsOperations:
 
         _content = body
 
-        _request = build_beta_skills_create_skill_from_package_request(
+        _request = build_beta_skills_create_from_package_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -11118,7 +11114,7 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_skill(self, skill_name: str, **kwargs: Any) -> _models.SkillObject:
+    def get(self, skill_name: str, **kwargs: Any) -> _models.SkillObject:
         """Retrieves a skill.
 
         :param skill_name: The unique name of the skill. Required.
@@ -11140,7 +11136,7 @@ class BetaSkillsOperations:
 
         cls: ClsType[_models.SkillObject] = kwargs.pop("cls", None)
 
-        _request = build_beta_skills_get_skill_request(
+        _request = build_beta_skills_get_request(
             skill_name=skill_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -11183,7 +11179,7 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def download_skill(self, skill_name: str, **kwargs: Any) -> Iterator[bytes]:
+    def download(self, skill_name: str, **kwargs: Any) -> Iterator[bytes]:
         """Downloads a skill package.
 
         :param skill_name: The unique name of the skill. Required.
@@ -11205,7 +11201,7 @@ class BetaSkillsOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_beta_skills_download_skill_request(
+        _request = build_beta_skills_download_request(
             skill_name=skill_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -11248,7 +11244,7 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_skills(
+    def list(
         self,
         *,
         limit: Optional[int] = None,
@@ -11291,7 +11287,7 @@ class BetaSkillsOperations:
 
         def prepare_request(_continuation_token=None):
 
-            _request = build_beta_skills_list_skills_request(
+            _request = build_beta_skills_list_request(
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -11338,7 +11334,7 @@ class BetaSkillsOperations:
         return ItemPaged(get_next, extract_data)
 
     @overload
-    def update_skill(
+    def update(
         self,
         skill_name: str,
         *,
@@ -11373,7 +11369,7 @@ class BetaSkillsOperations:
         """
 
     @overload
-    def update_skill(
+    def update(
         self, skill_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SkillObject:
         """Updates an existing skill.
@@ -11391,7 +11387,7 @@ class BetaSkillsOperations:
         """
 
     @overload
-    def update_skill(
+    def update(
         self, skill_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SkillObject:
         """Updates an existing skill.
@@ -11409,7 +11405,7 @@ class BetaSkillsOperations:
         """
 
     @distributed_trace
-    def update_skill(
+    def update(
         self,
         skill_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -11465,7 +11461,7 @@ class BetaSkillsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_skills_update_skill_request(
+        _request = build_beta_skills_update_request(
             skill_name=skill_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -11510,7 +11506,7 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_skill(self, skill_name: str, **kwargs: Any) -> _models.DeleteSkillResponse:
+    def delete(self, skill_name: str, **kwargs: Any) -> _models.DeleteSkillResponse:
         """Deletes a skill.
 
         :param skill_name: The unique name of the skill. Required.
@@ -11532,7 +11528,7 @@ class BetaSkillsOperations:
 
         cls: ClsType[_models.DeleteSkillResponse] = kwargs.pop("cls", None)
 
-        _request = build_beta_skills_delete_skill_request(
+        _request = build_beta_skills_delete_request(
             skill_name=skill_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -11593,7 +11589,7 @@ class BetaAgentInvocationsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get_agent_invocation_open_api_spec(self, agent_name: str, **kwargs: Any) -> dict[str, Any]:
+    def get_open_api_spec(self, agent_name: str, **kwargs: Any) -> dict[str, Any]:
         """Retrieves the OpenAPI specification for an agent version's invocation contract. Returns 404 if
         the agent does not expose an OpenAPI specification.
 
@@ -11616,7 +11612,7 @@ class BetaAgentInvocationsOperations:
 
         cls: ClsType[dict[str, Any]] = kwargs.pop("cls", None)
 
-        _request = build_beta_agent_invocations_get_agent_invocation_open_api_spec_request(
+        _request = build_beta_agent_invocations_get_open_api_spec_request(
             agent_name=agent_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -11662,9 +11658,7 @@ class BetaAgentInvocationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def create_agent_invocation(
-        self, agent_name: str, request: Any, *, agent_session_id: Optional[str] = None, **kwargs: Any
-    ) -> Any:
+    def create(self, agent_name: str, request: Any, *, agent_session_id: Optional[str] = None, **kwargs: Any) -> Any:
         """Creates an invocation for the specified agent version.
 
         :param agent_name: The name of the agent. Required.
@@ -11695,7 +11689,7 @@ class BetaAgentInvocationsOperations:
 
         _content = request
 
-        _request = build_beta_agent_invocations_create_agent_invocation_request(
+        _request = build_beta_agent_invocations_create_request(
             agent_name=agent_name,
             agent_session_id=agent_session_id,
             content_type=content_type,
@@ -11748,7 +11742,7 @@ class BetaAgentInvocationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_agent_invocation(self, agent_name: str, invocation_id: str, **kwargs: Any) -> Any:
+    def get(self, agent_name: str, invocation_id: str, **kwargs: Any) -> Any:
         """Retrieves the invocation with the given ID. Returns 404 if the agent does not support this
         operation or if the invocation ID is not found.
 
@@ -11773,7 +11767,7 @@ class BetaAgentInvocationsOperations:
 
         cls: ClsType[Any] = kwargs.pop("cls", None)
 
-        _request = build_beta_agent_invocations_get_agent_invocation_request(
+        _request = build_beta_agent_invocations_get_request(
             agent_name=agent_name,
             invocation_id=invocation_id,
             api_version=self._config.api_version,
@@ -11820,9 +11814,7 @@ class BetaAgentInvocationsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def cancel_agent_invocation(
-        self, agent_name: str, invocation_id: str, request: Optional[Any] = None, **kwargs: Any
-    ) -> Any:
+    def cancel(self, agent_name: str, invocation_id: str, request: Optional[Any] = None, **kwargs: Any) -> Any:
         """Cancels an invocation. Returns 404 if the agent does not support this operation or if the
         invocation ID is not found.
 
@@ -11856,7 +11848,7 @@ class BetaAgentInvocationsOperations:
         else:
             _content = None
 
-        _request = build_beta_agent_invocations_cancel_agent_invocation_request(
+        _request = build_beta_agent_invocations_cancel_request(
             agent_name=agent_name,
             invocation_id=invocation_id,
             content_type=content_type,
@@ -11923,7 +11915,7 @@ class BetaAgentSessionFilesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def upload_session_file(
+    def upload(
         self, agent_name: str, session_id: str, content: bytes, *, path: str, **kwargs: Any
     ) -> _models.SessionFileWriteResponse:
         """Upload a file to the session sandbox via binary stream. Maximum file size is 50 MB. Uploads
@@ -11959,7 +11951,7 @@ class BetaAgentSessionFilesOperations:
 
         _content = content
 
-        _request = build_beta_agent_session_files_upload_session_file_request(
+        _request = build_beta_agent_session_files_upload_request(
             agent_name=agent_name,
             session_id=session_id,
             path=path,
@@ -12006,7 +11998,7 @@ class BetaAgentSessionFilesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def download_session_file(self, agent_name: str, session_id: str, *, path: str, **kwargs: Any) -> Iterator[bytes]:
+    def download(self, agent_name: str, session_id: str, *, path: str, **kwargs: Any) -> Iterator[bytes]:
         """Download a file from the session sandbox as a binary stream.
 
         :param agent_name: The name of the agent. Required.
@@ -12033,7 +12025,7 @@ class BetaAgentSessionFilesOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_beta_agent_session_files_download_session_file_request(
+        _request = build_beta_agent_session_files_download_request(
             agent_name=agent_name,
             session_id=session_id,
             path=path,
@@ -12075,7 +12067,7 @@ class BetaAgentSessionFilesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list_session_files(
+    def list(
         self, agent_name: str, session_id: str, *, path: str, **kwargs: Any
     ) -> _models.SessionDirectoryListResponse:
         """List files and directories at a given path in the session sandbox. Returns only the immediate
@@ -12105,7 +12097,7 @@ class BetaAgentSessionFilesOperations:
 
         cls: ClsType[_models.SessionDirectoryListResponse] = kwargs.pop("cls", None)
 
-        _request = build_beta_agent_session_files_list_session_files_request(
+        _request = build_beta_agent_session_files_list_request(
             agent_name=agent_name,
             session_id=session_id,
             path=path,
@@ -12150,7 +12142,7 @@ class BetaAgentSessionFilesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_session_file(  # pylint: disable=inconsistent-return-statements
+    def delete(  # pylint: disable=inconsistent-return-statements
         self, agent_name: str, session_id: str, *, path: str, recursive: Optional[bool] = None, **kwargs: Any
     ) -> None:
         """Delete a file or directory from the session sandbox. If ``recursive`` is false (default) and
@@ -12183,7 +12175,7 @@ class BetaAgentSessionFilesOperations:
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_beta_agent_session_files_delete_session_file_request(
+        _request = build_beta_agent_session_files_delete_request(
             agent_name=agent_name,
             session_id=session_id,
             path=path,
@@ -12234,10 +12226,10 @@ class BetaManagedAgentIdentityBlueprintsOperations:  # pylint: disable=name-too-
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    def create_or_update_managed_agent_identity_blueprint(  # pylint: disable=name-too-long
+    def create_or_update(
         self, blueprint_name: str, *, name: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ManagedAgentIdentityBlueprint:
-        """create_or_update_managed_agent_identity_blueprint.
+        """create_or_update.
 
         :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
         :type blueprint_name: str
@@ -12258,10 +12250,10 @@ class BetaManagedAgentIdentityBlueprintsOperations:  # pylint: disable=name-too-
         """
 
     @overload
-    def create_or_update_managed_agent_identity_blueprint(  # pylint: disable=name-too-long
+    def create_or_update(
         self, blueprint_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ManagedAgentIdentityBlueprint:
-        """create_or_update_managed_agent_identity_blueprint.
+        """create_or_update.
 
         :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
         :type blueprint_name: str
@@ -12277,10 +12269,10 @@ class BetaManagedAgentIdentityBlueprintsOperations:  # pylint: disable=name-too-
         """
 
     @overload
-    def create_or_update_managed_agent_identity_blueprint(  # pylint: disable=name-too-long
+    def create_or_update(
         self, blueprint_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ManagedAgentIdentityBlueprint:
-        """create_or_update_managed_agent_identity_blueprint.
+        """create_or_update.
 
         :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
         :type blueprint_name: str
@@ -12296,10 +12288,10 @@ class BetaManagedAgentIdentityBlueprintsOperations:  # pylint: disable=name-too-
         """
 
     @distributed_trace
-    def create_or_update_managed_agent_identity_blueprint(  # pylint: disable=name-too-long
+    def create_or_update(
         self, blueprint_name: str, body: Union[JSON, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any
     ) -> _models.ManagedAgentIdentityBlueprint:
-        """create_or_update_managed_agent_identity_blueprint.
+        """create_or_update.
 
         :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
         :type blueprint_name: str
@@ -12343,15 +12335,13 @@ class BetaManagedAgentIdentityBlueprintsOperations:  # pylint: disable=name-too-
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = (
-            build_beta_managed_agent_identity_blueprints_create_or_update_managed_agent_identity_blueprint_request(
-                blueprint_name=blueprint_name,
-                content_type=content_type,
-                api_version=self._config.api_version,
-                content=_content,
-                headers=_headers,
-                params=_params,
-            )
+        _request = build_beta_managed_agent_identity_blueprints_create_or_update_request(
+            blueprint_name=blueprint_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
         )
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
@@ -12390,9 +12380,7 @@ class BetaManagedAgentIdentityBlueprintsOperations:  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def get_managed_agent_identity_blueprint(
-        self, blueprint_name: str, **kwargs: Any
-    ) -> _models.ManagedAgentIdentityBlueprint:
+    def get(self, blueprint_name: str, **kwargs: Any) -> _models.ManagedAgentIdentityBlueprint:
         """Retrieves a managed agent identity blueprint by name.
 
         :param blueprint_name: The name of the managed agent identity blueprint to retrieve. Required.
@@ -12415,7 +12403,7 @@ class BetaManagedAgentIdentityBlueprintsOperations:  # pylint: disable=name-too-
 
         cls: ClsType[_models.ManagedAgentIdentityBlueprint] = kwargs.pop("cls", None)
 
-        _request = build_beta_managed_agent_identity_blueprints_get_managed_agent_identity_blueprint_request(
+        _request = build_beta_managed_agent_identity_blueprints_get_request(
             blueprint_name=blueprint_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -12458,9 +12446,7 @@ class BetaManagedAgentIdentityBlueprintsOperations:  # pylint: disable=name-too-
         return deserialized  # type: ignore
 
     @distributed_trace
-    def delete_managed_agent_identity_blueprint(  # pylint: disable=inconsistent-return-statements
-        self, blueprint_name: str, **kwargs: Any
-    ) -> None:
+    def delete(self, blueprint_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Deletes a managed agent identity blueprint by name.
 
         :param blueprint_name: The name of the managed agent identity blueprint to delete. Required.
@@ -12482,7 +12468,7 @@ class BetaManagedAgentIdentityBlueprintsOperations:  # pylint: disable=name-too-
 
         cls: ClsType[None] = kwargs.pop("cls", None)
 
-        _request = build_beta_managed_agent_identity_blueprints_delete_managed_agent_identity_blueprint_request(
+        _request = build_beta_managed_agent_identity_blueprints_delete_request(
             blueprint_name=blueprint_name,
             api_version=self._config.api_version,
             headers=_headers,
@@ -12512,10 +12498,10 @@ class BetaManagedAgentIdentityBlueprintsOperations:  # pylint: disable=name-too-
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace
-    def list_managed_agent_identity_blueprints(
+    def list(
         self, *, order: Optional[Union[str, _models.PageOrder]] = None, limit: Optional[int] = None, **kwargs: Any
     ) -> _models.PagedManagedAgentIdentityBlueprint:
-        """list_managed_agent_identity_blueprints.
+        """list.
 
         :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
          ascending order and``desc``
@@ -12543,7 +12529,7 @@ class BetaManagedAgentIdentityBlueprintsOperations:  # pylint: disable=name-too-
 
         cls: ClsType[_models.PagedManagedAgentIdentityBlueprint] = kwargs.pop("cls", None)
 
-        _request = build_beta_managed_agent_identity_blueprints_list_managed_agent_identity_blueprints_request(
+        _request = build_beta_managed_agent_identity_blueprints_list_request(
             order=order,
             limit=limit,
             api_version=self._config.api_version,
