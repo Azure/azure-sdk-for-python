@@ -271,11 +271,16 @@ class RaiServiceEvaluatorBase(EvaluatorBase[T]):
 
                 # Check if this result matches our evaluator's metric
                 # Handle both exact match ("violence") and prefixed format ("builtin.violence")
+                # Use case-insensitive comparison since the service may return capitalized metric names
+                # (e.g., "Violence") while SDK constants use lowercase (e.g., "violence")
                 expected_metric = self._eval_metric.value if hasattr(self._eval_metric, "value") else self._eval_metric
+                metric_name_lower = metric_name.lower()
+                expected_metric_lower = expected_metric.lower()
                 if (
-                    metric_name == expected_metric
-                    or metric_name == f"builtin.{expected_metric}"
-                    or metric_name == self._eval_metric
+                    metric_name_lower == expected_metric_lower
+                    or metric_name_lower == f"builtin.{expected_metric_lower}"
+                    or metric_name_lower
+                    == (self._eval_metric.lower() if isinstance(self._eval_metric, str) else self._eval_metric)
                 ):
                     # Extract common fields
                     score = result_dict.get("score", 0)
