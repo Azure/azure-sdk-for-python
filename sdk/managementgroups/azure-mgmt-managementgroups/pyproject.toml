@@ -13,7 +13,7 @@ authors = [
 description = "Microsoft Azure Managementgroups Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -78,8 +78,8 @@ verifytypes = false
 package_name = "azure-mgmt-managementgroups"
 package_pprint_name = "Management Groups"
 package_doc_id = ""
-is_stable = true
-title = "ManagementGroupsAPI"
+is_stable = false
+title = "ManagementGroupsMgmtClient"
 package_nspkg = "azure-mgmt-nspkg"
 is_arm = true
 no_sub = true
