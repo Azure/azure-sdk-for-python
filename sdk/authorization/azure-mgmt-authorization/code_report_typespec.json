@@ -2921,7 +2921,7 @@
                 "param_type": "positional_or_keyword"
               },
               "expand": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -2939,7 +2939,7 @@
                 "param_type": "positional_or_keyword"
               },
               "expand": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -18438,7 +18438,7 @@
                     "param_type": "keyword_only"
                   },
                   "type": {
-                    "type": "Optional[_types.DenyAssignmentPrincipalType]",
+                    "type": "Optional[str]",
                     "default": null,
                     "param_type": "keyword_only"
                   }
@@ -39075,7 +39075,7 @@
                 "param_type": "positional_or_keyword"
               },
               "expand": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {
@@ -39093,7 +39093,7 @@
                 "param_type": "positional_or_keyword"
               },
               "expand": {
-                "default": "none",
+                "default": "str",
                 "param_type": "keyword_only"
               },
               "kwargs": {

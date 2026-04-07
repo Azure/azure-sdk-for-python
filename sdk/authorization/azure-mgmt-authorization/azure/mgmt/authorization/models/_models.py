@@ -15,7 +15,7 @@ from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
 from ._enums import AccessReviewDecisionInsightType, DecisionTargetType, RoleManagementPolicyRuleType
 
 if TYPE_CHECKING:
-    from .. import _types, models as _models
+    from .. import models as _models
 
 
 class AccessReviewActorIdentity(_Model):
@@ -2921,25 +2921,21 @@ class DenyAssignmentPrincipal(_Model):
 
     :ivar id: The object ID of the principal.
     :vartype id: str
-    :ivar type: The type of the principal such as user, group, servicePrincipal, etc. Is one of the
-     following types: str
+    :ivar type: The type of the principal such as user, group, servicePrincipal, etc.
     :vartype type: str
     """
 
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The object ID of the principal."""
-    type: Optional["_types.DenyAssignmentPrincipalType"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The type of the principal such as user, group, servicePrincipal, etc. Is one of the following
-     types: str"""
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of the principal such as user, group, servicePrincipal, etc."""
 
     @overload
     def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        type: Optional["_types.DenyAssignmentPrincipalType"] = None,
+        type: Optional[str] = None,
     ) -> None: ...
 
     @overload

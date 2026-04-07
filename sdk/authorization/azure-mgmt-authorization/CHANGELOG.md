@@ -253,9 +253,7 @@
   - Deleted or renamed model `RoleEligibilityScheduleRequestFilter`
   - Deleted or renamed model `ValidationResponse`
   - Deleted or renamed model `ValidationResponseErrorInfo`
-  - Method `ProviderOperationsMetadataOperations.get` parameter `expand` changed default value from `str` to `none`
   - Method `ProviderOperationsMetadataOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
-  - Method `ProviderOperationsMetadataOperations.list` parameter `expand` changed default value from `str` to `none`
   - Method `ProviderOperationsMetadataOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `RoleAssignmentsOperations.delete` changed its parameter `tenant_id` from `positional_or_keyword` to `keyword_only`
   - Method `RoleAssignmentsOperations.delete_by_id` changed its parameter `tenant_id` from `positional_or_keyword` to `keyword_only`

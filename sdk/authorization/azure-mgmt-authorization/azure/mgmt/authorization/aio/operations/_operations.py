@@ -12454,13 +12454,13 @@ class ProviderOperationsMetadataOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_provider_namespace: str, *, expand: Optional[str] = None, **kwargs: Any
+        self, resource_provider_namespace: str, *, expand: str = "resourceTypes", **kwargs: Any
     ) -> _models.ProviderOperationsMetadata:
         """Gets provider operations metadata for the specified resource provider.
 
         :param resource_provider_namespace: The namespace of the resource provider. Required.
         :type resource_provider_namespace: str
-        :keyword expand: Specifies whether to expand the values. Default value is None.
+        :keyword expand: Specifies whether to expand the values. Default value is "resourceTypes".
         :paramtype expand: str
         :return: ProviderOperationsMetadata. The ProviderOperationsMetadata is compatible with
          MutableMapping
@@ -12526,11 +12526,11 @@ class ProviderOperationsMetadataOperations:
 
     @distributed_trace
     def list(
-        self, *, expand: Optional[str] = None, **kwargs: Any
+        self, *, expand: str = "resourceTypes", **kwargs: Any
     ) -> AsyncItemPaged["_models.ProviderOperationsMetadata"]:
         """Gets provider operations metadata for all resource providers.
 
-        :keyword expand: Specifies whether to expand the values. Default value is None.
+        :keyword expand: Specifies whether to expand the values. Default value is "resourceTypes".
         :paramtype expand: str
         :return: An iterator like instance of ProviderOperationsMetadata
         :rtype:

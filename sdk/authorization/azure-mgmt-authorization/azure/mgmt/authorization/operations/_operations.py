@@ -3336,7 +3336,7 @@ def build_global_administrator_elevate_access_request(**kwargs: Any) -> HttpRequ
 
 
 def build_provider_operations_metadata_get_request(  # pylint: disable=name-too-long
-    resource_provider_namespace: str, *, expand: Optional[str] = None, **kwargs: Any
+    resource_provider_namespace: str, *, expand: str = "resourceTypes", **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -3366,7 +3366,7 @@ def build_provider_operations_metadata_get_request(  # pylint: disable=name-too-
 
 
 def build_provider_operations_metadata_list_request(  # pylint: disable=name-too-long
-    *, expand: Optional[str] = None, **kwargs: Any
+    *, expand: str = "resourceTypes", **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -15769,13 +15769,13 @@ class ProviderOperationsMetadataOperations:
 
     @distributed_trace
     def get(
-        self, resource_provider_namespace: str, *, expand: Optional[str] = None, **kwargs: Any
+        self, resource_provider_namespace: str, *, expand: str = "resourceTypes", **kwargs: Any
     ) -> _models.ProviderOperationsMetadata:
         """Gets provider operations metadata for the specified resource provider.
 
         :param resource_provider_namespace: The namespace of the resource provider. Required.
         :type resource_provider_namespace: str
-        :keyword expand: Specifies whether to expand the values. Default value is None.
+        :keyword expand: Specifies whether to expand the values. Default value is "resourceTypes".
         :paramtype expand: str
         :return: ProviderOperationsMetadata. The ProviderOperationsMetadata is compatible with
          MutableMapping
@@ -15840,10 +15840,10 @@ class ProviderOperationsMetadataOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, *, expand: Optional[str] = None, **kwargs: Any) -> ItemPaged["_models.ProviderOperationsMetadata"]:
+    def list(self, *, expand: str = "resourceTypes", **kwargs: Any) -> ItemPaged["_models.ProviderOperationsMetadata"]:
         """Gets provider operations metadata for all resource providers.
 
-        :keyword expand: Specifies whether to expand the values. Default value is None.
+        :keyword expand: Specifies whether to expand the values. Default value is "resourceTypes".
         :paramtype expand: str
         :return: An iterator like instance of ProviderOperationsMetadata
         :rtype:
