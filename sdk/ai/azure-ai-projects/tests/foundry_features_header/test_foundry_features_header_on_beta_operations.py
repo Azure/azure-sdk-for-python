@@ -215,7 +215,10 @@ class TestFoundryFeaturesHeaderOnBetaOperations(FoundryFeaturesHeaderTestBase):
         """Assert that *method_name* on .beta.<subclient_name> sends the expected Foundry-Features value."""
         sc = getattr(client.beta, subclient_name)
         method = getattr(sc, method_name)
-        self._assert_header(label, self._make_fake_call(method), expected_header_value)
+        extra_kwargs: dict[str, Any] = {}
+        if method_name == "create_agent_invocation":
+            extra_kwargs["content_type"] = "application/json"
+        self._assert_header(label, self._make_fake_call(method, extra_kwargs=extra_kwargs), expected_header_value)
 
 
 # ---------------------------------------------------------------------------

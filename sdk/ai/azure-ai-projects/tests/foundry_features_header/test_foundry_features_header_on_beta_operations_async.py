@@ -235,7 +235,10 @@ class TestFoundryFeaturesHeaderOnBetaOperationsAsync(FoundryFeaturesHeaderTestBa
         """Assert that *method_name* on async .beta.<subclient_name> sends the expected Foundry-Features value."""
         sc = getattr(async_client.beta, subclient_name)
         method = getattr(sc, method_name)
-        await self._assert_header_async(label, self._make_fake_call(method), expected_header_value)
+        extra_kwargs: dict[str, Any] = {}
+        if method_name == "create_agent_invocation":
+            extra_kwargs["content_type"] = "some-content-type"
+        await self._assert_header_async(label, self._make_fake_call(method, extra_kwargs=extra_kwargs), expected_header_value)
 
 
 # ---------------------------------------------------------------------------
