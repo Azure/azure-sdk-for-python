@@ -28,6 +28,9 @@ class _CollectorExporter(SpanExporter):
         self.spans.extend(spans)
         return SpanExportResult.SUCCESS
 
+    def shutdown(self):
+        pass
+
 
 
 # ------------------------------------------------------------------ #
