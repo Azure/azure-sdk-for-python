@@ -25,7 +25,7 @@ from .streaming._builders import (
     TextContentBuilder,
 )
 from .streaming._event_stream import ResponseEventStream
-from ._response_context import ResponseContext
+from ._response_context import ResponseContext, IsolationContext
 from ._options import ResponsesServerOptions
 from .store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from .store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError, FoundryStorageError
@@ -46,6 +46,7 @@ __all__ = [
     "__version__",
     "ResponsesAgentServerHost",
     "ResponseContext",
+    "IsolationContext",
     "ResponsesServerOptions",
     "ResponseProviderProtocol",
     "ResponseStreamProviderProtocol",

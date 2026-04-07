@@ -102,10 +102,11 @@ def echo_response_handler(
         response_id=context.response_id,
         model=request.model,
     )
-    yield from stream.start()
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
     echo_text = get_input_text(request) or "hello!"
-    yield from stream.text_message(f"[Response] Echo: {echo_text}")
-    yield from stream.complete()
+    yield from stream.output_item_message(f"[Response] Echo: {echo_text}")
+    yield stream.emit_completed()
 
 
 

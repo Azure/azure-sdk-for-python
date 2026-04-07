@@ -4,8 +4,9 @@
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterable
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator
 
 from ._base import BaseOutputItemBuilder, BuilderLifecycleState, EVENT_TYPE
 
@@ -377,3 +378,89 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
                 "status": "completed",
             }
         )
+
+    # ---- Sub-item convenience generators (S-053) ----
+
+    def text_content(self, text: str) -> Iterator[dict[str, Any]]:
+        """Yield the full lifecycle for a text content part.
+
+        Creates the sub-builder, emits ``content_part.added``,
+        ``output_text.delta``, ``output_text.done``, and ``content_part.done``.
+
+        :param text: The complete text content.
+        :type text: str
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        tc = self.add_text_content()
+        yield tc.emit_added()
+        yield tc.emit_delta(text)
+        yield tc.emit_done(text)
+        yield self.emit_content_done(tc)
+
+    async def atext_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`text_content` with streaming support.
+
+        When *text* is a string, behaves identically to :meth:`text_content`.
+        When *text* is an async iterable of string chunks, emits one
+        ``output_text.delta`` per chunk in real time (S-055), then
+        ``output_text.done`` with the accumulated text.
+
+        :param text: Complete text or async iterable of text chunks.
+        :type text: str | AsyncIterable[str]
+        :returns: An async iterator of event dicts.
+        :rtype: AsyncIterator[dict[str, Any]]
+        """
+        if isinstance(text, str):
+            for event in self.text_content(text):
+                yield event
+            return
+        tc = self.add_text_content()
+        yield tc.emit_added()
+        async for chunk in text:
+            yield tc.emit_delta(chunk)
+        yield tc.emit_done()
+        yield self.emit_content_done(tc)
+
+    def refusal_content(self, text: str) -> Iterator[dict[str, Any]]:
+        """Yield the full lifecycle for a refusal content part.
+
+        Creates the sub-builder, emits ``content_part.added``,
+        ``refusal.delta``, ``refusal.done``, and ``content_part.done``.
+
+        :param text: The complete refusal text.
+        :type text: str
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        rc = self.add_refusal_content()
+        yield rc.emit_added()
+        yield rc.emit_delta(text)
+        yield rc.emit_done(text)
+        yield self.emit_content_done(rc)
+
+    async def arefusal_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`refusal_content` with streaming support.
+
+        When *text* is a string, behaves identically to :meth:`refusal_content`.
+        When *text* is an async iterable of string chunks, emits one
+        ``refusal.delta`` per chunk in real time (S-055), then
+        ``refusal.done`` with the accumulated text.
+
+        :param text: Complete refusal text or async iterable of text chunks.
+        :type text: str | AsyncIterable[str]
+        :returns: An async iterator of event dicts.
+        :rtype: AsyncIterator[dict[str, Any]]
+        """
+        if isinstance(text, str):
+            for event in self.refusal_content(text):
+                yield event
+            return
+        rc = self.add_refusal_content()
+        yield rc.emit_added()
+        accumulated: list[str] = []
+        async for chunk in text:
+            accumulated.append(chunk)
+            yield rc.emit_delta(chunk)
+        yield rc.emit_done("".join(accumulated))
+        yield self.emit_content_done(rc)

@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterable
 from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any, AsyncIterator, Iterator
@@ -472,58 +473,11 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._validator.validate_next(candidate)
         return deepcopy(candidate)
 
-    # ---- Generator convenience methods ----
+    # ---- Generator convenience methods (S-056/S-057) ----
+    # Output-item convenience generators that encapsulate the full lifecycle.
+    # Names mirror the add_* factories with the add_ prefix removed.
 
-    def start(self, *, status: str = "in_progress") -> Iterator[dict[str, Any]]:
-        """Yield the opening lifecycle events for a response stream.
-
-        Yields ``response.created`` followed by ``response.in_progress``.
-
-        :keyword status: Initial status for the created event. Defaults to ``"in_progress"``.
-        :keyword type status: str
-        :returns: An iterator of event dicts.
-        :rtype: Iterator[dict[str, Any]]
-        """
-        yield self.emit_created(status=status)
-        yield self.emit_in_progress()
-
-    def complete(self, **kwargs: Any) -> Iterator[dict[str, Any]]:
-        """Yield the ``response.completed`` terminal event.
-
-        :keyword usage: Optional usage statistics to attach.
-        :returns: An iterator of event dicts.
-        :rtype: Iterator[dict[str, Any]]
-        """
-        yield self.emit_completed(**kwargs)
-
-    def fail(
-        self,
-        code: str = "server_error",
-        message: str = "An internal server error occurred.",
-        **kwargs: Any,
-    ) -> Iterator[dict[str, Any]]:
-        """Yield the ``response.failed`` terminal event.
-
-        :param code: Error code describing the failure.
-        :type code: str
-        :param message: Human-readable error message.
-        :type message: str
-        :returns: An iterator of event dicts.
-        :rtype: Iterator[dict[str, Any]]
-        """
-        yield self.emit_failed(code=code, message=message, **kwargs)
-
-    def incomplete(self, reason: str | None = None, **kwargs: Any) -> Iterator[dict[str, Any]]:
-        """Yield the ``response.incomplete`` terminal event.
-
-        :param reason: Optional reason for incompleteness.
-        :type reason: str | None
-        :returns: An iterator of event dicts.
-        :rtype: Iterator[dict[str, Any]]
-        """
-        yield self.emit_incomplete(reason=reason, **kwargs)
-
-    def text_message(self, text: str) -> Iterator[dict[str, Any]]:
+    def output_item_message(self, text: str) -> Iterator[dict[str, Any]]:
         """Yield the full lifecycle for a text message output item.
 
         Emits output_item.added, content_part.added, output_text.delta,
@@ -536,14 +490,10 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         message = self.add_output_item_message()
         yield message.emit_added()
-        text_content = message.add_text_content()
-        yield text_content.emit_added()
-        yield text_content.emit_delta(text)
-        yield text_content.emit_done(text)
-        yield message.emit_content_done(text_content)
+        yield from message.text_content(text)
         yield message.emit_done()
 
-    def function_call(self, name: str, call_id: str, arguments: str) -> Iterator[dict[str, Any]]:
+    def output_item_function_call(self, name: str, call_id: str, arguments: str) -> Iterator[dict[str, Any]]:
         """Yield the full lifecycle for a function call output item.
 
         Emits output_item.added, function_call_arguments.delta,
@@ -560,11 +510,10 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         fc = self.add_output_item_function_call(name=name, call_id=call_id)
         yield fc.emit_added()
-        yield fc.emit_arguments_delta(arguments)
-        yield fc.emit_arguments_done(arguments)
+        yield from fc.arguments(arguments)
         yield fc.emit_done()
 
-    def function_call_output(self, call_id: str, output: str) -> Iterator[dict[str, Any]]:
+    def output_item_function_call_output(self, call_id: str, output: str) -> Iterator[dict[str, Any]]:
         """Yield the full lifecycle for a function call output item.
 
         Emits output_item.added and output_item.done.
@@ -580,7 +529,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         yield fco.emit_added(output)
         yield fco.emit_done(output)
 
-    def reasoning(self, summary_text: str) -> Iterator[dict[str, Any]]:
+    def output_item_reasoning_item(self, summary_text: str) -> Iterator[dict[str, Any]]:
         """Yield the full lifecycle for a reasoning output item.
 
         Emits output_item.added, reasoning_summary_part.added,
@@ -594,56 +543,99 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         item = self.add_output_item_reasoning_item()
         yield item.emit_added()
-        part = item.add_summary_part()
-        yield part.emit_added()
-        yield part.emit_text_delta(summary_text)
-        yield part.emit_text_done(summary_text)
-        yield part.emit_done()
-        item.emit_summary_part_done(part)
+        yield from item.summary_part(summary_text)
         yield item.emit_done()
 
-    # ---- Async generator convenience methods ----
-    # Async equivalents for use in async handlers where `yield from` is illegal.
+    # ---- Async generator convenience methods (S-058) ----
+    # Async variants with AsyncIterable[str] support for real-time delta streaming.
 
-    async def astart(self, *, status: str = "in_progress") -> AsyncIterator[dict[str, Any]]:
-        """Async variant of :meth:`start` for use in async handlers."""
-        for event in self.start(status=status):
+    async def aoutput_item_message(self, text: str | AsyncIterable[str]) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`output_item_message` with streaming support.
+
+        When *text* is a string, emits the same events as the sync variant.
+        When *text* is an async iterable of string chunks, emits one
+        ``output_text.delta`` per chunk in real time, enabling token-by-token
+        streaming from upstream LLMs.
+
+        :param text: Complete text or async iterable of text chunks.
+        :type text: str | AsyncIterable[str]
+        :returns: An async iterator of event dicts.
+        :rtype: AsyncIterator[dict[str, Any]]
+        """
+        if isinstance(text, str):
+            for event in self.output_item_message(text):
+                yield event
+            return
+        message = self.add_output_item_message()
+        yield message.emit_added()
+        async for event in message.atext_content(text):
+            yield event
+        yield message.emit_done()
+
+    async def aoutput_item_function_call(
+        self, name: str, call_id: str, arguments: str | AsyncIterable[str]
+    ) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`output_item_function_call` with streaming support.
+
+        When *arguments* is a string, emits the same events as the sync variant.
+        When *arguments* is an async iterable of string chunks, emits one
+        ``function_call_arguments.delta`` per chunk in real time.
+
+        :param name: The function name being called.
+        :type name: str
+        :param call_id: Unique identifier for this function call.
+        :type call_id: str
+        :param arguments: Complete arguments string or async iterable of chunks.
+        :type arguments: str | AsyncIterable[str]
+        :returns: An async iterator of event dicts.
+        :rtype: AsyncIterator[dict[str, Any]]
+        """
+        if isinstance(arguments, str):
+            for event in self.output_item_function_call(name, call_id, arguments):
+                yield event
+            return
+        fc = self.add_output_item_function_call(name=name, call_id=call_id)
+        yield fc.emit_added()
+        async for event in fc.aarguments(arguments):
+            yield event
+        yield fc.emit_done()
+
+    async def aoutput_item_function_call_output(self, call_id: str, output: str) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`output_item_function_call_output`.
+
+        :param call_id: The call ID of the function call this output belongs to.
+        :type call_id: str
+        :param output: The output value for the function call.
+        :type output: str
+        :returns: An async iterator of event dicts.
+        :rtype: AsyncIterator[dict[str, Any]]
+        """
+        for event in self.output_item_function_call_output(call_id, output):
             yield event
 
-    async def acomplete(self, **kwargs: Any) -> AsyncIterator[dict[str, Any]]:
-        """Async variant of :meth:`complete` for use in async handlers."""
-        for event in self.complete(**kwargs):
-            yield event
+    async def aoutput_item_reasoning_item(
+        self, summary_text: str | AsyncIterable[str]
+    ) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`output_item_reasoning_item` with streaming support.
 
-    async def afail(self, code: str = "server_error", message: str = "An internal server error occurred.", **kwargs: Any) -> AsyncIterator[dict[str, Any]]:
-        """Async variant of :meth:`fail` for use in async handlers."""
-        for event in self.fail(code=code, message=message, **kwargs):
-            yield event
+        When *summary_text* is a string, emits the same events as the sync variant.
+        When *summary_text* is an async iterable of string chunks, emits one
+        ``reasoning_summary_text.delta`` per chunk in real time.
 
-    async def aincomplete(self, reason: str | None = None, **kwargs: Any) -> AsyncIterator[dict[str, Any]]:
-        """Async variant of :meth:`incomplete` for use in async handlers."""
-        for event in self.incomplete(reason=reason, **kwargs):
+        :param summary_text: Complete summary text or async iterable of chunks.
+        :type summary_text: str | AsyncIterable[str]
+        :returns: An async iterator of event dicts.
+        :rtype: AsyncIterator[dict[str, Any]]
+        """
+        if isinstance(summary_text, str):
+            for event in self.output_item_reasoning_item(summary_text):
+                yield event
+            return
+        item = self.add_output_item_reasoning_item()
+        yield item.emit_added()
+        async for event in item.asummary_part(summary_text):
             yield event
-
-    async def atext_message(self, text: str) -> AsyncIterator[dict[str, Any]]:
-        """Async variant of :meth:`text_message` for use in async handlers."""
-        for event in self.text_message(text):
-            yield event
-
-    async def afunction_call(self, name: str, call_id: str, arguments: str) -> AsyncIterator[dict[str, Any]]:
-        """Async variant of :meth:`function_call` for use in async handlers."""
-        for event in self.function_call(name, call_id, arguments):
-            yield event
-
-    async def afunction_call_output(self, call_id: str, output: str) -> AsyncIterator[dict[str, Any]]:
-        """Async variant of :meth:`function_call_output` for use in async handlers."""
-        for event in self.function_call_output(call_id, output):
-            yield event
-
-    async def areasoning(self, summary_text: str) -> AsyncIterator[dict[str, Any]]:
-        """Async variant of :meth:`reasoning` for use in async handlers."""
-        for event in self.reasoning(summary_text):
-            yield event
+        yield item.emit_done()
 
     # ---- Private helpers ----
 

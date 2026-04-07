@@ -4,8 +4,9 @@
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterable
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator
 
 from ._base import BaseOutputItemBuilder, EVENT_TYPE, _require_non_empty
 
@@ -133,6 +134,45 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
                 "status": "completed",
             }
         )
+
+    # ---- Sub-item convenience generators (S-053) ----
+
+    def arguments(self, args: str) -> Iterator[dict[str, Any]]:
+        """Yield the argument delta and done events.
+
+        Emits ``function_call_arguments.delta`` followed by
+        ``function_call_arguments.done``.
+
+        :param args: The complete arguments string.
+        :type args: str
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        yield self.emit_arguments_delta(args)
+        yield self.emit_arguments_done(args)
+
+    async def aarguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`arguments` with streaming support.
+
+        When *args* is a string, behaves identically to :meth:`arguments`.
+        When *args* is an async iterable of string chunks, emits one
+        ``function_call_arguments.delta`` per chunk in real time (S-055),
+        then ``function_call_arguments.done`` with the accumulated text.
+
+        :param args: Complete arguments string or async iterable of chunks.
+        :type args: str | AsyncIterable[str]
+        :returns: An async iterator of event dicts.
+        :rtype: AsyncIterator[dict[str, Any]]
+        """
+        if isinstance(args, str):
+            for event in self.arguments(args):
+                yield event
+            return
+        accumulated: list[str] = []
+        async for chunk in args:
+            accumulated.append(chunk)
+            yield self.emit_arguments_delta(chunk)
+        yield self.emit_arguments_done("".join(accumulated))
 
 
 class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):

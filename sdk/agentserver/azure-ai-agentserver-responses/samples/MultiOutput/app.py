@@ -18,10 +18,11 @@ server = ResponsesAgentServerHost()
 def multi_output_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Produces reasoning plus final message output in one response."""
     stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-    yield from stream.start()
-    yield from stream.reasoning("Let me think about this...")
-    yield from stream.text_message("Here is my answer.")
-    yield from stream.complete()
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
+    yield from stream.output_item_reasoning_item("Let me think about this...")
+    yield from stream.output_item_message("Here is my answer.")
+    yield stream.emit_completed()
 
 
 def main() -> None:

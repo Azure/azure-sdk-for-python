@@ -4,8 +4,9 @@
 
 from __future__ import annotations
 
+from collections.abc import AsyncIterable
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator
 
 from ._base import BaseOutputItemBuilder, BuilderLifecycleState, EVENT_TYPE
 
@@ -197,3 +198,53 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
                 "status": "completed",
             }
         )
+
+    # ---- Sub-item convenience generators (S-053) ----
+
+    def summary_part(self, text: str) -> Iterator[dict[str, Any]]:
+        """Yield the full lifecycle for a reasoning summary part.
+
+        Creates the sub-builder, emits ``reasoning_summary_part.added``,
+        ``reasoning_summary_text.delta``, ``reasoning_summary_text.done``,
+        ``reasoning_summary_part.done``, and registers the part with the
+        parent via :meth:`emit_summary_part_done`.
+
+        :param text: The complete summary text.
+        :type text: str
+        :returns: An iterator of event dicts.
+        :rtype: Iterator[dict[str, Any]]
+        """
+        part = self.add_summary_part()
+        yield part.emit_added()
+        yield part.emit_text_delta(text)
+        yield part.emit_text_done(text)
+        yield part.emit_done()
+        self.emit_summary_part_done(part)
+
+    async def asummary_part(self, text: str | AsyncIterable[str]) -> AsyncIterator[dict[str, Any]]:
+        """Async variant of :meth:`summary_part` with streaming support.
+
+        When *text* is a string, behaves identically to :meth:`summary_part`.
+        When *text* is an async iterable of string chunks, emits one
+        ``reasoning_summary_text.delta`` per chunk in real time (S-055),
+        then ``reasoning_summary_text.done`` with the accumulated text.
+
+        :param text: Complete summary text or async iterable of text chunks.
+        :type text: str | AsyncIterable[str]
+        :returns: An async iterator of event dicts.
+        :rtype: AsyncIterator[dict[str, Any]]
+        """
+        if isinstance(text, str):
+            for event in self.summary_part(text):
+                yield event
+            return
+        part = self.add_summary_part()
+        yield part.emit_added()
+        accumulated: list[str] = []
+        async for chunk in text:
+            accumulated.append(chunk)
+            yield part.emit_text_delta(chunk)
+        final = "".join(accumulated)
+        yield part.emit_text_done(final)
+        yield part.emit_done()
+        self.emit_summary_part_done(part)
