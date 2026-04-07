@@ -35,7 +35,7 @@ _PREVIEW_FEATURE_REQUIRED_CODE: Final = "preview_feature_required"
 _PREVIEW_FEATURE_ADDED_ERROR_MESSAGE: Final = (
     '\n**Python SDK users**: This operation requires you to set "allow_preview=True" '
     "when calling the AIProjectClient constructor. "
-    "\nNote that preview features are under development and subject to change."
+    "\nNote that preview features are under development and subject to change. They should not be used in production environments."
 )
 _AGENT_OPERATION_FEATURE_HEADERS: Final[str] = ",".join(
     [
