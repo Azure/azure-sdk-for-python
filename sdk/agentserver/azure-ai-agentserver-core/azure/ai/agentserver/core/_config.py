@@ -75,7 +75,7 @@ class AgentConfig:
     sse_keepalive_interval: int
 
     @classmethod
-    def from_env(cls) -> "AgentConfig":
+    def from_env(cls) -> Self
         """Create an ``AgentConfig`` by reading all platform environment variables.
 
         :return: A frozen config with resolved values.
