@@ -202,7 +202,7 @@ class TestCosmosBearerTokenPolicySend(unittest.TestCase):
         assert retry_auth.startswith(AAD_AUTH_PREFIX)
 
     def test_403_aad_retry_still_fails_returns_second_response(self):
-        """If the retry also returns a non-retriable 403, that response is returned unchanged."""
+        """If the retry also returns a non-retryable 403, that response is returned unchanged."""
         credential = _make_credential()
         result, transport = self._run(
             credential,
