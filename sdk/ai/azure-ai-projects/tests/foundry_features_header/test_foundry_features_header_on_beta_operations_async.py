@@ -236,7 +236,7 @@ class TestFoundryFeaturesHeaderOnBetaOperationsAsync(FoundryFeaturesHeaderTestBa
         sc = getattr(async_client.beta, subclient_name)
         method = getattr(sc, method_name)
         extra_kwargs: dict[str, Any] = {}
-        if method_name == "create_agent_invocation":
+        if subclient_name == "agent_invocations" and method_name == "create":
             extra_kwargs["content_type"] = "some-content-type"
         await self._assert_header_async(
             label, self._make_fake_call(method, extra_kwargs=extra_kwargs), expected_header_value
