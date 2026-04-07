@@ -46,7 +46,7 @@ steps:
       Write-Host (Get-Command python).Source
       $ErrorActionPreference = 'Stop'
       $PSNativeCommandUseErrorActionPreference = $true
-      $(PIP_EXE) install -r eng/ci_tools.txt -v
+      $(PIP_EXE) install -r eng/ci_tools.txt
       $(PIP_EXE) freeze
     displayName: 'Prep Environment'
 

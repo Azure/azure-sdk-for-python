@@ -166,7 +166,7 @@ function Get-AllPackageInfoFromRepo ($serviceDirectory)
     # Use ‘uv pip install’ if uv is on PATH, otherwise fall back to python -m pip
     if (Get-Command uv -ErrorAction SilentlyContinue) {
       Write-Host "Using uv pip install"
-      $installerOutput = uv pip install "$pathToBuild" -vv
+      $installerOutput = uv pip install "$pathToBuild"
       Write-Host $installerOutput
       $freezeOutput = uv pip freeze
       Write-Host "Pip freeze output: $freezeOutput"
