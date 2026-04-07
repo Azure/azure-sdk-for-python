@@ -38,7 +38,7 @@
   - Added model `ScheduleInfo`
   - Added model `SchedulerTime`
   - Added enum `TriggerType`
-  - Added model `ConnectionsOperations`
+  - Added operation group `ConnectionsOperations`
 
 ## 3.0.0 (2025-09-04)
 
