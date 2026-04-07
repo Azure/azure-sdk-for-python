@@ -7,7 +7,7 @@ from unittest.mock import patch, MagicMock, call
 
 import pytest
 
-from azpysdk.changelog import changelog, REPO_ROOT, _CHRONUS_MODULE_PATH
+from azpysdk.changelog import changelog, REPO_ROOT, _CHRONUS_MODULE_PATH, _CHANGE_KINDS
 
 
 # ---------------------------------------------------------------------------
@@ -46,6 +46,46 @@ class TestChangelogRegistration:
         args = parser.parse_args(["changelog", "add", "sdk/storage/azure-storage-blob"])
         assert args.changelog_command == "add"
         assert args.package == "sdk/storage/azure-storage-blob"
+
+    def test_changelog_add_with_kind(self):
+        parser = _build_parser()
+        args = parser.parse_args(["changelog", "add", "--kind", "breaking"])
+        assert args.kind == "breaking"
+
+    def test_changelog_add_with_kind_short(self):
+        parser = _build_parser()
+        args = parser.parse_args(["changelog", "add", "-k", "feature"])
+        assert args.kind == "feature"
+
+    def test_changelog_add_with_message(self):
+        parser = _build_parser()
+        args = parser.parse_args(["changelog", "add", "--message", "Fixed the bug"])
+        assert args.message == "Fixed the bug"
+
+    def test_changelog_add_with_message_short(self):
+        parser = _build_parser()
+        args = parser.parse_args(["changelog", "add", "-m", "Added new API"])
+        assert args.message == "Added new API"
+
+    def test_changelog_add_with_kind_and_message(self):
+        parser = _build_parser()
+        args = parser.parse_args(
+            ["changelog", "add", "sdk/core/azure-core", "--kind", "breaking", "-m", "Removed old API"]
+        )
+        assert args.package == "sdk/core/azure-core"
+        assert args.kind == "breaking"
+        assert args.message == "Removed old API"
+
+    def test_changelog_add_invalid_kind_rejected(self):
+        parser = _build_parser()
+        with pytest.raises(SystemExit):
+            parser.parse_args(["changelog", "add", "--kind", "notakind"])
+
+    def test_changelog_add_all_valid_kinds_accepted(self):
+        parser = _build_parser()
+        for kind in _CHANGE_KINDS:
+            args = parser.parse_args(["changelog", "add", "--kind", kind])
+            assert args.kind == kind
 
     def test_changelog_create(self):
         parser = _build_parser()
@@ -145,6 +185,50 @@ class TestChangelogExecution:
         assert result == 0
         cmd = mock_call.call_args[0][0]
         assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "sdk/core/azure-core"]
+
+    @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
+    @patch("azpysdk.changelog.subprocess.call", return_value=0)
+    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
+    def test_add_with_kind_passes_flag(self, mock_which, mock_call, _mock_installed):
+        """The --kind flag should be forwarded to chronus."""
+        parser = _build_parser()
+        args = parser.parse_args(["changelog", "add", "--kind", "breaking"])
+        with patch("os.getcwd", return_value=REPO_ROOT):
+            result = args.func(args)
+        assert result == 0
+        cmd = mock_call.call_args[0][0]
+        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "--kind", "breaking"]
+
+    @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
+    @patch("azpysdk.changelog.subprocess.call", return_value=0)
+    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
+    def test_add_with_message_passes_flag(self, mock_which, mock_call, _mock_installed):
+        """The --message flag should be forwarded to chronus."""
+        parser = _build_parser()
+        args = parser.parse_args(["changelog", "add", "-m", "Fixed upload bug"])
+        with patch("os.getcwd", return_value=REPO_ROOT):
+            result = args.func(args)
+        assert result == 0
+        cmd = mock_call.call_args[0][0]
+        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "--message", "Fixed upload bug"]
+
+    @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
+    @patch("azpysdk.changelog.subprocess.call", return_value=0)
+    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
+    def test_add_with_kind_message_and_package(self, mock_which, mock_call, _mock_installed):
+        """All flags (package, --kind, --message) should be forwarded together."""
+        parser = _build_parser()
+        args = parser.parse_args([
+            "changelog", "add", "sdk/core/azure-core",
+            "--kind", "breaking", "-m", "Removed deprecated API",
+        ])
+        result = args.func(args)
+        assert result == 0
+        cmd = mock_call.call_args[0][0]
+        assert cmd == [
+            "/usr/bin/npx", "--no", "chronus", "add", "sdk/core/azure-core",
+            "--kind", "breaking", "--message", "Removed deprecated API",
+        ]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)

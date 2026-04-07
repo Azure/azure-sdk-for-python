@@ -12,6 +12,10 @@ from ci_tools.logging import logger
 _CHRONUS_PACKAGE = "@chronus/chronus"
 _CHRONUS_MODULE_PATH = os.path.join("node_modules", "@chronus", "chronus")
 
+# Valid change kinds from .chronus/config.yaml.  Kept in sync manually
+# so the CLI can validate before calling out to chronus.
+_CHANGE_KINDS = ["breaking", "feature", "deprecation", "fix", "dependencies", "internal"]
+
 
 class changelog(Check):
     """Manage changelogs with Chronus.
@@ -51,6 +55,23 @@ class changelog(Check):
                 "Package path (e.g. sdk/storage/azure-storage-blob) to add an entry for. "
                 "If omitted and CWD is inside a package directory, the package is detected "
                 "automatically. Otherwise chronus detects modified packages interactively."
+            ),
+        )
+        add_p.add_argument(
+            "--kind", "-k",
+            choices=_CHANGE_KINDS,
+            default=None,
+            help=(
+                "Kind of change (e.g. breaking, feature, fix). "
+                "If omitted, chronus will prompt interactively."
+            ),
+        )
+        add_p.add_argument(
+            "--message", "-m",
+            default=None,
+            help=(
+                "Short description of the change. "
+                "If omitted, chronus will prompt interactively."
             ),
         )
         add_p.set_defaults(func=self._run_add)
@@ -122,14 +143,17 @@ class changelog(Check):
             raise SystemExit(1)
 
        
-        print(
-            "\nChronus is not installed locally. It is listed as a dev dependency\n"
-            f"in {os.path.join(REPO_ROOT, 'package.json')}.\n"
-        )
-        answer = input("Run 'npm install' in the repo root to install it? [Y/n] ").strip().lower()
-        if answer not in ("", "y", "yes"):
-            logger.info("Skipped Chronus installation.")
-            raise SystemExit(1)
+        if sys.stdin.isatty():
+            print(
+                "\nChronus is not installed locally. It is listed as a dev dependency\n"
+                f"in {os.path.join(REPO_ROOT, 'package.json')}.\n"
+            )
+            answer = input("Run 'npm install' in the repo root to install it? [Y/n] ").strip().lower()
+            if answer not in ("", "y", "yes"):
+                logger.info("Skipped Chronus installation.")
+                raise SystemExit(1)
+        else:
+            logger.info("Chronus not installed — running 'npm install' automatically (non-interactive).")
        
         logger.info(f"Running: npm install  (cwd: {REPO_ROOT})")
         rc = subprocess.call([npm, "install"], cwd=REPO_ROOT)
@@ -194,6 +218,10 @@ class changelog(Check):
         When no *package* argument is given but CWD is inside a package
         directory (``sdk/<service>/<package>``), the package path is detected
         automatically so the developer doesn't have to specify it.
+
+        Optional ``--kind`` and ``--message`` flags are forwarded to chronus
+        so the developer can skip the interactive prompts (e.g.
+        ``azpysdk changelog add --kind breaking -m "Removed foo API"``).
         """
         chronus_args = ["add"]
         package = getattr(args, "package", None)
@@ -203,6 +231,15 @@ class changelog(Check):
                 logger.info(f"Detected package from current directory: {package}")
         if package:
             chronus_args.append(package)
+
+        kind = getattr(args, "kind", None)
+        if kind:
+            chronus_args.extend(["--kind", kind])
+
+        message = getattr(args, "message", None)
+        if message:
+            chronus_args.extend(["--message", message])
+
         return self._run_chronus(chronus_args)
 
     def _run_verify(self, args: argparse.Namespace) -> int:
