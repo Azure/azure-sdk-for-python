@@ -932,6 +932,45 @@ class GitHubCopilotAdapter(CopilotAdapter):
 
         return await super().agent_run(context)
 
+    def get_model(self) -> Optional[str]:
+        """Get the currently configured model.
+
+        :return: The model name, or None if not configured.
+        """
+        return self._session_config.get("model")
+
+    def clear_default_model(self) -> None:
+        """Clear the default model from session config and cache.
+
+        For Foundry mode (when ``_foundry_resource_url`` is configured):
+        forces the adapter to re-discover and select a model on the next
+        ``initialize()`` call by clearing both the session config and the
+        model cache.
+
+        For non-Foundry mode: resets the model to the environment-based
+        default (from ``AZURE_AI_FOUNDRY_MODEL`` or ``COPILOT_MODEL`` env
+        vars, or ``gpt-5`` if neither is set).
+        """
+        resource_url = self._session_config.get("_foundry_resource_url")
+
+        if resource_url:
+            # Foundry mode: clear model to force re-discovery on next initialize()
+            self._session_config.pop("model", None)
+            try:
+                from ._model_cache import ModelCache
+                cache = ModelCache()
+                cache.invalidate(resource_url)
+                logger.info(f"Cleared model cache for resource: {resource_url}")
+            except Exception:
+                logger.warning("Failed to clear model cache", exc_info=True)
+        else:
+            # Non-Foundry mode: reset to environment-based default
+            # Reuse _build_session_config() to ensure consistent default-model resolution
+            default_config = _build_session_config()
+            default_model = default_config.get("model")
+            self._session_config["model"] = default_model
+            logger.info(f"Reset model to environment default: {default_model}")
+
 
 # ---------------------------------------------------------------------------
 # Copilot event iterator
