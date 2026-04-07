@@ -43,7 +43,6 @@ EXPECTED_FOUNDRY_FEATURES: dict[str, str] = {
     "schedules": "Schedules=V1Preview",
     "toolboxes": "Toolboxes=V1Preview",
     "skills": "Skills=V1Preview",
-    "agent_invocations": "HostedAgents=V1Preview",
     "agent_session_files": "HostedAgents=V1Preview",
     "managed_agent_identity_blueprints": "AgentEndpoints=V1Preview",
 }
