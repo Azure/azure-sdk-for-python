@@ -32,6 +32,7 @@ from typing import (
 )
 
 from jinja2 import Template
+from jinja2.sandbox import SandboxedEnvironment
 from openai import AsyncStream
 from openai.types.chat import ChatCompletion, ChatCompletionChunk, ChatCompletionUserMessageParam
 from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAIError
@@ -244,8 +245,16 @@ FILE_EXT_TO_MIME: Final[Mapping[str, str]] = {
 
 def render_jinja_template(template_str: str, *, trim_blocks=True, keep_trailing_newline=True, **kwargs) -> str:
     try:
-        template = Template(template_str, trim_blocks=trim_blocks, keep_trailing_newline=keep_trailing_newline)
-        return template.render(**kwargs)
+        use_sandbox_env = os.environ.get("PF_USE_SANDBOX_FOR_JINJA", "true")
+        if use_sandbox_env.lower() == "false":
+            template = Template(template_str, trim_blocks=trim_blocks, keep_trailing_newline=keep_trailing_newline)
+            return template.render(**kwargs)
+        else:
+            sandbox_env = SandboxedEnvironment(
+                trim_blocks=trim_blocks, keep_trailing_newline=keep_trailing_newline
+            )
+            sanitized_template = sandbox_env.from_string(template_str)
+            return sanitized_template.render(**kwargs)
     except Exception as e:  # pylint: disable=broad-except
         raise PromptyException(f"Failed to render jinja template - {type(e).__name__}: {str(e)}") from e
 
