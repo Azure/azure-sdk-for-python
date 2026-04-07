@@ -28,7 +28,8 @@ import copy
 import logging
 
 from ...aio import _retry_utility_async
-from ... import http_constants, exceptions
+from ... import http_constants, exceptions, _base
+from ..._constants import _Constants as Constants
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -51,6 +52,7 @@ class _QueryExecutionContextBase(object):
         self._has_started = False
         self._has_finished = False
         self._buffer = deque()
+        self._resource_link = None
 
     def _get_initial_continuation(self):
         if "continuation" in self._options:
@@ -182,8 +184,34 @@ class _QueryExecutionContextBase(object):
                         max_retries
                     )
 
-                    # Refresh routing map to get new partition key ranges
-                    self._client.refresh_routing_map_provider()
+                    # Refresh routing map to get new partition key ranges.
+                    # When resource_link is available, do a targeted refresh for just this collection
+                    # instead of destroying all collections' cached routing maps.
+                    if self._resource_link:
+                        collection_id = _base.GetResourceIdOrFullNameFromLink(self._resource_link)
+                        previous_map = self._client._routing_map_provider._collection_routing_map_by_item.get(
+                            collection_id)
+                        _LOGGER.debug(
+                            "Partition split retry (async): Targeted refresh for collection %s (has_previous_map=%s)",
+                            self._resource_link,
+                            previous_map is not None,
+                        )
+                        refresh_feed_options = {}
+                        if Constants.ContainerRID in self._options:
+                            refresh_feed_options[Constants.ContainerRID] = self._options[Constants.ContainerRID]
+                        if "excludedLocations" in self._options:
+                            refresh_feed_options["excludedLocations"] = self._options["excludedLocations"]
+                        await self._client.refresh_routing_map_provider(
+                            self._resource_link,
+                            previous_map,
+                            refresh_feed_options if refresh_feed_options else None,
+                        )
+                    else:
+                        # No resource_link available — defensive fallback to global refresh.
+                        # This branch should not be reached in practice since all callers now pass resource_link.
+                        _LOGGER.debug("Partition split retry (async): No resource_link available, using global refresh")
+                        await self._client.refresh_routing_map_provider()
+
                     # Reset execution context state to allow retry from the beginning
                     self._has_started = False
                     self._continuation = None
@@ -204,12 +232,16 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
     This is the default execution context.
     """
 
-    def __init__(self, client, options, fetch_function):
+    def __init__(self, client, options, fetch_function, resource_link=None):
         """
         :param CosmosClient client:
         :param dict options: The request options for the request.
         :param method fetch_function:
             Will be invoked for retrieving each page
+        :param str resource_link:
+            Optional collection link used for targeted routing map refresh on 410 partition split.
+            When provided, the 410 retry loop refreshes only this collection's cached routing map
+            instead of destroying all collections' cached maps.
 
             Example of `fetch_function`:
 
@@ -219,6 +251,7 @@ class _DefaultQueryExecutionContext(_QueryExecutionContextBase):
         """
         super(_DefaultQueryExecutionContext, self).__init__(client, options)
         self._fetch_function = fetch_function
+        self._resource_link = resource_link
 
     async def _fetch_next_block(self):
         while super(_DefaultQueryExecutionContext, self)._has_more_pages() and not self._buffer:

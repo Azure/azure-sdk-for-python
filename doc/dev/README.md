@@ -11,7 +11,17 @@ Overview of the documents:
 - [Docstrings](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/docstring.md): How to document an SDK (API View) and our documentation at [MS Docs][ms_docs] and the [azure.github.io][azure_github_io] site.
 - [Type Hints and Type Checking](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking.md) / [Cheatsheet](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md): How to add type hints to your library code and run type checking.
 
-The [mgmt](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt) folder contains information specific to management packages (i.e. packages prefixed by `azure-mgmt`)
+The [mgmt](https://github.com/Azure/azure-sdk-for-python/tree/main/doc/dev/mgmt) folder contains information specific to management packages (i.e. packages prefixed by `azure-mgmt`)
+
+### Troubleshooting
+
+- [Common Issues and FAQ](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/common_issues.md) - Common SDK issues and how to resolve them
+
+### Code Generation
+
+- [Dataplane SDK Generation](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/dataplane_generation.md) - Generate a dataplane SDK from a TypeSpec definition
+
+### Additional Topics
 
 <!-- links -->
 [ms_docs]: https://docs.microsoft.com/python/api/overview/azure/appconfiguration-readme?view=azure-python
