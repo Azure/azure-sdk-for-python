@@ -38,9 +38,7 @@ def test_options__invalid_boundary_values_fail_fast() -> None:
         ResponsesServerOptions(sse_keep_alive_interval_seconds=0)
 
     with pytest.raises(ValueError):
-        ResponsesServerOptions.from_env(
-            {"AZURE_AI_RESPONSES_SERVER_DEFAULT_FETCH_HISTORY_ITEM_COUNT": "-1"}
-        )
+        ResponsesServerOptions.from_env({"AZURE_AI_RESPONSES_SERVER_DEFAULT_FETCH_HISTORY_ITEM_COUNT": "-1"})
 
 
 def test_options__dotnet_environment_variable_names_are_supported() -> None:

@@ -104,6 +104,7 @@ def _extract_isolation(request: Request) -> IsolationContext:
         chat_key=request.headers.get("x-agent-chat-isolation-key"),
     )
 
+
 # Structured log scope context variables (spec §7.4)
 _response_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("ResponseId", default="")
 _conversation_id_var: contextvars.ContextVar[str] = contextvars.ContextVar("ConversationId", default="")
@@ -232,9 +233,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     # Streaming response helpers
     # ------------------------------------------------------------------
 
-    async def _monitor_disconnect(
-        self, request: Request, cancellation_signal: asyncio.Event
-    ) -> None:
+    async def _monitor_disconnect(self, request: Request, cancellation_signal: asyncio.Event) -> None:
         """Poll for client disconnect and set cancellation signal.
 
         Used for non-background streaming requests so that handler
@@ -305,7 +304,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type response_id: str
         :param agent_reference: Normalised agent reference dictionary.
         :type agent_reference: Any
-        :keyword agent_session_id: Resolved session ID (S-048), or ``None``.
+        :keyword agent_session_id: Resolved session ID (B39), or ``None``.
         :keyword type agent_session_id: str | None
         :param span: Active observability span for this request.
         :type span: Any
@@ -371,13 +370,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :param request: The Starlette HTTP request.
         :return: A fully-populated :class:`ResponseContext`.
         """
-        mode_flags = ResponseModeFlags(
-            stream=ctx.stream, store=ctx.store, background=ctx.background
-        )
-        client_headers = {
-            k: v for k, v in request.headers.items()
-            if k.lower().startswith("x-client-")
-        }
+        mode_flags = ResponseModeFlags(stream=ctx.stream, store=ctx.store, background=ctx.background)
+        client_headers = {k: v for k, v in request.headers.items() if k.lower().startswith("x-client-")}
 
         context = ResponseContext(
             response_id=ctx.response_id,
@@ -438,7 +432,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         try:
             response_id, agent_reference = _resolve_identity_fields(
-                parsed, request_headers=request.headers,
+                parsed,
+                request_headers=request.headers,
             )
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error("Failed to resolve identity fields", exc_info=exc)
@@ -446,7 +441,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             span.end(captured_error)
             return _error_response(exc, {})
 
-        # S-048: Resolve session ID
+        # B39: Resolve session ID
         agent_session_id = _resolve_session_id(parsed, payload)
 
         ctx = self._build_execution_context(
@@ -461,13 +456,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         # Extract X-Request-Id header for request ID propagation (truncated to 256 chars).
         request_id = extract_request_id(request.headers)
-        _project_id = getattr(getattr(self._host, 'config', None), 'project_id', "") or ""
+        _project_id = getattr(getattr(self._host, "config", None), "project_id", "") or ""
 
         span.set_tags(build_create_span_tags(ctx, request_id=request_id, project_id=_project_id))
 
         # Start OTel request span using host's request_span context manager.
         with self._host.request_span(
-            request.headers, response_id, "invoke_agent",
+            request.headers,
+            response_id,
+            "invoke_agent",
             operation_name="invoke_agent",
             session_id=agent_session_id or "",
             end_on_exit=False,
@@ -476,15 +473,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
             # Set W3C baggage per spec §7.3
             bag_ctx = _otel_context.get_current()
+            bag_ctx = _otel_baggage.set_baggage("azure.ai.agentserver.response_id", response_id, context=bag_ctx)
             bag_ctx = _otel_baggage.set_baggage(
-                "azure.ai.agentserver.response_id", response_id, context=bag_ctx)
-            bag_ctx = _otel_baggage.set_baggage(
-                "azure.ai.agentserver.conversation_id", ctx.conversation_id or "", context=bag_ctx)
-            bag_ctx = _otel_baggage.set_baggage(
-                "azure.ai.agentserver.streaming", str(ctx.stream), context=bag_ctx)
+                "azure.ai.agentserver.conversation_id", ctx.conversation_id or "", context=bag_ctx
+            )
+            bag_ctx = _otel_baggage.set_baggage("azure.ai.agentserver.streaming", str(ctx.stream), context=bag_ctx)
             if request_id:
-                bag_ctx = _otel_baggage.set_baggage(
-                    "azure.ai.agentserver.x-request-id", request_id, context=bag_ctx)
+                bag_ctx = _otel_baggage.set_baggage("azure.ai.agentserver.x-request-id", request_id, context=bag_ctx)
             baggage_token = _otel_context.attach(bag_ctx)
 
             # Set structured log scope per spec §7.4
@@ -524,9 +519,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     return wrapped
 
                 if not ctx.background:
-                    disconnect_task = asyncio.create_task(
-                        self._monitor_disconnect(request, ctx.cancellation_signal)
-                    )
+                    disconnect_task = asyncio.create_task(self._monitor_disconnect(request, ctx.cancellation_signal))
                     try:
                         snapshot = await self._orchestrator.run_sync(ctx)
                         end_span(otel_span)
@@ -534,12 +527,16 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     except _HandlerError as exc:
                         logger.error(
                             "Handler error in sync create (response_id=%s)",
-                            ctx.response_id, exc_info=exc.original,
+                            ctx.response_id,
+                            exc_info=exc.original,
                         )
-                        self._safe_set_attrs(otel_span, {
-                            _ATTR_ERROR_CODE: _classify_error_code(exc.original),
-                            _ATTR_ERROR_MESSAGE: str(exc.original),
-                        })
+                        self._safe_set_attrs(
+                            otel_span,
+                            {
+                                _ATTR_ERROR_CODE: _classify_error_code(exc.original),
+                                _ATTR_ERROR_MESSAGE: str(exc.original),
+                            },
+                        )
                         end_span(otel_span, exc=exc.original)
                         # Handler errors are server-side faults, not client errors
                         err_body = {
@@ -559,10 +556,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
             except _HandlerError as exc:
                 logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=exc.original)
-                self._safe_set_attrs(otel_span, {
-                    _ATTR_ERROR_CODE: _classify_error_code(exc.original),
-                    _ATTR_ERROR_MESSAGE: str(exc.original),
-                })
+                self._safe_set_attrs(
+                    otel_span,
+                    {
+                        _ATTR_ERROR_CODE: _classify_error_code(exc.original),
+                        _ATTR_ERROR_MESSAGE: str(exc.original),
+                    },
+                )
                 end_span(otel_span, exc=exc)
                 # Handler errors are server-side faults, not client errors
                 err_body = {
@@ -580,10 +580,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
-                self._safe_set_attrs(otel_span, {
-                    _ATTR_ERROR_CODE: _classify_error_code(exc),
-                    _ATTR_ERROR_MESSAGE: str(exc),
-                })
+                self._safe_set_attrs(
+                    otel_span,
+                    {
+                        _ATTR_ERROR_CODE: _classify_error_code(exc),
+                        _ATTR_ERROR_MESSAGE: str(exc),
+                    },
+                )
                 end_span(otel_span, exc=exc)
                 raise
             finally:
@@ -653,6 +656,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         stream_replay = request.query_params.get("stream", "false").lower() == "true"
         if stream_replay:
+            # B14: store=false responses are never persisted — return 404.
+            if not record.mode_flags.store:
+                return _not_found(response_id, {})
             if not record.replay_enabled:
                 return _invalid_mode(
                     "stream replay is not available for this response; to enable SSE replay, "
@@ -699,9 +705,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             async for event in record.subject.subscribe(cursor=_cursor):  # type: ignore[union-attr]
                 yield encode_sse_payload(event["type"], event["payload"])
 
-        return StreamingResponse(
-            _stream_from_subject(), media_type="text/event-stream", headers=self._sse_headers
-        )
+        return StreamingResponse(_stream_from_subject(), media_type="text/event-stream", headers=self._sse_headers)
 
     async def _try_replay_persisted_stream(
         self, request: Request, response_id: str, *, isolation: IsolationContext | None = None
@@ -721,10 +725,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             parsed_cursor = self._parse_starting_after(request)
             if isinstance(parsed_cursor, Response):
                 return parsed_cursor
-            filtered = [
-                e for e in replay_events
-                if e["payload"]["sequence_number"] > parsed_cursor
-            ]
+            filtered = [e for e in replay_events if e["payload"]["sequence_number"] > parsed_cursor]
             return StreamingResponse(
                 _encode_sse(filtered),
                 media_type="text/event-stream",
@@ -769,6 +770,19 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 await self._provider.delete_response(response_id, isolation=_extract_isolation(request))
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning("Best-effort provider delete failed for response_id=%s", response_id, exc_info=True)
+            # Clean up persisted stream events
+            if self._stream_provider is not None:
+                try:
+                    await self._stream_provider.delete_stream_events(
+                        response_id,
+                        isolation=_extract_isolation(request),
+                    )
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.debug(
+                        "Best-effort stream event delete failed for response_id=%s",
+                        response_id,
+                        exc_info=True,
+                    )
 
         return JSONResponse(
             {"id": response_id, "object": "response.deleted", "deleted": True},
@@ -861,11 +875,29 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 param="response_id",
             )
 
-        record.set_response_snapshot(
-            build_cancelled_response(record.response_id, record.agent_reference, record.model)
-        )
+        # B11: initiate cancellation winddown
+        record.cancel_requested = True
         record.cancel_signal.set()
+
+        # Wait for handler to complete with grace period (B11: up to 10 seconds).
+        # Matches .NET CancelAsync: await execution.ExecutionTask.WaitAsync(TimeSpan.FromSeconds(10))
+        if record.execution_task is not None:
+            try:
+                await asyncio.wait_for(asyncio.shield(record.execution_task), timeout=10.0)
+            except (asyncio.TimeoutError, asyncio.CancelledError, Exception):  # pylint: disable=broad-exception-caught
+                pass  # Handler may throw or timeout — already handled by the task itself
+
+        # Set cancelled snapshot and transition
+        record.set_response_snapshot(build_cancelled_response(record.response_id, record.agent_reference, record.model))
         record.transition_to("cancelled")
+
+        # Persist cancelled state to durable store (B11: cancellation always wins)
+        try:
+            if record.response is not None:
+                await self._provider.update_response(record.response, isolation=_extract_isolation(request))
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug("Best-effort cancel persist failed for response_id=%s", record.response_id, exc_info=True)
+
         return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=self._response_headers)
 
     async def handle_input_items(self, request: Request) -> Response:
@@ -884,14 +916,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         try:
             limit = int(limit_raw)
         except ValueError:
-            return _invalid_request(
-                "limit must be an integer between 1 and 100", {}, param="limit"
-            )
+            return _invalid_request("limit must be an integer between 1 and 100", {}, param="limit")
 
         if limit < 1 or limit > 100:
-            return _invalid_request(
-                "limit must be between 1 and 100", {}, param="limit"
-            )
+            return _invalid_request("limit must be between 1 and 100", {}, param="limit")
 
         order = request.query_params.get("order", "desc").lower()
         if order not in {"asc", "desc"}:
@@ -960,9 +988,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 )
                 record.transition_to("failed")
 
-        deadline = asyncio.get_running_loop().time() + float(
-            self._runtime_options.shutdown_grace_period_seconds
-        )
+        deadline = asyncio.get_running_loop().time() + float(self._runtime_options.shutdown_grace_period_seconds)
         while True:
             pending = [
                 record

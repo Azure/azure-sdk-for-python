@@ -178,8 +178,10 @@ def _build_client(handler: Any) -> TestClient:
 
 def _wait_for_terminal(client: TestClient, response_id: str) -> None:
     ok, diag = poll_until(
-        lambda: client.get(f"/responses/{response_id}").json().get("status")
-        in ("completed", "failed", "incomplete", "cancelled"),
+        lambda: (
+            client.get(f"/responses/{response_id}").json().get("status")
+            in ("completed", "failed", "incomplete", "cancelled")
+        ),
         timeout_s=5.0,
         label="wait_for_terminal",
     )
@@ -204,17 +206,13 @@ def test_streaming_output_items_have_response_id_matching_response_created() -> 
     response_id = created_event["data"]["response"]["id"]
 
     # All output_item.added and output_item.done events must have matching response_id
-    item_events = [
-        e for e in events
-        if e["type"] in ("response.output_item.added", "response.output_item.done")
-    ]
+    item_events = [e for e in events if e["type"] in ("response.output_item.added", "response.output_item.done")]
     assert item_events, "Expected at least one output item event"
 
     for evt in item_events:
         item = evt["data"]["item"]
         assert item.get("response_id") == response_id, (
-            f"Expected response_id={response_id}, got {item.get('response_id')} "
-            f"on event {evt['type']}"
+            f"Expected response_id={response_id}, got {item.get('response_id')} on event {evt['type']}"
         )
 
 
@@ -253,10 +251,7 @@ def test_multiple_output_items_all_have_same_response_id() -> None:
     created_event = next(e for e in events if e["type"] == "response.created")
     response_id = created_event["data"]["response"]["id"]
 
-    item_events = [
-        e for e in events
-        if e["type"] in ("response.output_item.added", "response.output_item.done")
-    ]
+    item_events = [e for e in events if e["type"] in ("response.output_item.added", "response.output_item.done")]
     assert len(item_events) >= 4, f"Expected at least 4 item events (2 added + 2 done), got {len(item_events)}"
 
     for evt in item_events:

@@ -17,6 +17,7 @@ from tests._helpers import EventGate, poll_until
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
+
     async def _events():
         if False:  # pragma: no cover - required to keep async-generator shape.
             yield None
@@ -26,6 +27,7 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 def _delayed_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that keeps background execution in-flight for deterministic delete checks."""
+
     async def _events():
         if cancellation_signal.is_set():
             return
@@ -46,6 +48,7 @@ def _build_client(handler: Any | None = None) -> TestClient:
 
 def _throwing_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     """Background handler that raises immediately — produces status=failed."""
+
     async def _events():
         raise RuntimeError("Simulated handler failure")
         if False:  # pragma: no cover - keep async generator shape.
@@ -59,6 +62,7 @@ def _throwing_after_created_bg_handler(request: Any, context: Any, cancellation_
 
     Phase 3: by yielding response.created first, the POST returns HTTP 200 instead of 500.
     """
+
     async def _events():
         yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
         raise RuntimeError("Simulated handler failure")
@@ -68,6 +72,7 @@ def _throwing_after_created_bg_handler(request: Any, context: Any, cancellation_
 
 def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits response.created then blocks until cancelled (Phase 3)."""
+
     async def _events():
         yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
         while not cancellation_signal.is_set():
@@ -78,6 +83,7 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
 
 def _incomplete_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     """Background handler that emits an incomplete terminal event."""
+
     async def _events():
         yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
         yield {"type": "response.incomplete", "payload": {"status": "incomplete", "output": []}}
@@ -275,12 +281,12 @@ def test_delete__returns_404_for_non_bg_in_flight_response() -> None:
 
 
 # ══════════════════════════════════════════════════════════
-# B-6: DELETE on terminal statuses (failed / incomplete / cancelled)
+# B6: DELETE on terminal statuses (failed / incomplete / cancelled)
 # ══════════════════════════════════════════════════════════
 
 
 def test_delete__deletes_stored_failed_response() -> None:
-    """B-6 — DELETE on a failed (terminal) stored response returns 200 with deleted=True."""
+    """B6 — DELETE on a failed (terminal) stored response returns 200 with deleted=True."""
     client = _build_client(_throwing_after_created_bg_handler)
 
     create_response = client.post(
@@ -314,7 +320,7 @@ def test_delete__deletes_stored_failed_response() -> None:
 
 
 def test_delete__deletes_stored_incomplete_response() -> None:
-    """B-6 — DELETE on an incomplete (terminal) stored response returns 200 with deleted=True."""
+    """B6 — DELETE on an incomplete (terminal) stored response returns 200 with deleted=True."""
     client = _build_client(_incomplete_bg_handler)
 
     create_response = client.post(
@@ -348,7 +354,7 @@ def test_delete__deletes_stored_incomplete_response() -> None:
 
 
 def test_delete__deletes_stored_cancelled_response() -> None:
-    """B-6 — DELETE on a cancelled (terminal) stored response returns 200 with deleted=True."""
+    """B6 — DELETE on a cancelled (terminal) stored response returns 200 with deleted=True."""
     client = _build_client(_cancellable_bg_handler)
 
     create_response = client.post(
@@ -417,3 +423,45 @@ def test_delete__second_delete_returns_404() -> None:
     )
     payload = second_delete.json()
     assert payload["error"].get("type") == "invalid_request_error"
+
+
+def test_delete__deletes_completed_background_response() -> None:
+    """DELETE a completed background response returns 200 with deletion confirmation."""
+    client = _build_client()
+
+    create_response = client.post(
+        "/responses",
+        json={
+            "model": "gpt-4o-mini",
+            "input": "hello",
+            "stream": False,
+            "store": True,
+            "background": True,
+        },
+    )
+    assert create_response.status_code == 200
+    response_id = create_response.json()["id"]
+
+    # Wait for background task to complete
+    ok, _ = poll_until(
+        lambda: (
+            client.get(f"/responses/{response_id}").json().get("status")
+            in {
+                "completed",
+                "failed",
+            }
+        ),
+        timeout_s=5.0,
+        interval_s=0.05,
+        label="wait for bg completion",
+    )
+    assert ok, "Background response did not reach terminal state within timeout"
+
+    delete = client.delete(f"/responses/{response_id}")
+    assert delete.status_code == 200
+    payload = delete.json()
+    assert payload["id"] == response_id
+    assert payload["deleted"] is True
+    assert payload.get("object") in {"response.deleted", "response"}, (
+        f"DELETE result must include a recognised object type, got: {payload.get('object')}"
+    )

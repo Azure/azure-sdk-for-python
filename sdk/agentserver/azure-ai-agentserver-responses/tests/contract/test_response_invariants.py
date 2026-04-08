@@ -16,6 +16,7 @@ from tests._helpers import poll_until
 
 def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler — auto-completes."""
+
     async def _events():
         if False:  # pragma: no cover
             yield None
@@ -25,6 +26,7 @@ def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
 
 def _throwing_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that raises after emitting created."""
+
     async def _events():
         stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
         yield stream.emit_created()
@@ -35,6 +37,7 @@ def _throwing_handler(request: Any, context: Any, cancellation_signal: Any):
 
 def _incomplete_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits an incomplete terminal event."""
+
     async def _events():
         stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
         yield stream.emit_created()
@@ -45,6 +48,7 @@ def _incomplete_handler(request: Any, context: Any, cancellation_signal: Any):
 
 def _delayed_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that sleeps briefly, checking for cancellation."""
+
     async def _events():
         if cancellation_signal.is_set():
             return
@@ -59,6 +63,7 @@ def _delayed_handler(request: Any, context: Any, cancellation_signal: Any):
 
 def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits response.created then blocks until cancelled (Phase 3)."""
+
     async def _events():
         yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
         while not cancellation_signal.is_set():
@@ -282,12 +287,12 @@ def test_token_usage__structure_valid_when_present() -> None:
 
 
 # ══════════════════════════════════════════════════════════
-# B-7: created_at present on every response
+# B7: created_at present on every response
 # ══════════════════════════════════════════════════════════
 
 
 def test_created_at__present_on_sync_response() -> None:
-    """B-7 — created_at field must be present (and numeric) on every response object."""
+    """B7 — created_at field must be present (and numeric) on every response object."""
     client = _build_client()
 
     response = client.post(
@@ -308,7 +313,7 @@ def test_created_at__present_on_sync_response() -> None:
 
 
 def test_created_at__present_on_background_response() -> None:
-    """B-7 — created_at is also present when fetching a background response via GET."""
+    """B7 — created_at is also present when fetching a background response via GET."""
     client = _build_client()
 
     create_response = client.post(
@@ -335,12 +340,12 @@ def test_created_at__present_on_background_response() -> None:
 
 
 # ══════════════════════════════════════════════════════════
-# B-8: ResponseError shape (only code + message, no type/param)
+# B8: ResponseError shape (only code + message, no type/param)
 # ══════════════════════════════════════════════════════════
 
 
 def test_response_error__shape_has_only_code_and_message() -> None:
-    """B-8 — The error field on a failed response has code and message but NOT type or param."""
+    """B8 — The error field on a failed response has code and message but NOT type or param."""
     client = _build_client(_throwing_handler)
 
     create_response = client.post(
@@ -368,17 +373,21 @@ def test_response_error__shape_has_only_code_and_message() -> None:
     assert "code" in error, f"error must have 'code' field, got: {list(error.keys())}"
     assert "message" in error, f"error must have 'message' field, got: {list(error.keys())}"
     # ResponseError shape: must NOT have type or param (those are for request errors)
-    assert "type" not in error, f"error must NOT have 'type' field (that is for request errors), got: {list(error.keys())}"
-    assert "param" not in error, f"error must NOT have 'param' field (that is for request errors), got: {list(error.keys())}"
+    assert "type" not in error, (
+        f"error must NOT have 'type' field (that is for request errors), got: {list(error.keys())}"
+    )
+    assert "param" not in error, (
+        f"error must NOT have 'param' field (that is for request errors), got: {list(error.keys())}"
+    )
 
 
 # ══════════════════════════════════════════════════════════
-# B-12: GET /responses/{id} returns 200 for all terminal statuses
+# B12: GET /responses/{id} returns 200 for all terminal statuses
 # ══════════════════════════════════════════════════════════
 
 
 def test_get__returns_200_for_failed_response() -> None:
-    """B-12 — GET returns HTTP 200 for a response in failed status."""
+    """B12 — GET returns HTTP 200 for a response in failed status."""
     client = _build_client(_throwing_handler)
 
     create_response = client.post(
@@ -401,7 +410,7 @@ def test_get__returns_200_for_failed_response() -> None:
 
 
 def test_get__returns_200_for_incomplete_response() -> None:
-    """B-12 — GET returns HTTP 200 for a response in incomplete status."""
+    """B12 — GET returns HTTP 200 for a response in incomplete status."""
     client = _build_client(_incomplete_handler)
 
     create_response = client.post(
@@ -424,7 +433,7 @@ def test_get__returns_200_for_incomplete_response() -> None:
 
 
 def test_get__returns_200_for_cancelled_response() -> None:
-    """B-12 — GET returns HTTP 200 for a response in cancelled status."""
+    """B12 — GET returns HTTP 200 for a response in cancelled status."""
     client = _build_client(_cancellable_bg_handler)
 
     create_response = client.post(
@@ -509,6 +518,7 @@ def test_error_field__null_for_cancelled_status() -> None:
 
 def _output_item_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits a single output message item."""
+
     async def _events():
         stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
         yield stream.emit_created()
@@ -685,12 +695,12 @@ def test_x_platform_server_header__present_on_sse_replay_get_response() -> None:
 
 
 # ══════════════════════════════════════════════════════════
-# B-14: x-platform-server header on 4xx error responses
+# B14: x-platform-server header on 4xx error responses
 # ══════════════════════════════════════════════════════════
 
 
 def test_x_platform_server__present_on_400_create_error() -> None:
-    """B-14 — x-platform-server header must be present on 4xx error responses (not just 2xx)."""
+    """B14 — x-platform-server header must be present on 4xx error responses (not just 2xx)."""
     client = _build_client()
 
     response = client.post(
@@ -707,12 +717,12 @@ def test_x_platform_server__present_on_400_create_error() -> None:
 
 
 # ══════════════════════════════════════════════════════════
-# B-15: output[] preserved for completed, cleared for cancelled
+# B15: output[] preserved for completed, cleared for cancelled
 # ══════════════════════════════════════════════════════════
 
 
 def test_output__preserved_for_completed_response() -> None:
-    """B-15 — output[] is preserved (may be non-empty) for completed responses."""
+    """B15 — output[] is preserved (may be non-empty) for completed responses."""
     client = _build_client()
 
     response = client.post(
@@ -734,7 +744,7 @@ def test_output__preserved_for_completed_response() -> None:
 
 
 def test_output__cleared_for_cancelled_response() -> None:
-    """B-15 — output[] is cleared (empty list) when a response is cancelled."""
+    """B15 — output[] is cleared (empty list) when a response is cancelled."""
     client = _build_client(_cancellable_bg_handler)
 
     create_response = client.post(
@@ -760,3 +770,129 @@ def test_output__cleared_for_cancelled_response() -> None:
     assert payload.get("output") == [], (
         f"output must be cleared (empty []) for cancelled responses, got: {payload.get('output')}"
     )
+
+
+# ══════════════════════════════════════════════════════════
+# StatusLifecycle: queued status round-trip
+# (ported from StatusLifecycleTests.cs)
+# ══════════════════════════════════════════════════════════
+
+
+def _collect_sse_events(response: Any) -> list[dict[str, Any]]:
+    """Collect SSE events from a streaming response."""
+    import json as _json
+
+    events: list[dict[str, Any]] = []
+    current_type: str | None = None
+    current_data: str | None = None
+    for line in response.iter_lines():
+        if not line:
+            if current_type is not None:
+                payload = _json.loads(current_data) if current_data else {}
+                events.append({"type": current_type, "data": payload})
+            current_type = None
+            current_data = None
+            continue
+        if line.startswith("event:"):
+            current_type = line.split(":", 1)[1].strip()
+        elif line.startswith("data:"):
+            current_data = line.split(":", 1)[1].strip()
+    if current_type is not None:
+        payload = _json.loads(current_data) if current_data else {}
+        events.append({"type": current_type, "data": payload})
+    return events
+
+
+def _queued_then_completed_handler(request: Any, context: Any, cancellation_signal: Any):
+    """Handler that emits created(queued) → in_progress → completed."""
+
+    async def _events():
+        stream = ResponseEventStream(
+            response_id=context.response_id,
+            model=getattr(request, "model", None),
+        )
+        yield stream.emit_created(status="queued")
+        yield stream.emit_in_progress()
+        yield stream.emit_completed()
+
+    return _events()
+
+
+def test_streaming_queued_status_honoured_in_created_event() -> None:
+    """Handler that sets queued status — the response.created SSE event must reflect status: 'queued'.
+
+    Ported from StatusLifecycleTests.Streaming_QueuedStatus_HonouredInCreatedEvent.
+    """
+    client = _build_client(_queued_then_completed_handler)
+
+    with client.stream(
+        "POST",
+        "/responses",
+        json={"model": "test", "input": "hello", "stream": True},
+    ) as resp:
+        assert resp.status_code == 200
+        events = _collect_sse_events(resp)
+
+    created = [e for e in events if e["type"] == "response.created"]
+    assert created, "Expected response.created event"
+    assert created[0]["data"]["response"]["status"] == "queued", (
+        f"Expected queued status on response.created, got {created[0]['data']['response']['status']!r}"
+    )
+
+
+def test_background_queued_status_honoured_in_post_response() -> None:
+    """Background mode: POST response body reflects status: 'queued' when handler sets it.
+
+    Ported from StatusLifecycleTests.Background_QueuedStatus_HonouredInPostResponse.
+    """
+
+    def _queued_waiting_handler(request: Any, context: Any, cancellation_signal: Any):
+        """Handler that emits created(queued), pauses, then in_progress → completed."""
+
+        async def _events():
+            stream = ResponseEventStream(
+                response_id=context.response_id,
+                model=getattr(request, "model", None),
+            )
+            yield stream.emit_created(status="queued")
+            # Pause to ensure the bg POST response sees 'queued' status
+            await asyncio.sleep(0.3)
+            yield stream.emit_in_progress()
+            yield stream.emit_completed()
+
+        return _events()
+
+    client = _build_client(_queued_waiting_handler)
+
+    response = client.post(
+        "/responses",
+        json={"model": "test", "input": "hello", "background": True, "store": True},
+    )
+    assert response.status_code == 200
+    payload = response.json()
+    # Initial status must be queued (from the response.created event the handler emits)
+    assert payload["status"] == "queued", (
+        f"Expected queued status on background POST response, got {payload['status']!r}"
+    )
+
+
+def test_background_queued_status_eventually_completes() -> None:
+    """Background queued response eventually transitions to status: 'completed' after handler finishes.
+
+    Ported from StatusLifecycleTests.Background_QueuedStatus_EventuallyCompletes.
+    """
+    client = _build_client(_queued_then_completed_handler)
+
+    response = client.post(
+        "/responses",
+        json={"model": "test", "input": "hello", "background": True, "store": True},
+    )
+    assert response.status_code == 200
+    response_id = response.json()["id"]
+
+    # Poll until the response reaches completed
+    _wait_for_status(client, response_id, "completed", timeout_s=5.0)
+
+    get = client.get(f"/responses/{response_id}")
+    assert get.status_code == 200
+    assert get.json()["status"] == "completed"

@@ -14,6 +14,7 @@ from tests._helpers import poll_until
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
+
     async def _events():
         if False:  # pragma: no cover - required to keep async-generator shape.
             yield None
@@ -447,12 +448,12 @@ def test_create__validation_error_includes_details_array() -> None:
 
 
 # ══════════════════════════════════════════════════════════
-# B-1, B-2, B-3: Request body edge cases
+# B1, B2, B3: Request body edge cases
 # ══════════════════════════════════════════════════════════
 
 
 def test_create__returns_400_for_empty_body() -> None:
-    """B-1 — Empty request body → HTTP 400, error.type: invalid_request_error."""
+    """B1 — Empty request body → HTTP 400, error.type: invalid_request_error."""
     client = _build_client()
 
     response = client.post(
@@ -468,7 +469,7 @@ def test_create__returns_400_for_empty_body() -> None:
 
 
 def test_create__returns_400_for_invalid_json_body() -> None:
-    """B-2 — Malformed JSON body → HTTP 400, error.type: invalid_request_error."""
+    """B2 — Malformed JSON body → HTTP 400, error.type: invalid_request_error."""
     client = _build_client()
 
     response = client.post(
@@ -484,7 +485,7 @@ def test_create__returns_400_for_invalid_json_body() -> None:
 
 
 def test_create__ignores_unknown_fields_in_request_body() -> None:
-    """B-3 — Unknown fields are ignored for forward compatibility → HTTP 200."""
+    """B3 — Unknown fields are ignored for forward compatibility → HTTP 200."""
     client = _build_client()
 
     response = client.post(
@@ -513,8 +514,9 @@ def test_create__ignores_unknown_fields_in_request_body() -> None:
 def test_sync_handler_exception_returns_500() -> None:
     """T5 — Handler raises an exception; stream=False → HTTP 500.
 
-    B8 / B-13 for sync mode: any handler exception surfaces as HTTP 500.
+    B8 / B13 for sync mode: any handler exception surfaces as HTTP 500.
     """
+
     def _raising_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             raise RuntimeError("Simulated handler failure")
@@ -540,7 +542,7 @@ def test_sync_no_terminal_event_still_completes() -> None:
 
     stream=False → HTTP 200, status=failed.
 
-    S-021: When the handler completes without emitting a terminal event, the library
+    S-015: When the handler completes without emitting a terminal event, the library
     synthesises a ``response.failed`` terminal.  Sync callers receive HTTP 200 with
     a "failed" response body (not HTTP 500).
     """
@@ -548,9 +550,7 @@ def test_sync_no_terminal_event_still_completes() -> None:
 
     def _no_terminal_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
-            stream = ResponseEventStream(
-                response_id=context.response_id, model=getattr(request, "model", None)
-            )
+            stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
             yield stream.emit_created()
             yield stream.emit_in_progress()
             # Intentionally omit terminal event (response.completed / response.failed)
@@ -567,27 +567,28 @@ def test_sync_no_terminal_event_still_completes() -> None:
     )
 
     assert response.status_code == 200, (
-        f"S-021: sync no-terminal handler must return HTTP 200, got {response.status_code}"
+        f"S-015: sync no-terminal handler must return HTTP 200, got {response.status_code}"
     )
     payload = response.json()
     assert payload.get("status") == "failed", (
-        f"S-021: synthesised terminal must set status to 'failed', got {payload.get('status')!r}"
+        f"S-015: synthesised terminal must set status to 'failed', got {payload.get('status')!r}"
     )
 
 
 # ══════════════════════════════════════════════════════════
-# Phase 5 — Task 5.1: S-007 / S-008 / S-009 first-event contract tests
+# Phase 5 — Task 5.1: FR-006 / FR-007 first-event contract first-event contract tests
 # ══════════════════════════════════════════════════════════
 
 
 def test_s007_wrong_first_event_sync() -> None:
     """T1 — Handler yields response.in_progress as first event; stream=False → HTTP 500.
 
-    S-007: The first event MUST be response.created.  Violations are treated as
+    FR-006: The first event MUST be response.created.  Violations are treated as
     pre-creation errors (B8) and map to HTTP 500 in sync mode.
     Uses a raw dict to bypass ResponseEventStream internal ordering validation so
     the orchestrator's _check_first_event_contract is the authority under test.
     """
+
     def _wrong_first_event_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             # Raw dict bypasses ResponseEventStream validation so _check_first_event_contract runs
@@ -611,16 +612,17 @@ def test_s007_wrong_first_event_sync() -> None:
     )
 
     assert response.status_code == 500, (
-        f"S-007 violation in sync mode must return HTTP 500, got {response.status_code}"
+        f"FR-006 violation in sync mode must return HTTP 500, got {response.status_code}"
     )
 
 
 def test_s007_wrong_first_event_stream() -> None:
     """T2 — Handler yields response.in_progress as first event; stream=True → SSE contains only 'error'.
 
-    S-007: Violation → single standalone error event; no response.created in stream.
+    FR-006: Violation → single standalone error event; no response.created in stream.
     Uses a raw dict to bypass ResponseEventStream internal ordering validation.
     """
+
     def _wrong_first_event_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             yield {
@@ -664,7 +666,7 @@ def test_s007_wrong_first_event_stream() -> None:
 
     event_types = [e["type"] for e in events]
     assert event_types == ["error"], (
-        f"S-007 violation in stream mode must produce exactly ['error'], got: {event_types}"
+        f"FR-006 violation in stream mode must produce exactly ['error'], got: {event_types}"
     )
     assert "response.created" not in event_types
 
@@ -672,8 +674,9 @@ def test_s007_wrong_first_event_stream() -> None:
 def test_s008_mismatched_id_stream() -> None:
     """T3 — Handler yields response.created with wrong id; stream=True → SSE contains only 'error'.
 
-    S-008: The id in response.created MUST equal the library-assigned response_id.
+    FR-006b: The id in response.created MUST equal the library-assigned response_id.
     """
+
     def _mismatched_id_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             # Emit response.created with a deliberately wrong id
@@ -719,16 +722,15 @@ def test_s008_mismatched_id_stream() -> None:
             events.append({"type": current_type, "data": _json.loads(current_data) if current_data else {}})
 
     event_types = [e["type"] for e in events]
-    assert event_types == ["error"], (
-        f"S-008 violation must produce exactly ['error'], got: {event_types}"
-    )
+    assert event_types == ["error"], f"FR-006b violation must produce exactly ['error'], got: {event_types}"
 
 
 def test_s009_terminal_status_on_created_stream() -> None:
     """T4 — Handler yields response.created with terminal status; stream=True → SSE contains only 'error'.
 
-    S-009: The status in response.created MUST be non-terminal (queued or in_progress).
+    FR-007: The status in response.created MUST be non-terminal (queued or in_progress).
     """
+
     def _terminal_on_created_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             yield {
@@ -771,23 +773,19 @@ def test_s009_terminal_status_on_created_stream() -> None:
             events.append({"type": current_type, "data": _json.loads(current_data) if current_data else {}})
 
     event_types = [e["type"] for e in events]
-    assert event_types == ["error"], (
-        f"S-009 violation must produce exactly ['error'], got: {event_types}"
-    )
+    assert event_types == ["error"], f"FR-007 violation must produce exactly ['error'], got: {event_types}"
 
 
 def test_s007_valid_handler_not_affected() -> None:
     """T5 — Compliant handler emits response.created with correct id; stream=True → normal SSE flow.
 
-    Regression: the S-007/S-008/S-009 validation must not block valid handlers.
+    Regression: the FR-006/FR-007 validation must not block valid handlers.
     """
     from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
     def _compliant_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
-            stream = ResponseEventStream(
-                response_id=context.response_id, model=getattr(request, "model", None)
-            )
+            stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
             yield stream.emit_created()
             yield stream.emit_completed()
 
@@ -826,6 +824,4 @@ def test_s007_valid_handler_not_affected() -> None:
     assert "response.created" in event_types, (
         f"Compliant handler must not be blocked; expected response.created in: {event_types}"
     )
-    assert "error" not in event_types, (
-        f"Compliant handler must not produce error event; got: {event_types}"
-    )
+    assert "error" not in event_types, f"Compliant handler must not produce error event; got: {event_types}"

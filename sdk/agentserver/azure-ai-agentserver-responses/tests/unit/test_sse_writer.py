@@ -51,7 +51,7 @@ def test_sse_writer__injects_monotonic_sequence_numbers() -> None:
 
     def _extract_sequence_number(encoded: str) -> int:
         data_line = next(line for line in encoded.splitlines() if line.startswith("data:"))
-        payload = _json.loads(data_line[len("data:"):].strip())
+        payload = _json.loads(data_line[len("data:") :].strip())
         return int(payload["sequence_number"])
 
     seq_first = _extract_sequence_number(encoded_first)

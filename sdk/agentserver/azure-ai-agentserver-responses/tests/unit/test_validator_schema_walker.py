@@ -207,6 +207,7 @@ def test_schema_walker_overlay_matches_vendor_prefixed_schema_by_bare_name() -> 
     assert "type" not in schema["required"]
     assert schema["properties"]["type"].get("nullable") is True
 
+
 def test_schema_walker_applies_overlay_default_discriminator() -> None:
     """Overlay default_discriminator injects defaultValue into the discriminator dict."""
     schemas = {

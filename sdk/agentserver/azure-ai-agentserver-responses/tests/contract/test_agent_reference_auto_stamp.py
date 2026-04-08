@@ -196,10 +196,7 @@ def test_agent_reference_propagates_to_output_items() -> None:
         assert resp.status_code == 200
         events = _collect_sse_events(resp)
 
-    item_events = [
-        e for e in events
-        if e["type"] in ("response.output_item.added", "response.output_item.done")
-    ]
+    item_events = [e for e in events if e["type"] in ("response.output_item.added", "response.output_item.done")]
     assert item_events, "Expected at least one output item event"
 
     for evt in item_events:
@@ -235,9 +232,7 @@ def test_handler_set_agent_reference_is_preserved() -> None:
     item = item_added["data"]["item"]
     agent_ref = item.get("agent_reference")
     assert agent_ref is not None
-    assert agent_ref["name"] == "handler-agent", (
-        f"Expected handler-agent to take precedence, got {agent_ref['name']}"
-    )
+    assert agent_ref["name"] == "handler-agent", f"Expected handler-agent to take precedence, got {agent_ref['name']}"
 
 
 # ════════════════════════════════════════════════════════════
@@ -257,10 +252,7 @@ def test_no_agent_reference_on_request_no_agent_reference_on_items() -> None:
         assert resp.status_code == 200
         events = _collect_sse_events(resp)
 
-    item_events = [
-        e for e in events
-        if e["type"] in ("response.output_item.added", "response.output_item.done")
-    ]
+    item_events = [e for e in events if e["type"] in ("response.output_item.added", "response.output_item.done")]
     assert item_events, "Expected at least one output item event"
 
     for evt in item_events:
@@ -268,8 +260,7 @@ def test_no_agent_reference_on_request_no_agent_reference_on_items() -> None:
         agent_ref = item.get("agent_reference")
         # agent_reference should be absent or null when request has none
         assert agent_ref is None or agent_ref == {}, (
-            f"Output item should not have agent_reference when request has none, "
-            f"got: {agent_ref}"
+            f"Output item should not have agent_reference when request has none, got: {agent_ref}"
         )
 
 

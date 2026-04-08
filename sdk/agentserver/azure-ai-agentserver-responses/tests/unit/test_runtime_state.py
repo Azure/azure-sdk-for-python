@@ -14,6 +14,7 @@ from azure.ai.agentserver.responses.models.runtime import ResponseExecution, Res
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _make_execution(
     response_id: str,
     *,
@@ -37,6 +38,7 @@ def _make_execution(
 # T1 – add + get returns the same object
 # ---------------------------------------------------------------------------
 
+
 async def test_add_and_get() -> None:
     state = _RuntimeState()
     execution = _make_execution("caresp_aaa0000000000000000000000000000")
@@ -49,6 +51,7 @@ async def test_add_and_get() -> None:
 # T2 – get unknown returns None
 # ---------------------------------------------------------------------------
 
+
 async def test_get_nonexistent_returns_none() -> None:
     state = _RuntimeState()
     assert await state.get("unknown_id") is None
@@ -57,6 +60,7 @@ async def test_get_nonexistent_returns_none() -> None:
 # ---------------------------------------------------------------------------
 # T3 – delete marks deleted; get returns None; is_deleted returns True
 # ---------------------------------------------------------------------------
+
 
 async def test_delete_marks_deleted() -> None:
     state = _RuntimeState()
@@ -74,6 +78,7 @@ async def test_delete_marks_deleted() -> None:
 # T4 – delete non-existent returns False
 # ---------------------------------------------------------------------------
 
+
 async def test_delete_nonexistent_returns_false() -> None:
     state = _RuntimeState()
     assert await state.delete("nonexistent_id") is False
@@ -82,6 +87,7 @@ async def test_delete_nonexistent_returns_false() -> None:
 # ---------------------------------------------------------------------------
 # T5 – get_input_items single execution (no chain)
 # ---------------------------------------------------------------------------
+
 
 async def test_get_input_items_single() -> None:
     state = _RuntimeState()
@@ -100,6 +106,7 @@ async def test_get_input_items_single() -> None:
 # ---------------------------------------------------------------------------
 # T6 – get_input_items chain walk (parent items come first)
 # ---------------------------------------------------------------------------
+
 
 async def test_get_input_items_chain_walk() -> None:
     state = _RuntimeState()
@@ -121,6 +128,7 @@ async def test_get_input_items_chain_walk() -> None:
 # T7 – get_input_items on deleted response raises ValueError
 # ---------------------------------------------------------------------------
 
+
 async def test_get_input_items_deleted_raises_value_error() -> None:
     state = _RuntimeState()
     execution = _make_execution("caresp_ddd0000000000000000000000000000")
@@ -134,6 +142,7 @@ async def test_get_input_items_deleted_raises_value_error() -> None:
 # ---------------------------------------------------------------------------
 # T8 – to_snapshot with response set returns dict with required fields
 # ---------------------------------------------------------------------------
+
 
 def test_to_snapshot_with_response() -> None:
     rid = "caresp_eee0000000000000000000000000000"
@@ -161,6 +170,7 @@ def test_to_snapshot_with_response() -> None:
 # T9 – to_snapshot with no response returns minimal dict for queued state
 # ---------------------------------------------------------------------------
 
+
 def test_to_snapshot_queued_no_response() -> None:
     rid = "caresp_fff0000000000000000000000000000"
     execution = _make_execution(rid, status="queued")
@@ -178,6 +188,7 @@ def test_to_snapshot_queued_no_response() -> None:
 # Extra: to_snapshot status field overrides response payload status
 # ---------------------------------------------------------------------------
 
+
 def test_to_snapshot_status_matches_execution_status() -> None:
     """to_snapshot should authoritative-stamp status from execution.status."""
     rid = "caresp_ggg0000000000000000000000000000"
@@ -193,6 +204,7 @@ def test_to_snapshot_status_matches_execution_status() -> None:
 # ---------------------------------------------------------------------------
 # Extra: to_snapshot injects id/response_id defaults when missing from response
 # ---------------------------------------------------------------------------
+
 
 def test_to_snapshot_injects_defaults_when_response_missing_ids() -> None:
     rid = "caresp_hhh0000000000000000000000000000"
@@ -211,6 +223,7 @@ def test_to_snapshot_injects_defaults_when_response_missing_ids() -> None:
 # Extra: list_records returns all stored executions
 # ---------------------------------------------------------------------------
 
+
 async def test_list_records_returns_all() -> None:
     state = _RuntimeState()
     e1 = _make_execution("caresp_iii0000000000000000000000000000")
@@ -228,9 +241,11 @@ async def test_list_records_returns_all() -> None:
 # T1 (Task 7.1) – _ExecutionRecord is no longer exported from _runtime_state
 # ---------------------------------------------------------------------------
 
+
 def test_import_does_not_expose_execution_record() -> None:
     """_ExecutionRecord was deleted in Task 7.1; the module must not export it."""
     import importlib
+
     mod = importlib.import_module("azure.ai.agentserver.responses.hosting._runtime_state")
     assert not hasattr(mod, "_ExecutionRecord"), (
         "_ExecutionRecord should have been removed from _runtime_state in Phase 7 / Task 7.1"

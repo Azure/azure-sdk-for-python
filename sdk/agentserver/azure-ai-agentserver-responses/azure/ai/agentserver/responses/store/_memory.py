@@ -79,7 +79,6 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         """
         response_id = str(getattr(response, "id"))
         async with self._locked():
-
             entry = self._entries.get(response_id)
             if entry is not None and not entry.deleted:
                 raise ValueError(f"response '{response_id}' already exists")
@@ -227,7 +226,10 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             ]
 
     async def get_items(
-        self, item_ids: Iterable[str], *, isolation: IsolationContext | None = None,
+        self,
+        item_ids: Iterable[str],
+        *,
+        isolation: IsolationContext | None = None,
     ) -> list[Any | None]:
         """Retrieve items by ID, preserving request order.
 
@@ -240,8 +242,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         """
         async with self._locked():
             return [
-                deepcopy(self._item_store[item_id]) if item_id in self._item_store else None
-                for item_id in item_ids
+                deepcopy(self._item_store[item_id]) if item_id in self._item_store else None for item_id in item_ids
             ]
 
     async def get_history_item_ids(
@@ -301,7 +302,6 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :raises ValueError: If an entry with the same response ID already exists.
         """
         async with self._locked():
-
             if execution.response_id in self._entries:
                 raise ValueError(f"response '{execution.response_id}' already exists")
 
@@ -536,6 +536,21 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             cutoff = datetime.now(timezone.utc) - timedelta(seconds=ttl)
             live = [e for e in events if e.get("_saved_at", cutoff) >= cutoff]
             return deepcopy(live)
+
+    async def delete_stream_events(
+        self,
+        response_id: str,
+        *,
+        isolation: IsolationContext | None = None,
+    ) -> None:
+        """Delete persisted SSE events for ``response_id``.
+
+        :param response_id: The unique identifier of the response whose events to remove.
+        :type response_id: str
+        :rtype: None
+        """
+        async with self._locked():
+            self._stream_events.pop(response_id, None)
 
     async def purge_expired(self, *, now: datetime | None = None) -> int:
         """Remove expired entries and return count.

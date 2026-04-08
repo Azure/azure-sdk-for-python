@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from typing import Any
 
@@ -14,6 +15,7 @@ from azure.ai.agentserver.responses import ResponsesAgentServerHost
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
+
     async def _events():
         if False:  # pragma: no cover - required to keep async-generator shape.
             yield None
@@ -218,12 +220,12 @@ def test_get_replay__rejects_bg_non_stream_response() -> None:
 
 
 # ══════════════════════════════════════════════════════════
-# B-5: SSE replay rejection message text
+# B5: SSE replay rejection message text
 # ══════════════════════════════════════════════════════════
 
 
 def test_get_replay__rejection_message_hints_at_background_true() -> None:
-    """B-5 — SSE replay rejection error message contains 'background=true' hint.
+    """B5 — SSE replay rejection error message contains 'background=true' hint.
 
     Clients should know how to fix their request.
     """
@@ -350,16 +352,14 @@ def test_c4_bg_stream_get_sse_replay() -> None:
         f"SSE replay must include a terminal event, got: {replay_types}"
     )
     # Replay must start from the beginning (response.created should be present)
-    assert "response.created" in replay_types, (
-        f"SSE replay must include response.created, got: {replay_types}"
-    )
+    assert "response.created" in replay_types, f"SSE replay must include response.created, got: {replay_types}"
 
 
 def test_c6_non_stored_stream_no_get() -> None:
     """T3 — store=False, bg=False, stream=True: GET returns HTTP 404.
 
     _finalize_non_bg_stream must NOT register the execution record when
-    store=False, so a subsequent GET returns 404 (B-16 / C6 contract).
+    store=False, so a subsequent GET returns 404 (B16 / C6 contract).
     """
     client = _build_client()
 
@@ -399,6 +399,7 @@ def test_bg_stream_cancelled_subject_completed() -> None:
             # Block until cancelled
             while not cancellation_signal.is_set():
                 import asyncio as _asyncio
+
                 await _asyncio.sleep(0.01)
 
         return _events()
@@ -415,6 +416,7 @@ def test_bg_stream_cancelled_subject_completed() -> None:
 
     def _stream_thread() -> None:
         from starlette.testclient import TestClient as _TC
+
         _client = _TC(app)
         with _client.stream(
             "POST",
@@ -446,6 +448,7 @@ def test_bg_stream_cancelled_subject_completed() -> None:
 
     # Cancel the response
     from starlette.testclient import TestClient as _TC2
+
     _cancel_client = _TC2(app)
     cancel_resp = _cancel_client.post(f"/responses/{response_id}/cancel")
     assert cancel_resp.status_code == 200
@@ -455,3 +458,164 @@ def test_bg_stream_cancelled_subject_completed() -> None:
         "_finalize_bg_stream must call subject.complete() so SSE stream terminates after cancel"
     )
     t.join(timeout=1.0)
+
+
+# ---------------------------------------------------------------------------
+# Missing .NET protocol parity tests (ported from GetResponseProtocolTests.cs)
+# ---------------------------------------------------------------------------
+
+
+def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any):
+    """Handler that blocks until cancelled — keeps bg response in_progress."""
+
+    async def _events():
+        yield {
+            "type": "response.created",
+            "payload": {"status": "in_progress", "output": []},
+        }
+        while not cancellation_signal.is_set():
+            await asyncio.sleep(0.01)
+
+    return _events()
+
+
+def test_get__in_progress_bg_response_returns_200() -> None:
+    """GET on a background response that is still in_progress returns 200 with status in_progress."""
+    app = ResponsesAgentServerHost()
+    app.create_handler(_cancellable_bg_handler)
+    client = TestClient(app)
+
+    create = client.post(
+        "/responses",
+        json={"model": "test", "input": "hello", "stream": False, "store": True, "background": True},
+    )
+    assert create.status_code == 200
+    response_id = create.json()["id"]
+
+    get = client.get(f"/responses/{response_id}")
+    assert get.status_code == 200
+    assert get.json()["status"] == "in_progress"
+
+    # Clean up
+    client.post(f"/responses/{response_id}/cancel")
+
+
+def test_get__cancelled_bg_returns_200_with_cancelled_status() -> None:
+    """GET on a cancelled background response returns 200 with status=cancelled and empty output."""
+    app = ResponsesAgentServerHost()
+    app.create_handler(_cancellable_bg_handler)
+    client = TestClient(app)
+
+    create = client.post(
+        "/responses",
+        json={"model": "test", "input": "hello", "stream": False, "store": True, "background": True},
+    )
+    assert create.status_code == 200
+    response_id = create.json()["id"]
+
+    cancel = client.post(f"/responses/{response_id}/cancel")
+    assert cancel.status_code == 200
+
+    get = client.get(f"/responses/{response_id}")
+    assert get.status_code == 200
+    payload = get.json()
+    assert payload["status"] == "cancelled"
+    assert payload.get("output", []) == [], "Cancelled response must have 0 output items"
+
+
+def test_get__sse_replay_starting_after_max_returns_no_events() -> None:
+    """SSE replay with starting_after >= max sequence number returns an empty event stream."""
+    client = _build_client()
+    response_id = _create_background_streaming_and_get_response_id(client)
+
+    # starting_after=9999 — way beyond any sequence in a simple handler
+    with client.stream(
+        "GET",
+        f"/responses/{response_id}?stream=true&starting_after=9999",
+    ) as replay:
+        assert replay.status_code == 200
+        events = _collect_replay_events(replay)
+
+    assert events == [], "Replay with starting_after >= max seq must return 0 events"
+
+
+def test_get__sse_replay_store_false_returns_404() -> None:
+    """SSE replay on a store=false response returns 404."""
+    client = _build_client()
+
+    create = client.post(
+        "/responses",
+        json={"model": "test", "input": "hello", "stream": False, "store": False},
+    )
+    assert create.status_code == 200
+    response_id = create.json()["id"]
+
+    with client.stream("GET", f"/responses/{response_id}?stream=true") as replay:
+        assert replay.status_code == 404
+
+
+def test_get__stream_false_returns_json_snapshot() -> None:
+    """Explicit ?stream=false returns a JSON snapshot, not SSE."""
+    client = _build_client()
+    response_id = _create_background_streaming_and_get_response_id(client)
+
+    get = client.get(f"/responses/{response_id}?stream=false")
+    assert get.status_code == 200
+    assert get.headers.get("content-type", "").startswith("application/json")
+    assert get.json()["id"] == response_id
+
+
+def test_get__sse_replay_has_correct_sequence_numbers() -> None:
+    """SSE replay produces monotonically increasing sequence numbers starting from 0."""
+    client = _build_client()
+    response_id = _create_background_streaming_and_get_response_id(client)
+
+    with client.stream("GET", f"/responses/{response_id}?stream=true") as replay:
+        assert replay.status_code == 200
+        events = _collect_replay_events(replay)
+
+    assert len(events) >= 2, "Expected at least 2 replayed SSE events"
+    seq_nums = [e["data"].get("sequence_number") for e in events]
+    assert seq_nums[0] == 0, "First sequence_number must be 0"
+    for i in range(1, len(seq_nums)):
+        assert seq_nums[i] > seq_nums[i - 1], (
+            f"Sequence numbers not monotonically increasing at index {i}: {seq_nums[i - 1]} → {seq_nums[i]}"
+        )
+
+
+def test_get__accept_sse_without_stream_true_returns_json_snapshot() -> None:
+    """Accept: text/event-stream WITHOUT ?stream=true returns JSON snapshot — Accept header is NOT a trigger for SSE.
+
+    Ported from GetResponseProtocolTests.GET_WithAcceptSse_WithoutStreamTrue_Returns200_JsonSnapshot.
+    """
+    client = _build_client()
+    response_id = _create_background_streaming_and_get_response_id(client)
+
+    get = client.get(
+        f"/responses/{response_id}",
+        headers={"Accept": "text/event-stream"},
+    )
+    assert get.status_code == 200
+    content_type = get.headers.get("content-type", "")
+    assert content_type.startswith("application/json"), (
+        f"Expected application/json when Accept: text/event-stream but no ?stream=true, got {content_type!r}"
+    )
+    assert get.json()["id"] == response_id
+
+
+def test_get__store_false_returns_404() -> None:
+    """GET on a store=false response returns 404.
+
+    Ported from GetResponseProtocolTests.GET_StoreFalse_Returns404.
+    """
+    client = _build_client()
+
+    create = client.post(
+        "/responses",
+        json={"model": "test", "input": "hello", "stream": False, "store": False},
+    )
+    assert create.status_code == 200
+    response_id = create.json()["id"]
+
+    get = client.get(f"/responses/{response_id}")
+    assert get.status_code == 404

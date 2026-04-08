@@ -28,11 +28,7 @@ def strip_nulls(d: dict) -> dict:
     :returns: A new dictionary with ``None``-valued keys removed.
     :rtype: dict
     """
-    return {
-        k: strip_nulls(v) if isinstance(v, dict) else v
-        for k, v in d.items()
-        if v is not None
-    }
+    return {k: strip_nulls(v) if isinstance(v, dict) else v for k, v in d.items() if v is not None}
 
 
 def _build_events(
@@ -117,6 +113,7 @@ def _apply_stream_event_defaults(
     model: str | None,
     sequence_number: int | None,
     agent_session_id: str | None = None,
+    conversation_id: str | None = None,
 ) -> dict[str, Any]:
     """Apply response-level defaults to an event payload.
 
@@ -126,7 +123,7 @@ def _apply_stream_event_defaults(
     stamps ``id``, ``response_id``, ``object``, ``agent_reference``,
     ``model``, and ``agent_session_id`` using ``setdefault`` so
     handler-supplied values are not overwritten (except
-    ``agent_session_id`` which is forcibly stamped per S-048).
+    ``agent_session_id`` which is forcibly stamped per S-038).
     For all other event types the payload is left untouched — those events have
     different schemas per the contract and do not carry these fields.
 
@@ -143,7 +140,7 @@ def _apply_stream_event_defaults(
     :keyword type model: str | None
     :keyword sequence_number: Optional sequence number to set; removed if ``None``.
     :keyword type sequence_number: int | None
-    :keyword agent_session_id: Resolved session ID (S-048).
+    :keyword agent_session_id: Resolved session ID (S-038).
     :keyword type agent_session_id: str | None
     :returns: A deep copy of the event with defaults applied.
     :rtype: dict[str, Any]
@@ -156,6 +153,7 @@ def _apply_stream_event_defaults(
         agent_reference=agent_reference if agent_reference else {},
         model=model,
         agent_session_id=agent_session_id,
+        conversation_id=conversation_id,
     )
     payload = normalized.get("payload")
     if not isinstance(payload, dict):
@@ -188,6 +186,7 @@ def _extract_response_snapshot_from_events(
     model: str | None,
     remove_sequence_number: bool = False,
     agent_session_id: str | None = None,
+    conversation_id: str | None = None,
 ) -> dict[str, Any]:
     """Extract the latest response snapshot payload from a list of events.
 
@@ -205,7 +204,7 @@ def _extract_response_snapshot_from_events(
     :keyword type model: str | None
     :keyword remove_sequence_number: Whether to strip ``sequence_number`` from the result.
     :keyword type remove_sequence_number: bool
-    :keyword agent_session_id: Resolved session ID (S-048).
+    :keyword agent_session_id: Resolved session ID (S-038).
     :keyword type agent_session_id: str | None
     :returns: A dict representing the response snapshot payload.
     :rtype: dict[str, Any]
@@ -222,9 +221,12 @@ def _extract_response_snapshot_from_events(
             snapshot.setdefault("output", [])
             if model is not None:
                 snapshot.setdefault("model", model)
-            # S-048: forcibly stamp session ID on snapshot
+            # S-038: forcibly stamp session ID on snapshot
             if agent_session_id is not None:
                 snapshot["agent_session_id"] = agent_session_id
+            # S-040: forcibly stamp conversation on snapshot
+            if conversation_id is not None:
+                snapshot["conversation"] = {"id": conversation_id}
             if remove_sequence_number:
                 snapshot.pop("sequence_number", None)
             return strip_nulls(snapshot)
@@ -237,9 +239,12 @@ def _extract_response_snapshot_from_events(
     )
     fallback_payload = deepcopy(fallback_events[-1]["payload"])
     fallback_payload.setdefault("output", [])
-    # S-048: forcibly stamp session ID on fallback snapshot
+    # S-038: forcibly stamp session ID on fallback snapshot
     if agent_session_id is not None:
         fallback_payload["agent_session_id"] = agent_session_id
+    # S-040: forcibly stamp conversation on fallback snapshot
+    if conversation_id is not None:
+        fallback_payload["conversation"] = {"id": conversation_id}
     if remove_sequence_number:
         fallback_payload.pop("sequence_number", None)
     return strip_nulls(fallback_payload)

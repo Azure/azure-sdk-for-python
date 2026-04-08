@@ -116,9 +116,7 @@ def _emit_text_only_handler(text: str):
     return handler
 
 
-def _emit_multi_output_handler(
-    request: CreateResponse, context: ResponseContext, cancellation_signal: Any
-):
+def _emit_multi_output_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
     """Emit 3 output items: reasoning + function_call + text message."""
 
     async def _events():
@@ -162,9 +160,7 @@ def _emit_multi_output_handler(
     return _events()
 
 
-def _emit_failed_handler(
-    request: CreateResponse, context: ResponseContext, cancellation_signal: Any
-):
+def _emit_failed_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
     """Emit created, in_progress, then failed."""
 
     async def _events():
@@ -301,9 +297,7 @@ def _make_upstream_integration_handler(upstream_client: openai.AsyncOpenAI):
                             reasoning_builder = stream.add_output_item_reasoning_item()
                             yield reasoning_builder.emit_added()
                         elif item.type == "function_call":
-                            fc_builder = stream.add_output_item_function_call(
-                                item.name, item.call_id
-                            )
+                            fc_builder = stream.add_output_item_function_call(item.name, item.call_id)
                             yield fc_builder.emit_added()
                         elif item.type == "message":
                             msg_builder = stream.add_output_item_message()
@@ -362,9 +356,7 @@ def _make_upstream_integration_handler(upstream_client: openai.AsyncOpenAI):
                             yield msg_builder.emit_content_done(text_builder)
 
             if upstream_failed:
-                yield stream.emit_failed(
-                    code="server_error", message="Upstream request failed"
-                )
+                yield stream.emit_failed(code="server_error", message="Upstream request failed")
             else:
                 yield stream.emit_completed()
 
@@ -462,9 +454,7 @@ class TestNonStreamingProxy:
         assert body["model"] == "test-model"
         output = body["output"]
         assert len(output) >= 1
-        text_parts = [
-            p for p in output[0]["content"] if p.get("type") == "output_text"
-        ]
+        text_parts = [p for p in output[0]["content"] if p.get("type") == "output_text"]
         assert text_parts[0]["text"] == "Hello, World!"
 
 
@@ -497,9 +487,7 @@ class TestUpstreamIntegration:
 
         # Text message
         assert output[2]["type"] == "message"
-        text_parts = [
-            p for p in output[2]["content"] if p.get("type") == "output_text"
-        ]
+        text_parts = [p for p in output[2]["content"] if p.get("type") == "output_text"]
         assert text_parts[0]["text"] == "The answer is 42."
 
     def test_upstream_multi_output_streaming_all_roundtrip(self) -> None:
@@ -521,15 +509,11 @@ class TestUpstreamIntegration:
         assert len(done_events) == 3
 
         # Reasoning summary deltas
-        reasoning_deltas = [
-            e for e in events if e["type"] == "response.reasoning_summary_text.delta"
-        ]
+        reasoning_deltas = [e for e in events if e["type"] == "response.reasoning_summary_text.delta"]
         assert len(reasoning_deltas) > 0
 
         # Function call argument deltas
-        arg_deltas = [
-            e for e in events if e["type"] == "response.function_call_arguments.delta"
-        ]
+        arg_deltas = [e for e in events if e["type"] == "response.function_call_arguments.delta"]
         assert len(arg_deltas) > 0
 
         # Text deltas

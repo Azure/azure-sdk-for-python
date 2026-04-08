@@ -18,6 +18,7 @@ from azure.ai.agentserver.responses.models.runtime import (
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _make_execution(**kwargs) -> ResponseExecution:
     defaults = dict(
         response_id="caresp_test000000000000000000000000",
@@ -31,6 +32,7 @@ def _make_execution(**kwargs) -> ResponseExecution:
 # T1 – transition_to valid
 # ---------------------------------------------------------------------------
 
+
 def test_transition_to_valid() -> None:
     execution = _make_execution(status="queued")
     execution.transition_to("in_progress")
@@ -41,6 +43,7 @@ def test_transition_to_valid() -> None:
 # ---------------------------------------------------------------------------
 # T2 – transition_to terminal sets completed_at
 # ---------------------------------------------------------------------------
+
 
 def test_transition_to_terminal_sets_completed_at() -> None:
     execution = _make_execution(status="in_progress")
@@ -53,6 +56,7 @@ def test_transition_to_terminal_sets_completed_at() -> None:
 # T3 – transition_to invalid raises ValueError
 # ---------------------------------------------------------------------------
 
+
 def test_transition_invalid_raises() -> None:
     execution = _make_execution(status="completed")
     with pytest.raises(ValueError, match="invalid status transition: completed -> in_progress"):
@@ -62,6 +66,7 @@ def test_transition_invalid_raises() -> None:
 # ---------------------------------------------------------------------------
 # T4 – transition_to same status is a no-op that refreshes updated_at
 # ---------------------------------------------------------------------------
+
 
 def test_transition_same_status_noop() -> None:
     execution = _make_execution(status="in_progress")
@@ -75,10 +80,9 @@ def test_transition_same_status_noop() -> None:
 # T5 – replay_enabled is True only for bg+stream+store
 # ---------------------------------------------------------------------------
 
+
 def test_replay_enabled_bg_stream_store() -> None:
-    execution = _make_execution(
-        mode_flags=ResponseModeFlags(stream=True, store=True, background=True)
-    )
+    execution = _make_execution(mode_flags=ResponseModeFlags(stream=True, store=True, background=True))
     assert execution.replay_enabled is True
 
 
@@ -86,10 +90,9 @@ def test_replay_enabled_bg_stream_store() -> None:
 # T6 – replay_enabled is False for non-background
 # ---------------------------------------------------------------------------
 
+
 def test_replay_enabled_false_for_non_bg() -> None:
-    execution = _make_execution(
-        mode_flags=ResponseModeFlags(stream=True, store=True, background=False)
-    )
+    execution = _make_execution(mode_flags=ResponseModeFlags(stream=True, store=True, background=False))
     assert execution.replay_enabled is False
 
 
@@ -97,10 +100,9 @@ def test_replay_enabled_false_for_non_bg() -> None:
 # T7 – visible_via_get is True when store=True
 # ---------------------------------------------------------------------------
 
+
 def test_visible_via_get_store_true() -> None:
-    execution = _make_execution(
-        mode_flags=ResponseModeFlags(stream=False, store=True, background=False)
-    )
+    execution = _make_execution(mode_flags=ResponseModeFlags(stream=False, store=True, background=False))
     assert execution.visible_via_get is True
 
 
@@ -108,16 +110,16 @@ def test_visible_via_get_store_true() -> None:
 # T8 – visible_via_get is False when store=False
 # ---------------------------------------------------------------------------
 
+
 def test_visible_via_get_store_false() -> None:
-    execution = _make_execution(
-        mode_flags=ResponseModeFlags(stream=False, store=False, background=False)
-    )
+    execution = _make_execution(mode_flags=ResponseModeFlags(stream=False, store=False, background=False))
     assert execution.visible_via_get is False
 
 
 # ---------------------------------------------------------------------------
 # T9 – apply_event with response.completed snapshot updates status and response
 # ---------------------------------------------------------------------------
+
 
 def test_apply_event_response_snapshot_updates_status() -> None:
     execution = _make_execution(status="in_progress")
@@ -157,6 +159,7 @@ def test_apply_event_response_snapshot_updates_status() -> None:
 # T10 – apply_event is a no-op when already cancelled
 # ---------------------------------------------------------------------------
 
+
 def test_apply_event_cancelled_is_noop() -> None:
     execution = _make_execution(status="cancelled")
 
@@ -182,6 +185,7 @@ def test_apply_event_cancelled_is_noop() -> None:
 # ---------------------------------------------------------------------------
 # T11 – apply_event output_item.added appends item
 # ---------------------------------------------------------------------------
+
 
 def test_apply_event_output_item_added() -> None:
     from azure.ai.agentserver.responses.models._generated import ResponseObject
@@ -212,6 +216,7 @@ def test_apply_event_output_item_added() -> None:
 # T12 – build_cancelled_response
 # ---------------------------------------------------------------------------
 
+
 def test_build_cancelled_response() -> None:
     response = build_cancelled_response(
         "caresp_xxx0000000000000000000000000000",
@@ -227,6 +232,7 @@ def test_build_cancelled_response() -> None:
 # ---------------------------------------------------------------------------
 # Extra – new fields exist with expected defaults
 # ---------------------------------------------------------------------------
+
 
 def test_new_fields_have_correct_defaults() -> None:
     execution = _make_execution()

@@ -220,7 +220,7 @@ def _resolve_identity_fields(
 ) -> tuple[str, dict[str, Any]]:
     """Resolve the response ID and agent reference from a parsed create request.
 
-    **S-047 — Response ID Resolution**: If the incoming request includes an
+    **B38 — Response ID Resolution**: If the incoming request includes an
     ``x-agent-response-id`` HTTP header with a non-empty value, that value is
     used as the response ID.  Otherwise the library generates one using
     ``IdGenerator.new_response_id()``, using the ``previous_response_id`` or
@@ -234,7 +234,7 @@ def _resolve_identity_fields(
     :rtype: tuple[str, dict[str, Any]]
     :raises RequestValidationError: If the resolved response ID is invalid.
     """
-    # S-047: header override takes highest precedence
+    # B38: header override takes highest precedence
     header_response_id: str | None = None
     if request_headers is not None:
         raw_header = request_headers.get(_X_AGENT_RESPONSE_ID_HEADER, "")
@@ -254,18 +254,14 @@ def _resolve_identity_fields(
             # for co-locating related response IDs in the same partition.
             # previous_response_id takes priority because it directly chains
             # responses, while conversation ID groups them more loosely.
-            partition_hint = (
-                parsed_mapping.get("previous_response_id")
-                or _resolve_conversation_id(parsed)
-                or ""
-            )
+            partition_hint = parsed_mapping.get("previous_response_id") or _resolve_conversation_id(parsed) or ""
             response_id = IdGenerator.new_response_id(partition_hint)
 
     _validate_response_id(response_id)
     agent_reference = _normalize_agent_reference(
-        parsed_mapping.get("agent_reference") \
-            if isinstance(parsed_mapping, dict) \
-            else getattr(parsed, "agent_reference", None)
+        parsed_mapping.get("agent_reference")
+        if isinstance(parsed_mapping, dict)
+        else getattr(parsed, "agent_reference", None)
     )
     return response_id, agent_reference
 
@@ -284,6 +280,9 @@ def _resolve_conversation_id(parsed: Any) -> str | None:
     raw = getattr(parsed, "conversation", None)
     if isinstance(raw, str):
         return raw or None
+    if isinstance(raw, dict):
+        cid = raw.get("id")
+        return str(cid) if cid else None
     if raw is not None and hasattr(raw, "id"):
         return str(raw.id) or None
     return None
@@ -292,7 +291,7 @@ def _resolve_conversation_id(parsed: Any) -> str | None:
 def _resolve_session_id(parsed: Any, payload: Any) -> str:
     """Resolve the session ID for a create-response request.
 
-    **S-048 — Session ID Resolution**: The library resolves ``agent_session_id``
+    **B39 — Session ID Resolution**: The library resolves ``agent_session_id``
     using the following priority chain:
 
     1. ``request.agent_session_id`` — payload field (client-supplied session affinity)

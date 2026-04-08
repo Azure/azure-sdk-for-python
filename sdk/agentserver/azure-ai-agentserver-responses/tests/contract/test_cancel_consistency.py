@@ -274,6 +274,4 @@ async def test_cancel_bg_stream_response_persisted_state_matches() -> None:
     get_resp = await client.get(f"/responses/{response_id}")
     assert get_resp.status_code == 200
     persisted = get_resp.json()
-    assert persisted["status"] == "cancelled", (
-        f"Persisted status should be 'cancelled', got '{persisted['status']}'"
-    )
+    assert persisted["status"] == "cancelled", f"Persisted status should be 'cancelled', got '{persisted['status']}'"

@@ -16,6 +16,7 @@ from azure.ai.agentserver.responses.streaming._event_stream import ResponseEvent
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
+
     async def _events():
         if False:  # pragma: no cover - required to keep async-generator shape.
             yield None
@@ -34,6 +35,7 @@ def _throwing_before_yield_handler(request: Any, context: Any, cancellation_sign
 
     Used to test pre-creation error handling in SSE streaming mode.
     """
+
     async def _events():
         raise RuntimeError("Simulated pre-creation failure")
         if False:  # pragma: no cover - keep async generator shape.
@@ -47,10 +49,9 @@ def _throwing_after_created_handler(request: Any, context: Any, cancellation_sig
 
     Used to test post-creation error handling in SSE streaming mode.
     """
+
     async def _events():
-        stream = ResponseEventStream(
-            response_id=context.response_id, model=getattr(request, "model", None)
-        )
+        stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
         yield stream.emit_created()
         raise RuntimeError("Simulated post-creation failure")
 
@@ -106,8 +107,9 @@ def test_streaming__first_event_is_response_created() -> None:
     assert events, "Expected at least one SSE event"
     assert events[0]["type"] == "response.created"
     # Contract (B8): response.created event status must be queued or in_progress
-    assert events[0]["data"]["response"].get("status") in {"queued", "in_progress"}, (
-        f"response.created status must be queued or in_progress per B8, got: {events[0]['data']['response'].get('status')}"
+    created_status = events[0]["data"]["response"].get("status")
+    assert created_status in {"queued", "in_progress"}, (
+        f"response.created status must be queued or in_progress per B8, got: {created_status}"
     )
 
 
@@ -184,8 +186,12 @@ def test_streaming__identity_fields_are_consistent_across_events() -> None:
     assert isinstance(first_response.get("agent_reference"), dict)
 
     _LIFECYCLE_TYPES = {
-        "response.queued", "response.created", "response.in_progress",
-        "response.completed", "response.failed", "response.incomplete",
+        "response.queued",
+        "response.created",
+        "response.in_progress",
+        "response.completed",
+        "response.failed",
+        "response.incomplete",
     }
     lifecycle_events = [e for e in events if e["type"] in _LIFECYCLE_TYPES]
     for event in lifecycle_events:
@@ -312,12 +318,12 @@ def test_streaming__background_stream_may_include_response_queued_event() -> Non
 
 
 # ══════════════════════════════════════════════════════════
-# B-4, B-10, B-13: Handler failure and in_progress event
+# B4, B10, B13: Handler failure and in_progress event
 # ══════════════════════════════════════════════════════════
 
 
 def test_streaming__pre_creation_handler_failure_produces_terminal_event() -> None:
-    """B-4 — Handler raising before any yield in streaming mode → SSE stream terminates with a proper terminal event."""
+    """B4 — Handler raising before any yield in streaming mode → SSE stream terminates with a proper terminal event."""
     handler = _throwing_before_yield_handler
     app = ResponsesAgentServerHost()
     app.create_handler(handler)
@@ -349,7 +355,7 @@ def test_streaming__pre_creation_handler_failure_produces_terminal_event() -> No
 
 
 def test_streaming__response_in_progress_event_is_in_stream() -> None:
-    """B-10 — response.in_progress must appear in the SSE stream between response.created and the terminal event."""
+    """B10 — response.in_progress must appear in the SSE stream between response.created and the terminal event."""
     client = _build_client()
 
     with client.stream(
@@ -367,24 +373,19 @@ def test_streaming__response_in_progress_event_is_in_stream() -> None:
         events = _collect_stream_events(response)
 
     event_types = [e["type"] for e in events]
-    assert "response.in_progress" in event_types, (
-        f"Expected response.in_progress in SSE stream, got: {event_types}"
-    )
+    assert "response.in_progress" in event_types, f"Expected response.in_progress in SSE stream, got: {event_types}"
     created_idx = event_types.index("response.created")
     in_progress_idx = event_types.index("response.in_progress")
     terminal_set = {"response.completed", "response.failed", "response.incomplete"}
-    terminal_idx = next(
-        (i for i, t in enumerate(event_types) if t in terminal_set), None
-    )
+    terminal_idx = next((i for i, t in enumerate(event_types) if t in terminal_set), None)
     assert terminal_idx is not None, f"No terminal event found in: {event_types}"
     assert created_idx < in_progress_idx < terminal_idx, (
-        f"response.in_progress must appear after response.created and before terminal event. "
-        f"Order was: {event_types}"
+        f"response.in_progress must appear after response.created and before terminal event. Order was: {event_types}"
     )
 
 
 def test_streaming__post_creation_error_yields_response_failed_not_error_event() -> None:
-    """B-13 — Handler raising after response.created → terminal is response.failed, NOT a standalone error event."""
+    """B13 — Handler raising after response.created → terminal is response.failed, NOT a standalone error event."""
     handler = _throwing_after_created_handler
     app = ResponsesAgentServerHost()
     app.create_handler(handler)
@@ -438,16 +439,14 @@ def test_stream_pre_creation_error_emits_error_event() -> None:
         events = _collect_stream_events(response)
 
     event_types = [e["type"] for e in events]
-    assert event_types == ["error"], (
-        f"Pre-creation error must produce exactly one 'error' event, got: {event_types}"
-    )
+    assert event_types == ["error"], f"Pre-creation error must produce exactly one 'error' event, got: {event_types}"
     assert "response.created" not in event_types
 
 
 def test_stream_post_creation_error_emits_response_failed() -> None:
     """T2 — Handler raises after response.created; stream=True → SSE ends with response.failed.
 
-    B-13: After response.created, handler failures surface as ``response.failed``, not raw ``error``.
+    B13: After response.created, handler failures surface as ``response.failed``, not raw ``error``.
     """
     _app = ResponsesAgentServerHost()
     _app.create_handler(_throwing_after_created_handler)
@@ -465,9 +464,7 @@ def test_stream_post_creation_error_emits_response_failed() -> None:
     assert "response.failed" in event_types, (
         f"Expected response.failed terminal after post-creation error, got: {event_types}"
     )
-    assert "error" not in event_types, (
-        f"No standalone error event expected after response.created, got: {event_types}"
-    )
+    assert "error" not in event_types, f"No standalone error event expected after response.created, got: {event_types}"
     # Exactly one terminal event
     terminal_types = {"response.completed", "response.failed", "response.incomplete"}
     assert sum(1 for t in event_types if t in terminal_types) == 1
@@ -492,20 +489,17 @@ def test_stream_empty_handler_emits_full_lifecycle() -> None:
     assert "response.created" in event_types, f"Missing response.created: {event_types}"
     assert "response.in_progress" in event_types, f"Missing response.in_progress: {event_types}"
     terminal_types = {"response.completed", "response.failed", "response.incomplete"}
-    assert any(t in terminal_types for t in event_types), (
-        f"Missing terminal event in: {event_types}"
-    )
+    assert any(t in terminal_types for t in event_types), f"Missing terminal event in: {event_types}"
     # created must come before in_progress which must come before terminal
     created_idx = event_types.index("response.created")
     in_progress_idx = event_types.index("response.in_progress")
     terminal_idx = next(i for i, t in enumerate(event_types) if t in terminal_types)
-    assert created_idx < in_progress_idx < terminal_idx, (
-        f"Lifecycle order violated: {event_types}"
-    )
+    assert created_idx < in_progress_idx < terminal_idx, f"Lifecycle order violated: {event_types}"
 
 
 def test_stream_sequence_numbers_monotonic() -> None:
-    """T4 — SSE events from a streaming response have strictly monotonically increasing sequence numbers starting at 0."""
+    """T4 — SSE events from a streaming response have strictly monotonically
+    increasing sequence numbers starting at 0."""
     client = _build_client()
 
     with client.stream(

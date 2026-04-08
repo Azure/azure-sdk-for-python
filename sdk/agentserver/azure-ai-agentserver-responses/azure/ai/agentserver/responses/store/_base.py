@@ -108,7 +108,9 @@ class ResponseProviderProtocol(Protocol):
         """
         ...
 
-    async def get_items(self, item_ids: Iterable[str], *, isolation: IsolationContext | None = None) -> list[Any | None]:
+    async def get_items(
+        self, item_ids: Iterable[str], *, isolation: IsolationContext | None = None
+    ) -> list[Any | None]:
         """Get items by ID (missing IDs produce ``None`` entries).
 
         :param item_ids: The item identifiers to look up.
@@ -189,4 +191,23 @@ class ResponseStreamProviderProtocol(Protocol):
         :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :returns: The ordered list of normalised SSE event dicts, or ``None`` if not found.
         :rtype: list[dict[str, Any]] | None
+        """
+
+    async def delete_stream_events(
+        self,
+        response_id: str,
+        *,
+        isolation: IsolationContext | None = None,
+    ) -> None:
+        """Delete persisted SSE events for a response.
+
+        Called when a response is deleted via ``DELETE /responses/{id}``.
+        Implementations should remove any stored event data for the given
+        response. No-op if no events exist for the ID.
+
+        :param response_id: The unique identifier of the response whose events to remove.
+        :type response_id: str
+        :keyword isolation: Isolation context for multi-tenant partitioning.
+        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+        :rtype: None
         """

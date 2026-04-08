@@ -19,14 +19,16 @@ EVENT_TYPE = generated_models.ResponseStreamEventType
 
 # Event types whose payload is a full Response snapshot.
 # Only these events should carry id/response_id/object/agent_reference/model.
-_RESPONSE_SNAPSHOT_EVENT_TYPES: frozenset[str] = frozenset({
-    EVENT_TYPE.RESPONSE_QUEUED.value,
-    EVENT_TYPE.RESPONSE_CREATED.value,
-    EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
-    EVENT_TYPE.RESPONSE_COMPLETED.value,
-    EVENT_TYPE.RESPONSE_FAILED.value,
-    EVENT_TYPE.RESPONSE_INCOMPLETE.value,
-})
+_RESPONSE_SNAPSHOT_EVENT_TYPES: frozenset[str] = frozenset(
+    {
+        EVENT_TYPE.RESPONSE_QUEUED.value,
+        EVENT_TYPE.RESPONSE_CREATED.value,
+        EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
+        EVENT_TYPE.RESPONSE_COMPLETED.value,
+        EVENT_TYPE.RESPONSE_FAILED.value,
+        EVENT_TYPE.RESPONSE_INCOMPLETE.value,
+    }
+)
 
 _EVENT_MODEL_CLASS_NAMES: dict[str, str] = {
     EVENT_TYPE.RESPONSE_QUEUED.value: "ResponseQueuedEvent",
@@ -174,6 +176,7 @@ def apply_common_defaults(
     agent_reference: dict[str, Any] | None,
     model: str | None,
     agent_session_id: str | None = None,
+    conversation_id: str | None = None,
 ) -> None:
     """Stamp lifecycle event payloads with response-level defaults.
 
@@ -181,12 +184,15 @@ def apply_common_defaults(
     (``response.queued``, ``response.created``, ``response.in_progress``,
     ``response.completed``, ``response.failed``, ``response.incomplete``)
     receive ``id``, ``response_id``, ``object``, ``agent_reference``,
-    ``model``, and ``agent_session_id`` defaults.  Other event types carry
-    different schemas per the contract and are left untouched.
+    ``model``, ``agent_session_id``, and ``conversation`` defaults.  Other
+    event types carry different schemas per the contract and are left untouched.
 
-    **S-048**: ``agent_session_id`` is forcibly stamped (not ``setdefault``)
+    **S-038**: ``agent_session_id`` is forcibly stamped (not ``setdefault``)
     on every ``response.*`` event so the resolved session ID is always
     present regardless of what the handler emits.
+
+    **S-040**: ``conversation`` is forcibly stamped on every ``response.*``
+    event so the resolved conversation round-trips on all lifecycle events.
 
     :param events: The list of event dicts to mutate.
     :type events: list[dict[str, Any]]
@@ -196,8 +202,10 @@ def apply_common_defaults(
     :keyword type agent_reference: dict[str, Any] | None
     :keyword model: Optional model identifier.
     :keyword type model: str | None
-    :keyword agent_session_id: Resolved session ID (S-048).
+    :keyword agent_session_id: Resolved session ID (S-038).
     :keyword type agent_session_id: str | None
+    :keyword conversation_id: Resolved conversation ID (S-040).
+    :keyword type conversation_id: str | None
     :rtype: None
     """
     for event in events:
@@ -215,9 +223,12 @@ def apply_common_defaults(
             payload.setdefault("agent_reference", deepcopy(agent_reference))
         if model is not None:
             payload.setdefault("model", model)
-        # S-048: forcibly stamp session ID on every response.* event
+        # S-038: forcibly stamp session ID on every response.* event
         if agent_session_id is not None:
             payload["agent_session_id"] = agent_session_id
+        # S-040: forcibly stamp conversation on every response.* event
+        if conversation_id is not None:
+            payload["conversation"] = {"id": conversation_id}
 
 
 def track_completed_output_item(

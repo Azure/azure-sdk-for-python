@@ -111,7 +111,9 @@ class ResponseContext:
             return self._history_cache
 
         item_ids = await self._provider.get_history_item_ids(
-            self._previous_response_id, self.conversation_id, self._history_limit,
+            self._previous_response_id,
+            self.conversation_id,
+            self._history_limit,
             isolation=self.isolation,
         )
         if not item_ids:

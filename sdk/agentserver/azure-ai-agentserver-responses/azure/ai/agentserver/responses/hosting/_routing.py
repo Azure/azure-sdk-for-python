@@ -100,6 +100,7 @@ class ResponsesAgentServerHost(AgentServerHost):
             if project_endpoint:
                 from ..store._foundry_provider import FoundryStorageProvider
                 from ..store._foundry_settings import FoundryStorageSettings
+
                 try:
                     from azure.identity.aio import DefaultAzureCredential
                 except ImportError:
@@ -108,10 +109,8 @@ class ResponsesAgentServerHost(AgentServerHost):
                     settings = FoundryStorageSettings.from_env()
                     provider = FoundryStorageProvider(DefaultAzureCredential(), settings)
 
-        resolved_provider: ResponseProviderProtocol = provider if provider is not None \
-                                                        else InMemoryResponseProvider()
-        stream_provider = resolved_provider if isinstance(resolved_provider, ResponseStreamProviderProtocol) \
-                                else None
+        resolved_provider: ResponseProviderProtocol = provider if provider is not None else InMemoryResponseProvider()
+        stream_provider = resolved_provider if isinstance(resolved_provider, ResponseStreamProviderProtocol) else None
         runtime_state = _RuntimeState()
         orchestrator = _ResponseOrchestrator(
             create_fn=self._dispatch_create,
@@ -219,9 +218,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         :rtype: Any
         """
         if self._create_fn is None:
-            raise NotImplementedError(
-                "No create handler registered. Use the @app.create_handler decorator."
-            )
+            raise NotImplementedError("No create handler registered. Use the @app.create_handler decorator.")
         result = self._create_fn(request, context, cancellation_signal)
         if isinstance(result, types.GeneratorType):
             return _sync_to_async_gen(result)

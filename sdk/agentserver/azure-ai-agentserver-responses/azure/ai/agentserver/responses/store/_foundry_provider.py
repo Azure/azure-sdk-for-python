@@ -87,7 +87,8 @@ class FoundryStorageProvider:
                 ),
                 policies.RetryPolicy(),
                 policies.AsyncBearerTokenCredentialPolicy(
-                    credential, _FOUNDRY_TOKEN_SCOPE,
+                    credential,
+                    _FOUNDRY_TOKEN_SCOPE,
                 ),
                 policies.ContentDecodePolicy(),
                 policies.DistributedTracingPolicy(),
@@ -238,7 +239,9 @@ class FoundryStorageProvider:
         raise_for_storage_error(http_resp)
         return deserialize_paged_items(http_resp.text())
 
-    async def get_items(self, item_ids: Iterable[str], *, isolation: IsolationContext | None = None) -> list[Any | None]:
+    async def get_items(
+        self, item_ids: Iterable[str], *, isolation: IsolationContext | None = None
+    ) -> list[Any | None]:
         """Retrieve multiple items by their IDs in a single batch request.
 
         Positions in the returned list correspond to positions in *item_ids*.

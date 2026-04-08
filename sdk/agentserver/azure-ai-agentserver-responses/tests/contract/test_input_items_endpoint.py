@@ -13,6 +13,7 @@ from azure.ai.agentserver.responses import ResponsesAgentServerHost
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire the hosting surface in contract tests."""
+
     async def _events():
         if False:  # pragma: no cover - required to keep async-generator shape.
             yield None
@@ -256,6 +257,7 @@ def test_input_items_returns_history_plus_current_input_in_desc_order() -> None:
 # Task 6.1 — input_items sourced from parsed model
 # ---------------------------------------------------------------------------
 
+
 def test_input_items_string_input_treated_as_empty() -> None:
     """T1: string input (not a list) should produce an empty input_items list."""
     client = _build_client()
@@ -341,6 +343,7 @@ def test_empty_previous_response_id_handled() -> None:
 # ---------------------------------------------------------------------------
 # Task 6.2 — provider/runtime_state branch alignment + pagination edge cases
 # ---------------------------------------------------------------------------
+
 
 def test_input_items_in_flight_fallback_to_runtime() -> None:
     """T3: in-progress background response serves input_items from runtime_state."""

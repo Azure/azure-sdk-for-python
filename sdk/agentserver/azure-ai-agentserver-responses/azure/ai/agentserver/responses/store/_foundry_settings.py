@@ -39,8 +39,7 @@ class FoundryStorageSettings:
             )
         if not (value.startswith("http://") or value.startswith("https://")):
             raise ValueError(
-                f"The '{_PROJECT_ENDPOINT_ENV_VAR}' environment variable must be a valid absolute URL, "
-                f"got: {value!r}"
+                f"The '{_PROJECT_ENDPOINT_ENV_VAR}' environment variable must be a valid absolute URL, got: {value!r}"
             )
         base = value.rstrip("/") + "/storage/"
         return cls(storage_base_url=base)

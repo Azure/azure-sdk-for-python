@@ -31,6 +31,32 @@ from ._state_machine import EventStreamValidator
 EVENT_TYPE = generated_models.ResponseStreamEventType
 
 
+def _resolve_conversation_param(raw: Any) -> str | None:
+    """Normalize a polymorphic conversation value to a plain string ID.
+
+    The input side of ``CreateResponse.conversation`` is ``Union[str, ConversationParam_2]``
+    whereas the output side ``ResponseObject.conversation`` is always a ``ConversationReference``
+    (object form ``{"id": "..."}``.  This helper extracts the string ID from whichever
+    form was supplied.
+
+    :param raw: The raw conversation value from the request (string, dict, model, or None).
+    :type raw: Any
+    :returns: The conversation ID string, or ``None`` if absent/empty.
+    :rtype: str | None
+    """
+    if raw is None:
+        return None
+    if isinstance(raw, str):
+        return raw or None
+    if isinstance(raw, dict):
+        cid = raw.get("id")
+        return str(cid) if cid else None
+    if hasattr(raw, "id"):
+        cid = raw.id
+        return str(cid) if cid else None
+    return None
+
+
 class ResponseEventStream:  # pylint: disable=too-many-public-methods
     """.NET-aligned response event stream with deterministic sequence numbers."""
 
@@ -90,10 +116,15 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
                 }
             )
             if request_mapping is not None:
-                for field_name in ("metadata", "background", "conversation", "previous_response_id"):
+                for field_name in ("metadata", "background", "previous_response_id"):
                     value = request_mapping.get(field_name)
                     if value is not None:
                         setattr(self._response, field_name, deepcopy(value))
+                # Normalize polymorphic conversation (str | ConversationParam_2)
+                # to the response-side ConversationReference object form.
+                conversation_id = _resolve_conversation_param(request_mapping.get("conversation"))
+                if conversation_id is not None:
+                    self._response.conversation = generated_models.ConversationReference(id=conversation_id)
                 request_model = request_mapping.get("model")
                 if isinstance(request_model, str) and request_model:
                     self._response.model = request_model
@@ -459,10 +490,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         candidate = deepcopy(event)
         _internals.apply_common_defaults(
-            [candidate],
-            response_id=self._response_id,
-            agent_reference=self._agent_reference,
-            model=self._model
+            [candidate], response_id=self._response_id, agent_reference=self._agent_reference, model=self._model
         )
         _internals.track_completed_output_item(self._response, candidate)
         payload = candidate.get("payload")

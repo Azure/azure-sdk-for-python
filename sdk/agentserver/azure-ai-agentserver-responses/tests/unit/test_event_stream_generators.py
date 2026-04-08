@@ -166,6 +166,7 @@ async def test_aoutput_item_message_yields_same_as_sync() -> None:
 @pytest.mark.asyncio
 async def test_aoutput_item_message_streams_deltas() -> None:
     """Verify that AsyncIterable[str] input produces one delta per chunk."""
+
     async def chunks():
         yield "Hello"
         yield " world"
@@ -214,6 +215,7 @@ async def test_aoutput_item_function_call_yields_same_as_sync() -> None:
 @pytest.mark.asyncio
 async def test_aoutput_item_function_call_streams_arguments() -> None:
     """Verify streaming arguments via AsyncIterable[str]."""
+
     async def arg_chunks():
         yield '{"city":'
         yield '"Seattle"}'
@@ -257,6 +259,7 @@ async def test_aoutput_item_reasoning_item_yields_same_as_sync() -> None:
 @pytest.mark.asyncio
 async def test_aoutput_item_reasoning_item_streams_deltas() -> None:
     """Verify streaming reasoning summary via AsyncIterable[str]."""
+
     async def summary_chunks():
         yield "Let me "
         yield "think..."

@@ -82,13 +82,9 @@ class TextResponse:
         configure: Callable[["ResponseObject"], None] | None = None,
     ) -> None:
         if create_text is not None and create_text_stream is not None:
-            raise ValueError(
-                "Provide either create_text or create_text_stream, not both."
-            )
+            raise ValueError("Provide either create_text or create_text_stream, not both.")
         if create_text is None and create_text_stream is None:
-            raise ValueError(
-                "Provide either create_text or create_text_stream."
-            )
+            raise ValueError("Provide either create_text or create_text_stream.")
         self._context = context
         self._request = request
         self._create_text = create_text

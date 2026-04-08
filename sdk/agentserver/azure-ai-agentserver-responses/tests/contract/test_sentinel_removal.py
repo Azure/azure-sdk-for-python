@@ -82,8 +82,10 @@ def _build_client(handler: Any) -> TestClient:
 
 def _wait_for_terminal(client: TestClient, response_id: str) -> None:
     ok, diag = poll_until(
-        lambda: client.get(f"/responses/{response_id}").json().get("status")
-        in ("completed", "failed", "incomplete", "cancelled"),
+        lambda: (
+            client.get(f"/responses/{response_id}").json().get("status")
+            in ("completed", "failed", "incomplete", "cancelled")
+        ),
         timeout_s=5.0,
         label="wait_for_terminal",
     )

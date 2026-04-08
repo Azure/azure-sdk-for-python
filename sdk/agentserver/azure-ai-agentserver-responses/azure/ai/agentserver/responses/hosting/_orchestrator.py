@@ -47,11 +47,10 @@ from ._runtime_state import _RuntimeState
 
 
 def _check_first_event_contract(normalized: dict[str, Any], response_id: str) -> str | None:
-    """Return an error message if the first handler event violates S-007/S-008/S-009, else None.
+    """Return an error message if the first handler event violates FR-006/FR-007, else None.
 
-    - S-007: The first event MUST be ``response.created``.
-    - S-008: The ``id`` in ``response.created`` MUST equal the library-assigned ``response_id``.
-    - S-009: The ``status`` in ``response.created`` MUST be non-terminal.
+    - FR-006: The first event MUST be ``response.created`` with matching ``id``.
+    - FR-007: The ``status`` in ``response.created`` MUST be non-terminal.
 
     :param normalized: Normalised first event dict.
     :type normalized: dict[str, Any]
@@ -117,20 +116,24 @@ async def _iter_with_winddown(
         yield item
 
 
-_OUTPUT_ITEM_EVENT_TYPES: frozenset[str] = frozenset({
-    EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value,
-    EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value,
-})
+_OUTPUT_ITEM_EVENT_TYPES: frozenset[str] = frozenset(
+    {
+        EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value,
+        EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value,
+    }
+)
 
 # Response-level lifecycle events whose payload carries a full Response snapshot.
 # Used by FR-008a output manipulation detection.
-_RESPONSE_SNAPSHOT_TYPES: frozenset[str] = frozenset({
-    EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
-    EVENT_TYPE.RESPONSE_COMPLETED.value,
-    EVENT_TYPE.RESPONSE_FAILED.value,
-    EVENT_TYPE.RESPONSE_INCOMPLETE.value,
-    EVENT_TYPE.RESPONSE_QUEUED.value,
-})
+_RESPONSE_SNAPSHOT_TYPES: frozenset[str] = frozenset(
+    {
+        EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
+        EVENT_TYPE.RESPONSE_COMPLETED.value,
+        EVENT_TYPE.RESPONSE_FAILED.value,
+        EVENT_TYPE.RESPONSE_INCOMPLETE.value,
+        EVENT_TYPE.RESPONSE_QUEUED.value,
+    }
+)
 
 
 def _validate_handler_event(coerced: dict[str, Any]) -> str | None:
@@ -173,6 +176,7 @@ async def _run_background_non_stream(
     provider: Any = None,
     store: bool = True,
     agent_session_id: str | None = None,
+    conversation_id: str | None = None,
     history_limit: int = 100,
 ) -> None:
     """Execute a non-stream handler in the background and update the execution record.
@@ -201,7 +205,7 @@ async def _run_background_non_stream(
     :keyword type provider: Any
     :keyword store: Whether the response should be persisted via the provider.
     :keyword type store: bool
-    :keyword agent_session_id: Resolved session ID (S-048).
+    :keyword agent_session_id: Resolved session ID (B39).
     :keyword type agent_session_id: str | None
     :return: None
     :rtype: None
@@ -211,6 +215,8 @@ async def _run_background_non_stream(
     validator = EventStreamValidator()
     output_item_count = 0
     _provider_created = False  # tracks whether create_response was called
+    # Track whether the handler set queued status so we can honour it
+    _handler_initial_status: str | None = None
 
     try:
         try:
@@ -233,6 +239,7 @@ async def _run_background_non_stream(
                     model=model,
                     sequence_number=None,
                     agent_session_id=agent_session_id,
+                    conversation_id=conversation_id,
                 )
                 handler_events.append(normalized)
                 validator.validate_next(normalized)
@@ -257,8 +264,14 @@ async def _run_background_non_stream(
                         agent_reference=agent_reference,
                         model=model,
                         agent_session_id=agent_session_id,
+                        conversation_id=conversation_id,
                     )
                     record.set_response_snapshot(generated_models.ResponseObject(_initial_snapshot))
+                    # Honour the handler's initial status (e.g. "queued") so the
+                    # POST response body reflects what the handler actually set.
+                    _handler_initial_status = _initial_snapshot.get("status")
+                    if _handler_initial_status == "queued":
+                        record.status = "queued"  # type: ignore[assignment]
                     # Persist at response.created time for bg+store (FR-003)
                     if store and provider is not None:
                         try:
@@ -266,7 +279,9 @@ async def _run_background_non_stream(
                             _response_obj = generated_models.ResponseObject(_initial_snapshot)
                             _history_ids = (
                                 await provider.get_history_item_ids(
-                                    record.previous_response_id, None, history_limit,
+                                    record.previous_response_id,
+                                    None,
+                                    history_limit,
                                     isolation=_isolation,
                                 )
                                 if record.previous_response_id
@@ -331,11 +346,15 @@ async def _run_background_non_stream(
             record.response_created_signal.set()  # unblock run_background on cancellation
             return
 
-        events = handler_events if handler_events else _build_events(
-            response_id,
-            include_progress=True,
-            agent_reference=agent_reference,
-            model=model,
+        events = (
+            handler_events
+            if handler_events
+            else _build_events(
+                response_id,
+                include_progress=True,
+                agent_reference=agent_reference,
+                model=model,
+            )
         )
         response_payload = _extract_response_snapshot_from_events(
             events,
@@ -344,22 +363,24 @@ async def _run_background_non_stream(
             model=model,
             remove_sequence_number=True,
             agent_session_id=agent_session_id,
+            conversation_id=conversation_id,
         )
 
         resolved_status = response_payload.get("status")
         if record.status != "cancelled":
             record.set_response_snapshot(generated_models.ResponseObject(response_payload))
-            record.transition_to(resolved_status if isinstance(resolved_status, str) else "completed")
+            target = resolved_status if isinstance(resolved_status, str) else "completed"
+            # If still queued, transition through in_progress first so the
+            # state machine stays valid (queued can only reach terminal
+            # states via in_progress).
+            if record.status == "queued" and target != "in_progress":
+                record.transition_to("in_progress")
+            record.transition_to(target)
     finally:
         # Always unblock run_background (idempotent if already set)
         record.response_created_signal.set()
         # Persist terminal state update via provider (bg non-stream: update after runner completes)
-        if (
-            store
-            and provider is not None
-            and record.status not in {"cancelled"}
-            and record.response is not None
-        ):
+        if store and provider is not None and record.status not in {"cancelled"} and record.response is not None:
             try:
                 if _provider_created:
                     await provider.update_response(record.response)
@@ -446,11 +467,13 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
     This class has no dependency on Starlette types.
     """
 
-    _TERMINAL_SSE_TYPES: frozenset[str] = frozenset({
-        EVENT_TYPE.RESPONSE_COMPLETED.value,
-        EVENT_TYPE.RESPONSE_FAILED.value,
-        EVENT_TYPE.RESPONSE_INCOMPLETE.value,
-    })
+    _TERMINAL_SSE_TYPES: frozenset[str] = frozenset(
+        {
+            EVENT_TYPE.RESPONSE_COMPLETED.value,
+            EVENT_TYPE.RESPONSE_FAILED.value,
+            EVENT_TYPE.RESPONSE_INCOMPLETE.value,
+        }
+    )
 
     def __init__(
         self,
@@ -515,6 +538,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             model=ctx.model,
             sequence_number=len(state.handler_events),
             agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
         )
         state.handler_events.append(normalized)
         state.validator.validate_next(normalized)
@@ -557,8 +581,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
     async def _make_failed_event(self, ctx: _ExecutionContext, state: _PipelineState) -> dict[str, Any]:
         """Build, normalise, append, and return a ``response.failed`` event dict.
 
-        Used for B-13 (handler exception after ``response.created``) and
-        S-021 (handler completed without emitting a terminal event).
+        Used for S-035 (handler exception after ``response.created``) and
+        S-015 (handler completed without emitting a terminal event).
 
         :param ctx: Current execution context (immutable inputs).
         :type ctx: _ExecutionContext
@@ -602,6 +626,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             agent_reference=ctx.agent_reference,
             model=ctx.model,
             agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
         )
         initial_status = initial_payload.get("status")
         if not isinstance(initial_status, str):
@@ -624,7 +649,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             _initial_response_obj = generated_models.ResponseObject(initial_payload)
             _history_ids = (
                 await self._provider.get_history_item_ids(
-                    ctx.previous_response_id, None,
+                    ctx.previous_response_id,
+                    None,
                     self._runtime_options.default_fetch_history_count,
                     isolation=_isolation,
                 )
@@ -654,12 +680,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         - First-event normalisation and bg+store record registration
           (:meth:`_register_bg_execution`).
         - Remaining events via :meth:`_normalize_and_append`.
-        - Post-creation handler exception (B-13): yields a ``response.failed`` event
+        - Post-creation handler exception (S-035): yields a ``response.failed`` event
           and sets ``state.captured_error``.
-        - Missing terminal after successful handler completion (S-021): yields a
+        - Missing terminal after successful handler completion (S-015): yields a
           ``response.failed`` event without setting ``state.captured_error`` so that
           synchronous callers can return HTTP 200 with a ``"failed"`` body.
-        - Cancellation winddown (S-019): yields a cancel-terminal event when the
+        - Cancellation winddown (B11): yields a cancel-terminal event when the
           cancellation signal is set and no terminal event was emitted.
 
         :param ctx: Current execution context (immutable inputs).
@@ -729,9 +755,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             model=ctx.model,
             sequence_number=len(state.handler_events),
             agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
         )
 
-        # S-007/S-008/S-009: first-event contract validation.
+        # FR-006/FR-007: first-event contract validation.
         # Violations are treated the same as B8 pre-creation errors:
         # - streaming: yield a standalone 'error' event and return (no record created)
         # - sync: state.captured_error is set → run_sync raises _HandlerError → HTTP 500
@@ -802,20 +829,20 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             raise
         except Exception as exc:  # pylint: disable=broad-exception-caught
             state.captured_error = exc
-            # B-13: emit response.failed when handler raises after response.created.
+            # S-035: emit response.failed when handler raises after response.created.
             if not self._has_terminal_event(state.handler_events):
                 yield await self._make_failed_event(ctx, state)
             return
 
-        # S-019: cancellation winddown checked BEFORE S-021 so that a handler
+        # B11: cancellation winddown checked BEFORE S-015 so that a handler
         # stopped early by the cancellation signal receives a proper cancel
         # terminal event (response.failed with status == "cancelled") rather
-        # than a generic S-021 failure terminal.
+        # than a generic S-015 failure terminal.
         if ctx.cancellation_signal.is_set() and not self._has_terminal_event(state.handler_events):
             yield await self._cancel_terminal_sse_dict(ctx, state)
             return
 
-        # S-021: handler completed normally but never emitted a terminal event.
+        # S-015: handler completed normally but never emitted a terminal event.
         # NOTE: state.captured_error intentionally left None so that synchronous
         # callers return HTTP 200 with a "failed" body rather than HTTP 500.
         if not self._has_terminal_event(state.handler_events):
@@ -844,12 +871,19 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         if ctx.background and ctx.store and state.bg_record is not None:
             record = state.bg_record
 
+            # B11: When status is already "cancelled" (set by the cancel endpoint),
+            # skip snapshot/status update — cancellation always wins.  But still
+            # persist the cancelled state and complete the subject below.
             if record.status != "cancelled":
-                events = state.handler_events if state.handler_events else _build_events(
-                    ctx.response_id,
-                    include_progress=True,
-                    agent_reference=ctx.agent_reference,
-                    model=ctx.model,
+                events = (
+                    state.handler_events
+                    if state.handler_events
+                    else _build_events(
+                        ctx.response_id,
+                        include_progress=True,
+                        agent_reference=ctx.agent_reference,
+                        model=ctx.model,
+                    )
                 )
                 if state.captured_error is not None:
                     record.set_response_snapshot(
@@ -868,27 +902,30 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         agent_reference=ctx.agent_reference,
                         model=ctx.model,
                         agent_session_id=ctx.agent_session_id,
+                        conversation_id=ctx.conversation_id,
                     )
                     resolved_status = response_payload.get("status")
                     status = resolved_status if isinstance(resolved_status, str) else "in_progress"
                     record.set_response_snapshot(generated_models.ResponseObject(response_payload))
                     record.transition_to(status)  # type: ignore[arg-type]
 
-                # Persist terminal state update via provider (bg+stream: initial create already done)
-                if record.mode_flags.store and record.response is not None:
+            # Persist terminal state update via provider (bg+stream: initial create already done).
+            # Always persist — including cancelled state — so the durable store
+            # reflects the final status.  Matches .NET FinalizeExecutionAsync.
+            if record.mode_flags.store and record.response is not None:
+                try:
+                    _isolation = ctx.context.isolation if ctx.context else None
+                    await self._provider.update_response(record.response, isolation=_isolation)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    pass  # best effort
+                # Persist SSE events for replay after process restart (not needed for cancelled)
+                if record.status != "cancelled" and self._stream_provider is not None and state.handler_events:
                     try:
-                        _isolation = ctx.context.isolation if ctx.context else None
-                        await self._provider.update_response(record.response, isolation=_isolation)
+                        await self._stream_provider.save_stream_events(
+                            ctx.response_id, state.handler_events, isolation=_isolation
+                        )
                     except Exception:  # pylint: disable=broad-exception-caught
                         pass  # best effort
-                    # Persist SSE events for replay after process restart
-                    if self._stream_provider is not None and state.handler_events:
-                        try:
-                            await self._stream_provider.save_stream_events(
-                                ctx.response_id, state.handler_events, isolation=_isolation
-                            )
-                        except Exception:  # pylint: disable=broad-exception-caught
-                            pass  # best effort
 
             ctx.span.end(state.captured_error)
             # Complete the subject — signals all live SSE replay subscribers that
@@ -904,11 +941,15 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # Covers non-background streams and background streams where no record
         # was created (empty handler fallback, pre-creation errors, first-event
         # contract violations).
-        events = state.handler_events if state.handler_events else _build_events(
-            ctx.response_id,
-            include_progress=True,
-            agent_reference=ctx.agent_reference,
-            model=ctx.model,
+        events = (
+            state.handler_events
+            if state.handler_events
+            else _build_events(
+                ctx.response_id,
+                include_progress=True,
+                agent_reference=ctx.agent_reference,
+                model=ctx.model,
+            )
         )
         response_payload = _extract_response_snapshot_from_events(
             events,
@@ -916,6 +957,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             agent_reference=ctx.agent_reference,
             model=ctx.model,
             agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
         )
         resolved_status = response_payload.get("status")
         status = resolved_status if isinstance(resolved_status, str) else "completed"
@@ -945,7 +987,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 _isolation = ctx.context.isolation if ctx.context else None
                 _history_ids = (
                     await self._provider.get_history_item_ids(
-                        ctx.previous_response_id, None,
+                        ctx.previous_response_id,
+                        None,
                         self._runtime_options.default_fetch_history_count,
                         isolation=_isolation,
                     )
@@ -954,7 +997,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 )
                 await self._provider.create_response(
                     generated_models.ResponseObject(response_payload),
-                    ctx.input_items or None, _history_ids,
+                    ctx.input_items or None,
+                    _history_ids,
                     isolation=_isolation,
                 )
             except Exception:  # pylint: disable=broad-exception-caught
@@ -973,7 +1017,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         - Pre-creation errors (B8 contract: standalone ``error`` SSE event).
         - Empty handler (fallback synthesised events).
-        - Mid-stream handler errors (``response.failed`` SSE event, B-13).
+        - Mid-stream handler errors (``response.failed`` SSE event, S-035).
         - Cancellation terminal events.
         - Optional SSE keep-alive comments.
 
@@ -988,7 +1032,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         """Drive the SSE streaming pipeline using the shared event pipeline.
 
         Delegates all event processing (first-event handling, normalisation,
-        bg record registration, B-13 / S-021 / S-019 terminal events) to
+        bg record registration, S-035 / S-015 / B11 terminal events) to
         :meth:`_process_handler_events`.  This method only encodes each event
         dict to SSE and handles keep-alive comment injection.
 
@@ -1129,8 +1173,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         builds the response snapshot, optionally persists the record, closes
         the span, and returns the snapshot dict.
 
-        Raises :class:`_HandlerError` if the handler raises (B8 or B-13) so
-        the caller can map it to an HTTP 500 response.  S-021 (handler
+        Raises :class:`_HandlerError` if the handler raises (B8 or S-035) so
+        the caller can map it to an HTTP 500 response.  S-015 (handler
         completed without emitting a terminal event) does *not* raise; instead
         the snapshot status is ``"failed"`` and HTTP 200 is returned.
 
@@ -1142,7 +1186,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         """
         state = _PipelineState()
         handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
-        # _process_handler_events handles all error paths (B8, B-13, S-021, S-019).
+        # _process_handler_events handles all error paths (B8, S-035, S-015, B11).
         # run_sync only needs to exhaust the generator for state.handler_events side-effects.
         async for _ in self._process_handler_events(ctx, state, handler_iterator):
             pass
@@ -1150,17 +1194,21 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         if state.captured_error is not None:
             # Only raise _HandlerError for pre-creation errors (B8) where no
             # terminal lifecycle event has been emitted.  Post-creation errors
-            # (B-13, FR-008a) emit response.failed and should complete as
+            # (S-035, FR-008a) emit response.failed and should complete as
             # HTTP 200 with failed status — not an HTTP 500.
             if not self._has_terminal_event(state.handler_events):
                 ctx.span.end(state.captured_error)
                 raise _HandlerError(state.captured_error) from state.captured_error
 
-        events = state.handler_events if state.handler_events else _build_events(
-            ctx.response_id,
-            include_progress=True,
-            agent_reference=ctx.agent_reference,
-            model=ctx.model,
+        events = (
+            state.handler_events
+            if state.handler_events
+            else _build_events(
+                ctx.response_id,
+                include_progress=True,
+                agent_reference=ctx.agent_reference,
+                model=ctx.model,
+            )
         )
         response_payload = _extract_response_snapshot_from_events(
             events,
@@ -1169,6 +1217,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             model=ctx.model,
             remove_sequence_number=True,
             agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
         )
         resolved_status = response_payload.get("status")
         status = resolved_status if isinstance(resolved_status, str) else "completed"
@@ -1195,7 +1244,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 _response_obj = generated_models.ResponseObject(response_payload)
                 _history_ids = (
                     await self._provider.get_history_item_ids(
-                        ctx.previous_response_id, None,
+                        ctx.previous_response_id,
+                        None,
                         self._runtime_options.default_fetch_history_count,
                         isolation=_isolation,
                     )
@@ -1203,8 +1253,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     else None
                 )
                 await self._provider.create_response(
-                    _response_obj, ctx.input_items or None,
-                    _history_ids, isolation=_isolation,
+                    _response_obj,
+                    ctx.input_items or None,
+                    _history_ids,
+                    isolation=_isolation,
                 )
             except Exception:  # pylint: disable=broad-exception-caught
                 pass  # best effort
@@ -1262,6 +1314,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         provider=self._provider,
                         store=ctx.store,
                         agent_session_id=ctx.agent_session_id,
+                        conversation_id=ctx.conversation_id,
                         history_limit=self._runtime_options.default_fetch_history_count,
                     )
             except asyncio.CancelledError:

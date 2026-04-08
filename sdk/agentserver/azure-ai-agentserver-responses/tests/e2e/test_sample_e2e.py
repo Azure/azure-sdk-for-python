@@ -278,10 +278,7 @@ def _sample4_handler(request: CreateResponse, context: ResponseContext, cancella
         yield stream.emit_created()
 
         items = get_input_expanded(request)
-        has_fn_output = any(
-            isinstance(item, FunctionCallOutputItemParam)
-            for item in items
-        )
+        has_fn_output = any(isinstance(item, FunctionCallOutputItemParam) for item in items)
 
         if has_fn_output:
             # Second turn: extract function output and echo it as text
@@ -371,10 +368,7 @@ def _sample5_handler(request: CreateResponse, context: ResponseContext, cancella
         text_content = msg.add_text_content()
         yield text_content.emit_added()
 
-        has_previous = (
-            request.previous_response_id is not None
-            and str(request.previous_response_id).strip() != ""
-        )
+        has_previous = request.previous_response_id is not None and str(request.previous_response_id).strip() != ""
         if has_previous:
             reply = f"Following up on {request.previous_response_id}: {get_input_text(request)}"
         else:
@@ -597,11 +591,13 @@ def test_sample8_mixin_composition_both_protocols() -> None:
     async def handle_invoke(request: Request) -> Response:
         data = await request.json()
         invocation_id = request.state.invocation_id
-        return JSONResponse({
-            "invocation_id": invocation_id,
-            "status": "completed",
-            "output": f"[Invocation] Echo: {data.get('message', '')}",
-        })
+        return JSONResponse(
+            {
+                "invocation_id": invocation_id,
+                "status": "completed",
+                "output": f"[Invocation] Echo: {data.get('message', '')}",
+            }
+        )
 
     host.create_handler(_sample8_response_handler)
 
@@ -660,9 +656,11 @@ def test_sample9_self_hosted_responses_under_prefix() -> None:
 
     responses_app.create_handler(_handler)
 
-    parent_app = Starlette(routes=[
-        Mount("/api", app=responses_app),
-    ])
+    parent_app = Starlette(
+        routes=[
+            Mount("/api", app=responses_app),
+        ]
+    )
 
     client = TestClient(parent_app)
     resp = client.post(

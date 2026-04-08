@@ -74,9 +74,7 @@ def _make_response(status_code: int, body: Any) -> MagicMock:
     return resp
 
 
-def _make_provider(
-    credential: Any, settings: FoundryStorageSettings, response: MagicMock
-) -> FoundryStorageProvider:
+def _make_provider(credential: Any, settings: FoundryStorageSettings, response: MagicMock) -> FoundryStorageProvider:
     """Create a FoundryStorageProvider with a mocked pipeline client."""
     provider = FoundryStorageProvider.__new__(FoundryStorageProvider)
     provider._settings = settings
@@ -91,6 +89,7 @@ def _make_provider(
 # Fixtures
 # ---------------------------------------------------------------------------
 
+
 @pytest.fixture()
 def credential() -> Any:
     return _make_credential()
@@ -104,6 +103,7 @@ def settings() -> FoundryStorageSettings:
 # ===========================================================================
 # create_response
 # ===========================================================================
+
 
 @pytest.mark.asyncio
 async def test_create_response__posts_to_responses_endpoint(credential: Any, settings: FoundryStorageSettings) -> None:
@@ -152,6 +152,7 @@ async def test_create_response__raises_foundry_api_error_on_500(
 # get_response
 # ===========================================================================
 
+
 @pytest.mark.asyncio
 async def test_get_response__gets_correct_url(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
@@ -199,6 +200,7 @@ async def test_get_response__url_encodes_special_characters(credential: Any, set
 # update_response
 # ===========================================================================
 
+
 @pytest.mark.asyncio
 async def test_update_response__posts_to_response_id_url(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
@@ -242,6 +244,7 @@ async def test_update_response__raises_bad_request_on_409(credential: Any, setti
 # delete_response
 # ===========================================================================
 
+
 @pytest.mark.asyncio
 async def test_delete_response__sends_delete_to_response_url(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
@@ -266,10 +269,9 @@ async def test_delete_response__raises_not_found_on_404(credential: Any, setting
 # get_input_items
 # ===========================================================================
 
+
 @pytest.mark.asyncio
-async def test_get_input_items__default_params_in_url(
-    credential: Any, settings: FoundryStorageSettings
-) -> None:
+async def test_get_input_items__default_params_in_url(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(
         credential, settings, _make_response(200, {"data": [_OUTPUT_ITEM_DICT], "object": "list"})
     )
@@ -344,6 +346,7 @@ async def test_get_input_items__cursor_params_omitted_when_none(
 # get_items
 # ===========================================================================
 
+
 @pytest.mark.asyncio
 async def test_get_items__posts_to_batch_retrieve_endpoint(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, [_OUTPUT_ITEM_DICT, None]))
@@ -393,6 +396,7 @@ async def test_get_items__preserves_input_order(credential: Any, settings: Found
 # ===========================================================================
 # get_history_item_ids
 # ===========================================================================
+
 
 @pytest.mark.asyncio
 async def test_get_history_item_ids__gets_to_history_endpoint(
@@ -456,6 +460,7 @@ async def test_get_history_item_ids__omits_optional_params_when_none(
 # ===========================================================================
 # Isolation headers (S-018)
 # ===========================================================================
+
 
 @pytest.mark.asyncio
 async def test_create_response__sends_isolation_headers(credential: Any, settings: FoundryStorageSettings) -> None:
@@ -574,6 +579,7 @@ async def test_isolation_headers__partial_keys_only_sends_present(
 # Error mapping
 # ===========================================================================
 
+
 @pytest.mark.asyncio
 async def test_error_mapping__400_raises_bad_request(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(400, {"error": {"message": "invalid input"}}))
@@ -615,6 +621,7 @@ async def test_error_mapping__error_message_falls_back_for_non_json_body(
 # HTTP client lifecycle
 # ===========================================================================
 
+
 @pytest.mark.asyncio
 async def test_aclose__closes_pipeline_client() -> None:
     provider = _make_provider(_make_credential(), _SETTINGS, _make_response(200, {}))
@@ -633,6 +640,7 @@ async def test_async_context_manager__closes_client_on_exit() -> None:
 # ===========================================================================
 # FoundryStorageSettings
 # ===========================================================================
+
 
 def test_settings__from_env__reads_foundry_project_endpoint(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "https://myproject.foundry.azure.com")

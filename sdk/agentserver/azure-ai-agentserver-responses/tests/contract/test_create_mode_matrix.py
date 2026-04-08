@@ -18,6 +18,7 @@ from azure.ai.agentserver.responses import ResponsesAgentServerHost
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire contract matrix tests."""
+
     async def _events():
         if False:  # pragma: no cover - keep async generator shape.
             yield None
@@ -217,11 +218,7 @@ def test_create_mode_matrix__http_and_content_type(case: _CreateModeCase) -> Non
 
 @pytest.mark.parametrize(
     "case",
-    [
-        case
-        for case in _CASES
-        if case.expected_http == 200 and case.expected_get_status is not None
-    ],
+    [case for case in _CASES if case.expected_http == 200 and case.expected_get_status is not None],
     ids=[case.id for case in _CASES if case.expected_http == 200 and case.expected_get_status is not None],
 )
 def test_create_mode_matrix__get_visibility(case: _CreateModeCase) -> None:

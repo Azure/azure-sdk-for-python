@@ -15,6 +15,7 @@ from tests._helpers import poll_until
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire lifecycle integration tests."""
+
     async def _events():
         if False:  # pragma: no cover - keep async generator shape.
             yield None
@@ -24,6 +25,7 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits response.created then blocks until cancelled (Phase 3)."""
+
     async def _events():
         yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
         while not cancellation_signal.is_set():

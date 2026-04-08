@@ -19,6 +19,7 @@ from tests._helpers import EventGate
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler used to wire host integration tests."""
+
     async def _events():
         if False:  # pragma: no cover - keep async generator shape.
             yield None

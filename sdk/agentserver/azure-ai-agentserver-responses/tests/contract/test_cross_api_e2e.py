@@ -91,6 +91,7 @@ def _wait_for_terminal(
 
 def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler — emits no events (framework auto-completes)."""
+
     async def _events():
         if False:  # pragma: no cover
             yield None
@@ -100,6 +101,7 @@ def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
 
 def _simple_text_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits created + completed with no output items."""
+
     async def _events():
         stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
         yield stream.emit_created()
@@ -110,6 +112,7 @@ def _simple_text_handler(request: Any, context: Any, cancellation_signal: Any):
 
 def _output_producing_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that produces a single message output item with text 'hello'."""
+
     async def _events():
         stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
         yield stream.emit_created()
@@ -129,6 +132,7 @@ def _output_producing_handler(request: Any, context: Any, cancellation_signal: A
 
 def _throwing_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that raises after emitting created."""
+
     async def _events():
         stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
         yield stream.emit_created()
@@ -139,6 +143,7 @@ def _throwing_handler(request: Any, context: Any, cancellation_signal: Any):
 
 def _incomplete_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that emits an incomplete terminal event."""
+
     async def _events():
         stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
         yield stream.emit_created()
@@ -149,6 +154,7 @@ def _incomplete_handler(request: Any, context: Any, cancellation_signal: Any):
 
 def _delayed_handler(request: Any, context: Any, cancellation_signal: Any):
     """Handler that sleeps briefly, checking for cancellation."""
+
     async def _events():
         if cancellation_signal.is_set():
             return
@@ -168,6 +174,7 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
     first event, so run_background returns immediately with in_progress status
     while the task continues running until cancellation.
     """
+
     async def _events():
         stream = ResponseEventStream(
             response_id=context.response_id,
@@ -181,10 +188,9 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
     return _events()
 
 
-def _make_blocking_sync_handler(
-    started_gate: EventGate, release_gate: threading.Event
-):
+def _make_blocking_sync_handler(started_gate: EventGate, release_gate: threading.Event):
     """Factory for a handler that blocks on a gate, for testing concurrent GET/Cancel on in-flight sync requests."""
+
     def handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             started_gate.signal(True)
@@ -207,6 +213,7 @@ def _make_two_item_gated_handler(
     item2_gate: threading.Event,
 ):
     """Factory for a handler that emits two message output items with gates between them."""
+
     def handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
@@ -309,10 +316,10 @@ class TestEphemeralStoreFalse:
     @pytest.mark.parametrize(
         "stream, operation",
         [
-            (False, "GET"),       # E30: C5 → GET JSON → 404
-            (False, "GET_SSE"),   # E31: C5 → GET SSE replay → 404
-            (True,  "GET"),       # E33: C6 → GET JSON → 404
-            (True,  "GET_SSE"),   # E34: C6 → GET SSE replay → 404
+            (False, "GET"),  # E30: C5 → GET JSON → 404
+            (False, "GET_SSE"),  # E31: C5 → GET SSE replay → 404
+            (True, "GET"),  # E33: C6 → GET JSON → 404
+            (True, "GET_SSE"),  # E34: C6 → GET SSE replay → 404
         ],
         ids=["E30-sync-GET", "E31-sync-GET_SSE", "E33-stream-GET", "E34-stream-GET_SSE"],
     )
@@ -344,12 +351,8 @@ class TestEphemeralStoreFalse:
         else:
             result = client.get(f"/responses/{response_id}?stream=true")
 
-        if operation == "GET_SSE":
-            # GET SSE finds the record in runtime state but replay is
-            # unavailable for store=false non-bg responses → 400.
-            assert result.status_code == 400
-        else:
-            assert result.status_code == 404
+        # B14: store=false responses are never persisted → 404 for any GET.
+        assert result.status_code == 404
 
     @pytest.mark.parametrize(
         "stream",
@@ -561,10 +564,7 @@ class TestC2StreamStored:
 
         Skipped: same limitation as E6.
         """
-        pytest.skip(
-            "Starlette TestClient does not deterministically surface client-disconnect "
-            "cancellation signals."
-        )
+        pytest.skip("Starlette TestClient does not deterministically surface client-disconnect cancellation signals.")
 
 
 # ════════════════════════════════════════════════════════════
@@ -795,9 +795,7 @@ class TestC4BgStreamStored:
         first_seq = full_events[0]["data"]["sequence_number"]
 
         # Replay with starting_after = first seq → skips first event
-        with client.stream(
-            "GET", f"/responses/{response_id}?stream=true&starting_after={first_seq}"
-        ) as cursor_resp:
+        with client.stream("GET", f"/responses/{response_id}?stream=true&starting_after={first_seq}") as cursor_resp:
             assert cursor_resp.status_code == 200
             cursor_events = _collect_sse_events(cursor_resp)
 
@@ -915,9 +913,7 @@ class TestC4BgStreamStored:
         max_seq = full_events[-1]["data"]["sequence_number"]
 
         # Replay with starting_after = max → empty
-        with client.stream(
-            "GET", f"/responses/{response_id}?stream=true&starting_after={max_seq}"
-        ) as empty_resp:
+        with client.stream("GET", f"/responses/{response_id}?stream=true&starting_after={max_seq}") as empty_resp:
             assert empty_resp.status_code == 200
             empty_events = _collect_sse_events(empty_resp)
         assert empty_events == []

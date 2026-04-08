@@ -435,8 +435,8 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
         if len(body) != IdGenerator._NEW_FORMAT_BODY_LENGTH and len(body) != IdGenerator._LEGACY_BODY_LENGTH:
             return (
                 False,
-                f"ID '{id_value}' has unexpected body length {len(body)}" \
-                + f" (expected {IdGenerator._NEW_FORMAT_BODY_LENGTH} or" \
+                f"ID '{id_value}' has unexpected body length {len(body)}"
+                + f" (expected {IdGenerator._NEW_FORMAT_BODY_LENGTH} or"
                 + f" {IdGenerator._LEGACY_BODY_LENGTH}).",
             )
 

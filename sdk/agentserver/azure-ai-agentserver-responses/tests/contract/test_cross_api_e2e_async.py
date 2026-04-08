@@ -142,9 +142,7 @@ class _AsyncAsgiClient:
     async def get(self, path: str) -> _AsgiResponse:
         return await self.request("GET", path)
 
-    async def post(
-        self, path: str, *, json_body: dict[str, Any] | None = None
-    ) -> _AsgiResponse:
+    async def post(self, path: str, *, json_body: dict[str, Any] | None = None) -> _AsgiResponse:
         return await self.request("POST", path, json_body=json_body)
 
 

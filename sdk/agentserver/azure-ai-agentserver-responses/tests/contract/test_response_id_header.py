@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Protocol conformance tests for ``x-agent-response-id`` header (S-047).
+"""Protocol conformance tests for ``x-agent-response-id`` header (B38).
 
 When the header is present with a non-empty value, the SDK MUST use that value
 as the response ID instead of generating one.
@@ -79,8 +79,10 @@ def _build_client(handler: Any = None) -> TestClient:
 
 def _wait_for_terminal(client: TestClient, response_id: str) -> None:
     ok, diag = poll_until(
-        lambda: client.get(f"/responses/{response_id}").json().get("status")
-        in ("completed", "failed", "incomplete", "cancelled"),
+        lambda: (
+            client.get(f"/responses/{response_id}").json().get("status")
+            in ("completed", "failed", "incomplete", "cancelled")
+        ),
         timeout_s=5.0,
         label="wait_for_terminal",
     )
@@ -93,7 +95,7 @@ def _wait_for_terminal(client: TestClient, response_id: str) -> None:
 
 
 def test_default_with_header_uses_header_value() -> None:
-    """S-047 — default mode: x-agent-response-id header overrides response ID."""
+    """B38 — default mode: x-agent-response-id header overrides response ID."""
     custom_id = IdGenerator.new_response_id()
     client = _build_client()
 
@@ -107,7 +109,7 @@ def test_default_with_header_uses_header_value() -> None:
 
 
 def test_default_without_header_generates_caresp_id() -> None:
-    """S-047 — without header, generates caresp_ prefixed ID."""
+    """B38 — without header, generates caresp_ prefixed ID."""
     client = _build_client()
 
     response = client.post("/responses", json={"model": "test"})
@@ -116,7 +118,7 @@ def test_default_without_header_generates_caresp_id() -> None:
 
 
 def test_default_with_empty_header_generates_caresp_id() -> None:
-    """S-047 — empty header is ignored, generates caresp_ prefixed ID."""
+    """B38 — empty header is ignored, generates caresp_ prefixed ID."""
     client = _build_client()
 
     response = client.post(
@@ -134,7 +136,7 @@ def test_default_with_empty_header_generates_caresp_id() -> None:
 
 
 def test_streaming_with_header_uses_header_value() -> None:
-    """S-047 — streaming mode: x-agent-response-id header overrides response ID."""
+    """B38 — streaming mode: x-agent-response-id header overrides response ID."""
     custom_id = IdGenerator.new_response_id()
     client = _build_client(_tracking_handler)
 
@@ -157,7 +159,7 @@ def test_streaming_with_header_uses_header_value() -> None:
 
 
 def test_background_with_header_uses_header_value() -> None:
-    """S-047 — background mode: x-agent-response-id header overrides response ID."""
+    """B38 — background mode: x-agent-response-id header overrides response ID."""
     custom_id = IdGenerator.new_response_id()
     client = _build_client()
 
@@ -176,7 +178,7 @@ def test_background_with_header_uses_header_value() -> None:
 
 
 def test_handler_context_has_correct_response_id() -> None:
-    """S-047 — handler context receives the header-specified response ID."""
+    """B38 — handler context receives the header-specified response ID."""
     global _last_context
     _last_context = None
 

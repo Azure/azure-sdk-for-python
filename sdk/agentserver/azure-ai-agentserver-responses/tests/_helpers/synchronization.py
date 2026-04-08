@@ -20,10 +20,7 @@ def format_async_failure(
 ) -> str:
     """Build a stable, diagnostics-rich timeout failure message."""
     context_payload = dict(context or {})
-    return (
-        f"{label} timed out after {elapsed_s:.3f}s (budget={timeout_s:.3f}s); "
-        f"diagnostics={context_payload}"
-    )
+    return f"{label} timed out after {elapsed_s:.3f}s (budget={timeout_s:.3f}s); diagnostics={context_payload}"
 
 
 def poll_until(

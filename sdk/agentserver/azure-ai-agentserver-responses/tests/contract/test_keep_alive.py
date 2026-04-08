@@ -36,6 +36,7 @@ def _make_slow_handler(delay_seconds: float = 0.5, event_count: int = 2):
 
 def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     """Minimal handler producing an empty stream."""
+
     async def _events():
         if False:  # pragma: no cover
             yield None
@@ -140,8 +141,7 @@ def test_keep_alive__enabled_interleaves_comment_frames_during_slow_handler() ->
 
     # At least one keep-alive comment should have been sent during the 1.5s gap
     assert len(comments) >= 1, (
-        f"Expected at least one keep-alive comment, got {len(comments)}. "
-        f"Events: {[e['type'] for e in events]}"
+        f"Expected at least one keep-alive comment, got {len(comments)}. Events: {[e['type'] for e in events]}"
     )
     # All comments should be the standard keep-alive format
     for comment in comments:

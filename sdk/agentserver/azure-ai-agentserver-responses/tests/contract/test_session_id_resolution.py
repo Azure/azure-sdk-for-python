@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Protocol conformance tests for session ID resolution (S-048).
+"""Protocol conformance tests for session ID resolution (B39).
 
 Priority: request payload ``agent_session_id`` → ``FOUNDRY_AGENT_SESSION_ID``
 env var → generated UUID.
@@ -124,7 +124,7 @@ class TestPayloadSessionId:
     """Payload agent_session_id is stamped on the response."""
 
     def test_default_payload_session_id_stamped_on_response(self) -> None:
-        """S-048 P1: non-streaming response carries the payload session ID."""
+        """B39 P1: non-streaming response carries the payload session ID."""
         session_id = "my-session-from-payload"
         client = _build_client()
 
@@ -140,7 +140,7 @@ class TestPayloadSessionId:
         assert response.json()["agent_session_id"] == session_id
 
     def test_streaming_payload_session_id_stamped_on_response(self) -> None:
-        """S-048 P1: streaming response.created and response.completed carry the payload session ID."""
+        """B39 P1: streaming response.created and response.completed carry the payload session ID."""
         session_id = "streaming-session-xyz"
         client = _build_client(_simple_text_handler)
 
@@ -167,7 +167,7 @@ class TestPayloadSessionId:
         assert completed_events[0]["data"]["response"]["agent_session_id"] == session_id
 
     def test_background_payload_session_id_stamped_on_response(self) -> None:
-        """S-048 P1: background response carries the payload session ID.
+        """B39 P1: background response carries the payload session ID.
 
         Background POST returns a queued snapshot immediately (before the handler
         runs), so agent_session_id is stamped once the handler processes. We poll
@@ -200,7 +200,7 @@ class TestEnvVarFallback:
     """FOUNDRY_AGENT_SESSION_ID env var is used when no payload field."""
 
     def test_no_payload_session_id_falls_back_to_env_var(self) -> None:
-        """S-048 P2: env var used when no payload session ID."""
+        """B39 P2: env var used when no payload session ID."""
         env_session_id = "env-session-from-foundry"
 
         with patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": env_session_id}):
@@ -214,7 +214,7 @@ class TestEnvVarFallback:
         assert response.json()["agent_session_id"] == env_session_id
 
     def test_payload_session_id_overrides_env_var(self) -> None:
-        """S-048: payload field takes precedence over env var."""
+        """B39: payload field takes precedence over env var."""
         payload_session_id = "payload-wins"
         env_session_id = "env-loses"
 
@@ -241,7 +241,7 @@ class TestGeneratedUuidFallback:
     """Generated UUID when no payload field or env var."""
 
     def test_no_payload_or_env_generates_session_id(self) -> None:
-        """S-048 P3: generated UUID when nothing else is available."""
+        """B39 P3: generated UUID when nothing else is available."""
         with patch.dict(os.environ, {}, clear=False):
             # Remove FOUNDRY_AGENT_SESSION_ID if present
             env = os.environ.copy()
@@ -260,7 +260,7 @@ class TestGeneratedUuidFallback:
         uuid.UUID(session_id)
 
     def test_generated_session_id_is_different_per_request(self) -> None:
-        """S-048 P3: generated session IDs are unique per request."""
+        """B39 P3: generated session IDs are unique per request."""
         with patch.dict(os.environ, {}, clear=False):
             env = os.environ.copy()
             env.pop("FOUNDRY_AGENT_SESSION_ID", None)
@@ -277,9 +277,7 @@ class TestGeneratedUuidFallback:
 
         session_id1 = response1.json()["agent_session_id"]
         session_id2 = response2.json()["agent_session_id"]
-        assert session_id1 != session_id2, (
-            "Generated session IDs should be unique per request"
-        )
+        assert session_id1 != session_id2, "Generated session IDs should be unique per request"
 
 
 # ════════════════════════════════════════════════════════════
@@ -291,7 +289,7 @@ class TestCrossModeConsistency:
     """Session ID stamping works consistently across modes."""
 
     def test_streaming_no_payload_or_env_stamps_generated_session_id(self) -> None:
-        """S-048: streaming mode generates and stamps a UUID session ID."""
+        """B39: streaming mode generates and stamps a UUID session ID."""
         with patch.dict(os.environ, {}, clear=False):
             env = os.environ.copy()
             env.pop("FOUNDRY_AGENT_SESSION_ID", None)
@@ -312,7 +310,7 @@ class TestCrossModeConsistency:
         uuid.UUID(session_id)
 
     def test_background_no_payload_or_env_stamps_generated_session_id(self) -> None:
-        """S-048: background mode generates and stamps a UUID session ID."""
+        """B39: background mode generates and stamps a UUID session ID."""
         with patch.dict(os.environ, {}, clear=False):
             env = os.environ.copy()
             env.pop("FOUNDRY_AGENT_SESSION_ID", None)
@@ -331,7 +329,7 @@ class TestCrossModeConsistency:
         uuid.UUID(session_id)
 
     def test_background_streaming_payload_session_id_on_all_events(self) -> None:
-        """S-048: bg+streaming with payload session ID stamps all lifecycle events."""
+        """B39: bg+streaming with payload session ID stamps all lifecycle events."""
         session_id = "bg-stream-session-42"
         client = _build_client(_simple_text_handler)
 
@@ -366,7 +364,7 @@ class TestCrossModeConsistency:
             )
 
     def test_session_id_consistent_between_create_and_get(self) -> None:
-        """S-048: session ID on POST matches session ID on subsequent GET."""
+        """B39: session ID on POST matches session ID on subsequent GET."""
         session_id = "consistent-session-check"
         client = _build_client()
 
@@ -388,7 +386,7 @@ class TestCrossModeConsistency:
         assert get_resp.json()["agent_session_id"] == session_id
 
     def test_session_id_consistent_between_create_and_sse_replay(self) -> None:
-        """S-048: session ID on create matches session ID in SSE replay events."""
+        """B39: session ID on create matches session ID in SSE replay events."""
         session_id = "replay-session-check"
         client = _build_client(_simple_text_handler)
 
@@ -414,9 +412,7 @@ class TestCrossModeConsistency:
         _wait_for_terminal(client, response_id)
 
         # SSE replay should carry the same session ID
-        with client.stream(
-            "GET", f"/responses/{response_id}?stream=true"
-        ) as replay_resp:
+        with client.stream("GET", f"/responses/{response_id}?stream=true") as replay_resp:
             assert replay_resp.status_code == 200
             replay_events = _collect_sse_events(replay_resp)
 
