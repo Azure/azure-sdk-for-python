@@ -63,3 +63,5 @@ extends:
       safeName: azuremgmtresourceprivatelinks
     - name: azure-mgmt-resource-subscriptions
       safeName: azuremgmtresourcesubscriptions
+    - name: azure-mgmt-resources-deployments
+      safeName: azuremgmtresourcesdeployments
