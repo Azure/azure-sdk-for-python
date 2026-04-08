@@ -67,10 +67,14 @@ class LangGraphAdapter(FoundryCBAgent):
             try:
                 from langchain_azure_ai.callbacks.tracers import AzureAIOpenTelemetryTracer
 
+                agent_id = os.environ.get(Constants.AGENT_ID)
+
                 self.azure_ai_tracer = AzureAIOpenTelemetryTracer(
                     connection_string=app_insights_conn_str,
                     enable_content_recording=True,
                     name=self.get_agent_identifier(),
+                    agent_id=agent_id,
+                    trace_all_langgraph_nodes=True,
                 )
                 logger.info("AzureAIOpenTelemetryTracer initialized successfully.")
             except Exception as e:
