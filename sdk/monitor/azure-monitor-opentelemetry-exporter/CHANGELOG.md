@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b51 (Unreleased)
+## 1.0.0b52 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b51 (2026-04-07)
+
+### Bugs Fixed
+- Added credential authentication support for customer sdkstats
+  ([#46143](https://github.com/Azure/azure-sdk-for-python/pull/46143))
 
 ## 1.0.0b50 (2026-04-03)
 
