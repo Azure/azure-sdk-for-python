@@ -327,10 +327,10 @@ class TestSigtermHandler:
             agent = AgentServerHost(graceful_shutdown_timeout=5)
             handler_at_serve_time = None
 
-            def fake_asyncio_run(coro):
+            def fake_asyncio_run(coroutine):
                 nonlocal handler_at_serve_time
                 handler_at_serve_time = signal.getsignal(signal.SIGTERM)
-                coro.close()
+                coroutine.close()
 
             with mock.patch("asyncio.run", side_effect=fake_asyncio_run):
                 agent.run(host="127.0.0.1", port=9999)
@@ -341,17 +341,17 @@ class TestSigtermHandler:
         finally:
             signal.signal(signal.SIGTERM, original)
 
-    def test_sigterm_handler_logs_and_reraises(self, caplog: pytest.LogCaptureFixture) -> None:
+    def test_sigterm_handler_logs_and_re_raises(self, caplog: pytest.LogCaptureFixture) -> None:
         """The installed SIGTERM handler logs then re-raises via os.kill."""
         original = signal.getsignal(signal.SIGTERM)
         try:
             agent = AgentServerHost(graceful_shutdown_timeout=5)
             handler_at_serve_time = None
 
-            def fake_asyncio_run(coro):
+            def fake_asyncio_run(coroutine):
                 nonlocal handler_at_serve_time
                 handler_at_serve_time = signal.getsignal(signal.SIGTERM)
-                coro.close()
+                coroutine.close()
 
             with mock.patch("asyncio.run", side_effect=fake_asyncio_run):
                 agent.run(host="127.0.0.1", port=9999)
