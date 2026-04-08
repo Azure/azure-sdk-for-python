@@ -44,4 +44,4 @@ steps:
         } else {
           Write-Host "##[warning]PIP_INDEX_URL not set - uv will fall back to public PyPI."
         }
-    displayName: 'Configure UV Authentication'
+      displayName: 'Configure UV Authentication'
