@@ -20,6 +20,20 @@ class TestSqlManagementSyncMembersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_sync_members_list_by_sync_group(self, resource_group):
+        response = self.client.sync_members.list_by_sync_group(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            database_name="str",
+            sync_group_name="str",
+            api_version="2025-01-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_sync_members_get(self, resource_group):
         response = self.client.sync_members.get(
             resource_group_name=resource_group.name,
@@ -27,7 +41,7 @@ class TestSqlManagementSyncMembersOperations(AzureMgmtRecordedTestCase):
             database_name="str",
             sync_group_name="str",
             sync_member_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -59,7 +73,7 @@ class TestSqlManagementSyncMembersOperations(AzureMgmtRecordedTestCase):
                 "usePrivateLinkConnection": bool,
                 "userName": "str",
             },
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -74,7 +88,7 @@ class TestSqlManagementSyncMembersOperations(AzureMgmtRecordedTestCase):
             database_name="str",
             sync_group_name="str",
             sync_member_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -106,38 +120,9 @@ class TestSqlManagementSyncMembersOperations(AzureMgmtRecordedTestCase):
                 "usePrivateLinkConnection": bool,
                 "userName": "str",
             },
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_sync_members_list_by_sync_group(self, resource_group):
-        response = self.client.sync_members.list_by_sync_group(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            database_name="str",
-            sync_group_name="str",
-            api_version="2020-11-01-preview",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_sync_members_list_member_schemas(self, resource_group):
-        response = self.client.sync_members.list_member_schemas(
-            resource_group_name=resource_group.name,
-            server_name="str",
-            database_name="str",
-            sync_group_name="str",
-            sync_member_name="str",
-            api_version="2020-11-01-preview",
-        )
-        result = [r for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -150,8 +135,23 @@ class TestSqlManagementSyncMembersOperations(AzureMgmtRecordedTestCase):
             database_name="str",
             sync_group_name="str",
             sync_member_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_sync_members_list_member_schemas(self, resource_group):
+        response = self.client.sync_members.list_member_schemas(
+            resource_group_name=resource_group.name,
+            server_name="str",
+            database_name="str",
+            sync_group_name="str",
+            sync_member_name="str",
+            api_version="2025-01-01",
+        )
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

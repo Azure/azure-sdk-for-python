@@ -38,7 +38,7 @@ class TestSqlManagementRecommendedSensitivityLabelsOperations(AzureMgmtRecordedT
                     }
                 ]
             },
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

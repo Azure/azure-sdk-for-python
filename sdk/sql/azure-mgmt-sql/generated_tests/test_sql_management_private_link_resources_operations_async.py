@@ -25,7 +25,7 @@ class TestSqlManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecordedTest
         response = self.client.private_link_resources.list_by_server(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestSqlManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             server_name="str",
             group_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

@@ -24,7 +24,7 @@ class TestSqlManagementCapabilitiesOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_capabilities_list_by_location(self, resource_group):
         response = await self.client.capabilities.list_by_location(
             location_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

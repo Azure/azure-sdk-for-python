@@ -26,7 +26,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperations(AzureMgmtRecordedTes
             server_name="str",
             database_name="str",
             advisor_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperations(AzureMgmtRecordedTes
             database_name="str",
             advisor_name="str",
             recommended_action_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperations(AzureMgmtRecordedTes
             advisor_name="str",
             recommended_action_name="str",
             parameters={
-                "details": {"str": {}},
+                "details": {"str": "str"},
                 "errorDetails": {"errorCode": "str", "isRetryable": "str"},
                 "estimatedImpact": [
                     {
@@ -68,7 +68,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperations(AzureMgmtRecordedTes
                         "unit": "str",
                     }
                 ],
-                "executeActionDuration": "str",
+                "executeActionDuration": "1 day, 0:00:00",
                 "executeActionInitiatedBy": "str",
                 "executeActionInitiatedTime": "2020-02-20 00:00:00",
                 "executeActionStartTime": "2020-02-20 00:00:00",
@@ -92,7 +92,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperations(AzureMgmtRecordedTes
                     }
                 ],
                 "recommendationReason": "str",
-                "revertActionDuration": "str",
+                "revertActionDuration": "1 day, 0:00:00",
                 "revertActionInitiatedBy": "str",
                 "revertActionInitiatedTime": "2020-02-20 00:00:00",
                 "revertActionStartTime": "2020-02-20 00:00:00",
@@ -110,7 +110,7 @@ class TestSqlManagementDatabaseRecommendedActionsOperations(AzureMgmtRecordedTes
                 "type": "str",
                 "validSince": "2020-02-20 00:00:00",
             },
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

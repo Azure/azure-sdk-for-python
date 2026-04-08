@@ -24,7 +24,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
     async def test_long_term_retention_backups_list_by_location(self, resource_group):
         response = self.client.long_term_retention_backups.list_by_location(
             location_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
         response = self.client.long_term_retention_backups.list_by_server(
             location_name="str",
             long_term_retention_server_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
             location_name="str",
             long_term_retention_server_name="str",
             long_term_retention_database_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -63,7 +63,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
             long_term_retention_server_name="str",
             long_term_retention_database_name="str",
             backup_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -78,7 +78,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                 long_term_retention_server_name="str",
                 long_term_retention_database_name="str",
                 backup_name="str",
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -95,7 +95,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                 long_term_retention_database_name="str",
                 backup_name="str",
                 parameters={"backupStorageAccessTier": "str", "operationMode": "str"},
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -119,7 +119,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                     "targetServerResourceId": "str",
                     "targetSubscriptionId": "str",
                 },
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -135,7 +135,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                 long_term_retention_server_name="str",
                 long_term_retention_database_name="str",
                 backup_name="str",
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -151,7 +151,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                 long_term_retention_server_name="str",
                 long_term_retention_database_name="str",
                 backup_name="str",
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -167,7 +167,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                 long_term_retention_server_name="str",
                 long_term_retention_database_name="str",
                 backup_name="str",
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -183,7 +183,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                 long_term_retention_server_name="str",
                 long_term_retention_database_name="str",
                 backup_name="str",
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -200,7 +200,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                 long_term_retention_database_name="str",
                 backup_name="str",
                 parameters={"requestedBackupStorageRedundancy": "str"},
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -213,7 +213,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
         response = self.client.long_term_retention_backups.list_by_resource_group_location(
             resource_group_name=resource_group.name,
             location_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -226,7 +226,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
             resource_group_name=resource_group.name,
             location_name="str",
             long_term_retention_server_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -240,7 +240,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
             location_name="str",
             long_term_retention_server_name="str",
             long_term_retention_database_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -255,7 +255,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
             long_term_retention_server_name="str",
             long_term_retention_database_name="str",
             backup_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -271,7 +271,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                 long_term_retention_server_name="str",
                 long_term_retention_database_name="str",
                 backup_name="str",
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -289,7 +289,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                 long_term_retention_database_name="str",
                 backup_name="str",
                 parameters={"backupStorageAccessTier": "str", "operationMode": "str"},
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -314,7 +314,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                     "targetServerResourceId": "str",
                     "targetSubscriptionId": "str",
                 },
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -333,7 +333,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                 long_term_retention_server_name="str",
                 long_term_retention_database_name="str",
                 backup_name="str",
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -352,7 +352,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                 long_term_retention_server_name="str",
                 long_term_retention_database_name="str",
                 backup_name="str",
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -371,7 +371,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                 long_term_retention_server_name="str",
                 long_term_retention_database_name="str",
                 backup_name="str",
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -390,7 +390,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                 long_term_retention_server_name="str",
                 long_term_retention_database_name="str",
                 backup_name="str",
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -408,7 +408,7 @@ class TestSqlManagementLongTermRetentionBackupsOperationsAsync(AzureMgmtRecorded
                 long_term_retention_database_name="str",
                 backup_name="str",
                 parameters={"requestedBackupStorageRedundancy": "str"},
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

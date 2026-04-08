@@ -32,7 +32,7 @@ def main():
     )
 
     response = client.database_operations.list_by_database(
-        resource_group_name="Default-SQL-SouthEastAsia",
+        resource_group_name="sqlcrudtestgroup",
         server_name="testsvr",
         database_name="testdb",
     )
@@ -40,6 +40,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2024-11-01-preview/examples/ListDatabaseOperations.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/SQL/stable/2025-01-01/examples/ListDatabaseOperations.json
 if __name__ == "__main__":
     main()

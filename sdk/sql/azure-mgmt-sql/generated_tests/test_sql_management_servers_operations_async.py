@@ -24,7 +24,7 @@ class TestSqlManagementServersOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_servers_check_name_availability(self, resource_group):
         response = await self.client.servers.check_name_availability(
             parameters={"name": "str", "type": "Microsoft.Sql/servers"},
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestSqlManagementServersOperationsAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_servers_list(self, resource_group):
         response = self.client.servers.list(
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestSqlManagementServersOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_servers_list_by_resource_group(self, resource_group):
         response = self.client.servers.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestSqlManagementServersOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.servers.get(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -123,7 +123,7 @@ class TestSqlManagementServersOperationsAsync(AzureMgmtRecordedTestCase):
                     "version": "str",
                     "workspaceFeature": "str",
                 },
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -137,7 +137,7 @@ class TestSqlManagementServersOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.servers.begin_delete(
                 resource_group_name=resource_group.name,
                 server_name="str",
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -199,7 +199,7 @@ class TestSqlManagementServersOperationsAsync(AzureMgmtRecordedTestCase):
                     "version": "str",
                     "workspaceFeature": "str",
                 },
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -226,7 +226,7 @@ class TestSqlManagementServersOperationsAsync(AzureMgmtRecordedTestCase):
                     "networkIsolation": {"sqlServerResourceId": "str", "storageAccountResourceId": "str"},
                     "serviceObjectiveName": "str",
                 },
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -240,7 +240,7 @@ class TestSqlManagementServersOperationsAsync(AzureMgmtRecordedTestCase):
             await self.client.servers.begin_refresh_status(
                 resource_group_name=resource_group.name,
                 server_name="str",
-                api_version="2024-11-01-preview",
+                api_version="2025-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -25,7 +25,7 @@ class TestSqlManagementLongTermRetentionPoliciesOperations(AzureMgmtRecordedTest
             resource_group_name=resource_group.name,
             server_name="str",
             database_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestSqlManagementLongTermRetentionPoliciesOperations(AzureMgmtRecordedTest
             server_name="str",
             database_name="str",
             policy_name="str",
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestSqlManagementLongTermRetentionPoliciesOperations(AzureMgmtRecordedTest
                 "weeklyRetention": "str",
                 "yearlyRetention": "str",
             },
-            api_version="2024-11-01-preview",
+            api_version="2025-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

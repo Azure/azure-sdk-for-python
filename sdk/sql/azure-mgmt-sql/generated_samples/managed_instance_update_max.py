@@ -48,6 +48,7 @@ def main():
                 "proxyOverride": "Redirect",
                 "publicDataEndpointEnabled": False,
                 "requestedBackupStorageRedundancy": "Geo",
+                "requestedLogicalAvailabilityZone": "1",
                 "storageSizeInGB": 448,
                 "vCores": 8,
             },
@@ -58,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/preview/2023-05-01-preview/examples/ManagedInstanceUpdateMax.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/SQL/stable/2025-01-01/examples/ManagedInstanceUpdateMax.json
 if __name__ == "__main__":
     main()

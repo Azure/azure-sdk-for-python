@@ -24,7 +24,7 @@ class TestSqlManagementServerAutomaticTuningOperations(AzureMgmtRecordedTestCase
         response = self.client.server_automatic_tuning.get(
             resource_group_name=resource_group.name,
             server_name="str",
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestSqlManagementServerAutomaticTuningOperations(AzureMgmtRecordedTestCase
                 "options": {"str": {"actualState": "str", "desiredState": "str", "reasonCode": 0, "reasonDesc": "str"}},
                 "type": "str",
             },
-            api_version="2020-11-01-preview",
+            api_version="2025-01-01",
         )
 
         # please add some check logic here by yourself

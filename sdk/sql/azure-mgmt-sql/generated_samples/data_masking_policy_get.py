@@ -35,10 +35,11 @@ def main():
         resource_group_name="sqlcrudtest-6852",
         server_name="sqlcrudtest-2080",
         database_name="sqlcrudtest-331",
+        data_masking_policy_name="Default",
     )
     print(response)
 
 
-# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/stable/2014-04-01/examples/DataMaskingPolicyGet.json
+# x-ms-original-file: specification/sql/resource-manager/Microsoft.Sql/SQL/stable/2025-01-01/examples/DataMaskingPolicyGet.json
 if __name__ == "__main__":
     main()
