@@ -23,6 +23,7 @@ from typing_extensions import Self
 
 _ENV_FOUNDRY_AGENT_NAME = "FOUNDRY_AGENT_NAME"
 _ENV_FOUNDRY_AGENT_VERSION = "FOUNDRY_AGENT_VERSION"
+_ENV_FOUNDRY_HOSTING_ENVIRONMENT = "FOUNDRY_HOSTING_ENVIRONMENT"
 _ENV_FOUNDRY_PROJECT_ENDPOINT = "FOUNDRY_PROJECT_ENDPOINT"
 _ENV_FOUNDRY_PROJECT_ARM_ID = "FOUNDRY_PROJECT_ARM_ID"
 _ENV_FOUNDRY_AGENT_SESSION_ID = "FOUNDRY_AGENT_SESSION_ID"
@@ -86,6 +87,18 @@ class AgentConfig:
         self.appinsights_connection_string = appinsights_connection_string
         self.otlp_endpoint = otlp_endpoint
         self.sse_keepalive_interval = sse_keepalive_interval
+
+    @property
+    def is_hosted(self) -> bool:
+        """Whether the agent is running in a Foundry-hosted container environment.
+
+        Returns ``True`` when the platform-injected ``FOUNDRY_HOSTING_ENVIRONMENT``
+        environment variable exists and is non-empty. This variable is set
+        exclusively by the Foundry platform at container startup.
+
+        :rtype: bool
+        """
+        return bool(os.environ.get(_ENV_FOUNDRY_HOSTING_ENVIRONMENT))
 
     @classmethod
     def from_env(cls) -> Self:
