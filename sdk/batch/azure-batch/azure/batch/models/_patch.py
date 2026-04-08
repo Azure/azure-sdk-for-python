@@ -22,9 +22,9 @@ class CreateTasksError(HttpResponseError):
     """Aggregate Exception containing details for any failures from a task add operation.
 
     :param pending_tasks: List of tasks remaining to be submitted.
-    :type pending_tasks: Optional[List[~TaskAddParameter]]
+    :type pending_tasks: Optional[List[~_models.BatchTaskCreateOptions]]
     :param failure_tasks: List of tasks which failed to add
-    :type failure_tasks: Optional[List[~TaskAddResult]]
+    :type failure_tasks: Optional[List[~_models.BatchTaskCreateResult]]
     :param errors: List of unknown errors forcing early termination
     :type errors: Optional[List[~Exception]]
     """

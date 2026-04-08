@@ -59,7 +59,7 @@
         "azure.batch.models.BatchNodeRemoteLoginSettings": "Azure.Batch.BatchNodeRemoteLoginSettings",
         "azure.batch.models.BatchNodeRemoveOptions": "Azure.Batch.BatchNodeRemoveOptions",
         "azure.batch.models.BatchNodeUserCreateOptions": "Azure.Batch.BatchNodeUserCreateOptions",
-        "azure.batch.models.BatchNodeUserUpdateOptions": "Azure.Batch.BatchNodeUserUpdateOptions",
+        "azure.batch.models.BatchNodeUserReplaceOptions": "Azure.Batch.BatchNodeUserUpdateOptions",
         "azure.batch.models.BatchNodeVMExtension": "Azure.Batch.BatchNodeVMExtension",
         "azure.batch.models.BatchOsDisk": "Azure.Batch.BatchOsDisk",
         "azure.batch.models.BatchPool": "Azure.Batch.BatchPool",

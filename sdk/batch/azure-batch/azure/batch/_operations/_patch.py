@@ -1107,10 +1107,10 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type job_id: str
         :param task_collection: The Tasks to be added. Required.
         :type task_collection: ~azure.batch.models.BatchTaskAddCollectionResult
-        :param max_concurrency: number of threads to use in parallel when adding tasks. If specified
+        :keyword max_concurrency: number of threads to use in parallel when adding tasks. If specified
          and greater than 0, will start additional threads to submit requests and wait for them to finish.
          Otherwise will submit create_task_collection requests sequentially on main thread
-        :type max_concurrency: int
+        :paramtype max_concurrency: int
         :keyword service_timeout: The maximum time that the server can spend processing the equest to
          create the task collection, in seconds. The default is 30 seconds. If the value is larger than
          30, the default will be used instead.". Default value is None.
@@ -1158,7 +1158,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 task_workflow_manager.errors,
             )
         submitted_tasks = _handle_output(results_queue)
-        return _models.BatchCreateTaskCollectionResult(values_property=submitted_tasks)
+        return _models.BatchCreateTaskCollectionResult(result_values=submitted_tasks)
 
     @distributed_trace
     def get_node_file(
@@ -1430,16 +1430,14 @@ def patch_sdk():
 class _TaskWorkflowManager:
     """Worker class for one create_task_collection request
 
-    :param ~TaskOperations task_operations: Parent object which instantiated this
+    :param batch_client: Parent object which instantiated this
+    :type batch_client: ~_BatchClientOperationsMixin
     :param str job_id: The ID of the job to which the task collection is to be
         added.
-    :param tasks_to_add: The collection of tasks to add.
-    :type tasks_to_add: list of :class:`TaskAddParameter
-        <azure.batch.models.TaskAddParameter>`
-    :param task_create_task_collection_options: Additional parameters for the
-        operation
-    :type task_create_task_collection_options: :class:`BatchTaskAddCollectionResult
-        <azure.batch.models.BatchTaskAddCollectionResult>`
+    :param task_collection: The collection of tasks to add.
+    :type task_collection: Iterable[~azure.batch.models.BatchTaskCreateOptions]
+    :param kwargs: Additional parameters for the operation
+    :type kwargs: dict
     """
 
     def __init__(
@@ -1488,7 +1486,7 @@ class _TaskWorkflowManager:
             create_task_collection_response: _models.BatchCreateTaskCollectionResult = (
                 self._batch_client.create_task_collection(
                     job_id=self._job_id,
-                    task_collection=_models.BatchTaskGroup(values_property=chunk_tasks_to_add),
+                    task_collection=_models.BatchTaskGroup(task_values=chunk_tasks_to_add),
                     **self._kwargs,
                 )
             )
@@ -1545,8 +1543,8 @@ class _TaskWorkflowManager:
             # Unknown State - don't know if tasks failed to add or were successful
             self.errors.appendleft(e)
         else:
-            if create_task_collection_response.values_property:
-                for task_result in create_task_collection_response.values_property:  # pylint: disable=no-member
+            if create_task_collection_response.result_values:
+                for task_result in create_task_collection_response.result_values:  # pylint: disable=no-member
                     if task_result.status == _models.BatchTaskAddStatus.SERVER_ERROR:
                         # Server error will be retried
                         with self._pending_queue_lock:

@@ -329,8 +329,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         max_results: Optional[int] = None,
-        starttime: Optional[datetime.datetime] = None,
-        endtime: Optional[datetime.datetime] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
         filter: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncItemPaged["_models.BatchPoolUsageMetrics"]:
@@ -354,16 +354,16 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :keyword max_results: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
         :paramtype max_results: int
-        :keyword starttime: The earliest time from which to include metrics. This must be at least two
+        :keyword start_time: The earliest time from which to include metrics. This must be at least two
          and
          a half hours before the current time. If not specified this defaults to the
          start time of the last aggregation interval currently available. Default value is None.
-        :paramtype starttime: ~datetime.datetime
-        :keyword endtime: The latest time from which to include metrics. This must be at least two
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The latest time from which to include metrics. This must be at least two
          hours
          before the current time. If not specified this defaults to the end time of the
          last aggregation interval currently available. Default value is None.
-        :paramtype endtime: ~datetime.datetime
+        :paramtype end_time: ~datetime.datetime
         :keyword filter: An OData $filter clause. For more information on constructing this filter, see
          `https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics
          <https://learn.microsoft.com/rest/api/batchservice/odata-filters-in-batch#list-account-usage-metrics>`_.
@@ -393,8 +393,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
                     service_timeout=service_timeout,
                     ocp_date=ocp_date,
                     max_results=max_results,
-                    starttime=starttime,
-                    endtime=endtime,
+                    start_time=start_time,
+                    end_time=end_time,
                     filter=filter,
                     api_version=self._config.api_version,
                     headers=_headers,
@@ -6307,7 +6307,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         pool_id: str,
         node_id: str,
         user_name: str,
-        update_options: _models.BatchNodeUserUpdateOptions,
+        update_options: _models.BatchNodeUserReplaceOptions,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -6327,7 +6327,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param user_name: The name of the user Account to update. Required.
         :type user_name: str
         :param update_options: The options to use for updating the user. Required.
-        :type update_options: ~azure.batch.models.BatchNodeUserUpdateOptions
+        :type update_options: ~azure.batch.models.BatchNodeUserReplaceOptions
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.

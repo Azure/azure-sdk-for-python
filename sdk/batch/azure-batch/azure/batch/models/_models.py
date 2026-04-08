@@ -635,12 +635,12 @@ class BatchContainerConfiguration(_Model):
 class BatchCreateTaskCollectionResult(_Model):
     """The result of creating a collection of Tasks to a Job.
 
-    :ivar values_property: The results of the create Task collection operation.
-    :vartype values_property: list[~azure.batch.models.BatchTaskCreateResult]
+    :ivar result_values: The results of the create Task collection operation.
+    :vartype result_values: list[~azure.batch.models.BatchTaskCreateResult]
     """
 
-    values_property: Optional[list["_models.BatchTaskCreateResult"]] = rest_field(
-        name="value", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
+    result_values: Optional[list["_models.BatchTaskCreateResult"]] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
     )
     """The results of the create Task collection operation."""
 
@@ -648,7 +648,7 @@ class BatchCreateTaskCollectionResult(_Model):
     def __init__(
         self,
         *,
-        values_property: Optional[list["_models.BatchTaskCreateResult"]] = None,
+        result_values: Optional[list["_models.BatchTaskCreateResult"]] = None,
     ) -> None: ...
 
     @overload
@@ -720,9 +720,9 @@ class BatchError(_Model):
     :ivar message: A message describing the error, intended to be suitable for display in a user
      interface.
     :vartype message: ~azure.batch.models.BatchErrorMessage
-    :ivar values_property: A collection of key-value pairs containing additional details about the
+    :ivar error_values: A collection of key-value pairs containing additional details about the
      error.
-    :vartype values_property: list[~azure.batch.models.BatchErrorDetail]
+    :vartype error_values: list[~azure.batch.models.BatchErrorDetail]
     """
 
     code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -732,8 +732,8 @@ class BatchError(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """A message describing the error, intended to be suitable for display in a user interface."""
-    values_property: Optional[list["_models.BatchErrorDetail"]] = rest_field(
-        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
+    error_values: Optional[list["_models.BatchErrorDetail"]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"]
     )
     """A collection of key-value pairs containing additional details about the error."""
 
@@ -743,7 +743,7 @@ class BatchError(_Model):
         *,
         code: Optional[str] = None,
         message: Optional["_models.BatchErrorMessage"] = None,
-        values_property: Optional[list["_models.BatchErrorDetail"]] = None,
+        error_values: Optional[list["_models.BatchErrorDetail"]] = None,
     ) -> None: ...
 
     @overload
@@ -2535,11 +2535,11 @@ class BatchJobSchedule(_Model):
     :vartype display_name: str
     :ivar url: The URL of the Job Schedule. Required.
     :vartype url: str
-    :ivar e_tag: The ETag of the Job Schedule. This is an opaque string. You can use it to detect
+    :ivar etag: The ETag of the Job Schedule. This is an opaque string. You can use it to detect
      whether the Job Schedule has changed between requests. In particular, you can be pass the ETag
      with an Update Job Schedule request to specify that your changes should take effect only if
      nobody else has modified the schedule in the meantime. Required.
-    :vartype e_tag: str
+    :vartype etag: str
     :ivar last_modified: The last modified time of the Job Schedule. This is the last time at which
      the schedule level data, such as the Job specification or recurrence information, changed. It
      does not factor in job-level changes such as new Jobs being created or Jobs changing state.
@@ -2583,7 +2583,7 @@ class BatchJobSchedule(_Model):
     """The display name for the schedule."""
     url: str = rest_field(visibility=["read"])
     """The URL of the Job Schedule. Required."""
-    e_tag: str = rest_field(name="eTag", visibility=["read"])
+    etag: str = rest_field(name="eTag", visibility=["read"])
     """The ETag of the Job Schedule. This is an opaque string. You can use it to detect whether the
      Job Schedule has changed between requests. In particular, you can be pass the ETag with an
      Update Job Schedule request to specify that your changes should take effect only if nobody else
@@ -4573,7 +4573,7 @@ class BatchNodeUserCreateOptions(_Model):
         super().__init__(*args, **kwargs)
 
 
-class BatchNodeUserUpdateOptions(_Model):
+class BatchNodeUserReplaceOptions(_Model):
     """Parameters for updating a user account for RDP or SSH access on an Azure Batch Compute Node.
 
     :ivar password: The password of the Account. The password is required for Windows Compute
@@ -4752,11 +4752,11 @@ class BatchPool(_Model):
     :vartype display_name: str
     :ivar url: The URL of the Pool. Required.
     :vartype url: str
-    :ivar e_tag: The ETag of the Pool. This is an opaque string. You can use it to detect whether
+    :ivar etag: The ETag of the Pool. This is an opaque string. You can use it to detect whether
      the Pool has changed between requests. In particular, you can be pass the ETag when updating a
      Pool to specify that your changes should take effect only if nobody else has modified the Pool
      in the meantime. Required.
-    :vartype e_tag: str
+    :vartype etag: str
     :ivar last_modified: The last modified time of the Pool. This is the last time at which the
      Pool level data, such as the targetDedicatedNodes or enableAutoscale settings, changed. It does
      not factor in node-level changes such as a Compute Node changing state. Required.
@@ -4873,7 +4873,7 @@ class BatchPool(_Model):
      length of 1024."""
     url: str = rest_field(visibility=["read"])
     """The URL of the Pool. Required."""
-    e_tag: str = rest_field(name="eTag", visibility=["read"])
+    etag: str = rest_field(name="eTag", visibility=["read"])
     """The ETag of the Pool. This is an opaque string. You can use it to detect whether the Pool has
      changed between requests. In particular, you can be pass the ETag when updating a Pool to
      specify that your changes should take effect only if nobody else has modified the Pool in the
@@ -6980,11 +6980,11 @@ class BatchTask(_Model):
     :vartype display_name: str
     :ivar url: The URL of the Task. Required.
     :vartype url: str
-    :ivar e_tag: The ETag of the Task. This is an opaque string. You can use it to detect whether
+    :ivar etag: The ETag of the Task. This is an opaque string. You can use it to detect whether
      the Task has changed between requests. In particular, you can be pass the ETag when updating a
      Task to specify that your changes should take effect only if nobody else has modified the Task
      in the meantime. Required.
-    :vartype e_tag: str
+    :vartype etag: str
     :ivar last_modified: The last modified time of the Task. Required.
     :vartype last_modified: ~datetime.datetime
     :ivar creation_time: The creation time of the Task. Required.
@@ -7092,7 +7092,7 @@ class BatchTask(_Model):
      characters up to a maximum length of 1024."""
     url: str = rest_field(visibility=["read"])
     """The URL of the Task. Required."""
-    e_tag: str = rest_field(name="eTag", visibility=["read"])
+    etag: str = rest_field(name="eTag", visibility=["read"])
     """The ETag of the Task. This is an opaque string. You can use it to detect whether the Task has
      changed between requests. In particular, you can be pass the ETag when updating a Task to
      specify that your changes should take effect only if nobody else has modified the Task in the
@@ -7747,11 +7747,11 @@ class BatchTaskCreateResult(_Model):
     :vartype status: str or ~azure.batch.models.BatchTaskAddStatus
     :ivar task_id: The ID of the Task for which this is the result. Required.
     :vartype task_id: str
-    :ivar e_tag: The ETag of the Task, if the Task was successfully added. You can use this to
+    :ivar etag: The ETag of the Task, if the Task was successfully added. You can use this to
      detect whether the Task has changed between requests. In particular, you can be pass the ETag
      with an Update Task request to specify that your changes should take effect only if nobody else
      has modified the Job in the meantime.
-    :vartype e_tag: str
+    :vartype etag: str
     :ivar last_modified: The last modified time of the Task.
     :vartype last_modified: ~datetime.datetime
     :ivar location: The URL of the Task, if the Task was successfully added.
@@ -7767,7 +7767,7 @@ class BatchTaskCreateResult(_Model):
      and \"servererror\"."""
     task_id: str = rest_field(name="taskId", visibility=["read", "create", "update", "delete", "query"])
     """The ID of the Task for which this is the result. Required."""
-    e_tag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
+    etag: Optional[str] = rest_field(name="eTag", visibility=["read", "create", "update", "delete", "query"])
     """The ETag of the Task, if the Task was successfully added. You can use this to detect whether
      the Task has changed between requests. In particular, you can be pass the ETag with an Update
      Task request to specify that your changes should take effect only if nobody else has modified
@@ -7787,7 +7787,7 @@ class BatchTaskCreateResult(_Model):
         *,
         status: Union[str, "_models.BatchTaskAddStatus"],
         task_id: str,
-        e_tag: Optional[str] = None,
+        etag: Optional[str] = None,
         last_modified: Optional[datetime.datetime] = None,
         location: Optional[str] = None,
         error: Optional["_models.BatchError"] = None,
@@ -8046,15 +8046,15 @@ class BatchTaskFailureInfo(_Model):
 class BatchTaskGroup(_Model):
     """A collection of Azure Batch Tasks to add.
 
-    :ivar values_property: The collection of Tasks to add. The maximum count of Tasks is 100. The
-     total serialized size of this collection must be less than 1MB. If it is greater than 1MB (for
+    :ivar task_values: The collection of Tasks to add. The maximum count of Tasks is 100. The total
+     serialized size of this collection must be less than 1MB. If it is greater than 1MB (for
      example if each Task has 100's of resource files or environment variables), the request will
      fail with code 'RequestBodyTooLarge' and should be retried again with fewer Tasks. Required.
-    :vartype values_property: list[~azure.batch.models.BatchTaskCreateOptions]
+    :vartype task_values: list[~azure.batch.models.BatchTaskCreateOptions]
     """
 
-    values_property: list["_models.BatchTaskCreateOptions"] = rest_field(
-        name="value", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
+    task_values: list["_models.BatchTaskCreateOptions"] = rest_field(
+        name="value", visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of Tasks to add. The maximum count of Tasks is 100. The total serialized size of
      this collection must be less than 1MB. If it is greater than 1MB (for example if each Task has
@@ -8065,7 +8065,7 @@ class BatchTaskGroup(_Model):
     def __init__(
         self,
         *,
-        values_property: list["_models.BatchTaskCreateOptions"],
+        task_values: list["_models.BatchTaskCreateOptions"],
     ) -> None: ...
 
     @overload
@@ -10236,8 +10236,8 @@ class ResizeError(_Model):
     :ivar message: A message describing the Pool resize error, intended to be suitable for display
      in a user interface.
     :vartype message: str
-    :ivar values_property: A list of additional error details related to the Pool resize error.
-    :vartype values_property: list[~azure.batch.models.NameValuePair]
+    :ivar error_values: A list of additional error details related to the Pool resize error.
+    :vartype error_values: list[~azure.batch.models.NameValuePair]
     """
 
     code: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -10246,8 +10246,8 @@ class ResizeError(_Model):
     message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A message describing the Pool resize error, intended to be suitable for display in a user
      interface."""
-    values_property: Optional[list["_models.NameValuePair"]] = rest_field(
-        name="values", visibility=["read", "create", "update", "delete", "query"], original_tsp_name="values"
+    error_values: Optional[list["_models.NameValuePair"]] = rest_field(
+        name="values", visibility=["read", "create", "update", "delete", "query"]
     )
     """A list of additional error details related to the Pool resize error."""
 
@@ -10257,7 +10257,7 @@ class ResizeError(_Model):
         *,
         code: Optional[str] = None,
         message: Optional[str] = None,
-        values_property: Optional[list["_models.NameValuePair"]] = None,
+        error_values: Optional[list["_models.NameValuePair"]] = None,
     ) -> None: ...
 
     @overload
@@ -10915,8 +10915,11 @@ class VirtualMachineConfiguration(_Model):
     :ivar license_type: This only applies to Images that contain the Windows operating system, and
      should only be used when you hold valid on-premises licenses for the Compute
      Nodes which will be deployed. If omitted, no on-premises licensing discount is
-     applied. Values are: Windows_Server (the on-premises license is for Windows
-     Server) and Windows_Client (the on-premises license is for Windows Client).
+     applied. Values are:
+
+      Windows_Server - The on-premises license is for Windows
+     Server.
+      Windows_Client - The on-premises license is for Windows Client.
     :vartype license_type: str
     :ivar container_configuration: The container configuration for the Pool. If specified, setup is
      performed on each Compute Node in the Pool to allow Tasks to run in containers. All regular
@@ -10984,8 +10987,11 @@ class VirtualMachineConfiguration(_Model):
     """This only applies to Images that contain the Windows operating system, and
      should only be used when you hold valid on-premises licenses for the Compute
      Nodes which will be deployed. If omitted, no on-premises licensing discount is
-     applied. Values are: Windows_Server (the on-premises license is for Windows
-     Server) and Windows_Client (the on-premises license is for Windows Client)."""
+     applied. Values are:
+     
+      Windows_Server - The on-premises license is for Windows
+     Server.
+      Windows_Client - The on-premises license is for Windows Client."""
     container_configuration: Optional["_models.BatchContainerConfiguration"] = rest_field(
         name="containerConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )

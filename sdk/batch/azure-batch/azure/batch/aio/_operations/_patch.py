@@ -1113,10 +1113,10 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type job_id: str
         :param task_collection: The Tasks to be added. Required.
         :type task_collection: ~azure.batch.models.BatchTaskAddCollectionResult
-        :param max_concurrency: number of coroutines to use in parallel when adding tasks. If specified
+        :keyword max_concurrency: number of coroutines to use in parallel when adding tasks. If specified
          and greater than 0, will start additional coroutines to submit requests and wait for them to finish.
          Otherwise will submit create_task_collection requests sequentially on main thread
-        :type max_concurrency: int
+        :paramtype max_concurrency: int
         :keyword service_timeout: The maximum time that the server can spend processing the equest to
          create the task collection, in seconds. The default is 30 seconds. If the value is larger than
          30, the default will be used instead.". Default value is None.
@@ -1154,7 +1154,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 task_workflow_manager.errors,
             )
         submitted_tasks = _handle_output(results_queue)
-        return _models.BatchCreateTaskCollectionResult(values_property=submitted_tasks)
+        return _models.BatchCreateTaskCollectionResult(result_values=submitted_tasks)
 
     @distributed_trace
     async def get_node_file(
@@ -1469,7 +1469,7 @@ class _TaskWorkflowManager:
             create_task_collection_response: _models.BatchCreateTaskCollectionResult = (
                 await self._batch_client.create_task_collection(
                     job_id=self._job_id,
-                    task_collection=_models.BatchTaskGroup(values_property=chunk_tasks_to_add),
+                    task_collection=_models.BatchTaskGroup(task_values=chunk_tasks_to_add),
                     **self._kwargs,
                 )
             )
@@ -1523,8 +1523,8 @@ class _TaskWorkflowManager:
             # Unknown State - don't know if tasks failed to add or were successful
             self.errors.appendleft(e)
         else:
-            if create_task_collection_response.values_property:
-                for task_result in create_task_collection_response.values_property:
+            if create_task_collection_response.result_values:
+                for task_result in create_task_collection_response.result_values:
                     if task_result.status == _models.BatchTaskAddStatus.SERVER_ERROR:
                         # Server error will be retried
                         for task in chunk_tasks_to_add:
