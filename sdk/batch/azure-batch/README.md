@@ -22,7 +22,7 @@ pip install azure-batch azure-identity
 ### Prerequisites
 * An Azure subscription. If you don't have one, [create an account for free][azure_sub]
 * A [Batch account][azure_batch] with a linked [Storage account][azure_storage]
-* Python 3.9 or later. For more details, please see the [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md)
+* Python 3.9 or later. For more details, please see the [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/7b02a5711c48e45028d0d3e682ce9b4e52b62e28/doc/python_version_support_policy.md)
 
 ### Authenticate the client
 
