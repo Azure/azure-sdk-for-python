@@ -2,11 +2,106 @@
 
 ## 4.1.0b1 (2026-04-08)
 
-skip changelog generation
+### Features Added
 
-## 4.1.0 (2026-04-08)
+  - Client `ContainerAppsAPIClient` added method `send_request`
+  - Model `BuildResource` added property `properties`
+  - Model `BuilderResource` added property `properties`
+  - Model `ContainerAppsBuildResource` added property `properties`
+  - Model `HeaderMatch` added property `match`
+  - Model `HttpRetryPolicy` added property `retry_back_off`
+  - Model `HttpRetryPolicy` added property `matches`
+  - Model `JobExecution` added property `system_data`
+  - Model `MaintenanceConfigurationResource` added property `properties`
+  - Model `Usage` added property `unit`
+  - Added model `BuildProperties`
+  - Added model `BuilderProperties`
+  - Added model `ContainerAppsBuildProperties`
+  - Added model `HeaderMatchMatch`
+  - Added model `HttpRetryPolicyMatches`
+  - Added model `HttpRetryPolicyRetryBackOff`
+  - Added model `LogicAppProperties`
+  - Added model `Object`
+  - Added model `RuntimeJavaJavaAgent`
+  - Added model `RuntimeJavaJavaAgentLogging`
+  - Added model `ScheduledEntries`
 
-skip changelog generation
+### Breaking Changes
+
+  - Method `BaseContainer.__init__` removed default value `None` from its parameter `args`
+  - Method `BaseContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Model `BuildResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `BuildResource` deleted or renamed its instance variable `build_status`
+  - Model `BuildResource` deleted or renamed its instance variable `destination_container_registry`
+  - Model `BuildResource` deleted or renamed its instance variable `configuration`
+  - Model `BuildResource` deleted or renamed its instance variable `upload_endpoint`
+  - Model `BuildResource` deleted or renamed its instance variable `log_stream_endpoint`
+  - Model `BuildResource` deleted or renamed its instance variable `token_endpoint`
+  - Model `BuilderResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `BuilderResource` deleted or renamed its instance variable `environment_id`
+  - Model `BuilderResource` deleted or renamed its instance variable `container_registries`
+  - Method `Container.__init__` removed default value `None` from its parameter `args`
+  - Method `Container.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Model `ContainerAppsBuildResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `ContainerAppsBuildResource` deleted or renamed its instance variable `build_status`
+  - Model `ContainerAppsBuildResource` deleted or renamed its instance variable `destination_container_registry`
+  - Model `ContainerAppsBuildResource` deleted or renamed its instance variable `configuration`
+  - Model `ContainerAppsBuildResource` deleted or renamed its instance variable `log_stream_endpoint`
+  - Model `HeaderMatch` deleted or renamed its instance variable `exact_match`
+  - Model `HeaderMatch` deleted or renamed its instance variable `prefix_match`
+  - Model `HeaderMatch` deleted or renamed its instance variable `suffix_match`
+  - Model `HeaderMatch` deleted or renamed its instance variable `regex_match`
+  - Model `HttpRetryPolicy` deleted or renamed its instance variable `headers`
+  - Model `HttpRetryPolicy` deleted or renamed its instance variable `http_status_codes`
+  - Model `HttpRetryPolicy` deleted or renamed its instance variable `errors`
+  - Model `HttpRetryPolicy` deleted or renamed its instance variable `initial_delay_in_milliseconds`
+  - Model `HttpRetryPolicy` deleted or renamed its instance variable `max_interval_in_milliseconds`
+  - Method `InitContainer.__init__` removed default value `None` from its parameter `args`
+  - Method `InitContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Method `JobExecutionContainer.__init__` removed default value `None` from its parameter `args`
+  - Method `JobExecutionContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Model `MaintenanceConfigurationResource` deleted or renamed its instance variable `scheduled_entries`
+  - Method `SessionContainer.__init__` removed default value `None` from its parameter `args`
+  - Method `SessionContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Deleted or renamed model `AppResiliencyCollection`
+  - Deleted or renamed model `AuthConfigCollection`
+  - Deleted or renamed model `AvailableOperations`
+  - Deleted or renamed model `AvailableWorkloadProfilesCollection`
+  - Deleted or renamed model `BuildCollection`
+  - Deleted or renamed model `BuilderCollection`
+  - Deleted or renamed model `CertificateCollection`
+  - Deleted or renamed model `ConnectedEnvironmentCollection`
+  - Deleted or renamed model `ContainerAppCollection`
+  - Deleted or renamed model `ContainerAppsBuildCollection`
+  - Deleted or renamed model `ContainerAppsFunctionCollection`
+  - Deleted or renamed model `DaprComponentResiliencyPoliciesCollection`
+  - Deleted or renamed model `DaprComponentsCollection`
+  - Deleted or renamed model `DaprSubscriptionsCollection`
+  - Deleted or renamed model `DotNetComponentsCollection`
+  - Deleted or renamed model `HttpRouteConfigCollection`
+  - Deleted or renamed model `JavaComponentsCollection`
+  - Deleted or renamed model `JobExecutionNamesCollection`
+  - Deleted or renamed model `JobsCollection`
+  - Deleted or renamed model `LabelHistoryCollection`
+  - Deleted or renamed model `ListUsagesResult`
+  - Deleted or renamed model `MaintenanceConfigurationCollection`
+  - Deleted or renamed model `ManagedCertificateCollection`
+  - Deleted or renamed model `ManagedEnvironmentsCollection`
+  - Deleted or renamed model `PatchCollection`
+  - Deleted or renamed model `RevisionCollection`
+  - Deleted or renamed model `RuntimeJavaAgent`
+  - Deleted or renamed model `RuntimeJavaAgentLogging`
+  - Deleted or renamed model `SessionPoolCollection`
+  - Deleted or renamed model `SourceControlCollection`
+  - Deleted or renamed model `WorkflowEnvelopeCollection`
+  - Deleted or renamed model `WorkloadProfileStatesCollection`
+  - Method `ContainerAppsOperations.list_custom_host_name_analysis` changed its parameter `custom_hostname` from `positional_or_keyword` to `keyword_only`
+  - Method `ContainerAppsSourceControlsOperations.begin_create_or_update` changed its parameter `x_ms_github_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `ContainerAppsSourceControlsOperations.begin_delete` changed its parameter `x_ms_github_auxiliary` from `positional_or_keyword` to `keyword_only`
+  - Method `ContainerAppsSourceControlsOperations.begin_delete` changed its parameter `ignore_workflow_deletion_failure` from `positional_or_keyword` to `keyword_only`
+  - Method `ContainerAppsSourceControlsOperations.begin_delete` changed its parameter `delete_workflow` from `positional_or_keyword` to `keyword_only`
+  - Method `LogicAppsOperations.invoke` changed its parameter `x_ms_logic_apps_proxy_path` from `positional_or_keyword` to `keyword_only`
+  - Method `LogicAppsOperations.invoke` changed its parameter `x_ms_logic_apps_proxy_method` from `positional_or_keyword` to `keyword_only`
 
 ## 4.0.0 (2025-10-24)
 
