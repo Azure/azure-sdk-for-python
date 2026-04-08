@@ -136,7 +136,6 @@ stages:
                           EnablePipAuth: true
                           EnableUvAuth: false
 
-
                       - script: |
                           python -m pip install -r $(Pipeline.Workspace)/release_artifact/release_requirements.txt
                         displayName: Install Release Dependencies
