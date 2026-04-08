@@ -16,6 +16,7 @@ from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 from azure.servicebus._common.constants import (
     MAX_BATCH_SIZE_PREMIUM,
     MAX_BATCH_SIZE_STANDARD,
+    MAX_MESSAGE_LENGTH_BYTES,
 )
 
 
@@ -137,7 +138,7 @@ class TestSenderBatchSizeInference:
 
         # Run the batch size determination logic (extracted from _open)
         sender._max_message_size_on_link = (
-            sender._amqp_transport.get_remote_max_message_size(sender._handler) or 256 * 1024
+            sender._amqp_transport.get_remote_max_message_size(sender._handler) or MAX_MESSAGE_LENGTH_BYTES
         )
         vendor_batch_size = sender._amqp_transport.get_remote_max_message_batch_size(sender._handler)
         if vendor_batch_size is not None:
@@ -158,7 +159,7 @@ class TestSenderBatchSizeInference:
         )
 
         sender._max_message_size_on_link = (
-            sender._amqp_transport.get_remote_max_message_size(sender._handler) or 256 * 1024
+            sender._amqp_transport.get_remote_max_message_size(sender._handler) or MAX_MESSAGE_LENGTH_BYTES
         )
         vendor_batch_size = sender._amqp_transport.get_remote_max_message_batch_size(sender._handler)
         if vendor_batch_size is not None:
@@ -178,7 +179,7 @@ class TestSenderBatchSizeInference:
         )
 
         sender._max_message_size_on_link = (
-            sender._amqp_transport.get_remote_max_message_size(sender._handler) or 256 * 1024
+            sender._amqp_transport.get_remote_max_message_size(sender._handler) or MAX_MESSAGE_LENGTH_BYTES
         )
         vendor_batch_size = sender._amqp_transport.get_remote_max_message_batch_size(sender._handler)
         if vendor_batch_size is not None:
@@ -198,7 +199,7 @@ class TestSenderBatchSizeInference:
         )
 
         sender._max_message_size_on_link = (
-            sender._amqp_transport.get_remote_max_message_size(sender._handler) or 256 * 1024
+            sender._amqp_transport.get_remote_max_message_size(sender._handler) or MAX_MESSAGE_LENGTH_BYTES
         )
         vendor_batch_size = sender._amqp_transport.get_remote_max_message_batch_size(sender._handler)
         if vendor_batch_size is not None:
