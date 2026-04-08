@@ -3,26 +3,31 @@
 # ---------------------------------------------------------
 """OpenTelemetry tracing for AgentServerHost.
 
-Tracing is automatically enabled when an Application Insights connection
-string (``APPLICATIONINSIGHTS_CONNECTION_STRING``) or an OTLP exporter
-endpoint (``OTEL_EXPORTER_OTLP_ENDPOINT``) is available.
+This module provides functions (not classes) for tracing:
 
-Requires ``opentelemetry-api`` to be installed::
+- :func:`configure_tracing` — one-time exporter setup (called by ``AgentServerHost.__init__``)
+- :func:`request_span` — create a request-scoped span with GenAI attributes
+- :func:`end_span` / :func:`record_error` — span lifecycle helpers
+- :func:`trace_stream` — wrap streaming responses with span lifecycle
 
-    pip install azure-ai-agentserver-core[tracing]
-
-If the package is not installed, tracing silently becomes a no-op.
+OpenTelemetry is a required dependency — these functions always create
+real spans.  Azure Monitor export is optional (lazy-imported).
 """
 import logging
+import os
 from collections.abc import AsyncIterable, AsyncIterator, Mapping  # pylint: disable=import-error
 from contextlib import contextmanager
 from typing import Any, Iterator, Optional, Union
 
+from opentelemetry import baggage as _otel_baggage, context as _otel_context, trace
+from opentelemetry.baggage.propagation import W3CBaggagePropagator
+from opentelemetry.propagate import composite
+from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+
 from . import _config
-from ._logger import get_logger
 
 _Content = Union[str, bytes, memoryview]
-_W3C_HEADERS = ("traceparent", "tracestate")
+_W3C_HEADERS = ("traceparent", "tracestate", "baggage")
 
 # GenAI semantic convention attribute keys
 _ATTR_SERVICE_NAME = "service.name"
@@ -40,221 +45,234 @@ _SERVICE_NAME_VALUE = "azure.ai.agentserver"
 _GEN_AI_SYSTEM_VALUE = "azure.ai.agentserver"
 _GEN_AI_PROVIDER_NAME_VALUE = "AzureAI Hosted Agents"
 
-logger = get_logger()
+logger = logging.getLogger("azure.ai.agentserver")
 
-_HAS_OTEL = False
-try:
-    from opentelemetry import trace
-    from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
-
-    _HAS_OTEL = True
-except ImportError:
-    pass
+# Composite propagator handles both traceparent/tracestate AND baggage
+_propagator = composite.CompositePropagator([
+    TraceContextTextMapPropagator(),
+    W3CBaggagePropagator(),
+])
 
 
-class TracingHelper:
-    """Lightweight wrapper around OpenTelemetry.
+# ======================================================================
+# Public API: exporter setup
+# ======================================================================
 
-    Automatically configures Azure Monitor and OTLP exporters when the
-    corresponding environment variables are set.  All span creation and
-    lifecycle is managed by the host framework -- developers never interact
-    with this class directly.
+
+def configure_tracing(connection_string: Optional[str] = None) -> None:
+    """Configure OpenTelemetry exporters for Azure Monitor and OTLP.
+
+    Called once at startup by ``AgentServerHost.__init__``.  Users may
+    pass a custom function (or ``None``) via the ``configure_tracing``
+    constructor parameter to override or disable this default setup.
+
+    :param connection_string: Application Insights connection string.
+        When provided, traces and logs are exported to Azure Monitor.
+    :type connection_string: str or None
     """
+    resource = _create_resource()
+    provider = _ensure_trace_provider(resource)
 
-    def __init__(self, connection_string: Optional[str] = None) -> None:
-        self._enabled = _HAS_OTEL
-        self._tracer: Any = None
-        self._propagator: Any = None
+    if provider is not None:
+        _register_enrichment_processor(provider)
 
-        self._agent_name = _config.resolve_agent_name()
-        self._agent_version = _config.resolve_agent_version()
-        self._project_id = _config.resolve_project_id()
+    if connection_string:
+        if resource is not None:
+            _setup_trace_export(provider, connection_string)
+            _setup_log_export(resource, connection_string)
 
-        if self._agent_name and self._agent_version:
-            self._agent_id = f"{self._agent_name}:{self._agent_version}"
-        elif self._agent_name:
-            self._agent_id = self._agent_name
-        else:
-            self._agent_id = ""
+    otlp_endpoint = _config.resolve_otlp_endpoint()
+    if otlp_endpoint and resource is not None:
+        _setup_otlp_trace_export(provider, otlp_endpoint)
+        _setup_otlp_log_export(resource, otlp_endpoint)
 
-        if not self._enabled:
-            logger.warning(
-                "Tracing was enabled but opentelemetry-api is not installed. "
-                "Install it with: pip install azure-ai-agentserver-core[tracing]"
-            )
-            return
 
-        resource = _create_resource()
-        trace_provider = _ensure_trace_provider(resource)
+# ======================================================================
+# Public API: span operations
+# ======================================================================
 
-        if trace_provider is not None:
-            trace_provider.add_span_processor(_FoundryEnrichmentSpanProcessor(
-                agent_name=self._agent_name or None,
-                agent_version=self._agent_version or None,
-                agent_id=self._agent_id or None,
-                project_id=self._project_id or None,
-            ))
 
-        if connection_string:
-            self._setup_azure_monitor(connection_string, resource, trace_provider)
+@contextmanager
+def request_span(
+    headers: Mapping[str, str],
+    request_id: str,
+    operation: str,
+    *,
+    agent_id: str = "",
+    agent_name: str = "",
+    agent_version: str = "",
+    project_id: str = "",
+    operation_name: Optional[str] = None,
+    session_id: str = "",
+    end_on_exit: bool = True,
+    instrumentation_scope: str = "Azure.AI.AgentServer",
+) -> Iterator[Any]:
+    """Create a request-scoped span with GenAI semantic convention attributes.
 
-        otlp_endpoint = _config.resolve_otlp_endpoint()
-        if otlp_endpoint:
-            self._setup_otlp_export(otlp_endpoint, resource, trace_provider)
+    Extracts W3C trace context from *headers* and creates a span set as
+    current in context (child spans are correctly parented).
 
-        self._tracer = trace.get_tracer("azure.ai.agentserver")
-        self._propagator = TraceContextTextMapPropagator()
+    For **non-streaming** requests use ``end_on_exit=True`` (default).
+    For **streaming** use ``end_on_exit=False`` and end via :func:`trace_stream`.
 
-    # ------------------------------------------------------------------
-    # Exporter configuration
-    # ------------------------------------------------------------------
+    :param headers: HTTP request headers.
+    :type headers: Mapping[str, str]
+    :param request_id: The request/invocation ID.
+    :type request_id: str
+    :param operation: Span operation (e.g. ``"invoke_agent"``).
+    :type operation: str
+    :keyword agent_id: Agent identifier (``"name:version"`` or ``"name"``).
+    :paramtype agent_id: str
+    :keyword agent_name: Agent name from FOUNDRY_AGENT_NAME.
+    :paramtype agent_name: str
+    :keyword agent_version: Agent version from FOUNDRY_AGENT_VERSION.
+    :paramtype agent_version: str
+    :keyword project_id: Foundry project ARM resource ID.
+    :paramtype project_id: str
+    :keyword operation_name: Optional ``gen_ai.operation.name`` value.
+    :paramtype operation_name: str or None
+    :keyword session_id: Session ID (empty string if absent).
+    :paramtype session_id: str
+    :keyword end_on_exit: Whether to end the span when the context exits.
+    :paramtype end_on_exit: bool
+    :keyword instrumentation_scope: OpenTelemetry instrumentation scope name.
+    :paramtype instrumentation_scope: str
+    :return: Context manager yielding the OTel span.
+    :rtype: Iterator[any]
+    """
+    tracer = trace.get_tracer(instrumentation_scope)
 
-    @staticmethod
-    def _setup_azure_monitor(connection_string: str, resource: Any, trace_provider: Any) -> None:
-        if resource is None:
-            return
-        _setup_trace_export(trace_provider, connection_string)
-        _setup_log_export(resource, connection_string)
+    # Build span name
+    name = f"{operation} {agent_id}" if agent_id else operation
 
-    @staticmethod
-    def _setup_otlp_export(endpoint: str, resource: Any, trace_provider: Any) -> None:
-        if resource is None:
-            return
-        _setup_otlp_trace_export(trace_provider, endpoint)
-        _setup_otlp_log_export(resource, endpoint)
+    # Build attributes
+    attrs: dict[str, str] = {
+        _ATTR_SERVICE_NAME: agent_name or _SERVICE_NAME_VALUE,
+        _ATTR_GEN_AI_SYSTEM: _GEN_AI_SYSTEM_VALUE,
+        _ATTR_GEN_AI_PROVIDER_NAME: _GEN_AI_PROVIDER_NAME_VALUE,
+        _ATTR_GEN_AI_RESPONSE_ID: request_id,
+        _ATTR_GEN_AI_AGENT_ID: agent_id,
+    }
+    if agent_name:
+        attrs[_ATTR_GEN_AI_AGENT_NAME] = agent_name
+    if agent_version:
+        attrs[_ATTR_GEN_AI_AGENT_VERSION] = agent_version
+    if operation_name:
+        attrs[_ATTR_GEN_AI_OPERATION_NAME] = operation_name
+    if session_id:
+        attrs[_ATTR_GEN_AI_CONVERSATION_ID] = session_id
+    if project_id:
+        attrs[_ATTR_FOUNDRY_PROJECT_ID] = project_id
 
-    # ------------------------------------------------------------------
-    # Span creation
-    # ------------------------------------------------------------------
+    # Propagate platform request correlation ID as span attribute AND baggage
+    x_request_id = headers.get("x-request-id")
+    if x_request_id:
+        attrs["x_request_id"] = x_request_id
 
-    @contextmanager
-    def request_span(
-        self,
-        headers: Mapping[str, str],
-        invocation_id: str,
-        span_operation: str,
-        operation_name: Optional[str] = None,
-        session_id: str = "",
-        end_on_exit: bool = True,
-    ) -> Iterator[Any]:
-        """Create a request-scoped span from HTTP headers.
+    # Extract W3C trace context (traceparent + tracestate + baggage)
+    carrier = _extract_w3c_carrier(headers)
+    ctx = _propagator.extract(carrier=carrier) if carrier else None
 
-        Extracts W3C trace context, builds GenAI attributes, and creates
-        a span set as current in context (child spans are correctly parented).
+    # Add x-request-id to baggage for downstream propagation
+    if x_request_id:
+        ctx = _otel_baggage.set_baggage("x_request_id", x_request_id, context=ctx)
 
-        For **non-streaming** requests use ``end_on_exit=True`` (default).
-        For **streaming** requests use ``end_on_exit=False`` and end the
-        span via :meth:`trace_stream`.
+    with tracer.start_as_current_span(
+        name=name,
+        attributes=attrs,
+        kind=trace.SpanKind.SERVER,
+        context=ctx,
+        end_on_exit=end_on_exit,
+    ) as otel_span:
+        yield otel_span
 
-        :param headers: HTTP request headers.
-        :type headers: ~collections.abc.Mapping[str, str]
-        :param invocation_id: The request/invocation ID.
-        :type invocation_id: str
-        :param span_operation: Span operation name (e.g. ``"invoke_agent"``).
-        :type span_operation: str
-        :param operation_name: Optional ``gen_ai.operation.name`` value.
-        :type operation_name: str or None
-        :param session_id: Session ID (empty string if absent).
-        :type session_id: str
-        :param end_on_exit: Whether to end the span when the context exits.
-        :type end_on_exit: bool
-        :return: Context manager yielding the OTel span or *None*.
-        :rtype: ~typing.Iterator
-        """
-        if not self._enabled or self._tracer is None:
-            yield None
-            return
 
-        # Build span name
-        name = f"{span_operation} {self._agent_id}" if self._agent_id else span_operation
+def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
+    """End a span, optionally recording an error first.
 
-        # Build attributes
-        attrs: dict[str, str] = {
-            _ATTR_SERVICE_NAME: _SERVICE_NAME_VALUE,
-            _ATTR_GEN_AI_SYSTEM: _GEN_AI_SYSTEM_VALUE,
-            _ATTR_GEN_AI_PROVIDER_NAME: _GEN_AI_PROVIDER_NAME_VALUE,
-            _ATTR_GEN_AI_RESPONSE_ID: invocation_id,
-            _ATTR_GEN_AI_AGENT_ID: self._agent_id,
-        }
-        if self._agent_name:
-            attrs[_ATTR_GEN_AI_AGENT_NAME] = self._agent_name
-        if self._agent_version:
-            attrs[_ATTR_GEN_AI_AGENT_VERSION] = self._agent_version
-        if operation_name:
-            attrs[_ATTR_GEN_AI_OPERATION_NAME] = operation_name
-        if session_id:
-            attrs[_ATTR_GEN_AI_CONVERSATION_ID] = session_id
-        if self._project_id:
-            attrs[_ATTR_FOUNDRY_PROJECT_ID] = self._project_id
+    No-op when *span* is ``None``.
 
-        # Extract W3C trace context
-        carrier = _extract_w3c_carrier(headers)
-        ctx = self._propagator.extract(carrier=carrier) if carrier else None
+    :param span: The OTel span to end, or ``None``.
+    :type span: any
+    :param exc: Optional exception to record before ending.
+    :type exc: BaseException or None
+    """
+    if span is None:
+        return
+    if exc is not None:
+        record_error(span, exc)
+    span.end()
 
-        with self._tracer.start_as_current_span(
-            name=name,
-            attributes=attrs,
-            kind=trace.SpanKind.SERVER,
-            context=ctx,
-            end_on_exit=end_on_exit,
-        ) as otel_span:
-            yield otel_span
 
-    # ------------------------------------------------------------------
-    # Span lifecycle
-    # ------------------------------------------------------------------
+def flush_spans(timeout_millis: int = 5000) -> None:
+    """Flush all pending spans from the TracerProvider.
 
-    def end_span(self, span: Any, exc: Optional[BaseException] = None) -> None:
-        """End a span, optionally recording an error first.
+    The ``BatchSpanProcessor`` buffers spans and exports them on a timer
+    (default 5 seconds).  In hosted sandbox environments the platform may
+    suspend the process immediately after an HTTP response is sent, before
+    the batch timer fires.  Calling this function after ending the request
+    span ensures that all child spans — including short-lived ones created
+    by third-party tracers (e.g. LangChain/LangGraph per-node spans) — are
+    exported before the sandbox is frozen.
 
-        :param span: The OTel span to end, or None.
-        :type span: any
-        :param exc: Optional exception to record on the span.
-        :type exc: ~BaseException or None
-        """
-        if span is None:
-            return
-        if exc is not None:
-            self.record_error(span, exc)
-        span.end()
+    No-op when the OTel SDK is not installed or the provider does not
+    support ``force_flush``.
 
-    @staticmethod
-    def record_error(span: Any, exc: BaseException) -> None:
-        """Record an exception and ERROR status on a span.
-
-        :param span: The OTel span to record the error on.
-        :type span: any
-        :param exc: The exception to record.
-        :type exc: ~BaseException
-        """
-        if span is not None and _HAS_OTEL:
-            span.set_status(trace.StatusCode.ERROR, str(exc))
-            span.record_exception(exc)
-
-    async def trace_stream(
-        self, iterator: AsyncIterable[_Content], span: Any
-    ) -> AsyncIterator[_Content]:
-        """Wrap a streaming body so the span covers the full transmission.
-
-        Yields chunks unchanged.  Ends the span when the iterator is
-        exhausted or raises an exception.
-
-        :param iterator: The async iterable to wrap.
-        :type iterator: ~collections.abc.AsyncIterable
-        :param span: The OTel span to end when the stream completes.
-        :type span: any
-        :return: An async iterator yielding chunks unchanged.
-        :rtype: ~collections.abc.AsyncIterator
-        """
-        error: Optional[BaseException] = None
+    :param timeout_millis: Maximum time to wait for the flush, in
+        milliseconds.  Defaults to 5000 (5 seconds).
+    :type timeout_millis: int
+    """
+    provider = trace.get_tracer_provider()
+    flush = getattr(provider, "force_flush", None)
+    if flush is not None:
         try:
-            async for chunk in iterator:
-                yield chunk
-        except BaseException as exc:
-            error = exc
-            raise
-        finally:
-            self.end_span(span, exc=error)
+            flush(timeout_millis)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug("TracerProvider.force_flush() failed", exc_info=True)
+
+
+def record_error(span: Any, exc: BaseException) -> None:
+    """Record an exception and ERROR status on a span.
+
+    Sets ``error.type`` and ``otel.status.description`` per OTel
+    semantic conventions.
+
+    :param span: The OTel span, or ``None``.
+    :type span: any
+    :param exc: The exception to record.
+    :type exc: BaseException
+    """
+    if span is not None:
+        span.set_status(trace.StatusCode.ERROR, str(exc))
+        span.set_attribute("error.type", type(exc).__name__)
+        span.record_exception(exc)
+
+
+async def trace_stream(
+    iterator: AsyncIterable[_Content], span: Any
+) -> AsyncIterator[_Content]:
+    """Wrap a streaming body so the span covers the full transmission.
+
+    Yields chunks unchanged.  Ends the span when the iterator is
+    exhausted or raises an exception.
+
+    :param iterator: The async iterable to wrap.
+    :type iterator: AsyncIterable[str or bytes or memoryview]
+    :param span: The OTel span to end on completion, or ``None``.
+    :type span: any
+    :return: An async iterator yielding chunks unchanged.
+    :rtype: AsyncIterator[str or bytes or memoryview]
+    """
+    error: Optional[BaseException] = None
+    try:
+        async for chunk in iterator:
+            yield chunk
+    except BaseException as exc:
+        error = exc
+        raise
+    finally:
+        end_span(span, exc=error)
+        flush_spans()
 
 
 # ======================================================================
@@ -278,17 +296,31 @@ class _FoundryEnrichmentSpanProcessor:
         self.project_id = project_id
 
     def on_start(self, span: Any, parent_context: Any = None) -> None:  # pylint: disable=unused-argument
-        if self.agent_name:
-            span.set_attribute(_ATTR_GEN_AI_AGENT_NAME, self.agent_name)
-        if self.agent_version:
-            span.set_attribute(_ATTR_GEN_AI_AGENT_VERSION, self.agent_version)
-        if self.agent_id:
-            span.set_attribute(_ATTR_GEN_AI_AGENT_ID, self.agent_id)
         if self.project_id:
             span.set_attribute(_ATTR_FOUNDRY_PROJECT_ID, self.project_id)
 
-    def _on_ending(self, span: Any) -> None:  # pylint: disable=unused-argument
-        pass
+    def _on_ending(self, span: Any) -> None:
+        # Set agent identity attributes at span end so they cannot be
+        # overwritten by underlying frameworks (e.g. LangChain, Semantic Kernel).
+        #
+        # Workaround: opentelemetry-sdk <=1.40.0 sets _end_time before calling
+        # _on_ending, which causes set_attribute() to silently no-op despite the
+        # spec requiring mutability during OnEnding.  We write to _attributes
+        # directly until the SDK is fixed.  The try/except guards against future
+        # SDK changes that may rename or remove the internal field.
+        # TODO: switch to span.set_attribute() once the SDK honours the spec.
+        attrs = getattr(span, "_attributes", None)
+        if attrs is None:
+            return
+        try:
+            if self.agent_name:
+                attrs[_ATTR_GEN_AI_AGENT_NAME] = self.agent_name
+            if self.agent_version:
+                attrs[_ATTR_GEN_AI_AGENT_VERSION] = self.agent_version
+            if self.agent_id:
+                attrs[_ATTR_GEN_AI_AGENT_ID] = self.agent_id
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug("Failed to enrich span attributes in _on_ending", exc_info=True)
 
     def on_end(self, span: Any) -> None:  # pylint: disable=unused-argument
         pass
@@ -300,8 +332,38 @@ class _FoundryEnrichmentSpanProcessor:
         return True
 
 
+class _BaggageLogRecordProcessor:
+    """OTel log record processor that copies W3C Baggage entries into log attributes.
+
+    Per container-image-spec §6.1, all baggage key-value pairs from the
+    current span context should appear as attributes on every log record
+    for end-to-end correlation.
+    """
+
+    def on_emit(self, log_data: Any) -> None:  # pylint: disable=unused-argument
+        """Copy baggage entries into the log record's attributes.
+
+        :param log_data: The log data being emitted.
+        :type log_data: any
+        """
+        try:
+            ctx = _otel_context.get_current()
+            entries = _otel_baggage.get_all(context=ctx)
+            if entries and hasattr(log_data, 'log_record') and log_data.log_record:
+                for key, value in entries.items():
+                    log_data.log_record.attributes[key] = value  # type: ignore[index]
+        except Exception:  # pylint: disable=broad-except
+            pass
+
+    def shutdown(self) -> None:
+        pass
+
+    def force_flush(self, timeout_millis: int = 30000) -> bool:  # pylint: disable=unused-argument
+        return True
+
+
 # ======================================================================
-# Infrastructure: resource, provider, exporters
+# Internal: resource, provider, exporters
 # ======================================================================
 
 
@@ -309,9 +371,12 @@ def _create_resource() -> Any:
     try:
         from opentelemetry.sdk.resources import Resource
     except ImportError:
-        logger.warning("OTel SDK not installed. pip install azure-ai-agentserver-core[tracing]")
+        logger.warning("OTel SDK not installed — tracing resource creation failed.")
         return None
-    return Resource.create({_ATTR_SERVICE_NAME: _SERVICE_NAME_VALUE})
+    # service.name maps to cloud_RoleName in App Insights
+    agent_name = os.environ.get(_config._ENV_FOUNDRY_AGENT_NAME, "")  # pylint: disable=protected-access
+    service_name = agent_name or _SERVICE_NAME_VALUE
+    return Resource.create({_ATTR_SERVICE_NAME: service_name})
 
 
 def _ensure_trace_provider(resource: Any) -> Any:
@@ -329,10 +394,33 @@ def _ensure_trace_provider(resource: Any) -> Any:
     return provider
 
 
+_enrichment_configured = False
 _az_trace_configured = False
 _az_log_configured = False
 _otlp_trace_configured = False
 _otlp_log_configured = False
+
+
+def _register_enrichment_processor(provider: Any) -> None:
+    global _enrichment_configured  # pylint: disable=global-statement
+    if _enrichment_configured:
+        return
+    agent_name = _config.resolve_agent_name() or None
+    agent_version = _config.resolve_agent_version() or None
+    project_id = _config.resolve_project_id() or None
+
+    if agent_name and agent_version:
+        agent_id = f"{agent_name}:{agent_version}"
+    elif agent_name:
+        agent_id = agent_name
+    else:
+        agent_id = None
+
+    provider.add_span_processor(_FoundryEnrichmentSpanProcessor(
+        agent_name=agent_name, agent_version=agent_version,
+        agent_id=agent_id, project_id=project_id,
+    ))
+    _enrichment_configured = True
 
 
 def _setup_trace_export(provider: Any, connection_string: str) -> None:
@@ -367,6 +455,7 @@ def _setup_log_export(resource: Any, connection_string: str) -> None:
     set_logger_provider(log_provider)
     log_provider.add_log_record_processor(BatchLogRecordProcessor(
         AzureMonitorLogExporter(connection_string=connection_string)))
+    log_provider.add_log_record_processor(_BaggageLogRecordProcessor())  # type: ignore[arg-type]
     logging.getLogger().addHandler(LoggingHandler(logger_provider=log_provider))
     _az_log_configured = True
     logger.info("Application Insights log exporter configured.")
@@ -394,7 +483,7 @@ def _setup_otlp_log_export(resource: Any, endpoint: str) -> None:
     try:
         from opentelemetry._logs import get_logger_provider
         from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
-        from opentelemetry.sdk._logs import LoggerProvider
+        from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
         from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
     except ImportError:
         logger.warning("OTLP log export requires opentelemetry-exporter-otlp-proto-grpc.")
@@ -408,6 +497,13 @@ def _setup_otlp_log_export(resource: Any, endpoint: str) -> None:
         set_logger_provider(log_provider)
     log_provider.add_log_record_processor(BatchLogRecordProcessor(
         OTLPLogExporter(endpoint=endpoint)))  # type: ignore[union-attr]
+    log_provider.add_log_record_processor(_BaggageLogRecordProcessor())  # type: ignore[arg-type]
+    # Note: LoggingHandler is NOT added here to avoid duplicating the
+    # handler already installed by _setup_log_export. The OTel LoggerProvider
+    # receives log records via the handler added there (or from direct OTel
+    # log API usage).  If OTLP is the only exporter, add a handler:
+    if not _az_log_configured:
+        logging.getLogger().addHandler(LoggingHandler(logger_provider=log_provider))
     _otlp_log_configured = True
     logger.info("OTLP log exporter configured (endpoint=%s).", endpoint)
 

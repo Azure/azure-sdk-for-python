@@ -9,27 +9,30 @@ building Azure AI Hosted Agent containers.
 Public API::
 
     from azure.ai.agentserver.core import (
-        get_logger,
+        AgentConfig,
         AgentServerHost,
-        Constants,
         create_error_response,
-        TracingHelper,
+        end_span,
+        flush_spans,
+        record_error,
+        trace_stream,
     )
 """
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from ._base import AgentServerHost
-from ._constants import Constants
+from ._config import AgentConfig
 from ._errors import create_error_response
-from ._logger import get_logger
-from ._tracing import TracingHelper
+from ._tracing import end_span, flush_spans, record_error, trace_stream
 from ._version import VERSION
 
 __all__ = [
+    "AgentConfig",
     "AgentServerHost",
-    "Constants",
     "create_error_response",
-    "get_logger",
-    "TracingHelper",
+    "end_span",
+    "flush_spans",
+    "record_error",
+    "trace_stream",
 ]
 __version__ = VERSION

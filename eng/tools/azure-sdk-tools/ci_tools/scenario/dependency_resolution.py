@@ -86,7 +86,7 @@ PLATFORM_SPECIFIC_MINIMUM_OVERRIDES = {
     },
 }
 
-PLATFORM_SPECIFIC_MAXIMUM_OVERRIDES = {}
+PLATFORM_SPECIFIC_MAXIMUM_OVERRIDES = {"<3.10.0": {"requests": "2.32.5"}}
 
 # This is used to actively _add_ requirements to the install set. These are used to actively inject
 # a new requirement specifier to the set of packages being installed.

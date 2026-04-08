@@ -25,17 +25,17 @@ steps:
       artifactFeeds: $(DevFeedName)
       onlyAddExtraIndex: false
 
-  # Disabled UV authentication step - for future enablement when UV fully supports Azure Artifacts
-  # To enable: uncomment this step and ensure UV_INDEX_URL is properly configured
-  # The PipAuthenticate task above creates a .pypirc file in the home directory that UV can use
   - pwsh: |
-      # This step configures UV to use the same authentication as pip
-      # UV will read credentials from ~/.pypirc created by PipAuthenticate task
       if ($env:PIP_INDEX_URL) {
-        Write-Host "PIP Index URL detected: $env:PIP_INDEX_URL"
-        # Uncomment the next line to enable UV authentication
-        # Write-Host "##vso[task.setvariable variable=UV_INDEX_URL]$($env:PIP_INDEX_URL)"
-        Write-Host "UV authentication is currently disabled. To enable, uncomment the variable assignment above."
+        # UV_DEFAULT_INDEX is the canonical replacement for the deprecated UV_INDEX_URL (uv 0.4.23+).
+        # PIP_INDEX_URL is set by PipAuthenticate@1 and contains embedded credentials, which uv
+        # will use for Basic auth against the ADO feed (and its PyPI upstream) per astral-sh/uv#12651.
+        Write-Host "##vso[task.setvariable variable=UV_DEFAULT_INDEX]azure-sdk=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+        # Disable keyring so uv uses the URL-embedded credentials directly.
+        Write-Host "##vso[task.setvariable variable=UV_KEYRING_PROVIDER]disabled"
+        Write-Host "##vso[task.setvariable variable=UV_INDEX_AZURE_SDK_USERNAME]x"
+        Write-Host "##vso[task.setvariable variable=UV_INDEX_AZURE_SDK_PASSWORD]$(System.AccessToken)"
+      } else {
+        Write-Host "##[warning]PIP_INDEX_URL not set - uv will fall back to public PyPI."
       }
-    displayName: 'Configure UV Authentication (Disabled)'
-    condition: false  # Explicitly disabled - change to 'true' or remove to enable
+    displayName: 'Configure UV Authentication'
