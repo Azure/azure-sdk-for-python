@@ -98,6 +98,10 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         self.code_configuration = code_configuration
         self.environment_variables = environment_variables
         self.app_insights_enabled = app_insights_enabled
+        if allowed_instance_types is not None and not isinstance(allowed_instance_types, list):
+            raise TypeError(
+                "allowed_instance_types must be a list of strings, " "e.g. ['Standard_DS3_v2', 'Standard_DS4_v2']."
+            )
         self.allowed_instance_types = allowed_instance_types
         self.default_instance_type = default_instance_type
         self.scoring_port = scoring_port

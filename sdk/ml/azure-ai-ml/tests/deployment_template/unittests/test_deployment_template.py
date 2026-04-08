@@ -232,6 +232,15 @@ class TestDeploymentTemplate:
         assert template.properties == {}
         assert template.environment_variables == {}
 
+    def test_deployment_template_allowed_instance_types_rejects_string(self):
+        """Test that allowed_instance_types raises TypeError when given a string."""
+        with pytest.raises(TypeError, match="allowed_instance_types must be a list of strings"):
+            DeploymentTemplate(
+                name="test-template",
+                version="1.0",
+                allowed_instance_types="Standard_DS2_v2,Standard_DS3_v2",
+            )
+
     def test_deployment_template_from_rest_object_none(self):
         """Test _from_rest_object with None input."""
         result = DeploymentTemplate._from_rest_object(None)
