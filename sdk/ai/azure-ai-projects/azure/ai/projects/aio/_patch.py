@@ -48,7 +48,6 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-     ~azure.core.credentials_async.AsyncTokenCredential
     :param allow_preview: Whether to enable preview features. Optional, default is False.
      Set this to True to create a Hosted Agent (using :class:`~azure.ai.projects.models.HostedAgentDefinition`)
      or a Workflow Agent (using :class:`~azure.ai.projects.models.WorkflowAgentDefinition`).

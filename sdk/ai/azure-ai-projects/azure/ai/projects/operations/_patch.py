@@ -20,6 +20,7 @@ from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._operations import (
+    BetaAgentsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
@@ -93,6 +94,8 @@ class BetaOperations(GeneratedBetaOperations):
         :attr:`beta` attribute.
     """
 
+    agents: BetaAgentsOperations
+    """:class:`~azure.ai.projects.operations.BetaAgentsOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
     """:class:`~azure.ai.projects.operations.BetaEvaluationTaxonomiesOperations` operations"""
     evaluators: BetaEvaluatorsOperations
@@ -127,6 +130,7 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
+    "BetaAgentsOperations",
     "BetaEvaluationTaxonomiesOperations",
     "BetaEvaluatorsOperations",
     "BetaInsightsOperations",
