@@ -310,6 +310,45 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(base._storage_directory, "test/path")
         mock_get_temp_dir.assert_not_called()
 
+    def test_normal_exporter_includes_http_logging_policy(self):
+        from azure.core.pipeline.policies import HttpLoggingPolicy
+
+        captured_policies = []
+        original_init = AzureMonitorClient.__init__
+
+        def capturing_init(self, *args, **kwargs):
+            captured_policies.extend(kwargs.get("policies", []))
+            original_init(self, *args, **kwargs)
+
+        with mock.patch.object(AzureMonitorClient, "__init__", capturing_init):
+            BaseExporter(
+                connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab",
+            )
+        self.assertTrue(
+            any(isinstance(p, HttpLoggingPolicy) for p in captured_policies),
+            "HttpLoggingPolicy should be present in the pipeline for normal exporters",
+        )
+
+    def test_statsbeat_exporter_excludes_http_logging_policy(self):
+        from azure.core.pipeline.policies import HttpLoggingPolicy
+
+        captured_policies = []
+        original_init = AzureMonitorClient.__init__
+
+        def capturing_init(self, *args, **kwargs):
+            captured_policies.extend(kwargs.get("policies", []))
+            original_init(self, *args, **kwargs)
+
+        with mock.patch.object(AzureMonitorClient, "__init__", capturing_init):
+            AzureMonitorMetricExporter(
+                is_sdkstats=True,
+                disable_offline_storage=True,
+            )
+        self.assertFalse(
+            any(isinstance(p, HttpLoggingPolicy) for p in captured_policies),
+            "HttpLoggingPolicy must not be present in the pipeline for statsbeat exporters",
+        )
+
     # ========================================================================
     # STORAGE TESTS
     # ========================================================================

@@ -16,7 +16,7 @@ dependencies = [
   "setuptools",
   "pyparsing",
   "certifi",
-  "cibuildwheel",
+  "cibuildwheel==2.23.3",
   "pkginfo",
   "build",
   "packaging",

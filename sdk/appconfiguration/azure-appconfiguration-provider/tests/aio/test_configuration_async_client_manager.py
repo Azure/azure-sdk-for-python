@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import time
 from unittest.mock import patch, call, MagicMock
 import pytest
 from azure.appconfiguration.provider.aio._async_client_manager import AsyncConfigurationClientManager
@@ -73,12 +72,6 @@ class TestAsyncConfigurationClientManager:
         mock_update_failover_endpoints.return_value = ["https://fake.endpoint2"]
         manager = AsyncConfigurationClientManager(connection_string, endpoint, None, "", 0, 0, True, 0, 0, False)
         await manager.refresh_clients()
-        int = 0
-        while len(manager._replica_clients) < 2:
-            if int > 30:
-                break
-            time.sleep(1)
-            int += 1
         assert len(manager._replica_clients) == 2
         mock_update_failover_endpoints.assert_called_once_with(endpoint, True)
         connection_string2 = "Endpoint=https://fake.endpoint2/;Id=fake_id;Secret=fake_secret"
@@ -127,12 +120,6 @@ class TestAsyncConfigurationClientManager:
         mock_update_failover_endpoints.return_value = ["https://fake.endpoint2"]
         manager = AsyncConfigurationClientManager(None, endpoint, "fake-credential", "", 0, 0, True, 0, 0, False)
         await manager.refresh_clients()
-        int = 0
-        while len(manager._replica_clients) < 2:
-            if int > 30:
-                break
-            time.sleep(1)
-            int += 1
         assert len(manager._replica_clients) == 2
         mock_update_failover_endpoints.assert_called_once_with(endpoint, True)
         mock_client.assert_has_calls(

@@ -24,7 +24,7 @@ import threading
 import warnings
 from concurrent.futures.thread import ThreadPoolExecutor
 from datetime import datetime
-from typing import Any, Callable, cast, Iterable, Mapping, Optional, overload, Sequence, Tuple, Union
+from typing import Any, Callable, cast, Iterable, Mapping, Optional, overload, Sequence, Tuple, Union, Dict
 from typing_extensions import Literal
 
 from azure.core import MatchConditions
@@ -105,8 +105,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 kwargs['excluded_locations'] = options['excludedLocations']
             if Constants.OperationStartTime in options:
                 kwargs[Constants.OperationStartTime] = options[Constants.OperationStartTime]
-            if "timeout" in options:
-                kwargs['timeout'] = options['timeout']
+            if Constants.Kwargs.TIMEOUT in options:
+                kwargs[Constants.Kwargs.TIMEOUT] = options[Constants.Kwargs.TIMEOUT]
+            if Constants.Kwargs.READ_TIMEOUT in options:
+                kwargs[Constants.Kwargs.READ_TIMEOUT] = options[Constants.Kwargs.READ_TIMEOUT]
         return self._get_properties(**kwargs)
 
     def _get_properties(self, **kwargs: Any) -> dict[str, Any]:
@@ -297,7 +299,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             request_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
@@ -366,6 +368,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         kwargs['max_concurrency'] = max_concurrency
         query_options = build_options(kwargs)
         self._get_properties_with_options(query_options)
+        query_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         query_options["enableCrossPartitionQuery"] = True
         query_options[Constants.TimeoutScope] = TimeoutScope.OPERATION
 
@@ -450,7 +453,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             response_hook.clear()
 
         self._get_properties_with_options(feed_options)
-        feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         items = self.client_connection.ReadItems(
             collection_link=self.container_link, feed_options=feed_options, response_hook=response_hook, **kwargs)
@@ -720,7 +723,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             change_feed_state_context["continuation"] = feed_options.pop("continuation")
 
         feed_options["changeFeedStateContext"] = change_feed_state_context
-        feed_options["containerRID"] = container_properties["_rid"]
+        feed_options[Constants.ContainerRID] = container_properties["_rid"]
 
         # populate availability_strategy
         if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
@@ -749,6 +752,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             populate_query_metrics: Optional[bool] = None,
             *,
             continuation_token_limit: Optional[int] = None,
+            full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             populate_index_metrics: Optional[bool] = None,
@@ -783,15 +787,19 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :param bool enable_scan_in_query: Allow scan on the queries which couldn't be served as
             indexing was opted out on the requested paths.
         :param bool populate_query_metrics: Enable returning query metrics in response headers.
+        :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
+            response. Valid values are positive integers.
+            A value of 0 is the same as not passing a value (default no limit).
+        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
+            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
+            across all documents in the container. When set to "Local", statistics are computed only over the subset
+            of documents within the partition key values specified in the query.
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
         :keyword bool populate_query_advice: Used to obtain the query advice to understand aspects of the query that can
             be optimized. Please note that this option will incur additional latency overhead, so it should be enabled
             when debugging queries.
-        :keyword int continuation_token_limit: The size limit in kb of the response continuation token in the query
-            response. Valid values are positive integers.
-            A value of 0 is the same as not passing a value (default no limit).
         :keyword Sequence[str] excluded_locations: Excluded locations to be skipped from preferred locations. The locations
             in this list are specified as the names of the Azure Cosmos locations like, 'West US', 'East US' and so on.
             If all preferred locations were excluded, primary/hub location will be used.
@@ -843,6 +851,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             enable_cross_partition_query: Optional[bool] = None,
             enable_scan_in_query: Optional[bool] = None,
             feed_range: dict[str, Any],
+            full_text_score_scope: Optional[Literal["Local", "Global"]] = None,
             initial_headers: Optional[dict[str, str]] = None,
             max_integrated_cache_staleness_in_ms: Optional[int] = None,
             max_item_count: Optional[int] = None,
@@ -878,6 +887,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             If all preferred locations were excluded, primary/hub location will be used.
             This excluded_location will override existing excluded_locations in client level.
         :keyword dict[str, Any] feed_range: The feed range that is used to define the scope.
+        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
+            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
+            across all documents in the container. When set to "Local", statistics are computed only over the subset
+            of documents within the partition key values specified in the query.
         :keyword dict[str, str] initial_headers: Initial headers to be sent as part of the request.
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
@@ -929,7 +942,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         ...
 
     @distributed_trace
-    def query_items(  # pylint:disable=docstring-missing-param
+    def query_items(  # pylint:disable=docstring-missing-param,too-many-statements
         self,
         *args: Any,
         **kwargs: Any
@@ -968,6 +981,10 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             None, it will perform a cross partition query. To learn more about using partition keys, see `here
             <https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/cosmos/azure-cosmos/docs/PartitionKeys.md>`_.
         :paramtype partition_key: ~azure.cosmos.partition_key.PartitionKeyType
+        :keyword Literal["Local", "Global"] full_text_score_scope: Sets the scope for computing BM25 statistics used
+            by FullTextScore in hybrid search queries. When set to "Global" (default), BM25 statistics are computed
+            across all documents in the container. When set to "Local", statistics are computed only over the subset
+            of documents within the partition key values specified in the query.
         :keyword bool populate_index_metrics: Used to obtain the index metrics to understand how the query engine used
             existing indexes and how it could use potential new indexes. Please note that this option will incur
             overhead, so it should be enabled only when debugging slow queries.
@@ -1035,6 +1052,11 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
         if utils.valid_key_value_exist(kwargs, "continuation_token_limit"):
             feed_options["responseContinuationTokenLimitInKb"] = kwargs.pop("continuation_token_limit")
+        if utils.valid_key_value_exist(kwargs, "full_text_score_scope"):
+            scope = kwargs.pop("full_text_score_scope")
+            if scope not in ("Local", "Global"):
+                raise ValueError(f"full_text_score_scope must be 'Local' or 'Global', got '{scope}'")
+            feed_options["fullTextScoreScope"] = scope
 
         # populate availability_strategy
         if (Constants.Kwargs.AVAILABILITY_STRATEGY in feed_options
@@ -1043,7 +1065,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
                 _validate_request_hedging_strategy(feed_options.pop(Constants.Kwargs.AVAILABILITY_STRATEGY))
 
         feed_options["correlatedActivityId"] = GenerateGuidId()
-        feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         # Set query with 'query' and 'parameters' from kwargs
         query_str = kwargs.pop("query", None)
@@ -1227,7 +1249,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["populateQueryMetrics"] = populate_query_metrics
 
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = self.client_connection.ReplaceItem(
             document_link=item_link,
             new_document=body,
@@ -1327,7 +1349,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             )
             request_options["populateQueryMetrics"] = populate_query_metrics
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.UpsertItem(
                 database_or_container_link=self.container_link,
@@ -1441,7 +1463,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if indexing_directive is not None:
             request_options["indexingDirective"] = indexing_directive
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         result = self.client_connection.CreateItem(
                 database_or_container_link=self.container_link, document=body, options=request_options, **kwargs)
         return result
@@ -1544,7 +1566,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             request_options["filterPredicate"] = filter_predicate
 
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         item_link = self._get_document_link(item)
         result = self.client_connection.PatchItem(
             document_link=item_link,
@@ -1636,7 +1658,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         request_options["disableAutomaticIdGeneration"] = True
         container_properties = self._get_properties_with_options(request_options)
-        request_options["containerRID"] = container_properties["_rid"]
+        request_options[Constants.ContainerRID] = container_properties["_rid"]
         return self.client_connection.Batch(
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
 
@@ -1731,7 +1753,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if post_trigger_include is not None:
             request_options["postTriggerInclude"] = post_trigger_include
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
         document_link = self._get_document_link(item)
         self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
@@ -1776,7 +1798,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        options = {"containerRID": properties["_rid"]}
+        options: Dict[str, Any] = {Constants.ContainerRID: properties["_rid"]}
+
         throughput_properties = list(self.client_connection.QueryOffers(query_spec, options, **kwargs))
 
         if response_hook:
@@ -1812,7 +1835,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             "query": "SELECT * FROM root r WHERE r.resource=@link",
             "parameters": [{"name": "@link", "value": link}],
         }
-        options = {"containerRID": properties["_rid"]}
+        options: Dict[str, Any] = {Constants.ContainerRID: properties["_rid"]}
         throughput_properties = list(self.client_connection.QueryOffers(query_spec, options, **kwargs))
         new_throughput_properties = throughput_properties[0].copy()
         _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)
@@ -1840,8 +1863,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         feed_options = build_options(kwargs)
         if max_item_count is not None:
             feed_options["maxItemCount"] = max_item_count
-        if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        self._get_properties_with_options(feed_options)
+        feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.ReadConflicts(
             collection_link=self.container_link, feed_options=feed_options, **kwargs
@@ -1887,8 +1910,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             feed_options["enableCrossPartitionQuery"] = enable_cross_partition_query
         if partition_key is not None:
             feed_options["partitionKey"] = self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            feed_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        self._get_properties_with_options(feed_options)
+        feed_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         result = self.client_connection.QueryConflicts(
             collection_link=self.container_link,
@@ -1923,8 +1946,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        self._get_properties_with_options(request_options)
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         return self.client_connection.ReadConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -1955,8 +1978,8 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         """
         request_options = build_options(kwargs)
         request_options["partitionKey"] = self._set_partition_key(partition_key)
-        if self.container_link in self.__get_client_container_caches():
-            request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        self._get_properties_with_options(request_options)
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         self.client_connection.DeleteConflict(
             conflict_link=self._get_conflict_link(conflict), options=request_options, **kwargs
@@ -2023,7 +2046,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         # regardless if partition key is valid we set it as invalid partition keys are set to a default empty value
         request_options["partitionKey"] = self._set_partition_key(partition_key)
         self._get_properties_with_options(request_options)
-        request_options["containerRID"] = self.__get_client_container_caches()[self.container_link]["_rid"]
+        request_options[Constants.ContainerRID] = self.__get_client_container_caches()[self.container_link]["_rid"]
 
         self.client_connection.DeleteAllItemsByPartitionKey(
             collection_link=self.container_link, options=request_options, **kwargs)
@@ -2050,11 +2073,16 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         if force_refresh is True:
             self.client_connection.refresh_routing_map_provider()
 
+        # Ensure container properties cache is populated so we can get the container RID.
+        self._get_properties_with_options()
+        feed_options = {Constants.ContainerRID: self.__get_client_container_caches()[self.container_link]["_rid"]}
+
         def get_next(continuation_token:str) -> list[dict[str, Any]]: # pylint: disable=unused-argument
             partition_key_ranges = \
                 self.client_connection._routing_map_provider.get_overlapping_ranges( # pylint: disable=protected-access
                     self.container_link,
                     [Range("", "FF", True, False)],  # default to full range
+                    feed_options,
                     **kwargs)
 
             feed_ranges = [FeedRangeInternalEpk(Range.PartitionKeyRangeToRange(partitionKeyRange)).to_dict()

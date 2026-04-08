@@ -1,8 +1,22 @@
 # Release History
 
-## 12.26.0b1 (Unreleased)
+## 12.27.0b1 (Unreleased)
 
 ### Features Added
+
+## 12.26.0b1 (2026-04-01)
+
+### Features Added
+- Added support for service version 2026-06-06.
+- Added support for the keyword `file_property_semantics` in `ShareClient`'s `create_directory` and `DirectoryClient`'s
+`create_directory` APIs, which specifies permissions to be configured upon directory creation.
+- Added support for the keyword `data` to `FileClient`'s `create_file` API, which specifies the
+optional initial data to be uploaded (up to 4MB).
+- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes 
+for `ShareClient`, `ShareDirectoryClient`, and `ShareFileClient`.
+
+### Other Changes
+- Consolidated the behavior of `max_concurrency=None` by defaulting to the shared `DEFAULT_MAX_CONCURRENCY` constant.
 
 ## 12.25.0b1 (2026-01-27)
 

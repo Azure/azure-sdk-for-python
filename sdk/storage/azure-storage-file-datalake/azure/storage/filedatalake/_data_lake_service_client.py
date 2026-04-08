@@ -116,8 +116,13 @@ class DataLakeServiceClient(StorageAccountHostsMixin):
         # ADLS doesn't support secondary endpoint, make sure it's empty
         self._hosts[LocationMode.SECONDARY] = ""
 
-        self._client = AzureDataLakeStorageRESTAPI(self.url, base_url=self.url, pipeline=self._pipeline)
-        self._client._config.version = get_api_version(kwargs)  # type: ignore [assignment]
+        self._api_version = get_api_version(kwargs)
+        self._client = AzureDataLakeStorageRESTAPI(
+            self.url,
+            version=self._api_version,
+            base_url=self.url,
+            pipeline=self._pipeline
+        )
 
     def __enter__(self) -> Self:
         self._client.__enter__()
