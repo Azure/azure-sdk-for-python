@@ -9,7 +9,6 @@ as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 from __future__ import annotations
 
 import logging
-import os
 import types
 from typing import Any, AsyncIterator, Callable, Optional
 
@@ -88,6 +87,20 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         # Build internal components
         runtime_options = options or ResponsesServerOptions()
+
+        # Resolve AgentConfig — used for Foundry auto-activation and
+        # merging platform env-vars (SSE keep-alive) into runtime options.
+        from azure.ai.agentserver.core._config import AgentConfig
+
+        config = AgentConfig.from_env()
+
+        # Merge SSE keep-alive from AgentConfig when the user hasn't
+        # explicitly set one via the options constructor.  AgentConfig
+        # defaults to 0 (disabled) per spec; a positive value means the
+        # platform env var SSE_KEEPALIVE_INTERVAL was explicitly set.
+        if runtime_options.sse_keep_alive_interval_seconds is None and config.sse_keepalive_interval > 0:
+            runtime_options.sse_keep_alive_interval_seconds = config.sse_keepalive_interval
+
         # SSE-specific headers (x-platform-server is handled by hosting middleware)
         sse_headers: dict[str, str] = {
             "connection": "keep-alive",
@@ -96,8 +109,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         }
 
         if provider is None:
-            project_endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT")
-            if project_endpoint:
+            if config.project_endpoint:
                 from ..store._foundry_provider import FoundryStorageProvider
                 from ..store._foundry_settings import FoundryStorageSettings
 
@@ -106,7 +118,7 @@ class ResponsesAgentServerHost(AgentServerHost):
                 except ImportError:
                     logger.warning("azure-identity not installed; Foundry auto-activation disabled")
                 else:
-                    settings = FoundryStorageSettings.from_env()
+                    settings = FoundryStorageSettings.from_endpoint(config.project_endpoint)
                     provider = FoundryStorageProvider(DefaultAzureCredential(), settings)
 
         resolved_provider: ResponseProviderProtocol = provider if provider is not None else InMemoryResponseProvider()

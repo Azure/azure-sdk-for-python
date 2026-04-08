@@ -442,7 +442,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return _error_response(exc, {})
 
         # B39: Resolve session ID
-        agent_session_id = _resolve_session_id(parsed, payload)
+        config_session_id = getattr(getattr(self._host, "config", None), "session_id", "") or ""
+        agent_session_id = _resolve_session_id(parsed, payload, env_session_id=config_session_id)
 
         ctx = self._build_execution_context(
             payload=payload,

@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-import os
 import uuid
 from copy import deepcopy
 from typing import Any, Mapping
@@ -13,7 +12,6 @@ from .._id_generator import IdGenerator
 from ..models.errors import RequestValidationError
 
 _X_AGENT_RESPONSE_ID_HEADER = "x-agent-response-id"
-_FOUNDRY_AGENT_SESSION_ID_ENV = "FOUNDRY_AGENT_SESSION_ID"
 
 _DEFAULT_AGENT_REFERENCE_NAME = "server-default-agent"
 
@@ -288,20 +286,23 @@ def _resolve_conversation_id(parsed: Any) -> str | None:
     return None
 
 
-def _resolve_session_id(parsed: Any, payload: Any) -> str:
+def _resolve_session_id(parsed: Any, payload: Any, *, env_session_id: str = "") -> str:
     """Resolve the session ID for a create-response request.
 
     **B39 — Session ID Resolution**: The library resolves ``agent_session_id``
     using the following priority chain:
 
     1. ``request.agent_session_id`` — payload field (client-supplied session affinity)
-    2. ``FOUNDRY_AGENT_SESSION_ID`` environment variable (platform-supplied)
+    2. ``env_session_id`` — platform-supplied (from ``AgentConfig.session_id``)
     3. Generated UUID (freshly generated as a string)
 
     :param parsed: Parsed ``CreateResponse`` model instance.
     :type parsed: Any
     :param payload: Raw JSON payload dict.
     :type payload: Any
+    :keyword env_session_id: Platform-supplied session ID from ``AgentConfig``
+        (sourced from ``FOUNDRY_AGENT_SESSION_ID`` env var).  Defaults to ``""``.
+    :keyword type env_session_id: str
     :returns: The resolved session ID string.
     :rtype: str
     """
@@ -314,8 +315,7 @@ def _resolve_session_id(parsed: Any, payload: Any) -> str:
     if isinstance(session_id, str) and session_id.strip():
         return session_id.strip()
 
-    # Priority 2: environment variable
-    env_session_id = os.environ.get(_FOUNDRY_AGENT_SESSION_ID_ENV, "")
+    # Priority 2: platform-supplied session ID
     if env_session_id.strip():
         return env_session_id.strip()
 

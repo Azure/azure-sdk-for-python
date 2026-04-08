@@ -264,13 +264,10 @@ def test_cancel__returns_failed_for_immediate_handler_failure() -> None:
     assert payload.get("status") == "failed"
 
 
-@pytest.mark.skip(
-    reason=(
-        "Known gap (S-024): unknown cancellation exceptions should map to"
-        " handler-error path instead of escaping as CancelledError"
-    ),
-)
+@pytest.mark.skip(reason="S-024: Starlette TestClient teardown sends spurious CancelledErrors")
 def test_cancel__unknown_cancellation_exception_is_treated_as_failed() -> None:
+    """S-024: An unknown CancelledError (not from cancel signal) should be
+    treated as a handler error, transitioning the response to failed."""
     client = _build_client(_unknown_cancellation_response_handler)
     response_id = _create_background_response(client)
     _wait_for_status(client, response_id, "failed")

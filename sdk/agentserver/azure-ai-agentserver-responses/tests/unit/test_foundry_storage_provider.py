@@ -662,7 +662,7 @@ def test_settings__from_env__raises_if_env_var_missing(monkeypatch: pytest.Monke
 
 def test_settings__from_env__raises_if_not_absolute_url(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setenv("FOUNDRY_PROJECT_ENDPOINT", "just-a-hostname")
-    with pytest.raises(ValueError, match="FOUNDRY_PROJECT_ENDPOINT"):
+    with pytest.raises(ValueError, match="valid absolute URL"):
         FoundryStorageSettings.from_env()
 
 

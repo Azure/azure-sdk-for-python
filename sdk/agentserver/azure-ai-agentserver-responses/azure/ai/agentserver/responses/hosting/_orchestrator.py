@@ -311,9 +311,8 @@ async def _run_background_non_stream(
                             )
         except asyncio.CancelledError:
             # S-024: Distinguish known cancellation (cancel_signal set) from
-            # unknown.  Unknown CancelledError (e.g. event-loop shutdown in
-            # Starlette TestClient) must be re-raised so the shielded runner
-            # catches it; transitioning to "failed" here would be wrong.
+            # unknown.  Known cancellation → transition to "cancelled".
+            # Unknown CancelledError (e.g. event-loop teardown) is re-raised.
             if cancellation_signal.is_set():
                 if record.status != "cancelled":
                     record.transition_to("cancelled")
@@ -321,8 +320,6 @@ async def _run_background_non_stream(
                     record.response_failed_before_events = True
                 record.response_created_signal.set()
                 return
-            # Unknown — re-raise; the shielded runner's except-CancelledError
-            # will swallow it and _refresh_background_status handles the rest.
             raise
         except Exception:  # pylint: disable=broad-exception-caught
             if record.status != "cancelled":

@@ -62,17 +62,12 @@ class ResponsesServerOptions:
             return value
 
         default_fetch_history_count = _parse_positive_int(
-            "AZURE_AI_RESPONSES_SERVER_DEFAULT_FETCH_HISTORY_ITEM_COUNT",
-        )
-        sse_keep_alive_interval_seconds = _parse_positive_int(
-            "AZURE_AI_RESPONSES_SERVER_SSE_KEEPALIVE_INTERVAL",
+            "DEFAULT_FETCH_HISTORY_ITEM_COUNT",
         )
 
         kwargs: dict[str, Any] = {}
         if default_fetch_history_count is not None:
             kwargs["default_fetch_history_count"] = default_fetch_history_count
-        if sse_keep_alive_interval_seconds is not None:
-            kwargs["sse_keep_alive_interval_seconds"] = sse_keep_alive_interval_seconds
 
         return cls(**kwargs)
 

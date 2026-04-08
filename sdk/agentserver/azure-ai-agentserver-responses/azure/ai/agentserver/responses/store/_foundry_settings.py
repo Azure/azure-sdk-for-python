@@ -4,11 +4,11 @@
 
 from __future__ import annotations
 
-import os
 from dataclasses import dataclass
 from urllib.parse import quote as _url_quote
 
-_PROJECT_ENDPOINT_ENV_VAR = "FOUNDRY_PROJECT_ENDPOINT"
+from azure.ai.agentserver.core._config import AgentConfig
+
 _API_VERSION = "v1"
 
 
@@ -31,17 +31,31 @@ class FoundryStorageSettings:
         :returns: A new :class:`FoundryStorageSettings` configured from the environment.
         :rtype: FoundryStorageSettings
         """
-        value = os.environ.get(_PROJECT_ENDPOINT_ENV_VAR)
-        if not value:
+        config = AgentConfig.from_env()
+        if not config.project_endpoint:
             raise EnvironmentError(
-                f"The '{_PROJECT_ENDPOINT_ENV_VAR}' environment variable is required. "
+                "The 'FOUNDRY_PROJECT_ENDPOINT' environment variable is required. "
                 "In hosted environments, the Azure AI Foundry platform must set this variable."
             )
-        if not (value.startswith("http://") or value.startswith("https://")):
+        return cls.from_endpoint(config.project_endpoint)
+
+    @classmethod
+    def from_endpoint(cls, endpoint: str) -> "FoundryStorageSettings":
+        """Create settings from an explicit project endpoint URL.
+
+        :param endpoint: Foundry project endpoint URL (e.g. ``https://myproject.foundry.azure.com``).
+        :type endpoint: str
+        :raises ValueError: If the endpoint is empty or not a valid absolute URL.
+        :returns: A new :class:`FoundryStorageSettings`.
+        :rtype: FoundryStorageSettings
+        """
+        if not endpoint:
+            raise ValueError("endpoint must be a non-empty string")
+        if not (endpoint.startswith("http://") or endpoint.startswith("https://")):
             raise ValueError(
-                f"The '{_PROJECT_ENDPOINT_ENV_VAR}' environment variable must be a valid absolute URL, got: {value!r}"
+                f"endpoint must be a valid absolute URL, got: {endpoint!r}"
             )
-        base = value.rstrip("/") + "/storage/"
+        base = endpoint.rstrip("/") + "/storage/"
         return cls(storage_base_url=base)
 
     def build_url(self, path: str, **extra_params: str) -> str:

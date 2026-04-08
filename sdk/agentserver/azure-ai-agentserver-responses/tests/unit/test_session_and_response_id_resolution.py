@@ -4,9 +4,7 @@
 
 from __future__ import annotations
 
-import os
 import uuid
-from unittest.mock import patch
 
 import pytest
 
@@ -141,39 +139,34 @@ class TestSessionIdResolution:
         assert result == "session-from-raw"
 
     def test_env_var_second_priority(self):
-        """B39 P2: FOUNDRY_AGENT_SESSION_ID env var when no payload field."""
+        """B39 P2: env_session_id (from AgentConfig) when no payload field."""
         parsed = _FakeParsed()
-        with patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": "env-session-123"}):
-            result = _resolve_session_id(parsed, {})
+        result = _resolve_session_id(parsed, {}, env_session_id="env-session-123")
         assert result == "env-session-123"
 
     def test_generated_uuid_third_priority(self):
-        """B39 P3: generated UUID when no payload field or env var."""
+        """B39 P3: generated UUID when no payload field or env_session_id."""
         parsed = _FakeParsed()
-        with patch.dict(os.environ, {}, clear=True):
-            result = _resolve_session_id(parsed, {})
+        result = _resolve_session_id(parsed, {})
         # Should be a valid UUID
         uuid.UUID(result)  # raises ValueError if invalid
 
     def test_payload_overrides_env_var(self):
-        """B39: payload field takes precedence over env var."""
+        """B39: payload field takes precedence over env_session_id."""
         parsed = _FakeParsed(agent_session_id="payload-session")
-        with patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": "env-session"}):
-            result = _resolve_session_id(parsed, {})
+        result = _resolve_session_id(parsed, {}, env_session_id="env-session")
         assert result == "payload-session"
 
     def test_empty_payload_falls_to_env(self):
-        """B39: empty/whitespace payload field falls through to env var."""
+        """B39: empty/whitespace payload field falls through to env_session_id."""
         parsed = _FakeParsed(agent_session_id="  ")
-        with patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": "env-fallback"}):
-            result = _resolve_session_id(parsed, {})
+        result = _resolve_session_id(parsed, {}, env_session_id="env-fallback")
         assert result == "env-fallback"
 
     def test_empty_env_falls_to_uuid(self):
-        """B39: empty env var falls through to generated UUID."""
+        """B39: empty env_session_id falls through to generated UUID."""
         parsed = _FakeParsed()
-        with patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": "  "}):
-            result = _resolve_session_id(parsed, {})
+        result = _resolve_session_id(parsed, {}, env_session_id="  ")
         uuid.UUID(result)
 
 
