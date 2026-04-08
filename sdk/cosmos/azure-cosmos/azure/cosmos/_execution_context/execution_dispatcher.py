@@ -37,6 +37,22 @@ from .._constants import _Constants as Constants
 
 # pylint: disable=protected-access
 
+_QUERY_PLAN_CACHE_MAX_SIZE = 256
+
+
+def _get_query_text(query):
+    """Extract the query text string from either a raw string query or a parameterized dict query.
+
+    :param query: The query, either a string or a dict with a "query" key.
+    :returns: The query text string, or None if not extractable.
+    :rtype: str or None
+    """
+    if isinstance(query, str):
+        return query
+    if isinstance(query, dict):
+        return query.get("query")
+    return None
+
 
 def _is_partitioned_execution_info(e):
     return (
@@ -84,8 +100,6 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         """
         super(_ProxyQueryExecutionContext, self).__init__(client, options)
 
-        self._execution_context = _DefaultQueryExecutionContext(client, options, fetch_function,
-                                                                resource_link=resource_link)
         self._resource_link = resource_link
         self._query = query
         self._fetch_function = fetch_function
@@ -93,6 +107,22 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         self._response_hook = response_hook
         self._raw_response_hook = raw_response_hook
         self._fetched_query_plan = False
+
+        # Check query plan cache before creating the default execution context
+        query_text = _get_query_text(query)
+        cached_plan = client._query_plan_cache.get(query_text) if query_text is not None else None
+        if cached_plan is not None:
+            client._query_plan_cache.move_to_end(query_text)
+            self._fetched_query_plan = True
+            query_execution_info = _PartitionedQueryExecutionInfo(cached_plan)
+            if isinstance(query, dict):
+                params = query.get("parameters")
+                if params is not None:
+                    query_execution_info._query_execution_info['parameters'] = params
+            self._execution_context = self._create_pipelined_execution_context(query_execution_info)
+        else:
+            self._execution_context = _DefaultQueryExecutionContext(client, options, fetch_function,
+                                                                     resource_link=resource_link)
 
     def _create_execution_context_with_query_plan(self):
         self._fetched_query_plan = True
@@ -103,6 +133,13 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
             self._options.get('excludedLocations'),
             read_timeout=self._options.get('read_timeout')
         )
+        # Cache the query plan for future use
+        query_text = _get_query_text(query_to_use)
+        if query_text is not None:
+            if len(self._client._query_plan_cache) >= _QUERY_PLAN_CACHE_MAX_SIZE:
+                self._client._query_plan_cache.popitem(last=False)
+            self._client._query_plan_cache[query_text] = query_plan
+
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan)
         qe_info = getattr(query_execution_info, "_query_execution_info", None)
         if isinstance(qe_info, dict) and isinstance(query_to_use, dict):

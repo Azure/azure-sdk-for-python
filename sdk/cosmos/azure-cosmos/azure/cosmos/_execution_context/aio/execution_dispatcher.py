@@ -29,7 +29,7 @@ from azure.cosmos._execution_context.aio import non_streaming_order_by_aggregato
 from azure.cosmos._execution_context.aio.base_execution_context import _QueryExecutionContextBase
 from azure.cosmos._execution_context.aio.base_execution_context import _DefaultQueryExecutionContext
 from azure.cosmos._execution_context.execution_dispatcher import _is_partitioned_execution_info,\
-    _is_hybrid_search_query, _verify_valid_hybrid_search_query
+    _is_hybrid_search_query, _verify_valid_hybrid_search_query, _get_query_text, _QUERY_PLAN_CACHE_MAX_SIZE
 from azure.cosmos._execution_context.query_execution_info import _PartitionedQueryExecutionInfo
 from azure.cosmos.documents import _DistinctType
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -54,8 +54,6 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         """
         super(_ProxyQueryExecutionContext, self).__init__(client, options)
 
-        self._execution_context = _DefaultQueryExecutionContext(client, options, fetch_function,
-                                                                resource_link=resource_link)
         self._resource_link = resource_link
         self._query = query
         self._fetch_function = fetch_function
@@ -63,6 +61,28 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         self._response_hook = response_hook
         self._raw_response_hook = raw_response_hook
         self._fetched_query_plan = False
+
+        # Check query plan cache - if hit, defer pipelined context creation to first iteration
+        query_text = _get_query_text(query)
+        cached_plan = client._query_plan_cache.get(query_text) if query_text is not None else None
+        if cached_plan is not None:
+            client._query_plan_cache.move_to_end(query_text)
+            self._cached_query_plan = cached_plan
+        else:
+            self._cached_query_plan = None
+            self._execution_context = _DefaultQueryExecutionContext(client, options, fetch_function,
+                                                                resource_link=resource_link)
+
+    async def _initialize_from_cache(self):
+        """Initialize pipelined execution context from a cached query plan."""
+        self._fetched_query_plan = True
+        query_execution_info = _PartitionedQueryExecutionInfo(self._cached_query_plan)
+        if isinstance(self._query, dict):
+            params = self._query.get("parameters")
+            if params is not None:
+                query_execution_info._query_execution_info['parameters'] = params
+        self._execution_context = await self._create_pipelined_execution_context(query_execution_info)
+        self._cached_query_plan = None
 
     async def _create_execution_context_with_query_plan(self):
         self._fetched_query_plan = True
@@ -73,6 +93,13 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
             self._options.get('excludedLocations'),
             read_timeout=self._options.get('read_timeout')
         )
+        # Cache the query plan for future use
+        query_text = _get_query_text(query_to_use)
+        if query_text is not None:
+            if len(self._client._query_plan_cache) >= _QUERY_PLAN_CACHE_MAX_SIZE:
+                self._client._query_plan_cache.popitem(last=False)
+            self._client._query_plan_cache[query_text] = query_plan
+
         query_execution_info = _PartitionedQueryExecutionInfo(query_plan)
         qe_info = getattr(query_execution_info, "_query_execution_info", None)
         if isinstance(qe_info, dict) and isinstance(query_to_use, dict):
@@ -90,6 +117,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :raises StopIteration: If no more result is left.
 
         """
+        if self._cached_query_plan is not None:
+            await self._initialize_from_cache()
         try:
             return await self._execution_context.__anext__()
         except CosmosHttpResponseError as e:
@@ -109,6 +138,8 @@ class _ProxyQueryExecutionContext(_QueryExecutionContextBase):  # pylint: disabl
         :return: List of results.
         :rtype: list
         """
+        if self._cached_query_plan is not None:
+            await self._initialize_from_cache()
         try:
             return await self._execution_context.fetch_next_block()
         except CosmosHttpResponseError as e:

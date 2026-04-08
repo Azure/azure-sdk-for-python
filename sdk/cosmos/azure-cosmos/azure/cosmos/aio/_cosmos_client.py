@@ -217,6 +217,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         """Instantiate a new CosmosClient."""
         auth = _build_auth(credential)
         connection_policy = _build_connection_policy(kwargs)
+        print("Initializing async client")
         self.client_connection = CosmosClientConnection(
             url_connection=url,
             auth=auth,

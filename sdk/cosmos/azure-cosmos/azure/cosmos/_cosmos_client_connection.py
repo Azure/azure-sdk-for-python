@@ -27,6 +27,7 @@ import logging
 import os
 import urllib.parse
 import uuid
+from collections import OrderedDict
 from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Callable, Any, Iterable, Mapping, Optional, Sequence, Tuple, Union, cast
 from typing_extensions import TypedDict
@@ -171,6 +172,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         self.connection_policy = connection_policy or ConnectionPolicy()
         self.partition_resolvers: dict[str, RangePartitionResolver] = {}
         self.__container_properties_cache: dict[str, dict[str, Any]] = {}
+        self._query_plan_cache: OrderedDict[str, dict[str, Any]] = OrderedDict()
         self.default_headers: dict[str, Any] = {
             http_constants.HttpHeaders.CacheControl: "no-cache",
             http_constants.HttpHeaders.Version: http_constants.Versions.CurrentVersion,
