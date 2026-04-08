@@ -144,8 +144,6 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> None: ...
@@ -157,8 +155,6 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         *,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> BlobLeaseClient: ...
@@ -177,9 +173,6 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         *,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
-        if_unmodified_since: Optional[datetime] = None,
-        etag: Optional[str] = None,
-        match_condition: Optional[MatchConditions] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> Dict[str, Union[str, datetime]]: ...

@@ -141,22 +141,9 @@ stages:
                             Get-ChildItem $esrpDirectory
                           displayName: Isolate files for ESRP Publish
 
-                        - task: EsrpRelease@9
-                          displayName: 'Publish to ESRP'
-                          inputs:
-                            ConnectedServiceName: 'Azure SDK PME Managed Identity'
-                            ClientId: '5f81938c-2544-4f1f-9251-dd9de5b8a81b'
-                            DomainTenantId: '975f013f-7f24-47e8-a7d3-abc4752bf346'
-                            UseManagedIdentity: true
-                            KeyVaultName: 'kv-azuresdk-codesign'
-                            SignCertName: 'azure-sdk-esrp-release-certificate'
-                            Intent: 'PackageDistribution'
-                            ContentType: 'PyPI'
-                            FolderLocation: $(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}
-                            Owners: $(Build.RequestedForEmail)
-                            Approvers: $(Build.RequestedForEmail)
-                            ServiceEndpointUrl: 'https://api.esrp.microsoft.com'
-                            MainPublisher: 'ESRPRELPACMANTEST'
+                        - template: /eng/pipelines/templates/steps/esrp-publish.yml
+                          parameters:
+                            targetFolder: "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
 
                       - ${{ if ne(parameters.PublicFeed, 'PyPi') }}:
                         - task: TwineAuthenticate@0
@@ -287,11 +274,11 @@ stages:
 
                 - download: current
 
-                # py2docfx requires Python >= 3.11
+                # py2docfx requires Python >= 3.12.x, match docs pipeline version specification
                 - task: UsePythonVersion@0
-                  displayName: 'Use Python 3.11'
+                  displayName: 'Use Python 3.12.x'
                   inputs:
-                    versionSpec: '3.11'
+                    versionSpec: '3.12.x'
 
                 - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
@@ -306,7 +293,6 @@ stages:
                     SparseCheckoutPaths:
                       - docs-ref-services/
                       - metadata/
-                    PackageSourceOverride: ${{parameters.PackageSourceOverride}}
 
           - job: UpdatePackageVersion
             displayName: "Update Package Version"

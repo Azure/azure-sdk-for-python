@@ -1519,6 +1519,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         assert prop.is_append_blob_sealed is None
         await copied_blob3.append_block("abc")
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_create_append_blob_with_immutability_policy(self, **kwargs):
