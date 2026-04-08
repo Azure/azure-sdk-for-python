@@ -7,9 +7,12 @@
 """
 DESCRIPTION:
     Given an AIProjectClient, this sample demonstrates how to:
-      1. Upload a local folder containing custom evaluator Python code and
-         register it as a code-based evaluator version using `evaluators.upload()`.
-      2. Create an evaluation (eval) that references the uploaded evaluator.
+      1. Upload the AzureFriendlyEvaluator code (which uses AzureOpenAI)
+         using ``evaluators.upload()``.
+      2. Create an evaluation (eval) that references the uploaded evaluator,
+         passing only ``deployment_name`` — the service automatically resolves
+         this into a ``model_config`` dict and injects it into the evaluator's
+         ``__init__``.
       3. Run the evaluation with inline data and poll for results.
 
 PREREQUISITE:
@@ -21,16 +24,15 @@ PREREQUISITE:
     5) Choose "User, group, or service principal" or "Managed Identity", add your AI Foundry project managed identity
 
 USAGE:
-    python sample_custom_eval_upload_simple.py
+    python sample_custom_eval_upload_azure_openai.py
 
     Before running the sample:
 
     pip install "azure-ai-projects>=2.0.0" azure-storage-blob python-dotenv azure-identity openai
 
     Set these environment variables with your own values:
-    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
-       Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) FOUNDRY_MODEL_NAME - Optional. The name of the model deployment to use for evaluation.
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint.
+    2) FOUNDRY_MODEL_NAME       - Required. The model deployment name in the project.
 """
 
 import os
@@ -51,7 +53,6 @@ from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import (
     CodeBasedEvaluatorDefinition,
-    TestingCriterionAzureAIEvaluator,
     EvaluatorCategory,
     EvaluatorMetric,
     EvaluatorMetricType,
@@ -63,10 +64,10 @@ from azure.ai.projects.models import (
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME")
+model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
 
-# The folder containing the AnswerLength evaluator code, relative to this sample file.
-local_upload_folder = str(Path(__file__).parent / "custom_evaluators" / "answer_length_evaluator")
+# The folder containing the AzureFriendlyEvaluator code
+evaluator_folder = str(Path(__file__).parent / "custom_evaluators" / "azure_friendly_evaluator")
 
 with (
     DefaultAzureCredential() as credential,
@@ -75,55 +76,66 @@ with (
 ):
     # ---------------------------------------------------------------
     # 1. Upload evaluator code and create evaluator version
-    #    upload() internally calls startPendingUpload to get a SAS URI,
-    #    uploads the folder contents to blob storage, then creates the
-    #    evaluator version with the blob URI.
     # ---------------------------------------------------------------
     suffix = "".join(random.choices(string.ascii_lowercase, k=5))
-    evaluator_name = f"answer_length_evaluator_{suffix}"
+    evaluator_name = f"azure_friendly_evaluator_{suffix}"
+
+    print(f"=== Step 1: Upload evaluator as '{evaluator_name}' ===\n")
+
     evaluator_version = EvaluatorVersion(
         evaluator_type=EvaluatorType.CUSTOM,
         categories=[EvaluatorCategory.QUALITY],
-        display_name="Answer Length Evaluator",
-        description="Custom evaluator to calculate length of content",
+        display_name="Azure Friendly Evaluator",
+        description="Azure-OpenAI-based evaluator that scores how friendly a response is (1-5)",
         definition=CodeBasedEvaluatorDefinition(
-            entry_point="answer_length_evaluator:AnswerLengthEvaluator",
+            entry_point="azure_friendly_evaluator:AzureFriendlyEvaluator",
             init_parameters={
                 "type": "object",
-                "properties": {},
-                "required": [],
+                "properties": {
+                    "model_config": {
+                        "type": "object",
+                        "description": "Azure OpenAI model configuration (injected by service from deployment_name)",
+                    },
+                    "threshold": {"type": "number"},
+                },
+                "required": ["model_config", "threshold"],
             },
             data_schema={
                 "type": "object",
                 "properties": {
-                    "query": {"type": "string"},
-                    "response": {"type": "string"},
+                    "query": {"type": "string", "description": "The original user query"},
+                    "response": {"type": "string", "description": "The response to evaluate for friendliness"},
                 },
                 "required": ["query", "response"],
             },
             metrics={
-                "result": EvaluatorMetric(
+                "score": EvaluatorMetric(
                     type=EvaluatorMetricType.ORDINAL,
                     desirable_direction=EvaluatorMetricDirection.INCREASE,
+                    min_value=1,
+                    max_value=5,
                 )
             },
         ),
     )
 
-    print("Uploading custom evaluator code and creating evaluator version...")
-    code_evaluator = project_client.beta.evaluators.upload(
+    azure_friendly_evaluator = project_client.beta.evaluators.upload(
         name=evaluator_name,
         evaluator_version=evaluator_version,
-        folder=local_upload_folder,
+        folder=evaluator_folder,
     )
 
-    print(f"Evaluator created: name={code_evaluator.name}, version={code_evaluator.version}")
-    print(f"Evaluator ID: {code_evaluator.id}")
-    pprint(code_evaluator)
+    print(f"Evaluator created: name={azure_friendly_evaluator.name}, version={azure_friendly_evaluator.version}")
+    print(f"Evaluator ID: {azure_friendly_evaluator.id}")
+    pprint(azure_friendly_evaluator)
 
     # ---------------------------------------------------------------
     # 2. Create an evaluation referencing the uploaded evaluator
+    #    Only deployment_name is passed — the service resolves it
+    #    into a full model_config dict for the evaluator's __init__.
     # ---------------------------------------------------------------
+    print(f"\n=== Step 2: Create evaluation ===\n")
+
     data_source_config = DataSourceConfigCustom(
         type="custom",
         item_schema={
@@ -138,17 +150,19 @@ with (
     )
 
     testing_criteria = [
-        TestingCriterionAzureAIEvaluator(
-            type="azure_ai_evaluator",
-            name=evaluator_name,
-            evaluator_name=evaluator_name,
-            initialization_parameters={},
-        )
+        {
+            "type": "azure_ai_evaluator",
+            "name": evaluator_name,
+            "evaluator_name": evaluator_name,
+            "initialization_parameters": {
+                "deployment_name": model_deployment_name,
+                "threshold": 3,
+            },
+        }
     ]
 
-    print("\nCreating evaluation...")
     eval_object = client.evals.create(
-        name=f"Answer Length Evaluation - {suffix}",
+        name=f"Azure Friendly Evaluation - {suffix}",
         data_source_config=data_source_config,
         testing_criteria=testing_criteria,  # type: ignore
     )
@@ -157,11 +171,12 @@ with (
     # ---------------------------------------------------------------
     # 3. Run the evaluation with inline data
     # ---------------------------------------------------------------
-    print("\nCreating evaluation run with inline data...")
+    print(f"\n=== Step 3: Create evaluation run ===\n")
+
     eval_run_object = client.evals.runs.create(
         eval_id=eval_object.id,
-        name=f"Answer Length Eval Run - {suffix}",
-        metadata={"team": "eval-exp", "scenario": "answer-length-v1"},
+        name=f"Azure Friendly Eval Run - {suffix}",
+        metadata={"team": "eval-exp", "scenario": "azure-friendliness-v1"},
         data_source=CreateEvalJSONLRunDataSourceParam(
             type="jsonl",
             source=SourceFileContent(
@@ -169,26 +184,26 @@ with (
                 content=[
                     SourceFileContentContent(
                         item={
-                            "query": "What is the capital of France?",
-                            "response": "Paris",
+                            "query": "How do I reset my password?",
+                            "response": "Go to settings and click reset. That's it.",
                         }
                     ),
                     SourceFileContentContent(
                         item={
-                            "query": "Explain quantum computing",
-                            "response": "Quantum computing leverages quantum mechanical phenomena like superposition and entanglement to process information in fundamentally different ways than classical computers.",
+                            "query": "I'm having trouble with my account",
+                            "response": "I'm really sorry to hear you're having trouble! I'd love to help you get this sorted out. Could you tell me a bit more about what's happening so I can assist you better?",
                         }
                     ),
                     SourceFileContentContent(
                         item={
-                            "query": "What is AI?",
-                            "response": "AI stands for Artificial Intelligence. It is a branch of computer science that aims to create intelligent machines that can perform tasks that typically require human intelligence, such as visual perception, speech recognition, decision-making, and language translation.",
+                            "query": "Can you help me?",
+                            "response": "Read the docs.",
                         }
                     ),
                     SourceFileContentContent(
                         item={
-                            "query": "Say hello",
-                            "response": "Hi!",
+                            "query": "What's the weather like today?",
+                            "response": "Great question! While I'm not a weather service, I'd be happy to suggest some wonderful weather apps that can give you accurate forecasts. Would you like some recommendations? 😊",
                         }
                     ),
                 ],
@@ -202,10 +217,12 @@ with (
     # ---------------------------------------------------------------
     # 4. Poll for evaluation run completion
     # ---------------------------------------------------------------
+    print("\n=== Step 4: Polling for results ===\n")
+
     while True:
         run = client.evals.runs.retrieve(run_id=eval_run_object.id, eval_id=eval_object.id)
         if run.status in ("completed", "failed"):
-            print(f"\nEvaluation run finished with status: {run.status}")
+            print(f"Evaluation run finished with status: {run.status}")
             output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
             pprint(output_items)
             print(f"\nEvaluation run Report URL: {run.report_url}")
@@ -213,14 +230,6 @@ with (
         time.sleep(5)
         print("Waiting for evaluation run to complete...")
 
-    # ---------------------------------------------------------------
-    # 5. Cleanup
-    # ---------------------------------------------------------------
-    print("\nCleaning up...")
-    project_client.beta.evaluators.delete_version(
-        name=code_evaluator.name,
-        version=code_evaluator.version,
-    )
-    client.evals.delete(eval_id=eval_object.id)
-    print("Cleanup done.")
-    print("\nDone - upload, eval creation, and eval run verified successfully.")
+    print("\nDone - AzureFriendlyEvaluator upload, eval creation, and eval run verified successfully.")
+    print(f"Evaluator '{azure_friendly_evaluator.name}' (version {azure_friendly_evaluator.version}) retained.")
+    print(f"Evaluation '{eval_object.name}' (id: {eval_object.id}) retained.")
