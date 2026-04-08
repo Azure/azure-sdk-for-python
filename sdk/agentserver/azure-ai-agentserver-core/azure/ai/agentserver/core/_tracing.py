@@ -430,7 +430,7 @@ def _setup_log_export(resource: Any, connection_string: str) -> None:
     set_logger_provider(log_provider)
     log_provider.add_log_record_processor(BatchLogRecordProcessor(
         AzureMonitorLogExporter(connection_string=connection_string)))
-    log_provider.add_log_record_processor(_BaggageLogRecordProcessor())
+    log_provider.add_log_record_processor(_BaggageLogRecordProcessor())  # type: ignore[arg-type]
     logging.getLogger().addHandler(LoggingHandler(logger_provider=log_provider))
     _az_log_configured = True
     logger.info("Application Insights log exporter configured.")
@@ -472,7 +472,7 @@ def _setup_otlp_log_export(resource: Any, endpoint: str) -> None:
         set_logger_provider(log_provider)
     log_provider.add_log_record_processor(BatchLogRecordProcessor(
         OTLPLogExporter(endpoint=endpoint)))  # type: ignore[union-attr]
-    log_provider.add_log_record_processor(_BaggageLogRecordProcessor())
+    log_provider.add_log_record_processor(_BaggageLogRecordProcessor())  # type: ignore[arg-type]
     # Note: LoggingHandler is NOT added here to avoid duplicating the
     # handler already installed by _setup_log_export. The OTel LoggerProvider
     # receives log records via the handler added there (or from direct OTel
