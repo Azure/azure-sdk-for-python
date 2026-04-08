@@ -4,8 +4,11 @@
 import asyncio  # pylint: disable=do-not-import-asyncio
 import contextlib
 import logging
-from collections.abc import AsyncGenerator, Awaitable, Callable  # pylint: disable=import-error
-from typing import Any, Optional
+import os
+import signal
+import sys
+from collections.abc import AsyncGenerator, AsyncIterable, AsyncIterator, Awaitable, Callable  # pylint: disable=import-error
+from typing import Any, Optional, Union
 
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
@@ -14,17 +17,19 @@ from starlette.requests import Request
 from starlette.responses import Response
 from starlette.routing import Route
 
-from . import _config
-from ._logger import get_logger
-from ._tracing import TracingHelper
+from . import _config, _tracing
+from ._version import VERSION as _CORE_VERSION
 
-logger = get_logger()
+logger = logging.getLogger("azure.ai.agentserver")
 
 # Pre-built health-check response to avoid per-request allocation.
 _HEALTHY_BODY = b'{"status":"healthy"}'
 
-# Server identity header value (name only — no version to avoid information disclosure).
-_PLATFORM_SERVER_VALUE = "azure-ai-agentserver-core"
+# Server identity header per spec: {sdk}/{version} (python/{runtime})
+_PLATFORM_SERVER_VALUE = (
+    f"azure-ai-agentserver-core/{_CORE_VERSION} "
+    f"(python/{sys.version_info.major}.{sys.version_info.minor})"
+)
 
 # Sentinel attribute name set on the console handler to prevent adding duplicates
 # across multiple AgentServerHost instantiations.
@@ -91,6 +96,7 @@ class AgentServerHost(Starlette):
         applicationinsights_connection_string: Optional[str] = None,
         graceful_shutdown_timeout: Optional[int] = None,
         log_level: Optional[str] = None,
+        configure_tracing: Optional[Callable[..., None]] = _tracing.configure_tracing,
         routes: Optional[list[Route]] = None,
         **kwargs: Any,
     ) -> None:
@@ -106,17 +112,22 @@ class AgentServerHost(Starlette):
             setattr(_console, _CONSOLE_HANDLER_ATTR, True)
             logger.addHandler(_console)
 
-        # Tracing — enabled when App Insights or OTLP endpoint is configured
-        _conn_str = _config.resolve_appinsights_connection_string(applicationinsights_connection_string)
-        _otlp_endpoint = _config.resolve_otlp_endpoint()
-        _tracing_on = bool(_conn_str or _otlp_endpoint)
-        self._tracing: Optional[TracingHelper] = None
-        if _tracing_on:
-            try:
-                self._tracing = TracingHelper(connection_string=_conn_str)
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.warning("Failed to initialize tracing; continuing without tracing.", exc_info=True)
-                self._tracing = None
+        # Suppress noisy Azure SDK and OTel exporter logs
+        logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
+        logging.getLogger("azure.monitor.opentelemetry.exporter").setLevel(logging.WARNING)
+
+        # Resolved configuration (accessible as self.config)
+        self.config: _config.AgentConfig = _config.AgentConfig.from_env()
+
+        # Tracing — overridable setup function
+        _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
+        if configure_tracing is not None:
+            _tracing_on = bool(_conn_str or self.config.otlp_endpoint)
+            if _tracing_on:
+                try:
+                    configure_tracing(connection_string=_conn_str)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning("Failed to initialize tracing; continuing without tracing.", exc_info=True)
 
         # Timeouts ---------------------------------------------------------
         self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(
@@ -165,17 +176,58 @@ class AgentServerHost(Starlette):
         )
 
     # ------------------------------------------------------------------
-    # Tracing accessor (for protocol subclasses)
+    # Tracing (for protocol subclasses)
     # ------------------------------------------------------------------
 
-    @property
-    def tracing(self) -> Optional[TracingHelper]:
-        """Return the tracing helper, or *None* when tracing is disabled.
+    #: Default instrumentation scope for tracing spans.
+    #: Protocol subclasses should override this per the spec.
+    _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer"
 
-        :return: The tracing helper instance.
-        :rtype: Optional[TracingHelper]
+    @contextlib.contextmanager
+    def request_span(
+        self,
+        headers: Any,
+        request_id: str,
+        operation: str,
+        *,
+        operation_name: Optional[str] = None,
+        session_id: str = "",
+        end_on_exit: bool = True,
+    ) -> Any:
+        """Create a request-scoped span with this host's identity attributes.
+
+        Delegates to :func:`_tracing.request_span` with pre-populated
+        agent identity from environment variables.
+
+        :param headers: HTTP request headers.
+        :type headers: any
+        :param request_id: The request/invocation ID.
+        :type request_id: str
+        :param operation: Span operation (e.g. ``"invoke_agent"``).
+        :type operation: str
+        :keyword operation_name: Optional ``gen_ai.operation.name`` value.
+        :paramtype operation_name: str or None
+        :keyword session_id: Session ID.
+        :paramtype session_id: str
+        :keyword end_on_exit: Whether to end the span when the context exits.
+        :paramtype end_on_exit: bool
+        :return: Context manager yielding the OTel span.
+        :rtype: any
         """
-        return self._tracing
+        with _tracing.request_span(
+            headers,
+            request_id,
+            operation,
+            agent_id=self.config.agent_id,
+            agent_name=self.config.agent_name,
+            agent_version=self.config.agent_version,
+            project_id=self.config.project_id,
+            operation_name=operation_name,
+            session_id=session_id,
+            end_on_exit=end_on_exit,
+            instrumentation_scope=self._INSTRUMENTATION_SCOPE,
+        ) as span:
+            yield span
 
     # ------------------------------------------------------------------
     # Shutdown handler (server-level lifecycle)
@@ -216,6 +268,8 @@ class AgentServerHost(Starlette):
         config = HypercornConfig()
         config.bind = [f"{host}:{port}"]
         config.graceful_timeout = float(self._graceful_shutdown_timeout)
+        # Spec requires HTTP/1.1 only — disable HTTP/2
+        config.h2_max_concurrent_streams = 0
         return config
 
     def run(self, host: str = "0.0.0.0", port: Optional[int] = None) -> None:
@@ -231,7 +285,24 @@ class AgentServerHost(Starlette):
         resolved_port = _config.resolve_port(port)
         logger.info("AgentServerHost starting on %s:%s", host, resolved_port)
         config = self._build_hypercorn_config(host, resolved_port)
-        asyncio.run(_hypercorn_serve(self, config))  # type: ignore[arg-type]
+
+        # Register SIGTERM handler to log the signal and initiate
+        # Hypercorn's graceful shutdown.
+        original_sigterm = signal.getsignal(signal.SIGTERM)
+
+        def _handle_sigterm(_signum: int, _frame: Any) -> None:
+            logger.info("SIGTERM received, initiating graceful shutdown")
+            # Restore the original handler so the re-raised signal is not
+            # caught by this handler again (avoids infinite recursion).
+            signal.signal(signal.SIGTERM, original_sigterm)
+            os.kill(os.getpid(), signal.SIGTERM)
+
+        signal.signal(signal.SIGTERM, _handle_sigterm)
+
+        try:
+            asyncio.run(_hypercorn_serve(self, config))  # type: ignore[arg-type]
+        finally:
+            signal.signal(signal.SIGTERM, original_sigterm)
 
     async def run_async(self, host: str = "0.0.0.0", port: Optional[int] = None) -> None:
         """Start the server asynchronously (awaitable).
@@ -261,3 +332,43 @@ class AgentServerHost(Starlette):
         :rtype: Response
         """
         return Response(_HEALTHY_BODY, media_type="application/json")
+
+    # ------------------------------------------------------------------
+    # Streaming utilities
+    # ------------------------------------------------------------------
+
+    _Content = Union[str, bytes, memoryview]
+
+    @staticmethod
+    async def sse_keepalive_stream(
+        iterator: "AsyncIterable[AgentServerHost._Content]",
+        interval: int,
+    ) -> "AsyncIterator[AgentServerHost._Content]":
+        """Interleave SSE keep-alive comment frames into a streaming body.
+
+        Emits ``b": keep-alive\\n\\n"`` whenever the upstream iterator has not
+        produced a chunk within *interval* seconds.  This prevents
+        proxies/load-balancers from closing idle connections.
+
+        :param iterator: The async iterable to wrap.
+        :type iterator: AsyncIterable[str or bytes or memoryview]
+        :param interval: Seconds between keep-alive frames. Must be > 0.
+        :type interval: int
+        :return: An async iterator with interleaved keep-alive frames.
+        :rtype: AsyncIterator[str or bytes or memoryview]
+        """
+        ait = iterator.__aiter__()
+        # Reuse the same __anext__ task across timeouts to avoid cancelling
+        # the upstream iterator when wait_for expires.
+        pending: "Optional[asyncio.Task[AgentServerHost._Content]]" = None
+        while True:
+            if pending is None:
+                pending = asyncio.ensure_future(ait.__anext__())
+            try:
+                chunk = await asyncio.wait_for(asyncio.shield(pending), timeout=interval)
+                pending = None  # consumed — create new task next iteration
+                yield chunk
+            except asyncio.TimeoutError:
+                yield b": keep-alive\n\n"
+            except StopAsyncIteration:
+                break
