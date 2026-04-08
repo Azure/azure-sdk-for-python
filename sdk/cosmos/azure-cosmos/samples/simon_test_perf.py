@@ -299,26 +299,24 @@ async def main():
         print(f"     Recall@{TOP_K}:      {best_result.recall:.4f}")
     print("═" * 80)
 
-    # ── Multiplier sweep ─────────────────────────────────────────────────────
-    if SEARCH_LIST_MULTIPLIERS and best_result:
-        print(f"\n▸ Search list multiplier sweep (concurrency={best_result.concurrency})")
+    # ── Multiplier sweep (all concurrency × all multipliers) ────────────────
+    if SEARCH_LIST_MULTIPLIERS:
+        print(f"\n▸ Search list multiplier sweep (all concurrency levels × all multipliers)")
         print()
         print(f"{'Multiplier':>12} {'Concurrency':>12} {'Queries':>10} {'Duration(s)':>12} "
               f"{'QPS':>10} {'Avg(ms)':>10} {'P50(ms)':>10} {'P95(ms)':>10} "
               f"{'P99(ms)':>10} {'Avg RU':>10} {'Recall':>10}")
         print("─" * 126)
 
-        # Default baseline
-        print_result(best_result, label="def")
-
-        for mult in SEARCH_LIST_MULTIPLIERS:
-            print(f"  ⏸ Cooling down {COOLDOWN_SECONDS}s...", flush=True)
-            await asyncio.sleep(COOLDOWN_SECONDS)
-            result = await run_at_concurrency(
-                container, best_result.concurrency, DURATION_PER_LEVEL_SECONDS,
-                test_embeddings, ground_truth, TOP_K, mult
-            )
-            print_result(result, label=str(mult))
+        for concurrency in CONCURRENCY_LEVELS:
+            for mult in SEARCH_LIST_MULTIPLIERS:
+                print(f"  ⏸ Cooling down {COOLDOWN_SECONDS}s...", flush=True)
+                await asyncio.sleep(COOLDOWN_SECONDS)
+                result = await run_at_concurrency(
+                    container, concurrency, DURATION_PER_LEVEL_SECONDS,
+                    test_embeddings, ground_truth, TOP_K, mult
+                )
+                print_result(result, label=f"{mult}x@{concurrency}")
 
         print("═" * 80)
 
