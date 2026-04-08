@@ -457,7 +457,9 @@ try:
             return handler.message_handler._link.peer_max_message_size  # pylint:disable=protected-access
 
         @staticmethod
-        def get_remote_max_message_batch_size(handler: "AMQPClient") -> "Optional[int]":
+        def get_remote_max_message_batch_size(  # pylint: disable=unused-argument
+            handler: "AMQPClient",
+        ) -> "Optional[int]":
             """
             Returns the max batch size from the vendor link property
             'com.microsoft:max-message-batch-size', or None if unavailable.

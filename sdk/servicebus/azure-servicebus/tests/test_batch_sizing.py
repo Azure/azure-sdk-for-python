@@ -210,3 +210,68 @@ class TestSenderBatchSizeInference:
             sender._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
 
         assert sender._max_batch_size_on_link == 262144
+
+
+class TestAsyncSenderBatchSizeInference:
+    """
+    Tests for the async sender's batch size inference, mirroring
+    TestSenderBatchSizeInference to ensure parity between sync and async paths.
+    """
+
+    def _create_mock_async_sender(self, max_message_size, remote_properties=None):
+        """Create a mock async sender with controllable link properties."""
+        from azure.servicebus.aio._servicebus_sender_async import ServiceBusSender as AsyncServiceBusSender
+
+        sender = MagicMock(spec=AsyncServiceBusSender)
+        sender._max_message_size_on_link = 0
+        sender._max_batch_size_on_link = 0
+        sender._running = False
+        sender._connection = None
+
+        mock_handler = MagicMock()
+        mock_handler._link.remote_max_message_size = max_message_size
+        mock_handler._link.remote_properties = remote_properties
+        sender._handler = mock_handler
+        sender._amqp_transport = PyamqpTransport
+
+        return sender
+
+    def test_async_vendor_property_overrides_tier_inference(self):
+        """Async Premium large-message: vendor batch=1MB overrides tier inference."""
+        sender = self._create_mock_async_sender(
+            max_message_size=100 * 1024 * 1024,
+            remote_properties={b"com.microsoft:max-message-batch-size": 1048576},
+        )
+
+        sender._max_message_size_on_link = (
+            sender._amqp_transport.get_remote_max_message_size(sender._handler) or MAX_MESSAGE_LENGTH_BYTES
+        )
+        vendor_batch_size = sender._amqp_transport.get_remote_max_message_batch_size(sender._handler)
+        if vendor_batch_size is not None:
+            sender._max_batch_size_on_link = vendor_batch_size
+        elif sender._max_message_size_on_link >= MAX_BATCH_SIZE_PREMIUM:
+            sender._max_batch_size_on_link = MAX_BATCH_SIZE_PREMIUM
+        else:
+            sender._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
+
+        assert sender._max_batch_size_on_link == 1048576
+
+    def test_async_fallback_to_standard_tier(self):
+        """Async Standard tier without vendor property falls back correctly."""
+        sender = self._create_mock_async_sender(
+            max_message_size=262144,
+            remote_properties={},
+        )
+
+        sender._max_message_size_on_link = (
+            sender._amqp_transport.get_remote_max_message_size(sender._handler) or MAX_MESSAGE_LENGTH_BYTES
+        )
+        vendor_batch_size = sender._amqp_transport.get_remote_max_message_batch_size(sender._handler)
+        if vendor_batch_size is not None:
+            sender._max_batch_size_on_link = vendor_batch_size
+        elif sender._max_message_size_on_link >= MAX_BATCH_SIZE_PREMIUM:
+            sender._max_batch_size_on_link = MAX_BATCH_SIZE_PREMIUM
+        else:
+            sender._max_batch_size_on_link = MAX_BATCH_SIZE_STANDARD
+
+        assert sender._max_batch_size_on_link == MAX_BATCH_SIZE_STANDARD
