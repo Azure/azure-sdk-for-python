@@ -14,8 +14,8 @@ Invalid environment variable values raise ``ValueError`` immediately so
 misconfiguration is surfaced at startup rather than silently masked.
 """
 import os
-from dataclasses import dataclass
 from typing import Optional
+from typing_extensions import Self
 
 # ======================================================================
 # Environment variable keys (internal — users access values via AgentConfig)
@@ -40,7 +40,6 @@ _DEFAULT_SSE_KEEPALIVE_INTERVAL = 15
 # ======================================================================
 
 
-@dataclass(frozen=True)
 class AgentConfig:
     """Resolved configuration for an agent server host.
 
@@ -63,19 +62,33 @@ class AgentConfig:
     :param sse_keepalive_interval: SSE keep-alive interval in seconds (0 = disabled).
     """
 
-    agent_name: str
-    agent_version: str
-    agent_id: str
-    project_endpoint: str
-    project_id: str
-    session_id: str
-    port: int
-    appinsights_connection_string: str
-    otlp_endpoint: str
-    sse_keepalive_interval: int
+    def __init__(
+        self,
+        *,
+        agent_name: str,
+        agent_version: str,
+        agent_id: str,
+        project_endpoint: str,
+        project_id: str,
+        session_id: str,
+        port: int,
+        appinsights_connection_string: str,
+        otlp_endpoint: str,
+        sse_keepalive_interval: int,
+    ) -> None:
+        self.agent_name = agent_name
+        self.agent_version = agent_version
+        self.agent_id = agent_id
+        self.project_endpoint = project_endpoint
+        self.project_id = project_id
+        self.session_id = session_id
+        self.port = port
+        self.appinsights_connection_string = appinsights_connection_string
+        self.otlp_endpoint = otlp_endpoint
+        self.sse_keepalive_interval = sse_keepalive_interval
 
     @classmethod
-    def from_env(cls) -> "AgentConfig":
+    def from_env(cls) -> Self:
         """Create an ``AgentConfig`` by reading all platform environment variables.
 
         :return: A frozen config with resolved values.

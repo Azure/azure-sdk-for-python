@@ -5,15 +5,34 @@
 import os
 from unittest import mock
 
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExporter, SpanExportResult
+from opentelemetry.sdk.resources import Resource
+
 from azure.ai.agentserver.core import AgentServerHost
 from azure.ai.agentserver.core._config import (
     resolve_agent_name,
     resolve_agent_version,
     resolve_appinsights_connection_string,
 )
+from azure.ai.agentserver.core._tracing import _FoundryEnrichmentSpanProcessor
 
 
+class _CollectorExporter(SpanExporter):
+    """In-memory span collector for tests."""
 
+    def __init__(self):
+        self.spans = []
+
+    def export(self, spans):
+        self.spans.extend(spans)
+        return SpanExportResult.SUCCESS
+
+    def shutdown(self):
+        return True
+
+    def force_flush(self, timeout_millis=30000):
+        return True
 # ------------------------------------------------------------------ #
 # Tracing enabled / disabled
 # ------------------------------------------------------------------ #
@@ -135,6 +154,88 @@ class TestConstructorConnectionString:
             configure_tracing=mock_configure,
         )
         mock_configure.assert_called_once_with(connection_string="InstrumentationKey=ctor")
+
+
+# ------------------------------------------------------------------ #
+# FoundryEnrichmentSpanProcessor: attribute timing
+# ------------------------------------------------------------------ #
+
+
+class TestFoundryEnrichmentSpanProcessor:
+    """Agent identity attributes are set in _on_ending so that underlying
+    frameworks (LangChain, Semantic Kernel, etc.) cannot overwrite them.
+
+    Tests use real OTel spans with an in-memory exporter to verify the
+    exported attributes end-to-end.
+    """
+
+    @staticmethod
+    def _create_provider(processor):
+        """Return (TracerProvider, _CollectorExporter) wired with *processor*."""
+        collector = _CollectorExporter()
+        provider = TracerProvider(resource=Resource.create({}))
+        provider.add_span_processor(processor)
+        provider.add_span_processor(SimpleSpanProcessor(collector))
+        return provider, collector
+
+    def test_agent_attrs_present_on_exported_span(self) -> None:
+        proc = _FoundryEnrichmentSpanProcessor(
+            agent_name="my-agent", agent_version="1.0",
+            agent_id="my-agent:1.0", project_id="proj-123",
+        )
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        with tracer.start_as_current_span("span"):
+            pass
+
+        attrs = dict(collector.spans[0].attributes)
+        assert attrs["gen_ai.agent.name"] == "my-agent"
+        assert attrs["gen_ai.agent.version"] == "1.0"
+        assert attrs["gen_ai.agent.id"] == "my-agent:1.0"
+        assert attrs["microsoft.foundry.project.id"] == "proj-123"
+
+    def test_agent_attrs_survive_framework_overwrite(self) -> None:
+        """A framework setting agent attrs mid-span must not win."""
+        proc = _FoundryEnrichmentSpanProcessor(
+            agent_name="my-agent", agent_version="1.0",
+            agent_id="my-agent:1.0", project_id="proj-123",
+        )
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        with tracer.start_as_current_span("span") as span:
+            span.set_attribute("gen_ai.agent.name", "framework-agent")
+            span.set_attribute("gen_ai.agent.id", "framework-agent:0.1")
+
+        attrs = dict(collector.spans[0].attributes)
+        assert attrs["gen_ai.agent.name"] == "my-agent"
+        assert attrs["gen_ai.agent.id"] == "my-agent:1.0"
+
+    def test_none_fields_are_skipped(self) -> None:
+        proc = _FoundryEnrichmentSpanProcessor(
+            agent_name=None, agent_version=None,
+            agent_id=None, project_id=None,
+        )
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        with tracer.start_as_current_span("span"):
+            pass
+
+        attrs = dict(collector.spans[0].attributes)
+        assert "gen_ai.agent.name" not in attrs
+        assert "gen_ai.agent.version" not in attrs
+        assert "gen_ai.agent.id" not in attrs
+        assert "microsoft.foundry.project.id" not in attrs
+
+    def test_no_crash_when_span_lacks_attributes(self) -> None:
+        """If the SDK changes internals, _on_ending must not raise."""
+        proc = _FoundryEnrichmentSpanProcessor(
+            agent_name="a", agent_version="1", agent_id="a:1",
+        )
+        fake_span = object()  # no _attributes at all
+        proc._on_ending(fake_span)  # should not raise
 
 
 # ------------------------------------------------------------------ #
