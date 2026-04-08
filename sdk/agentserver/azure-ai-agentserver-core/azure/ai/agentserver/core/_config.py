@@ -32,7 +32,7 @@ _ENV_OTEL_EXPORTER_OTLP_ENDPOINT = "OTEL_EXPORTER_OTLP_ENDPOINT"
 _ENV_SSE_KEEPALIVE_INTERVAL = "SSE_KEEPALIVE_INTERVAL"
 
 _DEFAULT_PORT = 8088
-_DEFAULT_SSE_KEEPALIVE_INTERVAL = 15
+_DEFAULT_SSE_KEEPALIVE_INTERVAL = 0
 
 
 # ======================================================================
@@ -292,7 +292,7 @@ def resolve_sse_keepalive_interval(interval: Optional[int] = None) -> int:
     """Resolve the SSE keep-alive interval from argument, env var, or default.
 
     Resolution order: explicit *interval* → ``SSE_KEEPALIVE_INTERVAL`` env var
-    → ``15`` (seconds).  A value of ``0`` disables keep-alive.
+    → ``0`` (seconds).  A value of ``0`` disables keep-alive.
 
     :param interval: Explicitly requested interval in seconds, or None.
     :type interval: Optional[int]
