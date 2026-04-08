@@ -117,7 +117,7 @@ class AgentServerHost(Starlette):
         logging.getLogger("azure.monitor.opentelemetry.exporter").setLevel(logging.WARNING)
 
         # Resolved configuration (accessible as self.config)
-        self.config = _config.AgentConfig.from_env()
+        self.config: _config.AgentConfig = _config.AgentConfig.from_env()
 
         # Tracing — overridable setup function
         _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
