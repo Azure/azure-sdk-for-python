@@ -41,28 +41,36 @@ class PyPIClient:
                 ca_certs=os.getenv("REQUESTS_CA_BUNDLE", None),
             )
 
+    def _pypi_http(self):
+        """Lazy PoolManager for pypi.org fallback when on AzDO backend."""
+        if not hasattr(self, "_pypi_http_pool"):
+            self._pypi_http_pool = PoolManager(
+                retries=Retry(total=3, raise_on_status=True),
+                ca_certs=os.getenv("REQUESTS_CA_BUNDLE", None),
+            )
+        return self._pypi_http_pool
+
+    def _pypi_json_request(self, path):
+        """GET from pypi.org JSON API, using the active backend's http pool if on pypi, else fallback."""
+        if self._backend == "pypi":
+            url = "{host}{path}".format(host=self._host, path=path)
+            response = self._http.request("get", url)
+        else:
+            url = "https://pypi.org{path}".format(path=path)
+            response = self._pypi_http().request("get", url)
+        return json.loads(response.data.decode("utf-8"))
+
     # ------------------------------------------------------------------
-    # PyPI-only: raw JSON endpoints
+    # PyPI JSON endpoints (fall back to pypi.org when on AzDO backend)
     # ------------------------------------------------------------------
 
     def project(self, package_name):
         if self._backend != "pypi":
             raise NotImplementedError("project() is only available against pypi.org")
-        response = self._http.request(
-            "get", "{host}/pypi/{project_name}/json".format(host=self._host, project_name=package_name)
-        )
-        return json.loads(response.data.decode("utf-8"))
+        return self._pypi_json_request("/pypi/{}/json".format(package_name))
 
     def project_release(self, package_name, version):
-        if self._backend != "pypi":
-            raise NotImplementedError("project_release() is only available against pypi.org")
-        response = self._http.request(
-            "get",
-            "{host}/pypi/{project_name}/{version}/json".format(
-                host=self._host, project_name=package_name, version=version
-            ),
-        )
-        return json.loads(response.data.decode("utf-8"))
+        return self._pypi_json_request("/pypi/{}/{}/json".format(package_name, version))
 
     # ------------------------------------------------------------------
     # Shared interface

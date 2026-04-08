@@ -103,7 +103,25 @@ class TestRetrieveVersions:
 
 
 # ---------------------------------------------------------------------------
-# PyPI-only tests (project / project_release / filter_packages_for_compatibility)
+# project_release — works on both backends (AzDO falls back to pypi.org)
+# ---------------------------------------------------------------------------
+
+
+class TestProjectRelease:
+    """Covers functions.py:888 usage of project_release() for requires_dist."""
+
+    @SKIP_IN_CI
+    def test_project_release_returns_version_info(self, client):
+        result = client.project_release(WELL_KNOWN_PACKAGE, WELL_KNOWN_VERSION)
+
+        assert result["info"]["name"] == WELL_KNOWN_PACKAGE
+        assert result["info"]["release_url"] == f"https://pypi.org/project/{WELL_KNOWN_PACKAGE}/{WELL_KNOWN_VERSION}/"
+        # requires_dist is what the mindep resolver reads
+        assert "requires_dist" in result["info"]
+
+
+# ---------------------------------------------------------------------------
+# PyPI-only tests (project / filter_packages_for_compatibility)
 # ---------------------------------------------------------------------------
 
 
@@ -122,14 +140,6 @@ class TestPyPIOnlyMethods:
         assert len(result["releases"]) > MINIMUM_EXPECTED_VERSIONS
         assert "1.25.1" in result["releases"]
         assert WELL_KNOWN_VERSION in result["releases"]
-
-    @SKIP_IN_CI
-    def test_project_release_returns_version_info(self):
-        client = PyPIClient()
-        result = client.project_release(WELL_KNOWN_PACKAGE, WELL_KNOWN_VERSION)
-
-        assert result["info"]["name"] == WELL_KNOWN_PACKAGE
-        assert result["info"]["release_url"] == f"https://pypi.org/project/{WELL_KNOWN_PACKAGE}/{WELL_KNOWN_VERSION}/"
 
     @SKIP_IN_CI
     @patch("pypi_tools.pypi.sys")
