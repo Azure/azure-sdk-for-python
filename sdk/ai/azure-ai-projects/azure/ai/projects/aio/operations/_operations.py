@@ -44,7 +44,6 @@ from ...operations._operations import (
     build_agents_get_version_request,
     build_agents_list_request,
     build_agents_list_versions_request,
-    build_agents_patch_agent_object_request,
     build_beta_agents_create_or_update_managed_identity_blueprint_request,
     build_beta_agents_create_session_request,
     build_beta_agents_delete_managed_identity_blueprint_request,
@@ -56,6 +55,7 @@ from ...operations._operations import (
     build_beta_agents_list_managed_identity_blueprints_request,
     build_beta_agents_list_session_files_request,
     build_beta_agents_list_sessions_request,
+    build_beta_agents_patch_agent_object_request,
     build_beta_agents_upload_session_file_request,
     build_beta_evaluation_taxonomies_create_request,
     build_beta_evaluation_taxonomies_delete_request,
@@ -1052,160 +1052,6 @@ class AgentsOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
-
-    @overload
-    async def patch_agent_object(
-        self,
-        agent_name: str,
-        *,
-        content_type: str = "application/merge-patch+json",
-        agent_endpoint: Optional[_models.AgentEndpoint] = None,
-        agent_card: Optional[_models.AgentCard] = None,
-        **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates an agent endpoint.
-
-        :param agent_name: The name of the agent to retrieve. Required.
-        :type agent_name: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
-        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpoint
-        :keyword agent_card: Optional agent card for the agent. Default value is None.
-        :paramtype agent_card: ~azure.ai.projects.models.AgentCard
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def patch_agent_object(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates an agent endpoint.
-
-        :param agent_name: The name of the agent to retrieve. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def patch_agent_object(
-        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates an agent endpoint.
-
-        :param agent_name: The name of the agent to retrieve. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/merge-patch+json".
-        :paramtype content_type: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def patch_agent_object(
-        self,
-        agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        agent_endpoint: Optional[_models.AgentEndpoint] = None,
-        agent_card: Optional[_models.AgentCard] = None,
-        **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates an agent endpoint.
-
-        :param agent_name: The name of the agent to retrieve. Required.
-        :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
-        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpoint
-        :keyword agent_card: Optional agent card for the agent. Default value is None.
-        :paramtype agent_card: ~azure.ai.projects.models.AgentCard
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            body = {"agent_card": agent_card, "agent_endpoint": agent_endpoint}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/merge-patch+json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_patch_agent_object_request(
-            agent_name=agent_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentDetails, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
 
 
 class EvaluationRulesOperations:
@@ -3170,6 +3016,160 @@ class BetaAgentsOperations:
         self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    async def patch_agent_object(
+        self,
+        agent_name: str,
+        *,
+        content_type: str = "application/merge-patch+json",
+        agent_endpoint: Optional[_models.AgentEndpoint] = None,
+        agent_card: Optional[_models.AgentCard] = None,
+        **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates an agent endpoint.
+
+        :param agent_name: The name of the agent to retrieve. Required.
+        :type agent_name: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
+        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpoint
+        :keyword agent_card: Optional agent card for the agent. Default value is None.
+        :paramtype agent_card: ~azure.ai.projects.models.AgentCard
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def patch_agent_object(
+        self, agent_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates an agent endpoint.
+
+        :param agent_name: The name of the agent to retrieve. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def patch_agent_object(
+        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates an agent endpoint.
+
+        :param agent_name: The name of the agent to retrieve. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/merge-patch+json".
+        :paramtype content_type: str
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def patch_agent_object(
+        self,
+        agent_name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        agent_endpoint: Optional[_models.AgentEndpoint] = None,
+        agent_card: Optional[_models.AgentCard] = None,
+        **kwargs: Any
+    ) -> _models.AgentDetails:
+        """Updates an agent endpoint.
+
+        :param agent_name: The name of the agent to retrieve. Required.
+        :type agent_name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword agent_endpoint: The endpoint configuration for the agent. Default value is None.
+        :paramtype agent_endpoint: ~azure.ai.projects.models.AgentEndpoint
+        :keyword agent_card: Optional agent card for the agent. Default value is None.
+        :paramtype agent_card: ~azure.ai.projects.models.AgentCard
+        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentDetails
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            body = {"agent_card": agent_card, "agent_endpoint": agent_endpoint}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/merge-patch+json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_agents_patch_agent_object_request(
+            agent_name=agent_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentDetails, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
 
     @overload
     async def create_session(
