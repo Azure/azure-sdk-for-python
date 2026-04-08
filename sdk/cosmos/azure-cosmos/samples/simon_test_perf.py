@@ -276,7 +276,6 @@ async def main():
 
     for i, concurrency in enumerate(CONCURRENCY_LEVELS):
         if i > 0:
-            print(f"  ⏸ Cooling down {COOLDOWN_SECONDS}s...", flush=True)
             await asyncio.sleep(COOLDOWN_SECONDS)
         result = await run_at_concurrency(
             container, concurrency, DURATION_PER_LEVEL_SECONDS,
@@ -310,7 +309,6 @@ async def main():
 
         for concurrency in CONCURRENCY_LEVELS:
             for mult in SEARCH_LIST_MULTIPLIERS:
-                print(f"  ⏸ Cooling down {COOLDOWN_SECONDS}s...", flush=True)
                 await asyncio.sleep(COOLDOWN_SECONDS)
                 result = await run_at_concurrency(
                     container, concurrency, DURATION_PER_LEVEL_SECONDS,
