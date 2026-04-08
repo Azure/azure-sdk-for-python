@@ -1,0 +1,4 @@
+directory: specification/resources/resource-manager/Microsoft.Resources/resources
+commit: 2ba37b9b44f6e5a73f736c072b24cd8f2fb1bb07
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
