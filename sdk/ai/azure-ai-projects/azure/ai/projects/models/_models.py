@@ -8858,7 +8858,7 @@ class SkillObject(_Model):
 
     :ivar skill_id: The unique identifier of the skill. Required.
     :vartype skill_id: str
-    :ivar has_blob: Whether the skill was created from a gzip blob package. Required.
+    :ivar has_blob: Whether the skill was created from a zip blob package. Required.
     :vartype has_blob: bool
     :ivar name: The unique name of the skill. Required.
     :vartype name: str
@@ -8876,7 +8876,7 @@ class SkillObject(_Model):
     skill_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique identifier of the skill. Required."""
     has_blob: bool = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Whether the skill was created from a gzip blob package. Required."""
+    """Whether the skill was created from a zip blob package. Required."""
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique name of the skill. Required."""
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])

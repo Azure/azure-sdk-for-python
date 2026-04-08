@@ -8805,9 +8805,9 @@ class BetaSkillsOperations:
 
     @distributed_trace_async
     async def create_from_package(self, body: bytes, **kwargs: Any) -> _models.SkillObject:
-        """Creates a skill from a gzip package.
+        """Creates a skill from a zip package.
 
-        :param body: The gzip package used to create the skill. Required.
+        :param body: The zip package used to create the skill. Required.
         :type body: bytes
         :return: SkillObject. The SkillObject is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SkillObject
@@ -8824,7 +8824,7 @@ class BetaSkillsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/gzip"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/zip"))
         cls: ClsType[_models.SkillObject] = kwargs.pop("cls", None)
 
         _content = body
