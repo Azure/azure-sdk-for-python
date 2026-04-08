@@ -28,9 +28,6 @@ from . import _config
 
 _Content = Union[str, bytes, memoryview]
 _W3C_HEADERS = ("traceparent", "tracestate", "baggage")
-# OTel is a required dependency (imported unconditionally above).
-# The flag is kept for forward-compat with flush_spans().
-_HAS_OTEL = True
 
 # GenAI semantic convention attribute keys
 _ATTR_SERVICE_NAME = "service.name"
