@@ -32,8 +32,6 @@ from ..._common.utils import construct_prompty_model_config, validate_model_conf
 logger = logging.getLogger(__name__)
 
 # Thresholds for response quality checks (first prompt)
-_RESPONSE_QUALITY_ABSTENTION_EXPECTED = False
-_RESPONSE_QUALITY_RELEVANCE_EXPECTED = True
 _RESPONSE_QUALITY_ANSWER_COMPLETENESS_THRESHOLD = 1.5
 
 # Thresholds for groundedness checks (second prompt)
