@@ -1,10 +1,26 @@
 # Release History
 
+## 1.16.5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed multi-turn and crescendo red team strategies producing output items identical to their baseline counterparts. The Foundry execution path was writing all strategies' conversations to a single shared JSONL file, causing each strategy to read all conversations and mislabel them. Now writes per-strategy JSONL files using PyRIT's scenario result grouping.
+
+### Other Changes
+
 ## 1.16.4 (2026-04-03)
 
 ### Features Added
 
 - Added support for evaluator `properties` passthrough in AOAI evaluation results. When an evaluator returns a `properties` dict, it is included alongside `score`, `label`, `reason`, `threshold`, and `passed` in the result object.
+
+### Bugs Fixed
+
+- Fixed stray space in `_eval_metric.value` attribute access in `_base_rai_svc_eval.py`.
 
 ## 1.16.3 (2026-04-01)
 
