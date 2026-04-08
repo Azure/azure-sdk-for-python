@@ -25,6 +25,7 @@ USAGE:
 
 import os
 import time
+from typing import Any, List
 from pprint import pprint
 from dotenv import load_dotenv
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
@@ -67,7 +68,7 @@ with (
         include_sample_schema=True,
     )
 
-    testing_criteria = [
+    testing_criteria: List[Any] = [
         TestingCriterionLabelModel(
             type="label_model",
             model=model_deployment_name,

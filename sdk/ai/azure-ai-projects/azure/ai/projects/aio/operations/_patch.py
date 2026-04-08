@@ -18,6 +18,7 @@ from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from ._operations import (
+    BetaAgentsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
@@ -38,6 +39,8 @@ class BetaOperations(GeneratedBetaOperations):
         :attr:`beta` attribute.
     """
 
+    agents: BetaAgentsOperations
+    """:class:`~azure.ai.projects.aio.operations.BetaAgentsOperations` operations"""
     evaluation_taxonomies: BetaEvaluationTaxonomiesOperations
     """:class:`~azure.ai.projects.aio.operations.BetaEvaluationTaxonomiesOperations` operations"""
     evaluators: BetaEvaluatorsOperations
@@ -72,6 +75,7 @@ class BetaOperations(GeneratedBetaOperations):
 
 __all__: List[str] = [
     "AgentsOperations",
+    "BetaAgentsOperations",
     "BetaEvaluationTaxonomiesOperations",
     "BetaEvaluatorsOperations",
     "BetaInsightsOperations",
