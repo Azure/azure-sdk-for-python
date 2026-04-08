@@ -128,6 +128,9 @@ class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint:
      azure.mgmt.appcontainers.operations.ConnectedEnvironmentsOperations
     :ivar certificates: CertificatesOperations operations
     :vartype certificates: azure.mgmt.appcontainers.operations.CertificatesOperations
+    :ivar managed_environments: ManagedEnvironmentsOperations operations
+    :vartype managed_environments:
+     azure.mgmt.appcontainers.operations.ManagedEnvironmentsOperations
     :ivar connected_environments_dapr_components: ConnectedEnvironmentsDaprComponentsOperations
      operations
     :vartype connected_environments_dapr_components:
@@ -137,9 +140,6 @@ class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint:
     :ivar connected_environments_storages: ConnectedEnvironmentsStoragesOperations operations
     :vartype connected_environments_storages:
      azure.mgmt.appcontainers.operations.ConnectedEnvironmentsStoragesOperations
-    :ivar managed_environments: ManagedEnvironmentsOperations operations
-    :vartype managed_environments:
-     azure.mgmt.appcontainers.operations.ManagedEnvironmentsOperations
     :ivar managed_certificates: ManagedCertificatesOperations operations
     :vartype managed_certificates:
      azure.mgmt.appcontainers.operations.ManagedCertificatesOperations
@@ -314,14 +314,14 @@ class ContainerAppsAPIClient(_ContainerAppsAPIClientOperationsMixin):  # pylint:
             self._client, self._config, self._serialize, self._deserialize
         )
         self.certificates = CertificatesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_environments = ManagedEnvironmentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.connected_environments_dapr_components = ConnectedEnvironmentsDaprComponentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.dapr_components = DaprComponentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.connected_environments_storages = ConnectedEnvironmentsStoragesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.managed_environments = ManagedEnvironmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.managed_certificates = ManagedCertificatesOperations(

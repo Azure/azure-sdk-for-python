@@ -31,10 +31,10 @@ from ._operations import BuildersOperations  # type: ignore
 from ._operations import BuildsOperations  # type: ignore
 from ._operations import ConnectedEnvironmentsOperations  # type: ignore
 from ._operations import CertificatesOperations  # type: ignore
+from ._operations import ManagedEnvironmentsOperations  # type: ignore
 from ._operations import ConnectedEnvironmentsDaprComponentsOperations  # type: ignore
 from ._operations import DaprComponentsOperations  # type: ignore
 from ._operations import ConnectedEnvironmentsStoragesOperations  # type: ignore
-from ._operations import ManagedEnvironmentsOperations  # type: ignore
 from ._operations import ManagedCertificatesOperations  # type: ignore
 from ._operations import DaprComponentResiliencyPoliciesOperations  # type: ignore
 from ._operations import DaprSubscriptionsOperations  # type: ignore
@@ -85,10 +85,10 @@ __all__ = [
     "BuildsOperations",
     "ConnectedEnvironmentsOperations",
     "CertificatesOperations",
+    "ManagedEnvironmentsOperations",
     "ConnectedEnvironmentsDaprComponentsOperations",
     "DaprComponentsOperations",
     "ConnectedEnvironmentsStoragesOperations",
-    "ManagedEnvironmentsOperations",
     "ManagedCertificatesOperations",
     "DaprComponentResiliencyPoliciesOperations",
     "DaprSubscriptionsOperations",

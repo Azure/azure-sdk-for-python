@@ -168,6 +168,9 @@
           "certificates": {
             "attr_type": "CertificatesOperations"
           },
+          "managed_environments": {
+            "attr_type": "ManagedEnvironmentsOperations"
+          },
           "connected_environments_dapr_components": {
             "attr_type": "ConnectedEnvironmentsDaprComponentsOperations"
           },
@@ -176,9 +179,6 @@
           },
           "connected_environments_storages": {
             "attr_type": "ConnectedEnvironmentsStoragesOperations"
-          },
-          "managed_environments": {
-            "attr_type": "ManagedEnvironmentsOperations"
           },
           "managed_certificates": {
             "attr_type": "ManagedCertificatesOperations"
@@ -71492,7 +71492,7 @@
                     "param_type": "keyword_only"
                   },
                   "java_agent": {
-                    "type": "Optional[_models.RuntimeJavaJavaAgent]",
+                    "type": "Optional[_models.RuntimeJavaAgent]",
                     "default": null,
                     "param_type": "keyword_only"
                   }
@@ -71670,7 +71670,7 @@
           "java_agent": "Optional"
         }
       },
-      "RuntimeJavaJavaAgent": {
+      "RuntimeJavaAgent": {
         "type": null,
         "methods": {
           "__init__": {
@@ -71703,7 +71703,7 @@
                     "param_type": "keyword_only"
                   },
                   "logging": {
-                    "type": "Optional[_models.RuntimeJavaJavaAgentLogging]",
+                    "type": "Optional[_models.RuntimeJavaAgentLogging]",
                     "default": null,
                     "param_type": "keyword_only"
                   }
@@ -71881,7 +71881,7 @@
           "logging": "Optional"
         }
       },
-      "RuntimeJavaJavaAgentLogging": {
+      "RuntimeJavaAgentLogging": {
         "type": null,
         "methods": {
           "__init__": {
@@ -86854,6 +86854,9 @@
           "certificates": {
             "attr_type": "CertificatesOperations"
           },
+          "managed_environments": {
+            "attr_type": "ManagedEnvironmentsOperations"
+          },
           "connected_environments_dapr_components": {
             "attr_type": "ConnectedEnvironmentsDaprComponentsOperations"
           },
@@ -86862,9 +86865,6 @@
           },
           "connected_environments_storages": {
             "attr_type": "ConnectedEnvironmentsStoragesOperations"
-          },
-          "managed_environments": {
-            "attr_type": "ManagedEnvironmentsOperations"
           },
           "managed_certificates": {
             "attr_type": "ManagedCertificatesOperations"

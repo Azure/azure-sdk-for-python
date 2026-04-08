@@ -12467,14 +12467,14 @@ class RuntimeJava(_Model):
     :ivar enable_metrics: Enable jmx core metrics for the java app.
     :vartype enable_metrics: bool
     :ivar java_agent: Diagnostic capabilities achieved by java agent.
-    :vartype java_agent: ~azure.mgmt.appcontainers.models.RuntimeJavaJavaAgent
+    :vartype java_agent: ~azure.mgmt.appcontainers.models.RuntimeJavaAgent
     """
 
     enable_metrics: Optional[bool] = rest_field(
         name="enableMetrics", visibility=["read", "create", "update", "delete", "query"]
     )
     """Enable jmx core metrics for the java app."""
-    java_agent: Optional["_models.RuntimeJavaJavaAgent"] = rest_field(
+    java_agent: Optional["_models.RuntimeJavaAgent"] = rest_field(
         name="javaAgent", visibility=["read", "create", "update", "delete", "query"]
     )
     """Diagnostic capabilities achieved by java agent."""
@@ -12484,7 +12484,7 @@ class RuntimeJava(_Model):
         self,
         *,
         enable_metrics: Optional[bool] = None,
-        java_agent: Optional["_models.RuntimeJavaJavaAgent"] = None,
+        java_agent: Optional["_models.RuntimeJavaAgent"] = None,
     ) -> None: ...
 
     @overload
@@ -12498,18 +12498,18 @@ class RuntimeJava(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuntimeJavaJavaAgent(_Model):
+class RuntimeJavaAgent(_Model):
     """Diagnostic capabilities achieved by java agent.
 
     :ivar enabled: Enable java agent injection for the java app.
     :vartype enabled: bool
     :ivar logging: Capabilities on the java logging scenario.
-    :vartype logging: ~azure.mgmt.appcontainers.models.RuntimeJavaJavaAgentLogging
+    :vartype logging: ~azure.mgmt.appcontainers.models.RuntimeJavaAgentLogging
     """
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Enable java agent injection for the java app."""
-    logging: Optional["_models.RuntimeJavaJavaAgentLogging"] = rest_field(
+    logging: Optional["_models.RuntimeJavaAgentLogging"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Capabilities on the java logging scenario."""
@@ -12519,7 +12519,7 @@ class RuntimeJavaJavaAgent(_Model):
         self,
         *,
         enabled: Optional[bool] = None,
-        logging: Optional["_models.RuntimeJavaJavaAgentLogging"] = None,
+        logging: Optional["_models.RuntimeJavaAgentLogging"] = None,
     ) -> None: ...
 
     @overload
@@ -12533,7 +12533,7 @@ class RuntimeJavaJavaAgent(_Model):
         super().__init__(*args, **kwargs)
 
 
-class RuntimeJavaJavaAgentLogging(_Model):
+class RuntimeJavaAgentLogging(_Model):
     """Capabilities on the java logging scenario.
 
     :ivar logger_settings: Settings of the logger for the java app.
