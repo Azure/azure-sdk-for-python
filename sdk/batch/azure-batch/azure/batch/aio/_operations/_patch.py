@@ -1086,8 +1086,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         job_id: str,
         task_collection: List[_models.BatchTaskCreateOptions],
-        max_concurrency: int = 0,
         *,
+        max_concurrency: int = 0,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
