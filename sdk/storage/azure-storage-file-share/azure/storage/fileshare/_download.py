@@ -9,7 +9,7 @@ import threading
 import warnings
 from io import BytesIO
 from typing import (
-    Any, Callable, Generator, IO, Literal, Iterator, Optional, Tuple, Union,
+    Any, Callable, Generator, IO, Iterator, Optional, Tuple,
     TYPE_CHECKING
 )
 
@@ -18,7 +18,7 @@ from azure.core.tracing.common import with_current_context
 from ._shared.request_handlers import validate_and_format_range_headers
 from ._shared.response_handlers import parse_length_from_content_range, process_storage_error
 from ._shared.constants import DEFAULT_MAX_CONCURRENCY
-from ._shared.validation import is_md5_validation
+from ._shared.validation import is_md5_validation, CV_TYPE, CV_TYPE_PARSED
 
 if TYPE_CHECKING:
     from ._generated.operations import FileOperations
@@ -44,7 +44,7 @@ class _ChunkDownloader:  # pylint: disable=too-many-instance-attributes
         current_progress: int,
         start_range: int,
         end_range: int,
-        validate_content: Optional[Union[bool, Literal['crc64', 'md5']]],
+        validate_content: CV_TYPE_PARSED,
         etag: str,
         stream: Any = None,
         parallel: Optional[int] = None,
@@ -220,7 +220,7 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
         config: "StorageConfiguration" = None,  # type: ignore [assignment]
         start_range: Optional[int] = None,
         end_range: Optional[int] = None,
-        validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]] = None,
+        validate_content: CV_TYPE_PARSED = None,
         max_concurrency: Optional[int] = None,
         name: str = None,  # type: ignore [assignment]
         path: str = None,  # type: ignore [assignment]

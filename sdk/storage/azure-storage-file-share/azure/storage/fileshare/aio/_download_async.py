@@ -13,7 +13,7 @@ from io import BytesIO
 from itertools import islice
 from typing import (
     Any, AsyncIterator, Awaitable, Callable,
-    cast, Generator, IO, Literal, Optional, Tuple, Union,
+    cast, Generator, IO, Optional, Tuple,
     TYPE_CHECKING
 )
 
@@ -22,7 +22,7 @@ from .._download import _ChunkDownloader
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import parse_length_from_content_range, process_storage_error
 from .._shared.constants import DEFAULT_MAX_CONCURRENCY
-from .._shared.validation import is_md5_validation
+from .._shared.validation import is_md5_validation, CV_TYPE_PARSED
 
 if TYPE_CHECKING:
     from .._generated.aio.operations import FileOperations
@@ -179,7 +179,7 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
         config: "StorageConfiguration" = None,  # type: ignore [assignment]
         start_range: Optional[int] = None,
         end_range: Optional[int] = None,
-        validate_content: Optional[Union[bool, Literal['crc64', 'md5']]] = None,
+        validate_content: CV_TYPE_PARSED = None,
         max_concurrency: Optional[int] = None,
         name: str = None,  # type: ignore [assignment]
         path: str = None,  # type: ignore [assignment]

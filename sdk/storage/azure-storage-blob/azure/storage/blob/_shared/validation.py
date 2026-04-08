@@ -15,6 +15,9 @@ from azure.core import CaseInsensitiveEnumMeta
 CRC64_LENGTH = 8
 CV_TYPE_ERROR_MSG = "Data should be bytes or seekable IO[bytes] for content validation."
 
+CV_TYPE = Optional[Union[bool, Literal["auto", "crc64", "md5"]]]
+CV_TYPE_PARSED = Optional[Union[bool, Literal["crc64", "md5"]]]
+
 
 class ChecksumAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AUTO = "auto"
@@ -37,8 +40,8 @@ def _verify_extensions(module: str) -> None:
 
 
 def parse_validation_option(
-    validate_content: Optional[Union[bool, Literal["auto", "crc64", "md5"]]],
-) -> Optional[Union[bool, Literal["auto", "crc64", "md5"]]]:
+    validate_content: CV_TYPE,
+) -> CV_TYPE_PARSED:
     if validate_content is None:
         return None
 
@@ -56,11 +59,11 @@ def parse_validation_option(
     if validate_content == ChecksumAlgorithm.CRC64:
         _verify_extensions("crc64")
 
-    return validate_content
+    return cast(CV_TYPE_PARSED, validate_content)
 
 
 def is_md5_validation(
-    validate_content: Optional[Union[bool, Literal["md5", "crc64"]]],
+    validate_content: CV_TYPE_PARSED,
 ) -> bool:
     if validate_content is None:
         return False

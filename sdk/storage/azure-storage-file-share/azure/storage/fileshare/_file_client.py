@@ -45,7 +45,7 @@ from ._shared.constants import DEFAULT_MAX_CONCURRENCY
 from ._shared.request_handlers import add_metadata_headers, get_length
 from ._shared.response_handlers import return_response_headers, process_storage_error
 from ._shared.uploads import IterStreamer, FileChunkUploader, upload_data_chunks
-from ._shared.validation import parse_validation_option
+from ._shared.validation import CV_TYPE_PARSED, parse_validation_option
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -59,7 +59,7 @@ def _upload_file_helper(
     size: Optional[int],
     metadata: Optional[Dict[str, str]],
     content_settings: Optional["ContentSettings"],
-    validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]],
+    validate_content: CV_TYPE_PARSED,
     timeout: Optional[int],
     max_concurrency: int,
     file_settings: "StorageConfiguration",
