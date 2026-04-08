@@ -16,6 +16,10 @@ if TYPE_CHECKING:
 from ._models import (  # type: ignore
     AADAuthTypeConnectionProperties,
     AbusePenalty,
+    AcceleratorDeployment,
+    AcceleratorDeploymentProperties,
+    AcceleratorDeploymentProvisioningDetails,
+    AcceleratorDeploymentRoutes,
     AccessKeyAuthTypeConnectionProperties,
     Account,
     AccountKeyAuthTypeConnectionProperties,
@@ -293,6 +297,10 @@ from ._patch import patch_sdk as _patch_sdk
 __all__ = [
     "AADAuthTypeConnectionProperties",
     "AbusePenalty",
+    "AcceleratorDeployment",
+    "AcceleratorDeploymentProperties",
+    "AcceleratorDeploymentProvisioningDetails",
+    "AcceleratorDeploymentRoutes",
     "AccessKeyAuthTypeConnectionProperties",
     "Account",
     "AccountKeyAuthTypeConnectionProperties",

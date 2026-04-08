@@ -34,6 +34,7 @@ from ._operations import ProjectConnectionsOperations  # type: ignore
 from ._operations import ProjectCapabilityHostsOperations  # type: ignore
 from ._operations import QuotaTiersOperations  # type: ignore
 from ._operations import AgentApplicationsOperations  # type: ignore
+from ._operations import AcceleratorDeploymentsOperations  # type: ignore
 from ._operations import ComputeOperationsOperations  # type: ignore
 from ._operations import PrivateLinkResourcesOperations  # type: ignore
 from ._operations import TestRaiExternalSafetyProviderOperations  # type: ignore
@@ -80,6 +81,7 @@ __all__ = [
     "ProjectCapabilityHostsOperations",
     "QuotaTiersOperations",
     "AgentApplicationsOperations",
+    "AcceleratorDeploymentsOperations",
     "ComputeOperationsOperations",
     "PrivateLinkResourcesOperations",
     "TestRaiExternalSafetyProviderOperations",

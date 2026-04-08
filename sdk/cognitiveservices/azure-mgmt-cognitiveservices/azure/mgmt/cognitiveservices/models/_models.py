@@ -312,6 +312,271 @@ class AbusePenalty(_Model):
         super().__init__(*args, **kwargs)
 
 
+class Resource(_Model):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    """
+
+
+class AcceleratorDeployment(ProxyResource):
+    """Cognitive Services account accelerator deployment, backed by managed compute (GPU) resources.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
+    :ivar properties: Properties of the Cognitive Services accelerator deployment.
+    :vartype properties: ~azure.mgmt.cognitiveservices.models.AcceleratorDeploymentProperties
+    :ivar sku: The resource model definition representing SKU.
+    :vartype sku: ~azure.mgmt.cognitiveservices.models.Sku
+    :ivar etag: Resource Etag.
+    :vartype etag: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    """
+
+    properties: Optional["_models.AcceleratorDeploymentProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Properties of the Cognitive Services accelerator deployment."""
+    sku: Optional["_models.Sku"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The resource model definition representing SKU."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """Resource Etag."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update"])
+    """Resource tags."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.AcceleratorDeploymentProperties"] = None,
+        sku: Optional["_models.Sku"] = None,
+        tags: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcceleratorDeploymentProperties(_Model):
+    """Properties of a Cognitive Services accelerator deployment.
+
+    :ivar model: AzureML Registry model asset URI. Required on creation; immutable after creation.
+     Example: azureml://registries/{registry}/models/{model}/versions/{version}.
+    :vartype model: str
+    :ivar deployment_template: AzureML Registry deployment template URI. Required on creation.
+     Example: azureml://registries/{registry}/deploymenttemplates/{template}/versions/{version}.
+    :vartype deployment_template: str
+    :ivar accelerator_type: Accelerator type (e.g., H100_80GB). Required on creation; immutable
+     after creation.
+    :vartype accelerator_type: str
+    :ivar version_upgrade_option: Template auto-upgrade policy. Defaults to
+     OnceNewDefaultVersionAvailable. Known values are: "OnceNewDefaultVersionAvailable",
+     "OnceCurrentVersionExpired", and "NoAutoUpgrade".
+    :vartype version_upgrade_option: str or
+     ~azure.mgmt.cognitiveservices.models.DeploymentModelVersionUpgradeOption
+    :ivar accelerators_per_instance: Read-only. Number of accelerators (GPUs) consumed by each
+     model instance, sourced from the deployment template.
+    :vartype accelerators_per_instance: int
+    :ivar total_accelerators: Read-only. Total accelerators allocated: sku.capacity (instances) x
+     acceleratorsPerInstance.
+    :vartype total_accelerators: int
+    :ivar provisioning_state: Read-only. Current provisioning state. Known values are: "Accepted",
+     "Creating", "Deleting", "Moving", "Failed", "Succeeded", "Canceled", and "ResolvingDNS".
+    :vartype provisioning_state: str or ~azure.mgmt.cognitiveservices.models.ProvisioningState
+    :ivar provisioning_details: Read-only. Status message and timestamp from the last provisioning
+     operation.
+    :vartype provisioning_details:
+     ~azure.mgmt.cognitiveservices.models.AcceleratorDeploymentProvisioningDetails
+    :ivar routes: Read-only. Inference route paths relative to the account endpoint. Populated when
+     provisioningState is Succeeded.
+    :vartype routes: ~azure.mgmt.cognitiveservices.models.AcceleratorDeploymentRoutes
+    """
+
+    model: Optional[str] = rest_field(visibility=["read", "create"])
+    """AzureML Registry model asset URI. Required on creation; immutable after creation. Example:
+     azureml://registries/{registry}/models/{model}/versions/{version}."""
+    deployment_template: Optional[str] = rest_field(name="deploymentTemplate", visibility=["read", "create"])
+    """AzureML Registry deployment template URI. Required on creation. Example:
+     azureml://registries/{registry}/deploymenttemplates/{template}/versions/{version}."""
+    accelerator_type: Optional[str] = rest_field(name="acceleratorType", visibility=["read", "create"])
+    """Accelerator type (e.g., H100_80GB). Required on creation; immutable after creation."""
+    version_upgrade_option: Optional[Union[str, "_models.DeploymentModelVersionUpgradeOption"]] = rest_field(
+        name="versionUpgradeOption", visibility=["read", "create", "update"]
+    )
+    """Template auto-upgrade policy. Defaults to OnceNewDefaultVersionAvailable. Known values are:
+     \"OnceNewDefaultVersionAvailable\", \"OnceCurrentVersionExpired\", and \"NoAutoUpgrade\"."""
+    accelerators_per_instance: Optional[int] = rest_field(name="acceleratorsPerInstance", visibility=["read"])
+    """Read-only. Number of accelerators (GPUs) consumed by each model instance, sourced from the
+     deployment template."""
+    total_accelerators: Optional[int] = rest_field(name="totalAccelerators", visibility=["read"])
+    """Read-only. Total accelerators allocated: sku.capacity (instances) x acceleratorsPerInstance."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """Read-only. Current provisioning state. Known values are: \"Accepted\", \"Creating\",
+     \"Deleting\", \"Moving\", \"Failed\", \"Succeeded\", \"Canceled\", and \"ResolvingDNS\"."""
+    provisioning_details: Optional["_models.AcceleratorDeploymentProvisioningDetails"] = rest_field(
+        name="provisioningDetails", visibility=["read"]
+    )
+    """Read-only. Status message and timestamp from the last provisioning operation."""
+    routes: Optional["_models.AcceleratorDeploymentRoutes"] = rest_field(visibility=["read"])
+    """Read-only. Inference route paths relative to the account endpoint. Populated when
+     provisioningState is Succeeded."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model: Optional[str] = None,
+        deployment_template: Optional[str] = None,
+        accelerator_type: Optional[str] = None,
+        version_upgrade_option: Optional[Union[str, "_models.DeploymentModelVersionUpgradeOption"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcceleratorDeploymentProvisioningDetails(_Model):
+    """Provisioning status details for an accelerator deployment.
+
+    :ivar message: A human-readable status message from the last provisioning operation.
+    :vartype message: str
+    :ivar last_operation_timestamp: Timestamp of the last provisioning operation.
+    :vartype last_operation_timestamp: ~datetime.datetime
+    """
+
+    message: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """A human-readable status message from the last provisioning operation."""
+    last_operation_timestamp: Optional[datetime.datetime] = rest_field(
+        name="lastOperationTimestamp", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """Timestamp of the last provisioning operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        message: Optional[str] = None,
+        last_operation_timestamp: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class AcceleratorDeploymentRoutes(_Model):
+    """Inference route paths for an accelerator deployment, relative to the account endpoint.
+    Populated when provisioningState is Succeeded.
+
+    :ivar chat_completions_scoring_path: Relative path to the chat completions scoring endpoint.
+    :vartype chat_completions_scoring_path: str
+    :ivar swagger: Relative path to the Swagger/OpenAPI endpoint.
+    :vartype swagger: str
+    :ivar messages_api_scoring_path: Relative path to the messages API scoring endpoint.
+    :vartype messages_api_scoring_path: str
+    """
+
+    chat_completions_scoring_path: Optional[str] = rest_field(
+        name="chatCompletionsScoringPath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Relative path to the chat completions scoring endpoint."""
+    swagger: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Relative path to the Swagger/OpenAPI endpoint."""
+    messages_api_scoring_path: Optional[str] = rest_field(
+        name="messagesApiScoringPath", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Relative path to the messages API scoring endpoint."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        chat_completions_scoring_path: Optional[str] = None,
+        swagger: Optional[str] = None,
+        messages_api_scoring_path: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AccessKeyAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminator="AccessKey"):
     """AccessKeyAuthTypeConnectionProperties.
 
@@ -403,34 +668,6 @@ class AccessKeyAuthTypeConnectionProperties(ConnectionPropertiesV2, discriminato
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.auth_type = ConnectionAuthType.ACCESS_KEY  # type: ignore
-
-
-class Resource(_Model):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
 class Account(Resource):
@@ -1091,23 +1328,6 @@ class AccountSkuListResult(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class ProxyResource(Resource):
-    """Proxy Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.cognitiveservices.models.SystemData
-    """
 
 
 class AgentApplication(ProxyResource):

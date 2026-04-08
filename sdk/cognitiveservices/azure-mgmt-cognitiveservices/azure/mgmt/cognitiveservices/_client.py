@@ -20,6 +20,7 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from ._configuration import CognitiveServicesManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
+    AcceleratorDeploymentsOperations,
     AccountCapabilityHostsOperations,
     AccountConnectionsOperations,
     AccountsOperations,
@@ -124,6 +125,9 @@ class CognitiveServicesManagementClient(
     :ivar agent_applications: AgentApplicationsOperations operations
     :vartype agent_applications:
      azure.mgmt.cognitiveservices.operations.AgentApplicationsOperations
+    :ivar accelerator_deployments: AcceleratorDeploymentsOperations operations
+    :vartype accelerator_deployments:
+     azure.mgmt.cognitiveservices.operations.AcceleratorDeploymentsOperations
     :ivar compute_operations: ComputeOperationsOperations operations
     :vartype compute_operations:
      azure.mgmt.cognitiveservices.operations.ComputeOperationsOperations
@@ -180,7 +184,7 @@ class CognitiveServicesManagementClient(
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword api_version: The API version to use for this operation. Known values are
-     "2026-01-15-preview". Default value is "2026-01-15-preview". Note that overriding this default
+     "2026-03-15-preview". Default value is "2026-03-15-preview". Note that overriding this default
      value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -277,6 +281,9 @@ class CognitiveServicesManagementClient(
         )
         self.quota_tiers = QuotaTiersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.agent_applications = AgentApplicationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.accelerator_deployments = AcceleratorDeploymentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.compute_operations = ComputeOperationsOperations(
