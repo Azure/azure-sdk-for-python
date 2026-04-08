@@ -119,7 +119,7 @@ class _QueryExecutionContextBase(object):
         :rtype: list
         """
         fetched_items = []
-        new_options = copy.deepcopy(self._options)
+        new_options = dict(self._options)
         while self._continuation or not self._has_started:
             new_options["continuation"] = self._continuation
 
