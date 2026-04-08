@@ -2,7 +2,229 @@
 
 ## 4.1.0b1 (2026-04-08)
 
-skip changelog generation
+### Features Added
+
+  - Client `ContainerAppsAPIClient` added method `send_request`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_builds`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_functions`
+  - Client `ContainerAppsAPIClient` added operation group `functions_extension`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_label_history`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_patches`
+  - Client `ContainerAppsAPIClient` added operation group `dot_net_components`
+  - Client `ContainerAppsAPIClient` added operation group `builders`
+  - Client `ContainerAppsAPIClient` added operation group `builds`
+  - Client `ContainerAppsAPIClient` added operation group `dapr_component_resiliency_policies`
+  - Client `ContainerAppsAPIClient` added operation group `dapr_subscriptions`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_builds_by_container_app`
+  - Client `ContainerAppsAPIClient` added operation group `container_apps_revision_functions`
+  - Client `ContainerAppsAPIClient` added operation group `app_resiliency`
+  - Client `ContainerAppsAPIClient` added operation group `builds_by_builder_resource`
+  - Client `ContainerAppsAPIClient` added operation group `build_auth_token`
+  - Enum `ActiveRevisionsMode` added member `LABELS`
+  - Model `BaseContainer` added property `image_type`
+  - Model `BlobStorageTokenStore` added property `blob_container_uri`
+  - Model `BlobStorageTokenStore` added property `client_id`
+  - Model `BlobStorageTokenStore` added property `managed_identity_resource_id`
+  - Model `CertificateProperties` added property `certificate_type`
+  - Model `Configuration` added property `target_label`
+  - Model `Configuration` added property `revision_transition_threshold`
+  - Model `ConnectedEnvironmentStorageProperties` added property `smb`
+  - Model `Container` added property `image_type`
+  - Model `ContainerResources` added property `gpu`
+  - Enum `ContainerType` added member `NODE_LTS`
+  - Enum `ContainerType` added member `SHELL`
+  - Model `GithubActionConfiguration` added property `dockerfile_path`
+  - Model `GithubActionConfiguration` added property `build_environment_variables`
+  - Model `HttpRouteTarget` added property `weight`
+  - Model `Ingress` added property `target_port_http_scheme`
+  - Model `InitContainer` added property `image_type`
+  - Enum `JavaComponentType` added member `NACOS`
+  - Enum `JavaComponentType` added member `SPRING_CLOUD_GATEWAY`
+  - Model `Job` added property `extended_location`
+  - Model `JobExecution` added property `system_data`
+  - Model `JobPatchProperties` added property `extended_location`
+  - Model `LogAnalyticsConfiguration` added property `dynamic_json_columns`
+  - Model `MaintenanceConfigurationResource` added property `properties`
+  - Model `ReplicaContainer` added property `debug_endpoint`
+  - Model `Runtime` added property `dotnet`
+  - Model `RuntimeJava` added property `java_agent`
+  - Model `ServiceBind` added property `client_type`
+  - Model `ServiceBind` added property `customized_keys`
+  - Model `SessionContainer` added property `probes`
+  - Enum `StorageType` added member `SMB`
+  - Model `Usage` added property `unit`
+  - Model `WorkloadProfile` added property `enable_fips`
+  - Added model `AppInsightsConfiguration`
+  - Added model `AppResiliency`
+  - Added model `AppResiliencyProperties`
+  - Added model `BuildConfiguration`
+  - Added model `BuildProperties`
+  - Added enum `BuildProvisioningState`
+  - Added model `BuildResource`
+  - Added enum `BuildStatus`
+  - Added model `BuildToken`
+  - Added model `BuilderProperties`
+  - Added enum `BuilderProvisioningState`
+  - Added model `BuilderResource`
+  - Added model `BuilderResourceUpdate`
+  - Added model `BuilderResourceUpdateProperties`
+  - Added enum `CertificateType`
+  - Added model `CircuitBreakerPolicy`
+  - Added model `ContainerAppPropertiesPatchingConfiguration`
+  - Added model `ContainerAppsBuildConfiguration`
+  - Added model `ContainerAppsBuildProperties`
+  - Added model `ContainerAppsBuildResource`
+  - Added model `ContainerAppsFunction`
+  - Added model `ContainerAppsFunctionProperties`
+  - Added model `ContainerAppsPatchResource`
+  - Added model `ContainerExecutionStatus`
+  - Added model `ContainerRegistry`
+  - Added model `ContainerRegistryWithCustomImage`
+  - Added model `DaprComponentResiliencyPolicy`
+  - Added model `DaprComponentResiliencyPolicyCircuitBreakerPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyHttpRetryBackOffConfiguration`
+  - Added model `DaprComponentResiliencyPolicyHttpRetryPolicyConfiguration`
+  - Added model `DaprComponentResiliencyPolicyProperties`
+  - Added model `DaprComponentResiliencyPolicyTimeoutPolicyConfiguration`
+  - Added model `DaprComponentServiceBinding`
+  - Added model `DaprServiceBindMetadata`
+  - Added model `DaprSubscription`
+  - Added model `DaprSubscriptionBulkSubscribeOptions`
+  - Added model `DaprSubscriptionProperties`
+  - Added model `DaprSubscriptionRouteRule`
+  - Added model `DaprSubscriptionRoutes`
+  - Added model `DataDogConfiguration`
+  - Added model `DestinationsConfiguration`
+  - Added enum `DetectionStatus`
+  - Added model `DiskEncryptionConfiguration`
+  - Added model `DiskEncryptionConfigurationKeyVaultConfiguration`
+  - Added model `DiskEncryptionConfigurationKeyVaultConfigurationAuth`
+  - Added model `DotNetComponent`
+  - Added model `DotNetComponentConfigurationProperty`
+  - Added model `DotNetComponentProperties`
+  - Added enum `DotNetComponentProvisioningState`
+  - Added model `DotNetComponentServiceBind`
+  - Added enum `DotNetComponentType`
+  - Added model `EnvironmentVariable`
+  - Added model `ExecutionStatus`
+  - Added model `Header`
+  - Added model `HeaderMatch`
+  - Added model `HeaderMatchMatch`
+  - Added model `HttpConnectionPool`
+  - Added model `HttpGet`
+  - Added model `HttpRetryPolicy`
+  - Added model `HttpRetryPolicyMatches`
+  - Added model `HttpRetryPolicyRetryBackOff`
+  - Added enum `ImageType`
+  - Added enum `IngressTargetPortHttpScheme`
+  - Added enum `JobRunningState`
+  - Added model `LabelHistory`
+  - Added model `LabelHistoryProperties`
+  - Added model `LabelHistoryRecordItem`
+  - Added enum `Level`
+  - Added model `LoggerSetting`
+  - Added enum `LogicAppsProxyMethod`
+  - Added model `LogsConfiguration`
+  - Added model `McpServerCredential`
+  - Added model `McpServerSettings`
+  - Added model `MetricsConfiguration`
+  - Added model `NacosComponent`
+  - Added model `Object`
+  - Added model `OpenTelemetryConfiguration`
+  - Added model `OtlpConfiguration`
+  - Added enum `PatchApplyStatus`
+  - Added model `PatchDetails`
+  - Added model `PatchDetailsNewLayer`
+  - Added model `PatchDetailsOldLayer`
+  - Added model `PatchProperties`
+  - Added model `PatchSkipConfig`
+  - Added enum `PatchType`
+  - Added enum `PatchingMode`
+  - Added model `PreBuildStep`
+  - Added model `ReplicaExecutionStatus`
+  - Added model `RuntimeDotnet`
+  - Added model `RuntimeJavaAgent`
+  - Added model `RuntimeJavaAgentLogging`
+  - Added model `ScgRoute`
+  - Added model `ScheduledEntries`
+  - Added model `SessionProbe`
+  - Added model `SessionProbeHttpGet`
+  - Added model `SessionProbeHttpGetHttpHeadersItem`
+  - Added model `SessionProbeTcpSocket`
+  - Added enum `SessionProbeType`
+  - Added model `SmbStorage`
+  - Added model `SpringCloudGatewayComponent`
+  - Added enum `Status`
+  - Added model `TcpConnectionPool`
+  - Added model `TcpRetryPolicy`
+  - Added model `TemplatePoolStatus`
+  - Added model `TemplateStatus`
+  - Added model `TemplateUpdateStatus`
+  - Added model `TimeoutPolicy`
+  - Added model `TracesConfiguration`
+  - Added model `WorkflowArtifacts`
+  - Model `ContainerAppsSessionPoolsOperations` added method `fetch_mcp_server_credentials`
+  - Model `ContainerAppsSessionPoolsOperations` added method `rotate_mcp_server_credentials`
+  - Model `ContainerAppsSourceControlsOperations` added parameter `x_ms_github_auxiliary` in method `begin_create_or_update`
+  - Model `ContainerAppsSourceControlsOperations` added parameter `x_ms_github_auxiliary` in method `begin_delete`
+  - Model `ContainerAppsSourceControlsOperations` added parameter `ignore_workflow_deletion_failure` in method `begin_delete`
+  - Model `ContainerAppsSourceControlsOperations` added parameter `delete_workflow` in method `begin_delete`
+  - Model `JobsOperations` added method `begin_resume`
+  - Model `JobsOperations` added method `begin_suspend`
+  - Model `LogicAppsOperations` added method `deploy_workflow_artifacts`
+  - Model `LogicAppsOperations` added method `invoke`
+  - Added model `AppResiliencyOperations`
+  - Added model `BuildAuthTokenOperations`
+  - Added model `BuildersOperations`
+  - Added model `BuildsByBuilderResourceOperations`
+  - Added model `BuildsOperations`
+  - Added model `ContainerAppsBuildsByContainerAppOperations`
+  - Added model `ContainerAppsBuildsOperations`
+  - Added model `ContainerAppsFunctionsOperations`
+  - Added model `ContainerAppsLabelHistoryOperations`
+  - Added model `ContainerAppsPatchesOperations`
+  - Added model `ContainerAppsRevisionFunctionsOperations`
+  - Added model `DaprComponentResiliencyPoliciesOperations`
+  - Added model `DaprSubscriptionsOperations`
+  - Added model `DotNetComponentsOperations`
+  - Added model `FunctionsExtensionOperations`
+
+### Breaking Changes
+
+  - Method `BaseContainer.__init__` removed default value `None` from its parameter `args`
+  - Method `BaseContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Method `Container.__init__` removed default value `None` from its parameter `args`
+  - Method `Container.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Method `InitContainer.__init__` removed default value `None` from its parameter `args`
+  - Method `InitContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Method `JobExecutionContainer.__init__` removed default value `None` from its parameter `args`
+  - Method `JobExecutionContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Model `MaintenanceConfigurationResource` deleted or renamed its instance variable `scheduled_entries`
+  - Method `SessionContainer.__init__` removed default value `None` from its parameter `args`
+  - Method `SessionContainer.__init__` changed its parameter `args` from `keyword_only` to `var_positional`
+  - Deleted or renamed model `AuthConfigCollection`
+  - Deleted or renamed model `AvailableOperations`
+  - Deleted or renamed model `AvailableWorkloadProfilesCollection`
+  - Deleted or renamed model `CertificateCollection`
+  - Deleted or renamed model `ConnectedEnvironmentCollection`
+  - Deleted or renamed model `ContainerAppCollection`
+  - Deleted or renamed model `DaprComponentsCollection`
+  - Deleted or renamed model `HttpRouteConfigCollection`
+  - Deleted or renamed model `JavaComponentsCollection`
+  - Deleted or renamed model `JobExecutionNamesCollection`
+  - Deleted or renamed model `JobsCollection`
+  - Deleted or renamed model `ListUsagesResult`
+  - Deleted or renamed model `MaintenanceConfigurationCollection`
+  - Deleted or renamed model `ManagedCertificateCollection`
+  - Deleted or renamed model `ManagedEnvironmentsCollection`
+  - Deleted or renamed model `RevisionCollection`
+  - Deleted or renamed model `SessionPoolCollection`
+  - Deleted or renamed model `SourceControlCollection`
+  - Deleted or renamed model `WorkflowEnvelopeCollection`
+  - Deleted or renamed model `WorkloadProfileStatesCollection`
+  - Method `ContainerAppsOperations.list_custom_host_name_analysis` changed its parameter `custom_hostname` from `positional_or_keyword` to `keyword_only`
+  - Method `LogicAppsOperations.create_or_update` removed default value `None` from its parameter `resource`
 
 ## 4.0.0 (2025-10-24)
 
