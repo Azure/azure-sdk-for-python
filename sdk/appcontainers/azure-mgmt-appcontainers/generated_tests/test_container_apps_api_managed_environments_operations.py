@@ -22,7 +22,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
     @recorded_by_proxy
     def test_managed_environments_list_by_subscription(self, resource_group):
         response = self.client.managed_environments.list_by_subscription(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
     def test_managed_environments_list_by_resource_group(self, resource_group):
         response = self.client.managed_environments.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
         response = self.client.managed_environments.get(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -146,7 +146,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
                 ],
                 "zoneRedundant": bool,
             },
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -158,7 +158,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
         response = self.client.managed_environments.begin_delete(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -259,7 +259,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
                 ],
                 "zoneRedundant": bool,
             },
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -271,7 +271,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
         response = self.client.managed_environments.get_auth_token(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -283,7 +283,7 @@ class TestContainerAppsAPIManagedEnvironmentsOperations(AzureMgmtRecordedTestCas
         response = self.client.managed_environments.list_workload_profile_states(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

@@ -25,7 +25,7 @@ class TestContainerAppsAPIManagedEnvironmentPrivateLinkResourcesOperationsAsync(
         response = self.client.managed_environment_private_link_resources.list(
             resource_group_name=resource_group.name,
             environment_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

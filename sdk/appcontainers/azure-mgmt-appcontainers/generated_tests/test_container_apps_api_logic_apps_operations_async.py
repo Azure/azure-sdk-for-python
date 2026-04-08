@@ -26,7 +26,7 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             container_app_name="str",
             logic_app_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -39,7 +39,7 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             container_app_name="str",
             logic_app_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -52,7 +52,7 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             container_app_name="str",
             logic_app_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -65,7 +65,7 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             container_app_name="str",
             logic_app_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -79,7 +79,7 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
             container_app_name="str",
             logic_app_name="str",
             workflow_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -92,7 +92,7 @@ class TestContainerAppsAPILogicAppsOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             container_app_name="str",
             logic_app_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself

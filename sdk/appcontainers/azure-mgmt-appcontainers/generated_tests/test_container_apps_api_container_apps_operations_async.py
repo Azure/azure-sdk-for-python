@@ -23,7 +23,7 @@ class TestContainerAppsAPIContainerAppsOperationsAsync(AzureMgmtRecordedTestCase
     @recorded_by_proxy_async
     async def test_container_apps_list_by_subscription(self, resource_group):
         response = self.client.container_apps.list_by_subscription(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestContainerAppsAPIContainerAppsOperationsAsync(AzureMgmtRecordedTestCase
     async def test_container_apps_list_by_resource_group(self, resource_group):
         response = self.client.container_apps.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -46,7 +46,7 @@ class TestContainerAppsAPIContainerAppsOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.container_apps.get(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -236,7 +236,7 @@ class TestContainerAppsAPIContainerAppsOperationsAsync(AzureMgmtRecordedTestCase
                     "type": "str",
                     "workloadProfileName": "str",
                 },
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -250,7 +250,7 @@ class TestContainerAppsAPIContainerAppsOperationsAsync(AzureMgmtRecordedTestCase
             await self.client.container_apps.begin_delete(
                 resource_group_name=resource_group.name,
                 container_app_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -441,7 +441,7 @@ class TestContainerAppsAPIContainerAppsOperationsAsync(AzureMgmtRecordedTestCase
                     "type": "str",
                     "workloadProfileName": "str",
                 },
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -454,7 +454,7 @@ class TestContainerAppsAPIContainerAppsOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.container_apps.list_custom_host_name_analysis(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -466,7 +466,7 @@ class TestContainerAppsAPIContainerAppsOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.container_apps.list_secrets(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -478,7 +478,7 @@ class TestContainerAppsAPIContainerAppsOperationsAsync(AzureMgmtRecordedTestCase
         response = await self.client.container_apps.get_auth_token(
             resource_group_name=resource_group.name,
             container_app_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -491,7 +491,7 @@ class TestContainerAppsAPIContainerAppsOperationsAsync(AzureMgmtRecordedTestCase
             await self.client.container_apps.begin_start(
                 resource_group_name=resource_group.name,
                 container_app_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -505,7 +505,7 @@ class TestContainerAppsAPIContainerAppsOperationsAsync(AzureMgmtRecordedTestCase
             await self.client.container_apps.begin_stop(
                 resource_group_name=resource_group.name,
                 container_app_name="str",
-                api_version="2025-07-01",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

@@ -401,9 +401,8 @@ class AuthPlatform(_serialization.Model):
      enabled for the current app; otherwise, :code:`<code>false</code>`.
     :vartype enabled: bool
     :ivar runtime_version: The RuntimeVersion of the Authentication / Authorization feature in use
-     for the current app.
-     The setting in this value can control the behavior of certain features in the Authentication /
-     Authorization module.
+     for the current app. The setting in this value can control the behavior of certain features in
+     the Authentication / Authorization module.
     :vartype runtime_version: str
     """
 
@@ -418,9 +417,8 @@ class AuthPlatform(_serialization.Model):
          enabled for the current app; otherwise, :code:`<code>false</code>`.
         :paramtype enabled: bool
         :keyword runtime_version: The RuntimeVersion of the Authentication / Authorization feature in
-         use for the current app.
-         The setting in this value can control the behavior of certain features in the Authentication /
-         Authorization module.
+         use for the current app. The setting in this value can control the behavior of certain features
+         in the Authentication / Authorization module.
         :paramtype runtime_version: str
         """
         super().__init__(**kwargs)
@@ -433,8 +431,8 @@ class AvailableOperations(_serialization.Model):
 
     :ivar value: Collection of available operation details.
     :vartype value: list[~azure.mgmt.appcontainers.models.OperationDetail]
-    :ivar next_link: URL client should use to fetch the next page (per server side paging).
-     It's null for now, added for future use.
+    :ivar next_link: URL client should use to fetch the next page (per server side paging). It's
+     null for now, added for future use.
     :vartype next_link: str
     """
 
@@ -449,8 +447,8 @@ class AvailableOperations(_serialization.Model):
         """
         :keyword value: Collection of available operation details.
         :paramtype value: list[~azure.mgmt.appcontainers.models.OperationDetail]
-        :keyword next_link: URL client should use to fetch the next page (per server side paging).
-         It's null for now, added for future use.
+        :keyword next_link: URL client should use to fetch the next page (per server side paging). It's
+         null for now, added for future use.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -623,10 +621,8 @@ class AzureActiveDirectory(_serialization.Model):
      flow.
     :vartype validation: ~azure.mgmt.appcontainers.models.AzureActiveDirectoryValidation
     :ivar is_auto_provisioned: Gets a value indicating whether the Azure AD configuration was
-     auto-provisioned using 1st party tooling.
-     This is an internal flag primarily intended to support the Azure Management Portal. Users
-     should not
-     read or write to this property.
+     auto-provisioned using 1st party tooling. This is an internal flag primarily intended to
+     support the Azure Management Portal. Users should not read or write to this property.
     :vartype is_auto_provisioned: bool
     """
 
@@ -661,10 +657,8 @@ class AzureActiveDirectory(_serialization.Model):
          flow.
         :paramtype validation: ~azure.mgmt.appcontainers.models.AzureActiveDirectoryValidation
         :keyword is_auto_provisioned: Gets a value indicating whether the Azure AD configuration was
-         auto-provisioned using 1st party tooling.
-         This is an internal flag primarily intended to support the Azure Management Portal. Users
-         should not
-         read or write to this property.
+         auto-provisioned using 1st party tooling. This is an internal flag primarily intended to
+         support the Azure Management Portal. Users should not read or write to this property.
         :paramtype is_auto_provisioned: bool
         """
         super().__init__(**kwargs)
@@ -679,8 +673,7 @@ class AzureActiveDirectoryLogin(_serialization.Model):
     """The configuration settings of the Azure Active Directory login flow.
 
     :ivar login_parameters: Login parameters to send to the OpenID Connect authorization endpoint
-     when
-     a user logs in. Each parameter must be in the form "key=value".
+     when a user logs in. Each parameter must be in the form "key=value".
     :vartype login_parameters: list[str]
     :ivar disable_www_authenticate: :code:`<code>true</code>` if the www-authenticate provider
      should be omitted from the request; otherwise, :code:`<code>false</code>`.
@@ -701,8 +694,7 @@ class AzureActiveDirectoryLogin(_serialization.Model):
     ) -> None:
         """
         :keyword login_parameters: Login parameters to send to the OpenID Connect authorization
-         endpoint when
-         a user logs in. Each parameter must be in the form "key=value".
+         endpoint when a user logs in. Each parameter must be in the form "key=value".
         :paramtype login_parameters: list[str]
         :keyword disable_www_authenticate: :code:`<code>true</code>` if the www-authenticate provider
          should be omitted from the request; otherwise, :code:`<code>false</code>`.
@@ -717,34 +709,31 @@ class AzureActiveDirectoryRegistration(_serialization.Model):
     """The configuration settings of the Azure Active Directory app registration.
 
     :ivar open_id_issuer: The OpenID Connect Issuer URI that represents the entity which issues
-     access tokens for this application.
-     When using Azure Active Directory, this value is the URI of the directory tenant, e.g.
-     https://login.microsoftonline.com/v2.0/{tenant-guid}/.
-     This URI is a case-sensitive identifier for the token issuer.
-     More information on OpenID Connect Discovery:
+     access tokens for this application. When using Azure Active Directory, this value is the URI of
+     the directory tenant, e.g. https://login.microsoftonline.com/v2.0/{tenant-guid}/. This URI is a
+     case-sensitive identifier for the token issuer. More information on OpenID Connect Discovery:
      http://openid.net/specs/openid-connect-discovery-1_0.html.
     :vartype open_id_issuer: str
-    :ivar client_id: The Client ID of this relying party application, known as the client_id.
-     This setting is required for enabling OpenID Connection authentication with Azure Active
-     Directory or
-     other 3rd party OpenID Connect providers.
-     More information on OpenID Connect: http://openid.net/specs/openid-connect-core-1_0.html.
+    :ivar client_id: The Client ID of this relying party application, known as the client_id. This
+     setting is required for enabling OpenID Connection authentication with Azure Active Directory
+     or other 3rd party OpenID Connect providers. More information on OpenID Connect:
+     http://openid.net/specs/openid-connect-core-1_0.html.
     :vartype client_id: str
     :ivar client_secret_setting_name: The app setting name that contains the client secret of the
      relying party application.
     :vartype client_secret_setting_name: str
     :ivar client_secret_certificate_thumbprint: An alternative to the client secret, that is the
-     thumbprint of a certificate used for signing purposes. This property acts as
-     a replacement for the Client Secret. It is also optional.
+     thumbprint of a certificate used for signing purposes. This property acts as a replacement for
+     the Client Secret. It is also optional.
     :vartype client_secret_certificate_thumbprint: str
     :ivar client_secret_certificate_subject_alternative_name: An alternative to the client secret
      thumbprint, that is the subject alternative name of a certificate used for signing purposes.
-     This property acts as
-     a replacement for the Client Secret Certificate Thumbprint. It is also optional.
+     This property acts as a replacement for the Client Secret Certificate Thumbprint. It is also
+     optional.
     :vartype client_secret_certificate_subject_alternative_name: str
     :ivar client_secret_certificate_issuer: An alternative to the client secret thumbprint, that is
-     the issuer of a certificate used for signing purposes. This property acts as
-     a replacement for the Client Secret Certificate Thumbprint. It is also optional.
+     the issuer of a certificate used for signing purposes. This property acts as a replacement for
+     the Client Secret Certificate Thumbprint. It is also optional.
     :vartype client_secret_certificate_issuer: str
     """
 
@@ -773,34 +762,31 @@ class AzureActiveDirectoryRegistration(_serialization.Model):
     ) -> None:
         """
         :keyword open_id_issuer: The OpenID Connect Issuer URI that represents the entity which issues
-         access tokens for this application.
-         When using Azure Active Directory, this value is the URI of the directory tenant, e.g.
-         https://login.microsoftonline.com/v2.0/{tenant-guid}/.
-         This URI is a case-sensitive identifier for the token issuer.
-         More information on OpenID Connect Discovery:
+         access tokens for this application. When using Azure Active Directory, this value is the URI of
+         the directory tenant, e.g. https://login.microsoftonline.com/v2.0/{tenant-guid}/. This URI is a
+         case-sensitive identifier for the token issuer. More information on OpenID Connect Discovery:
          http://openid.net/specs/openid-connect-discovery-1_0.html.
         :paramtype open_id_issuer: str
         :keyword client_id: The Client ID of this relying party application, known as the client_id.
          This setting is required for enabling OpenID Connection authentication with Azure Active
-         Directory or
-         other 3rd party OpenID Connect providers.
-         More information on OpenID Connect: http://openid.net/specs/openid-connect-core-1_0.html.
+         Directory or other 3rd party OpenID Connect providers. More information on OpenID Connect:
+         http://openid.net/specs/openid-connect-core-1_0.html.
         :paramtype client_id: str
         :keyword client_secret_setting_name: The app setting name that contains the client secret of
          the relying party application.
         :paramtype client_secret_setting_name: str
         :keyword client_secret_certificate_thumbprint: An alternative to the client secret, that is the
-         thumbprint of a certificate used for signing purposes. This property acts as
-         a replacement for the Client Secret. It is also optional.
+         thumbprint of a certificate used for signing purposes. This property acts as a replacement for
+         the Client Secret. It is also optional.
         :paramtype client_secret_certificate_thumbprint: str
         :keyword client_secret_certificate_subject_alternative_name: An alternative to the client
          secret thumbprint, that is the subject alternative name of a certificate used for signing
-         purposes. This property acts as
-         a replacement for the Client Secret Certificate Thumbprint. It is also optional.
+         purposes. This property acts as a replacement for the Client Secret Certificate Thumbprint. It
+         is also optional.
         :paramtype client_secret_certificate_subject_alternative_name: str
         :keyword client_secret_certificate_issuer: An alternative to the client secret thumbprint, that
-         is the issuer of a certificate used for signing purposes. This property acts as
-         a replacement for the Client Secret Certificate Thumbprint. It is also optional.
+         is the issuer of a certificate used for signing purposes. This property acts as a replacement
+         for the Client Secret Certificate Thumbprint. It is also optional.
         :paramtype client_secret_certificate_issuer: str
         """
         super().__init__(**kwargs)
@@ -3225,8 +3211,7 @@ class CustomOpenIdConnectProvider(_serialization.Model):
 class CustomScaleRule(_serialization.Model):
     """Container App container Custom scaling rule.
 
-    :ivar type: Type of the custom scale rule
-     eg: azure-servicebus, redis etc.
+    :ivar type: Type of the custom scale rule eg: azure-servicebus, redis etc.
     :vartype type: str
     :ivar metadata: Metadata properties to describe custom scale rule.
     :vartype metadata: dict[str, str]
@@ -3254,8 +3239,7 @@ class CustomScaleRule(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword type: Type of the custom scale rule
-         eg: azure-servicebus, redis etc.
+        :keyword type: Type of the custom scale rule eg: azure-servicebus, redis etc.
         :paramtype type: str
         :keyword metadata: Metadata properties to describe custom scale rule.
         :paramtype metadata: dict[str, str]
@@ -4881,9 +4865,8 @@ class GlobalValidation(_serialization.Model):
     :vartype unauthenticated_client_action: str or
      ~azure.mgmt.appcontainers.models.UnauthenticatedClientActionV2
     :ivar redirect_to_provider: The default authentication provider to use when multiple providers
-     are configured.
-     This setting is only needed if multiple providers are configured and the unauthenticated client
-     action is set to "RedirectToLoginPage".
+     are configured. This setting is only needed if multiple providers are configured and the
+     unauthenticated client action is set to "RedirectToLoginPage".
     :vartype redirect_to_provider: str
     :ivar excluded_paths: The paths for which unauthenticated flow would not be redirected to the
      login page.
@@ -4911,9 +4894,8 @@ class GlobalValidation(_serialization.Model):
         :paramtype unauthenticated_client_action: str or
          ~azure.mgmt.appcontainers.models.UnauthenticatedClientActionV2
         :keyword redirect_to_provider: The default authentication provider to use when multiple
-         providers are configured.
-         This setting is only needed if multiple providers are configured and the unauthenticated client
-         action is set to "RedirectToLoginPage".
+         providers are configured. This setting is only needed if multiple providers are configured and
+         the unauthenticated client action is set to "RedirectToLoginPage".
         :paramtype redirect_to_provider: str
         :keyword excluded_paths: The paths for which unauthenticated flow would not be redirected to
          the login page.
@@ -5436,8 +5418,7 @@ class IdentityProviders(_serialization.Model):
     :ivar azure_static_web_apps: The configuration settings of the Azure Static Web Apps provider.
     :vartype azure_static_web_apps: ~azure.mgmt.appcontainers.models.AzureStaticWebApps
     :ivar custom_open_id_connect_providers: The map of the name of the alias of each custom Open ID
-     Connect provider to the
-     configuration settings of the custom Open ID Connect provider.
+     Connect provider to the configuration settings of the custom Open ID Connect provider.
     :vartype custom_open_id_connect_providers: dict[str,
      ~azure.mgmt.appcontainers.models.CustomOpenIdConnectProvider]
     """
@@ -5487,8 +5468,7 @@ class IdentityProviders(_serialization.Model):
          provider.
         :paramtype azure_static_web_apps: ~azure.mgmt.appcontainers.models.AzureStaticWebApps
         :keyword custom_open_id_connect_providers: The map of the name of the alias of each custom Open
-         ID Connect provider to the
-         configuration settings of the custom Open ID Connect provider.
+         ID Connect provider to the configuration settings of the custom Open ID Connect provider.
         :paramtype custom_open_id_connect_providers: dict[str,
          ~azure.mgmt.appcontainers.models.CustomOpenIdConnectProvider]
         """
@@ -6827,8 +6807,7 @@ class JobScaleRule(_serialization.Model):
 
     :ivar name: Scale Rule Name.
     :vartype name: str
-    :ivar type: Type of the scale rule
-     eg: azure-servicebus, redis etc.
+    :ivar type: Type of the scale rule eg: azure-servicebus, redis etc.
     :vartype type: str
     :ivar metadata: Metadata properties to describe the scale rule.
     :vartype metadata: JSON
@@ -6860,8 +6839,7 @@ class JobScaleRule(_serialization.Model):
         """
         :keyword name: Scale Rule Name.
         :paramtype name: str
-        :keyword type: Type of the scale rule
-         eg: azure-servicebus, redis etc.
+        :keyword type: Type of the scale rule eg: azure-servicebus, redis etc.
         :paramtype type: str
         :keyword metadata: Metadata properties to describe the scale rule.
         :paramtype metadata: JSON
@@ -7167,8 +7145,8 @@ class Login(_serialization.Model):
     :vartype preserve_url_fragments_for_logins: bool
     :ivar allowed_external_redirect_urls: External URLs that can be redirected to as part of
      logging in or logging out of the app. Note that the query string part of the URL is ignored.
-     This is an advanced setting typically only needed by Windows Store application backends.
-     Note that URLs within the current domain are always implicitly allowed.
+     This is an advanced setting typically only needed by Windows Store application backends. Note
+     that URLs within the current domain are always implicitly allowed.
     :vartype allowed_external_redirect_urls: list[str]
     :ivar cookie_expiration: The configuration settings of the session cookie's expiration.
     :vartype cookie_expiration: ~azure.mgmt.appcontainers.models.CookieExpiration
@@ -7206,8 +7184,8 @@ class Login(_serialization.Model):
         :paramtype preserve_url_fragments_for_logins: bool
         :keyword allowed_external_redirect_urls: External URLs that can be redirected to as part of
          logging in or logging out of the app. Note that the query string part of the URL is ignored.
-         This is an advanced setting typically only needed by Windows Store application backends.
-         Note that URLs within the current domain are always implicitly allowed.
+         This is an advanced setting typically only needed by Windows Store application backends. Note
+         that URLs within the current domain are always implicitly allowed.
         :paramtype allowed_external_redirect_urls: list[str]
         :keyword cookie_expiration: The configuration settings of the session cookie's expiration.
         :paramtype cookie_expiration: ~azure.mgmt.appcontainers.models.CookieExpiration
@@ -9005,17 +8983,15 @@ class Revision(ProxyResource):
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
     :vartype system_data: ~azure.mgmt.appcontainers.models.SystemData
-    :ivar created_time: Timestamp describing when the revision was created
-     by controller.
+    :ivar created_time: Timestamp describing when the revision was created by controller.
     :vartype created_time: ~datetime.datetime
     :ivar last_active_time: Timestamp describing when the revision was last active. Only meaningful
      when revision is inactive.
     :vartype last_active_time: ~datetime.datetime
     :ivar fqdn: Fully qualified domain name of the revision.
     :vartype fqdn: str
-    :ivar template: Container App Revision Template with all possible settings and the
-     defaults if user did not provide them. The defaults are populated
-     as they were at the creation time.
+    :ivar template: Container App Revision Template with all possible settings and the defaults if
+     user did not provide them. The defaults are populated as they were at the creation time.
     :vartype template: ~azure.mgmt.appcontainers.models.Template
     :ivar active: Boolean describing if the Revision is Active.
     :vartype active: bool
@@ -10074,9 +10050,8 @@ class SourceControl(ProxyResource):
     :ivar branch: The branch which will trigger the auto deployment.
     :vartype branch: str
     :ivar github_action_configuration: Container App Revision Template with all possible settings
-     and the
-     defaults if user did not provide them. The defaults are populated
-     as they were at the creation time.
+     and the defaults if user did not provide them. The defaults are populated as they were at the
+     creation time.
     :vartype github_action_configuration:
      ~azure.mgmt.appcontainers.models.GithubActionConfiguration
     """
@@ -10117,9 +10092,8 @@ class SourceControl(ProxyResource):
         :keyword branch: The branch which will trigger the auto deployment.
         :paramtype branch: str
         :keyword github_action_configuration: Container App Revision Template with all possible
-         settings and the
-         defaults if user did not provide them. The defaults are populated
-         as they were at the creation time.
+         settings and the defaults if user did not provide them. The defaults are populated as they were
+         at the creation time.
         :paramtype github_action_configuration:
          ~azure.mgmt.appcontainers.models.GithubActionConfiguration
         """
@@ -10454,9 +10428,8 @@ class TcpScaleRule(_serialization.Model):
 
 
 class Template(_serialization.Model):
-    """Container App versioned application definition.
-    Defines the desired state of an immutable revision.
-    Any changes to this section Will result in a new revision being created.
+    """Container App versioned application definition. Defines the desired state of an immutable
+    revision. Any changes to this section Will result in a new revision being created.
 
     :ivar revision_suffix: User friendly suffix that is appended to the revision name.
     :vartype revision_suffix: str
@@ -10534,12 +10507,11 @@ class TokenStore(_serialization.Model):
     """The configuration settings of the token store.
 
     :ivar enabled: :code:`<code>true</code>` to durably store platform-specific security tokens
-     that are obtained during login flows; otherwise, :code:`<code>false</code>`.
-      The default is :code:`<code>false</code>`.
+     that are obtained during login flows; otherwise, :code:`<code>false</code>`. The default is
+     :code:`<code>false</code>`.
     :vartype enabled: bool
     :ivar token_refresh_extension_hours: The number of hours after session token expiration that a
-     session token can be used to
-     call the token refresh API. The default is 72 hours.
+     session token can be used to call the token refresh API. The default is 72 hours.
     :vartype token_refresh_extension_hours: float
     :ivar azure_blob_storage: The configuration settings of the storage of the tokens if blob
      storage is used.
@@ -10562,12 +10534,11 @@ class TokenStore(_serialization.Model):
     ) -> None:
         """
         :keyword enabled: :code:`<code>true</code>` to durably store platform-specific security tokens
-         that are obtained during login flows; otherwise, :code:`<code>false</code>`.
-          The default is :code:`<code>false</code>`.
+         that are obtained during login flows; otherwise, :code:`<code>false</code>`. The default is
+         :code:`<code>false</code>`.
         :paramtype enabled: bool
         :keyword token_refresh_extension_hours: The number of hours after session token expiration that
-         a session token can be used to
-         call the token refresh API. The default is 72 hours.
+         a session token can be used to call the token refresh API. The default is 72 hours.
         :paramtype token_refresh_extension_hours: float
         :keyword azure_blob_storage: The configuration settings of the storage of the tokens if blob
          storage is used.
@@ -10666,12 +10637,11 @@ class TwitterRegistration(_serialization.Model):
     """The configuration settings of the app registration for the Twitter provider.
 
     :ivar consumer_key: The OAuth 1.0a consumer key of the Twitter application used for sign-in.
-     This setting is required for enabling Twitter Sign-In.
-     Twitter Sign-In documentation: https://dev.twitter.com/web/sign-in.
+     This setting is required for enabling Twitter Sign-In. Twitter Sign-In documentation:
+     https://dev.twitter.com/web/sign-in.
     :vartype consumer_key: str
     :ivar consumer_secret_setting_name: The app setting name that contains the OAuth 1.0a consumer
-     secret of the Twitter
-     application used for sign-in.
+     secret of the Twitter application used for sign-in.
     :vartype consumer_secret_setting_name: str
     """
 
@@ -10685,12 +10655,11 @@ class TwitterRegistration(_serialization.Model):
     ) -> None:
         """
         :keyword consumer_key: The OAuth 1.0a consumer key of the Twitter application used for sign-in.
-         This setting is required for enabling Twitter Sign-In.
-         Twitter Sign-In documentation: https://dev.twitter.com/web/sign-in.
+         This setting is required for enabling Twitter Sign-In. Twitter Sign-In documentation:
+         https://dev.twitter.com/web/sign-in.
         :paramtype consumer_key: str
         :keyword consumer_secret_setting_name: The app setting name that contains the OAuth 1.0a
-         consumer secret of the Twitter
-         application used for sign-in.
+         consumer secret of the Twitter application used for sign-in.
         :paramtype consumer_secret_setting_name: str
         """
         super().__init__(**kwargs)

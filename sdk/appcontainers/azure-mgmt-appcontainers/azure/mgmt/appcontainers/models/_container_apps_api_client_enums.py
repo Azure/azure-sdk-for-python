@@ -103,7 +103,9 @@ class ConnectedEnvironmentProvisioningState(str, Enum, metaclass=CaseInsensitive
     SCHEDULED_FOR_DELETE = "ScheduledForDelete"
 
 
-class ConnectedEnvironmentStorageProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ConnectedEnvironmentStorageProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Provisioning state of the storage."""
 
     SUCCEEDED = "Succeeded"
@@ -334,7 +336,9 @@ class LogLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ERROR = "error"
 
 
-class ManagedCertificateDomainControlValidation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ManagedCertificateDomainControlValidation(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Selected type of domain control validation for managed certificates."""
 
     CNAME = "CNAME"
@@ -360,7 +364,9 @@ class PoolManagementType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DYNAMIC = "Dynamic"
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
