@@ -7,7 +7,7 @@ import functools
 from devtools_testutils import EnvironmentVariableLoader
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import has_feature_flag
-from asynctestcase import AppConfigTestCase, setup_configs
+from asynctestcase import AppConfigTestCase
 from test_constants import APPCONFIGURATION_ENDPOINT_STRING, FEATURE_MANAGEMENT_KEY
 from azure.appconfiguration.provider import SettingSelector
 from azure.appconfiguration.provider.aio import load
@@ -38,9 +38,6 @@ class TestAppConfigurationProviderFeatureManagement(AppConfigTestCase):
     @AppConfigProviderPreparer()
     @recorded_by_proxy_async
     async def test_select_feature_flags(self, appconfiguration_endpoint_string):
-        client = self.create_appconfig_client(appconfiguration_endpoint_string)
-        await setup_configs(client, None, None)
-
         credential = self.get_credential(AzureAppConfigurationClient, is_async=True)
         async with await load(
             endpoint=appconfiguration_endpoint_string,

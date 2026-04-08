@@ -297,12 +297,12 @@ def _get_cloud_role(resource: Resource) -> str:
 
 
 def _get_cloud_role_instance(resource: Resource) -> str:
-    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
-    if service_instance_id:
-        return service_instance_id  # type: ignore
     k8s_pod_name = resource.attributes.get(ResourceAttributes.K8S_POD_NAME)
     if k8s_pod_name:
         return k8s_pod_name  # type: ignore
+    service_instance_id = resource.attributes.get(ResourceAttributes.SERVICE_INSTANCE_ID)
+    if service_instance_id:
+        return service_instance_id  # type: ignore
     return platform.node()  # hostname default
 
 
@@ -351,7 +351,8 @@ def _is_any_synthetic_source(properties: Optional[Any]) -> bool:
 
 # pylint: disable=W0622
 def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, str]:
-    max_length = 64 * 1024
+    max_length = 8 * 1024
+    max_length_for_gen_ai_attributes = 256 * 1024
     processed_properties: Dict[str, str] = {}
     if not properties:
         return processed_properties
@@ -361,11 +362,11 @@ def _filter_custom_properties(properties: Attributes, filter=None) -> Dict[str, 
             if not filter(key, val):
                 continue
         # Apply truncation rules
-        # Max key length is 150, value is 64 * 1024
+        # Max key length is 150, value is 8 * 1024
         if not key or len(key) > 150 or val is None:
             continue
         if key in _GEN_AI_ATTRIBUTES:
-            processed_properties[key] = str(val)
+            processed_properties[key] = str(val)[:max_length_for_gen_ai_attributes]
         else:
             processed_properties[key] = str(val)[:max_length]
     return processed_properties

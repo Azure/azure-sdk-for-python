@@ -215,7 +215,11 @@ class TestStorageQueue(StorageRecordedTestCase):
         queue.set_queue_metadata(metadata={"val1": "test", "val2": "blah"})
 
         listed_queue = list(
-            qsc.list_queues(name_starts_with=queue.queue_name, results_per_page=1, include_metadata=True)
+            qsc.list_queues(
+                name_starts_with=queue.queue_name,
+                results_per_page=1,
+                include_metadata=True,
+            )
         )[0]
 
         # Asserts
@@ -775,7 +779,10 @@ class TestStorageQueue(StorageRecordedTestCase):
         messages = queue_client.receive_messages()
         list_result1 = next(messages)
         message = queue_client.update_message(
-            list_result1.id, pop_receipt=list_result1.pop_receipt, visibility_timeout=0, content="new text"
+            list_result1.id,
+            pop_receipt=list_result1.pop_receipt,
+            visibility_timeout=0,
+            content="new text",
         )
         list_result2 = next(messages)
 
@@ -863,7 +870,8 @@ class TestStorageQueue(StorageRecordedTestCase):
 
         with pytest.raises(ValueError):
             QueueServiceClient(
-                self.account_url(storage_account_name, "queue") + "?sig=foo", credential=AzureSasCredential("?foo=bar")
+                self.account_url(storage_account_name, "queue") + "?sig=foo",
+                credential=AzureSasCredential("?foo=bar"),
             )
 
     @pytest.mark.live_test_only
@@ -1205,7 +1213,11 @@ class TestStorageQueue(StorageRecordedTestCase):
         # Act
         expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
         start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow() - timedelta(minutes=5))
-        access_policy = AccessPolicy(permission=QueueSasPermissions(read=True), expiry=expiry_time, start=start_time)
+        access_policy = AccessPolicy(
+            permission=QueueSasPermissions(read=True),
+            expiry=expiry_time,
+            start=start_time,
+        )
         identifiers = {"testid": access_policy}
 
         resp = queue_client.set_queue_access_policy(signed_identifiers=identifiers)
@@ -1333,7 +1345,9 @@ class TestStorageQueue(StorageRecordedTestCase):
         prefix = TEST_QUEUE_PREFIX
         queue_name = self.get_resource_name(prefix)
         with QueueServiceClient(
-            self.account_url(storage_account_name, "queue"), credential=storage_account_key.secret, transport=transport
+            self.account_url(storage_account_name, "queue"),
+            credential=storage_account_key.secret,
+            transport=transport,
         ) as qsc:
             qsc.get_service_properties()
             assert transport.session is not None
@@ -1392,7 +1406,11 @@ class TestStorageQueue(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        queue = QueueClient(self.account_url(storage_account_name, "queue"), "testqueue1", storage_account_key.secret)
+        queue = QueueClient(
+            self.account_url(storage_account_name, "queue"),
+            "testqueue1",
+            storage_account_key.secret,
+        )
         queue.create_queue()
 
         # Act
@@ -1415,7 +1433,11 @@ class TestStorageQueue(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        queue = QueueClient(self.account_url(storage_account_name, "queue"), "testqueue2", storage_account_key.secret)
+        queue = QueueClient(
+            self.account_url(storage_account_name, "queue"),
+            "testqueue2",
+            storage_account_key.secret,
+        )
         queue.create_queue()
 
         # Act
