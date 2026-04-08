@@ -857,6 +857,8 @@ def _deserialize_sequence(
                 if _is_array_encoded_deserializer(sub_deserializer):
                     return sub_deserializer(obj)
 
+    if isinstance(obj, str):
+        raise DeserializationError()
     return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)
 
 

@@ -100,7 +100,7 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
             "    return True",
             "",
             "def _append_type_mismatch(errors: list[dict[str, str]], path: str, expected: str, value: Any) -> None:",
-            "    _append_error(errors, path, f\"Expected {expected}, got {_type_label(value)}\")",
+            '    _append_error(errors, path, f"Expected {expected}, got {_type_label(value)}")',
             "",
             "def _enum_values(enum_name: str) -> tuple[tuple[str, ...] | None, str | None]:",
             "    if _generated_enums is None:",
@@ -195,7 +195,8 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                 branch_hint = schema_name_hint
                 has_inline_enum_branch = True
             else:
-                branch_type = branch.get("type") if isinstance(branch.get("type"), str) else (_schema_kind(branch) or "branch")
+                raw_type = branch.get("type")
+                branch_type = raw_type if isinstance(raw_type, str) else (_schema_kind(branch) or "branch")
                 branch_hint = f"{schema_name_hint}_{branch_type}" if schema_name_hint else str(branch_type)
             fn_name = ensure_anonymous_function(branch, hint=branch_hint)
             branch_funcs.append((fn_name, _schema_kind(branch) or "value"))
@@ -223,7 +224,9 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                 emit_line(
                     block,
                     indent + 1,
-                    f"_append_error({errors_expr}, {path_expr}, f\"Expected {schema_label} to be a string value, got {{_type_label({value_expr})}}\")",
+                    f"_append_error({errors_expr}, {path_expr}, "
+                    f'f"Expected {schema_label} to be a string value, '
+                    f'got {{_type_label({value_expr})}}")',
                 )
             else:
                 emit_line(block, indent + 1, f"_append_error({errors_expr}, {path_expr}, 'Expected {only_label}')")
@@ -232,7 +235,8 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
             emit_line(
                 block,
                 indent + 1,
-                f"_append_error({errors_expr}, {path_expr}, f\"Expected one of: {expected}; got {{_type_label({value_expr})}}\")",
+                f"_append_error({errors_expr}, {path_expr}, "
+                f'f"Expected one of: {expected}; got {{_type_label({value_expr})}}")',
             )
         emit_line(block, indent + 1, "return")
 
@@ -253,7 +257,8 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
             ref_name = _resolve_ref(str(schema["$ref"]))
             ref_schema = ordered_schemas.get(ref_name)
             if isinstance(ref_schema, dict):
-                emit_line(block, indent, f"{ensure_schema_function(ref_name)}({value_expr}, {path_expr}, {errors_expr})")
+                fn = ensure_schema_function(ref_name)
+                emit_line(block, indent, f"{fn}({value_expr}, {path_expr}, {errors_expr})")
             return
 
         if "enum" in schema:
@@ -295,7 +300,9 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
             emit_line(
                 block,
                 indent + 1,
-                f"_append_error({errors_expr}, {path_expr}, f\"Invalid value '{{{value_expr}}}'. Allowed: {{', '.join(str(v) for v in _allowed_values)}}\")",
+                f"_append_error({errors_expr}, {path_expr}, "
+                f"f\"Invalid value '{{{value_expr}}}'. "
+                f"Allowed: {{', '.join(str(v) for v in _allowed_values)}}\")",
             )
 
         if "oneOf" in schema or "anyOf" in schema:
@@ -307,7 +314,11 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
 
         if isinstance(effective_type, str) and effective_type not in ("value", "union"):
             emit_line(block, indent, f"if not _is_type({value_expr}, {effective_type!r}):")
-            emit_line(block, indent + 1, f"_append_type_mismatch({errors_expr}, {path_expr}, {effective_type!r}, {value_expr})")
+            emit_line(
+                block,
+                indent + 1,
+                f"_append_type_mismatch({errors_expr}, {path_expr}, {effective_type!r}, {value_expr})",
+            )
             emit_line(block, indent + 1, "return")
 
         if effective_type == "array":
@@ -316,19 +327,28 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                 item_hint = f"{schema_name_hint}_item" if schema_name_hint else "item"
                 item_fn = ensure_anonymous_function(items, hint=item_hint)
                 emit_line(block, indent, f"for _idx, _item in enumerate({value_expr}):")
-                emit_line(block, indent + 1, f"{item_fn}(_item, f\"{{{path_expr}}}[{{_idx}}]\", {errors_expr})")
+                emit_line(block, indent + 1, f'{item_fn}(_item, f"{{{path_expr}}}[{{_idx}}]", {errors_expr})')
             return
 
         if effective_type == "object":
             properties = schema.get("properties", {})
             required = schema.get("required", [])
+            disc = schema.get("discriminator")
+            # When a default_discriminator is configured, the discriminator
+            # property is no longer strictly required — it defaults instead.
+            disc_prop_with_default = None
+            if isinstance(disc, dict) and disc.get("defaultValue") is not None:
+                disc_prop_with_default = disc.get("propertyName", "type")
             if isinstance(properties, dict):
                 for field in required:
+                    if field == disc_prop_with_default:
+                        continue  # Skip — handled by default discriminator
                     emit_line(block, indent, f"if {field!r} not in {value_expr}:")
                     emit_line(
                         block,
                         indent + 1,
-                        f"_append_error({errors_expr}, f\"{{{path_expr}}}.{field}\", \"Required property '{field}' is missing\")",
+                        f'_append_error({errors_expr}, f"{{{path_expr}}}.{field}", '
+                        f"\"Required property '{field}' is missing\")",
                     )
 
                 for field, field_schema in sorted(properties.items()):
@@ -340,7 +360,7 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                     emit_line(
                         block,
                         indent + 1,
-                        f"{field_fn}({value_expr}[{field!r}], f\"{{{path_expr}}}.{field}\", {errors_expr})",
+                        f'{field_fn}({value_expr}[{field!r}], f"{{{path_expr}}}.{field}", {errors_expr})',
                     )
 
             addl = schema.get("additionalProperties")
@@ -350,20 +370,51 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                 known = tuple(sorted(properties.keys())) if isinstance(properties, dict) else tuple()
                 emit_line(block, indent, f"for _key, _item in {value_expr}.items():")
                 emit_line(block, indent + 1, f"if _key not in {known!r}:")
-                emit_line(block, indent + 2, f"{addl_fn}(_item, f\"{{{path_expr}}}.{{_key}}\", {errors_expr})")
+                emit_line(block, indent + 2, f'{addl_fn}(_item, f"{{{path_expr}}}.{{_key}}", {errors_expr})')
 
             disc = schema.get("discriminator")
             if isinstance(disc, dict):
                 prop = disc.get("propertyName", "type")
                 mapping = disc.get("mapping", {})
-                emit_line(block, indent, f"_disc_value = {value_expr}.get({prop!r})")
-                emit_line(block, indent, f"if not isinstance(_disc_value, str):")
-                emit_line(
-                    block,
-                    indent + 1,
-                    f"_append_error({errors_expr}, f\"{{{path_expr}}}.{prop}\", \"Required discriminator '{prop}' is missing or invalid\")",
-                )
-                emit_line(block, indent + 1, "return")
+                default_disc = disc.get("defaultValue")
+                if default_disc is not None:
+                    # GAP-01: When a default discriminator is configured, use it
+                    # as a fallback instead of rejecting missing values.
+                    # Mirrors .NET ResolveDefaultDiscriminator.
+                    emit_line(block, indent, f"if {prop!r} in {value_expr}:")
+                    field_hint = f"{schema_name_hint}_{prop}" if schema_name_hint else prop
+                    for fld, fld_schema in sorted(properties.items()):
+                        if fld == prop and isinstance(fld_schema, dict):
+                            fld_fn = ensure_anonymous_function(fld_schema, hint=field_hint)
+                            emit_line(
+                                block,
+                                indent + 1,
+                                f'{fld_fn}({value_expr}[{prop!r}], f"{{{path_expr}}}.{prop}", {errors_expr})',
+                            )
+                            break
+                    emit_line(
+                        block,
+                        indent,
+                        f"_disc_value = {value_expr}.get({prop!r}, {default_disc!r})",
+                    )
+                    emit_line(block, indent, "if not isinstance(_disc_value, str):")
+                    disc_err = f"Required discriminator '{prop}' is missing or invalid"
+                    emit_line(
+                        block,
+                        indent + 1,
+                        f'_append_error({errors_expr}, f"{{{path_expr}}}.{prop}", "{disc_err}")',
+                    )
+                    emit_line(block, indent + 1, "return")
+                else:
+                    emit_line(block, indent, f"_disc_value = {value_expr}.get({prop!r})")
+                    emit_line(block, indent, "if not isinstance(_disc_value, str):")
+                    disc_err = f"Required discriminator '{prop}' is missing or invalid"
+                    emit_line(
+                        block,
+                        indent + 1,
+                        f'_append_error({errors_expr}, f"{{{path_expr}}}.{prop}", "{disc_err}")',
+                    )
+                    emit_line(block, indent + 1, "return")
 
                 for disc_value, ref in sorted(mapping.items()):
                     if not isinstance(ref, str):
@@ -400,7 +451,7 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
         class_name = f"{_sanitize_identifier(root)}Validator"
         fn_name = f"_validate_{_sanitize_identifier(root)}"
         lines.append(f"class {class_name}:")
-        lines.append("    \"\"\"Generated validator for the root schema.\"\"\"")
+        lines.append('    """Generated validator for the root schema."""')
         lines.append("")
         lines.append("    @staticmethod")
         lines.append("    def validate(payload: Any) -> list[dict[str, str]]:")

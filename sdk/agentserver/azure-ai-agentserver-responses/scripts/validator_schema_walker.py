@@ -77,11 +77,14 @@ class SchemaWalker:
     def _apply_overlay(self, name: str, schema: dict[str, Any]) -> dict[str, Any]:
         """Apply overlay fixes to a schema.
 
-        Supports three overlay keys per schema entry:
+        Supports four overlay keys per schema entry:
         - ``required``: replace the required list entirely.
         - ``not_required``: remove individual fields from required and mark their
           property schemas as ``nullable`` so ``None`` is accepted.
         - ``properties``: merge per-property constraint overrides (e.g. minimum/maximum).
+        - ``default_discriminator``: set a default discriminator value for the schema's
+          discriminator dispatch. When the discriminator property is absent from the
+          payload, this value is used instead of rejecting the input.
         """
         overlay_schemas = self.overlay.get("schemas", {})
         # Try exact name first, then fall back to the name with any "Vendor." prefix stripped
@@ -122,6 +125,13 @@ class SchemaWalker:
                 else:
                     schema["properties"][prop_name] = dict(schema["properties"][prop_name])
                 schema["properties"][prop_name].update(constraints)
+
+        # Inject default_discriminator into the schema's discriminator dict
+        if "default_discriminator" in overlay_entry:
+            disc = schema.get("discriminator")
+            if isinstance(disc, dict):
+                schema["discriminator"] = dict(disc)
+                schema["discriminator"]["defaultValue"] = overlay_entry["default_discriminator"]
 
         return schema
 

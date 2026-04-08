@@ -206,3 +206,24 @@ def test_schema_walker_overlay_matches_vendor_prefixed_schema_by_bare_name() -> 
     schema = walker.reachable["OpenAI.ItemMessage"]
     assert "type" not in schema["required"]
     assert schema["properties"]["type"].get("nullable") is True
+
+def test_schema_walker_applies_overlay_default_discriminator() -> None:
+    """Overlay default_discriminator injects defaultValue into the discriminator dict."""
+    schemas = {
+        "OpenAI.Item": {
+            "type": "object",
+            "required": ["type"],
+            "discriminator": {
+                "propertyName": "type",
+                "mapping": {"message": "#/components/schemas/ItemMessage"},
+            },
+            "properties": {"type": {"type": "string"}},
+        }
+    }
+    overlay = {"schemas": {"Item": {"default_discriminator": "message"}}}
+
+    walker = SchemaWalker(schemas, overlay=overlay)
+    walker.walk("OpenAI.Item")
+
+    disc = walker.reachable["OpenAI.Item"]["discriminator"]
+    assert disc["defaultValue"] == "message"

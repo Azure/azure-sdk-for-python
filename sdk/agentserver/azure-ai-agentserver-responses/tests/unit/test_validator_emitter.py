@@ -204,6 +204,58 @@ def test_emitter_generates_discriminator_dispatch() -> None:
     assert any(e["path"] == "$.name" and "missing" in e["message"].lower() for e in errors)
 
 
+def test_emitter_generates_default_discriminator_fallback() -> None:
+    """When defaultValue is set on a discriminator, absent 'type' uses the default."""
+    schemas = {
+        "Item": {
+            "type": "object",
+            "required": ["type"],
+            "discriminator": {
+                "propertyName": "type",
+                "defaultValue": "message",
+                "mapping": {
+                    "message": "#/components/schemas/ItemMessage",
+                    "function_call": "#/components/schemas/ItemFunctionCall",
+                },
+            },
+            "properties": {"type": {"type": "string"}},
+        },
+        "ItemMessage": {
+            "type": "object",
+            "required": ["role"],
+            "properties": {
+                "type": {"type": "string"},
+                "role": {"type": "string"},
+            },
+        },
+        "ItemFunctionCall": {
+            "type": "object",
+            "required": ["name"],
+            "properties": {
+                "type": {"type": "string"},
+                "name": {"type": "string"},
+            },
+        },
+    }
+    module = _load_module(build_validator_module(schemas, ["Item"]))
+
+    # No type → defaults to "message", validates against ItemMessage
+    errors = module.validate_Item({"role": "user"})
+    # Should NOT get "Required discriminator 'type' is missing" or "Required property 'type' is missing"
+    assert not any("type" in e.get("path", "") and "missing" in e.get("message", "").lower() for e in errors)
+    # Should validate as message — role present, so no errors
+    assert errors == []
+
+    # No type, missing required "role" → defaults to "message" but fails message validation
+    errors_no_role = module.validate_Item({"content": "hi"})
+    assert not any("type" in e.get("path", "") and "missing" in e.get("message", "").lower() for e in errors_no_role)
+    assert any(e["path"] == "$.role" and "missing" in e["message"].lower() for e in errors_no_role)
+
+    # Explicit type still works
+    errors_fc = module.validate_Item({"type": "function_call"})
+    assert any(e["path"] == "$.name" and "missing" in e["message"].lower() for e in errors_fc)
+
+
 def test_emitter_generates_array_and_map_checks() -> None:
     schemas = {
         "CreateResponse": {

@@ -45,9 +45,7 @@ def _load_overlay(overlay_path: Path | None) -> dict[str, Any]:
     try:
         import yaml  # type: ignore[import-not-found]
     except ModuleNotFoundError as exc:
-        raise ValueError(
-            "PyYAML is required to load the overlay file. Run: pip install pyyaml"
-        ) from exc
+        raise ValueError("PyYAML is required to load the overlay file. Run: pip install pyyaml") from exc
     loaded = yaml.safe_load(text)
     if not isinstance(loaded, dict):
         raise ValueError(f"Overlay file '{overlay_path}' must contain a top-level object")

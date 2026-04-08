@@ -21,7 +21,6 @@ from ._generated import (
     ToolChoiceParam,
 )
 
-
 # ---------------------------------------------------------------------------
 # Internal utilities for dict-safe field access
 # ---------------------------------------------------------------------------
@@ -92,7 +91,15 @@ def get_input_expanded(request: CreateResponse) -> list[dict]:
                 content=[MessageContentInputTextContent(text=inp)],
             ).as_dict()
         ]
-    return list(inp)
+    # Normalize items: per the OpenAI spec, items without an explicit
+    # ``type`` default to ``"message"`` (C-MSG-01 compliance).
+    items: list[dict] = []
+    for item in inp:
+        d = dict(item) if isinstance(item, dict) else item
+        if isinstance(d, dict) and "type" not in d:
+            d = {**d, "type": "message"}
+        items.append(d)
+    return items
 
 
 def get_input_text(request: CreateResponse) -> str:
@@ -144,8 +151,7 @@ def get_tool_choice_expanded(request: CreateResponse) -> Optional[ToolChoicePara
         if normalized == "none":
             return None
         raise ValueError(
-            f"Unrecognized tool_choice string value: '{normalized}'. "
-            "Expected 'auto', 'required', or 'none'."
+            f"Unrecognized tool_choice string value: '{normalized}'. Expected 'auto', 'required', or 'none'."
         )
     # dict fallback — wrap in ToolChoiceParam if it has a "type" key
     if isinstance(tc, dict) and "type" in tc:
