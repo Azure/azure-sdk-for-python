@@ -6,27 +6,16 @@
 # pylint: disable=c-extension-no-member
 
 import hashlib
-from enum import Enum
 from io import SEEK_SET
 from typing import IO, Literal, Optional, Union, cast
-
-from azure.core import CaseInsensitiveEnumMeta
 
 CRC64_LENGTH = 8
 CV_TYPE_ERROR_MSG = "Data should be bytes or seekable IO[bytes] for content validation."
 
+_VALID_CV_OPTIONS = ("auto", "crc64", "md5")
+
 CV_TYPE = Optional[Union[bool, Literal["auto", "crc64", "md5"]]]
 CV_TYPE_PARSED = Optional[Union[bool, Literal["crc64", "md5"]]]
-
-
-class ChecksumAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    AUTO = "auto"
-    MD5 = "md5"
-    CRC64 = "crc64"
-
-    @classmethod
-    def list(cls):
-        return list(map(lambda c: c.value, cls))
 
 
 def _verify_extensions(module: str) -> None:
@@ -49,14 +38,15 @@ def parse_validation_option(
     if isinstance(validate_content, bool):
         return validate_content
 
-    if validate_content not in (ChecksumAlgorithm.list()):
+    validate_content = validate_content.lower()
+    if validate_content not in _VALID_CV_OPTIONS:
         raise ValueError("Invalid value for `validate_content` specified.")
 
     # Resolve auto
-    if validate_content == ChecksumAlgorithm.AUTO:
-        validate_content = ChecksumAlgorithm.CRC64.value
+    if validate_content == "auto":
+        validate_content = "crc64"
 
-    if validate_content == ChecksumAlgorithm.CRC64:
+    if validate_content == "crc64":
         _verify_extensions("crc64")
 
     return cast(CV_TYPE_PARSED, validate_content)
@@ -69,7 +59,17 @@ def is_md5_validation(
         return False
     if isinstance(validate_content, bool):
         return validate_content
-    return validate_content == ChecksumAlgorithm.MD5
+    return validate_content == "md5"
+
+
+def is_crc64_validation(
+    validate_content: CV_TYPE_PARSED,
+) -> bool:
+    if validate_content is None:
+        return False
+    if isinstance(validate_content, bool):
+        return False
+    return validate_content == "crc64"
 
 
 def calculate_content_md5(data: Union[bytes, IO[bytes]]) -> bytes:

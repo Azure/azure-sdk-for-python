@@ -43,8 +43,8 @@ from .validation import (
     CV_TYPE_ERROR_MSG,
     calculate_content_md5,
     calculate_crc64_bytes,
+    is_crc64_validation,
     is_md5_validation,
-    ChecksumAlgorithm,
 )
 
 if TYPE_CHECKING:
@@ -418,7 +418,7 @@ def _prepare_content_validation(request: "PipelineRequest") -> None:
 
     # Download
     if request.http_request.method == "GET":
-        if validate_content == ChecksumAlgorithm.CRC64:
+        if is_crc64_validation(validate_content):
             request.http_request.headers[SM_HEADER] = SM_HEADER_V1_CRC64
 
     # Upload
@@ -431,7 +431,7 @@ def _prepare_content_validation(request: "PipelineRequest") -> None:
             request.http_request.headers[MD5_HEADER] = computed_md5
             request.context["validate_content_md5"] = computed_md5
 
-        elif validate_content == ChecksumAlgorithm.CRC64:
+        elif is_crc64_validation(validate_content):
             if isinstance(data, bytes):
                 request.http_request.headers[CRC64_HEADER] = encode_base64(
                     calculate_crc64_bytes(data)
@@ -485,7 +485,7 @@ def _validate_content_response(
                 response=response.http_response,
             )
 
-    elif validate_content == ChecksumAlgorithm.CRC64:
+    elif is_crc64_validation(validate_content):
         # For upload and download verify structured message header present in response if provided in request.
         sm_request = request.http_request.headers.get(SM_HEADER)
         sm_response = response.http_response.headers.get(SM_HEADER)
