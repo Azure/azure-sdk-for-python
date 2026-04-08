@@ -20,6 +20,7 @@ from ._generated import (
     ToolChoiceOptions,
     ToolChoiceParam,
 )
+from ._generated.sdk.models._utils.model_base import _deserialize
 
 # ---------------------------------------------------------------------------
 # Internal utilities for dict-safe field access
@@ -68,18 +69,19 @@ def get_conversation_id(request: CreateResponse) -> Optional[str]:
     return str(cid) if cid else None
 
 
-def get_input_expanded(request: CreateResponse) -> list[dict]:
+def get_input_expanded(request: CreateResponse) -> list[Item]:
     """Normalize ``CreateResponse.input`` into a list of :class:`Item`.
 
     - If input is ``None``, returns ``[]``.
     - If input is a string, wraps it as a single :class:`ItemMessage` with
       ``role=user`` and :class:`MessageContentInputTextContent`.
-    - If input is already a list, returns a shallow copy.
+    - If input is already a list, each element is deserialized into the appropriate
+      :class:`Item` subclass (e.g., :class:`ItemMessage`, :class:`FunctionCallOutputItemParam`).
 
     :param request: The create-response request.
     :type request: CreateResponse
-    :returns: A list of input items.
-    :rtype: list[dict]
+    :returns: A list of typed input items.
+    :rtype: list[Item]
     """
     inp = request.input
     if inp is None:
@@ -89,16 +91,19 @@ def get_input_expanded(request: CreateResponse) -> list[dict]:
             ItemMessage(
                 role=MessageRole.USER,
                 content=[MessageContentInputTextContent(text=inp)],
-            ).as_dict()
+            )
         ]
     # Normalize items: per the OpenAI spec, items without an explicit
     # ``type`` default to ``"message"`` (C-MSG-01 compliance).
-    items: list[dict] = []
-    for item in inp:
-        d = dict(item) if isinstance(item, dict) else item
+    items: list[Item] = []
+    for raw in inp:
+        d = dict(raw) if isinstance(raw, dict) else raw
         if isinstance(d, dict) and "type" not in d:
             d = {**d, "type": "message"}
-        items.append(d)
+        if isinstance(d, Item):
+            items.append(d)
+        else:
+            items.append(_deserialize(Item, d))
     return items
 
 

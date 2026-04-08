@@ -9,19 +9,22 @@ Run:
 import asyncio
 import json
 
-from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponseContext, ResponseEventStream, get_input_expanded
-from azure.ai.agentserver.responses.models import CreateResponse, ItemType
+from azure.ai.agentserver.responses import (
+    ResponseContext,
+    ResponseEventStream,
+    ResponsesAgentServerHost,
+    get_input_expanded,
+)
+from azure.ai.agentserver.responses.models import (
+    CreateResponse,
+    FunctionCallOutputItemParam,
+)
 
 
 def _extract_function_call_output(request_payload: CreateResponse) -> str | None:
-    items = get_input_expanded(request_payload)
-
-    for item in items:
-        if isinstance(item, str):
-            continue
-        if item.get("type") == ItemType.FUNCTION_CALL_OUTPUT:
-            return item.get("content", {}).get("output")
-
+    for item in get_input_expanded(request_payload):
+        if isinstance(item, FunctionCallOutputItemParam):
+            return item.output
     return None
 
 

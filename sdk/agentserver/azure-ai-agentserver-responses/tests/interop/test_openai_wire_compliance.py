@@ -79,7 +79,7 @@ def _send_and_capture(json_body: str) -> CreateResponse:
     return _captured["request"]
 
 
-def _send_input_and_capture(input_items_json: str) -> list[dict]:
+def _send_input_and_capture(input_items_json: str) -> list:
     """Send input items array and return the expanded item list."""
     json_body = f'{{"model": "test", "input": {input_items_json}}}'
     request = _send_and_capture(json_body)

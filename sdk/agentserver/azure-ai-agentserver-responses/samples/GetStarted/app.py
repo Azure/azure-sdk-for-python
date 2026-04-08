@@ -6,21 +6,24 @@ Run:
     python samples/GetStarted/app.py
 """
 
-import asyncio
-
-from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponseContext, ResponseEventStream, CreateResponse
-
+from azure.ai.agentserver.responses import (
+    CreateResponse,
+    ResponseContext,
+    ResponsesAgentServerHost,
+    TextResponse,
+    get_input_text,
+)
 
 app = ResponsesAgentServerHost()
 
 
 @app.create_handler
-def my_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-    yield stream.emit_created()
-    yield stream.emit_in_progress()
-    yield from stream.output_item_message("Hello from the Python GettingStarted sample!")
-    yield stream.emit_completed()
+def my_handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
+    return TextResponse(
+        context,
+        request,
+        create_text=lambda: f"Echo: {get_input_text(request)}",
+    )
 
 
 def main() -> None:

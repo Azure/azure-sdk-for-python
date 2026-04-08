@@ -7,44 +7,53 @@ Run:
 """
 
 from collections.abc import Sequence
-from typing import Any
 
-from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponseContext, ResponsesServerOptions, ResponseEventStream, get_input_text
-from azure.ai.agentserver.responses.models import CreateResponse, OutputItem
+from azure.ai.agentserver.responses import (
+    CreateResponse,
+    ResponseContext,
+    ResponsesAgentServerHost,
+    ResponsesServerOptions,
+    TextResponse,
+    get_input_text,
+)
+from azure.ai.agentserver.responses.models import OutputItem
 
 
 def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
     if len(history) == 0:
-        return f"[Turn 1] No history. You said: \"{current_input}\""
+        return f'[Turn 1] No history. You said: "{current_input}"'
 
-    history_messages = [item for item in history if getattr(item, "type", None) == "message"]
+    history_messages = [
+        item for item in history if getattr(item, "type", None) == "message"
+    ]
     turn_number = len(history_messages) + 1
     last_message = history_messages[-1] if history_messages else None
-    last_text = last_message["content"][0]["text"] if last_message and last_message.get("content") else "(no text)"
+    last_text = (
+        last_message["content"][0]["text"]
+        if last_message and last_message.get("content")
+        else "(no text)"
+    )
 
     return (
         f"[Turn {turn_number}] History has {len(history)} item(s). "
-        f"Last assistant message: \"{last_text}\". "
-        f"You said: \"{current_input}\""
+        f'Last assistant message: "{last_text}". '
+        f'You said: "{current_input}"'
     )
 
-server = ResponsesAgentServerHost(options=ResponsesServerOptions(default_fetch_history_count=20))
+
+server = ResponsesAgentServerHost(
+    options=ResponsesServerOptions(default_fetch_history_count=20),
+)
+
 
 @server.create_handler
-async def create(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
-    stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+def create(request: CreateResponse, context: ResponseContext, cancellation_signal):
+    async def _build():
+        history = await context.get_history()
+        current_input = get_input_text(request)
+        return _build_reply(current_input, history)
 
-    yield stream.emit_created()
-    yield stream.emit_in_progress()
-
-    history = await context.get_history()
-    current_input = get_input_text(request)
-    reply = _build_reply(current_input, history)
-
-    async for event in stream.aoutput_item_message(reply):
-        yield event
-    yield stream.emit_completed()
-
+    return TextResponse(context, request, create_text=_build)
 
 
 def main() -> None:

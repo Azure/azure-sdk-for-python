@@ -30,7 +30,7 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     get_input_expanded,
 )
-from azure.ai.agentserver.responses.models import ItemType
+from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam
 
 app = ResponsesAgentServerHost()
 
@@ -38,10 +38,8 @@ app = ResponsesAgentServerHost()
 def _find_function_call_output(request: CreateResponse) -> str | None:
     """Return the output string from the first function_call_output item, or None."""
     for item in get_input_expanded(request):
-        if isinstance(item, str):
-            continue
-        if item.get("type") == ItemType.FUNCTION_CALL_OUTPUT:
-            return item.get("content", {}).get("output")
+        if isinstance(item, FunctionCallOutputItemParam):
+            return item.output
     return None
 
 

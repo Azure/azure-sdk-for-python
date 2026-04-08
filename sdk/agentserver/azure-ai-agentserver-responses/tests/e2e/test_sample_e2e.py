@@ -19,6 +19,7 @@ from azure.ai.agentserver.responses import (
     get_input_expanded,
     get_input_text,
 )
+from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -278,8 +279,7 @@ def _sample4_handler(request: CreateResponse, context: ResponseContext, cancella
 
         items = get_input_expanded(request)
         has_fn_output = any(
-            (item.get("type") if isinstance(item, dict) else getattr(item, "type", None))
-            == "function_call_output"
+            isinstance(item, FunctionCallOutputItemParam)
             for item in items
         )
 
@@ -287,11 +287,8 @@ def _sample4_handler(request: CreateResponse, context: ResponseContext, cancella
             # Second turn: extract function output and echo it as text
             fn_output_text = ""
             for item in items:
-                item_type = item.get("type") if isinstance(item, dict) else getattr(item, "type", None)
-                if item_type == "function_call_output":
-                    fn_output_text = (
-                        item.get("output") if isinstance(item, dict) else getattr(item, "output", "")
-                    )
+                if isinstance(item, FunctionCallOutputItemParam):
+                    fn_output_text = item.output or ""
                     break
 
             msg = stream.add_output_item_message()

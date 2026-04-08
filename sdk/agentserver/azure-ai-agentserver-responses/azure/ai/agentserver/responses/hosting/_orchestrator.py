@@ -173,6 +173,7 @@ async def _run_background_non_stream(
     provider: Any = None,
     store: bool = True,
     agent_session_id: str | None = None,
+    history_limit: int = 100,
 ) -> None:
     """Execute a non-stream handler in the background and update the execution record.
 
@@ -265,7 +266,8 @@ async def _run_background_non_stream(
                             _response_obj = generated_models.ResponseObject(_initial_snapshot)
                             _history_ids = (
                                 await provider.get_history_item_ids(
-                                    record.previous_response_id, None, 10000, isolation=_isolation
+                                    record.previous_response_id, None, history_limit,
+                                    isolation=_isolation,
                                 )
                                 if record.previous_response_id
                                 else None
@@ -621,7 +623,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             _isolation = ctx.context.isolation if ctx.context else None
             _initial_response_obj = generated_models.ResponseObject(initial_payload)
             _history_ids = (
-                await self._provider.get_history_item_ids(ctx.previous_response_id, None, 10000, isolation=_isolation)
+                await self._provider.get_history_item_ids(
+                    ctx.previous_response_id, None,
+                    self._runtime_options.default_fetch_history_count,
+                    isolation=_isolation,
+                )
                 if ctx.previous_response_id
                 else None
             )
@@ -939,7 +945,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 _isolation = ctx.context.isolation if ctx.context else None
                 _history_ids = (
                     await self._provider.get_history_item_ids(
-                        ctx.previous_response_id, None, 10000, isolation=_isolation,
+                        ctx.previous_response_id, None,
+                        self._runtime_options.default_fetch_history_count,
+                        isolation=_isolation,
                     )
                     if ctx.previous_response_id
                     else None
@@ -1187,7 +1195,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 _response_obj = generated_models.ResponseObject(response_payload)
                 _history_ids = (
                     await self._provider.get_history_item_ids(
-                        ctx.previous_response_id, None, 10000, isolation=_isolation,
+                        ctx.previous_response_id, None,
+                        self._runtime_options.default_fetch_history_count,
+                        isolation=_isolation,
                     )
                     if ctx.previous_response_id
                     else None
@@ -1252,6 +1262,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         provider=self._provider,
                         store=ctx.store,
                         agent_session_id=ctx.agent_session_id,
+                        history_limit=self._runtime_options.default_fetch_history_count,
                     )
             except asyncio.CancelledError:
                 pass  # event-loop teardown in TestClient; background work already done
