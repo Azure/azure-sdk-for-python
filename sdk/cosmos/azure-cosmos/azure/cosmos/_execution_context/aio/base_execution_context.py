@@ -133,6 +133,9 @@ class _QueryExecutionContextBase(object):
 
             if fetched_items:
                 break
+        # If there is no continuation token, mark as finished to avoid a wasteful empty fetch cycle
+        if not self._continuation:
+            self._has_finished = True
         return fetched_items
 
     async def _fetch_items_helper_with_retries(self, fetch_function):

@@ -22,7 +22,6 @@
 """Asynchronous request in the Azure Cosmos database service.
 """
 import copy
-import json
 import time
 
 from urllib.parse import urlparse
@@ -32,6 +31,7 @@ from . import _retry_utility_async
 from ._asynchronous_availability_strategy_handler import execute_with_availability_strategy
 from .. import exceptions
 from .. import http_constants
+from .. import _json_utils
 from .._availability_strategy_config import CrossRegionHedgingStrategy
 from .._constants import _Constants
 from .._request_object import RequestObject
@@ -155,7 +155,7 @@ async def _Request(global_endpoint_manager, request_params, connection_policy, p
     result = None
     if data:
         try:
-            result = json.loads(data)
+            result = _json_utils.loads(data)
         except Exception as e:
             raise DecodeError(
                 message="Failed to decode JSON data: {}".format(e),

@@ -22,12 +22,13 @@
 """Synchronized request in the Azure Cosmos database service.
 """
 import copy
-import json
 import time
 from concurrent.futures import CancelledError
 from urllib.parse import urlparse
 
 from azure.core.exceptions import DecodeError  # type: ignore
+
+from . import _json_utils
 
 from . import exceptions, http_constants, _retry_utility
 from ._availability_strategy_config import CrossRegionHedgingStrategy
@@ -63,7 +64,7 @@ def _request_body_from_data(data):
     if data is None or isinstance(data, str) or _is_readable_stream(data):
         return data
     if isinstance(data, (dict, list, tuple)):
-        json_dumped = json.dumps(data, separators=(",", ":"))
+        json_dumped = _json_utils.dumps(data)
 
         return json_dumped
     return None
@@ -191,7 +192,7 @@ def _Request(global_endpoint_manager, request_params, connection_policy, pipelin
     result = None
     if data:
         try:
-            result = json.loads(data)
+            result = _json_utils.loads(data)
         except Exception as e:
             raise DecodeError(
                 message="Failed to decode JSON data: {}".format(e),
