@@ -8,6 +8,7 @@
 
 - Fixed default deployment template check to verify `asset_id` is not None before logging template information.
 - Skip _list_secrets for identity-based datastores to prevent noisy telemetry traces.
+- Fixed `UnboundLocalError` in `create_finetuning_job()` when `validation_data` is omitted or `None`.
 
 ### Other Changes
 

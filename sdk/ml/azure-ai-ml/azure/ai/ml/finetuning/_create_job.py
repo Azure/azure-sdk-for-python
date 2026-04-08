@@ -2,15 +2,14 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import List, Optional, Dict
+from typing import Dict, List, Optional
+
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.finetuning.custom_model_finetuning_job import (
-    CustomModelFineTuningJob,
-)
+from azure.ai.ml.entities._job.finetuning.custom_model_finetuning_job import CustomModelFineTuningJob
 from azure.ai.ml.entities._job.job_resources import JobResources
 from azure.ai.ml.entities._job.queue_settings import QueueSettings
-from azure.ai.ml._utils._experimental import experimental
 
 
 @experimental
@@ -50,6 +49,7 @@ def create_finetuning_job(
         path=training_data,
     )
 
+    validation_data_input = None
     if validation_data:
         validation_data_input = Input(
             type=AssetTypes.URI_FILE,
@@ -68,7 +68,7 @@ def create_finetuning_job(
         task=task,
         model=model_input,
         training_data=training_data_input,
-        validation_data=validation_data_input,  # pylint: disable=(possibly-used-before-assignment
+        validation_data=validation_data_input,
         hyperparameters=hyperparameters,
         compute=compute,
         resources=job_resources,
