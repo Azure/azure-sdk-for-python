@@ -24,28 +24,6 @@ class BetaAgentsOperations(GeneratedBetaAgentsOperations):
         :attr:`beta.agents` attribute.
     """
 
-    @overload
-    async def upload_session_file(
-        self,
-        agent_name: str,
-        session_id: str,
-        content: bytes,
-        *,
-        path: str,
-        **kwargs: Any,
-    ) -> _models.SessionFileWriteResponse: ...
-
-    @overload
-    async def upload_session_file(
-        self,
-        agent_name: str,
-        session_id: str,
-        file_path: str,
-        *,
-        path: str,
-        **kwargs: Any,
-    ) -> _models.SessionFileWriteResponse: ...
-
     @distributed_trace_async
     async def upload_session_file(  # type: ignore[override]
         self,
@@ -60,7 +38,8 @@ class BetaAgentsOperations(GeneratedBetaAgentsOperations):
 
         Accepts either a ``bytes`` buffer or a local file path (``str``).
         When a file path is provided the file is read from disk and its contents
-        are forwarded to the service. Maximum file size is 50 MB.
+        are forwarded to the service. Maximum file size is 50 MB. Uploads
+        exceeding this limit return 413 Payload Too Large.
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
