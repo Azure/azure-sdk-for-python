@@ -102,6 +102,7 @@ If the TypeSpec renames or removes API operations, the hand-written samples unde
 Run the following checks **from the package root** before pushing. All commands use the `azpysdk` CLI:
 
 ```bash
+pip install -e eng/tools/azure-sdk-tools
 cd sdk/planetarycomputer/azure-planetarycomputer
 ```
 
