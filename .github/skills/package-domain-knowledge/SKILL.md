@@ -1,12 +1,12 @@
 ---
-name: find-package-skill
-description: '**UTILITY SKILL** — Must be consulted before making any changes to packages under sdk/. Provides package-specific domain knowledge that prevents common mistakes. WHEN: "add feature to package", "fix bug in package", "modify package code", "regenerate from autorest/typespec", "change client library".'
+name: package-domain-knowledge
+description: '**MANDATORY PREREQUISITE** — Must be consulted before making any changes to packages under sdk/. Registry of package-specific domain knowledge including architecture, data flows, type mappings, and common pitfalls. WHEN: "add feature to package", "fix bug in package", "modify package code", "regenerate from autorest/typespec", "change client library".'
 ---
 
-# Find Package Skill
+# Package Domain Knowledge Registry
 
-Before modifying any SDK package in this monorepo, check this registry to see
-if a package-specific skill exists. Package skills contain tribal knowledge
+**Before modifying any SDK package in this monorepo, check this registry to see
+if a package-specific skill exists.** Package skills contain tribal knowledge
 (architecture, data flows, type mappings, pitfalls) that prevents common mistakes.
 
 Always check this registry before modifying any SDK package — even if you think
