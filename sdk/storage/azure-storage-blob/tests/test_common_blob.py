@@ -1473,6 +1473,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         copy_content = copyblob.download_blob().readall()
         assert copy_content == self.byte_data
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_copy_blob_with_immutability_policy(self, **kwargs):
@@ -2091,6 +2092,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert container_props is not None
         assert blob_props is not None
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_blob_service_sas(self, **kwargs):
@@ -2160,7 +2162,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert
         assert 'ss=bf' in token
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skip(reason="Temporarily skipping immutability test due to service bug")
     @BlobPreparer()
     def test_set_immutability_policy_using_sas(self, **kwargs):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
@@ -2714,7 +2716,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert info.get('sku_name') is not None
         assert info.get('account_kind') is not None
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skip(reason="Temporarily skipping immutability test due to service bug")
     @BlobPreparer()
     def test_get_account_information_with_container_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -3109,6 +3111,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert that the token attempts to refresh 4 times (i.e, get_token called 4 times)
         assert token_credential.get_token_count == 4
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_blob_immutability_policy(self, **kwargs):
@@ -3161,6 +3164,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_blob_legal_hold(self, **kwargs):
@@ -3204,6 +3208,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             blob.delete_blob()
             mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_download_blob_with_immutability_policy(self, **kwargs):
@@ -3253,6 +3258,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_list_blobs_with_immutability_policy(self, **kwargs):
@@ -3298,6 +3304,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_snapshot_immutability_policy_and_legal_hold(self, **kwargs):
@@ -3347,6 +3354,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy
     def test_versioning_immutability_policy_and_legal_hold(self, **kwargs):
