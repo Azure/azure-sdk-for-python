@@ -5,15 +5,13 @@
 Unit tests for batch sizing based on the vendor link property
 'com.microsoft:max-message-batch-size'. These tests verify:
 
-1. Vendor property present → uses its value for batch sizing.
+1. Vendor property present (bytes and str keys) → uses its value for batch sizing.
 2. Vendor property absent → falls back to tier-based inference.
 3. Vendor property with wrong type → falls back gracefully.
-4. User-specified max_size_in_bytes → overrides vendor property.
-5. Standard tier → 256 KB from vendor property.
+4. Standard tier → 256 KB from vendor property.
 """
 
-import pytest
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 from azure.servicebus._transport._pyamqp_transport import PyamqpTransport
 from azure.servicebus._common.constants import (
     MAX_BATCH_SIZE_PREMIUM,
@@ -25,9 +23,20 @@ class TestPyamqpGetRemoteMaxMessageBatchSize:
     """Tests for PyamqpTransport.get_remote_max_message_batch_size()."""
 
     def test_returns_vendor_property_value(self):
+        """pyamqp decodes AMQP symbols as bytes — the primary key form."""
         handler = MagicMock()
         handler._link.remote_properties = {
-            "com.microsoft:max-message-batch-size": 1048576,  # 1 MB
+            b"com.microsoft:max-message-batch-size": 1048576,  # 1 MB
+        }
+
+        result = PyamqpTransport.get_remote_max_message_batch_size(handler)
+        assert result == 1048576
+
+    def test_returns_vendor_property_value_str_key(self):
+        """Fallback: some transports may use str keys."""
+        handler = MagicMock()
+        handler._link.remote_properties = {
+            "com.microsoft:max-message-batch-size": 1048576,
         }
 
         result = PyamqpTransport.get_remote_max_message_batch_size(handler)
@@ -50,7 +59,7 @@ class TestPyamqpGetRemoteMaxMessageBatchSize:
     def test_returns_none_when_property_is_wrong_type(self):
         handler = MagicMock()
         handler._link.remote_properties = {
-            "com.microsoft:max-message-batch-size": "not-a-number",
+            b"com.microsoft:max-message-batch-size": "not-a-number",
         }
 
         result = PyamqpTransport.get_remote_max_message_batch_size(handler)
@@ -59,7 +68,7 @@ class TestPyamqpGetRemoteMaxMessageBatchSize:
     def test_returns_none_when_property_is_zero(self):
         handler = MagicMock()
         handler._link.remote_properties = {
-            "com.microsoft:max-message-batch-size": 0,
+            b"com.microsoft:max-message-batch-size": 0,
         }
 
         result = PyamqpTransport.get_remote_max_message_batch_size(handler)
@@ -68,7 +77,7 @@ class TestPyamqpGetRemoteMaxMessageBatchSize:
     def test_returns_none_when_property_is_negative(self):
         handler = MagicMock()
         handler._link.remote_properties = {
-            "com.microsoft:max-message-batch-size": -1,
+            b"com.microsoft:max-message-batch-size": -1,
         }
 
         result = PyamqpTransport.get_remote_max_message_batch_size(handler)
@@ -77,7 +86,7 @@ class TestPyamqpGetRemoteMaxMessageBatchSize:
     def test_returns_256_kb_for_standard_tier(self):
         handler = MagicMock()
         handler._link.remote_properties = {
-            "com.microsoft:max-message-batch-size": 262144,  # 256 KB
+            b"com.microsoft:max-message-batch-size": 262144,  # 256 KB
         }
 
         result = PyamqpTransport.get_remote_max_message_batch_size(handler)
@@ -123,7 +132,7 @@ class TestSenderBatchSizeInference:
         """Premium large-message: max-message-size=100MB, vendor batch=1MB → uses 1MB."""
         sender = self._create_mock_sender(
             max_message_size=100 * 1024 * 1024,
-            remote_properties={"com.microsoft:max-message-batch-size": 1048576},
+            remote_properties={b"com.microsoft:max-message-batch-size": 1048576},
         )
 
         # Run the batch size determination logic (extracted from _open)
@@ -185,7 +194,7 @@ class TestSenderBatchSizeInference:
         """Standard tier with vendor property: 256KB for both → uses vendor value."""
         sender = self._create_mock_sender(
             max_message_size=262144,
-            remote_properties={"com.microsoft:max-message-batch-size": 262144},
+            remote_properties={b"com.microsoft:max-message-batch-size": 262144},
         )
 
         sender._max_message_size_on_link = (

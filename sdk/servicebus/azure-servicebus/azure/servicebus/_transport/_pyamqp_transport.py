@@ -400,10 +400,13 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         :rtype: Optional[int]
         """
         props = getattr(handler._link, "remote_properties", None)  # pylint: disable=protected-access
-        if props and "com.microsoft:max-message-batch-size" in props:
-            value = props["com.microsoft:max-message-batch-size"]
-            if isinstance(value, int) and value > 0:
-                return value
+        if props:
+            # pyamqp decodes AMQP symbols as bytes; check both forms for safety.
+            for key in (b"com.microsoft:max-message-batch-size", "com.microsoft:max-message-batch-size"):
+                if key in props:
+                    value = props[key]
+                    if isinstance(value, int) and value > 0:
+                        return value
         return None
 
     @staticmethod
