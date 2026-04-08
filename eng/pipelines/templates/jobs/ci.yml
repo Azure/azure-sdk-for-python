@@ -285,6 +285,9 @@ jobs:
             inputs:
               versionSpec: '3.12'
           - template: /eng/pipelines/templates/steps/use-venv.yml
+          - template: ../steps/auth-dev-feed.yml
+            parameters:
+              DevFeedName: ${{ parameters.DevFeedName }}
           - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
             parameters:
               ServiceDirectory: ${{parameters.ServiceDirectory}}
@@ -323,6 +326,11 @@ jobs:
             inputs:
               versionSpec: '3.12'
           - template: /eng/pipelines/templates/steps/use-venv.yml
+
+          - template: ../steps/auth-dev-feed.yml
+            parameters:
+              DevFeedName: ${{ parameters.DevFeedName }}
+
           - pwsh: |
               $ErrorActionPreference = 'Stop'
               $PSNativeCommandUseErrorActionPreference = $true
