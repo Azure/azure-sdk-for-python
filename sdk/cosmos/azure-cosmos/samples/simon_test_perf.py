@@ -13,8 +13,12 @@ from dataclasses import dataclass
 
 import numpy as np
 import pyarrow.parquet as pq
+import aiohttp
+from azure.core.pipeline.transport import AioHttpTransport
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos import PartitionKey
+import azure.cosmos._timing_instrument  # noqa: F401 - installs timing hooks
+from azure.cosmos._timing import print_timing_summary
 
 # ── Config ──────────────────────────────────────────────────────────────────
 ENDPOINT = os.environ.get("COSMOS_ENDPOINT", "")
@@ -30,6 +34,7 @@ DURATION_PER_LEVEL_SECONDS = 20
 CONCURRENCY_LEVELS = [16, 32, 64]
 SEARCH_LIST_MULTIPLIERS = [3, 4, 5]
 COOLDOWN_SECONDS = 5
+CONNECTION_POOL_SIZES = [32, 64, 100, 128, 256]
 
 DATASET_CACHE = os.path.join(os.path.dirname(__file__), "..", "dataset_cache")
 
@@ -151,7 +156,6 @@ async def run_at_concurrency(
     recall_scores: list[float] = []
     query_count = 0
     error_count = 0
-    lock = asyncio.Lock()
 
     deadline = time.monotonic() + duration_seconds
 
@@ -169,26 +173,26 @@ async def run_at_concurrency(
                 )
                 elapsed_ms = (time.perf_counter() - start) * 1000.0
 
-                async with lock:
-                    latencies.append(elapsed_ms)
-                    ru_charges.append(ru)
-                    query_count += 1
+                latencies.append(elapsed_ms)
+                ru_charges.append(ru)
+                query_count += 1
 
-                    if gt_sets is not None and query_idx < len(gt_sets):
-                        gt = gt_sets[query_idx]
-                        hits = sum(1 for rid in result_ids if rid in gt)
-                        recall_scores.append(hits / len(gt) if gt else 0.0)
+                if gt_sets is not None and query_idx < len(gt_sets):
+                    gt = gt_sets[query_idx]
+                    hits = sum(1 for rid in result_ids if rid in gt)
+                    recall_scores.append(hits / len(gt) if gt else 0.0)
 
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                async with lock:
-                    error_count += 1
-                    if error_count <= 3:
-                        print(f"\n  ❌ Error: {type(e).__name__}: {e}")
+                error_count += 1
+                if error_count <= 3:
+                    print(f"\n  ❌ Error: {type(e).__name__}: {e}")
 
+    wall_start = time.monotonic()
     tasks = [asyncio.create_task(worker(t)) for t in range(concurrency)]
     await asyncio.gather(*tasks)
+    actual_duration = time.monotonic() - wall_start
 
     sorted_latencies = sorted(latencies)
 
@@ -198,7 +202,7 @@ async def run_at_concurrency(
     return BenchmarkResult(
         concurrency=concurrency,
         total_queries=query_count,
-        duration_seconds=duration_seconds,
+        duration_seconds=actual_duration,
         avg_latency_ms=sum(sorted_latencies) / len(sorted_latencies) if sorted_latencies else 0,
         p50_latency_ms=percentile(sorted_latencies, 0.50),
         p95_latency_ms=percentile(sorted_latencies, 0.95),
@@ -209,19 +213,16 @@ async def run_at_concurrency(
 
 
 def print_header():
-    print(f"{'Concurrency':>12} {'Queries':>10} {'Duration(s)':>12} "
-          f"{'QPS':>10} {'Avg(ms)':>10} {'P50(ms)':>10} {'P95(ms)':>10} "
-          f"{'P99(ms)':>10} {'Avg RU':>10} {'Recall':>10}")
-    print("─" * 114)
+    pass  # No header needed for key=value format
 
 
 def print_result(result: BenchmarkResult, label: str | None = None):
-    prefix = f"{label:>12}" if label else f"{result.concurrency:>12}"
-    print(f"{prefix} {result.total_queries:>10,} "
-          f"{result.duration_seconds:>12.1f} {result.qps:>10.1f} "
-          f"{result.avg_latency_ms:>10.2f} {result.p50_latency_ms:>10.2f} "
-          f"{result.p95_latency_ms:>10.2f} {result.p99_latency_ms:>10.2f} "
-          f"{result.avg_ru_per_query:>10.1f} {result.recall:>10.4f}")
+    tag = f"{label}, " if label else f"Conc={result.concurrency}, "
+    print(f"{tag}Queries={result.total_queries}, Duration={result.duration_seconds:.1f}s, "
+          f"QPS={result.qps:.1f}, AvgLat={result.avg_latency_ms:.2f}ms, "
+          f"P50={result.p50_latency_ms:.2f}ms, P95={result.p95_latency_ms:.2f}ms, "
+          f"P99={result.p99_latency_ms:.2f}ms, AvgRU={result.avg_ru_per_query:.1f}, "
+          f"Recall={result.recall:.4f}")
 
 
 async def main():
@@ -302,10 +303,6 @@ async def main():
     if SEARCH_LIST_MULTIPLIERS:
         print(f"\n▸ Search list multiplier sweep (all concurrency levels × all multipliers)")
         print()
-        print(f"{'Multiplier':>12} {'Concurrency':>12} {'Queries':>10} {'Duration(s)':>12} "
-              f"{'QPS':>10} {'Avg(ms)':>10} {'P50(ms)':>10} {'P95(ms)':>10} "
-              f"{'P99(ms)':>10} {'Avg RU':>10} {'Recall':>10}")
-        print("─" * 126)
 
         for concurrency in CONCURRENCY_LEVELS:
             for mult in SEARCH_LIST_MULTIPLIERS:
@@ -314,11 +311,50 @@ async def main():
                     container, concurrency, DURATION_PER_LEVEL_SECONDS,
                     test_embeddings, ground_truth, TOP_K, mult
                 )
-                print_result(result, label=f"{mult}x@{concurrency}")
+                print_result(result, label=f"Mult={mult}, Conc={concurrency}")
 
         print("═" * 80)
 
-    await client.close()
+    # ── Connection pool sweep ────────────────────────────────────────────────
+    if CONNECTION_POOL_SIZES:
+        await client.close()
+        best_conc = best_result.concurrency if best_result else 64
+        print(f"\n▸ Connection pool sweep (concurrency={best_conc}, default multiplier)")
+        print()
+
+        for pool_size in CONNECTION_POOL_SIZES:
+            connector = aiohttp.TCPConnector(limit=pool_size, limit_per_host=pool_size)
+            session = aiohttp.ClientSession(connector=connector)
+            transport = AioHttpTransport(session=session, session_owner=False)
+            pool_client = CosmosClient(ENDPOINT, credential=KEY, consistency_level="Eventual",
+                                       transport=transport)
+            pool_database = pool_client.get_database_client(DATABASE_NAME)
+            pool_container = pool_database.get_container_client(CONTAINER_NAME)
+
+            # Brief warmup
+            warmup_tasks = [
+                execute_search(pool_container, test_embeddings[i % len(test_embeddings)], TOP_K)
+                for i in range(min(pool_size, len(test_embeddings)))
+            ]
+            await asyncio.gather(*warmup_tasks, return_exceptions=True)
+            await asyncio.sleep(COOLDOWN_SECONDS)
+
+            result = await run_at_concurrency(
+                pool_container, best_conc, DURATION_PER_LEVEL_SECONDS,
+                test_embeddings, ground_truth, TOP_K
+            )
+            print_result(result, label=f"Pool={pool_size}, Conc={best_conc}")
+
+            await pool_client.close()
+            await session.close()
+
+        print("═" * 80)
+        # Re-open original client is not needed since we're done
+        client = None  # skip the final close
+
+    if client:
+        await client.close()
+    print_timing_summary()
     print("\nDone.")
     return 0
 
