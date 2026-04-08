@@ -37,22 +37,22 @@ if TYPE_CHECKING:
 class ResourceManagementClient:
     """ResourceManagement Client.
 
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.resource.resources.operations.Operations
+    :ivar resources: ResourcesOperations operations
+    :vartype resources: azure.mgmt.resource.resources.operations.ResourcesOperations
+    :ivar tags: TagsOperations operations
+    :vartype tags: azure.mgmt.resource.resources.operations.TagsOperations
     :ivar providers: ProvidersOperations operations
     :vartype providers: azure.mgmt.resource.resources.operations.ProvidersOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.resource.resources.operations.Operations
     :ivar provider_resource_types: ProviderResourceTypesOperations operations
     :vartype provider_resource_types:
      azure.mgmt.resource.resources.operations.ProviderResourceTypesOperations
-    :ivar resources: ResourcesOperations operations
-    :vartype resources: azure.mgmt.resource.resources.operations.ResourcesOperations
     :ivar resource_groups: ResourceGroupsOperations operations
     :vartype resource_groups: azure.mgmt.resource.resources.operations.ResourceGroupsOperations
-    :ivar tags: TagsOperations operations
-    :vartype tags: azure.mgmt.resource.resources.operations.TagsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Microsoft Azure subscription ID. Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
@@ -112,14 +112,14 @@ class ResourceManagementClient:
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.resources = ResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.tags = TagsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.providers = ProvidersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.provider_resource_types = ProviderResourceTypesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.resources = ResourcesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.resource_groups = ResourceGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.tags = TagsOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, *, stream: bool = False, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

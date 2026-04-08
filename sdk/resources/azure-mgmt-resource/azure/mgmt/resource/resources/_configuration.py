@@ -26,7 +26,7 @@ class ResourceManagementClientConfiguration:  # pylint: disable=too-many-instanc
 
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Microsoft Azure subscription ID. Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.

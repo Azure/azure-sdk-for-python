@@ -20,8 +20,18 @@ class TestResourceManagementProvidersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_providers_unregister(self, resource_group):
-        response = self.client.providers.unregister(
+    def test_providers_list_at_tenant_scope(self, resource_group):
+        response = self.client.providers.list_at_tenant_scope(
+            api_version="2025-04-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_providers_get_at_tenant_scope(self, resource_group):
+        response = self.client.providers.get_at_tenant_scope(
             resource_provider_namespace="str",
             api_version="2025-04-01",
         )
@@ -35,6 +45,27 @@ class TestResourceManagementProvidersOperations(AzureMgmtRecordedTestCase):
         response = self.client.providers.register_at_management_group_scope(
             resource_provider_namespace="str",
             group_id="str",
+            api_version="2025-04-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_providers_list(self, resource_group):
+        response = self.client.providers.list(
+            api_version="2025-04-01",
+        )
+        result = [r for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_providers_get(self, resource_group):
+        response = self.client.providers.get(
+            resource_provider_namespace="str",
             api_version="2025-04-01",
         )
 
@@ -65,39 +96,8 @@ class TestResourceManagementProvidersOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_providers_list(self, resource_group):
-        response = self.client.providers.list(
-            api_version="2025-04-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_providers_list_at_tenant_scope(self, resource_group):
-        response = self.client.providers.list_at_tenant_scope(
-            api_version="2025-04-01",
-        )
-        result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_providers_get(self, resource_group):
-        response = self.client.providers.get(
-            resource_provider_namespace="str",
-            api_version="2025-04-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_providers_get_at_tenant_scope(self, resource_group):
-        response = self.client.providers.get_at_tenant_scope(
+    def test_providers_unregister(self, resource_group):
+        response = self.client.providers.unregister(
             resource_provider_namespace="str",
             api_version="2025-04-01",
         )

@@ -21,12 +21,142 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_resources_list_by_resource_group(self, resource_group):
-        response = self.client.resources.list_by_resource_group(
-            resource_group_name=resource_group.name,
+    async def test_resources_get_by_id(self, resource_group):
+        response = await self.client.resources.get_by_id(
+            resource_id="str",
             api_version="2025-04-01",
         )
-        result = [r async for r in response]
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_resources_begin_create_or_update_by_id(self, resource_group):
+        response = await (
+            await self.client.resources.begin_create_or_update_by_id(
+                resource_id="str",
+                parameters={
+                    "extendedLocation": {"name": "str", "type": "str"},
+                    "id": "str",
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
+                    "kind": "str",
+                    "location": "str",
+                    "managedBy": "str",
+                    "name": "str",
+                    "plan": {
+                        "name": "str",
+                        "product": "str",
+                        "promotionCode": "str",
+                        "publisher": "str",
+                        "version": "str",
+                    },
+                    "properties": {},
+                    "sku": {
+                        "capacity": 0,
+                        "family": "str",
+                        "model": "str",
+                        "name": "str",
+                        "size": "str",
+                        "tier": "str",
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "tags": {"str": "str"},
+                    "type": "str",
+                },
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_resources_begin_update_by_id(self, resource_group):
+        response = await (
+            await self.client.resources.begin_update_by_id(
+                resource_id="str",
+                parameters={
+                    "extendedLocation": {"name": "str", "type": "str"},
+                    "id": "str",
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
+                    "kind": "str",
+                    "location": "str",
+                    "managedBy": "str",
+                    "name": "str",
+                    "plan": {
+                        "name": "str",
+                        "product": "str",
+                        "promotionCode": "str",
+                        "publisher": "str",
+                        "version": "str",
+                    },
+                    "properties": {},
+                    "sku": {
+                        "capacity": 0,
+                        "family": "str",
+                        "model": "str",
+                        "name": "str",
+                        "size": "str",
+                        "tier": "str",
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "tags": {"str": "str"},
+                    "type": "str",
+                },
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_resources_begin_delete_by_id(self, resource_group):
+        response = await (
+            await self.client.resources.begin_delete_by_id(
+                resource_id="str",
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_resources_check_existence_by_id(self, resource_group):
+        response = await self.client.resources.check_existence_by_id(
+            resource_id="str",
+            api_version="2025-04-01",
+        )
+
         # please add some check logic here by yourself
         # ...
 
@@ -41,6 +171,178 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
             )
         ).result()  # call '.result()' to poll until service return final result
 
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_resources_get(self, resource_group):
+        response = await self.client.resources.get(
+            resource_group_name=resource_group.name,
+            resource_provider_namespace="str",
+            parent_resource_path="str",
+            resource_type="str",
+            resource_name="str",
+            api_version="2025-04-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_resources_begin_create_or_update(self, resource_group):
+        response = await (
+            await self.client.resources.begin_create_or_update(
+                resource_group_name=resource_group.name,
+                resource_provider_namespace="str",
+                parent_resource_path="str",
+                resource_type="str",
+                resource_name="str",
+                parameters={
+                    "extendedLocation": {"name": "str", "type": "str"},
+                    "id": "str",
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
+                    "kind": "str",
+                    "location": "str",
+                    "managedBy": "str",
+                    "name": "str",
+                    "plan": {
+                        "name": "str",
+                        "product": "str",
+                        "promotionCode": "str",
+                        "publisher": "str",
+                        "version": "str",
+                    },
+                    "properties": {},
+                    "sku": {
+                        "capacity": 0,
+                        "family": "str",
+                        "model": "str",
+                        "name": "str",
+                        "size": "str",
+                        "tier": "str",
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "tags": {"str": "str"},
+                    "type": "str",
+                },
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_resources_begin_update(self, resource_group):
+        response = await (
+            await self.client.resources.begin_update(
+                resource_group_name=resource_group.name,
+                resource_provider_namespace="str",
+                parent_resource_path="str",
+                resource_type="str",
+                resource_name="str",
+                parameters={
+                    "extendedLocation": {"name": "str", "type": "str"},
+                    "id": "str",
+                    "identity": {
+                        "principalId": "str",
+                        "tenantId": "str",
+                        "type": "str",
+                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
+                    },
+                    "kind": "str",
+                    "location": "str",
+                    "managedBy": "str",
+                    "name": "str",
+                    "plan": {
+                        "name": "str",
+                        "product": "str",
+                        "promotionCode": "str",
+                        "publisher": "str",
+                        "version": "str",
+                    },
+                    "properties": {},
+                    "sku": {
+                        "capacity": 0,
+                        "family": "str",
+                        "model": "str",
+                        "name": "str",
+                        "size": "str",
+                        "tier": "str",
+                    },
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
+                    "tags": {"str": "str"},
+                    "type": "str",
+                },
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_resources_begin_delete(self, resource_group):
+        response = await (
+            await self.client.resources.begin_delete(
+                resource_group_name=resource_group.name,
+                resource_provider_namespace="str",
+                parent_resource_path="str",
+                resource_type="str",
+                resource_name="str",
+                api_version="2025-04-01",
+            )
+        ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_resources_check_existence(self, resource_group):
+        response = await self.client.resources.check_existence(
+            resource_group_name=resource_group.name,
+            resource_provider_namespace="str",
+            parent_resource_path="str",
+            resource_type="str",
+            resource_name="str",
+            api_version="2025-04-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_resources_list_by_resource_group(self, resource_group):
+        response = self.client.resources.list_by_resource_group(
+            resource_group_name=resource_group.name,
+            api_version="2025-04-01",
+        )
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -65,275 +367,5 @@ class TestResourceManagementResourcesOperationsAsync(AzureMgmtRecordedTestCase):
             api_version="2025-04-01",
         )
         result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_resources_check_existence(self, resource_group):
-        response = await self.client.resources.check_existence(
-            resource_group_name=resource_group.name,
-            resource_provider_namespace="str",
-            parent_resource_path="str",
-            resource_type="str",
-            resource_name="str",
-            api_version="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_resources_begin_delete(self, resource_group):
-        response = await (
-            await self.client.resources.begin_delete(
-                resource_group_name=resource_group.name,
-                resource_provider_namespace="str",
-                parent_resource_path="str",
-                resource_type="str",
-                resource_name="str",
-                api_version="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_resources_begin_create_or_update(self, resource_group):
-        response = await (
-            await self.client.resources.begin_create_or_update(
-                resource_group_name=resource_group.name,
-                resource_provider_namespace="str",
-                parent_resource_path="str",
-                resource_type="str",
-                resource_name="str",
-                api_version="str",
-                parameters={
-                    "extendedLocation": {"name": "str", "type": "str"},
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "kind": "str",
-                    "location": "str",
-                    "managedBy": "str",
-                    "name": "str",
-                    "plan": {
-                        "name": "str",
-                        "product": "str",
-                        "promotionCode": "str",
-                        "publisher": "str",
-                        "version": "str",
-                    },
-                    "properties": {},
-                    "sku": {
-                        "capacity": 0,
-                        "family": "str",
-                        "model": "str",
-                        "name": "str",
-                        "size": "str",
-                        "tier": "str",
-                    },
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_resources_begin_update(self, resource_group):
-        response = await (
-            await self.client.resources.begin_update(
-                resource_group_name=resource_group.name,
-                resource_provider_namespace="str",
-                parent_resource_path="str",
-                resource_type="str",
-                resource_name="str",
-                api_version="str",
-                parameters={
-                    "extendedLocation": {"name": "str", "type": "str"},
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "kind": "str",
-                    "location": "str",
-                    "managedBy": "str",
-                    "name": "str",
-                    "plan": {
-                        "name": "str",
-                        "product": "str",
-                        "promotionCode": "str",
-                        "publisher": "str",
-                        "version": "str",
-                    },
-                    "properties": {},
-                    "sku": {
-                        "capacity": 0,
-                        "family": "str",
-                        "model": "str",
-                        "name": "str",
-                        "size": "str",
-                        "tier": "str",
-                    },
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_resources_get(self, resource_group):
-        response = await self.client.resources.get(
-            resource_group_name=resource_group.name,
-            resource_provider_namespace="str",
-            parent_resource_path="str",
-            resource_type="str",
-            resource_name="str",
-            api_version="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_resources_check_existence_by_id(self, resource_group):
-        response = await self.client.resources.check_existence_by_id(
-            resource_id="str",
-            api_version="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_resources_begin_delete_by_id(self, resource_group):
-        response = await (
-            await self.client.resources.begin_delete_by_id(
-                resource_id="str",
-                api_version="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_resources_begin_create_or_update_by_id(self, resource_group):
-        response = await (
-            await self.client.resources.begin_create_or_update_by_id(
-                resource_id="str",
-                api_version="str",
-                parameters={
-                    "extendedLocation": {"name": "str", "type": "str"},
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "kind": "str",
-                    "location": "str",
-                    "managedBy": "str",
-                    "name": "str",
-                    "plan": {
-                        "name": "str",
-                        "product": "str",
-                        "promotionCode": "str",
-                        "publisher": "str",
-                        "version": "str",
-                    },
-                    "properties": {},
-                    "sku": {
-                        "capacity": 0,
-                        "family": "str",
-                        "model": "str",
-                        "name": "str",
-                        "size": "str",
-                        "tier": "str",
-                    },
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_resources_begin_update_by_id(self, resource_group):
-        response = await (
-            await self.client.resources.begin_update_by_id(
-                resource_id="str",
-                api_version="str",
-                parameters={
-                    "extendedLocation": {"name": "str", "type": "str"},
-                    "id": "str",
-                    "identity": {
-                        "principalId": "str",
-                        "tenantId": "str",
-                        "type": "str",
-                        "userAssignedIdentities": {"str": {"clientId": "str", "principalId": "str"}},
-                    },
-                    "kind": "str",
-                    "location": "str",
-                    "managedBy": "str",
-                    "name": "str",
-                    "plan": {
-                        "name": "str",
-                        "product": "str",
-                        "promotionCode": "str",
-                        "publisher": "str",
-                        "version": "str",
-                    },
-                    "properties": {},
-                    "sku": {
-                        "capacity": 0,
-                        "family": "str",
-                        "model": "str",
-                        "name": "str",
-                        "size": "str",
-                        "tier": "str",
-                    },
-                    "tags": {"str": "str"},
-                    "type": "str",
-                },
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_resources_get_by_id(self, resource_group):
-        response = await self.client.resources.get_by_id(
-            resource_id="str",
-            api_version="str",
-        )
-
         # please add some check logic here by yourself
         # ...

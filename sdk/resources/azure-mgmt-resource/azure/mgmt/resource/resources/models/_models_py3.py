@@ -258,6 +258,49 @@ class ErrorAdditionalInfo(_serialization.Model):
         self.info: Optional[JSON] = None
 
 
+class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.resource.resources.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.resource.resources.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
 class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed
     operations. (This also follows the OData error response format.).
@@ -383,85 +426,86 @@ class ExtendedLocation(_serialization.Model):
 
 
 class Resource(_serialization.Model):
-    """Specified resource.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar extended_location: Resource extended location.
-    :vartype extended_location: ~azure.mgmt.resource.resources.models.ExtendedLocation
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.resource.resources.models.SystemData
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
-        "tags": {"key": "tags", "type": "{str}"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
-        tags: Optional[dict[str, str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword location: Resource location.
-        :paramtype location: str
-        :keyword extended_location: Resource extended location.
-        :paramtype extended_location: ~azure.mgmt.resource.resources.models.ExtendedLocation
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.id: Optional[str] = None
         self.name: Optional[str] = None
         self.type: Optional[str] = None
-        self.location = location
-        self.extended_location = extended_location
-        self.tags = tags
+        self.system_data: Optional["_models.SystemData"] = None
 
 
-class GenericResource(Resource):
+class ProxyResource(Resource):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.resource.resources.models.SystemData
+    """
+
+
+class GenericResource(ProxyResource):
     """Resource information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar extended_location: Resource extended location.
-    :vartype extended_location: ~azure.mgmt.resource.resources.models.ExtendedLocation
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.resource.resources.models.SystemData
+    :ivar properties: The resource properties.
+    :vartype properties: any
     :ivar plan: The plan of the resource.
     :vartype plan: ~azure.mgmt.resource.resources.models.Plan
-    :ivar properties: The resource properties.
-    :vartype properties: JSON
     :ivar kind: The kind of the resource.
     :vartype kind: str
     :ivar managed_by: ID of the resource that manages this resource.
@@ -470,12 +514,19 @@ class GenericResource(Resource):
     :vartype sku: ~azure.mgmt.resource.resources.models.Sku
     :ivar identity: The identity of the resource.
     :vartype identity: ~azure.mgmt.resource.resources.models.Identity
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar extended_location: Resource extended location.
+    :vartype extended_location: ~azure.mgmt.resource.resources.models.ExtendedLocation
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "kind": {"pattern": r"^[-\w\._,\(\)]+$"},
     }
 
@@ -483,42 +534,37 @@ class GenericResource(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "plan": {"key": "plan", "type": "Plan"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "object"},
+        "plan": {"key": "plan", "type": "Plan"},
         "kind": {"key": "kind", "type": "str"},
         "managed_by": {"key": "managedBy", "type": "str"},
         "sku": {"key": "sku", "type": "Sku"},
         "identity": {"key": "identity", "type": "Identity"},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
-        tags: Optional[dict[str, str]] = None,
+        properties: Optional[Any] = None,
         plan: Optional["_models.Plan"] = None,
-        properties: Optional[JSON] = None,
         kind: Optional[str] = None,
         managed_by: Optional[str] = None,
         sku: Optional["_models.Sku"] = None,
         identity: Optional["_models.Identity"] = None,
+        location: Optional[str] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location.
-        :paramtype location: str
-        :keyword extended_location: Resource extended location.
-        :paramtype extended_location: ~azure.mgmt.resource.resources.models.ExtendedLocation
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
+        :keyword properties: The resource properties.
+        :paramtype properties: any
         :keyword plan: The plan of the resource.
         :paramtype plan: ~azure.mgmt.resource.resources.models.Plan
-        :keyword properties: The resource properties.
-        :paramtype properties: JSON
         :keyword kind: The kind of the resource.
         :paramtype kind: str
         :keyword managed_by: ID of the resource that manages this resource.
@@ -527,14 +573,23 @@ class GenericResource(Resource):
         :paramtype sku: ~azure.mgmt.resource.resources.models.Sku
         :keyword identity: The identity of the resource.
         :paramtype identity: ~azure.mgmt.resource.resources.models.Identity
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword extended_location: Resource extended location.
+        :paramtype extended_location: ~azure.mgmt.resource.resources.models.ExtendedLocation
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
         """
-        super().__init__(location=location, extended_location=extended_location, tags=tags, **kwargs)
-        self.plan = plan
+        super().__init__(**kwargs)
         self.properties = properties
+        self.plan = plan
         self.kind = kind
         self.managed_by = managed_by
         self.sku = sku
         self.identity = identity
+        self.location = location
+        self.extended_location = extended_location
+        self.tags = tags
 
 
 class GenericResourceExpanded(GenericResource):
@@ -542,22 +597,21 @@ class GenericResourceExpanded(GenericResource):
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Resource ID.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location.
-    :vartype location: str
-    :ivar extended_location: Resource extended location.
-    :vartype extended_location: ~azure.mgmt.resource.resources.models.ExtendedLocation
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.resource.resources.models.SystemData
+    :ivar properties: The resource properties.
+    :vartype properties: any
     :ivar plan: The plan of the resource.
     :vartype plan: ~azure.mgmt.resource.resources.models.Plan
-    :ivar properties: The resource properties.
-    :vartype properties: JSON
     :ivar kind: The kind of the resource.
     :vartype kind: str
     :ivar managed_by: ID of the resource that manages this resource.
@@ -566,6 +620,12 @@ class GenericResourceExpanded(GenericResource):
     :vartype sku: ~azure.mgmt.resource.resources.models.Sku
     :ivar identity: The identity of the resource.
     :vartype identity: ~azure.mgmt.resource.resources.models.Identity
+    :ivar location: Resource location.
+    :vartype location: str
+    :ivar extended_location: Resource extended location.
+    :vartype extended_location: ~azure.mgmt.resource.resources.models.ExtendedLocation
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
     :ivar created_time: The created time of the resource. This is only present if requested via the
      $expand query parameter.
     :vartype created_time: ~datetime.datetime
@@ -581,6 +641,7 @@ class GenericResourceExpanded(GenericResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "kind": {"pattern": r"^[-\w\._,\(\)]+$"},
         "created_time": {"readonly": True},
         "changed_time": {"readonly": True},
@@ -591,15 +652,16 @@ class GenericResourceExpanded(GenericResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "plan": {"key": "plan", "type": "Plan"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "object"},
+        "plan": {"key": "plan", "type": "Plan"},
         "kind": {"key": "kind", "type": "str"},
         "managed_by": {"key": "managedBy", "type": "str"},
         "sku": {"key": "sku", "type": "Sku"},
         "identity": {"key": "identity", "type": "Identity"},
+        "location": {"key": "location", "type": "str"},
+        "extended_location": {"key": "extendedLocation", "type": "ExtendedLocation"},
+        "tags": {"key": "tags", "type": "{str}"},
         "created_time": {"key": "createdTime", "type": "iso-8601"},
         "changed_time": {"key": "changedTime", "type": "iso-8601"},
         "provisioning_state": {"key": "provisioningState", "type": "str"},
@@ -608,28 +670,22 @@ class GenericResourceExpanded(GenericResource):
     def __init__(
         self,
         *,
-        location: Optional[str] = None,
-        extended_location: Optional["_models.ExtendedLocation"] = None,
-        tags: Optional[dict[str, str]] = None,
+        properties: Optional[Any] = None,
         plan: Optional["_models.Plan"] = None,
-        properties: Optional[JSON] = None,
         kind: Optional[str] = None,
         managed_by: Optional[str] = None,
         sku: Optional["_models.Sku"] = None,
         identity: Optional["_models.Identity"] = None,
+        location: Optional[str] = None,
+        extended_location: Optional["_models.ExtendedLocation"] = None,
+        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location.
-        :paramtype location: str
-        :keyword extended_location: Resource extended location.
-        :paramtype extended_location: ~azure.mgmt.resource.resources.models.ExtendedLocation
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
+        :keyword properties: The resource properties.
+        :paramtype properties: any
         :keyword plan: The plan of the resource.
         :paramtype plan: ~azure.mgmt.resource.resources.models.Plan
-        :keyword properties: The resource properties.
-        :paramtype properties: JSON
         :keyword kind: The kind of the resource.
         :paramtype kind: str
         :keyword managed_by: ID of the resource that manages this resource.
@@ -638,61 +694,28 @@ class GenericResourceExpanded(GenericResource):
         :paramtype sku: ~azure.mgmt.resource.resources.models.Sku
         :keyword identity: The identity of the resource.
         :paramtype identity: ~azure.mgmt.resource.resources.models.Identity
+        :keyword location: Resource location.
+        :paramtype location: str
+        :keyword extended_location: Resource extended location.
+        :paramtype extended_location: ~azure.mgmt.resource.resources.models.ExtendedLocation
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
         """
         super().__init__(
-            location=location,
-            extended_location=extended_location,
-            tags=tags,
-            plan=plan,
             properties=properties,
+            plan=plan,
             kind=kind,
             managed_by=managed_by,
             sku=sku,
             identity=identity,
+            location=location,
+            extended_location=extended_location,
+            tags=tags,
             **kwargs
         )
         self.created_time: Optional[datetime.datetime] = None
         self.changed_time: Optional[datetime.datetime] = None
         self.provisioning_state: Optional[str] = None
-
-
-class GenericResourceFilter(_serialization.Model):
-    """Resource filter.
-
-    :ivar resource_type: The resource type.
-    :vartype resource_type: str
-    :ivar tagname: The tag name.
-    :vartype tagname: str
-    :ivar tagvalue: The tag value.
-    :vartype tagvalue: str
-    """
-
-    _attribute_map = {
-        "resource_type": {"key": "resourceType", "type": "str"},
-        "tagname": {"key": "tagname", "type": "str"},
-        "tagvalue": {"key": "tagvalue", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        resource_type: Optional[str] = None,
-        tagname: Optional[str] = None,
-        tagvalue: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword resource_type: The resource type.
-        :paramtype resource_type: str
-        :keyword tagname: The tag name.
-        :paramtype tagname: str
-        :keyword tagvalue: The tag value.
-        :paramtype tagvalue: str
-        """
-        super().__init__(**kwargs)
-        self.resource_type = resource_type
-        self.tagname = tagname
-        self.tagvalue = tagvalue
 
 
 class Identity(_serialization.Model):
@@ -779,45 +802,80 @@ class IdentityUserAssignedIdentitiesValue(_serialization.Model):
 
 
 class Operation(_serialization.Model):
-    """Microsoft.Resources operation.
+    """Details of a REST API operation, returned from the Resource Provider Operations API.
 
-    :ivar name: Operation name: {provider}/{resource}/{operation}.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
+     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
     :vartype name: str
-    :ivar display: The object that represents the operation.
+    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
+     data-plane operations and "false" for ARM/control-plane operations.
+    :vartype is_data_action: bool
+    :ivar display: Localized display information for this particular operation.
     :vartype display: ~azure.mgmt.resource.resources.models.OperationDisplay
+    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
+     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
+     and "user,system".
+    :vartype origin: str or ~azure.mgmt.resource.resources.models.Origin
+    :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
+     internal only APIs. "Internal"
+    :vartype action_type: str or ~azure.mgmt.resource.resources.models.ActionType
     """
+
+    _validation = {
+        "name": {"readonly": True},
+        "is_data_action": {"readonly": True},
+        "origin": {"readonly": True},
+        "action_type": {"readonly": True},
+    }
 
     _attribute_map = {
         "name": {"key": "name", "type": "str"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
         "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
-    def __init__(
-        self, *, name: Optional[str] = None, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any
-    ) -> None:
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs: Any) -> None:
         """
-        :keyword name: Operation name: {provider}/{resource}/{operation}.
-        :paramtype name: str
-        :keyword display: The object that represents the operation.
+        :keyword display: Localized display information for this particular operation.
         :paramtype display: ~azure.mgmt.resource.resources.models.OperationDisplay
         """
         super().__init__(**kwargs)
-        self.name = name
+        self.name: Optional[str] = None
+        self.is_data_action: Optional[bool] = None
         self.display = display
+        self.origin: Optional[Union[str, "_models.Origin"]] = None
+        self.action_type: Optional[Union[str, "_models.ActionType"]] = None
 
 
 class OperationDisplay(_serialization.Model):
-    """The object that represents the operation.
+    """Localized display information for this particular operation.
 
-    :ivar provider: Service provider: Microsoft.Resources.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
+     Monitoring Insights" or "Microsoft Compute".
     :vartype provider: str
-    :ivar resource: Resource on which the operation is performed: Profile, endpoint, etc.
+    :ivar resource: The localized friendly name of the resource type related to this operation.
+     E.g. "Virtual Machines" or "Job Schedule Collections".
     :vartype resource: str
-    :ivar operation: Operation type: Read, write, delete, etc.
+    :ivar operation: The concise, localized friendly name for the operation; suitable for
+     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
     :vartype operation: str
-    :ivar description: Description of the operation.
+    :ivar description: The short, localized friendly description of the operation; suitable for
+     tool tips and detailed views.
     :vartype description: str
     """
+
+    _validation = {
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
+        "description": {"readonly": True},
+    }
 
     _attribute_map = {
         "provider": {"key": "provider", "type": "str"},
@@ -826,59 +884,42 @@ class OperationDisplay(_serialization.Model):
         "description": {"key": "description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        provider: Optional[str] = None,
-        resource: Optional[str] = None,
-        operation: Optional[str] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword provider: Service provider: Microsoft.Resources.
-        :paramtype provider: str
-        :keyword resource: Resource on which the operation is performed: Profile, endpoint, etc.
-        :paramtype resource: str
-        :keyword operation: Operation type: Read, write, delete, etc.
-        :paramtype operation: str
-        :keyword description: Description of the operation.
-        :paramtype description: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
+        self.provider: Optional[str] = None
+        self.resource: Optional[str] = None
+        self.operation: Optional[str] = None
+        self.description: Optional[str] = None
 
 
 class OperationListResult(_serialization.Model):
-    """Result of the request to list Microsoft.Resources operations. It contains a list of operations
-    and a URL link to get the next set of results.
+    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
+    to get the next set of results.
 
-    :ivar value: List of Microsoft.Resources operations.
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of operations supported by the resource provider.
     :vartype value: list[~azure.mgmt.resource.resources.models.Operation]
-    :ivar next_link: URL to get the next set of operation list results if there are any.
+    :ivar next_link: URL to get the next set of operation list results (if there are any).
     :vartype next_link: str
     """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Operation]"},
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self, *, value: Optional[list["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: List of Microsoft.Resources operations.
-        :paramtype value: list[~azure.mgmt.resource.resources.models.Operation]
-        :keyword next_link: URL to get the next set of operation list results if there are any.
-        :paramtype next_link: str
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
+        self.value: Optional[list["_models.Operation"]] = None
+        self.next_link: Optional[str] = None
 
 
 class Permission(_serialization.Model):
@@ -1104,16 +1145,16 @@ class ProviderExtendedLocation(_serialization.Model):
 class ProviderListResult(_serialization.Model):
     """List of resource providers.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar value: An array of resource providers.
+    :ivar value: The Provider items on this page. Required.
     :vartype value: list[~azure.mgmt.resource.resources.models.Provider]
-    :ivar next_link: The URL to use for getting the next set of results.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
@@ -1121,14 +1162,16 @@ class ProviderListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[list["_models.Provider"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Provider"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: An array of resource providers.
+        :keyword value: The Provider items on this page. Required.
         :paramtype value: list[~azure.mgmt.resource.resources.models.Provider]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
 class ProviderPermission(_serialization.Model):
@@ -1184,16 +1227,16 @@ class ProviderPermission(_serialization.Model):
 class ProviderPermissionListResult(_serialization.Model):
     """List of provider permissions.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar value: An array of provider permissions.
+    :ivar value: The ProviderPermission items on this page. Required.
     :vartype value: list[~azure.mgmt.resource.resources.models.ProviderPermission]
-    :ivar next_link: The URL to use for getting the next set of results.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
@@ -1201,14 +1244,18 @@ class ProviderPermissionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[list["_models.ProviderPermission"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: list["_models.ProviderPermission"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword value: An array of provider permissions.
+        :keyword value: The ProviderPermission items on this page. Required.
         :paramtype value: list[~azure.mgmt.resource.resources.models.ProviderPermission]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
 class ProviderRegistrationRequest(_serialization.Model):
@@ -1329,16 +1376,16 @@ class ProviderResourceType(_serialization.Model):
 class ProviderResourceTypeListResult(_serialization.Model):
     """List of resource types of a resource provider.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar value: An array of resource types.
+    :ivar value: The ProviderResourceType items on this page. Required.
     :vartype value: list[~azure.mgmt.resource.resources.models.ProviderResourceType]
-    :ivar next_link: The URL to use for getting the next set of results.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
@@ -1346,44 +1393,50 @@ class ProviderResourceTypeListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[list["_models.ProviderResourceType"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: list["_models.ProviderResourceType"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword value: An array of resource types.
+        :keyword value: The ProviderResourceType items on this page. Required.
         :paramtype value: list[~azure.mgmt.resource.resources.models.ProviderResourceType]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
-class ResourceGroup(_serialization.Model):
-    """Resource group information.
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: The ID of the resource group.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The name of the resource group.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the resource group.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar properties: The resource group properties.
-    :vartype properties: ~azure.mgmt.resource.resources.models.ResourceGroupProperties
-    :ivar location: The location of the resource group. It cannot be changed after the resource
-     group has been created. It must be one of the supported Azure locations. Required.
-    :vartype location: str
-    :ivar managed_by: The ID of the resource that manages this resource group.
-    :vartype managed_by: str
-    :ivar tags: The tags attached to the resource group.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.resource.resources.models.SystemData
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
     }
 
@@ -1391,74 +1444,126 @@ class ResourceGroup(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "properties": {"key": "properties", "type": "ResourceGroupProperties"},
-        "location": {"key": "location", "type": "str"},
-        "managed_by": {"key": "managedBy", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
+class ResourceGroup(TrackedResource):
+    """Resource group information.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.resource.resources.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar properties: The resource group properties.
+    :vartype properties: ~azure.mgmt.resource.resources.models.ResourceGroupProperties
+    :ivar managed_by: The ID of the resource that manages this resource group.
+    :vartype managed_by: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "properties": {"key": "properties", "type": "ResourceGroupProperties"},
+        "managed_by": {"key": "managedBy", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         location: str,
+        tags: Optional[dict[str, str]] = None,
         properties: Optional["_models.ResourceGroupProperties"] = None,
         managed_by: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword properties: The resource group properties.
         :paramtype properties: ~azure.mgmt.resource.resources.models.ResourceGroupProperties
-        :keyword location: The location of the resource group. It cannot be changed after the resource
-         group has been created. It must be one of the supported Azure locations. Required.
-        :paramtype location: str
         :keyword managed_by: The ID of the resource that manages this resource group.
         :paramtype managed_by: str
-        :keyword tags: The tags attached to the resource group.
-        :paramtype tags: dict[str, str]
         """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
+        super().__init__(tags=tags, location=location, **kwargs)
         self.properties = properties
-        self.location = location
         self.managed_by = managed_by
-        self.tags = tags
 
 
 class ResourceGroupExportResult(_serialization.Model):
     """Resource group export result.
 
     :ivar template: The template content. Used if outputFormat is empty or set to 'Json'.
-    :vartype template: JSON
+    :vartype template: any
     :ivar output: The formatted export content. Used if outputFormat is set to 'Bicep'.
     :vartype output: str
     :ivar error: The template export error.
-    :vartype error: ~azure.mgmt.resource.resources.models.ErrorResponse
+    :vartype error: ~azure.mgmt.resource.resources.models.ErrorDetail
     """
 
     _attribute_map = {
         "template": {"key": "template", "type": "object"},
         "output": {"key": "output", "type": "str"},
-        "error": {"key": "error", "type": "ErrorResponse"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
     def __init__(
         self,
         *,
-        template: Optional[JSON] = None,
+        template: Optional[Any] = None,
         output: Optional[str] = None,
-        error: Optional["_models.ErrorResponse"] = None,
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword template: The template content. Used if outputFormat is empty or set to 'Json'.
-        :paramtype template: JSON
+        :paramtype template: any
         :keyword output: The formatted export content. Used if outputFormat is set to 'Bicep'.
         :paramtype output: str
         :keyword error: The template export error.
-        :paramtype error: ~azure.mgmt.resource.resources.models.ErrorResponse
+        :paramtype error: ~azure.mgmt.resource.resources.models.ErrorDetail
         """
         super().__init__(**kwargs)
         self.template = template
@@ -1466,45 +1571,19 @@ class ResourceGroupExportResult(_serialization.Model):
         self.error = error
 
 
-class ResourceGroupFilter(_serialization.Model):
-    """Resource group filter.
-
-    :ivar tag_name: The tag name.
-    :vartype tag_name: str
-    :ivar tag_value: The tag value.
-    :vartype tag_value: str
-    """
-
-    _attribute_map = {
-        "tag_name": {"key": "tagName", "type": "str"},
-        "tag_value": {"key": "tagValue", "type": "str"},
-    }
-
-    def __init__(self, *, tag_name: Optional[str] = None, tag_value: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword tag_name: The tag name.
-        :paramtype tag_name: str
-        :keyword tag_value: The tag value.
-        :paramtype tag_value: str
-        """
-        super().__init__(**kwargs)
-        self.tag_name = tag_name
-        self.tag_value = tag_value
-
-
 class ResourceGroupListResult(_serialization.Model):
-    """List of resource groups.
+    """The response of a ResourceGroup list operation.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar value: An array of resource groups.
+    :ivar value: The ResourceGroup items on this page. Required.
     :vartype value: list[~azure.mgmt.resource.resources.models.ResourceGroup]
-    :ivar next_link: The URL to use for getting the next set of results.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
@@ -1512,14 +1591,16 @@ class ResourceGroupListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[list["_models.ResourceGroup"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.ResourceGroup"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: An array of resource groups.
+        :keyword value: The ResourceGroup items on this page. Required.
         :paramtype value: list[~azure.mgmt.resource.resources.models.ResourceGroup]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
 class ResourceGroupPatchable(_serialization.Model):
@@ -1592,18 +1673,18 @@ class ResourceGroupProperties(_serialization.Model):
 
 
 class ResourceListResult(_serialization.Model):
-    """List of resource groups.
+    """Paged collection of GenericResourceExpanded items.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar value: An array of resources.
+    :ivar value: The GenericResourceExpanded items on this page. Required.
     :vartype value: list[~azure.mgmt.resource.resources.models.GenericResourceExpanded]
-    :ivar next_link: The URL to use for getting the next set of results.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
@@ -1611,67 +1692,18 @@ class ResourceListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[list["_models.GenericResourceExpanded"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: list["_models.GenericResourceExpanded"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
-        :keyword value: An array of resources.
+        :keyword value: The GenericResourceExpanded items on this page. Required.
         :paramtype value: list[~azure.mgmt.resource.resources.models.GenericResourceExpanded]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link: Optional[str] = None
-
-
-class ResourceProviderOperationDisplayProperties(_serialization.Model):  # pylint: disable=name-too-long
-    """Resource provider operation's display properties.
-
-    :ivar publisher: Operation description.
-    :vartype publisher: str
-    :ivar provider: Operation provider.
-    :vartype provider: str
-    :ivar resource: Operation resource.
-    :vartype resource: str
-    :ivar operation: Resource provider operation.
-    :vartype operation: str
-    :ivar description: Operation description.
-    :vartype description: str
-    """
-
-    _attribute_map = {
-        "publisher": {"key": "publisher", "type": "str"},
-        "provider": {"key": "provider", "type": "str"},
-        "resource": {"key": "resource", "type": "str"},
-        "operation": {"key": "operation", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        publisher: Optional[str] = None,
-        provider: Optional[str] = None,
-        resource: Optional[str] = None,
-        operation: Optional[str] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword publisher: Operation description.
-        :paramtype publisher: str
-        :keyword provider: Operation provider.
-        :paramtype provider: str
-        :keyword resource: Operation resource.
-        :paramtype resource: str
-        :keyword operation: Resource provider operation.
-        :paramtype operation: str
-        :keyword description: Operation description.
-        :paramtype description: str
-        """
-        super().__init__(**kwargs)
-        self.publisher = publisher
-        self.provider = provider
-        self.resource = resource
-        self.operation = operation
-        self.description = description
+        self.next_link = next_link
 
 
 class ResourcesMoveInfo(_serialization.Model):
@@ -1815,24 +1847,68 @@ class Sku(_serialization.Model):
         self.capacity = capacity
 
 
-class SubResource(_serialization.Model):
-    """Sub-resource.
+class SystemData(_serialization.Model):
+    """Metadata pertaining to creation and last modification of the resource.
 
-    :ivar id: Resource ID.
-    :vartype id: str
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.resource.resources.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.resource.resources.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        "id": {"key": "id", "type": "str"},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
-    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+    def __init__(
+        self,
+        *,
+        created_by: Optional[str] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        created_at: Optional[datetime.datetime] = None,
+        last_modified_by: Optional[str] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
+        last_modified_at: Optional[datetime.datetime] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword id: Resource ID.
-        :paramtype id: str
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.resource.resources.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.resource.resources.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
         """
         super().__init__(**kwargs)
-        self.id = id
+        self.created_by = created_by
+        self.created_by_type = created_by_type
+        self.created_at = created_at
+        self.last_modified_by = last_modified_by
+        self.last_modified_by_type = last_modified_by_type
+        self.last_modified_at = last_modified_at
 
 
 class TagCount(_serialization.Model):
@@ -1935,16 +2011,16 @@ class Tags(_serialization.Model):
 class TagsListResult(_serialization.Model):
     """List of subscription tags.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    All required parameters must be populated in order to send to server.
 
-    :ivar value: An array of tags.
+    :ivar value: The TagDetails items on this page. Required.
     :vartype value: list[~azure.mgmt.resource.resources.models.TagDetails]
-    :ivar next_link: The URL to use for getting the next set of results.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
     _validation = {
-        "next_link": {"readonly": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
@@ -1952,14 +2028,16 @@ class TagsListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[list["_models.TagDetails"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.TagDetails"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: An array of tags.
+        :keyword value: The TagDetails items on this page. Required.
         :paramtype value: list[~azure.mgmt.resource.resources.models.TagDetails]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
-        self.next_link: Optional[str] = None
+        self.next_link = next_link
 
 
 class TagsPatchResource(_serialization.Model):
@@ -1996,19 +2074,24 @@ class TagsPatchResource(_serialization.Model):
         self.properties = properties
 
 
-class TagsResource(_serialization.Model):
+class TagsResource(ProxyResource):
     """Wrapper resource for tags API requests and responses.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: The ID of the tags wrapper resource.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: The name of the tags wrapper resource.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: The type of the tags wrapper resource.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.resource.resources.models.SystemData
     :ivar properties: The set of tags. Required.
     :vartype properties: ~azure.mgmt.resource.resources.models.Tags
     """
@@ -2017,6 +2100,7 @@ class TagsResource(_serialization.Model):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "properties": {"required": True},
     }
 
@@ -2024,6 +2108,7 @@ class TagsResource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "properties": {"key": "properties", "type": "Tags"},
     }
 
@@ -2033,9 +2118,6 @@ class TagsResource(_serialization.Model):
         :paramtype properties: ~azure.mgmt.resource.resources.models.Tags
         """
         super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
         self.properties = properties
 
 

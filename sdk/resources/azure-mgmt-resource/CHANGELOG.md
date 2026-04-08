@@ -1,5 +1,51 @@
 # Release History
 
+## 26.0.0 (2026-04-08)
+
+### Features Added
+
+  - Model `GenericResource` added property `system_data`
+  - Model `GenericResourceExpanded` added property `system_data`
+  - Model `Operation` added property `is_data_action`
+  - Model `Operation` added property `origin`
+  - Model `Operation` added property `action_type`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceGroup` added property `system_data`
+  - Model `TagsResource` added property `system_data`
+  - Added enum `ActionType`
+  - Added enum `CreatedByType`
+  - Added model `ErrorDetail`
+  - Added enum `Origin`
+  - Added model `ProxyResource`
+  - Added model `SystemData`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - Method `ProviderListResult.__init__` removed default value `None` from its parameter `value`
+  - Method `ProviderPermissionListResult.__init__` removed default value `None` from its parameter `value`
+  - Method `ProviderResourceTypeListResult.__init__` removed default value `None` from its parameter `value`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `extended_location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Method `ResourceGroupListResult.__init__` removed default value `None` from its parameter `value`
+  - Method `ResourceListResult.__init__` removed default value `None` from its parameter `value`
+  - Method `TagsListResult.__init__` removed default value `None` from its parameter `value`
+  - Deleted or renamed model `GenericResourceFilter`
+  - Deleted or renamed model `ResourceGroupFilter`
+  - Deleted or renamed model `ResourceProviderOperationDisplayProperties`
+  - Deleted or renamed model `SubResource`
+  - Method `ResourcesOperations.begin_create_or_update` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `ResourcesOperations.begin_create_or_update_by_id` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `ResourcesOperations.begin_delete` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `ResourcesOperations.begin_delete_by_id` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `ResourcesOperations.begin_update` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `ResourcesOperations.begin_update_by_id` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `ResourcesOperations.check_existence` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `ResourcesOperations.check_existence_by_id` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `ResourcesOperations.get` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+  - Method `ResourcesOperations.get_by_id` deleted or renamed its parameter `api_version` of kind `positional_or_keyword`
+
 ## 25.0.0 (2026-02-04)
 
 ### Breaking Changes
