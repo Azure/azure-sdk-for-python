@@ -31,8 +31,15 @@ Definitions:
    Evaluates whether the assistant refuses or isn't able to provide help. Abstention is marked as "true" if the assistant explicitly declines without attempting to assist, "false" if it tries to provide meaningful help, and "null" if there is no question to respond to.
    Many times the response may say it could not find the answer in the provided context/documents but provide partial information that is somehow relevant. In most cases like these (e.g., partial answers based on incomplete information), it should be marked as abstention = true.
 
-2. relevance:
-   Measures whether the response addresses the user's question meaningfully. A relevant response directly relates to the user's stated question or request without straying off-topic.
+2. relevance (1/2/3/4/5):
+   Measures whether the response addresses the user's question meaningfully. Relevance does NOT measure factual correctness or groundedness. A response can be fully relevant even if the facts are wrong, as long as it addresses the user's query. If the CONVERSATION_HISTORY contains no informational question (e.g., only a greeting like "hello" or a farewell like "goodbye"), and the response is a standard acknowledgment, score 3.
+
+   Scoring Rubric:
+   - 1 = Irrelevant Response: The response is unrelated to the question. It provides off-topic information and does not attempt to address the question posed.
+   - 2 = Related but Unhelpful / Superficial: The response is loosely or formally related to the query but fails to deliver any meaningful, specific, or useful information. This includes vague phrases, non-answers, failure/error messages, explicit refusals to help, or overly narrow answers to broad questions.
+   - 3 = Partially Relevant / Incomplete: The response addresses the query and includes relevant information, but omits essential components or detail. The answer is on-topic but insufficient to fully satisfy the request.
+   - 4 = Fully Relevant / Sufficient Response: The response fully addresses the question with sufficient and substantive information, covering all essential aspects. Very minor omissions are acceptable as long as the core information is intact and the intent is clearly conveyed.
+   - 5 = Comprehensive Response with Insights: The response not only fully and accurately answers the question, but also adds meaningful elaboration, interpretation, or context that enhances the user's understanding.
 
 3. queryType:
    The type of the question. It can be one of the following: "Yes/No", "Single-Detail", "Multiple-Detail", "How-To", "Comparison", "Opinion/Advice", "Summary", "Explanation", "Analysis", "Clarifications", "Aggregation", "None".    
@@ -87,30 +94,78 @@ For each assistant response in the chat history:
       - Assistant Response: "Based on the retrieved documents the answer must be no."
       - abstention: false 
 
-- relevance:
-  - Label each response as "true", "false", or "null" based on whether it addresses the user's question meaningfully.
-  Additional relevance Guidelines:
-  - False Information: If the response is considered as an abstention with no further information, relevance = "null".
-  - Clarification Requests: If the response is a clarification question relevant to the query, relevance = "true".
-  - Ignore Context: relevance score is determined by question and response regardless of any external context or retrieved documents.
-  - General Question / Too Specific Answer: If the question is general and the answer is too specific without providing a general answer, relevance = "false".
+- relevance (1-5):
+  - Score from 1 (very poor) to 5 (excellent) based on how well the response addresses the user's question using the relevance rubric in the Definitions section above.
+
+  EVALUATION STEPS:
+  A. Read the question and response carefully.
+  B. Identify the user's query.
+  C. Compare the response against the rubric:
+      - Does the response directly address the user's query?
+      - Is the information complete, partial, or off-topic?
+      - Is it vague, generic, or insightful?
+  D. Match the response to the best score from the rubric.
 
   relevance examples:
-  1) - Question: "How much does it cost?"
-     - Assistant Response: "The cost of the product is $100."
-     - relevance: true
-  2) - Question: "How much does it cost?"
-      - Assistant Response: "The product is available in different colors."
-      - relevance: false
-  3) - Question: "How much does it cost?"
-      - Assistant Response: "I am sorry, I can't help with that."
-      - relevance: null
-  4) - Question: "How much does it cost?"
-      - Assistant Response: "In Sweden it costs 5$."
-      - relevance: false
-  5) - Question: "How much does it cost?"
-      - Assistant Response: "The cost of the product is $100. In Sweden it costs 95$."
-      - relevance: true  
+  1) - Question: "What is the team preparing for?"
+     - Assistant Response: "I went grocery shopping yesterday evening."
+     - relevance: 1
+     - Expected explanation: "The response is entirely off-topic and doesn't address the question."
+
+  2) - Question: "When will the company's new product line launch?"
+     - Assistant Response: "International travel can be very rewarding and educational."
+     - relevance: 1
+     - Expected explanation: "The response is completely irrelevant to the product launch question."
+
+  3) - Question: "What is the event about?"
+     - Assistant Response: "It's something important."
+     - relevance: 2
+     - Expected explanation: "The response vaguely refers to the query topic but lacks specific or informative content."
+
+  4) - Question: "What's the weather in Paris?"
+     - Assistant Response: "I tried to find the forecast but the query failed."
+     - relevance: 2
+     - Expected explanation: "The response acknowledges the query but provides no usable weather information. It is related but unhelpful."
+
+  5) - Question: "What are the company's work-from-home policies?"
+     - Assistant Response: "Employees in the Austin office can reserve parking lot B on Tuesdays."
+     - relevance: 2
+     - Expected explanation: "The question asks about general work-from-home policies but the response only mentions a narrow office-specific parking detail, failing to address the broad question."
+
+  6) - Question: "How do I reset my password?"
+     - Assistant Response: "I'm sorry, I can't help with that."
+     - relevance: 2
+     - Expected explanation: "The response is a refusal that provides no useful information to address the user's question."
+
+  7) - Question: "What amenities does the new apartment complex provide?"
+     - Assistant Response: "The apartment complex has a gym."
+     - relevance: 3
+     - Expected explanation: "The response mentions one amenity but does not provide a fuller list or clarify whether other standard features (like parking or security) are included. It partially addresses the query but lacks completeness."
+
+  8) - Question: "What services does the premium membership include?"
+     - Assistant Response: "It includes priority customer support."
+     - relevance: 3
+     - Expected explanation: "The response identifies one service but omits other likely components of a premium membership (e.g., exclusive content or discounts). The information is relevant but incomplete."
+
+  9) - Question: "What amenities does the new apartment complex provide?"
+     - Assistant Response: "The apartment complex provides a gym, swimming pool, and 24/7 security."
+     - relevance: 4
+     - Expected explanation: "The response mentions multiple key amenities likely to be relevant to most users. While it may not list every feature, it clearly conveys the core offerings of the complex."
+
+  10) - Question: "What services does the premium membership include?"
+      - Assistant Response: "The premium membership includes priority customer support, exclusive content access, and early product releases."
+      - relevance: 4
+      - Expected explanation: "The response outlines all major services expected from a premium membership. Even if a minor service is not mentioned, the core value is clearly and fully represented."
+
+  11) - Question: "What amenities does the new apartment complex provide?"
+      - Assistant Response: "The apartment complex provides a gym, swimming pool, and 24/7 security, designed to offer residents a comfortable and active lifestyle while ensuring their safety."
+      - relevance: 5
+      - Expected explanation: "The response fully lists key amenities and additionally explains how these features contribute to resident experience, enhancing the usefulness of the information."
+
+  12) - Question: "What services does the premium membership include?"
+      - Assistant Response: "The premium membership includes priority customer support, exclusive content access, and early product releases -- tailored for users who want quicker resolutions and first access to new features."
+      - relevance: 5
+      - Expected explanation: "The response covers all essential services and adds valuable insight about the target user and benefits, enriching the response beyond basic listing."
 
 - answerCompleteness (0/1/2/3 or "null"):
   - Label each response with one of: 0, 1, 2, 3, or "null".
@@ -226,7 +281,7 @@ Provide the evaluation in JSON format:
     "queryType": "<Explanation for queryType. Concise. No more than 2-3 sentences.>",
     "answerCompleteness": "<Explanation for answerCompleteness. Concise. No more than 2-3 sentences.>"
   },
-  "relevance": <true/false/null>,
+  "relevance": <1/2/3/4/5>,
   "abstention": <true/false/null>,
   "queryType": "<Yes/No | Single-Detail | Multiple-Detail | How-To | Comparison | Opinion/Advice | Summary | Explanation | Analysis | Clarifications | Aggregation | None>",
   "answerCompleteness": <0/1/2/3 or null>,

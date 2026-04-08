@@ -32,10 +32,11 @@ from ..._common.utils import construct_prompty_model_config, validate_model_conf
 logger = logging.getLogger(__name__)
 
 # Thresholds for response quality checks (first prompt)
+_RESPONSE_QUALITY_RELEVANCE_THRESHOLD = 2.5
 _RESPONSE_QUALITY_ANSWER_COMPLETENESS_THRESHOLD = 1.5
 
 # Thresholds for groundedness checks (second prompt)
-_GROUNDEDNESS_THRESHOLD = 3.5
+_GROUNDEDNESS_THRESHOLD = 2.5
 _CONTEXT_COVERAGE_THRESHOLD = 1.5
 
 
@@ -45,12 +46,12 @@ class QualityGraderEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     Stage 1 (Response Quality): Evaluates the response for relevance, abstention, and answer completeness.
     The response must satisfy:
         - abstention must be false
-        - relevance must be true
+        - relevance must be greater than 3.5 (on a 1-5 scale)
         - answerCompleteness must be greater than 1.5
 
     Stage 2 (Groundedness, only if context is provided): Evaluates whether the response is grounded in the
     provided context and covers the key information. The response must satisfy:
-        - groundedness must be greater than 3.5
+        - groundedness must be greater than 2.5
         - contextCoverage must exceed 1.5
 
     If all checks pass, the evaluator returns "pass". Otherwise, it returns "fail" with failure reasons.
@@ -178,14 +179,18 @@ class QualityGraderEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         if abstention is True:
             failure_reasons.append("abstention is true (expected false)")
-        if relevance is not True:
-            failure_reasons.append(f"relevance is {relevance} (expected true)")
+        if isinstance(relevance, (int, float)) and relevance <= _RESPONSE_QUALITY_RELEVANCE_THRESHOLD:
+            failure_reasons.append(
+                f"relevance is {relevance} (must be > {_RESPONSE_QUALITY_RELEVANCE_THRESHOLD})"
+            )
+        elif relevance is None or relevance == "null":
+            failure_reasons.append(f"relevance is null (must be > {_RESPONSE_QUALITY_RELEVANCE_THRESHOLD})")
         if isinstance(answer_completeness, (int, float)) and answer_completeness <= _RESPONSE_QUALITY_ANSWER_COMPLETENESS_THRESHOLD:
             failure_reasons.append(
                 f"answerCompleteness is {answer_completeness} (must be > {_RESPONSE_QUALITY_ANSWER_COMPLETENESS_THRESHOLD})"
             )
         elif answer_completeness is None or answer_completeness == "null":
-            failure_reasons.append("answerCompleteness is null (must be > 1.5)")
+            failure_reasons.append(f"answerCompleteness is null (must be > {_RESPONSE_QUALITY_ANSWER_COMPLETENESS_THRESHOLD})")
 
         if failure_reasons:
             return self._build_result(
@@ -218,14 +223,14 @@ class QualityGraderEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                     f"groundedness is {groundedness} (must be > {_GROUNDEDNESS_THRESHOLD})"
                 )
             elif groundedness is None or groundedness == "null":
-                failure_reasons.append("groundedness is null (must be > 3.5)")
+                failure_reasons.append(f"groundedness is null (must be > {_GROUNDEDNESS_THRESHOLD})")
 
             if isinstance(context_coverage, (int, float)) and context_coverage <= _CONTEXT_COVERAGE_THRESHOLD:
                 failure_reasons.append(
                     f"contextCoverage is {context_coverage} (must exceed {_CONTEXT_COVERAGE_THRESHOLD})"
                 )
             elif context_coverage is None or context_coverage == "null":
-                failure_reasons.append("contextCoverage is null (must exceed 1.5)")
+                failure_reasons.append(f"contextCoverage is null (must exceed {_CONTEXT_COVERAGE_THRESHOLD})")
 
             if failure_reasons:
                 return self._build_result(
