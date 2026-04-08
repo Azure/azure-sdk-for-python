@@ -129,8 +129,16 @@ stages:
                         inputs:
                           versionSpec: '3.9'
 
+                      - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                        parameters:
+                          DevFeedName: ${{ parameters.DevFeedName }}
+                          EnableTwineAuth: false
+                          EnablePipAuth: true
+                          EnableUvAuth: false
+
+
                       - script: |
-                          python -m pip install -r $(Pipeline.Workspace)/release_artifact/release_requirements.txt --index-url ${{ parameters.PackageSourceOverride }}
+                          python -m pip install -r $(Pipeline.Workspace)/release_artifact/release_requirements.txt
                         displayName: Install Release Dependencies
 
                       - ${{ if eq(parameters.PublicFeed, 'PyPi') }}:
