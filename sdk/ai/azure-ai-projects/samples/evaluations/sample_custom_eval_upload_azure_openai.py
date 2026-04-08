@@ -24,7 +24,7 @@ PREREQUISITE:
     5) Choose "User, group, or service principal" or "Managed Identity", add your AI Foundry project managed identity
 
 USAGE:
-    python sample_custom_eval_upload_azure_friendly.py
+    python sample_custom_eval_upload_azure_openai.py
 
     Before running the sample:
 
