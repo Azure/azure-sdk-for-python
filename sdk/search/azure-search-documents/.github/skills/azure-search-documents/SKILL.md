@@ -98,7 +98,6 @@ git diff models/_enums.py models/_models.py indexes/models/_enums.py indexes/mod
 
 Watch for:
 - **Renamed enum values** — backward-compat aliases in `_patch.py` may reference old names
-- **New enum values that collide with Python keywords** — the generator renames them with `_ENUM` suffix (e.g., `IS` → `IS_ENUM`), and you must add a backward-compat alias
 - **Changed model constructors** — `IndexDocumentsBatch`, `SearchField`, `SearchIndexerDataSourceConnection`, `KnowledgeBase` are subclassed in `_patch.py` and may break if the base constructor changes
 - **New fields on `SearchResult`** — `_convert_search_result()` in `_operations/_patch.py` extracts `@search.*` metadata fields; new ones need to be added
 - **Changed `SearchRequest` model** — `_build_search_request()` constructs this model directly; new parameters need to be wired through
@@ -207,8 +206,6 @@ Entirely hand-authored in `_patch.py` (sync) and `aio/_patch.py` (async). Not ge
 Monkey-patched at module load in `_patch.py` files:
 ```python
 SearchFieldDataType.Int32 = SearchFieldDataType.INT32   # camelCase → UPPER
-OcrSkillLanguage.IS = OcrSkillLanguage.IS_ENUM           # Python keyword collision
-ScoringStatistics.Global = ScoringStatistics.GLOBAL_ENUM
 ```
 After regeneration, verify the right-hand-side names still exist in the generated enums. If a new enum collides with a Python keyword, add an alias.
 
@@ -225,10 +222,6 @@ def delete_index(self, index, *, match_condition=MatchConditions.Unconditionally
         return self._delete_index(name=name, **kwargs)
 ```
 New resource types need this same wrapper in both sync and async.
-
-## Removed Model Tombstones
-
-`EntityRecognitionSkill`, `SentimentSkill` → `_RemovedModel` subclasses that `raise ValueError` on instantiation. Keep these for backward compat.
 
 ## `_convert_index_response` Helper
 

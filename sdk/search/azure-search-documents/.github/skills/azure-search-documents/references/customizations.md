@@ -34,14 +34,8 @@ Use this file after running `tsp-client update` to verify every customization. E
 | `IndexDocumentsBatch` | class | Adds `add_upload_actions`, `add_delete_actions`, `add_merge_actions`, `add_merge_or_upload_actions`, `dequeue_actions`, `enqueue_actions`, `actions` property |
 | `RequestEntityTooLargeError` | class | `HttpResponseError` subclass for 413 |
 
-### Enum Aliases
-```python
-ScoringStatistics.Global = ScoringStatistics.GLOBAL_ENUM
-```
-
 ### After Regeneration, Verify
 - [ ] `IndexDocumentsBatchGenerated` base class still exists with compatible constructor
-- [ ] `ScoringStatistics.GLOBAL_ENUM` still exists in generated enums
 
 ---
 
@@ -127,10 +121,6 @@ ScoringStatistics.Global = ScoringStatistics.GLOBAL_ENUM
 | `SearchableField()` | function | Builder: auto-types to `String`/`Collection(String)` |
 | `ComplexField()` | function | Builder: sets type to `Complex`/`Collection(Complex)` |
 | `Collection()` | function | Wraps type in `"Collection(...)"` format |
-| `_RemovedModel` | class | Base for tombstones: raises `ValueError` on init, `TypeError` on subclass |
-| `EntityRecognitionSkill` | tombstone | "Use EntityRecognitionSkillV3 instead" |
-| `EntityRecognitionSkillLanguage` | tombstone | "Use EntityRecognitionSkillV3 instead" |
-| `SentimentSkill` | tombstone | "Use SentimentSkillV3 instead" |
 
 ### Enum Aliases
 ```python
@@ -147,15 +137,10 @@ SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX
 
 # Monkey-patched staticmethod
 SearchFieldDataType.Collection = staticmethod(Collection)
-
-# Python keyword collisions (generated IS_ENUM -> alias IS)
-OcrSkillLanguage.IS = OcrSkillLanguage.IS_ENUM
-SplitSkillLanguage.IS = SplitSkillLanguage.IS_ENUM
-TextTranslationSkillLanguage.IS = TextTranslationSkillLanguage.IS_ENUM
 ```
 
 ### After Regeneration, Verify
-- [ ] All right-hand-side enum members (`STRING`, `INT32`, `IS_ENUM`, etc.) still exist
+- [ ] All right-hand-side enum members (`STRING`, `INT32`, etc.) still exist
 - [ ] `_SearchField`, `_SearchIndexerDataSourceConnection`, `_KnowledgeBase` base constructors unchanged
 - [ ] No new enum values that collide with Python keywords — if so, add aliases
 - [ ] `SearchField.retrievable` property still exists (used by `hidden` inversion)
