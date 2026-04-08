@@ -15,7 +15,7 @@ from azure.mgmt.cloudhealth import CloudHealthMgmtClient
     pip install azure-identity
     pip install azure-mgmt-cloudhealth
 # USAGE
-    python authentication_settings_list_by_health_model.py
+    python entities_ingest_health_report.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,24 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.authentication_settings.list_by_health_model(
-        resource_group_name="my-resource-group",
-        health_model_name="my-health-model",
+    client.entities.ingest_health_report(
+        resource_group_name="rgopenapi",
+        health_model_name="myHealthModel",
+        entity_name="entity1",
+        body={
+            "additionalContext": "CPU usage elevated due to batch processing job",
+            "evaluationRules": {
+                "degradedRule": {"operator": "GreaterThan", "threshold": 70},
+                "unhealthyRule": {"operator": "GreaterThan", "threshold": 90},
+            },
+            "expiresInMinutes": 60,
+            "healthState": "Degraded",
+            "signalName": "uniqueSignalName1",
+            "value": 85.5,
+        },
     )
-    for item in response:
-        print(item)
 
 
-# x-ms-original-file: 2026-01-01-preview/AuthenticationSettings_ListByHealthModel.json
+# x-ms-original-file: 2026-01-01-preview/Entities_IngestHealthReport.json
 if __name__ == "__main__":
     main()
