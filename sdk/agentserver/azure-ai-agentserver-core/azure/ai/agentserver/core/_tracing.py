@@ -119,16 +119,29 @@ def request_span(
     For **streaming** use ``end_on_exit=False`` and end via :func:`trace_stream`.
 
     :param headers: HTTP request headers.
+    :type headers: Mapping[str, str]
     :param request_id: The request/invocation ID.
+    :type request_id: str
     :param operation: Span operation (e.g. ``"invoke_agent"``).
-    :param agent_id: Agent identifier (``"name:version"`` or ``"name"``).
-    :param agent_name: Agent name from FOUNDRY_AGENT_NAME.
-    :param agent_version: Agent version from FOUNDRY_AGENT_VERSION.
-    :param project_id: Foundry project ARM resource ID.
-    :param operation_name: Optional ``gen_ai.operation.name`` value.
-    :param session_id: Session ID (empty string if absent).
-    :param end_on_exit: Whether to end the span when the context exits.
+    :type operation: str
+    :keyword agent_id: Agent identifier (``"name:version"`` or ``"name"``).
+    :paramtype agent_id: str
+    :keyword agent_name: Agent name from FOUNDRY_AGENT_NAME.
+    :paramtype agent_name: str
+    :keyword agent_version: Agent version from FOUNDRY_AGENT_VERSION.
+    :paramtype agent_version: str
+    :keyword project_id: Foundry project ARM resource ID.
+    :paramtype project_id: str
+    :keyword operation_name: Optional ``gen_ai.operation.name`` value.
+    :paramtype operation_name: str or None
+    :keyword session_id: Session ID (empty string if absent).
+    :paramtype session_id: str
+    :keyword end_on_exit: Whether to end the span when the context exits.
+    :paramtype end_on_exit: bool
+    :keyword instrumentation_scope: OpenTelemetry instrumentation scope name.
+    :paramtype instrumentation_scope: str
     :return: Context manager yielding the OTel span.
+    :rtype: Iterator[any]
     """
     tracer = trace.get_tracer(instrumentation_scope)
 
@@ -183,7 +196,9 @@ def end_span(span: Any, exc: Optional[BaseException] = None) -> None:
     No-op when *span* is ``None``.
 
     :param span: The OTel span to end, or ``None``.
+    :type span: any
     :param exc: Optional exception to record before ending.
+    :type exc: BaseException or None
     """
     if span is None:
         return
@@ -208,6 +223,7 @@ def flush_spans(timeout_millis: int = 5000) -> None:
 
     :param timeout_millis: Maximum time to wait for the flush, in
         milliseconds.  Defaults to 5000 (5 seconds).
+    :type timeout_millis: int
     """
     provider = trace.get_tracer_provider()
     flush = getattr(provider, "force_flush", None)
@@ -225,7 +241,9 @@ def record_error(span: Any, exc: BaseException) -> None:
     semantic conventions.
 
     :param span: The OTel span, or ``None``.
+    :type span: any
     :param exc: The exception to record.
+    :type exc: BaseException
     """
     if span is not None:
         span.set_status(trace.StatusCode.ERROR, str(exc))
@@ -242,8 +260,11 @@ async def trace_stream(
     exhausted or raises an exception.
 
     :param iterator: The async iterable to wrap.
+    :type iterator: AsyncIterable[str or bytes or memoryview]
     :param span: The OTel span to end on completion, or ``None``.
+    :type span: any
     :return: An async iterator yielding chunks unchanged.
+    :rtype: AsyncIterator[str or bytes or memoryview]
     """
     error: Optional[BaseException] = None
     try:
@@ -323,7 +344,11 @@ class _BaggageLogRecordProcessor:
     """
 
     def on_emit(self, log_data: Any) -> None:  # pylint: disable=unused-argument
-        """Copy baggage entries into the log record's attributes."""
+        """Copy baggage entries into the log record's attributes.
+
+        :param log_data: The log data being emitted.
+        :type log_data: any
+        """
         try:
             ctx = _otel_context.get_current()
             entries = _otel_baggage.get_all(context=ctx)
@@ -433,7 +458,7 @@ def _setup_log_export(resource: Any, connection_string: str) -> None:
     set_logger_provider(log_provider)
     log_provider.add_log_record_processor(BatchLogRecordProcessor(
         AzureMonitorLogExporter(connection_string=connection_string)))
-    log_provider.add_log_record_processor(_BaggageLogRecordProcessor())
+    log_provider.add_log_record_processor(_BaggageLogRecordProcessor())  # type: ignore[arg-type]
     logging.getLogger().addHandler(LoggingHandler(logger_provider=log_provider))
     _az_log_configured = True
     logger.info("Application Insights log exporter configured.")
@@ -475,7 +500,7 @@ def _setup_otlp_log_export(resource: Any, endpoint: str) -> None:
         set_logger_provider(log_provider)
     log_provider.add_log_record_processor(BatchLogRecordProcessor(
         OTLPLogExporter(endpoint=endpoint)))  # type: ignore[union-attr]
-    log_provider.add_log_record_processor(_BaggageLogRecordProcessor())
+    log_provider.add_log_record_processor(_BaggageLogRecordProcessor())  # type: ignore[arg-type]
     # Note: LoggingHandler is NOT added here to avoid duplicating the
     # handler already installed by _setup_log_export. The OTel LoggerProvider
     # receives log records via the handler added there (or from direct OTel

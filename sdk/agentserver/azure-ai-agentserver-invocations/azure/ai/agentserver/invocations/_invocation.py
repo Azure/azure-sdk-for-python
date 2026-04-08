@@ -350,7 +350,7 @@ class InvocationAgentServerHost(AgentServerHost):
             # Set structured logging context (concurrency-safe via contextvars)
             _ensure_log_filter()
             inv_token = _invocation_id_var.set(invocation_id)
-            sess_token = _session_id_var.set(session_id)
+            session_token = _session_id_var.set(session_id)
             try:
                 response = await self._dispatch_invoke(request)
                 response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
@@ -389,7 +389,7 @@ class InvocationAgentServerHost(AgentServerHost):
                 )
             finally:
                 _invocation_id_var.reset(inv_token)
-                _session_id_var.reset(sess_token)
+                _session_id_var.reset(session_token)
                 try:
                     _otel_context.detach(baggage_token)
                 except ValueError:
@@ -424,7 +424,7 @@ class InvocationAgentServerHost(AgentServerHost):
             })
             _ensure_log_filter()
             inv_token = _invocation_id_var.set(invocation_id)
-            sess_token = _session_id_var.set(session_id)
+            session_token = _session_id_var.set(session_id)
             try:
                 response = await dispatch(request)
                 response.headers[InvocationConstants.INVOCATION_ID_HEADER] = invocation_id
@@ -444,7 +444,7 @@ class InvocationAgentServerHost(AgentServerHost):
                 )
             finally:
                 _invocation_id_var.reset(inv_token)
-                _session_id_var.reset(sess_token)
+                _session_id_var.reset(session_token)
 
     async def _get_invocation_endpoint(self, request: Request) -> Response:
         return await self._traced_invocation_endpoint(

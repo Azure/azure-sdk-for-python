@@ -200,12 +200,19 @@ class AgentServerHost(Starlette):
         agent identity from environment variables.
 
         :param headers: HTTP request headers.
+        :type headers: any
         :param request_id: The request/invocation ID.
+        :type request_id: str
         :param operation: Span operation (e.g. ``"invoke_agent"``).
-        :param operation_name: Optional ``gen_ai.operation.name`` value.
-        :param session_id: Session ID.
-        :param end_on_exit: Whether to end the span when the context exits.
+        :type operation: str
+        :keyword operation_name: Optional ``gen_ai.operation.name`` value.
+        :paramtype operation_name: str or None
+        :keyword session_id: Session ID.
+        :paramtype session_id: str
+        :keyword end_on_exit: Whether to end the span when the context exits.
+        :paramtype end_on_exit: bool
         :return: Context manager yielding the OTel span.
+        :rtype: any
         """
         with _tracing.request_span(
             headers,
@@ -283,7 +290,7 @@ class AgentServerHost(Starlette):
         # Hypercorn's graceful shutdown.
         original_sigterm = signal.getsignal(signal.SIGTERM)
 
-        def _handle_sigterm(signum: int, frame: Any) -> None:
+        def _handle_sigterm(_signum: int, _frame: Any) -> None:
             logger.info("SIGTERM received, initiating graceful shutdown")
             # Restore the original handler so the re-raised signal is not
             # caught by this handler again (avoids infinite recursion).
@@ -344,8 +351,11 @@ class AgentServerHost(Starlette):
         proxies/load-balancers from closing idle connections.
 
         :param iterator: The async iterable to wrap.
+        :type iterator: AsyncIterable[str or bytes or memoryview]
         :param interval: Seconds between keep-alive frames. Must be > 0.
+        :type interval: int
         :return: An async iterator with interleaved keep-alive frames.
+        :rtype: AsyncIterator[str or bytes or memoryview]
         """
         ait = iterator.__aiter__()
         # Reuse the same __anext__ task across timeouts to avoid cancelling
