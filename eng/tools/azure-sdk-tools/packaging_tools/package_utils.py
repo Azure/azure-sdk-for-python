@@ -32,7 +32,7 @@ def create_package(prefolder, name):
 @return_origin_path
 def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     os.chdir(package_folder)
-    cmd = "azpysdk breaking --changelog"
+    cmd = "azpysdk breaking . --changelog"
     if lastest_pypi_version:
         cmd += " --latest-pypi-version"
     try:
