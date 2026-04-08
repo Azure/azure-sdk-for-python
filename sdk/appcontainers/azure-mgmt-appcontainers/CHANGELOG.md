@@ -1,5 +1,9 @@
 # Release History
 
+## 4.1.0b1 (2026-04-08)
+
+skip changelog generation
+
 ## 4.1.0 (2026-04-08)
 
 skip changelog generation
