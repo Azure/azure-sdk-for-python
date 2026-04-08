@@ -390,6 +390,23 @@ class PyamqpTransport(AmqpTransport):  # pylint: disable=too-many-public-methods
         return handler._link.remote_max_message_size  # pylint: disable=protected-access
 
     @staticmethod
+    def get_remote_max_message_batch_size(handler: "AMQPClient") -> Optional[int]:
+        """
+        Returns the max batch size from the vendor link property
+        'com.microsoft:max-message-batch-size', or None if unavailable.
+
+        :param ~pyamqp.AMQPClient handler: Client to read link properties from.
+        :return: Remote max message batch size, or None.
+        :rtype: Optional[int]
+        """
+        props = getattr(handler._link, "remote_properties", None)  # pylint: disable=protected-access
+        if props and "com.microsoft:max-message-batch-size" in props:
+            value = props["com.microsoft:max-message-batch-size"]
+            if isinstance(value, int) and value > 0:
+                return value
+        return None
+
+    @staticmethod
     def get_handler_link_name(handler: "AMQPClient") -> str:
         """
         Returns link name.

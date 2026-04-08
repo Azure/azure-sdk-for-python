@@ -457,6 +457,21 @@ try:
             return handler.message_handler._link.peer_max_message_size  # pylint:disable=protected-access
 
         @staticmethod
+        def get_remote_max_message_batch_size(handler: "AMQPClient") -> "Optional[int]":
+            """
+            Returns the max batch size from the vendor link property
+            'com.microsoft:max-message-batch-size', or None if unavailable.
+
+            The uAMQP transport does not expose remote link properties,
+            so this always returns None (triggering the tier-based fallback).
+
+            :param ~uamqp.AMQPClient handler: Client to read link properties from.
+            :return: Remote max message batch size, or None.
+            :rtype: Optional[int]
+            """
+            return None
+
+        @staticmethod
         def get_handler_link_name(handler: "AMQPClient") -> str:
             """
             Returns link name.
