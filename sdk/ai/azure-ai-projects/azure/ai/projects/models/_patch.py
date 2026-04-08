@@ -48,7 +48,12 @@ _BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
     "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
     "toolboxes": _FoundryFeaturesOptInKeys.TOOLBOXES_V1_PREVIEW.value,
     "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
-    "agents": ",".join([_AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value, _AgentDefinitionOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value])
+    "agents": ",".join(
+        [
+            _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
+            _AgentDefinitionOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
+        ]
+    ),
 }
 """Foundry-Features header values keyed by beta sub-client property name."""
 

@@ -26,6 +26,7 @@ USAGE:
 import asyncio
 import os
 from pprint import pprint
+from typing import Any, List
 from dotenv import load_dotenv
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
@@ -70,7 +71,7 @@ async def main() -> None:
             include_sample_schema=True,
         )
 
-        testing_criteria = [
+        testing_criteria: List[Any] = [
             TestingCriterionLabelModel(
                 type="label_model",
                 model=model_deployment_name,
