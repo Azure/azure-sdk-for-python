@@ -91,7 +91,8 @@ def get_datastore_info(
         Instead, a SAS token will be requested from the datastore, and the MLClient credential will be used as backup,
         if necessary.
     :paramtype credential: str
-    :return: The dictionary with datastore info
+    :return: The dictionary with datastore info containing keys:
+        "storage_type", "storage_account", "account_url", "container_name", "credential".
     :rtype: Dict[str, Any]
     """
     datastore_info: Dict[str, Any] = {}
