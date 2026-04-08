@@ -2044,7 +2044,7 @@ class ContainerProxy:
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
 
     @distributed_trace
-    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.READ)
+    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.READ_FEED)
     def read_feed_ranges(
             self,
             *,
