@@ -12,18 +12,26 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
-from typing import Any, AsyncIterator
+from typing import TYPE_CHECKING, Any, AsyncIterator
+
+if TYPE_CHECKING:
+    from .._response_context import ResponseContext
 
 import anyio
 
+from .._options import ResponsesServerOptions
 from ..models import _generated as generated_models
 from ..models.runtime import (
     ResponseExecution,
     ResponseModeFlags,
+)
+from ..models.runtime import (
     build_cancelled_response as _build_cancelled_response,
+)
+from ..models.runtime import (
     build_failed_response as _build_failed_response,
 )
-from ..streaming._sse import encode_keep_alive_comment, encode_sse_payload, new_stream_counter
+from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..streaming._helpers import (
     EVENT_TYPE,
     _apply_stream_event_defaults,
@@ -31,9 +39,8 @@ from ..streaming._helpers import (
     _coerce_handler_event,
     _extract_response_snapshot_from_events,
 )
-from ..streaming._state_machine import EventStreamValidator, LifecycleStateMachineError
-from .._options import ResponsesServerOptions
-from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
+from ..streaming._sse import encode_keep_alive_comment, encode_sse_payload, new_stream_counter
+from ..streaming._state_machine import EventStreamValidator
 from ._event_subject import _ResponseEventSubject
 from ._execution_context import _ExecutionContext
 from ._runtime_state import _RuntimeState
@@ -56,13 +63,13 @@ def _check_first_event_contract(normalized: dict[str, Any], response_id: str) ->
     event_type = normalized.get("type")
     payload = normalized.get("payload") or {}
     if event_type != "response.created":
-        return f"S-007: first event must be response.created, got '{event_type}'"
+        return f"first event must be response.created, got '{event_type}'"
     emitted_id = payload.get("id")
     if emitted_id and emitted_id != response_id:
-        return f"S-008: response.created id '{emitted_id}' != assigned id '{response_id}'"
+        return f"response.created id '{emitted_id}' != assigned id '{response_id}'"
     emitted_status = payload.get("status")
     if emitted_status in {"completed", "failed", "cancelled", "incomplete"}:
-        return f"S-009: response.created status must be non-terminal, got '{emitted_status}'"
+        return f"response.created status must be non-terminal, got '{emitted_status}'"
     return None
 
 
@@ -115,6 +122,16 @@ _OUTPUT_ITEM_EVENT_TYPES: frozenset[str] = frozenset({
     EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value,
 })
 
+# Response-level lifecycle events whose payload carries a full Response snapshot.
+# Used by FR-008a output manipulation detection.
+_RESPONSE_SNAPSHOT_TYPES: frozenset[str] = frozenset({
+    EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
+    EVENT_TYPE.RESPONSE_COMPLETED.value,
+    EVENT_TYPE.RESPONSE_FAILED.value,
+    EVENT_TYPE.RESPONSE_INCOMPLETE.value,
+    EVENT_TYPE.RESPONSE_QUEUED.value,
+})
+
 
 def _validate_handler_event(coerced: dict[str, Any]) -> str | None:
     """Return an error message if a coerced handler event has invalid structure, else None.
@@ -131,14 +148,14 @@ def _validate_handler_event(coerced: dict[str, Any]) -> str | None:
     """
     payload = coerced.get("payload")
     if not isinstance(payload, dict):
-        return f"B30: event payload must be a dict, got {type(payload).__name__}"
+        return f"event payload must be a dict, got {type(payload).__name__}"
 
     event_type = coerced.get("type", "")
     if event_type in _OUTPUT_ITEM_EVENT_TYPES:
         if "output_index" not in payload:
-            return f"B30: {event_type} payload missing required field 'output_index'"
+            return f"{event_type} payload missing required field 'output_index'"
         if "item_id" not in payload and "item" not in payload:
-            return f"B30: {event_type} payload must include 'item_id' or 'item'"
+            return f"{event_type} payload must include 'item_id' or 'item'"
 
     return None
 
@@ -191,6 +208,8 @@ async def _run_background_non_stream(
     record.transition_to("in_progress")
     handler_events: list[dict[str, Any]] = []
     validator = EventStreamValidator()
+    output_item_count = 0
+    _provider_created = False  # tracks whether create_response was called
 
     try:
         try:
@@ -218,6 +237,17 @@ async def _run_background_non_stream(
                 validator.validate_next(normalized)
                 if not first_event_processed:
                     first_event_processed = True
+
+                    # FR-008a: output manipulation detection on response.created
+                    created_payload = normalized.get("payload") or {}
+                    created_output = created_payload.get("output")
+                    if isinstance(created_output, list) and len(created_output) != 0:
+                        raise ValueError(
+                            f"Handler directly modified Response.Output "
+                            f"(found {len(created_output)} items, expected 0). "
+                            f"Use output builder events instead."
+                        )
+
                     # Set initial response snapshot for POST response body without
                     # changing record.status (transition_to manages status lifecycle)
                     _initial_snapshot = _extract_response_snapshot_from_events(
@@ -228,7 +258,55 @@ async def _run_background_non_stream(
                         agent_session_id=agent_session_id,
                     )
                     record.set_response_snapshot(generated_models.ResponseObject(_initial_snapshot))
+                    # Persist at response.created time for bg+store (FR-003)
+                    if store and provider is not None:
+                        try:
+                            _isolation = context.isolation if context else None
+                            _response_obj = generated_models.ResponseObject(_initial_snapshot)
+                            _history_ids = (
+                                await provider.get_history_item_ids(
+                                    record.previous_response_id, None, 10000, isolation=_isolation
+                                )
+                                if record.previous_response_id
+                                else None
+                            )
+                            await provider.create_response(
+                                _response_obj, record.input_items or None, _history_ids, isolation=_isolation
+                            )
+                            _provider_created = True
+                        except Exception:  # pylint: disable=broad-exception-caught
+                            pass  # best effort
                     record.response_created_signal.set()
+                else:
+                    # Track output_item.added events for FR-008a
+                    if normalized.get("type") == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
+                        output_item_count += 1
+
+                    # FR-008a: detect direct Output manipulation on response.* events
+                    n_type = normalized.get("type", "")
+                    if n_type in _RESPONSE_SNAPSHOT_TYPES:
+                        n_payload = normalized.get("payload") or {}
+                        n_output = n_payload.get("output")
+                        if isinstance(n_output, list) and len(n_output) > output_item_count:
+                            raise ValueError(
+                                f"Output item count mismatch "
+                                f"({len(n_output)} vs {output_item_count} output_item.added events)"
+                            )
+        except asyncio.CancelledError:
+            # S-024: Distinguish known cancellation (cancel_signal set) from
+            # unknown.  Unknown CancelledError (e.g. event-loop shutdown in
+            # Starlette TestClient) must be re-raised so the shielded runner
+            # catches it; transitioning to "failed" here would be wrong.
+            if cancellation_signal.is_set():
+                if record.status != "cancelled":
+                    record.transition_to("cancelled")
+                if not first_event_processed:
+                    record.response_failed_before_events = True
+                record.response_created_signal.set()
+                return
+            # Unknown — re-raise; the shielded runner's except-CancelledError
+            # will swallow it and _refresh_background_status handles the rest.
+            raise
         except Exception:  # pylint: disable=broad-exception-caught
             if record.status != "cancelled":
                 record.set_response_snapshot(
@@ -281,7 +359,15 @@ async def _run_background_non_stream(
             and record.response is not None
         ):
             try:
-                await provider.update_response(record.response)
+                if _provider_created:
+                    await provider.update_response(record.response)
+                else:
+                    # Response was never created (handler yielded nothing or
+                    # failed before response.created) — create instead of update.
+                    _isolation = context.isolation if context else None
+                    await provider.create_response(
+                        record.response, record.input_items or None, None, isolation=_isolation
+                    )
             except Exception:  # pylint: disable=broad-exception-caught
                 pass  # best effort
 
@@ -595,6 +681,17 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 state.handler_events.append(event)
                 yield event
             return
+        except asyncio.CancelledError:
+            # S-024: Known cancellation before first event.
+            if ctx.cancellation_signal.is_set():
+                state.captured_error = asyncio.CancelledError()
+                yield {
+                    "type": EVENT_TYPE.ERROR.value,
+                    "payload": {"message": "An internal server error occurred.", "param": None, "code": None},
+                }
+                return
+            # Unknown CancelledError (e.g. event-loop teardown) — re-raise.
+            raise
         except Exception as exc:  # pylint: disable=broad-exception-caught
             # B8: Pre-creation error → emit a standalone `error` event only.
             # No response.created precedes it; this is the contract-mandated shape.
@@ -644,6 +741,20 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         state.handler_events.append(first_normalized)
         state.validator.validate_next(first_normalized)
 
+        # FR-008a: output manipulation detection on response.created.
+        # If the handler directly added items to response.output instead of
+        # using builder events, the output list will be non-empty.
+        created_payload = first_normalized.get("payload") or {}
+        created_output = created_payload.get("output")
+        if isinstance(created_output, list) and len(created_output) != 0:
+            state.captured_error = ValueError(
+                f"Handler directly modified Response.Output "
+                f"(found {len(created_output)} items, expected 0). "
+                f"Use output builder events instead."
+            )
+            yield await self._make_failed_event(ctx, state)
+            return
+
         # bg+store: create and register the execution record after the first event.
         if ctx.background and ctx.store:
             await self._register_bg_execution(ctx, state, first_normalized)
@@ -651,10 +762,38 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         yield first_normalized
 
         # --- Remaining events ---
+        output_item_count = 0
         try:
             async for raw in _iter_with_winddown(handler_iterator, ctx.cancellation_signal):
+                # FR-008a: Pre-check for output manipulation BEFORE validation.
+                # Must inspect the raw event first so that an offending terminal
+                # event (e.g. response.completed with manipulated output) is NOT
+                # appended to the state machine before we emit response.failed.
+                _pre_coerced = _coerce_handler_event(raw)
+                _pre_type = _pre_coerced.get("type", "")
+                if _pre_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
+                    output_item_count += 1
+                if _pre_type in _RESPONSE_SNAPSHOT_TYPES:
+                    _pre_payload = _pre_coerced.get("payload") or {}
+                    _pre_output = _pre_payload.get("output")
+                    if isinstance(_pre_output, list) and len(_pre_output) > output_item_count:
+                        state.captured_error = ValueError(
+                            f"Output item count mismatch "
+                            f"({len(_pre_output)} vs {output_item_count} output_item.added events)"
+                        )
+                        yield await self._make_failed_event(ctx, state)
+                        return
+
                 normalized = await self._normalize_and_append(ctx, state, raw)
                 yield normalized
+        except asyncio.CancelledError:
+            # S-024: Known cancellation — emit cancel terminal.
+            if ctx.cancellation_signal.is_set():
+                if not self._has_terminal_event(state.handler_events):
+                    yield await self._cancel_terminal_sse_dict(ctx, state)
+                return
+            # Unknown CancelledError (e.g. event-loop teardown) — re-raise.
+            raise
         except Exception as exc:  # pylint: disable=broad-exception-caught
             state.captured_error = exc
             # B-13: emit response.failed when handler raises after response.created.
@@ -775,32 +914,40 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         resolved_status = response_payload.get("status")
         status = resolved_status if isinstance(resolved_status, str) else "completed"
 
+        # Always register in runtime state so cancel/GET return correct status codes.
+        replay_subject: _ResponseEventSubject | None = None
         if ctx.store:
             replay_subject = _ResponseEventSubject()
             for _evt in events:
                 await replay_subject.publish(_evt)
             await replay_subject.complete()
 
-            execution = ResponseExecution(
-                response_id=ctx.response_id,
-                mode_flags=ResponseModeFlags(stream=True, store=True, background=ctx.background),
-                status=status,
-                subject=replay_subject,
-                input_items=deepcopy(ctx.input_items),
-                previous_response_id=ctx.previous_response_id,
-                cancel_signal=ctx.cancellation_signal if ctx.background else None,
-            )
-            execution.set_response_snapshot(generated_models.ResponseObject(response_payload))
-            await self._runtime_state.add(execution)
+        execution = ResponseExecution(
+            response_id=ctx.response_id,
+            mode_flags=ResponseModeFlags(stream=True, store=ctx.store, background=ctx.background),
+            status=status,
+            subject=replay_subject,
+            input_items=deepcopy(ctx.input_items),
+            previous_response_id=ctx.previous_response_id,
+            cancel_signal=ctx.cancellation_signal if ctx.background else None,
+        )
+        execution.set_response_snapshot(generated_models.ResponseObject(response_payload))
+        await self._runtime_state.add(execution)
+
+        if ctx.store:
             try:
                 _isolation = ctx.context.isolation if ctx.context else None
                 _history_ids = (
-                    await self._provider.get_history_item_ids(ctx.previous_response_id, None, 10000, isolation=_isolation)
+                    await self._provider.get_history_item_ids(
+                        ctx.previous_response_id, None, 10000, isolation=_isolation,
+                    )
                     if ctx.previous_response_id
                     else None
                 )
                 await self._provider.create_response(
-                    generated_models.ResponseObject(response_payload), ctx.input_items or None, _history_ids, isolation=_isolation
+                    generated_models.ResponseObject(response_payload),
+                    ctx.input_items or None, _history_ids,
+                    isolation=_isolation,
                 )
             except Exception:  # pylint: disable=broad-exception-caught
                 pass  # best effort
@@ -874,7 +1021,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             _SENTINEL_BG = object()
             bg_queue: asyncio.Queue[object] = asyncio.Queue()
 
-            async def _bg_producer() -> None:
+            async def _bg_producer_inner() -> None:
                 try:
                     async for event in self._process_handler_events(ctx, state, handler_iterator):
                         await bg_queue.put(encode_sse_payload(event["type"], event["payload"]))
@@ -886,6 +1033,17 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     # never properly closed by Starlette.
                     await _finalize()
                     await bg_queue.put(_SENTINEL_BG)
+
+            async def _bg_producer() -> None:
+                try:
+                    # FR-013: Shield the inner producer via asyncio.shield so
+                    # that Starlette's anyio cancel-scope cancellation (triggered
+                    # by client disconnect) does NOT propagate into the handler.
+                    # asyncio.shield() creates a new inner Task whose cancellation
+                    # is independent of the outer task.
+                    await asyncio.shield(_bg_producer_inner())
+                except asyncio.CancelledError:
+                    pass  # outer task cancelled by scope; inner task continues
 
             bg_task = asyncio.create_task(_bg_producer())
             try:
@@ -982,8 +1140,13 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             pass
 
         if state.captured_error is not None:
-            ctx.span.end(state.captured_error)
-            raise _HandlerError(state.captured_error) from state.captured_error
+            # Only raise _HandlerError for pre-creation errors (B8) where no
+            # terminal lifecycle event has been emitted.  Post-creation errors
+            # (B-13, FR-008a) emit response.failed and should complete as
+            # HTTP 200 with failed status — not an HTTP 500.
+            if not self._has_terminal_event(state.handler_events):
+                ctx.span.end(state.captured_error)
+                raise _HandlerError(state.captured_error) from state.captured_error
 
         events = state.handler_events if state.handler_events else _build_events(
             ctx.response_id,
@@ -1012,18 +1175,27 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         )
         record.set_response_snapshot(generated_models.ResponseObject(response_payload))
 
+        # Always register in runtime state so that cancel/GET can find the record
+        # and return the correct status code (e.g., 400 for non-bg cancel).
+        # Matches .NET _tracker.Create which always registers.
+        await self._runtime_state.add(record)
+
         if ctx.store:
-            await self._runtime_state.add(record)
             # Persist via provider (non-bg sync: single create at terminal state)
             try:
                 _isolation = ctx.context.isolation if ctx.context else None
                 _response_obj = generated_models.ResponseObject(response_payload)
                 _history_ids = (
-                    await self._provider.get_history_item_ids(ctx.previous_response_id, None, 10000, isolation=_isolation)
+                    await self._provider.get_history_item_ids(
+                        ctx.previous_response_id, None, 10000, isolation=_isolation,
+                    )
                     if ctx.previous_response_id
                     else None
                 )
-                await self._provider.create_response(_response_obj, ctx.input_items or None, _history_ids, isolation=_isolation)
+                await self._provider.create_response(
+                    _response_obj, ctx.input_items or None,
+                    _history_ids, isolation=_isolation,
+                )
             except Exception:  # pylint: disable=broad-exception-caught
                 pass  # best effort
 
@@ -1033,19 +1205,21 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
     async def run_background(self, ctx: _ExecutionContext) -> dict[str, Any]:
         """Handle a background (non-stream) create-response request.
 
-        Launches the handler as an asyncio task and returns the initial
-        queued snapshot immediately without waiting for the handler to
-        emit its first event (S-003).
+        Launches the handler as an asyncio task, waits for the handler to
+        emit ``response.created``, then returns the in_progress snapshot.
+        Matches the .NET ``ResponseCreatedSignal`` pattern: the POST blocks
+        until the handler's first event is processed.
 
         :param ctx: Current execution context.
         :type ctx: _ExecutionContext
-        :return: Response snapshot dictionary (status: queued).
+        :return: Response snapshot dictionary (status: in_progress).
         :rtype: dict[str, Any]
+        :raises _HandlerError: If the handler fails before emitting ``response.created``.
         """
         record = ResponseExecution(
             response_id=ctx.response_id,
             mode_flags=ResponseModeFlags(stream=False, store=ctx.store, background=True),
-            status="queued",
+            status="in_progress",
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             response_context=ctx.context,
@@ -1054,23 +1228,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             initial_agent_reference=ctx.agent_reference,
         )
 
-        # Always register so GET can observe in-flight state
+        # Register so GET can observe in-flight state (matches .NET _tracker.Create)
         await self._runtime_state.add(record)
-
-        # Best-effort persist initial queued state via provider
-        if ctx.store:
-            try:
-                _isolation = ctx.context.isolation if ctx.context else None
-                _initial_snapshot = _RuntimeState.to_snapshot(record)
-                _response_obj = generated_models.ResponseObject(_initial_snapshot)
-                _history_ids = (
-                    await self._provider.get_history_item_ids(ctx.previous_response_id, None, 10000, isolation=_isolation)
-                    if ctx.previous_response_id
-                    else None
-                )
-                await self._provider.create_response(_response_obj, ctx.input_items or None, _history_ids, isolation=_isolation)
-            except Exception:  # pylint: disable=broad-exception-caught
-                pass  # best effort
 
         # Launch handler immediately (S-003: handler runs asynchronously)
         # Use anyio.CancelScope(shield=True) + suppress CancelledError so the
@@ -1099,7 +1258,16 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         record.execution_task = asyncio.create_task(_shielded_runner())
 
-        # Return immediately with the queued snapshot (S-003: background POST
-        # must not block waiting for the handler to emit its first event).
+        # Wait for handler to emit response.created (or fail).
+        # Matches .NET: await execution.ResponseCreatedSignal.Task
+        await record.response_created_signal.wait()
+
+        # If handler failed before emitting any events, return the failed
+        # snapshot (status: failed).  Background POST always returns 200 —
+        # the failure is reflected in the response status, not the HTTP code.
+        if record.response_failed_before_events:
+            ctx.span.end(RuntimeError("Handler failed before response.created"))
+            return _RuntimeState.to_snapshot(record)
+
         ctx.span.end(None)
         return _RuntimeState.to_snapshot(record)

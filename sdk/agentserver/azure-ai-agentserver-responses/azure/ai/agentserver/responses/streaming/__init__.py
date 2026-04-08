@@ -5,7 +5,7 @@
 from ._helpers import (
     EVENT_TYPE,
 )
-from ._sse import encode_sse_event, encode_sse_payload, encode_keep_alive_comment
+from ._sse import encode_keep_alive_comment, encode_sse_event, encode_sse_payload
 from ._state_machine import (
     EventStreamValidator,
     LifecycleStateMachineError,

@@ -22,31 +22,22 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 from azure.ai.agentserver.core import end_span, flush_spans, trace_stream
 from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse
 
-from .._response_context import ResponseContext, IsolationContext
 from .._options import ResponsesServerOptions
-from ..models.runtime import ResponseModeFlags
-from ..streaming._helpers import _encode_sse
+from .._response_context import IsolationContext, ResponseContext
+from ..models.runtime import ResponseModeFlags, build_cancelled_response, build_failed_response
+from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
+from ..streaming._helpers import EVENT_TYPE, _encode_sse
 from ..streaming._sse import encode_sse_payload
 from ..streaming._state_machine import LifecycleStateMachineError, normalize_lifecycle_events
-from ._orchestrator import _refresh_background_status
 from ._execution_context import _ExecutionContext
-from ..models.runtime import build_cancelled_response, build_failed_response
-from ._validation import (
-    deleted_response as _deleted_response,
-    error_response as _error_response,
-    invalid_mode_response as _invalid_mode,
-    invalid_request_response as _invalid_request,
-    not_found_response as _not_found,
-    service_unavailable_response as _service_unavailable,
-)
 from ._observability import (
     _initial_create_span_tags,
     build_create_otel_attrs,
     build_create_span_tags,
     extract_request_id,
-    start_create_span
+    start_create_span,
 )
-from ._orchestrator import _HandlerError, _ResponseOrchestrator
+from ._orchestrator import _HandlerError, _refresh_background_status, _ResponseOrchestrator
 from ._request_parsing import (
     _apply_item_cursors,
     _extract_item_id,
@@ -56,14 +47,31 @@ from ._request_parsing import (
     _resolve_session_id,
 )
 from ._runtime_state import _RuntimeState
+from ._validation import (
+    deleted_response as _deleted_response,
+)
+from ._validation import (
+    error_response as _error_response,
+)
+from ._validation import (
+    invalid_mode_response as _invalid_mode,
+)
+from ._validation import (
+    invalid_request_response as _invalid_request,
+)
+from ._validation import (
+    not_found_response as _not_found,
+)
 from ._validation import parse_and_validate_create_response
-from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
-from ..streaming._helpers import EVENT_TYPE
+from ._validation import (
+    service_unavailable_response as _service_unavailable,
+)
 
 if TYPE_CHECKING:
     from ._routing import ResponsesAgentServerHost
 
-from opentelemetry import baggage as _otel_baggage, context as _otel_context
+from opentelemetry import baggage as _otel_baggage
+from opentelemetry import context as _otel_context
 
 from ..models.errors import RequestValidationError
 
@@ -192,7 +200,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             normalize_lifecycle_events(
                 response_id="resp_validation",
                 events=[
-                    {"type": EVENT_TYPE.RESPONSE_CREATED.value, "payload": {"status": "queued"}},
+                    {"type": EVENT_TYPE.RESPONSE_CREATED.value, "payload": {"status": "in_progress"}},
                     {"type": EVENT_TYPE.RESPONSE_COMPLETED.value, "payload": {"status": "completed"}},
                 ],
             )
@@ -524,17 +532,25 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         end_span(otel_span)
                         return JSONResponse(snapshot, status_code=200)
                     except _HandlerError as exc:
-                        logger.error("Handler error in sync create (response_id=%s)", ctx.response_id, exc_info=exc.original)
+                        logger.error(
+                            "Handler error in sync create (response_id=%s)",
+                            ctx.response_id, exc_info=exc.original,
+                        )
                         self._safe_set_attrs(otel_span, {
                             _ATTR_ERROR_CODE: _classify_error_code(exc.original),
                             _ATTR_ERROR_MESSAGE: str(exc.original),
                         })
                         end_span(otel_span, exc=exc.original)
                         # Handler errors are server-side faults, not client errors
-                        return JSONResponse(
-                            {"error": {"message": "internal server error", "type": "server_error", "code": "internal_error", "param": None}},
-                            status_code=500,
-                        )
+                        err_body = {
+                            "error": {
+                                "message": "internal server error",
+                                "type": "server_error",
+                                "code": "internal_error",
+                                "param": None,
+                            }
+                        }
+                        return JSONResponse(err_body, status_code=500)
                     finally:
                         disconnect_task.cancel()
 
@@ -549,8 +565,16 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 })
                 end_span(otel_span, exc=exc)
                 # Handler errors are server-side faults, not client errors
+                err_body = {
+                    "error": {
+                        "message": "internal server error",
+                        "type": "server_error",
+                        "code": "internal_error",
+                        "param": None,
+                    }
+                }
                 return JSONResponse(
-                    {"error": {"message": "internal server error", "type": "server_error", "code": "internal_error", "param": None}},
+                    err_body,
                     status_code=500,
                     headers=self._response_headers,
                 )
@@ -721,6 +745,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         response_id = request.path_params["response_id"]
         record = await self._runtime_state.get(response_id)
         if record is None:
+            return _not_found(response_id, {})
+
+        # store=false responses are not deletable (FR-014, matches .NET)
+        if not record.mode_flags.store:
             return _not_found(response_id, {})
 
         _refresh_background_status(record)

@@ -12,7 +12,6 @@ from typing import Any, Mapping
 from ..models._generated import ResponseStreamEvent
 from ._internals import _RESPONSE_SNAPSHOT_EVENT_TYPES
 
-
 _stream_counter_var: ContextVar[itertools.count] = ContextVar("_stream_counter_var")
 
 

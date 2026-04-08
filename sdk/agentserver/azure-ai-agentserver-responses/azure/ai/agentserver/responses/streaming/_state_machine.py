@@ -186,7 +186,7 @@ def normalize_lifecycle_events(
                 "payload": {
                     "id": response_id,
                     "object": "response",
-                    "status": "queued",
+                    "status": "in_progress",
                     "model": default_model,
                 },
             }

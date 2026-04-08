@@ -9,12 +9,11 @@ import threading
 from typing import Any
 
 import pytest
-
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
-from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
+from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
 from tests._helpers import EventGate
 
 

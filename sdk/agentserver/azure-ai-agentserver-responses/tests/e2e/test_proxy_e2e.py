@@ -20,7 +20,6 @@ from typing import Any
 
 import httpx
 import openai
-import pytest
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses import (
@@ -277,7 +276,6 @@ def _make_upstream_integration_handler(upstream_client: openai.AsyncOpenAI):
             fc_builder = None
             msg_builder = None
             text_builder = None
-            output_items_done: list[dict[str, Any]] = []
 
             async with await upstream_client.responses.create(
                 model=request.model or "gpt-4o-mini",

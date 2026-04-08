@@ -8,7 +8,6 @@ import threading
 import time
 from typing import Any, Callable, Mapping
 
-
 ContextProvider = Callable[[], Mapping[str, Any] | None]
 
 

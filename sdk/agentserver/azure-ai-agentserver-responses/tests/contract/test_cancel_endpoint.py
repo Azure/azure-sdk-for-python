@@ -235,11 +235,10 @@ def test_cancel__returns_400_for_completed_background_response() -> None:
     )
 
 
-def test_cancel__returns_queued_for_failed_background_response() -> None:
-    """Background POST returns immediately with queued status even when the
-    handler will subsequently fail.  The failure is observed via GET.
+def test_cancel__returns_failed_for_immediate_handler_failure() -> None:
+    """Background POST waits for response.created; when the handler fails
+    before emitting it, the POST returns 200 with status=failed.
     """
-    from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
     def _raising_before_events(req: Any, ctx: Any, sig: Any):
         async def _ev():
@@ -253,14 +252,17 @@ def test_cancel__returns_queued_for_failed_background_response() -> None:
         "/responses",
         json={"model": "gpt-4o-mini", "input": "hello", "stream": False, "store": True, "background": True},
     )
-    # Background POST returns immediately with queued status
+    # Background POST returns 200 — failure reflected in status, not HTTP code
     assert create_response.status_code == 200
     payload = create_response.json()
-    assert payload.get("status") in {"queued", "in_progress"}
+    assert payload.get("status") == "failed"
 
 
 @pytest.mark.skip(
-    reason="Known gap (S-024): unknown cancellation exceptions should map to handler-error path instead of escaping as CancelledError",
+    reason=(
+        "Known gap (S-024): unknown cancellation exceptions should map to"
+        " handler-error path instead of escaping as CancelledError"
+    ),
 )
 def test_cancel__unknown_cancellation_exception_is_treated_as_failed() -> None:
     client = _build_client(_unknown_cancellation_response_handler)

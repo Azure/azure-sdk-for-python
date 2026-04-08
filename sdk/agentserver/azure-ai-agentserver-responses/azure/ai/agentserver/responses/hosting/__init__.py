@@ -2,7 +2,6 @@
 # Licensed under the MIT license.
 """HTTP hosting, routing, and request orchestration for the Responses server."""
 
-from ._routing import ResponsesAgentServerHost
 from ._observability import (
     CreateSpan,
     CreateSpanHook,
@@ -12,6 +11,7 @@ from ._observability import (
     build_platform_server_header,
     start_create_span,
 )
+from ._routing import ResponsesAgentServerHost
 from ._validation import (
     build_api_error_response,
     build_invalid_mode_error_response,

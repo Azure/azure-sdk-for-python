@@ -14,7 +14,6 @@ from azure.ai.agentserver.responses.models.runtime import (
     build_cancelled_response,
 )
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

@@ -8,7 +8,6 @@ import pytest
 
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
-
 RESPONSE_ID = "resp_gen_test_12345"
 
 

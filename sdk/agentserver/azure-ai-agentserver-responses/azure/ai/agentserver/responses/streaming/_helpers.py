@@ -7,11 +7,11 @@ from __future__ import annotations
 from copy import deepcopy
 from typing import Any, AsyncIterator
 
+from ..models import _generated as generated_models
 from . import _internals
 from ._event_stream import ResponseEventStream
 from ._internals import _RESPONSE_SNAPSHOT_EVENT_TYPES
 from ._sse import encode_sse_payload
-from ..models import _generated as generated_models
 
 EVENT_TYPE = generated_models.ResponseStreamEventType
 
@@ -60,7 +60,7 @@ def _build_events(
         agent_reference=agent_reference,
         model=model,
     )
-    events = [stream.emit_created(status="queued")]
+    events = [stream.emit_created(status="in_progress")]
     if include_progress:
         events.append(stream.emit_in_progress())
     events.append(stream.emit_completed())
@@ -168,7 +168,10 @@ def _apply_stream_event_defaults(
         if isinstance(item, dict):
             item.setdefault("response_id", response_id)
             if agent_reference:
-                item.setdefault("agent_reference", agent_reference)
+                # Use explicit None check instead of setdefault so that
+                # builder items with agent_reference=None are overridden.
+                if item.get("agent_reference") is None:
+                    item["agent_reference"] = agent_reference
 
     if sequence_number is not None:
         payload["sequence_number"] = sequence_number

@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses import (
     OutputItemFunctionCallBuilder,
     OutputItemFunctionCallOutputBuilder,
@@ -12,6 +11,7 @@ from azure.ai.agentserver.responses import (
     ResponseEventStream,
     TextContentBuilder,
 )
+from azure.ai.agentserver.responses._id_generator import IdGenerator
 
 
 def test_text_content_builder__emits_added_delta_done_events() -> None:

@@ -23,11 +23,9 @@ import asyncio
 import json as _json
 from typing import Any
 
-import pytest
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
-
 
 # ════════════════════════════════════════════════════════════
 # Lightweight async ASGI test client
@@ -281,6 +279,153 @@ def _make_gated_stream_handler_with_output():
     return handler
 
 
+def _make_item_lifecycle_gated_handler():
+    """Factory matching .NET ItemLifecycleGatedStream.
+
+    Emits two message output items with fine-grained gates:
+    - item_added: fires after first item emit_added (item in_progress, empty content)
+    - item_done: fires after first item emit_done (item completed, text="Hello")
+    - item2_done: fires after second item emit_done (2 completed items)
+
+    Each gate has a corresponding ``_checked`` event that the test must set
+    to let the handler continue.
+    """
+    item_added = asyncio.Event()
+    item_added_checked = asyncio.Event()
+    item_done = asyncio.Event()
+    item_done_checked = asyncio.Event()
+    item2_done = asyncio.Event()
+    item2_done_checked = asyncio.Event()
+
+    def handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            stream = ResponseEventStream(
+                response_id=context.response_id,
+                model=getattr(request, "model", None),
+            )
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
+
+            # First item — gate after Added (in_progress, empty content)
+            msg1 = stream.add_output_item_message()
+            yield msg1.emit_added()
+
+            item_added.set()
+            while not item_added_checked.is_set():
+                if cancellation_signal.is_set():
+                    return
+                await asyncio.sleep(0.01)
+
+            # Continue to completion of first item
+            text1 = msg1.add_text_content()
+            yield text1.emit_added()
+            yield text1.emit_delta("Hello")
+            yield text1.emit_done()
+            yield msg1.emit_content_done(text1)
+            yield msg1.emit_done()
+
+            item_done.set()
+            while not item_done_checked.is_set():
+                if cancellation_signal.is_set():
+                    return
+                await asyncio.sleep(0.01)
+
+            # Second item — emit fully, gate after Done
+            msg2 = stream.add_output_item_message()
+            yield msg2.emit_added()
+            text2 = msg2.add_text_content()
+            yield text2.emit_added()
+            yield text2.emit_delta("World")
+            yield text2.emit_done()
+            yield msg2.emit_content_done(text2)
+            yield msg2.emit_done()
+
+            item2_done.set()
+            while not item2_done_checked.is_set():
+                if cancellation_signal.is_set():
+                    return
+                await asyncio.sleep(0.01)
+
+            yield stream.emit_completed()
+
+        return _events()
+
+    handler.item_added = item_added  # type: ignore[attr-defined]
+    handler.item_added_checked = item_added_checked  # type: ignore[attr-defined]
+    handler.item_done = item_done  # type: ignore[attr-defined]
+    handler.item_done_checked = item_done_checked  # type: ignore[attr-defined]
+    handler.item2_done = item2_done  # type: ignore[attr-defined]
+    handler.item2_done_checked = item2_done_checked  # type: ignore[attr-defined]
+    return handler
+
+
+def _make_two_item_gated_bg_handler():
+    """Factory matching .NET TwoItemGatedStream for progressive polling (E44).
+
+    Emits two message output items with gates between them:
+    - item1_emitted: fires after first item is fully done (completed with text="Hello")
+    - item2_emitted: fires after second item is fully done (completed with text="World")
+
+    Each gate has a corresponding ``_checked`` event the test must set.
+    """
+    item1_emitted = asyncio.Event()
+    item1_checked = asyncio.Event()
+    item2_emitted = asyncio.Event()
+    item2_checked = asyncio.Event()
+
+    def handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            stream = ResponseEventStream(
+                response_id=context.response_id,
+                model=getattr(request, "model", None),
+            )
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
+
+            # First message output item
+            msg1 = stream.add_output_item_message()
+            yield msg1.emit_added()
+            text1 = msg1.add_text_content()
+            yield text1.emit_added()
+            yield text1.emit_delta("Hello")
+            yield text1.emit_done()
+            yield msg1.emit_content_done(text1)
+            yield msg1.emit_done()
+
+            item1_emitted.set()
+            while not item1_checked.is_set():
+                if cancellation_signal.is_set():
+                    return
+                await asyncio.sleep(0.01)
+
+            # Second message output item
+            msg2 = stream.add_output_item_message()
+            yield msg2.emit_added()
+            text2 = msg2.add_text_content()
+            yield text2.emit_added()
+            yield text2.emit_delta("World")
+            yield text2.emit_done()
+            yield msg2.emit_content_done(text2)
+            yield msg2.emit_done()
+
+            item2_emitted.set()
+            while not item2_checked.is_set():
+                if cancellation_signal.is_set():
+                    return
+                await asyncio.sleep(0.01)
+
+            yield stream.emit_completed()
+
+        return _events()
+
+    handler.item1_emitted = item1_emitted  # type: ignore[attr-defined]
+    handler.item1_checked = item1_checked  # type: ignore[attr-defined]
+    handler.item2_emitted = item2_emitted  # type: ignore[attr-defined]
+    handler.item2_checked = item2_checked  # type: ignore[attr-defined]
+    return handler
+    return handler
+
+
 # ════════════════════════════════════════════════════════════
 # C2 — Sync streaming, stored: E8, E11
 # ════════════════════════════════════════════════════════════
@@ -351,7 +496,9 @@ class TestC2StreamStoredAsync:
 
             # Cancel non-bg in-flight → 404 (not yet stored, S7)
             cancel_resp = await client.post(f"/responses/{response_id}/cancel")
-            assert cancel_resp.status_code == 404, "S7: non-background in-flight cancel must return 404 (not yet stored)"
+            assert cancel_resp.status_code == 404, (
+                "S7: non-background in-flight cancel must return 404 (not yet stored)"
+            )
 
             handler.release.set()
             await asyncio.wait_for(post_task, timeout=5.0)
@@ -538,5 +685,225 @@ class TestC4BgStreamStoredAsync:
             assert terminal["data"]["response"].get("status") == "cancelled"
             # B11: output cleared
             assert terminal["data"]["response"].get("output") == []
+        finally:
+            await _ensure_task_done(post_task, handler)
+
+    async def test_e26_bg_stream_cancel_then_sse_replay_terminal_event(self) -> None:
+        """B26 — SSE replay after cancel contains terminal event response.failed with status cancelled.
+
+        Unlike test_bg_stream_cancel_terminal_sse_is_response_failed_with_cancelled
+        which checks the *live* SSE stream, this test verifies the stored *replay*
+        endpoint (GET ?stream=true) returns the correct terminal event.
+        """
+        handler = _make_gated_stream_handler()
+        client = _build_client(handler)
+        response_id = IdGenerator.new_response_id()
+
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={
+                    "response_id": response_id,
+                    "model": "gpt-4o-mini",
+                    "input": "hello",
+                    "stream": True,
+                    "store": True,
+                    "background": True,
+                },
+            )
+        )
+        try:
+            await asyncio.wait_for(handler.started.wait(), timeout=5.0)
+
+            # Cancel bg in-flight → 200
+            cancel_resp = await client.post(f"/responses/{response_id}/cancel")
+            assert cancel_resp.status_code == 200
+
+            await asyncio.wait_for(post_task, timeout=5.0)
+        finally:
+            await _ensure_task_done(post_task, handler)
+
+        # SSE replay after cancel → should have response.failed terminal event
+        replay_resp = await client.get(f"/responses/{response_id}?stream=true")
+        assert replay_resp.status_code == 200
+
+        replay_events = _parse_sse_events(replay_resp.body.decode())
+        assert len(replay_events) >= 1, "Replay should have at least 1 event"
+
+        # B26: terminal event for cancelled response is response.failed
+        last_event = replay_events[-1]
+        assert last_event["type"] == "response.failed", (
+            f"Expected response.failed terminal in replay, got: {last_event['type']}"
+        )
+
+        # The response inside should have status: cancelled
+        if "response" in last_event["data"]:
+            assert last_event["data"]["response"]["status"] == "cancelled"
+
+    async def test_e43_bg_stream_get_during_stream_item_lifecycle(self) -> None:
+        """B5, B23 — GET mid-stream returns progressive item lifecycle.
+
+        Validates the full 4-phase lifecycle matching .NET E43:
+        Phase 1: After item Added → 1 item, status=in_progress, empty content
+        Phase 2: After item Done → 1 item, status=completed, text="Hello"
+        Phase 3: After 2nd item Done → 2 items, both completed
+        Phase 4: After completion → 2 items, both completed (final snapshot)
+        """
+        handler = _make_item_lifecycle_gated_handler()
+        client = _build_client(handler)
+        response_id = IdGenerator.new_response_id()
+
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={
+                    "response_id": response_id,
+                    "model": "gpt-4o-mini",
+                    "input": "hello",
+                    "stream": True,
+                    "store": True,
+                    "background": True,
+                },
+            )
+        )
+        try:
+            # ── Phase 1: After EmitAdded (before EmitDone) ──
+            await asyncio.wait_for(handler.item_added.wait(), timeout=5.0)
+
+            get1 = await client.get(f"/responses/{response_id}")
+            assert get1.status_code == 200
+            doc1 = get1.json()
+            assert doc1["status"] == "in_progress"
+            output1 = doc1["output"]
+            assert len(output1) == 1
+            item1_added = output1[0]
+            assert item1_added["type"] == "message"
+            # Item is in_progress — content should be empty
+            assert item1_added["status"] == "in_progress"
+            assert len(item1_added["content"]) == 0
+
+            handler.item_added_checked.set()
+
+            # ── Phase 2: After EmitDone — item is completed with full text ──
+            await asyncio.wait_for(handler.item_done.wait(), timeout=5.0)
+
+            get2 = await client.get(f"/responses/{response_id}")
+            assert get2.status_code == 200
+            doc2 = get2.json()
+            assert doc2["status"] == "in_progress"
+            output2 = doc2["output"]
+            assert len(output2) == 1
+            item1_done = output2[0]
+            assert item1_done["status"] == "completed"
+            content_done = item1_done["content"]
+            assert len(content_done) == 1
+            assert content_done[0]["type"] == "output_text"
+            assert content_done[0]["text"] == "Hello"
+
+            handler.item_done_checked.set()
+
+            # ── Phase 3: Second item done — output should have 2 completed items ──
+            await asyncio.wait_for(handler.item2_done.wait(), timeout=5.0)
+
+            get3 = await client.get(f"/responses/{response_id}")
+            assert get3.status_code == 200
+            doc3 = get3.json()
+            assert doc3["status"] == "in_progress"
+            output3 = doc3["output"]
+            assert len(output3) == 2
+            assert output3[0]["status"] == "completed"
+            assert output3[1]["status"] == "completed"
+            assert output3[1]["content"][0]["text"] == "World"
+
+            handler.item2_done_checked.set()
+
+            post_resp = await asyncio.wait_for(post_task, timeout=5.0)
+            assert post_resp.status_code == 200
+
+            # ── Phase 4: After completion — final snapshot ──
+            get_final = await client.get(f"/responses/{response_id}")
+            assert get_final.status_code == 200
+            doc_final = get_final.json()
+            assert doc_final["status"] == "completed"
+            assert len(doc_final["output"]) == 2
+        finally:
+            await _ensure_task_done(post_task, handler)
+
+    async def test_e44_bg_progressive_polling_output_grows(self) -> None:
+        """B5, B10 — background progressive polling shows output accumulation.
+
+        Validates the full 3-phase progressive polling matching .NET E44:
+        Phase 1: After item1 done → 1 completed item with text="Hello"
+        Phase 2: After item2 done → 2 completed items with text="Hello" and "World"
+        Phase 3: After completion → 2 items, full content preserved
+
+        Note: The Python server updates the stored record progressively only
+        for bg+stream responses (S-035), so this test uses stream=True.
+        The sync E44 test verifies the final-state-only path for bg non-streaming.
+        """
+        handler = _make_two_item_gated_bg_handler()
+        client = _build_client(handler)
+        response_id = IdGenerator.new_response_id()
+
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={
+                    "response_id": response_id,
+                    "model": "gpt-4o-mini",
+                    "input": "hello",
+                    "stream": True,
+                    "store": True,
+                    "background": True,
+                },
+            )
+        )
+        try:
+            # Wait for first item to be fully emitted (done)
+            await asyncio.wait_for(handler.item1_emitted.wait(), timeout=5.0)
+
+            # Poll: should see 1 completed output item with text "Hello"
+            poll1 = await client.get(f"/responses/{response_id}")
+            assert poll1.status_code == 200
+            doc1 = poll1.json()
+            assert doc1["status"] == "in_progress"
+            output1 = doc1["output"]
+            assert len(output1) == 1
+            assert output1[0]["status"] == "completed"
+            assert output1[0]["content"][0]["text"] == "Hello"
+
+            # Release gate for second item
+            handler.item1_checked.set()
+
+            # Wait for second item
+            await asyncio.wait_for(handler.item2_emitted.wait(), timeout=5.0)
+
+            # Poll: should see 2 completed output items
+            poll2 = await client.get(f"/responses/{response_id}")
+            assert poll2.status_code == 200
+            doc2 = poll2.json()
+            assert doc2["status"] == "in_progress"
+            output2 = doc2["output"]
+            assert len(output2) == 2
+            assert output2[0]["status"] == "completed"
+            assert output2[0]["content"][0]["text"] == "Hello"
+            assert output2[1]["status"] == "completed"
+            assert output2[1]["content"][0]["text"] == "World"
+
+            # Release final gate
+            handler.item2_checked.set()
+
+            post_resp = await asyncio.wait_for(post_task, timeout=5.0)
+            assert post_resp.status_code == 200
+
+            # Final poll: completed with 2 items, full content preserved
+            poll_final = await client.get(f"/responses/{response_id}")
+            assert poll_final.status_code == 200
+            doc_final = poll_final.json()
+            assert doc_final["status"] == "completed"
+            output_final = doc_final["output"]
+            assert len(output_final) == 2
+            assert output_final[0]["content"][0]["text"] == "Hello"
+            assert output_final[1]["content"][0]["text"] == "World"
         finally:
             await _ensure_task_done(post_task, handler)

@@ -8,7 +8,7 @@ from collections.abc import AsyncIterable
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator
 
-from ._base import BaseOutputItemBuilder, BuilderLifecycleState, EVENT_TYPE
+from ._base import EVENT_TYPE, BaseOutputItemBuilder, BuilderLifecycleState
 
 if TYPE_CHECKING:
     from .._event_stream import ResponseEventStream

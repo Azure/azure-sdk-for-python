@@ -66,7 +66,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         created_at: datetime | None = None,
         updated_at: datetime | None = None,
         completed_at: datetime | None = None,
-        status: ResponseStatus = "queued",
+        status: ResponseStatus = "in_progress",
         response: ResponseObject | None = None,
         execution_task: asyncio.Task[Any] | None = None,
         cancel_requested: bool = False,
@@ -164,10 +164,19 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
     def visible_via_get(self) -> bool:
         """Non-streaming stored responses are retrievable via GET after completion.
 
+        For background non-stream responses, visibility is deferred until
+        ``response.created`` is processed (FR-001: response not accessible
+        before the handler emits ``response.created``).
+
         :returns: True if this execution can be retrieved via GET.
         :rtype: bool
         """
-        return self.mode_flags.store
+        if not self.mode_flags.store:
+            return False
+        # FR-001: bg non-stream responses are not visible until response.created.
+        if self.mode_flags.background and not self.mode_flags.stream:
+            return self.response_created_signal.is_set()
+        return True
 
     def apply_event(self, normalized: dict[str, Any], all_events: list[dict[str, Any]]) -> None:
         """Apply a normalised stream event — updates self.response and self.status.
@@ -181,8 +190,10 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         :type all_events: list[dict[str, Any]]
         """
         # Lazy imports to avoid circular dependency (models.runtime ← streaming._helpers ← models.__init__)
+        from ..streaming._helpers import (
+            _extract_response_snapshot_from_events,  # pylint: disable=import-outside-toplevel
+        )
         from ..streaming._internals import _RESPONSE_SNAPSHOT_EVENT_TYPES  # pylint: disable=import-outside-toplevel
-        from ..streaming._helpers import _extract_response_snapshot_from_events  # pylint: disable=import-outside-toplevel
 
         if self.status == "cancelled":
             return

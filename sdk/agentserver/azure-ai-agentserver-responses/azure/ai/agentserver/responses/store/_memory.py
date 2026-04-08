@@ -8,7 +8,7 @@ import asyncio
 import contextlib
 from collections import defaultdict
 from copy import deepcopy
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Any, AsyncIterator, Dict, Iterable
 
@@ -17,7 +17,6 @@ from ..models._generated import ResponseObject
 from ..models._helpers import get_conversation_id
 from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, StreamReplayState
 from ._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
-
 
 _DEFAULT_REPLAY_EVENT_TTL_SECONDS: int = 600
 """Minimum per-event replay TTL (10 minutes) per spec B35."""
@@ -221,9 +220,15 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
                     pass
 
             safe_limit = max(1, min(100, int(limit)))
-            return [deepcopy(self._item_store[item_id]) for item_id in ordered_ids[:safe_limit] if item_id in self._item_store]
+            return [
+                deepcopy(self._item_store[item_id])
+                for item_id in ordered_ids[:safe_limit]
+                if item_id in self._item_store
+            ]
 
-    async def get_items(self, item_ids: Iterable[str], *, isolation: IsolationContext | None = None) -> list[Any | None]:
+    async def get_items(
+        self, item_ids: Iterable[str], *, isolation: IsolationContext | None = None,
+    ) -> list[Any | None]:
         """Retrieve items by ID, preserving request order.
 
         Returns deep copies of stored items. Missing IDs produce ``None`` entries.
@@ -234,7 +239,10 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :rtype: list[Any | None]
         """
         async with self._locked():
-            return [deepcopy(self._item_store[item_id]) if item_id in self._item_store else None for item_id in item_ids]
+            return [
+                deepcopy(self._item_store[item_id]) if item_id in self._item_store else None
+                for item_id in item_ids
+            ]
 
     async def get_history_item_ids(
         self,

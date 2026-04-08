@@ -8,7 +8,6 @@ import json
 from typing import Any
 
 import pytest
-
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses import (
@@ -20,7 +19,6 @@ from azure.ai.agentserver.responses import (
     get_input_expanded,
     get_input_text,
 )
-
 
 # ---------------------------------------------------------------------------
 # Helpers

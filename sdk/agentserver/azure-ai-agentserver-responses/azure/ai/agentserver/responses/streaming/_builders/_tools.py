@@ -7,7 +7,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterable
 from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator
 
-from ._base import BaseOutputItemBuilder, EVENT_TYPE, _require_non_empty
+from ._base import EVENT_TYPE, BaseOutputItemBuilder, _require_non_empty
 
 if TYPE_CHECKING:
     from .._event_stream import ResponseEventStream

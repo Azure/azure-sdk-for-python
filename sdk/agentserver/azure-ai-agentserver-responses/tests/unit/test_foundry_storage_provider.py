@@ -11,18 +11,18 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
+from azure.ai.agentserver.responses._response_context import IsolationContext
 from azure.ai.agentserver.responses.store._foundry_errors import (
     FoundryApiError,
     FoundryBadRequestError,
     FoundryResourceNotFoundError,
 )
 from azure.ai.agentserver.responses.store._foundry_provider import (
-    FoundryStorageProvider,
     _CHAT_ISOLATION_HEADER,
     _USER_ISOLATION_HEADER,
+    FoundryStorageProvider,
 )
 from azure.ai.agentserver.responses.store._foundry_settings import FoundryStorageSettings
-from azure.ai.agentserver.responses._response_context import IsolationContext
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -135,7 +135,9 @@ async def test_create_response__sends_correct_envelope(credential: Any, settings
 
 
 @pytest.mark.asyncio
-async def test_create_response__raises_foundry_api_error_on_500(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_create_response__raises_foundry_api_error_on_500(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
     provider = _make_provider(credential, settings, _make_response(500, {"error": {"message": "server fault"}}))
     from azure.ai.agentserver.responses.models._generated import ResponseObject
 
@@ -211,7 +213,9 @@ async def test_update_response__posts_to_response_id_url(credential: Any, settin
 
 
 @pytest.mark.asyncio
-async def test_update_response__sends_serialized_response_body(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_update_response__sends_serialized_response_body(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {}))
     from azure.ai.agentserver.responses.models._generated import ResponseObject
 
@@ -263,8 +267,12 @@ async def test_delete_response__raises_not_found_on_404(credential: Any, setting
 # ===========================================================================
 
 @pytest.mark.asyncio
-async def test_get_input_items__default_params_in_url(credential: Any, settings: FoundryStorageSettings) -> None:
-    provider = _make_provider(credential, settings, _make_response(200, {"data": [_OUTPUT_ITEM_DICT], "object": "list"}))
+async def test_get_input_items__default_params_in_url(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
+    provider = _make_provider(
+        credential, settings, _make_response(200, {"data": [_OUTPUT_ITEM_DICT], "object": "list"})
+    )
 
     await provider.get_input_items("resp_abc123")
 
@@ -309,7 +317,9 @@ async def test_get_input_items__returns_deserialized_items(credential: Any, sett
 
 
 @pytest.mark.asyncio
-async def test_get_input_items__empty_data_returns_empty_list(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_input_items__empty_data_returns_empty_list(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {"data": [], "object": "list"}))
 
     items = await provider.get_input_items("resp_abc123")
@@ -318,7 +328,9 @@ async def test_get_input_items__empty_data_returns_empty_list(credential: Any, s
 
 
 @pytest.mark.asyncio
-async def test_get_input_items__cursor_params_omitted_when_none(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_input_items__cursor_params_omitted_when_none(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
     provider = _make_provider(credential, settings, _make_response(200, {"data": []}))
 
     await provider.get_input_items("resp_abc123", after=None, before=None)
@@ -383,7 +395,9 @@ async def test_get_items__preserves_input_order(credential: Any, settings: Found
 # ===========================================================================
 
 @pytest.mark.asyncio
-async def test_get_history_item_ids__gets_to_history_endpoint(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_history_item_ids__gets_to_history_endpoint(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
     provider = _make_provider(credential, settings, _make_response(200, ["item_h1", "item_h2"]))
 
     await provider.get_history_item_ids(None, None, limit=10)
@@ -405,7 +419,9 @@ async def test_get_history_item_ids__returns_list_of_strings(credential: Any, se
 
 
 @pytest.mark.asyncio
-async def test_get_history_item_ids__appends_previous_response_id(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_history_item_ids__appends_previous_response_id(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
     provider = _make_provider(credential, settings, _make_response(200, ["item_h1"]))
 
     await provider.get_history_item_ids("prev_resp_99", None, limit=5)
@@ -425,7 +441,9 @@ async def test_get_history_item_ids__appends_conversation_id(credential: Any, se
 
 
 @pytest.mark.asyncio
-async def test_get_history_item_ids__omits_optional_params_when_none(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_get_history_item_ids__omits_optional_params_when_none(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
     provider = _make_provider(credential, settings, _make_response(200, []))
 
     await provider.get_history_item_ids(None, None, limit=10)
@@ -538,7 +556,9 @@ async def test_isolation_headers__omitted_when_none(credential: Any, settings: F
 
 
 @pytest.mark.asyncio
-async def test_isolation_headers__partial_keys_only_sends_present(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_isolation_headers__partial_keys_only_sends_present(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
     """When only user_key is set, only user header is added."""
     provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
 
@@ -565,7 +585,9 @@ async def test_error_mapping__400_raises_bad_request(credential: Any, settings: 
 
 
 @pytest.mark.asyncio
-async def test_error_mapping__generic_status_raises_foundry_api_error(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_error_mapping__generic_status_raises_foundry_api_error(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
     provider = _make_provider(credential, settings, _make_response(503, {}))
 
     with pytest.raises(FoundryApiError) as exc_info:
@@ -575,7 +597,9 @@ async def test_error_mapping__generic_status_raises_foundry_api_error(credential
 
 
 @pytest.mark.asyncio
-async def test_error_mapping__error_message_falls_back_for_non_json_body(credential: Any, settings: FoundryStorageSettings) -> None:
+async def test_error_mapping__error_message_falls_back_for_non_json_body(
+    credential: Any, settings: FoundryStorageSettings
+) -> None:
     raw = MagicMock()
     raw.status_code = 502
     raw.text = MagicMock(return_value="<html>Bad Gateway</html>")

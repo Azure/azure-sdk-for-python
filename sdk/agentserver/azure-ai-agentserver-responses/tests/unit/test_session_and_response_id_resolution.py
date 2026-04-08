@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 import pytest
 
+from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.hosting._request_parsing import (
     _resolve_identity_fields,
     _resolve_session_id,
@@ -17,8 +18,6 @@ from azure.ai.agentserver.responses.hosting._request_parsing import (
 from azure.ai.agentserver.responses.streaming._internals import (
     apply_common_defaults,
 )
-from azure.ai.agentserver.responses._id_generator import IdGenerator
-
 
 # ---------------------------------------------------------------------------
 # Minimal stub for parsed CreateResponse

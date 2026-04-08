@@ -9,10 +9,12 @@ from copy import deepcopy
 from datetime import datetime, timezone
 from typing import Any, AsyncIterator, Iterator
 
+from .._id_generator import IdGenerator
+from ..models import _generated as generated_models
 from . import _internals
 from ._builders import (
-    OutputItemCodeInterpreterCallBuilder,
     OutputItemBuilder,
+    OutputItemCodeInterpreterCallBuilder,
     OutputItemCustomToolCallBuilder,
     OutputItemFileSearchCallBuilder,
     OutputItemFunctionCallBuilder,
@@ -24,9 +26,7 @@ from ._builders import (
     OutputItemReasoningItemBuilder,
     OutputItemWebSearchCallBuilder,
 )
-from .._id_generator import IdGenerator
-from ._state_machine import EventStreamValidator, validate_response_event_stream
-from ..models import _generated as generated_models
+from ._state_machine import EventStreamValidator
 
 EVENT_TYPE = generated_models.ResponseStreamEventType
 

@@ -9,9 +9,8 @@ from typing import Any
 
 from starlette.testclient import TestClient
 
-from tests._helpers import poll_until
-
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
+from tests._helpers import poll_until
 
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):

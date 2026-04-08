@@ -17,7 +17,6 @@ import pytest
 from azure.ai.agentserver.responses.models import _generated as generated_models
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

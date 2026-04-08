@@ -223,7 +223,10 @@ def test_get_replay__rejects_bg_non_stream_response() -> None:
 
 
 def test_get_replay__rejection_message_hints_at_background_true() -> None:
-    """B-5 — SSE replay rejection error message contains 'background=true' hint so clients know how to fix their request."""
+    """B-5 — SSE replay rejection error message contains 'background=true' hint.
+
+    Clients should know how to fix their request.
+    """
     client = _build_client()
 
     create_response = client.post(
@@ -388,7 +391,6 @@ def test_bg_stream_cancelled_subject_completed() -> None:
     from tests._helpers import poll_until
 
     gate_started: list[bool] = []
-    gate_proceed: list[bool] = []
 
     def _blocking_bg_stream_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
@@ -401,7 +403,6 @@ def test_bg_stream_cancelled_subject_completed() -> None:
 
         return _events()
 
-    import asyncio
     import threading
 
     _app = ResponsesAgentServerHost()

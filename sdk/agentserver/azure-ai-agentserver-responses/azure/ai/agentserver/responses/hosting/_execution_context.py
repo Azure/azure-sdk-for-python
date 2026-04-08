@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam

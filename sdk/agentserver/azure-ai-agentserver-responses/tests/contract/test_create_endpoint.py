@@ -8,9 +8,8 @@ from typing import Any
 
 from starlette.testclient import TestClient
 
-from tests._helpers import poll_until
-
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
+from tests._helpers import poll_until
 
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
@@ -47,9 +46,9 @@ def test_create__returns_json_response_for_non_streaming_success() -> None:
     assert isinstance(payload.get("id"), str)
     assert payload["id"].startswith("caresp_")
     assert payload.get("response_id") == payload.get("id")
-    assert isinstance(payload.get("agent_reference"), dict)
-    assert payload["agent_reference"].get("type") == "agent_reference"
-    assert isinstance(payload["agent_reference"].get("name"), str)
+    # agent_reference may be empty/absent when the request doesn't include one (matching .NET null behaviour)
+    agent_ref = payload.get("agent_reference")
+    assert agent_ref is None or isinstance(agent_ref, dict)
     assert payload.get("object") == "response"
     assert payload.get("status") in {"completed", "in_progress", "queued"}
     assert "sequence_number" not in payload
@@ -537,7 +536,9 @@ def test_sync_handler_exception_returns_500() -> None:
 
 
 def test_sync_no_terminal_event_still_completes() -> None:
-    """T6 — Handler yields response.created + response.in_progress but no terminal; stream=False → HTTP 200, status=failed.
+    """T6 — Handler yields response.created + response.in_progress but no terminal.
+
+    stream=False → HTTP 200, status=failed.
 
     S-021: When the handler completes without emitting a terminal event, the library
     synthesises a ``response.failed`` terminal.  Sync callers receive HTTP 200 with

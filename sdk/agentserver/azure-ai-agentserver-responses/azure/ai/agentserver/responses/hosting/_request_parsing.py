@@ -114,19 +114,19 @@ def _validate_response_id(response_id: str) -> None:
 def _normalize_agent_reference(value: Any) -> dict[str, Any]:
     """Normalize an agent reference value into a validated dictionary.
 
-    If *value* is ``None``, a default agent reference is returned.
+    If *value* is ``None``, an empty dict is returned (matching .NET null behaviour).
+    Callers interpret an empty dict as "no agent_reference was provided in the
+    request" and skip auto-stamping output items.
 
     :param value: Raw agent reference from the request (dict, model, or ``None``).
     :type value: Any
-    :return: Normalized agent reference dictionary with ``type`` and ``name`` keys.
+    :return: Normalized agent reference dictionary with ``type`` and ``name`` keys,
+        or ``{}`` when no agent_reference was provided.
     :rtype: dict[str, Any]
     :raises RequestValidationError: If the value is not a valid agent reference.
     """
     if value is None:
-        return {
-            "type": "agent_reference",
-            "name": _DEFAULT_AGENT_REFERENCE_NAME,
-        }
+        return {}
 
     if hasattr(value, "as_dict"):
         candidate = value.as_dict()

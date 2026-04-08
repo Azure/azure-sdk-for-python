@@ -19,10 +19,9 @@ import pytest
 from starlette.testclient import TestClient
 
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
-from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from azure.ai.agentserver.responses._id_generator import IdGenerator
+from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from tests._helpers import EventGate, poll_until
-
 
 # ════════════════════════════════════════════════════════════
 # Shared helpers
@@ -345,7 +344,12 @@ class TestEphemeralStoreFalse:
         else:
             result = client.get(f"/responses/{response_id}?stream=true")
 
-        assert result.status_code == 404
+        if operation == "GET_SSE":
+            # GET SSE finds the record in runtime state but replay is
+            # unavailable for store=false non-bg responses → 400.
+            assert result.status_code == 400
+        else:
+            assert result.status_code == 404
 
     @pytest.mark.parametrize(
         "stream",
@@ -355,8 +359,9 @@ class TestEphemeralStoreFalse:
     def test_ephemeral_store_false_cancel_rejected(self, stream: bool) -> None:
         """B1, B14 — store=false response not bg, cancel rejected.
 
-        The Python SDK returns 404 because store=false responses are not
-        persisted, so the cancel endpoint cannot find them.
+        With unconditional runtime-state registration (matching .NET _tracker),
+        the cancel endpoint finds the record and returns 400 "Cannot cancel a
+        synchronous response." for non-bg requests.
         """
         handler = _simple_text_handler if stream else _noop_handler
         client = _build_client(handler)
@@ -380,8 +385,8 @@ class TestEphemeralStoreFalse:
             response_id = r.json()["id"]
 
         result = client.post(f"/responses/{response_id}/cancel")
-        # Contract: store=false responses are never persisted → cancel always 404
-        assert result.status_code == 404
+        # Contract: record found in runtime state → 400 (cannot cancel synchronous).
+        assert result.status_code == 400
 
 
 # ════════════════════════════════════════════════════════════
@@ -873,6 +878,12 @@ class TestC4BgStreamStored:
         assert "code" in error
         assert "message" in error
 
+        # SSE replay → terminal = response.failed
+        with client.stream("GET", f"/responses/{response_id}?stream=true") as replay_resp:
+            assert replay_resp.status_code == 200
+            replay_events = _collect_sse_events(replay_resp)
+        assert replay_events[-1]["type"] == "response.failed"
+
     def test_e41_bg_stream_handler_incomplete_get_and_sse_replay_returns_incomplete(self) -> None:
         """B5, B6 — incomplete status invariants; B26 — terminal event."""
         client = _build_client(_incomplete_handler)
@@ -914,8 +925,11 @@ class TestC4BgStreamStored:
     def test_e26_bg_stream_cancel_then_sse_replay_has_terminal_event(self) -> None:
         """B26 — terminal SSE event after cancel; B11.
 
-        Uses non-streaming bg path because the synchronous TestClient cannot
-        issue concurrent requests during an active SSE stream.
+        Uses non-streaming bg path for the cancel step because the synchronous
+        TestClient cannot issue concurrent requests during an active SSE stream.
+        The SSE replay terminal-event check is performed in the async test file
+        (test_e26_bg_stream_cancel_then_sse_replay_terminal_event) which can
+        create bg+stream responses and cancel mid-stream.
         """
         client = _build_client(_cancellable_bg_handler)
         response_id = _create_bg_response(client)
