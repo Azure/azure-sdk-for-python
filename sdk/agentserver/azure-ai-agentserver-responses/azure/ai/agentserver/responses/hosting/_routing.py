@@ -109,7 +109,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         }
 
         if provider is None:
-            if config.project_endpoint:
+            if config.is_hosted:
                 from ..store._foundry_provider import FoundryStorageProvider
                 from ..store._foundry_settings import FoundryStorageSettings
 
