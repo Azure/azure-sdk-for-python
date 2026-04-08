@@ -33,30 +33,30 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
-from ..._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _failsafe_deserialize
+from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
-from ..._utils.utils import prepare_multipart_form_data
 from ...operations._operations import (
-    build_agents_create_agent_from_code_request,
-    build_agents_create_agent_version_from_code_request,
-    build_agents_create_session_request,
     build_agents_create_version_from_manifest_request,
     build_agents_create_version_request,
     build_agents_delete_request,
-    build_agents_delete_session_request,
     build_agents_delete_version_request,
     build_agents_get_request,
-    build_agents_get_session_request,
     build_agents_get_version_request,
     build_agents_list_request,
-    build_agents_list_sessions_request,
     build_agents_list_versions_request,
     build_agents_patch_agent_object_request,
-    build_agents_update_agent_from_code_request,
-    build_beta_agent_session_files_delete_request,
-    build_beta_agent_session_files_download_request,
-    build_beta_agent_session_files_list_request,
-    build_beta_agent_session_files_upload_request,
+    build_beta_agents_create_or_update_managed_identity_blueprint_request,
+    build_beta_agents_create_session_request,
+    build_beta_agents_delete_managed_identity_blueprint_request,
+    build_beta_agents_delete_session_file_request,
+    build_beta_agents_delete_session_request,
+    build_beta_agents_download_session_file_request,
+    build_beta_agents_get_managed_identity_blueprint_request,
+    build_beta_agents_get_session_request,
+    build_beta_agents_list_managed_identity_blueprints_request,
+    build_beta_agents_list_session_files_request,
+    build_beta_agents_list_sessions_request,
+    build_beta_agents_upload_session_file_request,
     build_beta_evaluation_taxonomies_create_request,
     build_beta_evaluation_taxonomies_delete_request,
     build_beta_evaluation_taxonomies_get_request,
@@ -73,10 +73,6 @@ from ...operations._operations import (
     build_beta_insights_generate_request,
     build_beta_insights_get_request,
     build_beta_insights_list_request,
-    build_beta_managed_agent_identity_blueprints_create_or_update_request,
-    build_beta_managed_agent_identity_blueprints_delete_request,
-    build_beta_managed_agent_identity_blueprints_get_request,
-    build_beta_managed_agent_identity_blueprints_list_request,
     build_beta_memory_stores_create_request,
     build_beta_memory_stores_delete_request,
     build_beta_memory_stores_delete_scope_request,
@@ -157,6 +153,7 @@ class BetaOperations:  # pylint: disable=too-many-instance-attributes
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
+        self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.evaluation_taxonomies = BetaEvaluationTaxonomiesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -167,12 +164,6 @@ class BetaOperations:  # pylint: disable=too-many-instance-attributes
         self.schedules = BetaSchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.toolboxes = BetaToolboxesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.skills = BetaSkillsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.agent_session_files = BetaAgentSessionFilesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.managed_agent_identity_blueprints = BetaManagedAgentIdentityBlueprintsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
 
 
 class AgentsOperations:
@@ -218,285 +209,6 @@ class AgentsOperations:
         _request = build_agents_get_request(
             agent_name=agent_name,
             api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentDetails, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_agent_from_code(
-        self, body: _models.CreateAgentFromCodeContent, *, agent_name: str, code_zip_sha256: str, **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Creates a new code-based agent. Uploads the code zip and creates the agent in a single call.
-        The agent name is provided in the ``x-ms-agent-name`` header since POST /agents has no name in
-        the URL path. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
-        header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
-        part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
-
-        :param body: Required.
-        :type body: ~azure.ai.projects.models.CreateAgentFromCodeContent
-        :keyword agent_name: The unique name that identifies the agent. Max 63 chars, must start and
-         end with alphanumeric, hyphens allowed in the middle. Required.
-        :paramtype agent_name: str
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_agent_from_code(
-        self, body: JSON, *, agent_name: str, code_zip_sha256: str, **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Creates a new code-based agent. Uploads the code zip and creates the agent in a single call.
-        The agent name is provided in the ``x-ms-agent-name`` header since POST /agents has no name in
-        the URL path. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
-        header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
-        part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
-
-        :param body: Required.
-        :type body: JSON
-        :keyword agent_name: The unique name that identifies the agent. Max 63 chars, must start and
-         end with alphanumeric, hyphens allowed in the middle. Required.
-        :paramtype agent_name: str
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_agent_from_code(
-        self,
-        body: Union[_models.CreateAgentFromCodeContent, JSON],
-        *,
-        agent_name: str,
-        code_zip_sha256: str,
-        **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Creates a new code-based agent. Uploads the code zip and creates the agent in a single call.
-        The agent name is provided in the ``x-ms-agent-name`` header since POST /agents has no name in
-        the URL path. The SHA-256 hex digest of the zip is provided in the ``x-ms-code-zip-sha256``
-        header for integrity and dedup. The request body is multipart/form-data with a JSON metadata
-        part and a binary code part (part order is irrelevant). Maximum upload size is 250 MB.
-
-        :param body: Is either a CreateAgentFromCodeContent type or a JSON type. Required.
-        :type body: ~azure.ai.projects.models.CreateAgentFromCodeContent or JSON
-        :keyword agent_name: The unique name that identifies the agent. Max 63 chars, must start and
-         end with alphanumeric, hyphens allowed in the middle. Required.
-        :paramtype agent_name: str
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
-
-        _body = body.as_dict() if isinstance(body, _Model) else body
-        _file_fields: list[str] = ["code"]
-        _data_fields: list[str] = ["metadata"]
-        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
-
-        _request = build_agents_create_agent_from_code_request(
-            agent_name=agent_name,
-            code_zip_sha256=code_zip_sha256,
-            api_version=self._config.api_version,
-            files=_files,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentDetails, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def update_agent_from_code(
-        self, agent_name: str, body: _models.CreateAgentVersionFromCodeContent, *, code_zip_sha256: str, **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates a code-based agent by uploading new code and creating a new version. If the code and
-        definition are unchanged (matched by x-ms-code-zip-sha256 header), returns the existing
-        version. The request body is multipart/form-data with a JSON metadata part and a binary code
-        part (part order is irrelevant). Maximum upload size is 250 MB.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def update_agent_from_code(
-        self, agent_name: str, body: JSON, *, code_zip_sha256: str, **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates a code-based agent by uploading new code and creating a new version. If the code and
-        definition are unchanged (matched by x-ms-code-zip-sha256 header), returns the existing
-        version. The request body is multipart/form-data with a JSON metadata part and a binary code
-        part (part order is irrelevant). Maximum upload size is 250 MB.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def update_agent_from_code(
-        self,
-        agent_name: str,
-        body: Union[_models.CreateAgentVersionFromCodeContent, JSON],
-        *,
-        code_zip_sha256: str,
-        **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates a code-based agent by uploading new code and creating a new version. If the code and
-        definition are unchanged (matched by x-ms-code-zip-sha256 header), returns the existing
-        version. The request body is multipart/form-data with a JSON metadata part and a binary code
-        part (part order is irrelevant). Maximum upload size is 250 MB.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Is either a CreateAgentVersionFromCodeContent type or a JSON type. Required.
-        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent or JSON
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
-
-        _body = body.as_dict() if isinstance(body, _Model) else body
-        _file_fields: list[str] = ["code"]
-        _data_fields: list[str] = ["metadata"]
-        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
-
-        _request = build_agents_update_agent_from_code_request(
-            agent_name=agent_name,
-            code_zip_sha256=code_zip_sha256,
-            api_version=self._config.api_version,
-            files=_files,
             headers=_headers,
             params=_params,
         )
@@ -1494,550 +1206,6 @@ class AgentsOperations:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
-
-    @overload
-    async def create_agent_version_from_code(
-        self, agent_name: str, body: _models.CreateAgentVersionFromCodeContent, *, code_zip_sha256: str, **kwargs: Any
-    ) -> _models.AgentVersionDetails:
-        """create_agent_version_from_code.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_agent_version_from_code(
-        self, agent_name: str, body: JSON, *, code_zip_sha256: str, **kwargs: Any
-    ) -> _models.AgentVersionDetails:
-        """create_agent_version_from_code.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_agent_version_from_code(
-        self,
-        agent_name: str,
-        body: Union[_models.CreateAgentVersionFromCodeContent, JSON],
-        *,
-        code_zip_sha256: str,
-        **kwargs: Any
-    ) -> _models.AgentVersionDetails:
-        """create_agent_version_from_code.
-
-        :param agent_name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :type agent_name: str
-        :param body: Is either a CreateAgentVersionFromCodeContent type or a JSON type. Required.
-        :type body: ~azure.ai.projects.models.CreateAgentVersionFromCodeContent or JSON
-        :keyword code_zip_sha256: SHA-256 hex digest of the uploaded code zip. Used for change
-         detection (dedup) and integrity verification. Required.
-        :paramtype code_zip_sha256: str
-        :return: AgentVersionDetails. The AgentVersionDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentVersionDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentVersionDetails] = kwargs.pop("cls", None)
-
-        _body = body.as_dict() if isinstance(body, _Model) else body
-        _file_fields: list[str] = ["code"]
-        _data_fields: list[str] = ["metadata"]
-        _files = prepare_multipart_form_data(_body, _file_fields, _data_fields)
-
-        _request = build_agents_create_agent_version_from_code_request(
-            agent_name=agent_name,
-            code_zip_sha256=code_zip_sha256,
-            api_version=self._config.api_version,
-            files=_files,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentVersionDetails, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def create_session(
-        self,
-        agent_name: str,
-        *,
-        isolation_key: str,
-        version_indicator: _models.VersionIndicator,
-        content_type: str = "application/json",
-        agent_session_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.AgentSessionResource:
-        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
-        from ``version_indicator`` and enforces session ownership using the provided isolation key for
-        session-mutating operations.
-
-        :param agent_name: The name of the agent to create a session for. Required.
-        :type agent_name: str
-        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
-         for session-mutating operations. Required.
-        :paramtype isolation_key: str
-        :keyword version_indicator: Determines which agent version backs the session. Required.
-        :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword agent_session_id: Optional caller-provided session ID. If specified, it must be unique
-         within the agent endpoint. Auto-generated if omitted. Default value is None.
-        :paramtype agent_session_id: str
-        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentSessionResource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_session(
-        self, agent_name: str, body: JSON, *, isolation_key: str, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentSessionResource:
-        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
-        from ``version_indicator`` and enforces session ownership using the provided isolation key for
-        session-mutating operations.
-
-        :param agent_name: The name of the agent to create a session for. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
-         for session-mutating operations. Required.
-        :paramtype isolation_key: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentSessionResource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_session(
-        self,
-        agent_name: str,
-        body: IO[bytes],
-        *,
-        isolation_key: str,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.AgentSessionResource:
-        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
-        from ``version_indicator`` and enforces session ownership using the provided isolation key for
-        session-mutating operations.
-
-        :param agent_name: The name of the agent to create a session for. Required.
-        :type agent_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
-         for session-mutating operations. Required.
-        :paramtype isolation_key: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentSessionResource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_session(
-        self,
-        agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        isolation_key: str,
-        version_indicator: _models.VersionIndicator = _Unset,
-        agent_session_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.AgentSessionResource:
-        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
-        from ``version_indicator`` and enforces session ownership using the provided isolation key for
-        session-mutating operations.
-
-        :param agent_name: The name of the agent to create a session for. Required.
-        :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
-         for session-mutating operations. Required.
-        :paramtype isolation_key: str
-        :keyword version_indicator: Determines which agent version backs the session. Required.
-        :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
-        :keyword agent_session_id: Optional caller-provided session ID. If specified, it must be unique
-         within the agent endpoint. Auto-generated if omitted. Default value is None.
-        :paramtype agent_session_id: str
-        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentSessionResource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentSessionResource] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if version_indicator is _Unset:
-                raise TypeError("missing required argument: version_indicator")
-            body = {"agent_session_id": agent_session_id, "version_indicator": version_indicator}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_create_session_request(
-            agent_name=agent_name,
-            isolation_key=isolation_key,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentSessionResource, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_session(self, agent_name: str, session_id: str, **kwargs: Any) -> _models.AgentSessionResource:
-        """Retrieves a session by ID.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param session_id: The session identifier. Required.
-        :type session_id: str
-        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentSessionResource
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.AgentSessionResource] = kwargs.pop("cls", None)
-
-        _request = build_agents_get_session_request(
-            agent_name=agent_name,
-            session_id=session_id,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentSessionResource, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete_session(self, agent_name: str, session_id: str, *, isolation_key: str, **kwargs: Any) -> None:
-        """Deletes a session synchronously. Returns 204 No Content when the session is deleted or does not
-        exist.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param session_id: The session identifier. Required.
-        :type session_id: str
-        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
-         for session-mutating operations. Required.
-        :paramtype isolation_key: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_agents_delete_session_request(
-            agent_name=agent_name,
-            session_id=session_id,
-            isolation_key=isolation_key,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace
-    def list_sessions(
-        self,
-        agent_name: str,
-        *,
-        limit: Optional[int] = None,
-        order: Optional[Union[str, _models.PageOrder]] = None,
-        before: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncItemPaged["_models.AgentSessionResource"]:
-        """Returns a list of sessions for the specified agent.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
-         place in the list.
-         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
-         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
-         Default value is None.
-        :paramtype before: str
-        :return: An iterator like instance of AgentSessionResource
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentSessionResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[List[_models.AgentSessionResource]] = kwargs.pop("cls", None)
-
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(_continuation_token=None):
-
-            _request = build_agents_list_sessions_request(
-                agent_name=agent_name,
-                limit=limit,
-                order=order,
-                after=_continuation_token,
-                before=before,
-                api_version=self._config.api_version,
-                headers=_headers,
-                params=_params,
-            )
-            path_format_arguments = {
-                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            }
-            _request.url = self._client.format_url(_request.url, **path_format_arguments)
-            return _request
-
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.AgentSessionResource],
-                deserialized.get("data", []),
-            )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
-
-        async def get_next(_continuation_token=None):
-            _request = prepare_request(_continuation_token)
-
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.ApiErrorResponse,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
 
 
 class EvaluationRulesOperations:
@@ -3979,6 +3147,1077 @@ class IndexesOperations:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.Index, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+
+class BetaAgentsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`agents` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    async def create_session(
+        self,
+        agent_name: str,
+        *,
+        isolation_key: str,
+        version_indicator: _models.VersionIndicator,
+        content_type: str = "application/json",
+        agent_session_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.AgentSessionResource:
+        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
+        from ``version_indicator`` and enforces session ownership using the provided isolation key for
+        session-mutating operations.
+
+        :param agent_name: The name of the agent to create a session for. Required.
+        :type agent_name: str
+        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
+         for session-mutating operations. Required.
+        :paramtype isolation_key: str
+        :keyword version_indicator: Determines which agent version backs the session. Required.
+        :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword agent_session_id: Optional caller-provided session ID. If specified, it must be unique
+         within the agent endpoint. Auto-generated if omitted. Default value is None.
+        :paramtype agent_session_id: str
+        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentSessionResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_session(
+        self, agent_name: str, body: JSON, *, isolation_key: str, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AgentSessionResource:
+        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
+        from ``version_indicator`` and enforces session ownership using the provided isolation key for
+        session-mutating operations.
+
+        :param agent_name: The name of the agent to create a session for. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
+         for session-mutating operations. Required.
+        :paramtype isolation_key: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentSessionResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_session(
+        self,
+        agent_name: str,
+        body: IO[bytes],
+        *,
+        isolation_key: str,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.AgentSessionResource:
+        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
+        from ``version_indicator`` and enforces session ownership using the provided isolation key for
+        session-mutating operations.
+
+        :param agent_name: The name of the agent to create a session for. Required.
+        :type agent_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
+         for session-mutating operations. Required.
+        :paramtype isolation_key: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentSessionResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_session(
+        self,
+        agent_name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        isolation_key: str,
+        version_indicator: _models.VersionIndicator = _Unset,
+        agent_session_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.AgentSessionResource:
+        """Creates a new session for an agent endpoint. The endpoint resolves the backing agent version
+        from ``version_indicator`` and enforces session ownership using the provided isolation key for
+        session-mutating operations.
+
+        :param agent_name: The name of the agent to create a session for. Required.
+        :type agent_name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
+         for session-mutating operations. Required.
+        :paramtype isolation_key: str
+        :keyword version_indicator: Determines which agent version backs the session. Required.
+        :paramtype version_indicator: ~azure.ai.projects.models.VersionIndicator
+        :keyword agent_session_id: Optional caller-provided session ID. If specified, it must be unique
+         within the agent endpoint. Auto-generated if omitted. Default value is None.
+        :paramtype agent_session_id: str
+        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentSessionResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.AgentSessionResource] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if version_indicator is _Unset:
+                raise TypeError("missing required argument: version_indicator")
+            body = {"agent_session_id": agent_session_id, "version_indicator": version_indicator}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_agents_create_session_request(
+            agent_name=agent_name,
+            isolation_key=isolation_key,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentSessionResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_session(self, agent_name: str, session_id: str, **kwargs: Any) -> _models.AgentSessionResource:
+        """Retrieves a session by ID.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session identifier. Required.
+        :type session_id: str
+        :return: AgentSessionResource. The AgentSessionResource is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.AgentSessionResource
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.AgentSessionResource] = kwargs.pop("cls", None)
+
+        _request = build_beta_agents_get_session_request(
+            agent_name=agent_name,
+            session_id=session_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.AgentSessionResource, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_session(self, agent_name: str, session_id: str, *, isolation_key: str, **kwargs: Any) -> None:
+        """Deletes a session synchronously. Returns 204 No Content when the session is deleted or does not
+        exist.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session identifier. Required.
+        :type session_id: str
+        :keyword isolation_key: Isolation key used by the agent endpoint to enforce session ownership
+         for session-mutating operations. Required.
+        :paramtype isolation_key: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_agents_delete_session_request(
+            agent_name=agent_name,
+            session_id=session_id,
+            isolation_key=isolation_key,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace
+    def list_sessions(
+        self,
+        agent_name: str,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.AgentSessionResource"]:
+        """Returns a list of sessions for the specified agent.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of AgentSessionResource
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.AgentSessionResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.AgentSessionResource]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_beta_agents_list_sessions_request(
+                agent_name=agent_name,
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.AgentSessionResource],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def upload_session_file(
+        self, agent_name: str, session_id: str, content: bytes, *, path: str, **kwargs: Any
+    ) -> _models.SessionFileWriteResponse:
+        """Upload a file to the session sandbox via binary stream. Maximum file size is 50 MB. Uploads
+        exceeding this limit return 413 Payload Too Large.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :param content: Required.
+        :type content: bytes
+        :keyword path: The destination file path within the sandbox, relative to the session home
+         directory. Required.
+        :paramtype path: str
+        :return: SessionFileWriteResponse. The SessionFileWriteResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.SessionFileWriteResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
+        cls: ClsType[_models.SessionFileWriteResponse] = kwargs.pop("cls", None)
+
+        _content = content
+
+        _request = build_beta_agents_upload_session_file_request(
+            agent_name=agent_name,
+            session_id=session_id,
+            path=path,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SessionFileWriteResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def download_session_file(
+        self, agent_name: str, session_id: str, *, path: str, **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Download a file from the session sandbox as a binary stream.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :keyword path: The file path to download from the sandbox, relative to the session home
+         directory. Required.
+        :paramtype path: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_beta_agents_download_session_file_request(
+            agent_name=agent_name,
+            session_id=session_id,
+            path=path,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def list_session_files(
+        self, agent_name: str, session_id: str, *, path: str, **kwargs: Any
+    ) -> _models.SessionDirectoryListResponse:
+        """List files and directories at a given path in the session sandbox. Returns only the immediate
+        children of the specified directory (non-recursive).
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :keyword path: The directory path to list, relative to the session home directory. Required.
+        :paramtype path: str
+        :return: SessionDirectoryListResponse. The SessionDirectoryListResponse is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.SessionDirectoryListResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SessionDirectoryListResponse] = kwargs.pop("cls", None)
+
+        _request = build_beta_agents_list_session_files_request(
+            agent_name=agent_name,
+            session_id=session_id,
+            path=path,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SessionDirectoryListResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_session_file(
+        self, agent_name: str, session_id: str, *, path: str, recursive: Optional[bool] = None, **kwargs: Any
+    ) -> None:
+        """Delete a file or directory from the session sandbox. If ``recursive`` is false (default) and
+        the target is a non-empty directory, the API returns 409 Conflict.
+
+        :param agent_name: The name of the agent. Required.
+        :type agent_name: str
+        :param session_id: The session ID. Required.
+        :type session_id: str
+        :keyword path: The file or directory path to delete, relative to the session home directory.
+         Required.
+        :paramtype path: str
+        :keyword recursive: Whether to recursively delete directory contents. Defaults to false.
+         Default value is None.
+        :paramtype recursive: bool
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_agents_delete_session_file_request(
+            agent_name=agent_name,
+            session_id=session_id,
+            path=path,
+            recursive=recursive,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @overload
+    async def create_or_update_managed_identity_blueprint(  # pylint: disable=name-too-long
+        self, blueprint_name: str, *, name: str, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ManagedAgentIdentityBlueprint:
+        """create_or_update_managed_identity_blueprint.
+
+        :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
+        :type blueprint_name: str
+        :keyword name: The unique name that identifies the managed agent identity blueprint.
+         Name can be used to retrieve/update/delete the managed agent identity blueprint.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :paramtype name: str
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update_managed_identity_blueprint(  # pylint: disable=name-too-long
+        self, blueprint_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ManagedAgentIdentityBlueprint:
+        """create_or_update_managed_identity_blueprint.
+
+        :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
+        :type blueprint_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create_or_update_managed_identity_blueprint(  # pylint: disable=name-too-long
+        self, blueprint_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ManagedAgentIdentityBlueprint:
+        """create_or_update_managed_identity_blueprint.
+
+        :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
+        :type blueprint_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create_or_update_managed_identity_blueprint(  # pylint: disable=name-too-long
+        self, blueprint_name: str, body: Union[JSON, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any
+    ) -> _models.ManagedAgentIdentityBlueprint:
+        """create_or_update_managed_identity_blueprint.
+
+        :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
+        :type blueprint_name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword name: The unique name that identifies the managed agent identity blueprint.
+         Name can be used to retrieve/update/delete the managed agent identity blueprint.
+
+         * Must start and end with alphanumeric characters,
+         * Can contain hyphens in the middle
+         * Must not exceed 63 characters. Required.
+        :paramtype name: str
+        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ManagedAgentIdentityBlueprint] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if name is _Unset:
+                raise TypeError("missing required argument: name")
+            body = {"name": name}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_agents_create_or_update_managed_identity_blueprint_request(
+            blueprint_name=blueprint_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ManagedAgentIdentityBlueprint, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_managed_identity_blueprint(
+        self, blueprint_name: str, **kwargs: Any
+    ) -> _models.ManagedAgentIdentityBlueprint:
+        """Retrieves a managed agent identity blueprint by name.
+
+        :param blueprint_name: The name of the managed agent identity blueprint to retrieve. Required.
+        :type blueprint_name: str
+        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
+         MutableMapping
+        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ManagedAgentIdentityBlueprint] = kwargs.pop("cls", None)
+
+        _request = build_beta_agents_get_managed_identity_blueprint_request(
+            blueprint_name=blueprint_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ManagedAgentIdentityBlueprint, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def delete_managed_identity_blueprint(self, blueprint_name: str, **kwargs: Any) -> None:
+        """Deletes a managed agent identity blueprint by name.
+
+        :param blueprint_name: The name of the managed agent identity blueprint to delete. Required.
+        :type blueprint_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_beta_agents_delete_managed_identity_blueprint_request(
+            blueprint_name=blueprint_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore
+
+    @distributed_trace_async
+    async def list_managed_identity_blueprints(
+        self, *, order: Optional[Union[str, _models.PageOrder]] = None, limit: Optional[int] = None, **kwargs: Any
+    ) -> _models.PagedManagedAgentIdentityBlueprint:
+        """list_managed_identity_blueprints.
+
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :return: PagedManagedAgentIdentityBlueprint. The PagedManagedAgentIdentityBlueprint is
+         compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PagedManagedAgentIdentityBlueprint
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.PagedManagedAgentIdentityBlueprint] = kwargs.pop("cls", None)
+
+        _request = build_beta_agents_list_managed_identity_blueprints_request(
+            order=order,
+            limit=limit,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PagedManagedAgentIdentityBlueprint, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -9084,682 +9323,6 @@ class BetaSkillsOperations:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.DeleteSkillResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-
-class BetaAgentSessionFilesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.aio.AIProjectClient`'s
-        :attr:`agent_session_files` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def upload(
-        self, agent_name: str, session_id: str, content: bytes, *, path: str, **kwargs: Any
-    ) -> _models.SessionFileWriteResponse:
-        """Upload a file to the session sandbox via binary stream. Maximum file size is 50 MB. Uploads
-        exceeding this limit return 413 Payload Too Large.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
-        :param content: Required.
-        :type content: bytes
-        :keyword path: The destination file path within the sandbox, relative to the session home
-         directory. Required.
-        :paramtype path: str
-        :return: SessionFileWriteResponse. The SessionFileWriteResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.SessionFileWriteResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))
-        cls: ClsType[_models.SessionFileWriteResponse] = kwargs.pop("cls", None)
-
-        _content = content
-
-        _request = build_beta_agent_session_files_upload_request(
-            agent_name=agent_name,
-            session_id=session_id,
-            path=path,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.SessionFileWriteResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def download(self, agent_name: str, session_id: str, *, path: str, **kwargs: Any) -> AsyncIterator[bytes]:
-        """Download a file from the session sandbox as a binary stream.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
-        :keyword path: The file path to download from the sandbox, relative to the session home
-         directory. Required.
-        :paramtype path: str
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_session_files_download_request(
-            agent_name=agent_name,
-            session_id=session_id,
-            path=path,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def list(
-        self, agent_name: str, session_id: str, *, path: str, **kwargs: Any
-    ) -> _models.SessionDirectoryListResponse:
-        """List files and directories at a given path in the session sandbox. Returns only the immediate
-        children of the specified directory (non-recursive).
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
-        :keyword path: The directory path to list, relative to the session home directory. Required.
-        :paramtype path: str
-        :return: SessionDirectoryListResponse. The SessionDirectoryListResponse is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.SessionDirectoryListResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.SessionDirectoryListResponse] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_session_files_list_request(
-            agent_name=agent_name,
-            session_id=session_id,
-            path=path,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.SessionDirectoryListResponse, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete(
-        self, agent_name: str, session_id: str, *, path: str, recursive: Optional[bool] = None, **kwargs: Any
-    ) -> None:
-        """Delete a file or directory from the session sandbox. If ``recursive`` is false (default) and
-        the target is a non-empty directory, the API returns 409 Conflict.
-
-        :param agent_name: The name of the agent. Required.
-        :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
-        :keyword path: The file or directory path to delete, relative to the session home directory.
-         Required.
-        :paramtype path: str
-        :keyword recursive: Whether to recursively delete directory contents. Defaults to false.
-         Default value is None.
-        :paramtype recursive: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_agent_session_files_delete_request(
-            agent_name=agent_name,
-            session_id=session_id,
-            path=path,
-            recursive=recursive,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-
-class BetaManagedAgentIdentityBlueprintsOperations:  # pylint: disable=name-too-long
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.projects.aio.AIProjectClient`'s
-        :attr:`managed_agent_identity_blueprints` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @overload
-    async def create_or_update(
-        self, blueprint_name: str, *, name: str, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ManagedAgentIdentityBlueprint:
-        """create_or_update.
-
-        :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
-        :type blueprint_name: str
-        :keyword name: The unique name that identifies the managed agent identity blueprint.
-         Name can be used to retrieve/update/delete the managed agent identity blueprint.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :paramtype name: str
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self, blueprint_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ManagedAgentIdentityBlueprint:
-        """create_or_update.
-
-        :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
-        :type blueprint_name: str
-        :param body: Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self, blueprint_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ManagedAgentIdentityBlueprint:
-        """create_or_update.
-
-        :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
-        :type blueprint_name: str
-        :param body: Required.
-        :type body: IO[bytes]
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_update(
-        self, blueprint_name: str, body: Union[JSON, IO[bytes]] = _Unset, *, name: str = _Unset, **kwargs: Any
-    ) -> _models.ManagedAgentIdentityBlueprint:
-        """create_or_update.
-
-        :param blueprint_name: The name of the managed agent identity blueprint to create. Required.
-        :type blueprint_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword name: The unique name that identifies the managed agent identity blueprint.
-         Name can be used to retrieve/update/delete the managed agent identity blueprint.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :paramtype name: str
-        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ManagedAgentIdentityBlueprint] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if name is _Unset:
-                raise TypeError("missing required argument: name")
-            body = {"name": name}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_beta_managed_agent_identity_blueprints_create_or_update_request(
-            blueprint_name=blueprint_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ManagedAgentIdentityBlueprint, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get(self, blueprint_name: str, **kwargs: Any) -> _models.ManagedAgentIdentityBlueprint:
-        """Retrieves a managed agent identity blueprint by name.
-
-        :param blueprint_name: The name of the managed agent identity blueprint to retrieve. Required.
-        :type blueprint_name: str
-        :return: ManagedAgentIdentityBlueprint. The ManagedAgentIdentityBlueprint is compatible with
-         MutableMapping
-        :rtype: ~azure.ai.projects.models.ManagedAgentIdentityBlueprint
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ManagedAgentIdentityBlueprint] = kwargs.pop("cls", None)
-
-        _request = build_beta_managed_agent_identity_blueprints_get_request(
-            blueprint_name=blueprint_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.ManagedAgentIdentityBlueprint, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def delete(self, blueprint_name: str, **kwargs: Any) -> None:
-        """Deletes a managed agent identity blueprint by name.
-
-        :param blueprint_name: The name of the managed agent identity blueprint to delete. Required.
-        :type blueprint_name: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_beta_managed_agent_identity_blueprints_delete_request(
-            blueprint_name=blueprint_name,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
-
-    @distributed_trace_async
-    async def list(
-        self, *, order: Optional[Union[str, _models.PageOrder]] = None, limit: Optional[int] = None, **kwargs: Any
-    ) -> _models.PagedManagedAgentIdentityBlueprint:
-        """list.
-
-        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
-         ascending order and``desc``
-         for descending order. Known values are: "asc" and "desc". Default value is None.
-        :paramtype order: str or ~azure.ai.projects.models.PageOrder
-        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
-         100, and the
-         default is 20. Default value is None.
-        :paramtype limit: int
-        :return: PagedManagedAgentIdentityBlueprint. The PagedManagedAgentIdentityBlueprint is
-         compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.PagedManagedAgentIdentityBlueprint
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.PagedManagedAgentIdentityBlueprint] = kwargs.pop("cls", None)
-
-        _request = build_beta_managed_agent_identity_blueprints_list_request(
-            order=order,
-            limit=limit,
-            api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.PagedManagedAgentIdentityBlueprint, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore

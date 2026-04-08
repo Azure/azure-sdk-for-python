@@ -12,7 +12,6 @@ import datetime
 from typing import Any, Literal, Mapping, Optional, TYPE_CHECKING, Union, overload
 
 from .._utils.model_base import Model as _Model, rest_discriminator, rest_field
-from .._utils.utils import FileType
 from ._enums import (
     AgentBlueprintReferenceType,
     AgentEndpointAuthorizationSchemeType,
@@ -3386,135 +3385,6 @@ class CosmosDBIndex(Index, discriminator="CosmosDBNoSqlVectorStore"):
         self.type = IndexType.COSMOS_DB  # type: ignore
 
 
-class CreateAgentFromCodeContent(_Model):
-    """Multipart request body for creating a new code-based agent (POST /agents). Inherits from
-    CreateAgentVersionFromCodeContent for future extensibility.
-
-    :ivar metadata: JSON metadata including description and hosted definition. Required.
-    :vartype metadata: ~azure.ai.projects.models.CreateAgentVersionFromCodeRequest
-    :ivar code: The code zip file (max 250 MB). Required.
-    :vartype code: ~azure.ai.projects._utils.utils.FileType
-    """
-
-    metadata: "_models.CreateAgentVersionFromCodeRequest" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """JSON metadata including description and hosted definition. Required."""
-    code: FileType = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
-    )
-    """The code zip file (max 250 MB). Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        metadata: "_models.CreateAgentVersionFromCodeRequest",
-        code: FileType,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CreateAgentVersionFromCodeContent(_Model):
-    """Multipart request body for updating or versioning a code-based agent (POST /agents/{name} and
-    POST /agents/{name}/versions).
-
-    :ivar metadata: JSON metadata including description and hosted definition. Required.
-    :vartype metadata: ~azure.ai.projects.models.CreateAgentVersionFromCodeRequest
-    :ivar code: The code zip file (max 250 MB). Required.
-    :vartype code: ~azure.ai.projects._utils.utils.FileType
-    """
-
-    metadata: "_models.CreateAgentVersionFromCodeRequest" = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """JSON metadata including description and hosted definition. Required."""
-    code: FileType = rest_field(
-        visibility=["read", "create", "update", "delete", "query"], is_multipart_file_input=True
-    )
-    """The code zip file (max 250 MB). Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        metadata: "_models.CreateAgentVersionFromCodeRequest",
-        code: FileType,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class CreateAgentVersionFromCodeRequest(_Model):
-    """JSON metadata for code-based agent operations (create, update, create version). The agent name
-    comes from the URL path parameter or the ``x-ms-agent-name`` header, so it is not included in
-    this model. The content hash (SHA-256 of the zip) is carried in the ``x-ms-code-zip-sha256``
-    header.
-
-    :ivar description: A human-readable description of the agent.
-    :vartype description: str
-    :ivar metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters.
-    :vartype metadata: dict[str, str]
-    :ivar definition: The hosted agent definition including code_configuration (runtime,
-     entry_point), cpu, memory, and protocol_versions. Required.
-    :vartype definition: ~azure.ai.projects.models.HostedAgentDefinition
-    """
-
-    description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """A human-readable description of the agent."""
-    metadata: Optional[dict[str, str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Set of 16 key-value pairs that can be attached to an object. This can be
-     useful for storing additional information about the object in a structured
-     format, and querying for objects via API or the dashboard.
-     
-     Keys are strings with a maximum length of 64 characters. Values are strings
-     with a maximum length of 512 characters."""
-    definition: "_models.HostedAgentDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The hosted agent definition including code_configuration (runtime, entry_point), cpu, memory,
-     and protocol_versions. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        definition: "_models.HostedAgentDefinition",
-        description: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class Trigger(_Model):
     """Base model for Trigger of the schedule.
 
@@ -5032,6 +4902,8 @@ class EvaluatorMetric(_Model):
     :vartype min_value: float
     :ivar max_value: Maximum value for the metric. If not specified, it is assumed to be unbounded.
     :vartype max_value: float
+    :ivar threshold: Default pass/fail threshold for this metric.
+    :vartype threshold: float
     :ivar is_primary: Indicates if this metric is primary when there are multiple metrics.
     :vartype is_primary: bool
     """
@@ -5049,6 +4921,8 @@ class EvaluatorMetric(_Model):
     """Minimum value for the metric."""
     max_value: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Maximum value for the metric. If not specified, it is assumed to be unbounded."""
+    threshold: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Default pass/fail threshold for this metric."""
     is_primary: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Indicates if this metric is primary when there are multiple metrics."""
 
@@ -5060,6 +4934,7 @@ class EvaluatorMetric(_Model):
         desirable_direction: Optional[Union[str, "_models.EvaluatorMetricDirection"]] = None,
         min_value: Optional[float] = None,
         max_value: Optional[float] = None,
+        threshold: Optional[float] = None,
         is_primary: Optional[bool] = None,
     ) -> None: ...
 
