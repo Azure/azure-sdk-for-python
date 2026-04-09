@@ -217,11 +217,7 @@ class TestTaskNavigationEfficiencyEvaluator:
         """Test that dict param values match when both sides are dict."""
         evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
         result = evaluator(
-            response=[
-                self._make_action(
-                    "search", {"filters": {"category": "news", "lang": "en"}, "query": "weather"}
-                )
-            ],
+            response=[self._make_action("search", {"filters": {"category": "news", "lang": "en"}, "query": "weather"})],
             ground_truth=(
                 ["search"],
                 {"search": {"filters": {"category": "news", "lang": "en"}, "query": "weather"}},
@@ -233,11 +229,7 @@ class TestTaskNavigationEfficiencyEvaluator:
         """Test that dict agent param matches JSON-stringified ground truth."""
         evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
         result = evaluator(
-            response=[
-                self._make_action(
-                    "search", {"filters": {"category": "news", "lang": "en"}, "query": "weather"}
-                )
-            ],
+            response=[self._make_action("search", {"filters": {"category": "news", "lang": "en"}, "query": "weather"})],
             ground_truth=(
                 ["search"],
                 {"search": {"filters": '{"category": "news", "lang": "en"}', "query": "weather"}},

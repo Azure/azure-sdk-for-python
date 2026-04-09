@@ -185,16 +185,18 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
             # When parameter matching is enabled, we need to match both tool name and parameters.
             # Normalize all parameter values to strings on both sides for consistent comparison.
             agent_steps = [
-                (pair[0], tuple(sorted(
-                    (k, self._normalize_param_value(v)) for k, v in pair[1].items()
-                )))
+                (pair[0], tuple(sorted((k, self._normalize_param_value(v)) for k, v in pair[1].items())))
                 for pair in agent_tool_pairs
             ]
             ground_truth_steps = [
-                (name, tuple(sorted(
-                    (k, self._normalize_param_value(v))
-                    for k, v in ground_truth_params.get(name, {}).items()
-                )))
+                (
+                    name,
+                    tuple(
+                        sorted(
+                            (k, self._normalize_param_value(v)) for k, v in ground_truth_params.get(name, {}).items()
+                        )
+                    ),
+                )
                 for name in ground_truth
             ]
         else:
