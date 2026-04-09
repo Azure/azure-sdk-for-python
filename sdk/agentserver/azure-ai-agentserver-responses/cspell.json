@@ -8,7 +8,16 @@
       "funcs",
       "addl",
       "badid",
-      "aoutput"
+      "aoutput",
+      "finalizer",
+      "coro",
+      "nostream",
+      "genai",
+      "aarguments",
+      "atext",
+      "arefusal",
+      "asummary",
+      "acode"
     ],
     "ignorePaths": [
       "*.csv",

@@ -374,7 +374,7 @@ def to_item(output_item: OutputItem) -> Item | None:
     """Convert an :class:`OutputItem` back to the corresponding :class:`Item`.
 
     Both hierarchies share the same ``type`` discriminator values, so
-    serialising an :class:`OutputItem` to a dict and deserialising as
+    serialising an :class:`OutputItem` to a dict and deserializing as
     :class:`Item` produces the correct concrete subtype (e.g.
     :class:`OutputItemMessage` → :class:`ItemMessage`).
 

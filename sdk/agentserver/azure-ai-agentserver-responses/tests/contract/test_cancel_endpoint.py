@@ -665,7 +665,7 @@ def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_
                 "type": "response.created",
                 "response": {"status": "in_progress", "output": []},
             }
-            # Deliberatly ignores cancellation_signal — simulates uncooperative handler.
+            # Deliberately ignores cancellation_signal — simulates uncooperative handler.
             # The short sleep ensures the handler is still "running" when cancel comes in,
             # but completes before the 10s winddown deadline.
             await asyncio.sleep(0.5)
