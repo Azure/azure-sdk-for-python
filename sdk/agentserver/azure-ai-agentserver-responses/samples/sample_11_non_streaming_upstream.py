@@ -78,7 +78,7 @@ async def handler(
     # Call upstream without streaming and get the complete response.
     result = await upstream.responses.create(
         model=request.model or "gpt-4o-mini",
-        input=input_items,
+        input=input_items,  # type: ignore[arg-type]
     )
 
     # Build a standard SSE event stream.  Seed from the request to

@@ -22,7 +22,7 @@ ResponseStatus = Literal["queued", "in_progress", "completed", "failed", "cancel
 TerminalResponseStatus = Literal["completed", "failed", "cancelled", "incomplete"]
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass(frozen=True)
 class ResponseModeFlags:
     """Execution mode flags captured from the create request."""
 
@@ -31,7 +31,7 @@ class ResponseModeFlags:
     background: bool
 
 
-@dataclass(slots=True)
+@dataclass
 class StreamEventRecord:
     """A persisted record for one emitted stream event."""
 
@@ -115,7 +115,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         :type next_status: ResponseStatus
         :raises ValueError: If the requested transition is not allowed.
         """
-        allowed: dict[ResponseStatus, set[ResponseStatus]] = {
+        allowed: dict[str, set[ResponseStatus]] = {
             "queued": {"in_progress", "failed"},
             "in_progress": {"completed", "failed", "cancelled", "incomplete"},
             "completed": set(),

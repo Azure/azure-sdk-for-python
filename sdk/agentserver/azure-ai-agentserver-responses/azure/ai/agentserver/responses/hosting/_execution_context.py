@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from ._observability import CreateSpan
 
 
-@dataclass(slots=True)
+@dataclass
 class _ExecutionContext:
     """Holds all per-request state for a single create-response call.
 

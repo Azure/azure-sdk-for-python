@@ -115,7 +115,7 @@ async def handler(
 
     async with await upstream.responses.create(
         model=request.model or "gpt-4o-mini",
-        input=input_items,
+        input=input_items,  # type: ignore[arg-type]
         stream=True,
     ) as upstream_stream:
         async for event in upstream_stream:

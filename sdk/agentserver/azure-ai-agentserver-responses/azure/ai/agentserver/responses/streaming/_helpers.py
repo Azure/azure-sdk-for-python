@@ -229,7 +229,7 @@ def _extract_response_snapshot_from_events(
         snapshot_source = event.get("response")
         if event_type in _RESPONSE_SNAPSHOT_EVENT_TYPES and isinstance(snapshot_source, MutableMapping):
             if hasattr(snapshot_source, "as_dict"):
-                snapshot = snapshot_source.as_dict()
+                snapshot = snapshot_source.as_dict()  # type: ignore[union-attr]
             else:
                 snapshot = deepcopy(dict(snapshot_source))
             snapshot.setdefault("id", response_id)

@@ -57,18 +57,18 @@ class ResponseIncompleteReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class CreateResponse(CreateResponseGenerated):
     """Override generated ``CreateResponse`` to correct temperature/top_p types."""
 
-    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])  # pyright: ignore[reportIncompatibleVariableOverride]
     """Sampling temperature.  Float between 0 and 2."""
-    top_p: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    top_p: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])  # pyright: ignore[reportIncompatibleVariableOverride]
     """Nucleus sampling parameter.  Float between 0 and 1."""
 
 
 class ResponseObject(ResponseObjectGenerated):
     """Override generated ``ResponseObject`` to correct temperature/top_p types."""
 
-    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    temperature: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])  # pyright: ignore[reportIncompatibleVariableOverride]
     """Sampling temperature.  Float between 0 and 2."""
-    top_p: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    top_p: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])  # pyright: ignore[reportIncompatibleVariableOverride]
     """Nucleus sampling parameter.  Float between 0 and 1."""
 
 

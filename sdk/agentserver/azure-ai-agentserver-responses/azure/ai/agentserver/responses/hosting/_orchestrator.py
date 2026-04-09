@@ -218,10 +218,10 @@ async def _run_background_non_stream(
     _provider_created = False  # tracks whether create_response was called
     # Track whether the handler set queued status so we can honour it
     _handler_initial_status: str | None = None
+    first_event_processed = False
 
     try:
         try:
-            first_event_processed = False
             async for handler_event in _iter_with_winddown(
                 create_fn(parsed, context, cancellation_signal), cancellation_signal
             ):
@@ -1008,8 +1008,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # Always persist — including cancelled state — so the durable store
             # reflects the final status.
             if record.mode_flags.store and record.response is not None:
+                _isolation = ctx.context.isolation if ctx.context else None
                 try:
-                    _isolation = ctx.context.isolation if ctx.context else None
                     await self._provider.update_response(record.response, isolation=_isolation)
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning(

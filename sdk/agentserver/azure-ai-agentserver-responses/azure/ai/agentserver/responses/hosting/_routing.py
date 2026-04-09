@@ -11,7 +11,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import types
-from collections.abc import AsyncIterable, Generator
+from collections.abc import AsyncIterable, Awaitable, Generator
 from typing import Any, AsyncIterator, Callable, Optional, Union
 
 from starlette.routing import Route
@@ -33,6 +33,7 @@ CreateHandlerFn = Callable[
     Union[
         AsyncIterable[Union[ResponseStreamEvent, dict[str, Any]]],
         Generator[Union[ResponseStreamEvent, dict[str, Any]], Any, None],
+        Awaitable[AsyncIterable[Union[ResponseStreamEvent, dict[str, Any]]]],
     ],
 ]
 """Type alias for the user-registered create-response handler function.
