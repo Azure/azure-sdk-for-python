@@ -13,7 +13,7 @@ breaking = false
 suppressed_skip_warnings = ["*"]
 
 [build-system]
-requires = ["setuptools", "wheel", "cibuildwheel"]
+requires = ["setuptools", "wheel"]
 
 [tool.cibuildwheel]
 build = ["cp39*", "pp39*", "pp310*", "pp311*"]
