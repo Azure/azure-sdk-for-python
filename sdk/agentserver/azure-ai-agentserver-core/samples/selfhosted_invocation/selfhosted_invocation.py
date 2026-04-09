@@ -13,7 +13,7 @@ This pattern is useful when:
 
 Usage::
 
-    pip install azure-ai-agentserver-core[tracing]
+    pip install azure-ai-agentserver-core
 
     # Enable tracing via App Insights connection string
     export APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..."
@@ -28,18 +28,18 @@ Usage::
     curl http://localhost:8088/readiness
     # -> {"status": "healthy"}
 """
-import contextlib
+import logging
 import os
 import uuid
-from typing import Any, Optional
+from typing import Any
 
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 from starlette.routing import Route
 
-from azure.ai.agentserver.core import get_logger, AgentServerHost, TracingHelper
+from azure.ai.agentserver.core import AgentServerHost, record_error
 
-logger = get_logger()
+logger = logging.getLogger("azure.ai.agentserver")
 
 
 class SelfHostedInvocationHost(AgentServerHost):
@@ -61,18 +61,10 @@ class SelfHostedInvocationHost(AgentServerHost):
             or str(uuid.uuid4())
         )
 
-        if self.tracing is not None:
-            span_cm = self.tracing.request_span(
-                headers=request.headers,
-                invocation_id=invocation_id,
-                span_operation="invoke_agent",
-                operation_name="invoke_agent",
-                session_id=session_id,
-            )
-        else:
-            span_cm = contextlib.nullcontext(None)
-
-        with span_cm as otel_span:
+        with self.request_span(
+            request.headers, invocation_id, "invoke_agent",
+            operation_name="invoke_agent", session_id=session_id,
+        ) as otel_span:
             logger.info("Processing invocation %s in session %s", invocation_id, session_id)
 
             try:
@@ -80,8 +72,7 @@ class SelfHostedInvocationHost(AgentServerHost):
                 name = data.get("name", "World")
                 result = {"greeting": f"Hello, {name}!"}
             except Exception as exc:
-                if self.tracing is not None and otel_span is not None:
-                    self.tracing.record_error(otel_span, exc)
+                record_error(otel_span, exc)
                 logger.error("Invocation %s failed: %s", invocation_id, exc)
                 raise
 
