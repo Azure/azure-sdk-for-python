@@ -750,6 +750,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         try:
             first_raw = await handler_iterator.__anext__()
         except StopAsyncIteration:
+            # B17: Handler exited without yielding after cancellation — treat
+            # as a cancellation (not an empty handler) so that run_sync raises
+            # _HandlerError and the response is never persisted.
+            if ctx.cancellation_signal.is_set():
+                state.captured_error = asyncio.CancelledError()
+                return
             # Handler yielded nothing: synthesise fallback lifecycle events.
             fallback_events = _build_events(
                 ctx.response_id,

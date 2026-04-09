@@ -12,10 +12,10 @@ from typing import Any, Optional, Union
 
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
-from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette.routing import Route
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 from . import _config, _tracing
 from ._server_version import build_server_version
@@ -31,21 +31,33 @@ _HEALTHY_BODY = b'{"status":"healthy"}'
 _CONSOLE_HANDLER_ATTR = "_agentserver_console"
 
 
-class _PlatformHeaderMiddleware(BaseHTTPMiddleware):
-    """Middleware that adds ``x-platform-server`` version header to all responses.
+class _PlatformHeaderMiddleware:
+    """Pure-ASGI middleware that adds ``x-platform-server`` header to responses.
 
-    Takes a callable that returns the current header value so protocol
-    hosts can register additional segments after construction.
+    Unlike ``BaseHTTPMiddleware``, this passes the ``receive`` callable
+    through to the inner application untouched, which preserves
+    ``request.is_disconnected()`` behaviour required for client disconnect detection.
     """
 
-    def __init__(self, app: Any, *, get_server_version: Callable[[], str]) -> None:  # type: ignore[override]
-        super().__init__(app)
+    def __init__(self, app: ASGIApp, *, get_server_version: Callable[[], str]) -> None:
+        self.app = app
         self._get_server_version = get_server_version
 
-    async def dispatch(self, request: Request, call_next):  # type: ignore[no-untyped-def, override]
-        response = await call_next(request)
-        response.headers["x-platform-server"] = self._get_server_version()
-        return response
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+
+        async def _send_with_header(message: dict[str, Any]) -> None:
+            if message["type"] == "http.response.start":
+                headers = list(message.get("headers", []))
+                headers.append(
+                    (b"x-platform-server", self._get_server_version().encode())
+                )
+                message = {**message, "headers": headers}
+            await send(message)
+
+        await self.app(scope, receive, _send_with_header)
 
 
 class AgentServerHost(Starlette):
