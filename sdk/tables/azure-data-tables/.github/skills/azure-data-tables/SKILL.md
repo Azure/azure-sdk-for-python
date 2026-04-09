@@ -63,13 +63,25 @@ When modifying any client or policy, **always update both sync and async version
 
 When adding a new operation from the generated client to the convenience layer:
 
+### API design rules
+
+> **CRITICAL:** The convenience layer is the public API that customers use. It must be well-designed, consistent, and Pythonic. Do NOT simply mirror the generated operation signature — design the API for the customer.
+
+1. **Required parameters are positional.** Place them before the `*` or `**kwargs` separator.
+2. **Optional parameters are keyword-only.** Place them after `*` using keyword-only syntax.
+3. **Do NOT expose the `timeout` query parameter.** The `timeout` parameter from the generated operation is an internal detail — it's already handled by `**kwargs`.
+4. **Surface all other generated options/properties.** Every meaningful parameter, header, or option from the generated operation should be accessible through the convenience layer — either as explicit keyword parameters or passed through via `**kwargs`.
+5. **Evaluate consistency with existing methods.** Look at neighboring methods on the same client class. Match naming patterns, parameter ordering, return type conventions, and docstring style. For example, if other methods accept `datetime` objects, don't accept ISO strings.
+6. **Use Python-idiomatic types.** Accept `datetime` instead of ISO strings, Python enums instead of raw strings, etc. Convert to the generated types internally.
+
+
 ### Step-by-step pattern
 
 1. **Find the generated operation** in `_generated/operations/_operations.py`. Note the method signature, parameter types, and return type.
 2. **Add the convenience wrapper** to the appropriate client file (`_table_service_client.py` or `_table_client.py`):
    - Use `@distributed_trace` decorator (sync) or `@distributed_trace_async` (async).
-   - Extract `timeout` from `**kwargs` (pattern: `timeout = kwargs.pop("timeout", None)`).
    - Construct any internal models (e.g., `KeyInfo`) from user-friendly parameters.
+   - Evaluate the public parameter names for short, consistent, concise and efficient naming.
    - Call `self._client.service.<operation>(...)` or `self._client.table.<operation>(...)`.
    - Wrap in `try/except HttpResponseError` with `_process_table_error(error)` in the except block.
 3. **Mirror in async** — copy the method to the async client file with `async def` and `await`.
@@ -83,9 +95,8 @@ The convenience layer uses a consistent error handling pattern. The `except` bra
 ```python
 @distributed_trace
 def my_operation(self, param: str, **kwargs: Any) -> ReturnType:
-    timeout = kwargs.pop("timeout", None)
     try:
-        return self._client.service.my_operation(param=param, timeout=timeout, **kwargs)
+        return self._client.service.my_operation(param=param, **kwargs)
     except HttpResponseError as error:
         _process_table_error(error)
         raise  # unreachable but satisfies pylint
@@ -99,7 +110,7 @@ def my_operation(self, param: str, **kwargs: Any) -> ReturnType:
 - [ ] `_SUPPORTED_API_VERSIONS` updated if needed
 - [ ] Docstrings with `:param`, `:type`, `:return`, `:rtype`, `:raises`
 - [ ] Tests for both sync and async
-- [ ] Tests for both Storage and Cosmos backends (even if negative/rejection test)
+- [ ] Tests for both Storage and Cosmos backends — positive if supported, negative (with error code/message assertions) if not
 - [ ] `datetime` imports added if type annotations reference `datetime`
 
 ## The Two Clients
@@ -123,7 +134,6 @@ def my_operation(self, param: str, **kwargs: Any) -> ReturnType:
 - `query_tables(query_filter, **kwargs)` — OData-filtered table listing
 - `get_service_properties()` / `set_service_properties(...)` — **Storage-only** (see Dual Backend)
 - `get_service_stats()` — **Storage-only**
-- `get_user_delegation_key(key_info_start, key_info_expiry)` — **Storage-only**, requires AAD auth
 
 ### TableClient Operations
 
@@ -476,7 +486,33 @@ All entity CRUD and table CRUD operations work on both backends.
 
 ### Testing Requirement
 
-All new features **must be tested against both Storage and Cosmos endpoints**. The test infrastructure provisions both backends via `test-resources.bicep`, and test classes typically run the same suite against both.
+> **MANDATORY:** All new features must have tests for **BOTH** Storage and Cosmos endpoints — no exceptions. This applies even when the feature is only supported on one backend.
+
+- **Supported on both backends** — Write positive tests that exercise the feature on Storage and Cosmos.
+- **Supported on Storage only** (e.g., `get_user_delegation_key`, `get_service_properties`) — Write positive tests for Storage AND negative tests for Cosmos that verify the operation is correctly rejected. Negative tests must assert on the specific exception type (e.g., `HttpResponseError`) and validate the error message or error code.
+- **Supported on Cosmos only** — Write positive tests for Cosmos AND negative tests for Storage.
+
+Negative tests must:
+- Use `pytest.raises(ExpectedExceptionType)` to catch the error.
+- Assert on the `status_code` (e.g., 403, 404, 400) when possible.
+- Assert on the `error_code` or error message substring to confirm the failure reason is correct (not a generic auth or network error).
+
+Example pattern for a Storage-only feature tested against Cosmos:
+```python
+@cosmos_decorator
+@recorded_by_proxy
+def test_my_storage_only_feature_cosmos_fails(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+    """Verify that this Storage-only feature is correctly rejected on Cosmos DB."""
+    url = self.account_url(tables_cosmos_account_name, "cosmos")
+    tsc = TableServiceClient(endpoint=url, credential=tables_primary_cosmos_account_key)
+
+    with pytest.raises(HttpResponseError) as exc_info:
+        tsc.my_storage_only_operation(...)
+    assert "AuthenticationFailed" in str(exc_info.value)
+    assert exc_info.value.status_code == 403
+```
+
+The test infrastructure provisions both backends via `test-resources.bicep`, and test file naming follows the pattern: `test_<feature>.py` (Storage), `test_<feature>_cosmos.py` (Cosmos), plus async variants.
 
 ## Query & OData Filters — `_serialize.py`
 
