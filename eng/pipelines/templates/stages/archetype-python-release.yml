@@ -387,16 +387,25 @@ stages:
           - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
 
             - pwsh: |
-                $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
+                $artifactDir = "$(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}"
+
+                # When a build is scoped via BuildTargetingString, only targeted packages have
+                # artifact directories. Skip gracefully if this package was not part of the build.
+                if (-not (Test-Path $artifactDir)) {
+                  Write-Host "Artifact directory for ${{artifact.name}} not found at '$artifactDir'. Package was not targeted by the current build scope, skipping publish."
+                  exit 0
+                }
+
+                $fileCount = (Get-ChildItem $artifactDir | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
 
                 if ($fileCount -eq 0) {
                   Write-Host "No alpha packages for ${{artifact.name}} to publish."
                   exit 0
                 }
 
-                twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.whl
+                twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $artifactDir/*-*a*.whl
                 echo "Uploaded whl to devops feed $(DevFeedName)"
-                twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}}/*-*a*.tar.gz
+                twine upload --repository $(DevFeedName) --config-file $(PYPIRC_PATH) $artifactDir/*-*a*.tar.gz
                 echo "Uploaded sdist to devops feed $(DevFeedName)"
               displayName: 'Publish ${{artifact.name}} alpha package'
 
