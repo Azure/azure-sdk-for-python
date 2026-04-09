@@ -10067,10 +10067,6 @@ class VersionRefIndicator(VersionIndicator, discriminator="version_ref"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = VersionIndicatorType.VERSION_REF  # type: ignore
-        # Workaround: service requires 'type' discriminator to appear first in JSON
-        if "type" in self._data:
-            type_val = self._data.pop("type")
-            self._data = {"type": type_val, **self._data}
 
 
 class VersionSelector(_Model):
