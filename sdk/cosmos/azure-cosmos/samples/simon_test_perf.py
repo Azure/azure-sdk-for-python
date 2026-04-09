@@ -315,11 +315,10 @@ async def main():
 
         print("═" * 80)
 
-    # ── Connection pool sweep ────────────────────────────────────────────────
+    # ── Connection pool sweep (all pool sizes × all concurrency levels) ────
     if CONNECTION_POOL_SIZES:
         await client.close()
-        best_conc = best_result.concurrency if best_result else 64
-        print(f"\n▸ Connection pool sweep (concurrency={best_conc}, default multiplier)")
+        print(f"\n▸ Connection pool sweep (pool sizes × concurrency levels)")
         print()
 
         for pool_size in CONNECTION_POOL_SIZES:
@@ -337,19 +336,19 @@ async def main():
                 for i in range(min(pool_size, len(test_embeddings)))
             ]
             await asyncio.gather(*warmup_tasks, return_exceptions=True)
-            await asyncio.sleep(COOLDOWN_SECONDS)
 
-            result = await run_at_concurrency(
-                pool_container, best_conc, DURATION_PER_LEVEL_SECONDS,
-                test_embeddings, ground_truth, TOP_K
-            )
-            print_result(result, label=f"Pool={pool_size}, Conc={best_conc}")
+            for concurrency in CONCURRENCY_LEVELS:
+                await asyncio.sleep(COOLDOWN_SECONDS)
+                result = await run_at_concurrency(
+                    pool_container, concurrency, DURATION_PER_LEVEL_SECONDS,
+                    test_embeddings, ground_truth, TOP_K
+                )
+                print_result(result, label=f"Pool={pool_size}, Conc={concurrency}")
 
             await pool_client.close()
             await session.close()
 
         print("═" * 80)
-        # Re-open original client is not needed since we're done
         client = None  # skip the final close
 
     if client:
