@@ -2,10 +2,16 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 """Shared fixtures for azure-ai-agentserver-core tests."""
+import os
+
 import pytest
 import httpx
 
 from azure.ai.agentserver.core import AgentServerHost
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests requiring live Azure resources")
 
 
 @pytest.fixture()
@@ -24,3 +30,37 @@ def client(agent: AgentServerHost) -> httpx.AsyncClient:
         transport=httpx.ASGITransport(app=agent),
         base_url="http://testserver",
     )
+
+
+@pytest.fixture()
+def appinsights_connection_string():
+    """Return the Application Insights connection string from the environment.
+
+    Tests marked ``tracing_e2e`` are skipped when the variable is absent
+    (e.g. local development without live resources).
+    """
+    conn_str = os.environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING")
+    if not conn_str:
+        pytest.skip("APPLICATIONINSIGHTS_CONNECTION_STRING not set")
+    return conn_str
+
+
+@pytest.fixture()
+def appinsights_resource_id():
+    """Return the Application Insights ARM resource ID from the environment.
+
+    Needed by ``LogsQueryClient.query_resource()`` to verify spans in App Insights.
+    """
+    resource_id = os.environ.get("APPLICATIONINSIGHTS_RESOURCE_ID")
+    if not resource_id:
+        pytest.skip("APPLICATIONINSIGHTS_RESOURCE_ID not set")
+    return resource_id
+
+
+@pytest.fixture()
+def logs_query_client():
+    """Create a ``LogsQueryClient`` for querying Application Insights."""
+    from azure.identity import DefaultAzureCredential
+    from azure.monitor.query import LogsQueryClient
+
+    return LogsQueryClient(DefaultAzureCredential())
