@@ -2,6 +2,23 @@
 # Licensed under the MIT license.
 """Event streaming, SSE encoding, and output item builders."""
 
+from ._builders import (
+    OutputItemBuilder,
+    OutputItemCodeInterpreterCallBuilder,
+    OutputItemCustomToolCallBuilder,
+    OutputItemFileSearchCallBuilder,
+    OutputItemFunctionCallBuilder,
+    OutputItemFunctionCallOutputBuilder,
+    OutputItemImageGenCallBuilder,
+    OutputItemMcpCallBuilder,
+    OutputItemMcpListToolsBuilder,
+    OutputItemMessageBuilder,
+    OutputItemReasoningItemBuilder,
+    OutputItemWebSearchCallBuilder,
+    ReasoningSummaryPartBuilder,
+    RefusalContentBuilder,
+    TextContentBuilder,
+)
 from ._helpers import (
     EVENT_TYPE,
 )
@@ -21,4 +38,20 @@ __all__ = [
     "encode_keep_alive_comment",
     "normalize_lifecycle_events",
     "validate_response_event_stream",
+    # Builders
+    "OutputItemBuilder",
+    "OutputItemCodeInterpreterCallBuilder",
+    "OutputItemCustomToolCallBuilder",
+    "OutputItemFileSearchCallBuilder",
+    "OutputItemFunctionCallBuilder",
+    "OutputItemFunctionCallOutputBuilder",
+    "OutputItemImageGenCallBuilder",
+    "OutputItemMcpCallBuilder",
+    "OutputItemMcpListToolsBuilder",
+    "OutputItemMessageBuilder",
+    "OutputItemReasoningItemBuilder",
+    "OutputItemWebSearchCallBuilder",
+    "ReasoningSummaryPartBuilder",
+    "RefusalContentBuilder",
+    "TextContentBuilder",
 ]

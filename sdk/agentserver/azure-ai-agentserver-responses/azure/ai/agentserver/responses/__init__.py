@@ -1,6 +1,26 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Public API surface for the Azure AI Agent Server Responses package."""
+"""Public API surface for the Azure AI Agent Server Responses package.
+
+Core types for building response handlers::
+
+    from azure.ai.agentserver.responses import (
+        ResponsesAgentServerHost,
+        ResponseContext,
+        ResponseEventStream,
+        TextResponse,
+        CreateResponse,
+    )
+
+Builder types for advanced event construction are available from the
+``streaming`` subpackage::
+
+    from azure.ai.agentserver.responses.streaming import (
+        OutputItemMessageBuilder,
+        OutputItemFunctionCallBuilder,
+        ...
+    )
+"""
 
 from ._version import VERSION
 
@@ -25,32 +45,31 @@ from .store._foundry_errors import (
 from .store._foundry_provider import FoundryStorageProvider
 from .store._foundry_settings import FoundryStorageSettings
 from .store._memory import InMemoryResponseProvider
-from .streaming._builders import (
-    OutputItemBuilder,
-    OutputItemCodeInterpreterCallBuilder,
-    OutputItemCustomToolCallBuilder,
-    OutputItemFileSearchCallBuilder,
-    OutputItemFunctionCallBuilder,
-    OutputItemFunctionCallOutputBuilder,
-    OutputItemImageGenCallBuilder,
-    OutputItemMcpCallBuilder,
-    OutputItemMcpListToolsBuilder,
-    OutputItemMessageBuilder,
-    OutputItemReasoningItemBuilder,
-    OutputItemWebSearchCallBuilder,
-    ReasoningSummaryPartBuilder,
-    RefusalContentBuilder,
-    TextContentBuilder,
-)
 from .streaming._event_stream import ResponseEventStream
 from .streaming._text_response import TextResponse
 
+# Builder types are available from azure.ai.agentserver.responses.streaming
+# for advanced use cases. They are not re-exported here to keep the root
+# namespace focused on the most commonly used types.
+
 __all__ = [
+    # Core
     "__version__",
     "ResponsesAgentServerHost",
     "ResponseContext",
     "IsolationContext",
     "ResponsesServerOptions",
+    # Event stream
+    "ResponseEventStream",
+    "TextResponse",
+    # Models
+    "CreateResponse",
+    "ResponseObject",
+    # Helpers
+    "get_conversation_id",
+    "get_input_expanded",
+    "to_output_item",
+    # Storage
     "ResponseProviderProtocol",
     "ResponseStreamProviderProtocol",
     "InMemoryResponseProvider",
@@ -60,26 +79,4 @@ __all__ = [
     "FoundryResourceNotFoundError",
     "FoundryBadRequestError",
     "FoundryApiError",
-    "TextContentBuilder",
-    "OutputItemMessageBuilder",
-    "OutputItemBuilder",
-    "OutputItemFunctionCallBuilder",
-    "OutputItemFunctionCallOutputBuilder",
-    "RefusalContentBuilder",
-    "OutputItemReasoningItemBuilder",
-    "ReasoningSummaryPartBuilder",
-    "OutputItemFileSearchCallBuilder",
-    "OutputItemWebSearchCallBuilder",
-    "OutputItemCodeInterpreterCallBuilder",
-    "OutputItemImageGenCallBuilder",
-    "OutputItemMcpCallBuilder",
-    "OutputItemMcpListToolsBuilder",
-    "OutputItemCustomToolCallBuilder",
-    "ResponseEventStream",
-    "TextResponse",
-    "CreateResponse",
-    "ResponseObject",
-    "get_conversation_id",
-    "get_input_expanded",
-    "to_output_item",
 ]
