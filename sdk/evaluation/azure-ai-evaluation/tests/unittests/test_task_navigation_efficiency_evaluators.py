@@ -242,9 +242,7 @@ class TestTaskNavigationEfficiencyEvaluator:
         evaluator = _TaskNavigationEfficiencyEvaluator(matching_mode=_TaskNavigationEfficiencyMatchingMode.EXACT_MATCH)
         result = evaluator(
             response=[
-                self._make_action(
-                    "search", {"filters": '{"category": "news", "lang": "en"}', "query": "weather"}
-                )
+                self._make_action("search", {"filters": '{"category": "news", "lang": "en"}', "query": "weather"})
             ],
             ground_truth=(
                 ["search"],
