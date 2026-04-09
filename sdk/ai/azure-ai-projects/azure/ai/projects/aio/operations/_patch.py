@@ -12,7 +12,6 @@ from typing import Any, List
 from ._patch_agents_async import AgentsOperations
 from ._patch_datasets_async import DatasetsOperations
 from ._patch_evaluation_rules_async import EvaluationRulesOperations
-from ._patch_evaluators_async import BetaEvaluatorsOperations
 from ._patch_telemetry_async import TelemetryOperations
 from ._patch_connections_async import ConnectionsOperations
 from ._patch_memories_async import BetaMemoryStoresOperations
@@ -20,6 +19,7 @@ from ._patch_sessions_async import BetaAgentsOperations
 from ...operations._patch import _BETA_OPERATION_FEATURE_HEADERS, _OperationMethodHeaderProxy
 from ._operations import (
     BetaEvaluationTaxonomiesOperations,
+    BetaEvaluatorsOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
     BetaRedTeamsOperations,
