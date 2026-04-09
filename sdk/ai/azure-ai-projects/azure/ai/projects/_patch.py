@@ -11,7 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import os
 import re
 import logging
-from typing import List, Any
+from typing import List, Any, Optional
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
 from openai import OpenAI
 from azure.core.tracing.decorator import distributed_trace
@@ -101,7 +101,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
     @distributed_trace
-    def get_openai_client(self, **kwargs: Any) -> OpenAI:
+    def get_openai_client(self, agent_name: Optional[str] = None, **kwargs: Any) -> OpenAI:
         """Get an authenticated OpenAI client from the `openai` package.
 
         Keyword arguments are passed to the OpenAI client constructor.
@@ -109,14 +109,22 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         The OpenAI client constructor is called with:
 
         * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai/v1" appended.
+          If ``agent_name`` is provided (and ``allow_preview=True`` was set on the AIProjectClient), ``base_url``
+          is instead set to the Agent's endpoint ``{endpoint}/agents/{agent_name}/endpoint/openai/v1``.
           Can be overridden by passing ``base_url`` as a keyword argument.
         * ``api_key`` set to a get_bearer_token_provider() callable that uses the TokenCredential provided to the
           AIProjectClient constructor, with scope "https://ai.azure.com/.default".
           Can be overridden by passing ``api_key`` as a keyword argument.
 
+        :param agent_name: Optional name of an Agent. When provided, the OpenAI client's ``base_url``
+            is pointed at the Agent's endpoint. Requires ``allow_preview=True`` to have been set on the
+            AIProjectClient constructor; otherwise a :exc:`ValueError` is raised.
+        :type agent_name: str or None
+
         :return: An authenticated OpenAI client
         :rtype: ~openai.OpenAI
 
+        :raises ValueError: If ``agent_name`` is provided but ``allow_preview=True`` was not set on the client.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -125,6 +133,17 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         # Allow caller to override base_url
         if "base_url" in kwargs:
             base_url = kwargs.pop("base_url")
+        elif agent_name is not None:
+            if self._config.allow_preview:
+                base_url = (
+                    self._config.endpoint.rstrip("/") + f"/agents/{agent_name}/endpoint/openai/v1"
+                )  # pylint: disable=protected-access
+            else:
+                raise ValueError(
+                    "Calling `get_openai_client` method with an `agent_name` requires you to set `allow_preview=True`"
+                    "\nwhen constructing the AIProjectClient. Note that preview features are under development and "
+                    "\nsubject to change. They should not be used in production environments."
+                )
         else:
             base_url = self._config.endpoint.rstrip("/") + "/openai/v1"  # pylint: disable=protected-access
 

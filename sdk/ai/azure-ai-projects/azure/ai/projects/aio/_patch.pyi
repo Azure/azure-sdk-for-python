@@ -100,7 +100,9 @@ class AsyncOpenAI(AsyncOpenAIClient):
 
 class AIProjectClient(AIProjectClientGenerated):
     telemetry: TelemetryOperations
-    def get_openai_client(self, **kwargs: Any) -> AsyncOpenAI: ...  # pylint: disable=unused-argument
+    def get_openai_client(
+        self, agent_name: Optional[str] = None, **kwargs: Any  # pylint: disable=unused-argument
+    ) -> AsyncOpenAI: ...
 
 # To make mypy happy... otherwise imports of the below result in mypy "attr-defined" error
 __all__: List[str] = ["AIProjectClient"]

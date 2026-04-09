@@ -101,7 +101,9 @@ class OpenAI(OpenAIClient):
 
 class AIProjectClient(AIProjectClientGenerated):
     telemetry: TelemetryOperations
-    def get_openai_client(self, **kwargs: Any) -> OpenAI: ...  # pylint: disable=unused-argument
+    def get_openai_client(
+        self, agent_name: Optional[str] = None, **kwargs: Any  # pylint: disable=unused-argument
+    ) -> OpenAI: ...
 
 # To make mypy happy... otherwise imports of the below result in mypy "attr-defined" error
 class _AuthSecretsFilter(logging.Filter): ...
