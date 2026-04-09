@@ -24,12 +24,12 @@ dependencies = [
     "azure-ai-agentserver-core>=2.0.0b1",
 ]
 
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
+
 [build-system]
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
-
-[project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.packages.find]
 exclude = [
@@ -66,3 +66,6 @@ pyright = true
 verifytypes = true
 pylint = true
 type_check_samples = false
+
+[tool.uv.sources]
+azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core" }

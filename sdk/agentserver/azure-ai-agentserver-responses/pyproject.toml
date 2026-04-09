@@ -68,3 +68,8 @@ disallow_untyped_defs = true
 asyncio_mode = "auto"
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.uv.sources]
+azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core" }
+azure-core = { path = "../../core/azure-core" }
+azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
