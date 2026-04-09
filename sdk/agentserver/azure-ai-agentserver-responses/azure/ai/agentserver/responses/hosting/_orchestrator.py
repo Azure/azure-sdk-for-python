@@ -11,8 +11,11 @@ routing module which wraps these results.
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
+import logging
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, AsyncIterator, Callable
+
+logger = logging.getLogger("azure.ai.agentserver")
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
@@ -289,7 +292,11 @@ async def _run_background_non_stream(
                             )
                             _provider_created = True
                         except Exception:  # pylint: disable=broad-exception-caught
-                            pass  # best effort
+                            logger.warning(
+                                "Best-effort provider create failed at response.created (response_id=%s)",
+                                response_id,
+                                exc_info=True,
+                            )
                     record.response_created_signal.set()
                 else:
                     # Track output_item.added events for FR-008a
@@ -318,7 +325,12 @@ async def _run_background_non_stream(
                 record.response_created_signal.set()
                 return
             raise
-        except Exception:  # pylint: disable=broad-exception-caught
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error(
+                "Handler raised during background processing (response_id=%s)",
+                response_id,
+                exc_info=exc,
+            )
             if record.status != "cancelled":
                 record.set_response_snapshot(
                     _build_failed_response(
@@ -386,7 +398,11 @@ async def _run_background_non_stream(
                         record.response, record.input_items or None, None, isolation=_isolation
                     )
             except Exception:  # pylint: disable=broad-exception-caught
-                pass  # best effort
+                logger.warning(
+                    "Best-effort provider persist failed at finalization (response_id=%s)",
+                    response_id,
+                    exc_info=True,
+                )
 
 
 def _refresh_background_status(record: ResponseExecution) -> None:
@@ -719,6 +735,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         except Exception as exc:  # pylint: disable=broad-exception-caught
             # B8: Pre-creation error → emit a standalone `error` event only.
             # No response.created precedes it; this is the contract-mandated shape.
+            logger.error(
+                "Handler raised before response.created (response_id=%s)",
+                ctx.response_id,
+                exc_info=exc,
+            )
             state.captured_error = exc
             yield construct_event_model(
                 {"type": "error", "message": "An internal server error occurred.", "param": None, "code": None, "sequence_number": 0}
@@ -732,6 +753,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # B30: structural validation of the first event.
         b30_violation = _validate_handler_event(first_coerced)
         if b30_violation:
+            logger.error(
+                "Handler event structure violation (response_id=%s): %s",
+                ctx.response_id,
+                b30_violation,
+            )
             state.captured_error = ValueError(b30_violation)
             yield construct_event_model(
                 {"type": "error", "message": "An internal server error occurred.", "param": None, "code": None, "sequence_number": 0}
@@ -754,6 +780,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # - sync: state.captured_error is set → run_sync raises _HandlerError → HTTP 500
         violation = _check_first_event_contract(first_normalized, ctx.response_id)
         if violation:
+            logger.error(
+                "First-event contract violation (response_id=%s): %s",
+                ctx.response_id,
+                violation,
+            )
             state.captured_error = RuntimeError(violation)
             yield construct_event_model(
                 {"type": "error", "message": "An internal server error occurred.", "param": None, "code": None, "sequence_number": 0}
@@ -769,11 +800,17 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         created_response = first_normalized.get("response") or {}
         created_output = created_response.get("output")
         if isinstance(created_output, list) and len(created_output) != 0:
-            state.captured_error = ValueError(
+            _fr008a_msg = (
                 f"Handler directly modified Response.Output "
                 f"(found {len(created_output)} items, expected 0). "
                 f"Use output builder events instead."
             )
+            logger.error(
+                "Output manipulation detected (response_id=%s): %s",
+                ctx.response_id,
+                _fr008a_msg,
+            )
+            state.captured_error = ValueError(_fr008a_msg)
             yield await self._make_failed_event(ctx, state)
             return
 
@@ -799,10 +836,16 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     _pre_response = _pre_coerced.get("response") or {}
                     _pre_output = _pre_response.get("output")
                     if isinstance(_pre_output, list) and len(_pre_output) > output_item_count:
-                        state.captured_error = ValueError(
+                        _fr008a_msg = (
                             f"Output item count mismatch "
                             f"({len(_pre_output)} vs {output_item_count} output_item.added events)"
                         )
+                        logger.error(
+                            "Output manipulation detected (response_id=%s): %s",
+                            ctx.response_id,
+                            _fr008a_msg,
+                        )
+                        state.captured_error = ValueError(_fr008a_msg)
                         yield await self._make_failed_event(ctx, state)
                         return
 
@@ -817,6 +860,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # Unknown CancelledError (e.g. event-loop teardown) — re-raise.
             raise
         except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error(
+                "Handler raised after response.created (response_id=%s)",
+                ctx.response_id,
+                exc_info=exc,
+            )
             state.captured_error = exc
             # S-035: emit response.failed when handler raises after response.created.
             if not self._has_terminal_event(state.handler_events):
@@ -906,7 +954,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     _isolation = ctx.context.isolation if ctx.context else None
                     await self._provider.update_response(record.response, isolation=_isolation)
                 except Exception:  # pylint: disable=broad-exception-caught
-                    pass  # best effort
+                    logger.warning(
+                        "Best-effort provider update failed at stream finalization (response_id=%s)",
+                        ctx.response_id,
+                        exc_info=True,
+                    )
                 # Persist SSE events for replay after process restart (not needed for cancelled)
                 if record.status != "cancelled" and self._stream_provider is not None and state.handler_events:
                     try:
@@ -914,7 +966,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                             ctx.response_id, state.handler_events, isolation=_isolation
                         )
                     except Exception:  # pylint: disable=broad-exception-caught
-                        pass  # best effort
+                        logger.warning(
+                            "Best-effort stream event persistence failed (response_id=%s)",
+                            ctx.response_id,
+                            exc_info=True,
+                        )
 
             ctx.span.end(state.captured_error)
             # Complete the subject — signals all live SSE replay subscribers that
@@ -991,7 +1047,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     isolation=_isolation,
                 )
             except Exception:  # pylint: disable=broad-exception-caught
-                pass  # best effort
+                logger.warning(
+                    "Best-effort provider create failed at stream finalization (response_id=%s)",
+                    ctx.response_id,
+                    exc_info=True,
+                )
 
         ctx.span.end(state.captured_error)
 
@@ -1067,6 +1127,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     async for event in self._process_handler_events(ctx, state, handler_iterator):
                         await bg_queue.put(encode_sse_any_event(event))
                 except Exception as exc:  # pylint: disable=broad-exception-caught
+                    logger.error(
+                        "Background stream producer failed (response_id=%s)",
+                        ctx.response_id,
+                        exc_info=exc,
+                    )
                     state.captured_error = exc
                 finally:
                     # Always finalize (includes subject.complete()) — this runs even if
@@ -1138,6 +1203,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     break
                 yield item  # type: ignore[misc]
         except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error(
+                "Stream consumer failed (response_id=%s)",
+                ctx.response_id,
+                exc_info=exc,
+            )
             state.captured_error = exc
         finally:
             keep_alive_task.cancel()
@@ -1248,7 +1318,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     isolation=_isolation,
                 )
             except Exception:  # pylint: disable=broad-exception-caught
-                pass  # best effort
+                logger.warning(
+                    "Best-effort provider create failed in sync path (response_id=%s)",
+                    ctx.response_id,
+                    exc_info=True,
+                )
 
         ctx.span.end(None)
         return _RuntimeState.to_snapshot(record)
