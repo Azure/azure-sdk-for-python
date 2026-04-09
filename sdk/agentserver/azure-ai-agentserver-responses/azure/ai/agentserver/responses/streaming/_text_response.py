@@ -16,6 +16,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterable
 from typing import TYPE_CHECKING, Any, AsyncIterator, Awaitable, Callable
 
+from ..models import _generated as generated_models
 from ._event_stream import ResponseEventStream
 
 if TYPE_CHECKING:
@@ -91,10 +92,10 @@ class TextResponse:
         self._create_text_stream = create_text_stream
         self._configure = configure
 
-    def __aiter__(self) -> AsyncIterator[dict[str, Any]]:
+    def __aiter__(self) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         return self._generate()
 
-    async def _generate(self) -> AsyncIterator[dict[str, Any]]:
+    async def _generate(self) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         stream = ResponseEventStream(
             response_id=self._context.response_id,
             request=self._request,

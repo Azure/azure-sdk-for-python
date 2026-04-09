@@ -84,6 +84,7 @@ class _ResponseEventSubject:
                 item = await q.get()
                 if item is self._DONE:
                     return
+                assert isinstance(item, ResponseStreamEvent)
                 yield item
         finally:
             # Clean up subscription on client disconnect or normal completion

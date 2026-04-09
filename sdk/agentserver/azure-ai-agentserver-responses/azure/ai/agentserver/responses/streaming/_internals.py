@@ -8,10 +8,10 @@ and generated model objects. They carry no mutable state of their own.
 
 from __future__ import annotations
 
-from collections.abc import MutableMapping
+from collections.abc import Callable, MutableMapping
 from copy import deepcopy
 from types import GeneratorType
-from typing import Any
+from typing import Any, cast
 
 from ..models import _generated as generated_models
 from ..models._generated import AgentReference
@@ -54,7 +54,9 @@ def construct_event_model(wire_dict: dict[str, Any]) -> generated_models.Respons
     if isinstance(event_type, str):
         event_class = generated_models.ResponseStreamEvent.__mapping__.get(event_type)
         if event_class is not None:
-            return event_class(wire_dict)
+            # __mapping__ values are classes; the generated type annotation is imprecise.
+            constructor = cast(Callable[[dict[str, Any]], generated_models.ResponseStreamEvent], event_class)
+            return constructor(wire_dict)
     return generated_models.ResponseStreamEvent(wire_dict)
 
 
@@ -251,7 +253,7 @@ def extract_response_fields(
         return None, None
     agent_reference = payload.get("agent_reference")
     agent_ref: AgentReference | dict[str, Any] | None = (
-        agent_reference if isinstance(agent_reference, (dict, MutableMapping)) else None
+        dict(agent_reference) if isinstance(agent_reference, MutableMapping) else None
     )
     model = payload.get("model")
     model_str = model if isinstance(model, str) and model else None

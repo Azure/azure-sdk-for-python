@@ -523,7 +523,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     # Output-item convenience generators that encapsulate the full lifecycle.
     # Names mirror the add_* factories with the add_ prefix removed.
 
-    def output_item_message(self, text: str) -> Iterator[dict[str, Any]]:
+    def output_item_message(self, text: str) -> Iterator[generated_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a text message output item.
 
         Emits output_item.added, content_part.added, output_text.delta,
@@ -531,15 +531,15 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
 
         :param text: The text content of the message.
         :type text: str
-        :returns: An iterator of event dicts.
-        :rtype: Iterator[dict[str, Any]]
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
         """
         message = self.add_output_item_message()
         yield message.emit_added()
         yield from message.text_content(text)
         yield message.emit_done()
 
-    def output_item_function_call(self, name: str, call_id: str, arguments: str) -> Iterator[dict[str, Any]]:
+    def output_item_function_call(self, name: str, call_id: str, arguments: str) -> Iterator[generated_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a function call output item.
 
         Emits output_item.added, function_call_arguments.delta,
@@ -551,15 +551,15 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :type call_id: str
         :param arguments: The function call arguments as a string.
         :type arguments: str
-        :returns: An iterator of event dicts.
-        :rtype: Iterator[dict[str, Any]]
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
         """
         fc = self.add_output_item_function_call(name=name, call_id=call_id)
         yield fc.emit_added()
         yield from fc.arguments(arguments)
         yield fc.emit_done()
 
-    def output_item_function_call_output(self, call_id: str, output: str) -> Iterator[dict[str, Any]]:
+    def output_item_function_call_output(self, call_id: str, output: str) -> Iterator[generated_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a function call output item.
 
         Emits output_item.added and output_item.done.
@@ -568,14 +568,14 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :type call_id: str
         :param output: The output value for the function call.
         :type output: str
-        :returns: An iterator of event dicts.
-        :rtype: Iterator[dict[str, Any]]
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
         """
         fco = self.add_output_item_function_call_output(call_id=call_id)
         yield fco.emit_added(output)
         yield fco.emit_done(output)
 
-    def output_item_reasoning_item(self, summary_text: str) -> Iterator[dict[str, Any]]:
+    def output_item_reasoning_item(self, summary_text: str) -> Iterator[generated_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a reasoning output item.
 
         Emits output_item.added, reasoning_summary_part.added,
@@ -584,8 +584,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
 
         :param summary_text: The reasoning summary text.
         :type summary_text: str
-        :returns: An iterator of event dicts.
-        :rtype: Iterator[dict[str, Any]]
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
         """
         item = self.add_output_item_reasoning_item()
         yield item.emit_added()
@@ -595,7 +595,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     # ---- Async generator convenience methods (S-058) ----
     # Async variants with AsyncIterable[str] support for real-time delta streaming.
 
-    async def aoutput_item_message(self, text: str | AsyncIterable[str]) -> AsyncIterator[dict[str, Any]]:
+    async def aoutput_item_message(self, text: str | AsyncIterable[str]) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`output_item_message` with streaming support.
 
         When *text* is a string, emits the same events as the sync variant.
@@ -605,8 +605,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
 
         :param text: Complete text or async iterable of text chunks.
         :type text: str | AsyncIterable[str]
-        :returns: An async iterator of event dicts.
-        :rtype: AsyncIterator[dict[str, Any]]
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if isinstance(text, str):
             for event in self.output_item_message(text):
@@ -614,13 +614,13 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             return
         message = self.add_output_item_message()
         yield message.emit_added()
-        async for event in message.atext_content(text):
-            yield event
+        async for streamed_event in message.atext_content(text):
+            yield streamed_event
         yield message.emit_done()
 
     async def aoutput_item_function_call(
         self, name: str, call_id: str, arguments: str | AsyncIterable[str]
-    ) -> AsyncIterator[dict[str, Any]]:
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`output_item_function_call` with streaming support.
 
         When *arguments* is a string, emits the same events as the sync variant.
@@ -633,8 +633,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :type call_id: str
         :param arguments: Complete arguments string or async iterable of chunks.
         :type arguments: str | AsyncIterable[str]
-        :returns: An async iterator of event dicts.
-        :rtype: AsyncIterator[dict[str, Any]]
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if isinstance(arguments, str):
             for event in self.output_item_function_call(name, call_id, arguments):
@@ -646,22 +646,22 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             yield event
         yield fc.emit_done()
 
-    async def aoutput_item_function_call_output(self, call_id: str, output: str) -> AsyncIterator[dict[str, Any]]:
+    async def aoutput_item_function_call_output(self, call_id: str, output: str) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`output_item_function_call_output`.
 
         :param call_id: The call ID of the function call this output belongs to.
         :type call_id: str
         :param output: The output value for the function call.
         :type output: str
-        :returns: An async iterator of event dicts.
-        :rtype: AsyncIterator[dict[str, Any]]
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
         """
         for event in self.output_item_function_call_output(call_id, output):
             yield event
 
     async def aoutput_item_reasoning_item(
         self, summary_text: str | AsyncIterable[str]
-    ) -> AsyncIterator[dict[str, Any]]:
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`output_item_reasoning_item` with streaming support.
 
         When *summary_text* is a string, emits the same events as the sync variant.
@@ -670,8 +670,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
 
         :param summary_text: Complete summary text or async iterable of chunks.
         :type summary_text: str | AsyncIterable[str]
-        :returns: An async iterator of event dicts.
-        :rtype: AsyncIterator[dict[str, Any]]
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if isinstance(summary_text, str):
             for event in self.output_item_reasoning_item(summary_text):

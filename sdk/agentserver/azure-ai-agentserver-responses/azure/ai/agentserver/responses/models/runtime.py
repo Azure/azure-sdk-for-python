@@ -8,7 +8,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Literal, Mapping
+from typing import TYPE_CHECKING, Any, Literal, Mapping, cast
 
 from ._generated import AgentReference, OutputItem, ResponseObject, ResponseStreamEvent, ResponseStreamEventType
 
@@ -216,7 +216,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
             self.set_response_snapshot(ResponseObject(snapshot))
             resolved = snapshot.get("status")
             if isinstance(resolved, str):
-                self.status = resolved
+                self.status = cast(ResponseStatus, resolved)
         elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
             item = normalized.get("item")
             if item is not None and self.response is not None:

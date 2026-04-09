@@ -8,6 +8,7 @@ from collections.abc import AsyncIterable
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator
 
+from ...models import _generated as generated_models
 from ._base import EVENT_TYPE, BaseOutputItemBuilder, _require_non_empty
 
 if TYPE_CHECKING:
@@ -61,11 +62,11 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         """
         return self._call_id
 
-    def emit_added(self) -> dict[str, Any]:
+    def emit_added(self) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.added`` event for this function call.
 
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         """
         return self._emit_added(
             {
@@ -78,13 +79,13 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
             }
         )
 
-    def emit_arguments_delta(self, delta: str) -> dict[str, Any]:
+    def emit_arguments_delta(self, delta: str) -> generated_models.ResponseStreamEvent:
         """Emit a function-call arguments delta event.
 
         :param delta: The incremental arguments text fragment.
         :type delta: str
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         """
         return self._stream.emit_event(
             {
@@ -95,13 +96,13 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
             }
         )
 
-    def emit_arguments_done(self, arguments: str) -> dict[str, Any]:
+    def emit_arguments_done(self, arguments: str) -> generated_models.ResponseStreamEvent:
         """Emit a function-call arguments done event.
 
         :param arguments: The final, complete arguments string.
         :type arguments: str
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         """
         self._final_arguments = arguments
         return self._stream.emit_event(
@@ -114,11 +115,11 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
             }
         )
 
-    def emit_done(self) -> dict[str, Any]:
+    def emit_done(self) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.done`` event for this function call.
 
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         """
         return self._emit_done(
             {
@@ -133,7 +134,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
 
     # ---- Sub-item convenience generators (S-053) ----
 
-    def arguments(self, args: str) -> Iterator[dict[str, Any]]:
+    def arguments(self, args: str) -> Iterator[generated_models.ResponseStreamEvent]:
         """Yield the argument delta and done events.
 
         Emits ``function_call_arguments.delta`` followed by
@@ -141,13 +142,13 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
 
         :param args: The complete arguments string.
         :type args: str
-        :returns: An iterator of event dicts.
-        :rtype: Iterator[dict[str, Any]]
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
         """
         yield self.emit_arguments_delta(args)
         yield self.emit_arguments_done(args)
 
-    async def aarguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[dict[str, Any]]:
+    async def aarguments(self, args: str | AsyncIterable[str]) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`arguments` with streaming support.
 
         When *args* is a string, behaves identically to :meth:`arguments`.
@@ -157,8 +158,8 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
 
         :param args: Complete arguments string or async iterable of chunks.
         :type args: str | AsyncIterable[str]
-        :returns: An async iterator of event dicts.
-        :rtype: AsyncIterator[dict[str, Any]]
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if isinstance(args, str):
             for event in self.arguments(args):
@@ -205,13 +206,13 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
         """
         return self._call_id
 
-    def emit_added(self, output: str | list[Any] | None = None) -> dict[str, Any]:
+    def emit_added(self, output: str | list[Any] | None = None) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.added`` event for this function-call output.
 
         :param output: Optional initial output value.
         :type output: str | list[Any] | None
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         """
         return self._emit_added(
             {
@@ -223,13 +224,13 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
             }
         )
 
-    def emit_done(self, output: str | list[Any] | None = None) -> dict[str, Any]:
+    def emit_done(self, output: str | list[Any] | None = None) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.done`` event for this function-call output.
 
         :param output: Optional final output value. Uses previously set output if ``None``.
         :type output: str | list[Any] | None
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         """
         if output is not None:
             self._final_output = deepcopy(output)

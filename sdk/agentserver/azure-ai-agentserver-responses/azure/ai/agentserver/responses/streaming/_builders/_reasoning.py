@@ -8,6 +8,7 @@ from collections.abc import AsyncIterable
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator
 
+from ...models import _generated as generated_models
 from ._base import EVENT_TYPE, BaseOutputItemBuilder, BuilderLifecycleState
 
 if TYPE_CHECKING:
@@ -54,11 +55,11 @@ class ReasoningSummaryPartBuilder:
         """
         return self._summary_index
 
-    def emit_added(self) -> dict[str, Any]:
+    def emit_added(self) -> generated_models.ResponseStreamEvent:
         """Emit a ``reasoning_summary_part.added`` event.
 
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         :raises ValueError: If the builder is not in ``NOT_STARTED`` state.
         """
         if self._lifecycle_state is not BuilderLifecycleState.NOT_STARTED:
@@ -74,13 +75,13 @@ class ReasoningSummaryPartBuilder:
             }
         )
 
-    def emit_text_delta(self, text: str) -> dict[str, Any]:
+    def emit_text_delta(self, text: str) -> generated_models.ResponseStreamEvent:
         """Emit a reasoning summary text delta event.
 
         :param text: The incremental summary text fragment.
         :type text: str
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         """
         return self._stream.emit_event(
             {
@@ -92,13 +93,13 @@ class ReasoningSummaryPartBuilder:
             }
         )
 
-    def emit_text_done(self, final_text: str) -> dict[str, Any]:
+    def emit_text_done(self, final_text: str) -> generated_models.ResponseStreamEvent:
         """Emit a reasoning summary text done event.
 
         :param final_text: The final, complete summary text.
         :type final_text: str
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         """
         self._final_text = final_text
         return self._stream.emit_event(
@@ -111,11 +112,11 @@ class ReasoningSummaryPartBuilder:
             }
         )
 
-    def emit_done(self) -> dict[str, Any]:
+    def emit_done(self) -> generated_models.ResponseStreamEvent:
         """Emit a ``reasoning_summary_part.done`` event.
 
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         :raises ValueError: If the builder is not in ``ADDED`` state.
         """
         if self._lifecycle_state is not BuilderLifecycleState.ADDED:
@@ -149,11 +150,11 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
         self._summary_index = 0
         self._completed_summaries: list[dict[str, Any]] = []
 
-    def emit_added(self) -> dict[str, Any]:
+    def emit_added(self) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.added`` event for this reasoning item.
 
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         """
         return self._emit_added({"type": "reasoning", "id": self._item_id, "summary": [], "status": "in_progress"})
 
@@ -176,11 +177,11 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
         """
         self._completed_summaries.append({"type": "summary_text", "text": summary_part.final_text or ""})
 
-    def emit_done(self) -> dict[str, Any]:
+    def emit_done(self) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.done`` event for this reasoning item.
 
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         """
         return self._emit_done(
             {
@@ -193,7 +194,7 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
 
     # ---- Sub-item convenience generators (S-053) ----
 
-    def summary_part(self, text: str) -> Iterator[dict[str, Any]]:
+    def summary_part(self, text: str) -> Iterator[generated_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a reasoning summary part.
 
         Creates the sub-builder, emits ``reasoning_summary_part.added``,
@@ -203,8 +204,8 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
 
         :param text: The complete summary text.
         :type text: str
-        :returns: An iterator of event dicts.
-        :rtype: Iterator[dict[str, Any]]
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
         """
         part = self.add_summary_part()
         yield part.emit_added()
@@ -213,7 +214,7 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
         yield part.emit_done()
         self.emit_summary_part_done(part)
 
-    async def asummary_part(self, text: str | AsyncIterable[str]) -> AsyncIterator[dict[str, Any]]:
+    async def asummary_part(self, text: str | AsyncIterable[str]) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`summary_part` with streaming support.
 
         When *text* is a string, behaves identically to :meth:`summary_part`.
@@ -223,8 +224,8 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
 
         :param text: Complete summary text or async iterable of text chunks.
         :type text: str | AsyncIterable[str]
-        :returns: An async iterator of event dicts.
-        :rtype: AsyncIterator[dict[str, Any]]
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if isinstance(text, str):
             for event in self.summary_part(text):

@@ -46,7 +46,7 @@ class CreateSpanHook(Protocol):
         :rtype: None
         """
 
-    def on_span_end(self, name: str, tags: dict[str, Any], error: Exception | None) -> None:
+    def on_span_end(self, name: str, tags: dict[str, Any], error: BaseException | None) -> None:
         """Called when a create span ends.
 
         :param name: Span name.
@@ -54,7 +54,7 @@ class CreateSpanHook(Protocol):
         :param tags: Final span tags.
         :type tags: dict[str, Any]
         :param error: The exception if the span ended with an error, or ``None``.
-        :type error: Exception | None
+        :type error: BaseException | None
         :return: None
         :rtype: None
         """
@@ -98,13 +98,13 @@ class CreateSpan:
         """
         self.tags.update(values)
 
-    def end(self, error: Exception | None = None) -> None:
+    def end(self, error: BaseException | None = None) -> None:
         """Complete the span exactly once.
 
         Subsequent calls are no-ops.
 
         :param error: The exception if the span ended with an error, or ``None``.
-        :type error: Exception | None
+        :type error: BaseException | None
         :return: None
         :rtype: None
         """
@@ -279,7 +279,7 @@ class RecordedSpan:
     tags: dict[str, Any]
     started_at: datetime
     ended_at: datetime | None = None
-    error: Exception | None = None
+    error: BaseException | None = None
 
 
 class InMemoryCreateSpanHook:
@@ -306,7 +306,7 @@ class InMemoryCreateSpanHook:
             )
         )
 
-    def on_span_end(self, name: str, tags: dict[str, Any], error: Exception | None) -> None:
+    def on_span_end(self, name: str, tags: dict[str, Any], error: BaseException | None) -> None:
         """Record a span end event.
 
         :param name: Span name.
@@ -314,7 +314,7 @@ class InMemoryCreateSpanHook:
         :param tags: Final span tags.
         :type tags: dict[str, Any]
         :param error: The exception if the span ended with an error, or ``None``.
-        :type error: Exception | None
+        :type error: BaseException | None
         :return: None
         :rtype: None
         """

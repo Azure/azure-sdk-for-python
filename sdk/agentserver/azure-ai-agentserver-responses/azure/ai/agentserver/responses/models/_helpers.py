@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Optional
+from typing import Any, Literal, Optional, cast
 
 from ._generated import (
     ConversationParam_2,
@@ -48,14 +48,14 @@ def _is_type(obj: Any, model_cls: type, type_value: str) -> bool:
 # ---------------------------------------------------------------------------
 
 
-def get_conversation_id(request: CreateResponse) -> Optional[str]:
-    """Extract conversation ID from ``CreateResponse.conversation``.
+def get_conversation_id(request: CreateResponse | ResponseObject) -> Optional[str]:
+    """Extract conversation ID from a request or response's ``conversation`` field.
 
     If conversation is a plain string, returns it directly.
     If it is a :class:`ConversationParam_2` object, returns its ``id`` field.
 
-    :param request: The create-response request.
-    :type request: CreateResponse
+    :param request: The create-response request or response object.
+    :type request: CreateResponse | ResponseObject
     :returns: The conversation ID, or ``None`` if no conversation is set.
     :rtype: str | None
     """
@@ -151,7 +151,7 @@ def get_tool_choice_expanded(request: CreateResponse) -> Optional[ToolChoicePara
     if isinstance(tc, str):
         normalized = tc if not isinstance(tc, ToolChoiceOptions) else tc.value
         if normalized in ("auto", "required"):
-            return ToolChoiceAllowed(mode=normalized, tools=[])
+            return ToolChoiceAllowed(mode=cast(Literal["auto", "required"], normalized), tools=[])
         if normalized == "none":
             return None
         raise ValueError(
@@ -211,11 +211,13 @@ def get_instruction_items(response: ResponseObject) -> list[Item]:
     if isinstance(instr, str):
         return [
             ItemMessage(
-                id="",
-                status="completed",
-                role=MessageRole.DEVELOPER,
-                content=[MessageContentInputTextContent(text=instr)],
-            ).as_dict()
+                {
+                    "id": "",
+                    "status": "completed",
+                    "role": MessageRole.DEVELOPER.value,
+                    "content": [{"type": "input_text", "text": instr}],
+                }
+            )
         ]
     return list(instr)
 

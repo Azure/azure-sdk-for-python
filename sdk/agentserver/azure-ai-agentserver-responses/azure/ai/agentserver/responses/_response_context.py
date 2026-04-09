@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Sequence
+from typing import TYPE_CHECKING, Any, Sequence, cast
 
 from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
 
@@ -69,7 +69,7 @@ class ResponseContext:
         request: CreateResponse | None = None,
         created_at: datetime | None = None,
         provider: "ResponseProviderProtocol | None" = None,
-        input_items: list[InputParam] | None = None,
+        input_items: list[InputParam] | list[OutputItem] | None = None,
         previous_response_id: str | None = None,
         conversation_id: str | None = None,
         history_limit: int = 100,
@@ -87,7 +87,12 @@ class ResponseContext:
         self.query_parameters: dict[str, str] = query_parameters or {}
         self.isolation: IsolationContext = isolation if isolation is not None else IsolationContext()
         self._provider: "ResponseProviderProtocol | None" = provider
-        self._input_items: list[InputParam] = list(input_items) if input_items is not None else []
+        _items: list[Any]
+        if input_items is not None:
+            _items = list(input_items)
+        else:
+            _items = []
+        self._input_items: list[Any] = _items
         self._previous_response_id: str | None = previous_response_id
         self.conversation_id: str | None = conversation_id
         self._history_limit: int = history_limit

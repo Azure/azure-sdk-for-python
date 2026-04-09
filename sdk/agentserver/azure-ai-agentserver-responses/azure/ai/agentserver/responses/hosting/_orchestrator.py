@@ -13,7 +13,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, AsyncIterator, Callable
+from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, cast
 
 logger = logging.getLogger("azure.ai.agentserver")
 
@@ -28,6 +28,7 @@ from ..models import _generated as generated_models
 from ..models.runtime import (
     ResponseExecution,
     ResponseModeFlags,
+    ResponseStatus,
 )
 from ..models.runtime import (
     build_cancelled_response as _build_cancelled_response,
@@ -404,7 +405,7 @@ async def _run_background_non_stream(
             # states via in_progress).
             if record.status == "queued" and target != "in_progress":
                 record.transition_to("in_progress")
-            record.transition_to(target)
+            record.transition_to(cast(ResponseStatus, target))
     finally:
         # Always unblock run_background (idempotent if already set)
         record.response_created_signal.set()
@@ -465,7 +466,7 @@ class _HandlerError(Exception):
     response without leaking orchestrator internals.
     """
 
-    def __init__(self, original: Exception) -> None:
+    def __init__(self, original: BaseException) -> None:
         self.original = original
         super().__init__(str(original))
 
@@ -486,7 +487,7 @@ class _PipelineState:
     def __init__(self) -> None:
         self.handler_events: list[generated_models.ResponseStreamEvent] = []
         self.bg_record: ResponseExecution | None = None
-        self.captured_error: Exception | None = None
+        self.captured_error: BaseException | None = None
         self.validator: EventStreamValidator = EventStreamValidator()
         self.stream_interrupted: bool = False
 
@@ -674,7 +675,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         execution = ResponseExecution(
             response_id=ctx.response_id,
             mode_flags=ResponseModeFlags(stream=True, store=True, background=True),
-            status=initial_status,
+            status=cast(ResponseStatus, initial_status),
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             cancel_signal=ctx.cancellation_signal,
@@ -682,6 +683,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         execution.set_response_snapshot(generated_models.ResponseObject(initial_payload))
         execution.subject = _ResponseEventSubject()
         state.bg_record = execution
+        assert state.bg_record.subject is not None
         await state.bg_record.subject.publish(first_normalized)
         await self._runtime_state.add(execution)
         if ctx.store:
@@ -978,6 +980,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     )
                 )
                 if state.captured_error is not None:
+                    assert ctx.context is not None
                     record.set_response_snapshot(
                         _build_failed_response(
                             ctx.response_id,
@@ -997,9 +1000,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         conversation_id=ctx.conversation_id,
                     )
                     resolved_status = response_payload.get("status")
-                    status = resolved_status if isinstance(resolved_status, str) else "in_progress"
+                    status = cast(ResponseStatus, resolved_status) if isinstance(resolved_status, str) else "in_progress"
                     record.set_response_snapshot(generated_models.ResponseObject(response_payload))
-                    record.transition_to(status)  # type: ignore[arg-type]
+                    record.transition_to(status)
 
             # Persist terminal state update via provider (bg+stream: initial create already done).
             # Always persist — including cancelled state — so the durable store
@@ -1068,7 +1071,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             conversation_id=ctx.conversation_id,
         )
         resolved_status = response_payload.get("status")
-        status = resolved_status if isinstance(resolved_status, str) else "completed"
+        final_status: ResponseStatus = cast(ResponseStatus, resolved_status) if isinstance(resolved_status, str) else "completed"
 
         # Always register in runtime state so cancel/GET return correct status codes.
         replay_subject: _ResponseEventSubject | None = None
@@ -1081,7 +1084,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         execution = ResponseExecution(
             response_id=ctx.response_id,
             mode_flags=ResponseModeFlags(stream=True, store=ctx.store, background=ctx.background),
-            status=status,
+            status=final_status,
             subject=replay_subject,
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
@@ -1353,7 +1356,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             conversation_id=ctx.conversation_id,
         )
         resolved_status = response_payload.get("status")
-        status = resolved_status if isinstance(resolved_status, str) else "completed"
+        status = cast(ResponseStatus, resolved_status) if isinstance(resolved_status, str) else "completed"
 
         record = ResponseExecution(
             response_id=ctx.response_id,
@@ -1437,6 +1440,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # runs to completion; catching CancelledError prevents the Task from being
         # marked as cancelled, so _refresh_background_status reads the real status.
         async def _shielded_runner() -> None:
+            assert ctx.context is not None
             try:
                 with anyio.CancelScope(shield=True):
                     await _run_background_non_stream(

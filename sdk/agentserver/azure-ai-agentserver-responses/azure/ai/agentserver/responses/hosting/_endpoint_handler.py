@@ -20,7 +20,7 @@ from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.core import end_span, flush_spans, trace_stream
 from azure.ai.agentserver.responses.models._generated import AgentReference
-from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse
+from azure.ai.agentserver.responses.models._generated import CreateResponse
 
 from .._options import ResponsesServerOptions
 from .._response_context import IsolationContext, ResponseContext
@@ -84,7 +84,7 @@ _ATTR_ERROR_CODE = "azure.ai.agentserver.responses.error.code"
 _ATTR_ERROR_MESSAGE = "azure.ai.agentserver.responses.error.message"
 
 
-def _classify_error_code(exc: Exception) -> str:
+def _classify_error_code(exc: BaseException) -> str:
     """Return an error code string for an exception, matching API error classification."""
     if isinstance(exc, RequestValidationError):
         return exc.code
@@ -948,7 +948,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return _not_found(response_id, {})
 
         ordered_items = items if order == "asc" else list(reversed(items))
-        scoped_items = _apply_item_cursors(ordered_items, after=after, before=before)
+        ordered_dicts: list[dict[str, Any]] = [item.as_dict() for item in ordered_items]
+        scoped_items = _apply_item_cursors(ordered_dicts, after=after, before=before)
 
         page = scoped_items[:limit]
         has_more = len(scoped_items) > limit
@@ -956,7 +957,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         first_id = _extract_item_id(page[0]) if page else None
         last_id = _extract_item_id(page[-1]) if page else None
 
-        page_data = [item.as_dict() if hasattr(item, "as_dict") else item for item in page]
+        page_data = page
 
         return JSONResponse(
             {
