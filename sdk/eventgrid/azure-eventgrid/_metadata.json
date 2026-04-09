@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2024-01-01",
+  "apiVersions": {
+    "Microsoft.EventGrid.SystemEvents": "2024-01-01"
+  },
+  "commit": "964e827a2beb3838001819532f1bafac405c520f",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/eventgrid/data-plane/EventGridSystemEvents",
+  "emitterVersion": "0.61.3"
+}
