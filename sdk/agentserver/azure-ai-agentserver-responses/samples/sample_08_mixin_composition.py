@@ -10,10 +10,24 @@ Endpoints exposed:
     POST  /responses                  — Responses protocol
     GET   /readiness                  — Health probe (from core)
 
-Pattern: cooperative inheritance, dual-protocol registration.
+Usage::
 
-Run:
-    python samples/scenarios/sample_08_mixin_composition.py
+    # Start the dual-protocol server
+    python sample_08_mixin_composition.py
+
+    # Hit the Invocation endpoint
+    curl -X POST http://localhost:8088/invocations \
+        -H "Content-Type: application/json" \
+        -d '{"message": "Hello!"}'
+    # -> {"invocation_id": "...", "status": "completed",
+    #     "output": "[Invocation] Echo: Hello!"}
+
+    # Hit the Responses endpoint
+    curl -X POST http://localhost:8088/responses \
+        -H "Content-Type: application/json" \
+        -d '{"model": "test", "input": "Hello!"}'
+    # -> {"output": [{"type": "message", "content":
+    #     [{"type": "output_text", "text": "[Response] Echo: Hello!"}]}]}
 """
 
 import asyncio
@@ -62,7 +76,7 @@ def handle_response(request: CreateResponse, context: ResponseContext, cancellat
 
 
 def main() -> None:
-    app.run(host="127.0.0.1", port=5207)
+    app.run()
 
 
 if __name__ == "__main__":

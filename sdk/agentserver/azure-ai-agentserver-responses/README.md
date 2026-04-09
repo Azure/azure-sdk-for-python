@@ -1,12 +1,8 @@
-# Azure AI Agent Server Responses API for Python
+# Azure AI Agent Server Responses client library for Python
 
-A Python SDK for building [Starlette](https://www.starlette.io/) servers that implement the [Azure AI Responses API](https://learn.microsoft.com/azure/ai-services). Install the package, implement one handler, and the SDK handles routing, streaming (SSE), background execution, cancellation, state management, and response lifecycle.
+The `azure-ai-agentserver-responses` package provides the Responses protocol endpoints for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) host framework and adds the full response lifecycle: create, stream (SSE), cancel, delete, replay, and input-item listing.
 
 ## Getting started
-
-### Prerequisites
-
-- Python 3.10+
 
 ### Install the package
 
@@ -14,115 +10,95 @@ A Python SDK for building [Starlette](https://www.starlette.io/) servers that im
 pip install azure-ai-agentserver-responses
 ```
 
-### Implement a handler and register routes
+This automatically installs `azure-ai-agentserver-core` as a dependency.
 
-```python
-import asyncio
+### Prerequisites
 
-from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponseContext, CreateResponse, ResponseEventStream
-
-
-app = ResponsesAgentServerHost()
-
-
-@app.create_handler
-def my_handler(
-    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
-):
-    stream = ResponseEventStream(
-        response_id=context.response_id,
-        model=request.model,
-    )
-
-    yield stream.emit_created()
-    yield stream.emit_in_progress()
-
-    message = stream.add_output_item_message()
-    yield message.emit_added()
-
-    text = message.add_text_content()
-    yield text.emit_added()
-    yield text.emit_delta("Hello from the Python GettingStarted sample!")
-    yield text.emit_done("Hello from the Python GettingStarted sample!")
-    yield message.emit_content_done(text)
-
-    yield message.emit_done()
-
-    yield stream.emit_completed()
-
-
-app.run(host="127.0.0.1", port=5100)
-```
-
-Run:
-
-```bash
-python app.py
-```
-
-This gives you five endpoints:
-
-| Method | Route                                    | Description                             |
-|--------|------------------------------------------|-----------------------------------------|
-| POST   | `/responses`                             | Create a new response                   |
-| GET    | `/responses/{response_id}`               | Get response state (JSON or SSE replay) |
-| POST   | `/responses/{response_id}/cancel`        | Cancel an in-flight response            |
-| DELETE | `/responses/{response_id}`               | Delete a stored response                |
-| GET    | `/responses/{response_id}/input_items`   | List input items (paginated)            |
+- Python 3.10 or later
 
 ## Key concepts
 
-### ResponseEventStream
+### ResponsesAgentServerHost
 
-`ResponseEventStream` manages `sequence_number`, `output_index`, `content_index`, `item_id`, and the full `Response` lifecycle automatically — each `yield` maps 1:1 to an SSE event with zero bookkeeping. The handler interacts only through `context.response_id` and the builder API.
-
-It provides a scoped, hierarchical builder that mirrors the SSE event nesting. Each scope manages its own bookkeeping — you never touch `sequence_number`, `output_index`, `content_index`, or `item_id`.
-
-```
-ResponseEventStream                          → response.created / in_progress / completed / failed / incomplete
-  ├─ OutputItemMessageBuilder                → output_item.added / done
-  │    ├─ TextContentBuilder                 → content_part.added / text.delta / text.done / content_part.done
-  │    │    └─ emit_annotation_added         → output_text.annotation.added
-  │    └─ RefusalContentBuilder              → content_part.added / refusal.delta / refusal.done / content_part.done
-  ├─ OutputItemFunctionCallBuilder           → output_item.added / function_call_arguments.delta / done / output_item.done
-  ├─ OutputItemReasoningItemBuilder          → output_item.added / done
-  │    └─ ReasoningSummaryPartBuilder        → summary_part.added / text.delta / text.done / summary_part.done
-  ├─ OutputItemFileSearchCallBuilder         → output_item.added / in_progress / searching / completed / done
-  ├─ OutputItemWebSearchCallBuilder          → output_item.added / in_progress / searching / completed / done
-  ├─ OutputItemCodeInterpreterCallBuilder    → output_item.added / in_progress / code.delta / code.done / completed / done
-  ├─ OutputItemImageGenCallBuilder           → output_item.added / in_progress / partial_image / completed / done
-  ├─ OutputItemMcpCallBuilder                → output_item.added / in_progress / args.delta / args.done / completed|failed / done
-  ├─ OutputItemMcpListToolsBuilder           → output_item.added / in_progress / completed|failed / done
-  └─ OutputItemCustomToolCallBuilder         → output_item.added / input.delta / input.done / done
-```
-
-**Naming convention:** `add_output_item_*()` methods create child scopes (return builders). `emit_*()` methods produce SSE events (return event dicts).
-
-### Handler contract
-
-Your handler must implement with this signature:
+`ResponsesAgentServerHost` is an `AgentServerHost` subclass that adds Responses protocol endpoints. Register your handler with the `@app.create_handler` decorator:
 
 ```python
 @app.create_handler
 def my_handler(
     request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
 ):
+    ...
 ```
 
-The `ResponseContext` provides:
+### Protocol endpoints
+
+| Method | Route | Description |
+|---|---|---|
+| `POST` | `/responses` | Create a new response |
+| `GET` | `/responses/{response_id}` | Get response state (JSON or SSE replay via `?stream=true`) |
+| `POST` | `/responses/{response_id}/cancel` | Cancel an in-flight response |
+| `DELETE` | `/responses/{response_id}` | Delete a stored response |
+| `GET` | `/responses/{response_id}/input_items` | List input items (paginated) |
+
+### TextResponse
+
+The simplest way to return text. Handles the full SSE lifecycle automatically (`response.created` → `response.in_progress` → message/content events → `response.completed`):
+
+```python
+return TextResponse(context, request, create_text=lambda: "Hello!")
+```
+
+For streaming, provide `create_text_stream` instead:
+
+```python
+async def tokens():
+    for t in ["Hello", ", ", "world!"]:
+        yield t
+
+return TextResponse(context, request, create_text_stream=tokens)
+```
+
+### ResponseEventStream
+
+Use `ResponseEventStream` when you need function calls, reasoning items, multiple output types, or fine-grained event control. Each `yield` maps 1:1 to an SSE event with zero bookkeeping:
+
+```python
+stream = ResponseEventStream(response_id=context.response_id, request=request)
+yield stream.emit_created()
+yield stream.emit_in_progress()
+yield from stream.output_item_message("Hello, world!")
+yield stream.emit_completed()
+```
+
+Drop down to the builder API for full control over individual events:
+
+```python
+message = stream.add_output_item_message()
+yield message.emit_added()
+text = message.add_text_content()
+yield text.emit_added()
+yield text.emit_delta("Hello!")
+yield text.emit_done()
+yield message.emit_content_done(text)
+yield message.emit_done()
+```
+
+### ResponseContext
+
+The `ResponseContext` provides request-scoped state:
 
 | Property / Method | Description |
 |---|---|
 | `response_id` | Unique ID for this response |
 | `is_shutdown_requested` | Whether the server is draining |
-| `raw_body` | Raw request body (if needed) |
-| `isolation` | `IsolationContext` with `user_key` and `chat_key` for multi-tenant state partitioning (`None` when the header was not sent; empty string when sent with no value) |
+| `raw_body` | Raw request body bytes |
+| `isolation` | `IsolationContext` with `user_key` and `chat_key` for multi-tenant state partitioning |
 | `client_headers` | Dictionary of `x-client-*` headers forwarded from the platform |
 | `query_parameters` | Dictionary of query string parameters |
 | `get_input_items()` | Load input items for this request |
 | `get_history()` | Load conversation history items |
 
-### Execution modes
+### Streaming and background modes
 
 The SDK automatically handles all combinations of `stream` and `background` flags:
 
@@ -131,16 +107,67 @@ The SDK automatically handles all combinations of `stream` and `background` flag
 - **Background** — Return immediately, handler runs in the background
 - **Streaming + Background** — SSE while connected, handler continues after disconnect
 
-### Features
+### Response lifecycle
 
-- **SSE keep-alive** — Automatic keep-alive comments to prevent proxy/load-balancer timeouts
-- **Event stream replay** — SSE replay for previously streamed responses via `?stream=true`
-- **Pluggable state provider** — `ResponseProviderProtocol` abstracts state persistence; default `InMemoryResponseProvider` included, override for multi-instance deployments
-- **Cancellation** — Cancel endpoint triggers cooperative cancellation via `asyncio.Event`
-- **Graceful shutdown** — Handlers distinguish shutdown from cancel via `context.is_shutdown_requested`. Shutdown-terminated responses are marked `failed` for client retry
-- **Content negotiation** — GET endpoint returns JSON snapshot by default, or SSE replay when `?stream=true` query parameter is specified
-- **Distributed tracing** — Built-in observability hooks for OpenTelemetry integration
-- **Error handling** — Global exception handling maps errors to appropriate HTTP responses
+The library orchestrates the complete response lifecycle: `created` → `in_progress` → `completed` (or `failed` / `cancelled`). Cancellation, error handling, and terminal event guarantees are all managed automatically.
+
+For detailed handler implementation guidance, see [docs/handler-implementation-guide.md](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md).
+
+## Examples
+
+### Echo handler
+
+```python
+import asyncio
+
+from azure.ai.agentserver.responses import (
+    CreateResponse,
+    ResponseContext,
+    ResponsesAgentServerHost,
+    TextResponse,
+    get_input_text,
+)
+
+app = ResponsesAgentServerHost()
+
+
+@app.create_handler
+def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    return TextResponse(context, request, create_text=lambda: f"Echo: {get_input_text(request)}")
+
+
+app.run()
+```
+
+### Function calling
+
+```python
+import json
+
+from azure.ai.agentserver.responses import ResponseEventStream
+
+stream = ResponseEventStream(response_id=context.response_id, request=request)
+yield stream.emit_created()
+yield stream.emit_in_progress()
+
+arguments = json.dumps({"location": "Seattle", "unit": "fahrenheit"})
+yield from stream.output_item_function_call("get_weather", "call_001", arguments)
+
+yield stream.emit_completed()
+```
+
+### Reasoning + text message
+
+```python
+stream = ResponseEventStream(response_id=context.response_id, request=request)
+yield stream.emit_created()
+yield stream.emit_in_progress()
+
+yield from stream.output_item_reasoning_item("Let me think about this...")
+yield from stream.output_item_message("Here is my answer.")
+
+yield stream.emit_completed()
+```
 
 ### Configuration
 
@@ -151,170 +178,55 @@ options = ResponsesServerOptions(
     default_model="gpt-4o",
     sse_keep_alive_interval_seconds=15,
     shutdown_grace_period_seconds=10,
-    additional_server_identity="my-server/1.0",
 )
 
 app = ResponsesAgentServerHost(options=options)
 ```
 
-Options can also be loaded from environment variables:
-
-```python
-options = ResponsesServerOptions.from_env()
-```
-
-#### Route prefix
-
-```python
-# Mount at a custom prefix
-app = ResponsesAgentServerHost(prefix="/openai/v1")
-# Routes become: /openai/v1/responses, /openai/v1/responses/{response_id}, etc.
-```
-
-#### Custom Response Provider
-
-For multi-instance deployments, implement `ResponseProviderProtocol`:
-
-```python
-from azure.ai.agentserver.responses import ResponseProviderProtocol
-
-class MyDurableProvider:
-    """Implements ResponseProviderProtocol with database-backed storage."""
-
-    async def create_response(self, response, input_items, history_item_ids):
-        ...
-
-    async def get_response(self, response_id):
-        ...
-
-    async def update_response(self, response):
-        ...
-
-    async def delete_response(self, response_id):
-        ...
-
-    async def get_input_items(self, response_id, limit=20, ascending=False, after=None, before=None):
-        ...
-
-    async def get_items(self, item_ids):
-        ...
-
-    async def get_history_item_ids(self, previous_response_id, conversation_id, limit):
-        ...
-```
-
-## Examples
-
-### Function call response
-
-```python
-stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-yield stream.emit_created()
-yield stream.emit_in_progress()
-
-fn_call = stream.add_output_item_function_call("get_weather", "call_abc123")
-yield fn_call.emit_added()
-yield fn_call.emit_arguments_delta('{"location":')
-yield fn_call.emit_arguments_delta('"San Francisco"}')
-yield fn_call.emit_arguments_done('{"location":"San Francisco"}')
-yield fn_call.emit_done()
-
-yield stream.emit_completed()
-```
-
-### Reasoning + text message (multiple output items)
-
-Output indices auto-increment across `add_output_item_*()` calls:
-
-```python
-stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-yield stream.emit_created()
-yield stream.emit_in_progress()
-
-# output_index=0: reasoning item
-reasoning = stream.add_output_item_reasoning_item()
-yield reasoning.emit_added()
-summary = reasoning.add_summary_part()
-yield summary.emit_added()
-yield summary.emit_text_delta("Let me think about this...")
-yield summary.emit_text_done("Let me think about this...")
-yield summary.emit_done()
-yield reasoning.emit_summary_part_done(summary)
-yield reasoning.emit_done()
-
-# output_index=1: message item (auto-incremented)
-message = stream.add_output_item_message()
-yield message.emit_added()
-text = message.add_text_content()
-yield text.emit_added()
-yield text.emit_delta("Here is my answer.")
-yield text.emit_done("Here is my answer.")
-yield message.emit_content_done(text)
-yield message.emit_done()
-
-yield stream.emit_completed()
-```
-
-
-### More samples
-
-The `samples/` directory contains runnable Starlette servers demonstrating the SDK:
-
-| Sample | Description |
-|--------|-------------|
-| GettingStarted | Minimal echo handler — text message in default, streaming, and background modes |
-| FunctionCalling | Two-turn conversation — server emits a function call, client submits output, server returns result |
-| MultiOutput | Multiple output items — reasoning followed by a text message |
-| ConversationHistory | Multi-turn with `previous_response_id` — demonstrates `get_history()` and conversation chaining |
-
-Each sample includes:
-- `app.py` — the sample Starlette server
-- `test.py` — a `requests`-based client that exercises the scenario
-
 ## Troubleshooting
 
-### General
+### Common errors
 
-Run your server locally first to verify handler behaviour before deploying.
-
-If the server works locally but fails in the cloud, check your logs in the Application Insights instance connected to your Azure AI Foundry Project.
-
+- **400 Bad Request**: The request body failed validation. Check that optional fields such as `model` (when provided) are valid and that `input` items are well-formed.
+- **404 Not Found**: The response ID does not exist or has expired past the configured TTL.
+- **400 Bad Request** (cancel): The response was not created with `background=true`, or it has already reached a terminal state.
 
 ### Reporting issues
 
-To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues). Mention the package name "azure-ai-agentserver-responses" in the title or content.
+To report an issue with the client library, or request additional features, please open a GitHub issue [here](https://github.com/Azure/azure-sdk-for-python/issues).
 
 ## Next steps
 
-Please visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples) folder for runnable examples covering common scenarios.
+Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples) folder for complete working examples:
 
-### Project structure
+| Sample | Description |
+|---|---|
+| [Getting Started](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_01_getting_started.py) | Minimal echo handler using `TextResponse` |
+| [Streaming Text Deltas](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_02_streaming_text_deltas.py) | Token-by-token streaming with `configure` callback |
+| [Full Control](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_03_full_control.py) | Convenience, streaming, and builder — three ways to emit output |
+| [Function Calling](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_04_function_calling.py) | Two-turn function calling with convenience and builder variants |
+| [Conversation History](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_05_conversation_history.py) | Multi-turn study tutor with `context.get_history()` |
+| [Multi-Output](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_06_multi_output.py) | Reasoning + message in a single response |
+| [Streaming Upstream](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_10_streaming_upstream.py) | Forward to upstream streaming LLM via `openai` SDK |
+| [Non-Streaming Upstream](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_11_non_streaming_upstream.py) | Forward to upstream non-streaming LLM, emit items via builders |
 
-```
-azure/ai/agentserver/responses/
-  ├─ hosting/              Starlette routing, background execution, validation, observability
-  ├─ models/               Domain models (runtime state, errors, generated contracts)
-  │    └─ _generated/      TypeSpec-generated model classes
-  ├─ store/                Persistence abstraction and in-memory provider
-  ├─ streaming/            Event stream builders, SSE encoding, lifecycle state machine
-  │    └─ _builders/       Scoped builder classes (message, function call, reasoning, etc.)
-  ├─ _response_context.py  ResponseContext and IsolationContext
-  ├─ _options.py           Server configuration (ResponsesServerOptions)
-  └─ _id_generator.py      Deterministic ID generation
-samples/                   Runnable Starlette sample servers
-tests/                     Test suite (contract, unit, integration)
-type_spec/                 TypeSpec definitions and pipeline
-```
+- [Handler implementation guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md) — Detailed reference for building handlers
 
 ## Contributing
 
-This project welcomes contributions and suggestions. Most contributions require you to agree to a Contributor License Agreement (CLA) declaring that you have the right to, and actually do, grant us the rights to use your contribution. For details, visit [https://cla.microsoft.com](https://cla.microsoft.com/).
+This project welcomes contributions and suggestions. Most contributions require
+you to agree to a Contributor License Agreement (CLA) declaring that you have
+the right to, and actually do, grant us the rights to use your contribution.
+For details, visit https://cla.microsoft.com.
 
-When you submit a pull request, a CLA-bot will automatically determine whether you need to provide a CLA and decorate the PR appropriately (e.g., label, comment). Simply follow the instructions provided by the bot. You will only need to do this once across all repos using our CLA.
+When you submit a pull request, a CLA-bot will automatically determine whether
+you need to provide a CLA and decorate the PR appropriately (e.g., label,
+comment). Simply follow the instructions provided by the bot. You will only
+need to do this once across all repos using our CLA.
 
-This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct]. For more information, see the [Code of Conduct FAQ][code_of_conduct_faq] or contact [opencode@microsoft.com][email_opencode] with any additional questions or comments.
+This project has adopted the
+[Microsoft Open Source Code of Conduct][code_of_conduct]. For more information,
+see the Code of Conduct FAQ or contact opencode@microsoft.com with any
+additional questions or comments.
 
-<!-- LINKS -->
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
-[code_of_conduct_faq]: https://opensource.microsoft.com/codeofconduct/faq/
-[email_opencode]: mailto:opencode@microsoft.com

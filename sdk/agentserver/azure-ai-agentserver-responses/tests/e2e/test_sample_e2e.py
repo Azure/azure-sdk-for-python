@@ -142,7 +142,7 @@ def test_sample1_echo_handler_structured_input() -> None:
 
 
 def _sample2_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    """Streaming handler: emits text in token-by-token deltas using TextResponse."""
+    """Streaming handler: emits text in token-by-token deltas using TextResponse with configure."""
     user_text = get_input_text(request)
     tokens = user_text.split() if user_text else ["Hello", "World"]
 
@@ -153,6 +153,7 @@ def _sample2_handler(request: CreateResponse, context: ResponseContext, cancella
     return TextResponse(
         context,
         request,
+        configure=lambda response: setattr(response, "temperature", 0.7),
         create_text_stream=_stream,
     )
 
@@ -186,28 +187,19 @@ def test_sample2_streaming_handler_non_streaming_returns_full_text() -> None:
 
 
 def _sample3_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    """Full lifecycle handler: emits all standard lifecycle event types."""
+    """Convenience handler: emits a greeting using output_item_message()."""
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
 
-    async def _events():
-        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-        yield stream.emit_created()
+    stream.response.temperature = 0.7
+    stream.response.max_output_tokens = 1024
 
-        msg = stream.add_output_item_message()
-        yield msg.emit_added()
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
 
-        text_content = msg.add_text_content()
-        yield text_content.emit_added()
+    user_text = get_input_text(request)
+    yield from stream.output_item_message(f"Hello, {user_text}! Welcome.")
 
-        user_text = get_input_text(request)
-        greeting = f"Hello, {user_text}! Welcome."
-        yield text_content.emit_delta(greeting)
-        yield text_content.emit_done()
-        yield msg.emit_content_done(text_content)
-        yield msg.emit_done()
-
-        yield stream.emit_completed()
-
-    return _events()
+    yield stream.emit_completed()
 
 
 def test_sample3_full_lifecycle_events() -> None:
@@ -247,44 +239,28 @@ def test_sample3_greeting_includes_input() -> None:
 
 
 def _sample4_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    """Function-calling handler: emits get_weather function call on first turn,
-    and a text response on second turn when function_call_output is present."""
+    """Function-calling handler: uses convenience generators for both turns."""
+    items = get_input_expanded(request)
+    has_fn_output = any(isinstance(item, FunctionCallOutputItemParam) for item in items)
 
-    async def _events():
-        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-        yield stream.emit_created()
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
 
-        items = get_input_expanded(request)
-        has_fn_output = any(isinstance(item, FunctionCallOutputItemParam) for item in items)
+    if has_fn_output:
+        # Second turn: extract function output and echo it as text
+        fn_output_text = ""
+        for item in items:
+            if isinstance(item, FunctionCallOutputItemParam):
+                fn_output_text = item.output or ""
+                break
+        yield from stream.output_item_message(f"The weather is: {fn_output_text}")
+    else:
+        # First turn: emit a function call for get_weather
+        args = json.dumps({"location": get_input_text(request)})
+        yield from stream.output_item_function_call("get_weather", "call_001", args)
 
-        if has_fn_output:
-            # Second turn: extract function output and echo it as text
-            fn_output_text = ""
-            for item in items:
-                if isinstance(item, FunctionCallOutputItemParam):
-                    fn_output_text = item.output or ""
-                    break
-
-            msg = stream.add_output_item_message()
-            yield msg.emit_added()
-            text_content = msg.add_text_content()
-            yield text_content.emit_added()
-            yield text_content.emit_delta(f"The weather is: {fn_output_text}")
-            yield text_content.emit_done()
-            yield msg.emit_content_done(text_content)
-            yield msg.emit_done()
-        else:
-            # First turn: emit a function call for get_weather
-            fc = stream.add_output_item_function_call(name="get_weather", call_id="call_001")
-            yield fc.emit_added()
-            args = json.dumps({"location": get_input_text(request)})
-            yield fc.emit_arguments_delta(args)
-            yield fc.emit_arguments_done(args)
-            yield fc.emit_done()
-
-        yield stream.emit_completed()
-
-    return _events()
+    yield stream.emit_completed()
 
 
 def test_sample4_turn1_emits_function_call() -> None:
@@ -332,13 +308,13 @@ def test_sample4_turn2_returns_weather_text() -> None:
 
 
 def _sample5_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    """Conversation history handler using TextResponse: welcome on first turn,
+    """Study tutor handler using TextResponse: welcome on first turn,
     references previous_response_id on second turn."""
     has_previous = request.previous_response_id is not None and str(request.previous_response_id).strip() != ""
     if has_previous:
-        text = f"Following up on {request.previous_response_id}: {get_input_text(request)}"
+        text = f"Building on our previous discussion ({request.previous_response_id}): {get_input_text(request)}"
     else:
-        text = f"Welcome! You said: {get_input_text(request)}"
+        text = f"Welcome! I'm your study tutor. You asked: {get_input_text(request)}"
 
     return TextResponse(context, request, create_text=lambda: text)
 
@@ -352,6 +328,7 @@ def test_sample5_first_turn_welcome() -> None:
     assert body["status"] == "completed"
     text_parts = [p for p in body["output"][0]["content"] if p.get("type") == "output_text"]
     assert "Welcome" in text_parts[0]["text"]
+    assert "study tutor" in text_parts[0]["text"]
     assert "Hi there" in text_parts[0]["text"]
 
 
@@ -373,7 +350,7 @@ def test_sample5_second_turn_references_history() -> None:
     assert second_body["status"] == "completed"
     text_parts = [p for p in second_body["output"][0]["content"] if p.get("type") == "output_text"]
     text = text_parts[0]["text"]
-    assert "Following up on" in text
+    assert "Building on our previous discussion" in text
     assert first_id in text
 
 
@@ -383,36 +360,21 @@ def test_sample5_second_turn_references_history() -> None:
 
 
 def _sample6_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    """Multi-output handler: emits a reasoning item then a message item."""
+    """Math solver handler: emits a reasoning item then a message item using convenience generators."""
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    question = get_input_text(request) or "What is 6 times 7?"
 
-    async def _events():
-        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-        yield stream.emit_created()
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
 
-        # Output item 1: reasoning
-        reasoning = stream.add_output_item_reasoning_item()
-        yield reasoning.emit_added()
-        summary = reasoning.add_summary_part()
-        yield summary.emit_added()
-        yield summary.emit_text_delta("Let me think about this...")
-        yield summary.emit_text_done("Let me think about this...")
-        reasoning.emit_summary_part_done(summary)
-        yield reasoning.emit_done()
+    # Output item 0: reasoning
+    thought = f'The user asked: "{question}". I need to compute the result.'
+    yield from stream.output_item_reasoning_item(thought)
 
-        # Output item 2: message
-        msg = stream.add_output_item_message()
-        yield msg.emit_added()
-        text_content = msg.add_text_content()
-        yield text_content.emit_added()
-        user_text = get_input_text(request)
-        yield text_content.emit_delta(f"After reasoning: {user_text}")
-        yield text_content.emit_done()
-        yield msg.emit_content_done(text_content)
-        yield msg.emit_done()
+    # Output item 1: message
+    yield from stream.output_item_message(f"After reasoning: {question}")
 
-        yield stream.emit_completed()
-
-    return _events()
+    yield stream.emit_completed()
 
 
 def test_sample6_streaming_emits_reasoning_and_message() -> None:

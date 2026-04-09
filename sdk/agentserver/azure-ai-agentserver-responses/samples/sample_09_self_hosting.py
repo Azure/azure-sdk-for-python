@@ -9,10 +9,17 @@ URL prefix (e.g. ``/api/responses``).
 Because ``ResponsesAgentServerHost`` **is** a Starlette application,
 it can be used as a sub-application via ``starlette.routing.Mount``.
 
-Pattern: Starlette Mount, sub-application composition, TextResponse.
+Usage::
 
-Run:
-    python samples/scenarios/sample_09_self_hosting.py
+    # Start the server
+    python sample_09_self_hosting.py
+
+    # Responses are mounted under /api
+    curl -X POST http://localhost:8000/api/responses \
+        -H "Content-Type: application/json" \
+        -d '{"model": "test", "input": "Hello!"}'
+    # -> {"output": [{"type": "message", "content":
+    #     [{"type": "output_text", "text": "Self-hosted echo: Hello!"}]}]}
 """
 
 import asyncio
@@ -51,7 +58,7 @@ app = Starlette(routes=[
 
 def main() -> None:
     import uvicorn
-    uvicorn.run(app, host="127.0.0.1", port=5208)
+    uvicorn.run(app)
 
 
 if __name__ == "__main__":

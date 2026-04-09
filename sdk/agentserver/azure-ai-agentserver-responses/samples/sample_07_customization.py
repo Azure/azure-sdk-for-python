@@ -10,10 +10,24 @@ Shows how to configure the server with custom runtime options:
   - A handler that relies on ``request.model``, which is automatically
     filled from ``default_model`` when the client omits it.
 
-Pattern: TextResponse with custom options, default model, debug logging.
+Usage::
 
-Run:
-    python samples/scenarios/sample_07_customization.py
+    # Start the server (with DEBUG logging)
+    python sample_07_customization.py
+
+    # Send a request (model defaults to gpt-4o via default_model)
+    curl -X POST http://localhost:8088/responses \
+        -H "Content-Type: application/json" \
+        -d '{"input": "Hello!"}'
+    # -> {"output": [{"type": "message", "content":
+    #     [{"type": "output_text", "text": "[model=gpt-4o] Echo: Hello!"}]}]}
+
+    # Override the model explicitly
+    curl -X POST http://localhost:8088/responses \
+        -H "Content-Type: application/json" \
+        -d '{"model": "custom", "input": "Hello!"}'
+    # -> {"output": [{"type": "message", "content":
+    #     [{"type": "output_text", "text": "[model=custom] Echo: Hello!"}]}]}
 """
 
 import asyncio
@@ -47,7 +61,7 @@ def handler(request: CreateResponse, context: ResponseContext, cancellation_sign
 
 
 def main() -> None:
-    app.run(host="127.0.0.1", port=5206)
+    app.run()
 
 
 if __name__ == "__main__":

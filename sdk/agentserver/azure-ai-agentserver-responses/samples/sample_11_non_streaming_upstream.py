@@ -14,11 +14,32 @@ This pattern is useful when your handler needs to inspect or transform the
 full response before streaming it to the client — for example, filtering
 output items, injecting additional context, or calling multiple upstreams.
 
-Pattern: ResponseEventStream, upstream non-streaming, output item builders.
+Usage::
 
-Run:
-    UPSTREAM_ENDPOINT=http://localhost:5211 OPENAI_API_KEY=your-key \\
-        python samples/scenarios/sample_11_non_streaming_upstream.py
+    # Start the server (set upstream endpoint and API key)
+    UPSTREAM_ENDPOINT=http://localhost:5211 OPENAI_API_KEY=your-key \
+        python sample_11_non_streaming_upstream.py
+
+    # Send a request
+    curl -X POST http://localhost:8088/responses \
+        -H "Content-Type: application/json" \
+        -d '{"model": "gpt-4o-mini", "input": "Say hello!"}'
+    # -> {"output": [{"type": "message", "content":
+    #     [{"type": "output_text", "text": "Hello! ..."}]}]}
+
+    # Stream the response
+    curl -N -X POST http://localhost:8088/responses \
+        -H "Content-Type: application/json" \
+        -d '{"model": "gpt-4o-mini", "input": "Say hello!", "stream": true}'
+    # -> event: response.created            data: {"response": {"status": "in_progress", ...}}
+    # -> event: response.in_progress        data: {"response": {"status": "in_progress", ...}}
+    # -> event: response.output_item.added  data: {"item": {"type": "message", ...}}
+    # -> event: response.content_part.added data: {"part": {"type": "output_text", ...}}
+    # -> event: response.output_text.delta  data: {"delta": "..."}
+    # -> event: response.output_text.done   data: {"text": "..."}
+    # -> event: response.content_part.done  data: {"part": {"type": "output_text", ...}}
+    # -> event: response.output_item.done   data: {"item": {"type": "message", ...}}
+    # -> event: response.completed          data: {"response": {"status": "completed", ...}}
 """
 
 import asyncio
@@ -92,7 +113,7 @@ async def handler(
 
 
 def main() -> None:
-    app.run(host="127.0.0.1", port=5210)
+    app.run()
 
 
 if __name__ == "__main__":

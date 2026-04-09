@@ -19,11 +19,25 @@ orchestration logic — filtering outputs, injecting items, calling multiple
 upstreams, or transforming content — between the upstream call and the
 ``yield``.
 
-Pattern: Raw events, upstream streaming via openai SDK.
+Usage::
 
-Run:
-    UPSTREAM_ENDPOINT=http://localhost:5211 OPENAI_API_KEY=your-key \\
-        python samples/scenarios/sample_10_streaming_upstream.py
+    # Start the server (set upstream endpoint and API key)
+    UPSTREAM_ENDPOINT=http://localhost:5211 OPENAI_API_KEY=your-key \
+        python sample_10_streaming_upstream.py
+
+    # Send a streaming request
+    curl -N -X POST http://localhost:8088/responses \
+        -H "Content-Type: application/json" \
+        -d '{"model": "gpt-4o-mini", "input": "Say hello!", "stream": true}'
+    # -> event: response.created            data: {"response": {"status": "in_progress", ...}}
+    # -> event: response.in_progress        data: {"response": {"status": "in_progress", ...}}
+    # -> event: response.output_item.added  data: {"item": {"type": "message", ...}}
+    # -> event: response.content_part.added data: {"part": {"type": "output_text", ...}}
+    # -> event: response.output_text.delta  data: {"delta": "..."}
+    # -> ...                                     (more deltas)
+    # -> event: response.output_text.done   data: {"text": "..."}
+    # -> event: response.output_item.done   data: {"item": {"type": "message", ...}}
+    # -> event: response.completed          data: {"response": {"status": "completed", ...}}
 """
 
 import asyncio
@@ -142,7 +156,7 @@ async def handler(
 
 
 def main() -> None:
-    app.run(host="127.0.0.1", port=5209)
+    app.run()
 
 
 if __name__ == "__main__":
