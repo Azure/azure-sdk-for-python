@@ -27,14 +27,13 @@ steps:
 
   - pwsh: |
       if ($env:PIP_INDEX_URL) {
+        Write-Host "Found pip index URL: $($env:PIP_INDEX_URL)"
         # UV_DEFAULT_INDEX is the canonical replacement for the deprecated UV_INDEX_URL (uv 0.4.23+).
         # PIP_INDEX_URL is set by PipAuthenticate@1 and contains embedded credentials, which uv
         # will use for Basic auth against the ADO feed (and its PyPI upstream) per astral-sh/uv#12651.
-        Write-Host "##vso[task.setvariable variable=UV_DEFAULT_INDEX]azure-sdk=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+        Write-Host "##vso[task.setvariable variable=UV_DEFAULT_INDEX]$($env:PIP_INDEX_URL)"
         # Disable keyring so uv uses the URL-embedded credentials directly.
         Write-Host "##vso[task.setvariable variable=UV_KEYRING_PROVIDER]disabled"
-        Write-Host "##vso[task.setvariable variable=UV_INDEX_AZURE_SDK_USERNAME]x"
-        Write-Host "##vso[task.setvariable variable=UV_INDEX_AZURE_SDK_PASSWORD]$(System.AccessToken)"
       } else {
         Write-Host "##[warning]PIP_INDEX_URL not set - uv will fall back to public PyPI."
       }
