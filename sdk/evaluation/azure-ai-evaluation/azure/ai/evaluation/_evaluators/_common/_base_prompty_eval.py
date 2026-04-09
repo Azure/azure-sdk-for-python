@@ -5,7 +5,6 @@
 import math
 import re
 import os
-from itertools import chain
 from typing import Dict, Optional, TypeVar, Union, List
 
 if os.getenv("AI_EVALS_USE_PF_PROMPTY", "false").lower() == "true":
@@ -357,9 +356,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                         continue
                     elif tool_name:
                         # This is a regular function tool from converter
-                        tool_definition_exists = any(
-                            tool.get("name") == tool_name for tool in needed_tool_definitions
-                        )
+                        tool_definition_exists = any(tool.get("name") == tool_name for tool in needed_tool_definitions)
                         if not tool_definition_exists:
                             raise EvaluationException(
                                 message=f"Tool definition for {tool_name} not found",
