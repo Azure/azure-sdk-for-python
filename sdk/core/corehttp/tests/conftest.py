@@ -23,7 +23,7 @@ from rest_client import MockRestClient
 
 
 def is_port_available(port_num):
-    req = urllib.request.Request("http://localhost:{}/health".format(port_num))
+    req = urllib.request.Request("http://127.0.0.1:{}/health".format(port_num))
     try:
         return urllib.request.urlopen(req).code != 200
     except Exception as e:

@@ -148,6 +148,8 @@ class apistub(Check):
                 cmds.extend(["--out-path", out_token_path])
             if cross_language_mapping_path:
                 cmds.extend(["--mapping-path", cross_language_mapping_path])
+            if getattr(args, "generate_md", False):
+                cmds.append("--skip-pylint")
 
             logger.info("Running apistub {}.".format(cmds))
 

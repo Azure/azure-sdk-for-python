@@ -1,2 +1,7 @@
 -e ../../../eng/tools/azure-sdk-tools
-python-dotenv
+pytest
+httpx
+pytest-asyncio
+opentelemetry-api>=1.40.0
+opentelemetry-sdk>=1.40.0
+azure-monitor-opentelemetry-exporter>=1.0.0b21

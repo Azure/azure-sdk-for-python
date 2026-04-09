@@ -18,7 +18,7 @@ Two classes are exported:
     most developers should use.
 """
 import asyncio
-import logging as _logging
+import logging
 import os
 import pathlib
 import time
@@ -38,7 +38,9 @@ except ImportError:
         ProviderConfig = dict
 
 from azure.ai.agentserver.core.constants import Constants
-from azure.ai.agentserver.core.logger import get_logger
+
+logger = logging.getLogger("azure.ai.agentserver")
+
 from azure.ai.agentserver.core.models import Response as OpenAIResponse
 from azure.ai.agentserver.core.models.projects import (
     ResponseCompletedEvent,
@@ -59,10 +61,9 @@ from ._copilot_request_converter import ConvertedAttachments, CopilotRequestConv
 from ._copilot_response_converter import CopilotResponseConverter, CopilotStreamingResponseConverter
 from ._tool_acl import ToolAcl
 
-logger = get_logger()
 
 # Suppress noisy OTel detach warnings from async generator context switches.
-_logging.getLogger("opentelemetry.context").setLevel(_logging.CRITICAL)
+logging.getLogger("opentelemetry.context").setLevel(logging.CRITICAL)
 
 _COGNITIVE_SERVICES_SCOPE = "https://cognitiveservices.azure.com/.default"
 
@@ -71,12 +72,12 @@ _COGNITIVE_SERVICES_SCOPE = "https://cognitiveservices.azure.com/.default"
 # Health-check log filter
 # ---------------------------------------------------------------------------
 
-class _HealthCheckFilter(_logging.Filter):
+class _HealthCheckFilter(logging.Filter):
     """Drop health-check access-log records so they don't pollute App Insights."""
 
     _PATHS = ("/liveness", "/readiness")
 
-    def filter(self, record: _logging.LogRecord) -> bool:  # noqa: A003
+    def filter(self, record: logging.LogRecord) -> bool:  # noqa: A003
         msg = record.getMessage()
         return not any(p in msg for p in self._PATHS)
 
@@ -209,7 +210,7 @@ class CopilotAdapter(FoundryCBAgent):
         # is cosmetic (health-check noise), not a functional issue.
         _hc_filter = _HealthCheckFilter()
         for _name in ("uvicorn", "uvicorn.access", "uvicorn.error"):
-            _logging.getLogger(_name).addFilter(_hc_filter)
+            logging.getLogger(_name).addFilter(_hc_filter)
 
         # Build default config (handles BYOK provider setup from env vars)
         default_config = _build_session_config()
@@ -931,6 +932,45 @@ class GitHubCopilotAdapter(CopilotAdapter):
                 logger.info("Bootstrapped session %s with %d chars of history", conversation_id, len(history))
 
         return await super().agent_run(context)
+
+    def get_model(self) -> Optional[str]:
+        """Get the currently configured model.
+
+        :return: The model name, or None if not configured.
+        """
+        return self._session_config.get("model")
+
+    def clear_default_model(self) -> None:
+        """Clear the default model from session config and cache.
+
+        For Foundry mode (when ``_foundry_resource_url`` is configured):
+        forces the adapter to re-discover and select a model on the next
+        ``initialize()`` call by clearing both the session config and the
+        model cache.
+
+        For non-Foundry mode: resets the model to the environment-based
+        default (from ``AZURE_AI_FOUNDRY_MODEL`` or ``COPILOT_MODEL`` env
+        vars, or ``gpt-5`` if neither is set).
+        """
+        resource_url = self._session_config.get("_foundry_resource_url")
+
+        if resource_url:
+            # Foundry mode: clear model to force re-discovery on next initialize()
+            self._session_config.pop("model", None)
+            try:
+                from ._model_cache import ModelCache
+                cache = ModelCache()
+                cache.invalidate(resource_url)
+                logger.info(f"Cleared model cache for resource: {resource_url}")
+            except Exception:
+                logger.warning("Failed to clear model cache", exc_info=True)
+        else:
+            # Non-Foundry mode: reset to environment-based default
+            # Reuse _build_session_config() to ensure consistent default-model resolution
+            default_config = _build_session_config()
+            default_model = default_config.get("model")
+            self._session_config["model"] = default_model
+            logger.info(f"Reset model to environment default: {default_model}")
 
 
 # ---------------------------------------------------------------------------
