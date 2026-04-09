@@ -48,14 +48,59 @@ When modifying any client or policy, **always update both sync and async version
 | Modify batch transaction logic | `_table_batch.py` |
 | Change authentication (SharedKey signing) | `_authentication.py` / `aio/_authentication_async.py` |
 | Change SAS token generation | `_table_shared_access_signature.py` |
+| Change base SAS/account SAS signing | `_shared_access_signature.py` |
 | Modify pipeline policies (retry, cosmos, etc.) | `_policies.py` / `aio/_policies_async.py` |
 | Modify public models (TableAccessPolicy, UpdateMode, etc.) | `_models.py` |
 | Modify error handling/mapping | `_error.py` |
 | Modify common utilities (URL parsing, connection strings) | `_common_conversion.py` / `_base_client.py` |
 | Change serialization of filters/queries | `_serialize.py` |
 | Add/remove public exports | `__init__.py` |
+| Change API version defaults or allowed versions | `_constants.py` + `_base_client.py` (`_SUPPORTED_API_VERSIONS`) |
 
 **All files listed above are relative to `sdk/tables/azure-data-tables/azure/data/tables/`.**
+
+## Adding a New Convenience Method
+
+When adding a new operation from the generated client to the convenience layer:
+
+### Step-by-step pattern
+
+1. **Find the generated operation** in `_generated/operations/_operations.py`. Note the method signature, parameter types, and return type.
+2. **Add the convenience wrapper** to the appropriate client file (`_table_service_client.py` or `_table_client.py`):
+   - Use `@distributed_trace` decorator (sync) or `@distributed_trace_async` (async).
+   - Extract `timeout` from `**kwargs` (pattern: `timeout = kwargs.pop("timeout", None)`).
+   - Construct any internal models (e.g., `KeyInfo`) from user-friendly parameters.
+   - Call `self._client.service.<operation>(...)` or `self._client.table.<operation>(...)`.
+   - Wrap in `try/except HttpResponseError` with `_process_table_error(error)` in the except block.
+3. **Mirror in async** — copy the method to the async client file with `async def` and `await`.
+4. **Export new types** from `__init__.py` — add any new public models to imports and `__all__`.
+5. **Update `_SUPPORTED_API_VERSIONS`** in `_base_client.py` if the new operation requires a newer API version.
+
+### Error handling pattern
+
+The convenience layer uses a consistent error handling pattern. The `except` branch must raise to satisfy pylint `inconsistent-return-statements`:
+
+```python
+@distributed_trace
+def my_operation(self, param: str, **kwargs: Any) -> ReturnType:
+    timeout = kwargs.pop("timeout", None)
+    try:
+        return self._client.service.my_operation(param=param, timeout=timeout, **kwargs)
+    except HttpResponseError as error:
+        _process_table_error(error)
+        raise  # unreachable but satisfies pylint
+```
+
+### Checklist for new operations
+
+- [ ] Sync method in `_table_service_client.py` or `_table_client.py`
+- [ ] Async mirror in `aio/_table_service_client_async.py` or `aio/_table_client_async.py`
+- [ ] New models exported from `__init__.py` + added to `__all__`
+- [ ] `_SUPPORTED_API_VERSIONS` updated if needed
+- [ ] Docstrings with `:param`, `:type`, `:return`, `:rtype`, `:raises`
+- [ ] Tests for both sync and async
+- [ ] Tests for both Storage and Cosmos backends (even if negative/rejection test)
+- [ ] `datetime` imports added if type annotations reference `datetime`
 
 ## The Two Clients
 
@@ -78,6 +123,7 @@ When modifying any client or policy, **always update both sync and async version
 - `query_tables(query_filter, **kwargs)` — OData-filtered table listing
 - `get_service_properties()` / `set_service_properties(...)` — **Storage-only** (see Dual Backend)
 - `get_service_stats()` — **Storage-only**
+- `get_user_delegation_key(key_info_start, key_info_expiry)` — **Storage-only**, requires AAD auth
 
 ### TableClient Operations
 
@@ -217,17 +263,168 @@ table_client.submit_transaction(operations)
 | `TokenCredential` | `azure.identity` (e.g., `DefaultAzureCredential`) | AAD/Entra ID bearer token authentication. |
 | Connection string | Built-in parsing | `TableClient.from_connection_string(conn_str, table_name)` |
 
+### SharedKey Authentication Format
+
+The Tables SDK uses **SharedKey** with a **SharedKeyLite-style string-to-sign**:
+
+```
+Authorization: SharedKey {account}:{signature}
+```
+
+The string-to-sign is:
+```
+x-ms-date-value\n/{account}/{resource}?comp={value}
+```
+
+This is NOT the full SharedKey format (which includes verb, content-md5, content-type, and all canonicalized headers). It's the Lite format but with the `SharedKey` authorization scheme name. This combination works for `x-ms-version` up to `2019-02-02`. **For `x-ms-version: 2025-07-05`, this combination breaks** — the service requires the auth scheme name to match the actual format used.
+
+> **CRITICAL:** If the `x-ms-version` header changes (e.g., due to a TypeSpec regeneration that bumps the default API version), SharedKey authentication WILL break unless the auth format is also updated. This is a common regression source when upgrading API versions.
+
 ### SAS Generation
 
-- `generate_table_sas(credential, table_name, ...)` — Generate a table-level SAS token.
+- `generate_table_sas(credential, table_name, ...)` — Generate a table-level SAS token. Also accepts `UserDelegationKey` for user delegation SAS.
 - `generate_account_sas(credential, ...)` — Generate an account-level SAS token.
 - Both in `_table_shared_access_signature.py`.
+
+### SAS Version vs Client API Version
+
+These are **independent concepts**:
+
+- **SAS `sv` parameter** — Controls how the service validates the SAS signature (string-to-sign format). Set by `X_MS_VERSION` in `_constants.py`.
+- **Client `x-ms-version` header** — Controls request/response wire format. Set by `api_version` from `_generated/_configuration.py`.
+
+A SAS token with `sv=2019-02-02` works correctly with a client sending `x-ms-version: 2025-07-05`. They do NOT need to match.
+
+> **IMPORTANT:** `X_MS_VERSION` in `_constants.py` controls the SAS signing version. `api_version` in `_generated/_configuration.py` controls the wire request version. Changing one does NOT require changing the other. Bumping `X_MS_VERSION` affects ALL SAS tokens and may break Cosmos compatibility (see below).
+
+### SAS String-to-Sign Differences by Version
+
+The string-to-sign format for table service SAS changes between API versions:
+
+| Field | `sv` < 2015-04-05 | `sv` >= 2015-04-05 | `sv` >= 2020-12-06 |
+|-------|-------------------|--------------------|--------------------|
+| signedPermissions | ✅ | ✅ | ✅ |
+| signedStart | ✅ | ✅ | ✅ |
+| signedExpiry | ✅ | ✅ | ✅ |
+| canonicalizedResource | ✅ | ✅ | ✅ |
+| signedIdentifier | ✅ | ✅ | ✅ |
+| signedIP | ❌ | ✅ | ✅ |
+| signedProtocol | ❌ | ✅ | ✅ |
+| signedVersion | ✅ | ✅ | ✅ |
+| signedEncryptionScope | ❌ | ❌ | ✅ (account SAS only) |
+| startPk/startRk/endPk/endRk | ✅ | ✅ | ✅ |
+
+### User Delegation SAS
+
+User delegation SAS uses a different string-to-sign that includes the delegation key fields. For Table Storage with `sv=2025-07-05`:
+
+```
+signedPermissions\n + signedStart\n + signedExpiry\n + canonicalizedResource\n +
+signedKeyObjectId\n + signedKeyTenantId\n + signedKeyStart\n + signedKeyExpiry\n +
+signedKeyService\n + signedKeyVersion\n +
+signedKeyDelegatedUserTenantId\n + signedDelegatedUserObjectId\n +
+signedIP\n + signedProtocol\n + signedVersion\n +
+startingPartitionKey\n + startingRowKey\n + endingPartitionKey\n + endingRowKey
+```
+
+The signature is signed with the delegation key's `value` (HMAC-SHA256, base64-decoded) instead of the account key.
 
 ### Credential Scope Differences (Storage vs Cosmos)
 
 - **Storage**: `https://storage.azure.com/.default`
 - **Cosmos DB**: `https://{account}.documents.azure.com/.default`
 - The auth policies select the correct scope based on the endpoint URL.
+
+### SAS Compatibility: Storage vs Cosmos
+
+> **CRITICAL:** Storage and Cosmos use **different SAS string-to-sign formats** for the same `sv` version. A SAS token that works on Storage may fail on Cosmos, and vice versa. When bumping the `X_MS_VERSION` (SAS version), always test against BOTH backends.
+
+Specifically for Cosmos DB:
+- Cosmos error messages include the **expected string-to-sign**, which you can compare directly against your computed value to debug mismatches.
+- The `signedEncryptionScope` field was added in `sv=2020-12-06` for account SAS, but Cosmos does NOT include it in its expected string-to-sign for older SAS versions. Including it when the version is < `2020-12-06` produces an invalid signature on Cosmos.
+
+## API Versioning
+
+### Version Constants
+
+| Constant | File | Purpose |
+|----------|------|---------|
+| `X_MS_VERSION` | `_constants.py` | Default SAS token `sv` version. Also used by `StorageHeadersPolicy` for the `x-ms-version` header on some requests. |
+| `DEFAULT_X_MS_VERSION` | `_constants.py` | Legacy default, used by `_shared_access_signature.py` base class. |
+| `api_version` | `_generated/_configuration.py` | Default `x-ms-version` header sent on wire requests. Set by the TypeSpec code generator. |
+| `_SUPPORTED_API_VERSIONS` | `_base_client.py` | Allowed list of API versions the convenience layer accepts. |
+
+### How API Version Flows Through the SDK
+
+1. User creates `TableServiceClient(url, credential)` — no explicit `api_version`.
+2. Generated `_configuration.py` sets `api_version` to its default (e.g., `2025-07-05`).
+3. `_base_client.py` line 167: `get_api_version(api_version, self._client._config.api_version)` — user's value (None) falls through to the generated default.
+4. `_base_client.py` line 294: Adds `"x-ms-version": self.api_version` as a custom header in the pipeline.
+5. Generated request builders also set `x-ms-version` from `api_version` in the request headers.
+6. `_authentication.py` computes SharedKey signature — the `x-ms-version` value is included in canonicalized headers and affects signature validation.
+
+### Adding a New API Version
+
+When a TypeSpec regeneration bumps the default API version:
+
+1. Add the new version to `_SUPPORTED_API_VERSIONS` in `_base_client.py`.
+2. **Do NOT automatically bump `X_MS_VERSION`** in `_constants.py` — this affects SAS generation and may break Cosmos compatibility.
+3. Verify SharedKey authentication still works with the new `x-ms-version` header value.
+4. Run the full test suite live against both Storage and Cosmos backends.
+
+## Code Generation Pitfalls
+
+### URL Path Differences
+
+Code generators may produce slightly different URL paths between versions. For example:
+- Old emitter: `_url = "/?restype=service&comp=properties"` (with leading `/`)
+- New emitter: `_url = "?restype=service&comp=properties"` (without leading `/`)
+
+The leading `/` affects the URL path component, which changes the canonicalized resource in the SharedKey signature. A missing or extra `/` **silently breaks authentication** for all SharedKey-authenticated requests to that endpoint.
+
+> **Always check the generated URL paths after regeneration** by comparing `git diff` on the generated operations file. If URL paths changed, verify SharedKey auth still works.
+
+### XML Serialization
+
+When defining TypeSpec models that are sent/received as XML:
+- Use `@Xml.name("ElementName")` on each property to control XML element names.
+- For request body content-type, explicitly set `@header("Content-Type") contentType: "application/xml"` in the operation's request parameters. Without this, the emitter defaults to JSON serialization.
+- For datetime fields in XML responses, use `string` type instead of `@encode("rfc7231") utcDateTime` — the XML deserializer may not correctly apply format conversions, leaving raw XML `Element` objects instead of parsed `datetime` values.
+- When passing `datetime` values to the service in XML, strip microseconds (`.replace(microsecond=0)`) — the Tables service rejects datetime strings with microsecond precision in XML payloads.
+
+## TypeSpec-to-SDK Generation for Tables
+
+### Spec location
+The Tables TypeSpec is at `specification/cosmos-db/data-plane/Tables/` in the `azure-rest-api-specs` repo.
+
+### Key files in the spec
+| File | Purpose |
+|------|---------|
+| `main.tsp` | Service definition, namespace, `Versions` enum |
+| `models.tsp` | Request/response models (`KeyInfo`, `UserDelegationKey`, etc.) |
+| `routes.tsp` | Operations — defines `TablesXmlOperation` and `TablesJsonOperation` templates |
+| `client.tsp` | Python client customizations (`@clientName`, `@access`, parameter renames) |
+| `tspconfig.yaml` | Emitter configuration, package version, namespace |
+
+### Operation templates
+The Tables spec defines two operation templates:
+- **`TablesXmlOperation`** — For XML-based operations (service properties, stats, access policy, user delegation key). Request/response bodies are XML.
+- **`TablesJsonOperation`** — For JSON-based operations (table CRUD, entity CRUD). Request/response bodies are JSON.
+
+When adding a new XML operation, you MUST include `@header("Content-Type") contentType: "application/xml"` and `@header("Accept") accept: "application/xml"` in the request parameters — the template does NOT set these automatically.
+
+### Generation command
+```bash
+cd <sdk_repo>/<sdk.package_dir>
+npx tsp-client update
+```
+
+### Post-generation checklist
+After regeneration, always:
+1. `git diff` the generated operations file — check for URL path changes (e.g., missing leading `/`).
+2. Verify `_configuration.py` default `api_version` — if it changed, add the new version to `_SUPPORTED_API_VERSIONS`.
+3. Re-install the package (`pip install -e .`) before running any tests.
+4. Run a quick smoke test with SharedKey auth to verify auth isn't broken.
 
 ## Pipeline Policies — `_policies.py`
 
@@ -319,27 +516,61 @@ Supported parameter types with auto-quoting:
 
 - Tests are in `sdk/tables/azure-data-tables/tests/`.
 - Recorded tests using `devtools_testutils` and the test proxy.
-- `test-resources.bicep` provisions test resources (Storage account + Cosmos DB account).
+- `test-resources.bicep` is at `sdk/tables/test-resources.bicep` (service directory level, not package level). It provisions both a Storage account and a Cosmos DB account.
 - Tests cover **both** Azure Storage Tables and Cosmos DB Table API backends.
 - Test setup uses preparers for creating tables and entities.
 - Running tests: `pytest tests/ -k "test_name"` (after `pip install -r dev_requirements.txt`).
 - Running linting: `tox -e pylint -c ../../../eng/tox/tox.ini --root .` from the `sdk/tables/azure-data-tables` directory.
+
+### Test File Naming Convention
+
+| Pattern | Backend | Auth |
+|---------|---------|------|
+| `test_<feature>.py` | Storage | SharedKey via `tables_decorator` |
+| `test_<feature>_async.py` | Storage (async) | SharedKey via `tables_decorator_async` |
+| `test_<feature>_cosmos.py` | Cosmos DB | SharedKey via `cosmos_decorator` |
+| `test_<feature>_cosmos_async.py` | Cosmos DB (async) | SharedKey via `cosmos_decorator_async` |
+| `test_table_aad.py` / `test_table_aad_async.py` | Storage | AAD via `self.get_token_credential()` |
+
+### Test Resource Deployment
+
+- Deploy: `.\eng\common\TestResources\New-TestResources.ps1 tables` from the SDK repo root.
+- The script creates both Storage and Cosmos accounts and outputs environment variables.
+- The `test-resources.bicep` accepts a `supportsSafeSecretStandard` parameter (passed automatically for TME tenants) to control `allowSharedKeyAccess` on the storage account.
+- If adding a new feature that requires additional RBAC roles, add the role assignment to `test-resources.bicep` and redeploy.
+- TME tenant resources are prefixed with `SSS3PT_` and auto-expire after 120 hours.
+
+### Known Test Issues
+
+- `test_empty_batch` — Known test proxy bug (https://github.com/Azure/azure-sdk-tools/issues/2900). The test proxy fails to record/end sessions for empty batch (submit_transaction with `[]`). These tests are marked `@pytest.mark.live_test_only` but still fail due to the `@recorded_by_proxy` decorator attempting to manage the recording session.
+- Leftover tables from previous test runs can cause `TableAlreadyExists` errors. Clean up before re-running: list and delete all tables via `TableServiceClient.list_tables()` / `delete_table()`.
+
+### Recordings
+
+- Recordings are stored in the `azure-sdk-assets` repo, managed via `assets.json` in the package root.
+- Use `python scripts/manage_recordings.py locate -p sdk/tables/azure-data-tables` to find the local recordings directory.
+- Use `python scripts/manage_recordings.py push -p sdk/tables/azure-data-tables/assets.json` to push recordings after updating.
 
 ## Common Pitfalls
 
 - **PartitionKey/RowKey must be strings** — Non-string keys cause silent data corruption or errors.
 - **Int64 values** — JSON can't represent 64-bit ints; they're transmitted as strings with `Edm.Int64` annotation. Missing the annotation loses precision for values > 2^53.
 - **Datetime timezone** — All datetimes must be timezone-aware (UTC). Naive datetimes may cause unexpected behavior.
+- **Datetime microseconds in XML** — The Tables service rejects datetime strings with microsecond precision in XML payloads. Strip microseconds with `.replace(microsecond=0)` before passing to XML operations like `get_user_delegation_key`.
 - **Batch PartitionKey constraint** — All entities in a single transaction must share the same PartitionKey.
-- **Cosmos DB compatibility** — Cosmos Table API has different behaviors (PATCH verb, credential scopes, error formats, missing XML operations). The SDK normalizes these but new features must be tested against both backends.
-- **XML operations are Storage-only** — `get/set_service_properties`, `get_service_stats`, `get/set_table_access_policy` are not available on Cosmos DB endpoints.
-- **`_generated/` is auto-generated** — Never hand-edit files under `_generated/`. Changes will be overwritten on regeneration.
+- **Cosmos DB compatibility** — Cosmos Table API has different behaviors (PATCH verb, credential scopes, error formats, missing XML operations, different SAS signing format). The SDK normalizes these but new features must be tested against both backends.
+- **XML operations are Storage-only** — `get/set_service_properties`, `get_service_stats`, `get/set_table_access_policy` are not available on Cosmos DB endpoints. `get_user_delegation_key` is also Storage-only.
+- **`_generated/` is auto-generated** — Never hand-edit files under `_generated/`. Changes will be overwritten on regeneration. **Exception:** If the code generator produces a regression (e.g., wrong URL paths), you may need to patch generated code until the emitter is fixed.
 - **Entity metadata** — `etag` and `timestamp` are stored in `EntityMetadata`, accessed via `entity.metadata`, not `entity["metadata"]`.
 - **UpdateMode matters** — `UpdateMode.REPLACE` replaces the entire entity; `UpdateMode.MERGE` merges with existing properties. Using the wrong mode can cause data loss.
 - **Pagination location pinning** — Paginated queries (`list_tables`, `query_entities`) must retrieve all pages from the same location (primary or secondary). Mixing locations mid-pagination returns inconsistent data.
 - **Always update both sync and async** — Any change to a sync client/policy must be mirrored in the async counterpart in `aio/`.
 - **Auth scope is endpoint-dependent** — Using `TokenCredential` with the wrong scope (Storage scope on Cosmos endpoint or vice versa) causes silent auth failures.
 - **Batch size limits** — Maximum 100 operations and 4 MB payload per transaction. `RequestTooLargeError` is raised if exceeded.
+- **SharedKey auth format is version-sensitive** — The `SharedKey` auth header with a Lite-format string-to-sign works for `x-ms-version` ≤ `2019-02-02` but breaks for newer versions. If the API version changes, auth WILL break.
+- **SAS version changes break Cosmos** — Changing `X_MS_VERSION` in `_constants.py` affects all generated SAS tokens. Cosmos uses a different string-to-sign format than Storage for the same `sv` version. Always test SAS changes against both backends.
+- **Generated URL paths change between emitter versions** — The TypeSpec Python emitter may produce different URL paths (e.g., `/?param=value` vs `?param=value`). The path is part of the SharedKey signature, so even a single character difference breaks authentication silently.
+- **`signedEncryptionScope` is version-conditional** — The `ses` field in account SAS string-to-sign was added in `sv=2020-12-06`. Including it for older versions adds an extra `\n` that breaks the signature on Cosmos.
 
 ## Key References
 
