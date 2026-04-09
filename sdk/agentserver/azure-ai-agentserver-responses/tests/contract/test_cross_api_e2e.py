@@ -509,16 +509,72 @@ class TestC1SyncStored:
         release_gate.set()
         t.join(timeout=5.0)
 
-    def test_e6_disconnect_then_get_returns_not_found(self) -> None:
+    @pytest.mark.asyncio
+    async def test_e6_disconnect_then_get_returns_not_found(self) -> None:
         """B17 — connection termination cancels non-bg; not persisted → GET 404.
 
-        Note: Starlette TestClient does not deterministically simulate client disconnect.
-        We skip this test as the Python SDK disconnect tests need a real ASGI harness.
+        Uses a real Hypercorn server so that TCP disconnect propagates correctly.
+        A sync (non-streaming) POST with a blocking handler is aborted mid-flight,
+        then GET /responses/{id} must return 404.
         """
-        pytest.skip(
-            "Starlette TestClient does not deterministically surface client-disconnect "
-            "cancellation signals. Requires real ASGI harness."
-        )
+        from tests._helpers import hypercorn_server
+
+        handler_started = asyncio.Event()
+
+        app = ResponsesAgentServerHost()
+
+        @app.create_handler
+        def _handler(request: Any, context: Any, cancellation_signal: Any):
+            async def _events():
+                handler_started.set()
+                # Block long enough for the client to disconnect
+                for _ in range(200):
+                    if cancellation_signal.is_set():
+                        return
+                    await asyncio.sleep(0.05)
+                stream = ResponseEventStream(
+                    response_id=context.response_id,
+                    model=getattr(request, "model", None),
+                )
+                yield stream.emit_created()
+                yield stream.emit_completed()
+
+            return _events()
+
+        response_id = IdGenerator.new_response_id()
+
+        async with hypercorn_server(app) as client:
+            # Start a sync (non-streaming) POST in a task and cancel it
+            async def _do_post() -> None:
+                await client.post(
+                    "/responses",
+                    json={
+                        "response_id": response_id,
+                        "model": "gpt-4o-mini",
+                        "input": "hello",
+                        "stream": False,
+                        "store": True,
+                        "background": False,
+                    },
+                )
+
+            post_task = asyncio.create_task(_do_post())
+            # Wait for handler to start processing
+            await asyncio.wait_for(handler_started.wait(), timeout=5.0)
+            # Cancel the POST task → closes TCP connection
+            post_task.cancel()
+            try:
+                await post_task
+            except (asyncio.CancelledError, Exception):
+                pass
+
+            await asyncio.sleep(1.0)
+
+            # Non-bg in-flight responses are not persisted → GET returns 404
+            get_resp = await client.get(f"/responses/{response_id}")
+            assert get_resp.status_code == 404, (
+                f"Expected 404 for disconnected non-bg sync response, got {get_resp.status_code}"
+            )
 
 
 # ════════════════════════════════════════════════════════════
@@ -559,12 +615,75 @@ class TestC2StreamStored:
 
     # E11 moved to test_cross_api_e2e_async.py (requires async ASGI client)
 
-    def test_e12_stream_disconnect_then_get_returns_not_found(self) -> None:
-        """B17 — connection termination cancels non-bg.
+    @pytest.mark.asyncio
+    async def test_e12_stream_disconnect_then_get_returns_not_found(self) -> None:
+        """B17 — connection termination cancels non-bg streaming; not persisted → GET 404.
 
-        Skipped: same limitation as E6.
+        Uses a real Hypercorn server. Client starts streaming, reads a few SSE
+        events to capture the response_id, then disconnects. GET should return 404.
         """
-        pytest.skip("Starlette TestClient does not deterministically surface client-disconnect cancellation signals.")
+        from tests._helpers import hypercorn_server
+
+        handler_started = asyncio.Event()
+
+        app = ResponsesAgentServerHost()
+
+        @app.create_handler
+        def _handler(request: Any, context: Any, cancellation_signal: Any):
+            async def _events():
+                stream = ResponseEventStream(
+                    response_id=context.response_id,
+                    model=getattr(request, "model", None),
+                )
+                yield stream.emit_created()
+                yield stream.emit_in_progress()
+                handler_started.set()
+                msg = stream.add_output_item_message()
+                yield msg.emit_added()
+                tc = msg.add_text_content()
+                yield tc.emit_added()
+                for i in range(500):
+                    if cancellation_signal.is_set():
+                        break
+                    yield tc.emit_delta(f"chunk{i} ")
+                    await asyncio.sleep(0.02)
+                yield tc.emit_done("done")
+                yield msg.emit_content_done(tc)
+                yield msg.emit_done()
+                yield stream.emit_completed()
+
+            return _events()
+
+        response_id: str | None = None
+
+        async with hypercorn_server(app) as client:
+            async with client.stream(
+                "POST",
+                "/responses",
+                json={"model": "test", "input": "hi", "stream": True, "store": True},
+            ) as resp:
+                assert resp.status_code == 200
+                lines_read = 0
+                async for line in resp.aiter_lines():
+                    lines_read += 1
+                    # Extract response_id from the first data line
+                    if response_id is None and line.startswith("data:"):
+                        data = json.loads(line.split(":", 1)[1].strip())
+                        rid = (data.get("response") or {}).get("id")
+                        if rid:
+                            response_id = rid
+                    if lines_read >= 6:
+                        break
+                # EXIT context → real TCP disconnect
+
+            assert response_id is not None, "Should have captured response_id from SSE events"
+            await asyncio.sleep(1.5)
+
+            # Non-bg streaming response cancelled by disconnect → not persisted → 404
+            get_resp = await client.get(f"/responses/{response_id}")
+            assert get_resp.status_code == 404, (
+                f"Expected 404 for disconnected non-bg streaming response, got {get_resp.status_code}"
+            )
 
 
 # ════════════════════════════════════════════════════════════

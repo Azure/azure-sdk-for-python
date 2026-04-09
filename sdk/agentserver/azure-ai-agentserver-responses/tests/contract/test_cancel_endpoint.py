@@ -264,7 +264,6 @@ def test_cancel__returns_failed_for_immediate_handler_failure() -> None:
     assert payload.get("status") == "failed"
 
 
-@pytest.mark.skip(reason="S-024: Unknown CancelledError swallowed by shielded runner — needs orchestrator fix")
 def test_cancel__unknown_cancellation_exception_is_treated_as_failed() -> None:
     """S-024: An unknown CancelledError (not from cancel signal) should be
     treated as a handler error, transitioning the response to failed."""
@@ -277,18 +276,140 @@ def test_cancel__unknown_cancellation_exception_is_treated_as_failed() -> None:
     assert get_response.json().get("status") == "failed"
 
 
-def test_cancel__stream_disconnect_sets_handler_cancellation_signal() -> None:
-    pytest.skip(
-        "Requires a real ASGI disconnect harness; Starlette TestClient does not deterministically surface"
-        " client-disconnect cancellation signals to the handler."
-    )
+@pytest.mark.asyncio
+async def test_cancel__stream_disconnect_sets_handler_cancellation_signal() -> None:
+    """Non-bg streaming: client disconnect → handler generator cancelled.
+
+    Uses a real Hypercorn server so that TCP disconnect propagates as
+    asyncio.CancelledError to the streaming generator.
+    """
+    from tests._helpers import hypercorn_server
+
+    handler_started = asyncio.Event()
+    handler_cancelled = asyncio.Event()
+    handler_completed = asyncio.Event()
+
+    app = ResponsesAgentServerHost()
+
+    @app.create_handler
+    def _handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+
+            stream = ResponseEventStream(
+                response_id=context.response_id,
+                model=getattr(request, "model", None),
+            )
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
+            handler_started.set()
+            msg = stream.add_output_item_message()
+            yield msg.emit_added()
+            tc = msg.add_text_content()
+            yield tc.emit_added()
+            for i in range(500):
+                if cancellation_signal.is_set():
+                    handler_cancelled.set()
+                    break
+                yield tc.emit_delta(f"chunk{i} ")
+                await asyncio.sleep(0.02)
+            yield tc.emit_done("cancelled")
+            yield msg.emit_content_done(tc)
+            yield msg.emit_done()
+            yield stream.emit_incomplete(reason="cancelled")
+            handler_completed.set()
+
+        return _events()
+
+    async with hypercorn_server(app) as client:
+        async with client.stream(
+            "POST",
+            "/responses",
+            json={"model": "test", "input": "hi", "stream": True},
+        ) as resp:
+            assert resp.status_code == 200
+            lines_read = 0
+            async for _line in resp.aiter_lines():
+                lines_read += 1
+                if lines_read >= 5:
+                    break
+            # EXIT context → real TCP disconnect
+
+        # Give server time to detect disconnect
+        await asyncio.sleep(1.5)
+
+        assert handler_started.is_set(), "Handler should have started"
+        # The generator should have been cancelled by Hypercorn's
+        # CancelledError propagation. The handler either saw cancellation_signal
+        # or was killed by CancelledError before reaching the check.
+        assert not handler_completed.is_set(), (
+            "Handler should NOT have completed all 500 chunks — disconnect should stop it"
+        )
 
 
-def test_cancel__background_stream_disconnect_does_not_cancel_handler() -> None:
-    pytest.skip(
-        "Requires a real ASGI disconnect harness to verify that background execution is immune to"
-        " stream client disconnect per S-026."
-    )
+@pytest.mark.asyncio
+async def test_cancel__background_stream_disconnect_does_not_cancel_handler() -> None:
+    """S-026: Background streaming disconnect does NOT cancel the handler.
+
+    Uses a real Hypercorn server. Background execution is shielded from
+    HTTP scope cancellation, so the handler runs to completion even after
+    the streaming client disconnects.
+    """
+    from tests._helpers import hypercorn_server
+
+    handler_started = asyncio.Event()
+    handler_completed = asyncio.Event()
+
+    app = ResponsesAgentServerHost()
+
+    @app.create_handler
+    def _handler(request: Any, context: Any, cancellation_signal: Any):
+        async def _events():
+            from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
+
+            stream = ResponseEventStream(
+                response_id=context.response_id,
+                model=getattr(request, "model", None),
+            )
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
+            handler_started.set()
+            msg = stream.add_output_item_message()
+            yield msg.emit_added()
+            tc = msg.add_text_content()
+            yield tc.emit_added()
+            # Emit a handful of chunks then complete normally
+            for i in range(10):
+                yield tc.emit_delta(f"chunk{i} ")
+                await asyncio.sleep(0.05)
+            yield tc.emit_done("done")
+            yield msg.emit_content_done(tc)
+            yield msg.emit_done()
+            yield stream.emit_completed()
+            handler_completed.set()
+
+        return _events()
+
+    async with hypercorn_server(app) as client:
+        async with client.stream(
+            "POST",
+            "/responses",
+            json={"model": "test", "input": "hi", "stream": True, "background": True},
+        ) as resp:
+            assert resp.status_code == 200
+            lines_read = 0
+            async for _line in resp.aiter_lines():
+                lines_read += 1
+                if lines_read >= 3:
+                    break
+            # EXIT context → real TCP disconnect
+
+        # Wait for the background handler to complete
+        await asyncio.wait_for(handler_completed.wait(), timeout=5.0)
+        assert handler_started.is_set(), "Handler should have started"
+        assert handler_completed.is_set(), (
+            "Background handler should complete normally despite client disconnect"
+        )
 
 
 def test_cancel__returns_400_for_incomplete_background_response() -> None:

@@ -317,7 +317,6 @@ async def _run_background_non_stream(
         except asyncio.CancelledError:
             # S-024: Distinguish known cancellation (cancel_signal set) from
             # unknown.  Known cancellation → transition to "cancelled".
-            # Unknown CancelledError (e.g. event-loop teardown) is re-raised.
             if cancellation_signal.is_set():
                 if record.status not in ("cancelled", "completed", "failed", "incomplete"):
                     record.transition_to("cancelled")
@@ -325,6 +324,28 @@ async def _run_background_non_stream(
                     record.response_failed_before_events = True
                 record.response_created_signal.set()
                 return
+            # S-024: Unknown CancelledError before any events were yielded
+            # means the handler itself raised it — treat as handler failure.
+            if not first_event_processed:
+                logger.error(
+                    "Unknown CancelledError during background processing (response_id=%s)",
+                    response_id,
+                )
+                record.set_response_snapshot(
+                    _build_failed_response(
+                        response_id,
+                        agent_reference,
+                        model,
+                        created_at=context.created_at,
+                    )
+                )
+                record.transition_to("failed")
+                record.response_failed_before_events = True
+                record.response_created_signal.set()
+                return
+            # After events have been processed the CancelledError is most
+            # likely from event-loop / scope teardown — re-raise so the
+            # shielded runner can absorb it.
             raise
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error(
@@ -460,13 +481,14 @@ class _PipelineState:
     to ``_ExecutionContext``.
     """
 
-    __slots__ = ("handler_events", "bg_record", "captured_error", "validator")
+    __slots__ = ("handler_events", "bg_record", "captured_error", "validator", "stream_interrupted")
 
     def __init__(self) -> None:
         self.handler_events: list[generated_models.ResponseStreamEvent] = []
         self.bg_record: ResponseExecution | None = None
         self.captured_error: Exception | None = None
         self.validator: EventStreamValidator = EventStreamValidator()
+        self.stream_interrupted: bool = False
 
 
 class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
@@ -1019,6 +1041,14 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # Covers non-background streams and background streams where no record
         # was created (empty handler fallback, pre-creation errors, first-event
         # contract violations).
+
+        # B17: Non-bg streaming cancelled by disconnect → do not persist.
+        # The response was never committed to the store or runtime state,
+        # so GET must return 404.
+        if not ctx.background and state.stream_interrupted:
+            ctx.span.end(state.captured_error)
+            return
+
         events = (
             state.handler_events
             if state.handler_events
@@ -1139,10 +1169,17 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         if not self._runtime_options.sse_keep_alive_enabled:
             if not (ctx.background and ctx.store):
                 # Simple fast path for non-background streaming.
+                _stream_completed = False
                 try:
                     async for event in self._process_handler_events(ctx, state, handler_iterator):
                         yield encode_sse_any_event(event)
+                    _stream_completed = True
                 finally:
+                    # B17: If the stream did not complete naturally (e.g. client
+                    # disconnect → CancelledError), mark it as interrupted so
+                    # _finalize_stream skips persistence for non-bg streams.
+                    if not _stream_completed:
+                        state.stream_interrupted = True
                     await _finalize()
                 return
 
@@ -1229,10 +1266,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             _keep_alive_producer(self._runtime_options.sse_keep_alive_interval_seconds)  # type: ignore[arg-type]
         )
 
+        _ka_stream_completed = False
         try:
             while True:
                 item = await merge_queue.get()
                 if item is _SENTINEL:
+                    _ka_stream_completed = True
                     break
                 yield item  # type: ignore[misc]
         except Exception as exc:  # pylint: disable=broad-exception-caught
@@ -1243,6 +1282,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             )
             state.captured_error = exc
         finally:
+            if not _ka_stream_completed:
+                state.stream_interrupted = True
             keep_alive_task.cancel()
             try:
                 await keep_alive_task
@@ -1414,7 +1455,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         history_limit=self._runtime_options.default_fetch_history_count,
                     )
             except asyncio.CancelledError:
-                pass  # event-loop teardown in TestClient; background work already done
+                pass  # event-loop teardown; background work already done
 
         record.execution_task = asyncio.create_task(_shielded_runner())
 
