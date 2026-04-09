@@ -247,13 +247,13 @@ class TestFoundryEnrichmentSpanProcessor:
         tracer = provider.get_tracer("test")
 
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id", "sess-456",
+            "azure.ai.agentserver.session_id", "session-456",
         )
         with tracer.start_as_current_span("span", context=ctx):
             pass
 
         attrs = dict(collector.spans[0].attributes)
-        assert attrs["microsoft.session.id"] == "sess-456"
+        assert attrs["microsoft.session.id"] == "session-456"
         assert "gen_ai.conversation.id" not in attrs
 
     def test_conversation_id_from_baggage(self) -> None:
@@ -279,7 +279,7 @@ class TestFoundryEnrichmentSpanProcessor:
         tracer = provider.get_tracer("test")
 
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id", "sess-456",
+            "azure.ai.agentserver.session_id", "session-456",
         )
         ctx = _otel_baggage.set_baggage(
             "azure.ai.agentserver.conversation_id", "conv-123", context=ctx,
@@ -288,7 +288,7 @@ class TestFoundryEnrichmentSpanProcessor:
             pass
 
         attrs = dict(collector.spans[0].attributes)
-        assert attrs["microsoft.session.id"] == "sess-456"
+        assert attrs["microsoft.session.id"] == "session-456"
         assert attrs["gen_ai.conversation.id"] == "conv-123"
 
     def test_no_ids_when_no_baggage(self) -> None:
@@ -311,7 +311,7 @@ class TestFoundryEnrichmentSpanProcessor:
         tracer = provider.get_tracer("test")
 
         ctx = _otel_baggage.set_baggage(
-            "azure.ai.agentserver.session_id", "sess-456",
+            "azure.ai.agentserver.session_id", "session-456",
         )
         ctx = _otel_baggage.set_baggage(
             "azure.ai.agentserver.conversation_id", "conv-789", context=ctx,
@@ -325,9 +325,9 @@ class TestFoundryEnrichmentSpanProcessor:
             _otel_context.detach(token)
 
         spans_by_name = {s.name: dict(s.attributes) for s in collector.spans}
-        assert spans_by_name["child"]["microsoft.session.id"] == "sess-456"
+        assert spans_by_name["child"]["microsoft.session.id"] == "session-456"
         assert spans_by_name["child"]["gen_ai.conversation.id"] == "conv-789"
-        assert spans_by_name["parent"]["microsoft.session.id"] == "sess-456"
+        assert spans_by_name["parent"]["microsoft.session.id"] == "session-456"
         assert spans_by_name["parent"]["gen_ai.conversation.id"] == "conv-789"
 
 
