@@ -7,7 +7,12 @@
       "lsho",
       "funcs",
       "addl",
-      "badid"
+      "badid",
+      "etype",
+      "aoutput",
+      "Fslash",
+      "hdel",
+      "Ñoño"
     ],
     "ignorePaths": [
       "*.csv",
