@@ -6,7 +6,7 @@ Validates that when a handler directly adds/removes items from
 ResponseObject.Output without emitting corresponding output_item events,
 the SDK detects the inconsistency and fails with a server error.
 
-Python port of OutputManipulationDetectionTests.cs from the .NET SDK.
+Python port of OutputManipulationDetectionTests.
 """
 
 from __future__ import annotations

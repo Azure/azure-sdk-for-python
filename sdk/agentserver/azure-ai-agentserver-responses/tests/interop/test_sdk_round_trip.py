@@ -11,7 +11,7 @@ and our Responses API server.  Each test:
 3. Calls ``client.responses.create()`` through the SDK
 4. Asserts the SDK-parsed ``Response`` object matches expectations
 
-This is the Python equivalent of ``SdkRoundTripTests.cs`` in the .NET SDK.
+This is the Python equivalent of the SDK round-trip test suite.
 
 When a test fails, FIX THE SERVICE — do not change the test.
 """

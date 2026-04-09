@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Unit tests for .NET-parity ID generation behavior."""
+"""Unit tests for ID generation behavior."""
 
 from __future__ import annotations
 
@@ -66,7 +66,7 @@ def test_id_generator__extract_partition_key_raises_for_bad_input() -> None:
         IdGenerator.extract_partition_key("msg_short")
 
 
-def test_id_generator__is_valid_reports_dotnet_compatible_errors() -> None:
+def test_id_generator__is_valid_reports_compatible_errors() -> None:
     assert IdGenerator.is_valid("") == (False, "ID must not be null or empty.")
     assert IdGenerator.is_valid("badid") == (False, "ID 'badid' has no '_' delimiter.")
     assert IdGenerator.is_valid("_short") == (

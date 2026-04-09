@@ -13,7 +13,7 @@ from ..models._generated import ResponseStreamEvent
 class _ResponseEventSubject:
     """In-process hot observable with replay buffer for SSE event broadcasting.
 
-    Equivalent to .NET's ``SeekableReplaySubject`` / ``ConcurrentReplayAsyncSubject``.
+    Implements a seekable replay subject pattern.
     Multiple concurrent subscribers can join at any time and receive:
 
     - All buffered events emitted since creation (or from a cursor).
@@ -22,8 +22,7 @@ class _ResponseEventSubject:
 
     This enables live SSE replay behaviour for
     ``GET /responses/{id}?stream=true`` while a background+stream response is
-    still in flight, matching the .NET ``SseReplayResult`` / ``IResponsesStreamProvider``
-    contract.
+    still in flight.
     """
 
     _DONE: object = object()  # sentinel that signals stream completion

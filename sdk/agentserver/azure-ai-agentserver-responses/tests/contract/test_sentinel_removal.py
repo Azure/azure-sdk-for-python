@@ -5,7 +5,7 @@
 Validates that no SSE stream contains ``data: [DONE]`` under any scenario.
 Validates: B26 — Terminal SSE events (no [DONE] sentinel).
 
-Python port of SentinelRemovalProtocolTests.cs from the .NET SDK.
+Python port of SentinelRemovalProtocolTests.
 """
 
 from __future__ import annotations

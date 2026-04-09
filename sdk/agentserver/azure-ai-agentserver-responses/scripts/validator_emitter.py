@@ -380,7 +380,7 @@ def build_validator_module(schemas: dict[str, dict[str, Any]], roots: list[str])
                 if default_disc is not None:
                     # GAP-01: When a default discriminator is configured, use it
                     # as a fallback instead of rejecting missing values.
-                    # Mirrors .NET ResolveDefaultDiscriminator.
+                    # Mirrors ResolveDefaultDiscriminator.
                     emit_line(block, indent, f"if {prop!r} in {value_expr}:")
                     field_hint = f"{schema_name_hint}_{prop}" if schema_name_hint else prop
                     for fld, fld_schema in sorted(properties.items()):

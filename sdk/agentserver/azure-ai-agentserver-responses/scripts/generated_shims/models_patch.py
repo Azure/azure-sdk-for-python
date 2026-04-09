@@ -43,7 +43,7 @@ class ResponseIncompleteReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 # Fix temperature / top_p types: numeric → float  (emitter bug workaround)
 #
 # The upstream TypeSpec defines temperature and top_p as ``numeric | null``
-# (the abstract base scalar for all numbers).  The C# emitter correctly
+# (the abstract base scalar for all numbers).  The TypeSpec emitter correctly
 # maps this to ``double?`` but @azure-tools/typespec-python@0.61.2 maps
 # ``numeric`` → ``int``.  The OpenAPI 3 spec emits ``type: number``
 # (i.e. float), so ``int`` is wrong.

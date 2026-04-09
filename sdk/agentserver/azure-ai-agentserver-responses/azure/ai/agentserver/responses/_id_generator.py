@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""ID generation utilities aligned with the .NET IdGenerator implementation."""
+"""ID generation utilities for deterministic response and item IDs."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from .models import _generated as generated_models
 
 
 class IdGenerator:  # pylint: disable=too-many-public-methods
-    """Generates IDs with embedded partition keys matching the .NET format."""
+    """Generates IDs with embedded partition keys."""
 
     _PARTITION_KEY_HEX_LENGTH = 16
     _PARTITION_KEY_SUFFIX = "00"

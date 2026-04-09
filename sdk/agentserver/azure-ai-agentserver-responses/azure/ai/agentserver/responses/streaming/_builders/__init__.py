@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Streaming output-item builders aligned with .NET builder semantics."""
+"""Streaming output-item builders."""
 
 from ._base import (
     BaseOutputItemBuilder,

@@ -5,7 +5,7 @@
 ``conversation`` + ``store=false`` is accepted — reads history, doesn't write it.
 The response is ephemeral (GET returns 404).
 
-Python port of ConversationStoreProtocolTests.cs from the .NET SDK.
+Python port of ConversationStoreProtocolTests.
 """
 
 from __future__ import annotations

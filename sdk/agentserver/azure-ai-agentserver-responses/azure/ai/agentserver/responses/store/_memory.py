@@ -273,7 +273,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
             if previous_response_id is not None:
                 entry = self._entries.get(previous_response_id)
                 if entry is not None and not entry.deleted:
-                    # Mirror .NET IResponsesProvider.GetHistoryItemIdsAsync:
+                    # Resolve history chain for the previous response:
                     # return historyItemIds + inputItemIds + outputItemIds of the previous response
                     resolved.extend(entry.history_item_ids or [])
                     resolved.extend(entry.input_item_ids or [])

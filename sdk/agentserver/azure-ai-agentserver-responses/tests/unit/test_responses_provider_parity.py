@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Parity checks for provider naming alignment with .NET contracts."""
+"""Parity checks for provider surface method naming."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ def test_provider_parity__interface_name_is_responseproviderprotocol() -> None:
     assert isinstance(provider, ResponseProviderProtocol)
 
 
-def test_provider_parity__dotnet_surface_methods_exist() -> None:
+def test_provider_parity__surface_methods_exist() -> None:
     provider = InMemoryResponseProvider()
 
     assert hasattr(provider, "create_response")

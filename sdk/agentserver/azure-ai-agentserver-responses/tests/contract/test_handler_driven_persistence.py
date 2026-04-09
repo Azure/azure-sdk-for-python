@@ -6,9 +6,9 @@ Verifies FR-001 (no persistence before handler runs),
 FR-002 (bg=true: Create at response.created, Update at terminal),
 FR-003 (bg=false: single Create at terminal state).
 
-Python port of HandlerDrivenPersistenceTests.cs from the .NET SDK.
+Python port of HandlerDrivenPersistenceTests.
 
-NOTE: The .NET tests use a RecordingProvider (spy) to verify exactly when
+NOTE: The reference tests use a RecordingProvider (spy) to verify exactly when
 CreateResponseAsync and UpdateResponseAsync are called. The Python SDK uses
 the in-memory FoundryStorageProvider (default) which we probe via GET to
 confirm persistence timing.

@@ -89,7 +89,7 @@ class SchemaWalker:
         overlay_schemas = self.overlay.get("schemas", {})
         # Try exact name first, then fall back to the name with any "Vendor." prefix stripped
         # (e.g. "OpenAI.ItemMessage" -> "ItemMessage") to stay compatible with the overlay
-        # format shared with the C# generator, where TypeSpec uses bare names.
+        # format shared with the TypeSpec code generator, where TypeSpec uses bare names.
         overlay_entry = overlay_schemas.get(name)
         if not overlay_entry:
             bare = name.rsplit(".", 1)[-1] if "." in name else None

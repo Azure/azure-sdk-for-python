@@ -47,7 +47,7 @@ def test_options__invalid_boundary_values_fail_fast() -> None:
 
 
 def test_options__spec_environment_variable_names_are_supported() -> None:
-    """Verify the spec-aligned env var names (matching .NET SDK)."""
+    """Verify the spec-aligned env var names."""
     options = ResponsesServerOptions.from_env(
         {
             "DEFAULT_FETCH_HISTORY_ITEM_COUNT": "55",

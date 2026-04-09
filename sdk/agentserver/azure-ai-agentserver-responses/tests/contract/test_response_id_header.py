@@ -5,7 +5,7 @@
 When the header is present with a non-empty value, the SDK MUST use that value
 as the response ID instead of generating one.
 
-Python port of ResponseIdHeaderTests.cs from the .NET SDK.
+Python port of ResponseIdHeaderTests.
 """
 
 from __future__ import annotations

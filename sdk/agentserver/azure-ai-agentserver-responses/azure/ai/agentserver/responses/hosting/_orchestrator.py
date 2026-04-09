@@ -604,8 +604,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         Called from :meth:`_process_handler_events` after the first event is
         received.  The record is seeded with ``first_normalized`` so that
-        subscribers joining mid-stream receive the full history (matching
-        :meth:`.NET`'s ``SeekableReplaySubject`` behaviour).
+        subscribers joining mid-stream receive the full history.
 
         :param ctx: Current execution context (immutable inputs).
         :type ctx: _ExecutionContext
@@ -901,7 +900,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
             # Persist terminal state update via provider (bg+stream: initial create already done).
             # Always persist — including cancelled state — so the durable store
-            # reflects the final status.  Matches .NET FinalizeExecutionAsync.
+            # reflects the final status.
             if record.mode_flags.store and record.response is not None:
                 try:
                     _isolation = ctx.context.isolation if ctx.context else None
@@ -1224,7 +1223,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         # Always register in runtime state so that cancel/GET can find the record
         # and return the correct status code (e.g., 400 for non-bg cancel).
-        # Matches .NET _tracker.Create which always registers.
+        # Always register so cancel/GET can find this record.
         await self._runtime_state.add(record)
 
         if ctx.store:
@@ -1259,8 +1258,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         Launches the handler as an asyncio task, waits for the handler to
         emit ``response.created``, then returns the in_progress snapshot.
-        Matches the .NET ``ResponseCreatedSignal`` pattern: the POST blocks
-        until the handler's first event is processed.
+        The POST blocks until the handler's first event is processed
+        (the ``ResponseCreatedSignal`` pattern).
 
         :param ctx: Current execution context.
         :type ctx: _ExecutionContext
@@ -1280,7 +1279,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             initial_agent_reference=ctx.agent_reference,
         )
 
-        # Register so GET can observe in-flight state (matches .NET _tracker.Create)
+        # Register so GET can observe in-flight state
         await self._runtime_state.add(record)
 
         # Launch handler immediately (S-003: handler runs asynchronously)
@@ -1313,7 +1312,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         record.execution_task = asyncio.create_task(_shielded_runner())
 
         # Wait for handler to emit response.created (or fail).
-        # Matches .NET: await execution.ResponseCreatedSignal.Task
+        # Wait for handler to signal response.created (or fail).
         await record.response_created_signal.wait()
 
         # If handler failed before emitting any events, return the failed

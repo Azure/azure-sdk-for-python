@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""End-to-end tests matching .NET SampleEndToEndTests (Samples 1-11)."""
+"""End-to-end tests for Samples 1-11."""
 
 from __future__ import annotations
 
@@ -560,7 +560,7 @@ def test_sample9_self_hosted_responses_under_prefix() -> None:
 
 
 def _sample10_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    """Streaming upstream handler: yields raw event dicts, matching .NET pattern."""
+    """Streaming upstream handler: yields raw event dicts."""
 
     async def _mock_upstream_events(prompt: str):
         """Simulate upstream SSE stream events (lifecycle + content)."""

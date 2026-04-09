@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""End-to-end proxy tests matching .NET OpenAIProxyEndToEndTests.
+"""End-to-end proxy tests for OpenAI-compatible upstream forwarding.
 
 Architecture:
 
@@ -250,7 +250,7 @@ def _make_non_streaming_proxy_handler(upstream_client: openai.AsyncOpenAI):
 
 
 def _make_upstream_integration_handler(upstream_client: openai.AsyncOpenAI):
-    """Create an upstream integration handler (mirrors Sample 10 in .NET).
+    """Create an upstream integration handler (mirrors Sample 10).
 
     Owns the response lifecycle, translates upstream content events, and
     stamps its own response ID on all events.  Skips upstream lifecycle events

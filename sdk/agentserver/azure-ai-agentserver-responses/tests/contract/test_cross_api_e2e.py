@@ -5,7 +5,7 @@
 Each test calls 2+ endpoints and asserts cross-endpoint consistency per the contract.
 Validates: E1–E44 from the cross-API matrix.
 
-Python port of CrossApiE2eTests.cs from the .NET SDK.
+Python port of CrossApiE2eTests.
 """
 
 from __future__ import annotations
@@ -362,7 +362,7 @@ class TestEphemeralStoreFalse:
     def test_ephemeral_store_false_cancel_rejected(self, stream: bool) -> None:
         """B1, B14 — store=false response not bg, cancel rejected.
 
-        With unconditional runtime-state registration (matching .NET _tracker),
+        With unconditional runtime-state registration,
         the cancel endpoint finds the record and returns 400 "Cannot cancel a
         synchronous response." for non-bg requests.
         """

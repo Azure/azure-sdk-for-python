@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 @runtime_checkable
 class ResponseProviderProtocol(Protocol):
-    """Protocol aligned with the .NET ``IResponsesProvider`` contract.
+    """Protocol for response storage providers.
 
     Implementations provide response envelope storage plus input/history item lookup.
 

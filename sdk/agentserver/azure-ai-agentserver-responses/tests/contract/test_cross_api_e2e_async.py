@@ -278,7 +278,7 @@ def _make_gated_stream_handler_with_output():
 
 
 def _make_item_lifecycle_gated_handler():
-    """Factory matching .NET ItemLifecycleGatedStream.
+    """Factory for ItemLifecycleGatedStream.
 
     Emits two message output items with fine-grained gates:
     - item_added: fires after first item emit_added (item in_progress, empty content)
@@ -358,7 +358,7 @@ def _make_item_lifecycle_gated_handler():
 
 
 def _make_two_item_gated_bg_handler():
-    """Factory matching .NET TwoItemGatedStream for progressive polling (E44).
+    """Factory for TwoItemGatedStream for progressive polling (E44).
 
     Emits two message output items with gates between them:
     - item1_emitted: fires after first item is fully done (completed with text="Hello")
@@ -741,7 +741,7 @@ class TestC4BgStreamStoredAsync:
     async def test_e43_bg_stream_get_during_stream_item_lifecycle(self) -> None:
         """B5, B23 — GET mid-stream returns progressive item lifecycle.
 
-        Validates the full 4-phase lifecycle matching .NET E43:
+        Validates the full 4-phase lifecycle (E43):
         Phase 1: After item Added → 1 item, status=in_progress, empty content
         Phase 2: After item Done → 1 item, status=completed, text="Hello"
         Phase 3: After 2nd item Done → 2 items, both completed
@@ -830,7 +830,7 @@ class TestC4BgStreamStoredAsync:
     async def test_e44_bg_progressive_polling_output_grows(self) -> None:
         """B5, B10 — background progressive polling shows output accumulation.
 
-        Validates the full 3-phase progressive polling matching .NET E44:
+        Validates the full 3-phase progressive polling (E44):
         Phase 1: After item1 done → 1 completed item with text="Hello"
         Phase 2: After item2 done → 2 completed items with text="Hello" and "World"
         Phase 3: After completion → 2 items, full content preserved

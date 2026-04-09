@@ -5,7 +5,7 @@
 Verifies FR-014 (SetCancelled applied exactly once) and
 FR-015 (persisted state matches returned state on cancel).
 
-Python port of CancelConsistencyTests.cs from the .NET SDK.
+Python port of CancelConsistencyTests.
 
 NOTE: These tests require concurrent access during active handlers, so they use
 the async ASGI client pattern.

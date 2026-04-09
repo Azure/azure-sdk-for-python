@@ -47,7 +47,7 @@ def test_create__returns_json_response_for_non_streaming_success() -> None:
     assert isinstance(payload.get("id"), str)
     assert payload["id"].startswith("caresp_")
     assert payload.get("response_id") == payload.get("id")
-    # agent_reference may be empty/absent when the request doesn't include one (matching .NET null behaviour)
+    # agent_reference may be empty/absent when the request doesn't include one
     agent_ref = payload.get("agent_reference")
     assert agent_ref is None or isinstance(agent_ref, dict)
     assert payload.get("object") == "response"

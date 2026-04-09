@@ -461,7 +461,7 @@ def test_bg_stream_cancelled_subject_completed() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Missing .NET protocol parity tests (ported from GetResponseProtocolTests.cs)
+# Missing protocol parity tests (ported from GetResponseProtocolTests)
 # ---------------------------------------------------------------------------
 
 

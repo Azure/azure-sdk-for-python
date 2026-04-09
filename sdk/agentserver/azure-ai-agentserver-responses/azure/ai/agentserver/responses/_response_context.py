@@ -91,7 +91,7 @@ class ResponseContext:
         """Return and cache request input items, resolving item references.
 
         Inline items are converted from :class:`Item` to :class:`OutputItem`
-        via :func:`to_output_item` (mirroring .NET ``ItemConversion.ToOutputItem``).
+        via :func:`to_output_item`.
         :class:`ItemReferenceParam` entries are batch-resolved via the
         provider's :meth:`get_items` method.  Unresolvable references
         (provider returns ``None``) are silently dropped.
@@ -103,7 +103,7 @@ class ResponseContext:
             return self._input_items_cache
 
         # Normalise raw input (strings, dicts) into typed Item instances
-        # via get_input_expanded — mirrors .NET GetInputExpanded().
+        # via get_input_expanded.
         if self.request is not None:
             expanded = get_input_expanded(self.request)
         else:

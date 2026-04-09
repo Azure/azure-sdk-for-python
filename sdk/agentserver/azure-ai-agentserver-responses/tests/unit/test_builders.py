@@ -238,7 +238,7 @@ def test_builder_events__include_required_payload_fields_per_event_type() -> Non
     assert reasoning_item_done["item"]["summary"][0]["text"] == "short reason"
 
 
-def test_stream_item_id_generation__uses_dotnet_shape_and_response_partition_key() -> None:
+def test_stream_item_id_generation__uses_expected_shape_and_response_partition_key() -> None:
     response_id = IdGenerator.new_response_id()
     stream = ResponseEventStream(response_id=response_id)
 

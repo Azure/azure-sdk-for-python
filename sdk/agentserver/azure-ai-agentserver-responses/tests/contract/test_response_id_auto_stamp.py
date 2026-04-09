@@ -5,7 +5,7 @@
 Validates that every output item emitted by the SDK has ``response_id`` matching
 the parent response ID, and that handler-set values take precedence.
 
-Python port of ResponseIdAutoStampProtocolTests.cs from the .NET SDK.
+Python port of ResponseIdAutoStampProtocolTests.
 """
 
 from __future__ import annotations

@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Unit tests for .NET-aligned response event stream APIs."""
+"""Unit tests for the response event stream APIs."""
 
 from __future__ import annotations
 

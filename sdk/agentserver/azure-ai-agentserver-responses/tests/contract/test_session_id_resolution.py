@@ -7,7 +7,7 @@ env var → generated UUID.
 The resolved session ID MUST be auto-stamped on the
 ``ResponseObject.agent_session_id``.
 
-Python port of SessionIdResolutionTests.cs from the .NET SDK.
+Python port of SessionIdResolutionTests.
 """
 
 from __future__ import annotations

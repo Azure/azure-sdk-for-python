@@ -6,9 +6,9 @@ Validates that client disconnects are handled correctly for each mode:
 - Non-bg streaming disconnect → handler cancelled
 - Bg non-streaming → POST returns immediately, handler continues
 
-Python port of ConnectionTerminationTests.cs from the .NET SDK.
+Python port of ConnectionTerminationTests.
 
-NOTE: The .NET T067 (non-bg disconnect → cancelled) relies on HTTP connection
+NOTE: The T067 (non-bg disconnect → cancelled) relies on HTTP connection
 lifecycle that Starlette TestClient cannot model (no TCP disconnect).
 We test what we can: bg non-streaming handler continuation.
 """
@@ -204,7 +204,7 @@ async def test_bg_non_streaming_post_returns_handler_continues() -> None:
 #
 # NOTE: This test is skipped because the Starlette TestClient and our
 # async ASGI client cannot model the TCP disconnect lifecycle required
-# to test this behavior. The .NET test relies on HTTP connection
+# to test this behavior. The original test relies on HTTP connection
 # cancellation token propagation which doesn't map to ASGI's receive()
 # disconnect model in the same way.
 # ════════════════════════════════════════════════════════════

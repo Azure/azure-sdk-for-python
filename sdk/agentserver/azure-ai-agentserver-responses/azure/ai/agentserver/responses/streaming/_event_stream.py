@@ -64,7 +64,7 @@ def _resolve_conversation_param(raw: Any) -> str | None:
 
 
 class ResponseEventStream:  # pylint: disable=too-many-public-methods
-    """.NET-aligned response event stream with deterministic sequence numbers."""
+    """Response event stream with deterministic sequence numbers."""
 
     def __init__(
         self,

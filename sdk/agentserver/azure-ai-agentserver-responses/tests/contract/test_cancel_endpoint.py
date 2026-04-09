@@ -531,7 +531,6 @@ def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_
     """B11 race condition: handler eventually yields response.completed after cancel.
 
     The durable store must still reflect 'cancelled', not 'completed'.
-    Matches .NET Cancel_PersistedState_IsCancelled_EvenWhenHandlerCompletesAfterTimeout.
     """
     from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 

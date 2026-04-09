@@ -5,7 +5,7 @@
 Verifies FR-012 (handler continues after SSE disconnect for bg+stream),
 FR-013 (SSE write failure does NOT cancel handler CT).
 
-Python port of BgStreamDisconnectTests.cs from the .NET SDK.
+Python port of BgStreamDisconnectTests.
 
 NOTE: These tests use the async ASGI client with a cancellation-aware SSE reader
 to simulate client disconnect behavior.

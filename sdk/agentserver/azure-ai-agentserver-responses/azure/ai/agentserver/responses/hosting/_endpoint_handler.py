@@ -752,7 +752,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if record is None:
             return _not_found(response_id, {})
 
-        # store=false responses are not deletable (FR-014, matches .NET)
+        # store=false responses are not deletable (FR-014)
         if not record.mode_flags.store:
             return _not_found(response_id, {})
 
@@ -884,7 +884,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         record.cancel_signal.set()
 
         # Wait for handler to complete with grace period (B11: up to 10 seconds).
-        # Matches .NET CancelAsync: await execution.ExecutionTask.WaitAsync(TimeSpan.FromSeconds(10))
+        # Wait for handler task to finish (up to 10s grace period).
         if record.execution_task is not None:
             try:
                 await asyncio.wait_for(asyncio.shield(record.execution_task), timeout=10.0)

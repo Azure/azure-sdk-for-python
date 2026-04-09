@@ -5,7 +5,7 @@
 Validates that ``agent_reference`` from the create request propagates to the
 response object and all output items, with handler-set values taking precedence.
 
-Python port of AgentReferenceAutoStampProtocolTests.cs from the .NET SDK.
+Python port of AgentReferenceAutoStampProtocolTests.
 """
 
 from __future__ import annotations

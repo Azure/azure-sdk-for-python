@@ -5,7 +5,7 @@
 Verifies that SSE events and GET responses contain point-in-time snapshot data,
 not mutable references that change with subsequent mutations.
 
-Python port of SnapshotConsistencyTests.cs from the .NET SDK.
+Python port of SnapshotConsistencyTests.
 """
 
 from __future__ import annotations

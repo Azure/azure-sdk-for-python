@@ -57,7 +57,7 @@ app = ResponsesAgentServerHost()
 
 
 def _build_response_snapshot(request: CreateResponse, context: ResponseContext) -> dict[str, Any]:
-    """Construct a response snapshot dict from request + context, matching .NET ResponseObject."""
+    """Construct a response snapshot dict from request + context."""
     snapshot: dict[str, Any] = {
         "id": context.response_id,
         "object": "response",
