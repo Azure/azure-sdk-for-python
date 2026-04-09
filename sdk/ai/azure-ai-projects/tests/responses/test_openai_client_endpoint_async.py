@@ -3,10 +3,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Unit tests for AIProjectClient (async).get_openai_client(). No network calls are made.
-
-To run these tests:
-    pytest tests\responses\test_openai_client_endpoint_async.py -s
+"""
+Unit tests for verifying the base_url of the AsyncOpenAI client returned by AIProjectClient.get_openai_client(). 
+No network calls are made.
 """
 
 import pytest
@@ -15,7 +14,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.ai.projects.aio import AIProjectClient
 
 FAKE_ENDPOINT = "https://fake-account.services.ai.azure.com/api/projects/fake-project"
-AGENT_NAME = "MyAgentName"
+AGENT_NAME = "fake-agent-name"
 
 
 class FakeAsyncCredential(AsyncTokenCredential):
