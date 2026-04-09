@@ -88,14 +88,11 @@ class TestQuerySanitizationAsync(unittest.TestCase):
         self.assertEqual(result, "SELECT * FROM c WHERE c.id = @id AND c.status = '?'")
 
     def test_parameterized_with_literals_and_parameters(self):
-        """Inline literals should still be sanitized when parameters are provided."""
+        """Parameterized query text should remain unchanged when parameters are provided."""
         query = "SELECT * FROM c WHERE c.id = @id AND c.status = 'active' AND c.priority >= 5"
         parameters = [{"name": "@id", "value": "thread-1"}]
         result = sanitize_query(query, parameters)
-        self.assertEqual(
-            result,
-            "SELECT * FROM c WHERE c.id = @id AND c.status = '?' AND c.priority >= ?",
-        )
+        self.assertEqual(result, query)
 
     def test_complex_query_with_functions(self):
         """Complex queries with functions and literals."""
@@ -127,6 +124,18 @@ class TestQuerySanitizationAsync(unittest.TestCase):
         result = sanitize_query(query, None)
         self.assertEqual(result, "SELECT * FROM c WHERE c.temperature = ? AND c.balance = ?")
 
+    def test_scientific_notation_literals(self):
+        """Scientific notation literals should be sanitized as complete values."""
+        query = "SELECT * FROM c WHERE c.large = 1.5e10 AND c.small = -2E-3"
+        result = sanitize_query(query, None)
+        self.assertEqual(result, "SELECT * FROM c WHERE c.large = ? AND c.small = ?")
+
+    def test_parameterized_query_with_scientific_notation_literal(self):
+        """Parameterized query text should remain unchanged when parameters exist."""
+        query = "SELECT * FROM c WHERE c.id = @id AND c.large = 1.5e10"
+        result = sanitize_query(query, [{"name": "@id", "value": "item-1"}])
+        self.assertEqual(result, query)
+
     def test_real_world_auth_query(self):
         """Real-world authentication query with sensitive data."""
         query = "SELECT * FROM c WHERE c.username = 'admin@example.com' AND c.password = 'P@ssw0rd123'"
@@ -149,7 +158,7 @@ class TestAsyncPagerTracingRegression(unittest.TestCase):
         from azure.cosmos.aio._cosmos_span_attributes_async import cosmos_span_attributes_async
 
         @distributed_trace
-        @cosmos_span_attributes_async(operation_type=_Constants.OpenTelemetryOperationTypes.QUERY)
+        @cosmos_span_attributes_async(operation_name=_Constants.OpenTelemetryOperationNames.QUERY_ITEMS)
         def pager_factory():
             return _EmptyAsyncIterable()
 
@@ -213,13 +222,13 @@ class TestAsyncPagerTracingRegression(unittest.TestCase):
 
         from azure.cosmos.aio._cosmos_span_attributes_async import cosmos_span_attributes_async
 
-        @cosmos_span_attributes_async(operation_type=_Constants.OpenTelemetryOperationTypes.QUERY)
+        @cosmos_span_attributes_async(operation_name=_Constants.OpenTelemetryOperationNames.QUERY_ITEMS)
         def pager_factory(**kwargs):
             return _EmptyAsyncIterable()
 
         pager_factory(query={"query": "SELECT * FROM c WHERE c.id = @id", "parameters": [{"name": "@id", "value": "1"}]})
 
-        telemetry_kwargs = mock_add_cosmos_telemetry.call_args.args[3]
+        telemetry_kwargs = mock_add_cosmos_telemetry.call_args.args[2]
         self.assertEqual(telemetry_kwargs["query"], "SELECT * FROM c WHERE c.id = @id")
         self.assertEqual(telemetry_kwargs["parameters"], [{"name": "@id", "value": "1"}])
 

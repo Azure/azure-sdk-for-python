@@ -355,7 +355,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ...
 
     @distributed_trace_async
-    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.CREATE)
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.CREATE_DATABASE)
     async def create_database( # pylint:disable=docstring-should-be-keyword
         self,
         *args: Any,
@@ -498,7 +498,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ...
 
     @distributed_trace_async
-    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.CREATE)
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.CREATE_DATABASE_IF_NOT_EXISTS)
     async def create_database_if_not_exists( # pylint:disable=docstring-should-be-keyword
         self,
         *args: Any,
@@ -587,6 +587,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return DatabaseProxy(self.client_connection, id_value)
 
     @distributed_trace
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.READ_ALL_DATABASES)
     def list_databases(
         self,
         *,
@@ -627,6 +628,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return result
 
     @distributed_trace
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.QUERY_DATABASES)
     def query_databases(
         self,
         query: str,
@@ -676,7 +678,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return result
 
     @distributed_trace_async
-    @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.DELETE)
+    @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.DELETE_DATABASE)
     async def delete_database(
         self,
         database: Union[str, DatabaseProxy, dict[str, Any]],

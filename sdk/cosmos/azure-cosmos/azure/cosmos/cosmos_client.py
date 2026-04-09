@@ -365,7 +365,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ...
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.CREATE)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.CREATE_DATABASE)
     def create_database(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
         self,
         *args: Any,
@@ -507,6 +507,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         ...
 
     @distributed_trace
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.CREATE_DATABASE_IF_NOT_EXISTS)
     def create_database_if_not_exists(  # pylint:disable=docstring-missing-param, docstring-should-be-keyword
         self,
         *args: Any,
@@ -597,6 +598,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return DatabaseProxy(self.client_connection, id_value)
 
     @distributed_trace
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.READ_ALL_DATABASES)
     def list_databases(  # pylint:disable=docstring-missing-param
         self,
         max_item_count: Optional[int] = None,
@@ -641,6 +643,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return result
 
     @distributed_trace
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.QUERY_DATABASES)
     def query_databases(  # pylint:disable=docstring-missing-param
         self,
         query: Optional[str] = None,
@@ -704,6 +707,7 @@ class CosmosClient:  # pylint: disable=client-accepts-api-version-keyword
         return result
 
     @distributed_trace
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.DELETE_DATABASE)
     def delete_database(  # pylint:disable=docstring-missing-param
         self,
         database: Union[str, DatabaseProxy, Mapping[str, Any]],

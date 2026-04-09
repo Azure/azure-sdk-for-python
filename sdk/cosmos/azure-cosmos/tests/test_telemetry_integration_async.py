@@ -6,6 +6,8 @@
 import unittest
 import uuid
 import asyncio
+import importlib.util
+import os
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos import PartitionKey, exceptions
 from azure.cosmos._constants import _Constants
@@ -21,6 +23,12 @@ class TestTelemetryIntegrationAsync(unittest.IsolatedAsyncioTestCase):
     @classmethod
     def setUpClass(cls):
         """Set up tracing and Cosmos client."""
+        if importlib.util.find_spec("aiohttp") is None:
+            raise unittest.SkipTest("aiohttp is required for async Cosmos integration tests")
+
+        cls._previous_query_text_opt_in = os.environ.get(_Constants.OTEL_ENABLE_QUERY_TEXT)
+        os.environ[_Constants.OTEL_ENABLE_QUERY_TEXT] = "true"
+
         # Enable tracing using Azure Core abstractions
         cls.tracing_helper = setup_tracing()
 
@@ -54,16 +62,20 @@ class TestTelemetryIntegrationAsync(unittest.IsolatedAsyncioTestCase):
             await client.close()
 
         asyncio.run(cleanup())
+        if cls._previous_query_text_opt_in is None:
+            os.environ.pop(_Constants.OTEL_ENABLE_QUERY_TEXT, None)
+        else:
+            os.environ[_Constants.OTEL_ENABLE_QUERY_TEXT] = cls._previous_query_text_opt_in
         cleanup_tracing()
 
     async def test_parameterized_query_not_sanitized(self):
         """Verify parameterized queries are NOT sanitized in telemetry."""
         # Create test item
-        await self.container.create_item({"id": "test1", "pk": "pk1", "value": 100})
+        await self.container.create_item({"id": "test1", "pk": "pk1", "metric": 100, "label": "test"})
         self.tracing_helper.clear()
 
         # Query with parameters
-        query = "SELECT * FROM c WHERE c.value > @minValue"
+        query = "SELECT * FROM c WHERE c.metric > @minValue"
         parameters = [{"name": "@minValue", "value": 50}]
 
         items = []
@@ -86,18 +98,17 @@ class TestTelemetryIntegrationAsync(unittest.IsolatedAsyncioTestCase):
         param_keys = [k for k in attrs.keys() if "db.query.parameter" in k]
         self.assertEqual(len(param_keys), 0, "Parameter values should NOT be logged")
 
-        # Verify db.system is present
-        self.assertEqual(attrs.get(_Constants.OpenTelemetryAttributes.DB_SYSTEM), "cosmosdb")
-
-        # Verify operation type
-        self.assertEqual(attrs.get(_Constants.OpenTelemetryAttributes.DB_COSMOSDB_OPERATION_TYPE), "query")
+        self.assertEqual(attrs.get(_Constants.OpenTelemetryAttributes.DB_SYSTEM_NAME), "azure.cosmosdb")
 
     async def test_literal_query_is_sanitized(self):
         """Verify queries with literal values ARE sanitized in telemetry."""
         self.tracing_helper.clear()
 
         # Query with literal values
-        query = "SELECT * FROM c WHERE c.value = 100 AND c.name = 'test'"
+        await self.container.create_item({"id": "test2", "pk": "pk1", "metric": 100, "label": "test"})
+        self.tracing_helper.clear()
+
+        query = "SELECT * FROM c WHERE c.metric = 100 AND c.label = 'test'"
 
         items = []
         async for item in self.container.query_items(query=query, enable_cross_partition_query=True):
@@ -123,22 +134,24 @@ class TestTelemetryIntegrationAsync(unittest.IsolatedAsyncioTestCase):
         # Create an item
         await self.container.create_item({"id": f"attr_test_{uuid.uuid4().hex[:4]}", "pk": "pk1", "value": 200})
 
-        # Find the create span
+        # Find the Cosmos-enriched create span
         all_spans = self.tracing_helper.get_spans()
-        create_spans = [s for s in all_spans if "create" in s.get("name", "").lower()]
+        create_spans = [
+            s for s in all_spans
+            if s.get("attributes", {}).get(_Constants.OpenTelemetryAttributes.DB_OPERATION_NAME) == "create_item"
+        ]
 
         self.assertGreater(len(create_spans), 0)
         attrs = create_spans[0]["attributes"]
 
         # Verify required attributes
-        self.assertEqual(attrs.get(_Constants.OpenTelemetryAttributes.DB_SYSTEM), "cosmosdb")
+        self.assertEqual(attrs.get(_Constants.OpenTelemetryAttributes.DB_SYSTEM_NAME), "azure.cosmosdb")
         self.assertEqual(attrs.get(_Constants.OpenTelemetryAttributes.DB_OPERATION_NAME), "create_item")
-        self.assertEqual(attrs.get(_Constants.OpenTelemetryAttributes.DB_COSMOSDB_OPERATION_TYPE), "create")
         self.assertIn(self.test_container_name, attrs.get(_Constants.OpenTelemetryAttributes.DB_COLLECTION_NAME, ""))
         self.assertIn(self.test_db_name, attrs.get(_Constants.OpenTelemetryAttributes.DB_NAMESPACE, ""))
 
         # Verify response attributes
-        self.assertIn(_Constants.OpenTelemetryAttributes.DB_COSMOSDB_REQUEST_CHARGE, attrs)
+        self.assertIn(_Constants.OpenTelemetryAttributes.AZURE_COSMOSDB_OPERATION_REQUEST_CHARGE, attrs)
 
     async def test_error_has_db_system_attribute(self):
         """Verify db.system attribute is added even when operations fail."""
@@ -156,12 +169,12 @@ class TestTelemetryIntegrationAsync(unittest.IsolatedAsyncioTestCase):
 
         self.assertGreater(len(spans), 0, "Should have captured error span")
 
-        # Check if db.system is in any span
+        # Check if db.system.name is in any span
         has_db_system = any(
-            s["attributes"].get(_Constants.OpenTelemetryAttributes.DB_SYSTEM) == "cosmosdb"
+            s["attributes"].get(_Constants.OpenTelemetryAttributes.DB_SYSTEM_NAME) == "azure.cosmosdb"
             for s in spans
         )
-        self.assertTrue(has_db_system, "db.system should be present even on error")
+        self.assertTrue(has_db_system, "db.system.name should be present even on error")
 
 
 if __name__ == '__main__':

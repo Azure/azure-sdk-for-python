@@ -158,7 +158,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return self.client_connection._container_properties_cache
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.READ)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.READ_CONTAINER)
     def read(  # pylint:disable=docstring-missing-param
         self,
         populate_query_metrics: Optional[bool] = None,
@@ -216,7 +216,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return container
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.READ)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.READ_ITEM)
     def read_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[str, Mapping[str, Any]],
@@ -306,7 +306,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return self.client_connection.ReadItem(document_link=doc_link, options=request_options, **kwargs)
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.READ)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.READ_MANY_ITEMS)
     def read_items(
             self,
             items: Sequence[Tuple[str, PartitionKeyType]],
@@ -388,7 +388,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
 
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.QUERY)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.READ_ALL_ITEMS)
     def read_all_items(  # pylint:disable=docstring-missing-param
         self,
         max_item_count: Optional[int] = None,
@@ -654,7 +654,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         ...
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.QUERY)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.QUERY_CHANGE_FEED)
     def query_items_change_feed(
             self,
             *args: Any,
@@ -948,7 +948,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         ...
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.QUERY)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.QUERY_ITEMS)
     def query_items(  # pylint:disable=docstring-missing-param,too-many-statements
         self,
         *args: Any,
@@ -1159,7 +1159,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return result
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.REPLACE)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.REPLACE_ITEM)
     def replace_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[str, Mapping[str, Any]],
@@ -1266,7 +1266,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return result
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.UPSERT)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.UPSERT_ITEM)
     def upsert_item(  # pylint:disable=docstring-missing-param
         self,
         body: dict[str, Any],
@@ -1369,7 +1369,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return result
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.CREATE)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.CREATE_ITEM)
     def create_item(  # pylint:disable=docstring-missing-param
         self,
         body: dict[str, Any],
@@ -1479,7 +1479,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return result
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.PATCH)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.PATCH_ITEM)
     def patch_item(
         self,
         item: Union[str, dict[str, Any]],
@@ -1586,7 +1586,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return result
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.BATCH)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.EXECUTE_BATCH)
     def execute_item_batch(
         self,
         batch_operations: Sequence[Union[Tuple[str, Tuple[Any, ...]], Tuple[str, Tuple[Any, ...], dict[str, Any]]]],
@@ -1675,7 +1675,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             collection_link=self.container_link, batch_operations=batch_operations, options=request_options, **kwargs)
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.DELETE)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.DELETE_ITEM)
     def delete_item(  # pylint:disable=docstring-missing-param
         self,
         item: Union[Mapping[str, Any], str],
@@ -1771,7 +1771,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         self.client_connection.DeleteItem(document_link=document_link, options=request_options, **kwargs)
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.READ)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.READ_CONTAINER_THROUGHPUT)
     def read_offer(self, **kwargs: Any) -> Offer:
         """Get the ThroughputProperties object for this container.
         If no ThroughputProperties already exist for the container, an exception is raised.
@@ -1789,6 +1789,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return self.get_throughput(**kwargs)
 
     @distributed_trace
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.READ_CONTAINER_THROUGHPUT)
     def get_throughput(
             self,
             *,
@@ -1822,7 +1823,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return _deserialize_throughput(throughput=throughput_properties)
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.REPLACE)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.REPLACE_CONTAINER_THROUGHPUT)
     def replace_throughput(
         self,
         throughput: Union[int, ThroughputProperties],
@@ -1860,7 +1861,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return ThroughputProperties(offer_throughput=data["content"]["offerThroughput"], properties=data)
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.QUERY)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.READ_ALL_CONFLICTS)
     def list_conflicts(
         self,
         max_item_count: Optional[int] = None,
@@ -1890,7 +1891,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return result
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.QUERY)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.QUERY_CONFLICTS)
     def query_conflicts(
         self,
         query: str,
@@ -1941,7 +1942,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         return result
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.READ)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.READ_CONFLICT)
     def get_conflict(
         self,
         conflict: Union[str, Mapping[str, Any]],
@@ -1972,7 +1973,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.DELETE)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.DELETE_CONFLICT)
     def delete_conflict(
         self,
         conflict: Union[str, Mapping[str, Any]],
@@ -2005,7 +2006,7 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         )
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.DELETE)
+    @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.DELETE_ALL_ITEMS_BY_PARTITION_KEY)
     def delete_all_items_by_partition_key(
         self,
         partition_key: PartitionKeyType,
@@ -2072,7 +2073,6 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
             collection_link=self.container_link, options=request_options, **kwargs)
 
     @distributed_trace
-    @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.READ_FEED)
     def read_feed_ranges(
             self,
             *,

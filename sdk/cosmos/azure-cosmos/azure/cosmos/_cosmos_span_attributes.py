@@ -4,8 +4,10 @@
 """Decorator to add Cosmos DB semantic convention attributes to spans."""
 
 import functools
+import os
 import re
-from typing import Any, Callable, Mapping, Optional, TypeVar, cast
+from typing import Any, Callable, Mapping, Optional, Sequence, TypeVar, Union, cast
+from urllib.parse import urlparse
 
 from azure.core.settings import settings
 from azure.core.tracing import AbstractSpan
@@ -17,6 +19,9 @@ from .http_constants import HttpHeaders
 __all__ = ["cosmos_span_attributes", "sanitize_query"]
 
 F = TypeVar("F", bound=Callable[..., Any])
+_NUMERIC_LITERAL_PATTERN = re.compile(r"(?<![@\w.])-?(?:\d+(?:\.\d+)?|\.\d+)(?:[eE][+-]?\d+)?\b")
+_TRUE_VALUES = {"1", "true", "yes", "on"}
+_FALSE_VALUES = {"0", "false", "no", "off"}
 
 
 def _build_telemetry_kwargs(func_kwargs: Mapping[str, Any]) -> dict[str, Any]:
@@ -46,11 +51,12 @@ def sanitize_query(query: str, parameters: Optional[list]) -> str:
     """
     Sanitize query text according to OpenTelemetry semantic conventions.
 
-    Per the spec:
-    https://github.com/devopsleague/opentelemetry-semantic-conventions/blob/main/docs/database/database-spans.md#sanitization-of-dbquerytext
+    Per the official database semantic conventions:
+    https://opentelemetry.io/docs/specs/semconv/db/database-spans/#sanitization-of-dbquerytext
 
     - Preserve parameterized placeholders (for example, @param)
-    - Replace inline literal values with '?' placeholders, even when a parameters list exists
+    - Do not sanitize parameterized query text when explicit query parameters are provided
+    - Replace inline literal values with '?' placeholders for non-parameterized queries
 
     :param query: The SQL query text
     :type query: str
@@ -59,18 +65,19 @@ def sanitize_query(query: str, parameters: Optional[list]) -> str:
     :return: Sanitized query text
     :rtype: str
     """
-    _ = parameters
-
     if not query:
+        return query
+
+    if parameters:
         return query
 
     # Sanitize literal values in non-parameterized queries
     # Replace string literals, including escaped quotes and doubled single quotes.
     sanitized = re.sub(r"'(?:\\.|''|[^'])*'", "'?'", query)
 
-    # Replace numeric literals (integers and floats), including negative values.
-    # Match numbers not preceded by @ or identifier characters.
-    sanitized = re.sub(r"(?<![@\w.])-?\d+(?:\.\d+)?\b", "?", sanitized)
+    # Replace numeric literals (integers, floats, and scientific notation),
+    # including negative values. Match numbers not preceded by @ or identifier characters.
+    sanitized = _NUMERIC_LITERAL_PATTERN.sub("?", sanitized)
 
     # Replace boolean literals
     sanitized = re.sub(r'\b(true|false)\b', '?', sanitized, flags=re.IGNORECASE)
@@ -81,20 +88,48 @@ def sanitize_query(query: str, parameters: Optional[list]) -> str:
     return sanitized
 
 
+def _get_env_bool(name: str) -> Optional[bool]:
+    value = os.environ.get(name)
+    if value is None:
+        return None
+
+    normalized = value.strip().lower()
+    if normalized in _TRUE_VALUES:
+        return True
+    if normalized in _FALSE_VALUES:
+        return False
+    return None
+
+
+def _should_emit_query_text() -> bool:
+    explicit_opt_in = _get_env_bool(_Constants.OTEL_ENABLE_QUERY_TEXT)
+    return explicit_opt_in is True
+
+
+def _wrap_span(span_impl_type: Any, raw_span: Any) -> AbstractSpan:
+    if hasattr(raw_span, "add_attribute"):
+        return cast(AbstractSpan, raw_span)
+
+    try:
+        return cast(AbstractSpan, span_impl_type(span=raw_span))
+    except TypeError:
+        return cast(AbstractSpan, span_impl_type(raw_span))
+
+
 def cosmos_span_attributes(
     __func: Optional[Callable] = None,
     *,
     name_of_span: Optional[str] = None,
     kind: Optional[Any] = None,
     tracing_attributes: Optional[Mapping[str, Any]] = None,
-    operation_type: Optional[str] = None,
+    operation_name: Optional[str] = None,
     **kwargs: Any,
 ) -> Any:
     """
     Decorator that adds Cosmos DB semantic convention attributes to the current OpenTelemetry span.
 
-    The operation name (db.operation.name) is automatically derived from the function name.
-    The operation_type (db.cosmosdb.operation_type) should be provided from the spec table values.
+    The operation name (db.operation.name) defaults to the function name unless
+    an explicit operation_name override is provided.
 
     This decorator should be used in conjunction with @distributed_trace to enrich
     the trace span with Cosmos-specific attributes following the OpenTelemetry semantic conventions.
@@ -107,15 +142,15 @@ def cosmos_span_attributes(
     :paramtype kind: Optional[Any]
     :keyword tracing_attributes: Unused compatibility argument.
     :paramtype tracing_attributes: Optional[Mapping[str, Any]]
-    :keyword operation_type: The Cosmos DB operation type from the spec table
-    :paramtype operation_type: Optional[str]
+    :keyword operation_name: Explicit db.operation.name override.
+    :paramtype operation_name: Optional[str]
     :return: The decorated function
     :rtype: Any
 
     Example usage::
 
         @distributed_trace
-        @cosmos_span_attributes(operation_type=Constants.OpenTelemetryOperationTypes.CREATE)
+        @cosmos_span_attributes(operation_name=Constants.OpenTelemetryOperationNames.CREATE_ITEM)
         def create_item(self, body, **kwargs):
             # ... implementation
             return result
@@ -123,7 +158,7 @@ def cosmos_span_attributes(
     del name_of_span, kind, tracing_attributes, kwargs
 
     def decorator(func: F) -> F:
-        method_name = func.__name__
+        resolved_operation_name = operation_name or func.__name__
 
         @functools.wraps(func)
         def wrapper(*args: Any, **func_kwargs: Any) -> Any:
@@ -133,8 +168,7 @@ def cosmos_span_attributes(
 
                 # Add Cosmos-specific attributes (only if span exists)
                 _add_cosmos_telemetry(
-                    method_name,
-                    operation_type,
+                    resolved_operation_name,
                     args,
                     _build_telemetry_kwargs(func_kwargs),
                     result,
@@ -180,18 +214,25 @@ def _add_cosmos_error_telemetry(error: Exception) -> None:
             if not raw_span.is_recording():
                 return
 
-        # Wrap the span
-        span: AbstractSpan = span_impl_type(span=raw_span)
+        span = _wrap_span(span_impl_type, raw_span)
 
-        # Always add db.system for Cosmos DB
-        span.add_attribute(_Constants.OpenTelemetryAttributes.DB_SYSTEM, "cosmosdb")
+        span.add_attribute(
+            _Constants.OpenTelemetryAttributes.DB_SYSTEM_NAME,
+            _Constants.OpenTelemetryValues.DB_SYSTEM_NAME_VALUE,
+        )
 
-        # Add error attributes
         if hasattr(error, "status_code"):
-            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_COSMOSDB_STATUS_CODE, error.status_code)
+            status_code = str(getattr(error, "status_code"))
+            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_RESPONSE_STATUS_CODE, status_code)
+            span.add_attribute(_Constants.OpenTelemetryAttributes.ERROR_TYPE, status_code)
+        else:
+            span.add_attribute(_Constants.OpenTelemetryAttributes.ERROR_TYPE, type(error).__name__)
 
         if hasattr(error, "sub_status_code"):
-            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_COSMOSDB_SUB_STATUS_CODE, error.sub_status_code)
+            span.add_attribute(
+                _Constants.OpenTelemetryAttributes.AZURE_COSMOSDB_RESPONSE_SUB_STATUS_CODE,
+                error.sub_status_code,
+            )
 
         if hasattr(error, "headers") and error.headers:
             _extract_headers(span, error.headers)
@@ -201,8 +242,7 @@ def _add_cosmos_error_telemetry(error: Exception) -> None:
 
 
 def _add_cosmos_telemetry(
-    method_name: Optional[str],
-    operation_type: Optional[str],
+    operation_name: Optional[str],
     args: tuple,
     kwargs: dict,
     result: Any,
@@ -210,10 +250,8 @@ def _add_cosmos_telemetry(
     """
     Add Cosmos DB-specific telemetry attributes to the current span.
 
-    :param method_name: The actual method name from the function (e.g., "create_item")
-    :type method_name: Optional[str]
-    :param operation_type: The Cosmos DB operation type from spec (e.g., "create")
-    :type operation_type: Optional[str]
+    :param operation_name: The semantic db.operation.name value.
+    :type operation_name: Optional[str]
     :param args: Function arguments
     :type args: tuple
     :param kwargs: Function keyword arguments
@@ -245,11 +283,10 @@ def _add_cosmos_telemetry(
             if not is_recording:
                 return
 
-        # Wrap the raw span in the AbstractSpan implementation
-        span: AbstractSpan = span_impl_type(span=raw_span)
+        span = _wrap_span(span_impl_type, raw_span)
 
         # Add Cosmos DB attributes
-        _add_cosmos_attributes(span, method_name, operation_type, args, kwargs)
+        _add_cosmos_attributes(span, operation_name, args, kwargs)
         _add_response_attributes(span, result)
 
     except (AttributeError, TypeError, ValueError):
@@ -259,8 +296,7 @@ def _add_cosmos_telemetry(
 
 def _add_cosmos_attributes(
     span: AbstractSpan,
-    method_name: Optional[str],
-    operation_type: Optional[str],
+    operation_name: Optional[str],
     args: tuple,
     kwargs: dict,
 ) -> None:
@@ -269,46 +305,35 @@ def _add_cosmos_attributes(
 
     :param span: The span to enrich.
     :type span: ~azure.core.tracing.AbstractSpan
-    :param method_name: The SDK method name.
-    :type method_name: Optional[str]
-    :param operation_type: The Cosmos DB operation type.
-    :type operation_type: Optional[str]
+    :param operation_name: The semantic db.operation.name value.
+    :type operation_name: Optional[str]
     :param args: Positional arguments passed to the wrapped method.
     :type args: tuple
     :param kwargs: Keyword arguments passed to the wrapped method.
     :type kwargs: dict
     """
     try:
-        # Required: db.system
-        span.add_attribute(_Constants.OpenTelemetryAttributes.DB_SYSTEM, "cosmosdb")
+        span.add_attribute(
+            _Constants.OpenTelemetryAttributes.DB_SYSTEM_NAME,
+            _Constants.OpenTelemetryValues.DB_SYSTEM_NAME_VALUE,
+        )
 
-        # db.operation.name: The actual method name (e.g., "create_item")
-        # Per spec: "capture the value as provided by the application"
-        if method_name:
-            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_OPERATION_NAME, method_name)
+        if operation_name:
+            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_OPERATION_NAME, operation_name)
 
-        # db.cosmosdb.operation_type: Standardized value from spec table (e.g., "create")
-        if operation_type:
-            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_COSMOSDB_OPERATION_TYPE, operation_type)
-
-        # Extract container and database info from self (first arg)
         instance = args[0] if args else None
         if instance is not None:
             _add_instance_attributes(span, instance)
 
-        # db.query.text for query operations. This helper is only reached for
-        # recording spans because _add_cosmos_telemetry returns early for
-        # NonRecordingSpan instances.
+        _add_request_attributes(span, operation_name, args, kwargs)
+
         query_text, parameters = _extract_query_metadata(kwargs)
 
-        if query_text:
-            # Sanitize query text per semantic conventions
-            sanitized_query = sanitize_query(query_text, parameters)
-            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_QUERY_TEXT, sanitized_query)
-
-            # Note: Query parameter VALUES are opt-in per semantic conventions
-            # Since we don't have a standard configuration mechanism for this,
-            # we do NOT log parameter values to avoid exposing sensitive data
+        if query_text and _should_emit_query_text():
+            # Parameterized query text is emitted unchanged per the DB semantic conventions.
+            # Non-parameterized query text is sanitized to replace inline literals.
+            emitted_query = sanitize_query(query_text, parameters)
+            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_QUERY_TEXT, emitted_query)
 
 
     except (AttributeError, TypeError, ValueError):
@@ -325,21 +350,30 @@ def _add_response_attributes(span: AbstractSpan, result: Any) -> None:
     :type result: Any
     """
     try:
-        if result is None:
-            return
-
         headers = None
 
-        # Handle CosmosDict responses (single item operations)
+        if result is not None and hasattr(result, "status_code"):
+            span.add_attribute(
+                _Constants.OpenTelemetryAttributes.DB_RESPONSE_STATUS_CODE,
+                str(getattr(result, "status_code")),
+            )
+
         if isinstance(result, CosmosDict):
+            # Successful CosmosDict/CosmosList responses currently expose headers but not a public HTTP status code.
+            # Once status_code is surfaced on these response types, emit it here, for example:
+            # span.add_attribute(
+            #     _Constants.OpenTelemetryAttributes.DB_RESPONSE_STATUS_CODE,
+            #     str(result.status_code),
+            # )
             headers = result.get_response_headers()
-        # Handle CosmosList responses (query operations)
         elif isinstance(result, CosmosList):
             headers = result.get_response_headers()
-            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_COSMOSDB_ITEM_COUNT, len(result))
-        # Handle other types with get_response_headers method
+            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_RESPONSE_RETURNED_ROWS, len(result))
         elif hasattr(result, "get_response_headers"):
             headers = result.get_response_headers()
+
+        if isinstance(headers, list):
+            headers = headers[-1] if headers else None
 
         if headers:
             _extract_headers(span, headers)
@@ -378,6 +412,30 @@ def _extract_query_metadata(kwargs: Mapping[str, Any]) -> tuple[Optional[str], O
     return query_text, parameters
 
 
+def _add_request_attributes(
+    span: AbstractSpan,
+    operation_name: Optional[str],
+    args: tuple[Any, ...],
+    kwargs: Mapping[str, Any],
+) -> None:
+    consistency_level = kwargs.get("consistencyLevel") or kwargs.get("consistency_level")
+    if isinstance(consistency_level, (str, int)):
+        typed_consistency_level = cast(Union[str, int], consistency_level)
+        span.add_attribute(_Constants.OpenTelemetryAttributes.AZURE_COSMOSDB_CONSISTENCY_LEVEL, typed_consistency_level)
+
+    if operation_name != _Constants.OpenTelemetryOperationNames.EXECUTE_BATCH:
+        return
+
+    batch_operations = kwargs.get("batch_operations")
+    if batch_operations is None and len(args) > 1:
+        batch_operations = args[1]
+
+    if isinstance(batch_operations, Sequence) and not isinstance(batch_operations, (str, bytes)):
+        batch_size = len(batch_operations)
+        if batch_size > 1:
+            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_OPERATION_BATCH_SIZE, batch_size)
+
+
 def _add_instance_attributes(span: AbstractSpan, instance: Any) -> None:
     """
     Add container- and client-related attributes from the wrapped instance.
@@ -387,31 +445,33 @@ def _add_instance_attributes(span: AbstractSpan, instance: Any) -> None:
     :param instance: The wrapped SDK instance.
     :type instance: Any
     """
-    if not hasattr(instance, "id"):
-        return
-
-    span.add_attribute(_Constants.OpenTelemetryAttributes.DB_COLLECTION_NAME, instance.id)
-    _add_namespace_attribute(span, instance)
     _add_client_connection_attributes(span, instance)
 
-
-def _add_namespace_attribute(span: AbstractSpan, instance: Any) -> None:
-    """
-    Add the database namespace attribute when the container link is available.
-
-    :param span: The span to enrich.
-    :type span: ~azure.core.tracing.AbstractSpan
-    :param instance: The wrapped SDK instance.
-    :type instance: Any
-    """
-    if not hasattr(instance, "container_link"):
+    if hasattr(instance, "container_link") and hasattr(instance, "id"):
+        span.add_attribute(_Constants.OpenTelemetryAttributes.DB_COLLECTION_NAME, instance.id)
+        _add_namespace_from_link(span, instance.container_link)
         return
 
-    container_link = instance.container_link
-    if "dbs/" not in container_link or "/colls/" not in container_link:
+    if (
+        hasattr(instance, "database_link")
+        and not hasattr(instance, "user_link")
+        and not hasattr(instance, "permission_link")
+    ):
+        if hasattr(instance, "id"):
+            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_NAMESPACE, instance.id)
+        else:
+            _add_namespace_from_link(span, instance.database_link)
         return
 
-    parts = container_link.split("/")
+    if hasattr(instance, "database_link"):
+        _add_namespace_from_link(span, instance.database_link)
+
+
+def _add_namespace_from_link(span: AbstractSpan, resource_link: str) -> None:
+    if "dbs/" not in resource_link:
+        return
+
+    parts = resource_link.split("/")
     try:
         db_index = parts.index("dbs")
         if db_index + 1 < len(parts):
@@ -436,14 +496,46 @@ def _add_client_connection_attributes(span: AbstractSpan, instance: Any) -> None
     if hasattr(client_conn, "connection_policy"):
         policy = client_conn.connection_policy
         if hasattr(policy, "ConnectionMode"):
-            mode = "direct" if policy.ConnectionMode == 1 else "gateway"
-            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_COSMOSDB_CONNECTION_MODE, mode)
+            mode = (
+                _Constants.OpenTelemetryValues.CONNECTION_MODE_DIRECT
+                if policy.ConnectionMode == 1
+                else _Constants.OpenTelemetryValues.CONNECTION_MODE_GATEWAY
+            )
+            if mode != _Constants.OpenTelemetryValues.CONNECTION_MODE_GATEWAY:
+                span.add_attribute(_Constants.OpenTelemetryAttributes.AZURE_COSMOSDB_CONNECTION_MODE, mode)
 
     if hasattr(client_conn, "client_id"):
         span.add_attribute(
-            _Constants.OpenTelemetryAttributes.DB_COSMOSDB_CLIENT_ID,
+            _Constants.OpenTelemetryAttributes.AZURE_CLIENT_ID,
             str(client_conn.client_id),
         )
+
+    default_headers = getattr(client_conn, "default_headers", None)
+    consistency_level = None
+    if isinstance(default_headers, Mapping):
+        consistency_level = default_headers.get(HttpHeaders.ConsistencyLevel)
+    if isinstance(consistency_level, (str, int)):
+        typed_consistency_level = cast(Union[str, int], consistency_level)
+        span.add_attribute(_Constants.OpenTelemetryAttributes.AZURE_COSMOSDB_CONSISTENCY_LEVEL, typed_consistency_level)
+
+    span.add_attribute(
+        _Constants.OpenTelemetryAttributes.AZURE_RESOURCE_PROVIDER_NAMESPACE,
+        _Constants.OpenTelemetryValues.AZURE_RESOURCE_PROVIDER_NAMESPACE_VALUE,
+    )
+
+    if hasattr(client_conn, "url_connection"):
+        parsed = urlparse(str(client_conn.url_connection))
+        if parsed.hostname is not None:
+            hostname = cast(str, parsed.hostname)
+            span.add_attribute(_Constants.OpenTelemetryAttributes.SERVER_ADDRESS, hostname)
+        if parsed.port is not None and parsed.port != 443:
+            port = cast(int, parsed.port)
+            span.add_attribute(_Constants.OpenTelemetryAttributes.SERVER_PORT, port)
+
+    user_agent = getattr(client_conn, "_user_agent", None)
+    if isinstance(user_agent, (str, int)):
+        typed_user_agent = cast(Union[str, int], user_agent)
+        span.add_attribute(_Constants.OpenTelemetryAttributes.USER_AGENT_ORIGINAL, typed_user_agent)
 
 
 def _extract_headers(span: AbstractSpan, headers: Mapping[str, Any]) -> None:
@@ -456,53 +548,24 @@ def _extract_headers(span: AbstractSpan, headers: Mapping[str, Any]) -> None:
     :type headers: Mapping[str, Any]
     """
     try:
-        # db.cosmosdb.request_charge - Request Units consumed
         if HttpHeaders.RequestCharge in headers:
             charge = float(headers[HttpHeaders.RequestCharge])
             span.add_attribute(
-                _Constants.OpenTelemetryAttributes.DB_COSMOSDB_REQUEST_CHARGE,
+                _Constants.OpenTelemetryAttributes.AZURE_COSMOSDB_OPERATION_REQUEST_CHARGE,
                 cast(Any, charge),
             )
 
-        # db.cosmosdb.request_diagnostics_id - Request correlation ID
-        if HttpHeaders.ActivityId in headers:
-            activity_id = headers[HttpHeaders.ActivityId]
-            span.add_attribute(
-                _Constants.OpenTelemetryAttributes.DB_COSMOSDB_REQUEST_DIAGNOSTICS_ID,
-                activity_id,
-            )
-
-        # db.cosmosdb.sub_status_code - Cosmos-specific error details
         if HttpHeaders.SubStatus in headers:
             sub_status = int(headers[HttpHeaders.SubStatus])
-            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_COSMOSDB_SUB_STATUS_CODE, sub_status)
+            span.add_attribute(_Constants.OpenTelemetryAttributes.AZURE_COSMOSDB_RESPONSE_SUB_STATUS_CODE, sub_status)
 
-        # db.cosmosdb.item_count - Number of items in response
         if HttpHeaders.ItemCount in headers:
             item_count = int(headers[HttpHeaders.ItemCount])
-            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_COSMOSDB_ITEM_COUNT, item_count)
+            span.add_attribute(_Constants.OpenTelemetryAttributes.DB_RESPONSE_RETURNED_ROWS, item_count)
 
-        # db.cosmosdb.request_content_length - Size of request body
-        if HttpHeaders.ContentLength in headers:
-            try:
-                request_length = int(headers[HttpHeaders.ContentLength])
-                span.add_attribute(
-                    _Constants.OpenTelemetryAttributes.DB_COSMOSDB_REQUEST_CONTENT_LENGTH,
-                    request_length,
-                )
-            except (ValueError, TypeError):
-                pass
-
-        # db.cosmosdb.regions_contacted - Regions contacted for hedging/multi-region scenarios
-        for key in ["x-ms-regions-contacted", "x-ms-cosmos-regions-contacted"]:
-            if key in headers:
-                regions_header = headers[key]
-                if isinstance(regions_header, str):
-                    span.add_attribute(
-                        _Constants.OpenTelemetryAttributes.DB_COSMOSDB_REGIONS_CONTACTED,
-                        regions_header,
-                    )
-                break
+        # Python SDK does not currently expose a verified/public contacted-regions
+        # response contract for this telemetry path. If that becomes supported,
+        # add extraction here using the public response surface.
 
     except (AttributeError, TypeError, ValueError):
         pass

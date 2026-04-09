@@ -64,17 +64,17 @@ def basic_tracing_example():
         _client, _database, container = _get_sample_container()
 
         # Upsert an item - the emitted span includes Cosmos DB semantic attributes such as:
-        #   - db.system = "cosmosdb"
-        #   - db.operation.name = "upsert_item" (the actual SDK method name)
-        #   - db.cosmosdb.operation_type = "upsert" (the standardized operation type)
+        #   - db.system.name = "azure.cosmosdb"
+        #   - db.operation.name = "upsert_item"
         #   - db.namespace = database name
         #   - db.collection.name = container name
-        #   - db.cosmosdb.connection_mode = "gateway" or "direct"
-        #   - db.cosmosdb.request_charge = RU cost
-        #   - db.cosmosdb.client_id = unique client identifier
+        #   - azure.cosmosdb.connection.mode = "direct" when direct mode is used
+        #   - azure.cosmosdb.operation.request_charge = RU cost
+        #   - azure.client.id = unique client identifier
         container.upsert_item({"id": "otel-sample-item", "pk": "otel-sample", "value": 100})
 
-        # Query spans also include db.query.text. Fully parameterized placeholders are preserved.
+        # Query spans include db.query.text only when explicitly opted in via
+        # AZURE_COSMOS_ENABLE_DB_QUERY_TEXT=true.
         list(
             container.query_items(
                 query="SELECT * FROM c WHERE c.pk = @pk",

@@ -40,18 +40,15 @@ def _build_telemetry_kwargs(func_kwargs: Mapping[str, Any]) -> dict[str, Any]:
 
 
 def _add_success_telemetry(
-    method_name: str,
-    operation_type: Optional[str],
+    operation_name: str,
     args: tuple[Any, ...],
     func_kwargs: Mapping[str, Any],
     result: Any,
 ) -> None:
     """Add success telemetry for the decorated aio method.
 
-    :param method_name: The decorated method name.
-    :type method_name: str
-    :param operation_type: The Cosmos DB operation type from the semantic conventions table.
-    :type operation_type: Optional[str]
+    :param operation_name: The semantic db.operation.name value.
+    :type operation_name: str
     :param args: Positional arguments passed to the decorated method.
     :type args: tuple[Any, ...]
     :param func_kwargs: Keyword arguments passed to the decorated method.
@@ -60,8 +57,7 @@ def _add_success_telemetry(
     :type result: Any
     """
     _add_cosmos_telemetry(
-        method_name,
-        operation_type,
+        operation_name,
         args,
         _build_telemetry_kwargs(func_kwargs),
         result,
@@ -82,14 +78,14 @@ def cosmos_span_attributes_async(
     name_of_span: Optional[str] = None,
     kind: Optional[Any] = None,
     tracing_attributes: Optional[Mapping[str, Any]] = None,
-    operation_type: Optional[str] = None,
+    operation_name: Optional[str] = None,
     **kwargs: Any,
 ) -> Any:
     """
     Decorator that adds Cosmos DB semantic convention attributes to the current OpenTelemetry span.
 
-    The operation name (db.operation.name) is automatically derived from the function name.
-    The operation_type (db.cosmosdb.operation_type) should be provided from the spec table values.
+    The operation name (db.operation.name) defaults to the function name unless
+    an explicit operation_name override is provided.
 
     This decorator is intended for aio client methods and supports two shapes:
 
@@ -108,15 +104,15 @@ def cosmos_span_attributes_async(
     :paramtype kind: Optional[Any]
     :keyword tracing_attributes: Unused compatibility argument.
     :paramtype tracing_attributes: Optional[Mapping[str, Any]]
-    :keyword operation_type: The Cosmos DB operation type from the spec table (e.g., "create", "read")
-    :paramtype operation_type: Optional[str]
+    :keyword operation_name: Explicit db.operation.name override.
+    :paramtype operation_name: Optional[str]
     :return: The decorated function.
     :rtype: Any
 
     Example usage::
 
         @distributed_trace_async
-        @cosmos_span_attributes_async(operation_type=Constants.OpenTelemetryOperationTypes.CREATE)
+        @cosmos_span_attributes_async(operation_name=Constants.OpenTelemetryOperationNames.CREATE_ITEM)
         async def create_item(self, body, **kwargs):
             # ... implementation
             return result
@@ -124,7 +120,7 @@ def cosmos_span_attributes_async(
     del name_of_span, kind, tracing_attributes, kwargs
 
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
-        method_name = func.__name__
+        resolved_operation_name = operation_name or func.__name__
 
         if inspect.iscoroutinefunction(func):
             coroutine_func = cast(Callable[..., Awaitable[Any]], func)
@@ -133,7 +129,7 @@ def cosmos_span_attributes_async(
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
                 try:
                     result = await coroutine_func(*args, **kwargs)
-                    _add_success_telemetry(method_name, operation_type, args, kwargs, result)
+                    _add_success_telemetry(resolved_operation_name, args, kwargs, result)
                     return result
                 except Exception as error:
                     _add_error_telemetry(error)
@@ -145,7 +141,7 @@ def cosmos_span_attributes_async(
         def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
             try:
                 result = func(*args, **kwargs)
-                _add_success_telemetry(method_name, operation_type, args, kwargs, result)
+                _add_success_telemetry(resolved_operation_name, args, kwargs, result)
                 return result
             except Exception as error:
                 _add_error_telemetry(error)
