@@ -345,14 +345,6 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         built_in_definitions = self._get_needed_built_in_tool_definitions(tool_calls)
         needed_tool_definitions.extend(built_in_definitions)
 
-        # OpenAPI tool is a collection of functions, so we need to expand it
-        tool_definitions_expanded = list(
-            chain.from_iterable(
-                tool.get("functions", []) if tool.get("type") == "openapi" else [tool]
-                for tool in needed_tool_definitions
-            )
-        )
-
         # Validate that all tool calls have corresponding definitions
         for tool_call in tool_calls:
             if isinstance(tool_call, dict):
@@ -366,7 +358,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                     elif tool_name:
                         # This is a regular function tool from converter
                         tool_definition_exists = any(
-                            tool.get("name") == tool_name for tool in tool_definitions_expanded
+                            tool.get("name") == tool_name for tool in needed_tool_definitions
                         )
                         if not tool_definition_exists:
                             raise EvaluationException(
