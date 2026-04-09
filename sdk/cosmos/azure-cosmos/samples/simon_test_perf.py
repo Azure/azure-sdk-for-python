@@ -360,4 +360,11 @@ async def main():
 
 
 if __name__ == "__main__":
-    sys.exit(asyncio.run(main()))
+    # Use uvloop if available (Linux/macOS) for significantly faster async I/O
+    try:
+        import uvloop
+        print("[PERF] Using uvloop event loop")
+        sys.exit(uvloop.run(main()))
+    except ImportError:
+        print("[PERF] uvloop not available, using default asyncio event loop")
+        sys.exit(asyncio.run(main()))
