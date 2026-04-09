@@ -9,11 +9,13 @@ DESCRIPTION:
     This sample demonstrates how to perform CRUD operations on agent Sessions
     using the synchronous AIProjectClient.
 
+    Sessions only work with Hosted Agents.
+
     Sessions are currently a preview feature. In the Python SDK, you access
     these operations via `project_client.beta.agents`.
 
 USAGE:
-    python sample_session_crud.py
+    python sample_sessions_crud.py
 
     Before running the sample:
 
@@ -39,6 +41,11 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
+
+# Construct the paths to the data folder and data file used in this sample
+script_dir = os.path.dirname(os.path.abspath(__file__))
+data_folder = os.path.join(script_dir, "data_folder")
+data_file = os.path.join(data_folder, "data_file1.txt")
 
 with (
     DefaultAzureCredential() as credential,
@@ -78,6 +85,15 @@ with (
     print(f"Found {len(sessions)} session(s) for agent '{agent_name}'")
     for item in sessions:
         print(f"  - {item.agent_session_id} (status: {item.status})")
+
+    print(f"Uploading file {data_file} to the session")
+    project_client.beta.agents.upload_session_file(
+        agent_name=agent_name,
+        session_id=session.agent_session_id,
+        content_or_file_path=data_file,
+        path="data_file1.txt",
+    )
+    print("Session file uploaded")
 
     # Delete the session
     project_client.beta.agents.delete_session(
