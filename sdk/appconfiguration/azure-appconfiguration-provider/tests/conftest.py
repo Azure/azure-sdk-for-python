@@ -8,10 +8,10 @@ from devtools_testutils import (
     add_remove_header_sanitizer,
     add_uri_string_sanitizer,
     is_live,
+    get_credential,
 )
 import pytest
 from azure.appconfiguration import AzureAppConfigurationClient
-from azure.identity import DefaultAzureCredential
 from testcase import setup_configs, cleanup_test_resources
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
@@ -32,10 +32,10 @@ def setup_app_config_keys():
         yield
         return
 
-    credential = DefaultAzureCredential()
+    credential = get_credential()
     client = AzureAppConfigurationClient(endpoint, credential)
-    keyvault_secret_url = os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE")
-    keyvault_secret_url2 = os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE2")
+    keyvault_secret_url = os.environ.get("APPCONFIGURATION_KEYVAULT_SECRET_URL")
+    keyvault_secret_url2 = os.environ.get("APPCONFIGURATION_KEYVAULT_SECRET_URL2")
     snap_name, ff_snap_name = setup_configs(client, keyvault_secret_url, keyvault_secret_url2)
 
     snapshot_names["snapshot"] = snap_name
@@ -49,18 +49,25 @@ def setup_app_config_keys():
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(
-        value="https://sanitized.azconfig.io",
-        regex=os.environ.get("APPCONFIGURATION_ENDPOINT_STRING", "https://sanitized.azconfig.io"),
+        value="https://Sanitized.azconfig.io",
+        regex=os.environ.get("APPCONFIGURATION_ENDPOINT_STRING", "https://Sanitized.azconfig.io"),
     )
     add_general_regex_sanitizer(
-        value="sanitized",
-        regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "https://sanitized.azconfig.io"),
+        value="Sanitized",
+        regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "https://Sanitized.azconfig.io"),
     )
     add_uri_string_sanitizer()
+    # Register the longer URL2 sanitizer FIRST to prevent URL1's sanitizer from partially matching within URL2
     add_general_string_sanitizer(
-        value="https://sanitized.vault.azure.net/secrets/fake-secret/",
+        value="https://Sanitized.vault.azure.net/secrets/TestSecret2/",
         target=os.environ.get(
-            "APPCONFIGURATION_KEY_VAULT_REFERENCE", "https://sanitized.vault.azure.net/secrets/fake-secret/"
+            "APPCONFIGURATION_KEYVAULT_SECRET_URL2", "https://Sanitized.vault.azure.net/secrets/TestSecret2/"
+        ),
+    )
+    add_general_string_sanitizer(
+        value="https://Sanitized.vault.azure.net/secrets/TestSecret/",
+        target=os.environ.get(
+            "APPCONFIGURATION_KEYVAULT_SECRET_URL", "https://Sanitized.vault.azure.net/secrets/TestSecret/"
         ),
     )
     add_remove_header_sanitizer(headers="Correlation-Context")
