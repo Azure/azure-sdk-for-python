@@ -5,9 +5,7 @@ description = "Python SDK for building servers implementing the Azure AI Respons
 
 requires-python = ">=3.10"
 license = "MIT"
-authors = [
-    { name = "Microsoft Corporation" },
-]
+authors = [{ name = "Microsoft Corporation" }]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",
@@ -17,12 +15,13 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
-    "Programming Language :: Python :: 3.14"
+    "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
     "azure-ai-agentserver-core>=2.0.0b1",
     "azure-core>=1.30.0",
-    "isodate>=0.6.1"
+    "isodate>=0.6.1",
+    "aiohttp>=3.10.0",
 ]
 keywords = ["azure", "azure sdk"]
 
@@ -45,7 +44,7 @@ exclude = [
     "doc*",
     "azure",
     "azure.ai",
-    "scripts*"
+    "scripts*",
 ]
 
 [tool.setuptools.package-data]
