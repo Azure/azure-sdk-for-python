@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 import os
 import logging
-from typing import List, Any
+from typing import List, Any, Optional
 import httpx  # pylint: disable=networking-import-outside-azure-core-transport
 from openai import AsyncOpenAI
 from azure.core.tracing.decorator import distributed_trace
@@ -101,7 +101,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
     @distributed_trace
-    def get_openai_client(self, **kwargs: Any) -> AsyncOpenAI:
+    def get_openai_client(self, agent_name: Optional[str] = None, **kwargs: Any) -> AsyncOpenAI:
         """Get an authenticated AsyncOpenAI client from the `openai` package.
 
         Keyword arguments are passed to the AsyncOpenAI client constructor.
@@ -125,6 +125,17 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         # Allow caller to override base_url
         if "base_url" in kwargs:
             base_url = kwargs.pop("base_url")
+        elif agent_name is not None:
+            if self._config.allow_preview:
+                base_url = (
+                    self._config.endpoint.rstrip("/") + f"/agents/{agent_name}/endpoint/openai/v1"
+                )  # pylint: disable=protected-access
+            else:
+                raise ValueError(
+                    "Calling `get_openai_client` method with an `agent_name` requires you to set `allow_preview=True`"
+                    "\nwhen constructing the AIProjectClient. Note that preview features are under development and "
+                    "\nsubject to change. They should not be used in production environments."
+                )
         else:
             base_url = self._config.endpoint.rstrip("/") + "/openai/v1"  # pylint: disable=protected-access
 
