@@ -76,18 +76,18 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
     ResponsesAgentServerHost,
     TextResponse,
-    get_input_text,
 )
 
 app = ResponsesAgentServerHost()
 
 
 @app.create_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
+    text = await context.get_input_text()
     return TextResponse(
         context,
         request,
-        create_text=lambda: f"Echo: {get_input_text(request)}",
+        create_text=lambda: f"Echo: {text}",
     )
 ```
 
@@ -121,11 +121,12 @@ When you have the full text available at once:
 
 ```python
 @app.create_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
+    text = await context.get_input_text()
     return TextResponse(
         context,
         request,
-        create_text=lambda: f"Echo: {get_input_text(request)}",
+        create_text=lambda: f"Echo: {text}",
     )
 ```
 
@@ -133,9 +134,10 @@ def handler(request: CreateResponse, context: ResponseContext, cancellation_sign
 
 ```python
 @app.create_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
     async def _build():
-        answer = await model.generate(get_input_text(request))
+        text = await context.get_input_text()
+        answer = await model.generate(text)
         return answer
 
     return TextResponse(context, request, create_text=_build)
@@ -514,23 +516,45 @@ class ResponseContext:
     request: CreateResponse | None          # Parsed request model
     client_headers: dict[str, str]          # x-client-* headers from request
     query_parameters: dict[str, str]        # Query parameters from the HTTP request
-    async def get_input_items() -> list     # Resolved input items
-    async def get_history() -> list         # Conversation history items
+    async def get_input_items() -> Sequence[Item]   # Resolved input items as Item subtypes
+    async def get_input_text() -> str               # Extract all text content from input items
+    async def get_history() -> Sequence[OutputItem]  # Conversation history items
 ```
 
 ### Input Items — `get_input_items()`
 
-Returns the caller's input items fully resolved:
+Returns the caller's input items as `Item` subtypes, fully resolved:
 
 ```python
 input_items = await context.get_input_items()
 ```
 
-- Inline items are converted to their corresponding output item types with
-  generated IDs
-- Item references are batch-resolved via the provider
+- Inline items are returned as-is — the same `Item` subtypes from the original
+  request (e.g. `ItemMessage`, `FunctionCallOutputItemParam`)
+- `ItemReferenceParam` entries are batch-resolved via the provider and converted
+  to concrete `Item` subtypes
+- Unresolvable references (provider returns ``None``) are silently dropped
 - Input order is preserved
-- Lazy singleton — computed once and cached
+- Lazy — computed once and cached
+
+Pass `resolve_references=False` to skip reference resolution (item references are
+left as `ItemReferenceParam` in the returned sequence):
+
+```python
+input_items = await context.get_input_items(resolve_references=False)
+```
+
+### Input Text — `get_input_text()`
+
+Convenience method that resolves input items, filters for `ItemMessage` items,
+and joins all `MessageContentInputTextContent` text values:
+
+```python
+text = await context.get_input_text()
+```
+
+Returns `""` if no text content is found. Accepts `resolve_references=False` to
+skip reference resolution.
 
 ### Conversation History — `get_history()`
 
@@ -764,13 +788,14 @@ Each builder enforces its own lifecycle ordering.
 
 ## Handling Input
 
-Access the client's input via `get_input_expanded()`:
+Access the client's input via the `ResponseContext`:
 
 ```python
-from azure.ai.agentserver.responses import get_input_expanded, get_input_text
+# All resolved input items as Item subtypes
+input_items = await context.get_input_items()
 
-input_items = get_input_expanded(request)
-text = get_input_text(request)
+# Convenience: extract all text content as a single string
+text = await context.get_input_text()
 ```
 
 The `CreateResponse` object also provides:

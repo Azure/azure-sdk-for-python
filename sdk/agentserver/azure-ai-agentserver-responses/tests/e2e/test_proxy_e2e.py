@@ -27,7 +27,6 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
     ResponseEventStream,
     ResponsesAgentServerHost,
-    get_input_text,
 )
 
 # ---------------------------------------------------------------------------
@@ -191,7 +190,7 @@ def _make_streaming_proxy_handler(upstream_client: openai.AsyncOpenAI):
             tc = msg.add_text_content()
             yield tc.emit_added()
 
-            user_text = get_input_text(request) or "hello"
+            user_text = await context.get_input_text() or "hello"
             full_text: list[str] = []
 
             async with await upstream_client.responses.create(
@@ -220,7 +219,7 @@ def _make_non_streaming_proxy_handler(upstream_client: openai.AsyncOpenAI):
 
     def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
         async def _events():
-            user_text = get_input_text(request) or "hello"
+            user_text = await context.get_input_text() or "hello"
 
             result = await upstream_client.responses.create(
                 model=request.model or "gpt-4o-mini",
@@ -263,7 +262,7 @@ def _make_upstream_integration_handler(upstream_client: openai.AsyncOpenAI):
             yield stream.emit_created()
             yield stream.emit_in_progress()
 
-            user_text = get_input_text(request) or "hello"
+            user_text = await context.get_input_text() or "hello"
             upstream_failed = False
 
             # Track builders by output_index for multi-output

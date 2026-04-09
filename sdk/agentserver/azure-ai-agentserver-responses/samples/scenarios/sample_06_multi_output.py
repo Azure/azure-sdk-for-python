@@ -8,34 +8,10 @@ Builds a math problem solver that shows its work.  The agent emits a
 a single response — first using convenience generators, then with full
 builder control.
 
-Usage::
+Pattern: ResponseEventStream, convenience → builder, reasoning + message.
 
-    # Start the server
-    python sample_06_multi_output.py
-
-    # Send a math question
-    curl -X POST http://localhost:8088/responses \
-        -H "Content-Type: application/json" \
-        -d '{"model": "math", "input": "What is 6 times 7?"}'
-    # -> {"output": [{"type": "reasoning", ...},
-    #     {"type": "message", "content": [{"type": "output_text",
-    #      "text": "The answer is 42. Here's how: 6 × 7 = 42. ..."}]}]}
-
-    # Stream to see reasoning + answer arrive in sequence
-    curl -N -X POST http://localhost:8088/responses \
-        -H "Content-Type: application/json" \
-        -d '{"model": "math", "input": "What is 6 times 7?", "stream": true}'
-    # -> event: response.created            data: {"response": {"status": "in_progress", ...}}
-    # -> event: response.in_progress        data: {"response": {"status": "in_progress", ...}}
-    # -> event: response.output_item.added  data: {"item": {"type": "reasoning", ...}}
-    # -> event: response.output_item.done   data: {"item": {"type": "reasoning", ...}}
-    # -> event: response.output_item.added  data: {"item": {"type": "message", ...}}
-    # -> event: response.content_part.added data: {"part": {"type": "output_text", ...}}
-    # -> event: response.output_text.delta  data: {"delta": "The answer is 42. ..."}
-    # -> event: response.output_text.done   data: {"text": "The answer is 42. ..."}
-    # -> event: response.content_part.done  data: {"part": {"type": "output_text", ...}}
-    # -> event: response.output_item.done   data: {"item": {"type": "message", ...}}
-    # -> event: response.completed          data: {"response": {"status": "completed", ...}}
+Run:
+    python samples/scenarios/sample_06_multi_output.py
 """
 
 import asyncio
@@ -139,7 +115,7 @@ async def handler_builder(
 
 
 def main() -> None:
-    app.run()
+    app.run(host="127.0.0.1", port=5205)
 
 
 if __name__ == "__main__":

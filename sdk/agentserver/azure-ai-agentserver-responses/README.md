@@ -95,7 +95,8 @@ The `ResponseContext` provides request-scoped state:
 | `isolation` | `IsolationContext` with `user_key` and `chat_key` for multi-tenant state partitioning |
 | `client_headers` | Dictionary of `x-client-*` headers forwarded from the platform |
 | `query_parameters` | Dictionary of query string parameters |
-| `get_input_items()` | Load input items for this request |
+| `get_input_items()` | Load resolved input items as `Item` subtypes |
+| `get_input_text()` | Extract all text content from input items as a single string |
 | `get_history()` | Load conversation history items |
 
 ### Streaming and background modes
@@ -125,15 +126,15 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
     ResponsesAgentServerHost,
     TextResponse,
-    get_input_text,
 )
 
 app = ResponsesAgentServerHost()
 
 
 @app.create_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    return TextResponse(context, request, create_text=lambda: f"Echo: {get_input_text(request)}")
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    text = await context.get_input_text()
+    return TextResponse(context, request, create_text=lambda: f"Echo: {text}")
 
 
 app.run()

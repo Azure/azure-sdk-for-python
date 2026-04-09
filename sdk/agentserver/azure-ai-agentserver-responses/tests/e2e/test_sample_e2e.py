@@ -19,9 +19,8 @@ from azure.ai.agentserver.responses import (
     ResponsesServerOptions,
     TextResponse,
     get_input_expanded,
-    get_input_text,
 )
-from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam
+from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam, ItemMessage
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -92,10 +91,14 @@ def _base_payload(input_value: Any = "hello", **overrides) -> dict[str, Any]:
 
 def _sample1_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo handler: returns the user's input text using TextResponse."""
+
+    async def _create_text():
+        return await context.get_input_text()
+
     return TextResponse(
         context,
         request,
-        create_text=lambda: get_input_text(request),
+        create_text=_create_text,
     )
 
 
@@ -141,9 +144,9 @@ def test_sample1_echo_handler_structured_input() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample2_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def _sample2_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Streaming handler: emits text in token-by-token deltas using TextResponse with configure."""
-    user_text = get_input_text(request)
+    user_text = await context.get_input_text()
     tokens = user_text.split() if user_text else ["Hello", "World"]
 
     async def _stream():
@@ -186,7 +189,7 @@ def test_sample2_streaming_handler_non_streaming_returns_full_text() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample3_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def _sample3_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Convenience handler: emits a greeting using output_item_message()."""
     stream = ResponseEventStream(response_id=context.response_id, request=request)
 
@@ -196,8 +199,9 @@ def _sample3_handler(request: CreateResponse, context: ResponseContext, cancella
     yield stream.emit_created()
     yield stream.emit_in_progress()
 
-    user_text = get_input_text(request)
-    yield from stream.output_item_message(f"Hello, {user_text}! Welcome.")
+    user_text = await context.get_input_text()
+    for event in stream.output_item_message(f"Hello, {user_text}! Welcome."):
+        yield event
 
     yield stream.emit_completed()
 
@@ -238,7 +242,7 @@ def test_sample3_greeting_includes_input() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample4_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def _sample4_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Function-calling handler: uses convenience generators for both turns."""
     items = get_input_expanded(request)
     has_fn_output = any(isinstance(item, FunctionCallOutputItemParam) for item in items)
@@ -254,11 +258,13 @@ def _sample4_handler(request: CreateResponse, context: ResponseContext, cancella
             if isinstance(item, FunctionCallOutputItemParam):
                 fn_output_text = item.output or ""
                 break
-        yield from stream.output_item_message(f"The weather is: {fn_output_text}")
+        for event in stream.output_item_message(f"The weather is: {fn_output_text}"):
+            yield event
     else:
         # First turn: emit a function call for get_weather
-        args = json.dumps({"location": get_input_text(request)})
-        yield from stream.output_item_function_call("get_weather", "call_001", args)
+        args = json.dumps({"location": await context.get_input_text()})
+        for event in stream.output_item_function_call("get_weather", "call_001", args):
+            yield event
 
     yield stream.emit_completed()
 
@@ -307,14 +313,15 @@ def test_sample4_turn2_returns_weather_text() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample5_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def _sample5_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Study tutor handler using TextResponse: welcome on first turn,
     references previous_response_id on second turn."""
     has_previous = request.previous_response_id is not None and str(request.previous_response_id).strip() != ""
+    user_text = await context.get_input_text()
     if has_previous:
-        text = f"Building on our previous discussion ({request.previous_response_id}): {get_input_text(request)}"
+        text = f"Building on our previous discussion ({request.previous_response_id}): {user_text}"
     else:
-        text = f"Welcome! I'm your study tutor. You asked: {get_input_text(request)}"
+        text = f"Welcome! I'm your study tutor. You asked: {user_text}"
 
     return TextResponse(context, request, create_text=lambda: text)
 
@@ -359,20 +366,22 @@ def test_sample5_second_turn_references_history() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample6_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def _sample6_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Math solver handler: emits a reasoning item then a message item using convenience generators."""
     stream = ResponseEventStream(response_id=context.response_id, request=request)
-    question = get_input_text(request) or "What is 6 times 7?"
+    question = await context.get_input_text() or "What is 6 times 7?"
 
     yield stream.emit_created()
     yield stream.emit_in_progress()
 
     # Output item 0: reasoning
     thought = f'The user asked: "{question}". I need to compute the result.'
-    yield from stream.output_item_reasoning_item(thought)
+    for event in stream.output_item_reasoning_item(thought):
+        yield event
 
     # Output item 1: message
-    yield from stream.output_item_message(f"After reasoning: {question}")
+    for event in stream.output_item_message(f"After reasoning: {question}"):
+        yield event
 
     yield stream.emit_completed()
 
@@ -456,10 +465,14 @@ def test_sample7_explicit_model_overrides_default() -> None:
 
 def _sample8_response_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Responses handler for the mixin test, via TextResponse."""
+
+    async def _create_text():
+        return f"[Response] Echo: {await context.get_input_text()}"
+
     return TextResponse(
         context,
         request,
-        create_text=lambda: f"[Response] Echo: {get_input_text(request)}",
+        create_text=_create_text,
     )
 
 
@@ -527,10 +540,14 @@ def test_sample9_self_hosted_responses_under_prefix() -> None:
     responses_app = ResponsesAgentServerHost()
 
     def _handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+
+        async def _create_text():
+            return f"Self-hosted: {await context.get_input_text()}"
+
         return TextResponse(
             context,
             request,
-            create_text=lambda: f"Self-hosted: {get_input_text(request)}",
+            create_text=_create_text,
         )
 
     responses_app.create_handler(_handler)
@@ -573,20 +590,30 @@ def _sample10_handler(request: CreateResponse, context: ResponseContext, cancell
             "output_index": 0,
             "item": {"id": "item_up_001", "type": "message", "role": "assistant", "content": []},
         }
-        yield {"type": "response.content_part.added", "output_index": 0, "content_index": 0,
-               "part": {"type": "output_text", "text": ""}}
+        yield {
+            "type": "response.content_part.added",
+            "output_index": 0,
+            "content_index": 0,
+            "part": {"type": "output_text", "text": ""},
+        }
         tokens = ["Upstream says: ", "Hello", ", ", prompt, "!"]
         for token in tokens:
             yield {"type": "response.output_text.delta", "output_index": 0, "content_index": 0, "delta": token}
         full = "".join(tokens)
         yield {"type": "response.output_text.done", "output_index": 0, "content_index": 0, "text": full}
-        yield {"type": "response.content_part.done", "output_index": 0, "content_index": 0,
-               "part": {"type": "output_text", "text": full}}
+        yield {
+            "type": "response.content_part.done",
+            "output_index": 0,
+            "content_index": 0,
+            "part": {"type": "output_text", "text": full},
+        }
         yield {
             "type": "response.output_item.done",
             "output_index": 0,
             "item": {
-                "id": "item_up_001", "type": "message", "role": "assistant",
+                "id": "item_up_001",
+                "type": "message",
+                "role": "assistant",
                 "content": [{"type": "output_text", "text": full}],
             },
         }
@@ -607,7 +634,7 @@ def _sample10_handler(request: CreateResponse, context: ResponseContext, cancell
         yield {"type": "response.created", "response": snapshot}
         yield {"type": "response.in_progress", "response": snapshot}
 
-        user_text = get_input_text(request) or "world"
+        user_text = await context.get_input_text() or "world"
         output_items: list[dict[str, Any]] = []
         upstream_failed = False
 
@@ -698,14 +725,12 @@ def _sample11_handler(request: CreateResponse, context: ResponseContext, cancell
         yield stream.emit_created()
         yield stream.emit_in_progress()
 
-        user_text = get_input_text(request) or "world"
+        user_text = await context.get_input_text() or "world"
         upstream_items = _mock_upstream_call(user_text)
 
         for item in upstream_items:
             if item["type"] == "message":
-                text = "".join(
-                    part["text"] for part in item["content"] if part.get("type") == "output_text"
-                )
+                text = "".join(part["text"] for part in item["content"] if part.get("type") == "output_text")
                 for event in stream.output_item_message(text):
                     yield event
 
@@ -743,3 +768,250 @@ def test_sample11_non_streaming_upstream_streaming_events() -> None:
     delta_events = [e for e in events if e["type"] == "response.output_text.delta"]
     joined = "".join(e["data"]["delta"] for e in delta_events)
     assert "Dana" in joined
+
+
+# ---------------------------------------------------------------------------
+# Item Reference Multi-Turn Tests
+#
+# Validates that item_reference inputs are resolved by the server to their
+# concrete Item types before reaching the handler.
+# ---------------------------------------------------------------------------
+
+
+async def _item_ref_echo_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    """Handler that echoes resolved input items as JSON in the response text.
+
+    For each input item, emits its type and (for messages) its text content.
+    This lets tests verify that item_references were resolved to concrete items.
+    """
+    items = await context.get_input_items()
+    summaries = []
+    for item in items:
+        if isinstance(item, ItemMessage):
+            texts = []
+            for part in getattr(item, "content", None) or []:
+                t = getattr(part, "text", None)
+                if t:
+                    texts.append(t)
+            summaries.append({"type": "message", "text": " ".join(texts)})
+        else:
+            summaries.append({"type": getattr(item, "type", "unknown")})
+
+    return TextResponse(context, request, create_text=lambda: json.dumps(summaries))
+
+
+def test_item_reference_turn2_resolves_to_message() -> None:
+    """Turn 2 sends an item_reference to Turn 1's output; handler receives a resolved Item."""
+    client = _make_app(_item_ref_echo_handler)
+
+    # Turn 1: normal message input
+    t1_resp = _post_json(client, _base_payload("Hello from turn 1"))
+    assert t1_resp.status_code == 200
+    t1_body = t1_resp.json()
+    assert t1_body["status"] == "completed"
+    # Get the output item ID from turn 1's message output
+    t1_output_id = t1_body["output"][0]["id"]
+    t1_response_id = t1_body["id"]
+
+    # Turn 2: send an item_reference pointing to the turn-1 output item
+    t2_payload = _base_payload(
+        [
+            {"type": "item_reference", "id": t1_output_id},
+            {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "And hello from turn 2"}]},
+        ]
+    )
+    t2_payload["previous_response_id"] = t1_response_id
+    t2_resp = _post_json(client, t2_payload)
+
+    assert t2_resp.status_code == 200
+    t2_body = t2_resp.json()
+    assert t2_body["status"] == "completed"
+    # Parse handler's serialised summary from the response text
+    text_parts = [p for p in t2_body["output"][0]["content"] if p.get("type") == "output_text"]
+    items_json = json.loads(text_parts[0]["text"])
+
+    # First item should be the resolved message from turn 1
+    assert items_json[0]["type"] == "message"
+    # Second item is the inline message from turn 2
+    assert items_json[1]["type"] == "message"
+    assert "turn 2" in items_json[1]["text"]
+
+
+def test_item_reference_get_input_text_includes_resolved() -> None:
+    """get_input_text() includes text from resolved item_references."""
+    client = _make_app(_item_ref_echo_handler)
+
+    # Turn 1 (unused — establishes context in a different client)
+    _post_json(client, _base_payload("Alpha"))
+
+    # Turn 2: handler uses get_input_text which should include resolved text
+    async def _text_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+        text = await context.get_input_text()
+        return TextResponse(context, request, create_text=lambda: f"GOT: {text}")
+
+    client2 = _make_app(_text_handler)
+    # First create context for turn 1 in client2 too
+    t1b = _post_json(client2, _base_payload("Alpha"))
+    t1b_body = t1b.json()
+    t1b_output_id = t1b_body["output"][0]["id"]
+    t1b_response_id = t1b_body["id"]
+
+    t2_payload = _base_payload(
+        [
+            {"type": "item_reference", "id": t1b_output_id},
+            {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "Beta"}]},
+        ]
+    )
+    t2_payload["previous_response_id"] = t1b_response_id
+    t2_resp = _post_json(client2, t2_payload)
+
+    t2_body = t2_resp.json()
+    text_parts = [p for p in t2_body["output"][0]["content"] if p.get("type") == "output_text"]
+    result_text = text_parts[0]["text"]
+    assert "GOT:" in result_text
+    assert "Beta" in result_text
+
+
+def test_item_reference_nonexistent_dropped_silently() -> None:
+    """An item_reference pointing to a non-existent ID is silently dropped."""
+    client = _make_app(_item_ref_echo_handler)
+
+    payload = _base_payload(
+        [
+            {"type": "item_reference", "id": "item_nonexistent_999"},
+            {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "Only me"}]},
+        ]
+    )
+    resp = _post_json(client, payload)
+
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["status"] == "completed"
+    text_parts = [p for p in body["output"][0]["content"] if p.get("type") == "output_text"]
+    items_json = json.loads(text_parts[0]["text"])
+
+    # Only the inline message should remain — the unresolvable reference is dropped
+    assert len(items_json) == 1
+    assert items_json[0]["type"] == "message"
+    assert "Only me" in items_json[0]["text"]
+
+
+def test_item_reference_three_turn_chain() -> None:
+    """Three-turn conversation: each turn references previous output via item_reference."""
+    client = _make_app(_item_ref_echo_handler)
+
+    # Turn 1
+    t1 = _post_json(client, _base_payload("Turn 1"))
+    t1_body = t1.json()
+    t1_id = t1_body["id"]
+    t1_output_id = t1_body["output"][0]["id"]
+
+    # Turn 2: reference turn-1 output
+    t2_payload = _base_payload(
+        [
+            {"type": "item_reference", "id": t1_output_id},
+            {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "Turn 2"}]},
+        ]
+    )
+    t2_payload["previous_response_id"] = t1_id
+    t2 = _post_json(client, t2_payload)
+    t2_body = t2.json()
+    t2_id = t2_body["id"]
+    t2_output_id = t2_body["output"][0]["id"]
+
+    # Turn 3: reference turn-2 output
+    t3_payload = _base_payload(
+        [
+            {"type": "item_reference", "id": t2_output_id},
+            {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "Turn 3"}]},
+        ]
+    )
+    t3_payload["previous_response_id"] = t2_id
+    t3 = _post_json(client, t3_payload)
+    t3_body = t3.json()
+    assert t3_body["status"] == "completed"
+
+    text_parts = [p for p in t3_body["output"][0]["content"] if p.get("type") == "output_text"]
+    items_json = json.loads(text_parts[0]["text"])
+
+    # Should have 2 items: resolved reference from turn 2 + inline turn-3 message
+    assert len(items_json) == 2
+    assert items_json[0]["type"] == "message"
+    assert items_json[1]["type"] == "message"
+    assert "Turn 3" in items_json[1]["text"]
+
+
+def test_item_reference_resolve_references_false() -> None:
+    """When resolve_references=False, item_references are passed through as-is."""
+
+    async def _unresolved_handler(
+        request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+    ):
+        items = await context.get_input_items(resolve_references=False)
+        summaries = []
+        for item in items:
+            item_type = getattr(item, "type", "unknown")
+            summaries.append({"type": item_type})
+        return TextResponse(context, request, create_text=lambda: json.dumps(summaries))
+
+    client = _make_app(_unresolved_handler)
+
+    # Turn 1
+    t1 = _post_json(client, _base_payload("Hello"))
+    t1_body = t1.json()
+    t1_output_id = t1_body["output"][0]["id"]
+    t1_id = t1_body["id"]
+
+    # Turn 2 with resolve_references=False in handler
+    t2_payload = _base_payload(
+        [
+            {"type": "item_reference", "id": t1_output_id},
+            {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "test"}]},
+        ]
+    )
+    t2_payload["previous_response_id"] = t1_id
+    t2 = _post_json(client, t2_payload)
+    t2_body = t2.json()
+
+    text_parts = [p for p in t2_body["output"][0]["content"] if p.get("type") == "output_text"]
+    items_json = json.loads(text_parts[0]["text"])
+
+    # First item should remain as item_reference (not resolved)
+    assert items_json[0]["type"] == "item_reference"
+    # Second is the inline message
+    assert items_json[1]["type"] == "message"
+
+
+def test_item_reference_input_items_endpoint() -> None:
+    """The GET /responses/{id}/input_items endpoint returns resolved items."""
+    client = _make_app(_item_ref_echo_handler)
+
+    # Turn 1
+    t1 = _post_json(client, _base_payload("Stored text"))
+    t1_body = t1.json()
+    t1_output_id = t1_body["output"][0]["id"]
+    t1_id = t1_body["id"]
+
+    # Turn 2 with item_reference
+    t2_payload = _base_payload(
+        [
+            {"type": "item_reference", "id": t1_output_id},
+            {"type": "message", "role": "user", "content": [{"type": "input_text", "text": "New input"}]},
+        ]
+    )
+    t2_payload["previous_response_id"] = t1_id
+    t2 = _post_json(client, t2_payload)
+    t2_body = t2.json()
+    t2_id = t2_body["id"]
+
+    # GET input_items for turn 2
+    input_items_resp = client.get(f"/responses/{t2_id}/input_items")
+    assert input_items_resp.status_code == 200
+    input_items_body = input_items_resp.json()
+
+    # Should contain resolved items (not raw item_references)
+    items = input_items_body.get("data", [])
+    assert len(items) >= 1
+    # None of the items should be type "item_reference" — they should all be resolved
+    for item in items:
+        assert item.get("type") != "item_reference", f"Expected resolved item, got item_reference: {item}"

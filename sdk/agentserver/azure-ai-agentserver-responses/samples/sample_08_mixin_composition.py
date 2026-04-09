@@ -41,7 +41,6 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
     ResponsesAgentServerHost,
     TextResponse,
-    get_input_text,
 )
 
 
@@ -58,20 +57,26 @@ async def handle_invoke(request: Request) -> Response:
     data = await request.json()
     invocation_id = request.state.invocation_id
     message = data.get("message", "")
-    return JSONResponse({
-        "invocation_id": invocation_id,
-        "status": "completed",
-        "output": f"[Invocation] Echo: {message}",
-    })
+    return JSONResponse(
+        {
+            "invocation_id": invocation_id,
+            "status": "completed",
+            "output": f"[Invocation] Echo: {message}",
+        }
+    )
 
 
 @app.create_handler
-def handle_response(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handle_response(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo response: returns the user's input text."""
+
+    async def _create_text():
+        return f"[Response] Echo: {await context.get_input_text()}"
+
     return TextResponse(
         context,
         request,
-        create_text=lambda: f"[Response] Echo: {get_input_text(request)}",
+        create_text=_create_text,
     )
 
 

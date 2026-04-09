@@ -52,9 +52,7 @@ class FoundryStorageSettings:
         if not endpoint:
             raise ValueError("endpoint must be a non-empty string")
         if not (endpoint.startswith("http://") or endpoint.startswith("https://")):
-            raise ValueError(
-                f"endpoint must be a valid absolute URL, got: {endpoint!r}"
-            )
+            raise ValueError(f"endpoint must be a valid absolute URL, got: {endpoint!r}")
         base = endpoint.rstrip("/") + "/storage/"
         return cls(storage_base_url=base)
 

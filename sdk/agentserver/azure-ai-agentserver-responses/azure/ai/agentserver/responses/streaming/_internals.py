@@ -238,7 +238,6 @@ def coerce_usage(
     raise TypeError("usage must be a dict or a generated ResponseUsage model")
 
 
-
 def extract_response_fields(
     response: generated_models.ResponseObject,
 ) -> tuple[AgentReference | dict[str, Any] | None, str | None]:

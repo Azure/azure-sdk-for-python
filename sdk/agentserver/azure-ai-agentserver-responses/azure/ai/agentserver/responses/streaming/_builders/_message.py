@@ -311,7 +311,9 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
             item_id=self._item_id,
         )
 
-    def emit_content_done(self, content_builder: TextContentBuilder | RefusalContentBuilder) -> generated_models.ResponseStreamEvent:
+    def emit_content_done(
+        self, content_builder: TextContentBuilder | RefusalContentBuilder
+    ) -> generated_models.ResponseStreamEvent:
         """Emit a ``content_part.done`` event for a completed content part.
 
         :param content_builder: The content builder whose final state to emit.
@@ -383,7 +385,9 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         yield tc.emit_done(text)
         yield self.emit_content_done(tc)
 
-    async def atext_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    async def atext_content(
+        self, text: str | AsyncIterable[str]
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`text_content` with streaming support.
 
         When *text* is a string, behaves identically to :meth:`text_content`.
@@ -424,7 +428,9 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         yield rc.emit_done(text)
         yield self.emit_content_done(rc)
 
-    async def arefusal_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    async def arefusal_content(
+        self, text: str | AsyncIterable[str]
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`refusal_content` with streaming support.
 
         When *text* is a string, behaves identically to :meth:`refusal_content`.

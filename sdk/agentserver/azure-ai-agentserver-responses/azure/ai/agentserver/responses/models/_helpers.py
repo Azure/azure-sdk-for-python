@@ -107,12 +107,11 @@ def get_input_expanded(request: CreateResponse) -> list[Item]:
     return items
 
 
-def get_input_text(request: CreateResponse) -> str:
+def _get_input_text(request: CreateResponse) -> str:
     """Extract all text content from ``CreateResponse.input`` as a single string.
 
-    Expands input via :func:`get_input_expanded`, filters for
-    :class:`ItemMessage` items, and joins all
-    :class:`MessageContentInputTextContent` text values with newlines.
+    Internal helper — callers should use :meth:`ResponseContext.get_input_text`
+    instead, which handles item-reference resolution.
 
     :param request: The create-response request.
     :type request: CreateResponse
@@ -367,3 +366,25 @@ def to_output_item(item: Item, response_id: str | None = None) -> OutputItem | N
         pass  # keep the original status from the input item
 
     return _deserialize(OutputItem, data)
+
+
+def to_item(output_item: OutputItem) -> Item | None:
+    """Convert an :class:`OutputItem` back to the corresponding :class:`Item`.
+
+    Both hierarchies share the same ``type`` discriminator values, so
+    serialising an :class:`OutputItem` to a dict and deserialising as
+    :class:`Item` produces the correct concrete subtype (e.g.
+    :class:`OutputItemMessage` → :class:`ItemMessage`).
+
+    Returns ``None`` if the output item type has no :class:`Item` counterpart.
+
+    :param output_item: The output item to convert.
+    :type output_item: OutputItem
+    :returns: The corresponding input item, or ``None``.
+    :rtype: Item | None
+    """
+    try:
+        data = dict(output_item)
+        return _deserialize(Item, data)
+    except Exception:  # pylint: disable=broad-except
+        return None

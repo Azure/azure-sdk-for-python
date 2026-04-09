@@ -9,7 +9,7 @@
 - `TextResponse` — high-level convenience for text-only responses with automatic SSE lifecycle (`create_text` and `create_text_stream` modes).
 - `ResponseEventStream` — low-level builder API for emitting SSE events with full control over output items (message, function call, reasoning, file search, web search, code interpreter, image gen, MCP, custom tool).
 - Convenience generators (`output_item_message()`, `output_item_function_call()`, `output_item_reasoning_item()`) and async streaming variants (`aoutput_item_message()`, etc.) for common patterns.
-- `ResponseContext` providing `response_id`, conversation history loading, input item access, isolation context, and client headers.
+- `ResponseContext` providing `response_id`, conversation history loading, input item access via `get_input_items()` (returns `Item` subtypes), `get_input_text()` convenience for extracting text content, isolation context, and client headers.
 - `ResponsesServerOptions` for configuring default model, SSE keep-alive, shutdown grace period, and other runtime options.
 - Support for all execution modes: default (synchronous), streaming (SSE), background, and streaming + background.
 - Automatic SSE event replay for previously streamed responses via `?stream=true`.

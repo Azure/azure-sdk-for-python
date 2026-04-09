@@ -12,11 +12,11 @@ import pytest
 from azure.ai.agentserver.responses._response_context import IsolationContext, ResponseContext
 from azure.ai.agentserver.responses.models._generated import (
     CreateResponse,
+    Item,
     ItemMessage,
     ItemReferenceParam,
     MessageContentInputTextContent,
     MessageRole,
-    OutputItem,
     OutputItemMessage,
 )
 from azure.ai.agentserver.responses.models._helpers import to_output_item
@@ -46,7 +46,7 @@ def _make_request(inp: Any) -> CreateResponse:
 
 @pytest.mark.asyncio
 async def test_get_input_items__no_references_passes_through() -> None:
-    """Inline items are converted to OutputItem (OutputItemMessage)."""
+    """Inline items are returned as Item subtypes (ItemMessage)."""
     msg = ItemMessage(role=MessageRole.USER, content=[MessageContentInputTextContent(text="hello")])
     request = _make_request([msg])
     ctx = ResponseContext(
@@ -59,8 +59,8 @@ async def test_get_input_items__no_references_passes_through() -> None:
     items = await ctx.get_input_items()
 
     assert len(items) == 1
-    assert isinstance(items[0], OutputItemMessage)
-    assert isinstance(items[0], OutputItem)
+    assert isinstance(items[0], ItemMessage)
+    assert isinstance(items[0], Item)
     assert items[0].role == MessageRole.USER
 
 
@@ -71,7 +71,7 @@ async def test_get_input_items__no_references_passes_through() -> None:
 
 @pytest.mark.asyncio
 async def test_get_input_items__resolves_single_reference() -> None:
-    """A single ItemReferenceParam is replaced by the resolved OutputItem."""
+    """A single ItemReferenceParam is resolved and converted to an Item subtype."""
     ref = ItemReferenceParam(id="item_abc")
     resolved_item = OutputItemMessage(id="item_abc", role="assistant", content=[], status="completed")
     provider = _mock_provider(get_items_return=[resolved_item])
@@ -88,7 +88,9 @@ async def test_get_input_items__resolves_single_reference() -> None:
     items = await ctx.get_input_items()
 
     assert len(items) == 1
-    assert items[0] is resolved_item
+    # Resolved via to_item(): OutputItemMessage → ItemMessage
+    assert isinstance(items[0], ItemMessage)
+    assert items[0].role == "assistant"
     provider.get_items.assert_awaited_once_with(["item_abc"], isolation=ctx.isolation)
 
 
@@ -118,11 +120,13 @@ async def test_get_input_items__mixed_inline_and_references() -> None:
 
     items = await ctx.get_input_items()
 
-    # inline converted first, then both resolved references
+    # inline passed through as Item, references resolved via to_item()
     assert len(items) == 3
-    assert isinstance(items[0], OutputItemMessage)
-    assert items[1] is resolved1
-    assert items[2] is resolved2
+    assert isinstance(items[0], ItemMessage)
+    assert isinstance(items[1], ItemMessage)  # resolved from OutputItemMessage
+    assert items[1].role == "assistant"
+    assert isinstance(items[2], ItemMessage)  # resolved from OutputItemMessage
+    assert items[2].role == "user"
 
 
 # ------------------------------------------------------------------
@@ -150,7 +154,7 @@ async def test_get_input_items__unresolvable_references_dropped() -> None:
     items = await ctx.get_input_items()
 
     assert len(items) == 1
-    assert items[0] is resolved1
+    assert isinstance(items[0], ItemMessage)  # resolved via to_item()
 
 
 # ------------------------------------------------------------------
@@ -175,9 +179,9 @@ async def test_get_input_items__no_provider_no_resolution() -> None:
 
     items = await ctx.get_input_items()
 
-    # inline item converted to OutputItem; reference placeholder is dropped (None)
+    # inline item returned as Item subtype; reference placeholder is dropped
     assert len(items) == 1
-    assert isinstance(items[0], OutputItemMessage)
+    assert isinstance(items[0], ItemMessage)
 
 
 # ------------------------------------------------------------------
@@ -228,7 +232,7 @@ async def test_get_input_items__string_input_expanded() -> None:
     items = await ctx.get_input_items()
 
     assert len(items) == 1
-    assert isinstance(items[0], OutputItemMessage)
+    assert isinstance(items[0], ItemMessage)
     assert items[0].role == MessageRole.USER
 
 
@@ -276,8 +280,10 @@ async def test_get_input_items__forwards_isolation() -> None:
         isolation=isolation,
     )
 
-    await ctx.get_input_items()
+    items = await ctx.get_input_items()
 
+    assert len(items) == 1
+    assert isinstance(items[0], ItemMessage)  # resolved via to_item()
     provider.get_items.assert_awaited_once_with(["item_iso"], isolation=isolation)
 
 
@@ -333,9 +339,10 @@ async def test_get_input_items__preserves_order() -> None:
     items = await ctx.get_input_items()
 
     assert len(items) == 3
-    assert isinstance(items[0], OutputItemMessage)
-    assert items[1] is resolved
-    assert isinstance(items[2], OutputItemMessage)
+    assert isinstance(items[0], ItemMessage)
+    assert isinstance(items[1], ItemMessage)  # resolved via to_item()
+    assert items[1].role == "assistant"
+    assert isinstance(items[2], ItemMessage)
 
 
 # ------------------------------------------------------------------

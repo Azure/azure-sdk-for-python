@@ -518,7 +518,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
     # ------------------------------------------------------------------
 
     async def _normalize_and_append(
-        self, ctx: _ExecutionContext, state: _PipelineState, handler_event: generated_models.ResponseStreamEvent | dict[str, Any]
+        self,
+        ctx: _ExecutionContext,
+        state: _PipelineState,
+        handler_event: generated_models.ResponseStreamEvent | dict[str, Any],
     ) -> generated_models.ResponseStreamEvent:
         """Coerce, validate, normalise, and append a handler event to the pipeline state.
 
@@ -569,7 +572,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         """
         return any(e["type"] in _ResponseOrchestrator._TERMINAL_SSE_TYPES for e in handler_events)
 
-    async def _cancel_terminal_sse_dict(self, ctx: _ExecutionContext, state: _PipelineState) -> generated_models.ResponseStreamEvent:
+    async def _cancel_terminal_sse_dict(
+        self, ctx: _ExecutionContext, state: _PipelineState
+    ) -> generated_models.ResponseStreamEvent:
         """Build, normalise, append, and return a cancel-terminal event.
 
         Returns the normalised event (model instance) so that it can be consumed
@@ -588,7 +593,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         }
         return await self._normalize_and_append(ctx, state, cancel_event)
 
-    async def _make_failed_event(self, ctx: _ExecutionContext, state: _PipelineState) -> generated_models.ResponseStreamEvent:
+    async def _make_failed_event(
+        self, ctx: _ExecutionContext, state: _PipelineState
+    ) -> generated_models.ResponseStreamEvent:
         """Build, normalise, append, and return a ``response.failed`` event.
 
         Used for S-035 (handler exception after ``response.created``) and
@@ -727,7 +734,13 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             if ctx.cancellation_signal.is_set():
                 state.captured_error = asyncio.CancelledError()
                 yield construct_event_model(
-                    {"type": "error", "message": "An internal server error occurred.", "param": None, "code": None, "sequence_number": 0}
+                    {
+                        "type": "error",
+                        "message": "An internal server error occurred.",
+                        "param": None,
+                        "code": None,
+                        "sequence_number": 0,
+                    }
                 )
                 return
             # Unknown CancelledError (e.g. event-loop teardown) — re-raise.
@@ -742,7 +755,13 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             )
             state.captured_error = exc
             yield construct_event_model(
-                {"type": "error", "message": "An internal server error occurred.", "param": None, "code": None, "sequence_number": 0}
+                {
+                    "type": "error",
+                    "message": "An internal server error occurred.",
+                    "param": None,
+                    "code": None,
+                    "sequence_number": 0,
+                }
             )
             return
 
@@ -760,7 +779,13 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             )
             state.captured_error = ValueError(b30_violation)
             yield construct_event_model(
-                {"type": "error", "message": "An internal server error occurred.", "param": None, "code": None, "sequence_number": 0}
+                {
+                    "type": "error",
+                    "message": "An internal server error occurred.",
+                    "param": None,
+                    "code": None,
+                    "sequence_number": 0,
+                }
             )
             return
 
@@ -787,7 +812,13 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             )
             state.captured_error = RuntimeError(violation)
             yield construct_event_model(
-                {"type": "error", "message": "An internal server error occurred.", "param": None, "code": None, "sequence_number": 0}
+                {
+                    "type": "error",
+                    "message": "An internal server error occurred.",
+                    "param": None,
+                    "code": None,
+                    "sequence_number": 0,
+                }
             )
             return
 

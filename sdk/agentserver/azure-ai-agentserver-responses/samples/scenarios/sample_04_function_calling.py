@@ -14,24 +14,13 @@ Demonstrates a two-turn function-calling flow:
 The handler is shown first using convenience generators, then with full
 builder control.
 
-Usage::
+Uses ``get_input_expanded()`` to inspect the full input array for
+``function_call_output`` items.
 
-    # Start the server
-    python sample_04_function_calling.py
+Pattern: ResponseEventStream, convenience → builder, function_call flow.
 
-    # Turn 1 — triggers a function call
-    curl -X POST http://localhost:8088/responses \
-        -H "Content-Type: application/json" \
-        -d '{"model": "test", "input": "What is the weather in Seattle?"}'
-    # -> {"output": [{"type": "function_call", "name": "get_weather",
-    #     "call_id": "call_weather_1", "arguments": "{\"location\": \"Seattle\", ...}"}]}
-
-    # Turn 2 — submit function output, receive text
-    curl -X POST http://localhost:8088/responses \
-        -H "Content-Type: application/json" \
-        -d '{"model": "test", "input": [{"type": "function_call_output", "call_id": "call_weather_1", "output": "72F and sunny"}]}'
-    # -> {"output": [{"type": "message", "content": [{"type": "output_text",
-    #     "text": "The weather is: 72F and sunny"}]}]}
+Run:
+    python samples/scenarios/sample_04_function_calling.py
 """
 
 from __future__ import annotations
@@ -134,7 +123,7 @@ def handler_builder(
 
 
 def main() -> None:
-    app.run()
+    app.run(host="127.0.0.1", port=5203)
 
 
 if __name__ == "__main__":

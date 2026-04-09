@@ -32,7 +32,6 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
     ResponsesAgentServerHost,
     TextResponse,
-    get_input_text,
 )
 
 # Create the responses host (it IS a Starlette app)
@@ -40,24 +39,31 @@ responses_app = ResponsesAgentServerHost()
 
 
 @responses_app.create_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo handler mounted under /api."""
+
+    async def _create_text():
+        return f"Self-hosted echo: {await context.get_input_text()}"
+
     return TextResponse(
         context,
         request,
-        create_text=lambda: f"Self-hosted echo: {get_input_text(request)}",
+        create_text=_create_text,
     )
 
 
 # Mount into a parent Starlette app
-app = Starlette(routes=[
-    Mount("/api", app=responses_app),
-])
+app = Starlette(
+    routes=[
+        Mount("/api", app=responses_app),
+    ]
+)
 # Now responses are at /api/responses
 
 
 def main() -> None:
     import uvicorn
+
     uvicorn.run(app)
 
 

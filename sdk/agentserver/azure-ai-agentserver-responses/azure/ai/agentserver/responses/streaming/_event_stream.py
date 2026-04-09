@@ -202,7 +202,9 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             }
         )
 
-    def emit_completed(self, *, usage: generated_models.ResponseUsage | dict[str, Any] | None = None) -> generated_models.ResponseStreamEvent:
+    def emit_completed(
+        self, *, usage: generated_models.ResponseUsage | dict[str, Any] | None = None
+    ) -> generated_models.ResponseStreamEvent:
         """Emit a ``response.completed`` terminal lifecycle event.
 
         :keyword usage: Optional usage statistics to attach to the response.

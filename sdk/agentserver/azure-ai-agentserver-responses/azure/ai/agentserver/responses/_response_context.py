@@ -10,8 +10,15 @@ from typing import TYPE_CHECKING, Any, Sequence
 
 from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
 
-from .models._generated import CreateResponse, ItemReferenceParam, OutputItem
-from .models._helpers import get_input_expanded, to_output_item
+from .models._generated import (
+    CreateResponse,
+    Item,
+    ItemMessage,
+    ItemReferenceParam,
+    MessageContentInputTextContent,
+    OutputItem,
+)
+from .models._helpers import get_input_expanded, to_item, to_output_item
 from .models.runtime import ResponseModeFlags
 
 if TYPE_CHECKING:
@@ -84,40 +91,90 @@ class ResponseContext:
         self._previous_response_id: str | None = previous_response_id
         self.conversation_id: str | None = conversation_id
         self._history_limit: int = history_limit
-        self._input_items_cache: Sequence[OutputItem] | None = None
+        self._input_items_resolved_cache: Sequence[Item] | None = None
+        self._input_items_unresolved_cache: Sequence[Item] | None = None
         self._history_cache: Sequence[OutputItem] | None = None
 
-    async def get_input_items(self) -> Sequence[OutputItem]:
-        """Return and cache request input items, resolving item references.
+    async def get_input_items(self, *, resolve_references: bool = True) -> Sequence[Item]:
+        """Return the caller's input items as :class:`Item` subtypes.
 
-        Inline items are converted from :class:`Item` to :class:`OutputItem`
-        via :func:`to_output_item`.
+        Inline items are returned as-is — the same :class:`Item` subtypes from
+        the original request (e.g. :class:`ItemMessage`,
+        :class:`FunctionCallOutputItemParam`).
         :class:`ItemReferenceParam` entries are batch-resolved via the
-        provider's :meth:`get_items` method.  Unresolvable references
-        (provider returns ``None``) are silently dropped.
+        provider and converted back to :class:`Item` subtypes.
+        Unresolvable references (provider returns ``None``) are silently dropped.
 
-        :returns: A tuple of output items with references resolved.
+        :keyword resolve_references: When ``True`` (default),
+            :class:`ItemReferenceParam` items are resolved via the provider and
+            returned as their concrete :class:`Item` subtype.  When ``False``,
+            item references are left as :class:`ItemReferenceParam` in the
+            returned sequence.
+        :type resolve_references: bool
+        :returns: A tuple of input items.
+        :rtype: Sequence[Item]
+        """
+        if resolve_references:
+            return await self._get_input_items_resolved()
+        return await self._get_input_items_unresolved()
+
+    async def get_input_text(self, *, resolve_references: bool = True) -> str:
+        """Resolve input items and extract all text content as a single string.
+
+        Convenience method that calls :meth:`get_input_items`, filters for
+        :class:`ItemMessage` items, expands their content, and joins all
+        :class:`MessageContentInputTextContent` text values with newline
+        separators.
+
+        :keyword resolve_references: When ``True`` (default), item references
+            are resolved before extracting text.
+        :type resolve_references: bool
+        :returns: The combined text content, or ``""`` if no text found.
+        :rtype: str
+        """
+        items = await self.get_input_items(resolve_references=resolve_references)
+        texts: list[str] = []
+        for item in items:
+            if isinstance(item, ItemMessage):
+                for part in getattr(item, "content", None) or []:
+                    if isinstance(part, MessageContentInputTextContent):
+                        text = getattr(part, "text", None)
+                        if text is not None:
+                            texts.append(text)
+        return "\n".join(texts)
+
+    async def _get_input_items_for_persistence(self) -> Sequence[OutputItem]:
+        """Return input items as :class:`OutputItem` for storage persistence.
+
+        The orchestrator needs :class:`OutputItem` instances when creating the
+        stored response.  This method resolves references (so stored items are
+        always concrete), converts each :class:`Item` to :class:`OutputItem`,
+        and caches the result.
+
+        :returns: A tuple of output items suitable for persistence.
         :rtype: Sequence[OutputItem]
         """
-        if self._input_items_cache is not None:
-            return self._input_items_cache
+        items = await self.get_input_items(resolve_references=True)
+        return tuple(out for item in items if (out := to_output_item(item, self.response_id)) is not None)
 
-        # Normalise raw input (strings, dicts) into typed Item instances
-        # via get_input_expanded.
-        if self.request is not None:
-            expanded = get_input_expanded(self.request)
-        else:
-            expanded = list(self._input_items)  # type: ignore[arg-type]
+    # ------------------------------------------------------------------
+    # Private resolution helpers (cached independently per mode)
+    # ------------------------------------------------------------------
 
+    async def _get_input_items_resolved(self) -> Sequence[Item]:
+        """Resolve and cache input items with references resolved."""
+        if self._input_items_resolved_cache is not None:
+            return self._input_items_resolved_cache
+
+        expanded = self._expand_input()
         if not expanded:
-            self._input_items_cache = ()
-            return self._input_items_cache
+            self._input_items_resolved_cache = ()
+            return self._input_items_resolved_cache
 
         # Collect ItemReferenceParam positions and IDs for batch resolution.
-        # Non-reference items are converted to OutputItem via to_output_item.
         reference_ids: list[str] = []
         reference_positions: list[int] = []
-        results: list[OutputItem | None] = []
+        results: list[Item | None] = []
 
         for item in expanded:
             if isinstance(item, ItemReferenceParam):
@@ -125,20 +182,35 @@ class ResponseContext:
                 reference_positions.append(len(results))
                 results.append(None)  # placeholder
             else:
-                output = to_output_item(item, self.response_id)
-                if output is not None:
-                    results.append(output)
+                results.append(item)
 
         # Batch-resolve references if we have a provider and pending refs.
         if reference_ids and self._provider is not None:
             resolved = await self._provider.get_items(reference_ids, isolation=self.isolation)
             for idx, pos in enumerate(reference_positions):
                 if idx < len(resolved) and resolved[idx] is not None:
-                    results[pos] = resolved[idx]
+                    converted = to_item(resolved[idx])  # type: ignore[arg-type]
+                    if converted is not None:
+                        results[pos] = converted
 
         # Remove unresolved (None) placeholders.
-        self._input_items_cache = tuple(item for item in results if item is not None)
-        return self._input_items_cache
+        self._input_items_resolved_cache = tuple(item for item in results if item is not None)
+        return self._input_items_resolved_cache
+
+    async def _get_input_items_unresolved(self) -> Sequence[Item]:
+        """Return input items without resolving references."""
+        if self._input_items_unresolved_cache is not None:
+            return self._input_items_unresolved_cache
+
+        expanded = self._expand_input()
+        self._input_items_unresolved_cache = tuple(expanded)
+        return self._input_items_unresolved_cache
+
+    def _expand_input(self) -> list[Item]:
+        """Normalize raw input into typed Item instances."""
+        if self.request is not None:
+            return get_input_expanded(self.request)
+        return list(self._input_items)  # type: ignore[arg-type]
 
     async def get_history(self) -> Sequence[OutputItem]:
         """Resolve and cache conversation history items via the provider.

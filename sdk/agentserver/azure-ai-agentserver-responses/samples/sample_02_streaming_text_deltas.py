@@ -43,16 +43,15 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
     ResponsesAgentServerHost,
     TextResponse,
-    get_input_text,
 )
 
 app = ResponsesAgentServerHost()
 
 
 @app.create_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Stream tokens one at a time using TextResponse."""
-    user_text = get_input_text(request) or "world"
+    user_text = await context.get_input_text() or "world"
 
     async def generate_tokens():
         tokens = ["Hello", ", ", user_text, "! ", "How ", "are ", "you?"]

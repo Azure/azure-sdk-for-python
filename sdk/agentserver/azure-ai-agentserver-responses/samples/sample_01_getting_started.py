@@ -43,19 +43,22 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
     ResponsesAgentServerHost,
     TextResponse,
-    get_input_text,
 )
 
 app = ResponsesAgentServerHost()
 
 
 @app.create_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo the user's input back as a single message."""
+
+    async def _create_text():
+        return f"Echo: {await context.get_input_text()}"
+
     return TextResponse(
         context,
         request,
-        create_text=lambda: f"Echo: {get_input_text(request)}",
+        create_text=_create_text,
     )
 
 

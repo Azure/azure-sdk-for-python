@@ -207,9 +207,7 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         # Register the responses protocol version on the host so the
         # x-platform-server header includes this package's version.
-        self.register_server_version(
-            build_server_version("azure-ai-agentserver-responses", _RESPONSES_VERSION)
-        )
+        self.register_server_version(build_server_version("azure-ai-agentserver-responses", _RESPONSES_VERSION))
 
         # Allow handler developers to append their own version segment.
         if runtime_options.additional_server_version:
@@ -256,9 +254,13 @@ class ResponsesAgentServerHost(AgentServerHost):
         """Dispatch to the registered create handler.
 
         Called by the orchestrator when processing a create request.
-        If the handler returns a sync generator, it is automatically
-        wrapped into an async generator so the orchestrator can
-        ``await __anext__()`` uniformly.
+        Handles all handler return signatures:
+
+        - Sync generator → wrapped into async generator.
+        - AsyncIterable (e.g. ``TextResponse``) → converted to ``AsyncIterator``.
+        - Coroutine (``async def`` that ``return`` s a value) → awaited, then the
+          result is recursively normalised.
+        - Async generator → returned as-is.
 
         :param request: The parsed create-response request.
         :type request: CreateResponse
@@ -272,10 +274,28 @@ class ResponsesAgentServerHost(AgentServerHost):
         if self._create_fn is None:
             raise NotImplementedError("No create handler registered. Use the @app.create_handler decorator.")
         result = self._create_fn(request, context, cancellation_signal)
+        return self._normalize_handler_result(result)
+
+    def _normalize_handler_result(self, result: Any) -> AsyncIterator[ResponseStreamEvent]:
+        """Convert a handler result into an AsyncIterator.
+
+        Supports sync generators, async generators, coroutines (async def
+        that returns), and AsyncIterables (e.g. TextResponse).
+        """
         if isinstance(result, types.GeneratorType):
             return _sync_to_async_gen(result)
+        # Coroutine: async def handler that returns (rather than yields).
+        # Await it and normalise the inner result.
+        if asyncio.iscoroutine(result):
+            return self._await_and_normalize(result)
         # If the handler returned an AsyncIterable (e.g. TextResponse), convert
         # to an AsyncIterator so the orchestrator can __anext__() uniformly.
         if hasattr(result, "__aiter__") and not hasattr(result, "__anext__"):
             return result.__aiter__()  # type: ignore[union-attr, return-value]
         return result  # type: ignore[return-value]
+
+    async def _await_and_normalize(self, coro: Any) -> AsyncIterator[ResponseStreamEvent]:  # type: ignore[misc]
+        """Await a coroutine and yield events from its normalised result."""
+        inner = await coro
+        async for event in self._normalize_handler_result(inner):
+            yield event

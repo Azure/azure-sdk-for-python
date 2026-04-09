@@ -38,7 +38,6 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     ResponsesServerOptions,
     TextResponse,
-    get_input_text,
 )
 
 options = ResponsesServerOptions(
@@ -51,12 +50,16 @@ app = ResponsesAgentServerHost(options=options, log_level="DEBUG")
 
 
 @app.create_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo handler that reports which model is being used."""
+
+    async def _create_text():
+        return f"[model={request.model}] Echo: {await context.get_input_text()}"
+
     return TextResponse(
         context,
         request,
-        create_text=lambda: f"[model={request.model}] Echo: {get_input_text(request)}",
+        create_text=_create_text,
     )
 
 

@@ -130,7 +130,9 @@ class BaseOutputItemBuilder:
             }
         )
 
-    def _emit_item_state_event(self, event_type: str, *, extra_payload: dict[str, Any] | None = None) -> generated_models.ResponseStreamEvent:
+    def _emit_item_state_event(
+        self, event_type: str, *, extra_payload: dict[str, Any] | None = None
+    ) -> generated_models.ResponseStreamEvent:
         """Emit an item-level state event (e.g., in-progress, searching, completed).
 
         :param event_type: The event type string.

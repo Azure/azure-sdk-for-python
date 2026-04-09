@@ -16,31 +16,10 @@ identical SSE event sequence:
   3. **Builder**    — ``add_output_item_message()`` → ``add_text_content()``
      → ``emit_delta()`` / ``emit_done()``
 
-Usage::
+Pattern: ResponseEventStream, convenience → streaming → builder.
 
-    # Start the server
-    python sample_03_full_control.py
-
-    # Send a request
-    curl -X POST http://localhost:8088/responses \
-        -H "Content-Type: application/json" \
-        -d '{"model": "greeting", "input": "Hi there!"}'
-    # -> {"output": [{"type": "message", "content": [{"type": "output_text",
-    #     "text": "Hello! You said: \"Hi there!\""}]}]}
-
-    # Stream the response
-    curl -N -X POST http://localhost:8088/responses \
-        -H "Content-Type: application/json" \
-        -d '{"model": "greeting", "input": "Hi there!", "stream": true}'
-    # -> event: response.created            data: {"response": {"status": "in_progress", ...}}
-    # -> event: response.in_progress        data: {"response": {"status": "in_progress", ...}}
-    # -> event: response.output_item.added  data: {"item": {"type": "message", ...}}
-    # -> event: response.content_part.added data: {"part": {"type": "output_text", ...}}
-    # -> event: response.output_text.delta  data: {"delta": "Hello! You said: ..."}
-    # -> event: response.output_text.done   data: {"text": "Hello! You said: ..."}
-    # -> event: response.content_part.done  data: {"part": {"type": "output_text", ...}}
-    # -> event: response.output_item.done   data: {"item": {"type": "message", ...}}
-    # -> event: response.completed          data: {"response": {"status": "completed", ...}}
+Run:
+    python samples/scenarios/sample_03_full_control.py
 """
 
 import asyncio
@@ -160,7 +139,7 @@ async def handler_builder(
 
 
 def main() -> None:
-    app.run()
+    app.run(host="127.0.0.1", port=5202)
 
 
 if __name__ == "__main__":

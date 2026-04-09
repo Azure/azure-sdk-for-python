@@ -21,7 +21,7 @@ python sample_01_getting_started.py
 
 | # | Sample | Pattern | Description |
 |---|--------|---------|-------------|
-| 01 | [Getting Started](sample_01_getting_started.py) | `TextResponse` | Echo handler — simplest sync handler that echoes user input |
+| 01 | [Getting Started](sample_01_getting_started.py) | `TextResponse` | Echo handler — simplest async handler that echoes user input |
 | 02 | [Streaming Text Deltas](sample_02_streaming_text_deltas.py) | `TextResponse` + `create_text_stream` | Token-by-token streaming via async iterable, with `configure` callback |
 | 03 | [Full Control](sample_03_full_control.py) | `ResponseEventStream` | Convenience, streaming, and builder — three ways to emit the same output |
 | 04 | [Function Calling](sample_04_function_calling.py) | `ResponseEventStream` | Two-turn function calling with convenience and builder variants |

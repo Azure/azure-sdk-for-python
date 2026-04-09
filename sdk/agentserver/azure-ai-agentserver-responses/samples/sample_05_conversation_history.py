@@ -41,7 +41,6 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     ResponsesServerOptions,
     TextResponse,
-    get_input_text,
 )
 from azure.ai.agentserver.responses.models import OutputItem
 
@@ -52,16 +51,11 @@ app = ResponsesAgentServerHost(
 
 def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
     """Compose a study-tutor reply that references the conversation history."""
-    history_messages = [
-        item for item in history if getattr(item, "type", None) == "message"
-    ]
+    history_messages = [item for item in history if getattr(item, "type", None) == "message"]
     turn_number = len(history_messages) + 1
 
     if not history_messages:
-        return (
-            f"Welcome! I'm your study tutor. You asked: \"{current_input}\". "
-            "Let me help you understand that topic."
-        )
+        return f'Welcome! I\'m your study tutor. You asked: "{current_input}". Let me help you understand that topic.'
 
     last = history_messages[-1]
     last_text = "(none)"
@@ -71,8 +65,8 @@ def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
 
     return (
         f"[Turn {turn_number}] Building on our previous discussion "
-        f"(last answer: \"{last_text}\"), "
-        f"you asked: \"{current_input}\"."
+        f'(last answer: "{last_text}"), '
+        f'you asked: "{current_input}".'
     )
 
 
@@ -82,7 +76,7 @@ def handler(request: CreateResponse, context: ResponseContext, cancellation_sign
 
     async def _build():
         history = await context.get_history()
-        current_input = get_input_text(request)
+        current_input = await context.get_input_text()
         return _build_reply(current_input, history)
 
     return TextResponse(context, request, create_text=_build)
