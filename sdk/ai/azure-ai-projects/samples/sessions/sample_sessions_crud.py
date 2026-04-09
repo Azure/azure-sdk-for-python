@@ -33,35 +33,61 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import PromptAgentDefinition, VersionRefIndicator
+from azure.ai.projects.models import HostedAgentDefinition, VersionRefIndicator, ProtocolVersionRecord
+
+import uuid
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
+image = os.environ["FOUNDRY_AGENT_IMAGE"]
 
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential, api_version="2025-11-15-preview") as project_client,
 ):
-    agent_name = "MySessionAgent"
+    agent_name = "MySessionHostedAgent"
 
     # Create an agent version to back the session
     agent = project_client.agents.create_version(
         agent_name=agent_name,
-        definition=PromptAgentDefinition(
-            model=model_name,
-            instructions="You are a helpful assistant.",
+        definition=HostedAgentDefinition(
+            cpu="0.5",
+            memory="1Gi",
+            image=image,
+            container_protocol_versions=[
+                ProtocolVersionRecord(protocol="responses", version="v1"),
+            ],
         ),
+        metadata={"enableVnextExperience": "true"},
     )
     print(f"Agent created (name: {agent.name}, version: {agent.version})")
 
+    # Poll until agent version is active
+    import time
+    for attempt in range(60):
+        time.sleep(10)
+        version_details = project_client.agents.get_version(
+            agent_name=agent_name, agent_version=agent.version
+        )
+        status = version_details["status"]
+        print(f"Agent version status: {status} (attempt {attempt + 1})")
+        if status == "active":
+            break
+        if status == "failed":
+            raise RuntimeError(f"Agent version provisioning failed: {dict(version_details)}")
+    else:
+        raise RuntimeError("Timed out waiting for agent version to become active")
+
     isolation_key = "sample-isolation-key"
+    session_id = uuid.uuid4().hex[:16]
 
     # Create a session for the agent
     session = project_client.beta.agents.create_session(
         agent_name=agent_name,
         isolation_key=isolation_key,
+        agent_session_id=session_id,
         version_indicator=VersionRefIndicator(agent_version=agent.version),
     )
     print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
@@ -74,8 +100,7 @@ with (
     print(f"Retrieved session (id: {fetched.agent_session_id}, status: {fetched.status})")
 
     # List sessions for the agent
-    sessions = list(project_client.beta.agents.list_sessions(agent_name=agent_name))
-    print(f"Found {len(sessions)} session(s) for agent '{agent_name}'")
+    sessions = project_client.beta.agents.list_sessions(agent_name=agent_name, limit=5)
     for item in sessions:
         print(f"  - {item.agent_session_id} (status: {item.status})")
 

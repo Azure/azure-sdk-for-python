@@ -5858,7 +5858,8 @@ class BetaAgentsOperations:
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return deserialized.get("last_id") or None, iter(list_of_elem)
+            has_more = deserialized.get("has_more", False)
+            return (deserialized.get("last_id") if has_more else None), iter(list_of_elem)
 
         def get_next(_continuation_token=None):
             _request = prepare_request(_continuation_token)
