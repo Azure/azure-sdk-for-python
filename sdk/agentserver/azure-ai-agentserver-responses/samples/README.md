@@ -21,17 +21,17 @@ python sample_01_getting_started.py
 
 | # | Sample | Pattern | Description |
 |---|--------|---------|-------------|
-| 01 | [Getting Started](sample_01_getting_started.py) | `TextResponse` | Echo handler — simplest async handler that echoes user input |
-| 02 | [Streaming Text Deltas](sample_02_streaming_text_deltas.py) | `TextResponse` + `create_text_stream` | Token-by-token streaming via async iterable, with `configure` callback |
-| 03 | [Full Control](sample_03_full_control.py) | `ResponseEventStream` | Convenience, streaming, and builder — three ways to emit the same output |
-| 04 | [Function Calling](sample_04_function_calling.py) | `ResponseEventStream` | Two-turn function calling with convenience and builder variants |
-| 05 | [Conversation History](sample_05_conversation_history.py) | `TextResponse` + async `create_text` | Study tutor with `context.get_history()` and `ResponsesServerOptions` |
-| 06 | [Multi-Output](sample_06_multi_output.py) | `ResponseEventStream` | Math solver: reasoning + message, convenience and builder variants |
-| 07 | [Customization](sample_07_customization.py) | `TextResponse` | Custom `ResponsesServerOptions`, default model, debug logging |
-| 08 | [Mixin Composition](sample_08_mixin_composition.py) | `TextResponse` | Multi-protocol server via cooperative mixin inheritance |
-| 09 | [Self-Hosting](sample_09_self_hosting.py) | `TextResponse` | Mount responses into an existing Starlette app under `/api` |
-| 10 | [Streaming Upstream](sample_10_streaming_upstream.py) | Raw events | Forward to upstream streaming LLM via `openai` SDK, relay SSE events |
-| 11 | [Non-Streaming Upstream](sample_11_non_streaming_upstream.py) | `ResponseEventStream` | Forward to upstream non-streaming LLM via `openai` SDK, emit items |
+| 01 | [Getting Started](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_01_getting_started.py) | `TextResponse` | Echo handler — simplest async handler that echoes user input |
+| 02 | [Streaming Text Deltas](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_02_streaming_text_deltas.py) | `TextResponse` + `create_text_stream` | Token-by-token streaming via async iterable, with `configure` callback |
+| 03 | [Full Control](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_03_full_control.py) | `ResponseEventStream` | Convenience, streaming, and builder — three ways to emit the same output |
+| 04 | [Function Calling](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_04_function_calling.py) | `ResponseEventStream` | Two-turn function calling with convenience and builder variants |
+| 05 | [Conversation History](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_05_conversation_history.py) | `TextResponse` + async `create_text` | Study tutor with `context.get_history()` and `ResponsesServerOptions` |
+| 06 | [Multi-Output](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_06_multi_output.py) | `ResponseEventStream` | Math solver: reasoning + message, convenience and builder variants |
+| 07 | [Customization](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_07_customization.py) | `TextResponse` | Custom `ResponsesServerOptions`, default model, debug logging |
+| 08 | [Mixin Composition](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_08_mixin_composition.py) | `TextResponse` | Multi-protocol server via cooperative mixin inheritance |
+| 09 | [Self-Hosting](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_09_self_hosting.py) | `TextResponse` | Mount responses into an existing Starlette app under `/api` |
+| 10 | [Streaming Upstream](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_10_streaming_upstream.py) | Raw events | Forward to upstream streaming LLM via `openai` SDK, relay SSE events |
+| 11 | [Non-Streaming Upstream](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_11_non_streaming_upstream.py) | `ResponseEventStream` | Forward to upstream non-streaming LLM via `openai` SDK, emit items |
 
 ### When to use which
 
