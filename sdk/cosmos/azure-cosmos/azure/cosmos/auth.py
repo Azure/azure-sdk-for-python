@@ -62,8 +62,11 @@ def _get_authorization_header(
         resource_id_or_fullname = resource_id_or_fullname.lower()
 
     if cosmos_client_connection.master_key:
+        # Use pre-decoded key if available, otherwise decode on the fly
+        decoded_key = getattr(cosmos_client_connection, '_master_key_decoded', None)
         return __get_authorization_token_using_master_key(
-            verb, resource_id_or_fullname, resource_type, headers, cosmos_client_connection.master_key
+            verb, resource_id_or_fullname, resource_type, headers, cosmos_client_connection.master_key,
+            decoded_key=decoded_key
         )
     if cosmos_client_connection.resource_tokens:
         return __get_authorization_token_using_resource_token(
@@ -73,7 +76,8 @@ def _get_authorization_header(
     return None
 
 
-def __get_authorization_token_using_master_key(verb, resource_id_or_fullname, resource_type, headers, master_key):
+def __get_authorization_token_using_master_key(verb, resource_id_or_fullname, resource_type, headers, master_key,
+                                               decoded_key=None):
     """Gets the authorization token using `master_key.
 
     :param str verb:
@@ -81,13 +85,14 @@ def __get_authorization_token_using_master_key(verb, resource_id_or_fullname, re
     :param str resource_type:
     :param dict headers:
     :param str master_key:
+    :param bytes decoded_key: Pre-decoded master key bytes (optional, avoids repeated base64 decoding).
     :return: The authorization token.
     :rtype: dict
 
     """
 
-    # decodes the master key which is encoded in base64
-    key = base64.b64decode(master_key)
+    # Use pre-decoded key if available, otherwise decode
+    key = decoded_key if decoded_key is not None else base64.b64decode(master_key)
 
     # Skipping lower casing of resource_id_or_fullname since it may now contain "ID"
     # of the resource as part of the fullname

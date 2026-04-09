@@ -23,6 +23,7 @@
 
 """Document client class for the Azure Cosmos database service.
 """
+import base64
 import logging
 import os
 from collections import OrderedDict
@@ -150,10 +151,13 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             validate_client_hedging_strategy(availability_strategy)
         self.availability_strategy_max_concurrency: Optional[int] = availability_strategy_max_concurrency
         self.master_key: Optional[str] = None
+        self._master_key_decoded: Optional[bytes] = None
         self.resource_tokens: Optional[Mapping[str, Any]] = None
         self.aad_credentials: Optional[AsyncTokenCredential] = None
         if auth is not None:
             self.master_key = auth.get("masterKey")
+            if self.master_key:
+                self._master_key_decoded = base64.b64decode(self.master_key)
             self.resource_tokens = auth.get("resourceTokens")
             self.aad_credentials = auth.get("clientSecretCredential")
 
