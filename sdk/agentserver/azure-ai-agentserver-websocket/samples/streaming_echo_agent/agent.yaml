@@ -1,0 +1,8 @@
+kind: hosted
+name: echo-agent-streaming
+protocols:
+  - protocol: invocations
+    version: v0.0.1
+resources:
+  cpu: "0.25"
+  memory: 0.5Gi

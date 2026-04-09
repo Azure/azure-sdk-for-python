@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Echo Agent WebSocket Client</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #1e1e2e; color: #cdd6f4; height: 100vh; display: flex; flex-direction: column; }
+  header { padding: 16px 24px; background: #181825; border-bottom: 1px solid #313244; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  header h1 { font-size: 18px; font-weight: 600; color: #cba6f7; }
+  .connection-bar { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+  .connection-bar input { background: #313244; border: 1px solid #45475a; color: #cdd6f4; border-radius: 6px; padding: 8px 12px; font-size: 14px; width: 320px; }
+  .connection-bar input:focus { outline: none; border-color: #cba6f7; }
+  button { border: none; border-radius: 6px; padding: 8px 18px; font-size: 14px; font-weight: 500; cursor: pointer; transition: opacity .15s; }
+  button:hover { opacity: 0.85; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  #connectBtn { background: #a6e3a1; color: #1e1e2e; }
+  #disconnectBtn { background: #f38ba8; color: #1e1e2e; }
+  .status { font-size: 13px; display: flex; align-items: center; gap: 6px; }
+  .status .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot.disconnected { background: #f38ba8; }
+  .dot.connected { background: #a6e3a1; }
+  .dot.connecting { background: #f9e2af; }
+  .chat-area { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+  .msg { max-width: 80%; padding: 10px 14px; border-radius: 10px; font-size: 14px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+  .msg.user { align-self: flex-end; background: #585b70; color: #cdd6f4; }
+  .msg.agent { align-self: flex-start; background: #313244; color: #cdd6f4; }
+  .msg.system { align-self: center; background: transparent; color: #6c7086; font-size: 12px; font-style: italic; }
+  .input-bar { padding: 16px 24px; background: #181825; border-top: 1px solid #313244; display: flex; gap: 10px; }
+  .input-bar textarea { flex: 1; background: #313244; border: 1px solid #45475a; color: #cdd6f4; border-radius: 8px; padding: 10px 14px; font-size: 14px; font-family: inherit; resize: none; height: 44px; }
+  .input-bar textarea:focus { outline: none; border-color: #cba6f7; }
+  #sendBtn { background: #89b4fa; color: #1e1e2e; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Echo Agent WebSocket Client</h1>
+  <div class="connection-bar">
+    <input id="urlInput" type="text" value="ws://localhost:8088/invocations/ws" placeholder="ws://host:port/invocations/ws">
+    <button id="connectBtn">Connect</button>
+    <button id="disconnectBtn" disabled>Disconnect</button>
+    <span class="status"><span id="statusDot" class="dot disconnected"></span><span id="statusText">Disconnected</span></span>
+  </div>
+</header>
+
+<div id="chat" class="chat-area"></div>
+
+<div class="input-bar">
+  <textarea id="messageInput" placeholder="Type a message and press Enter…" disabled></textarea>
+  <button id="sendBtn" disabled>Send</button>
+</div>
+
+<script>
+(function () {
+  const urlInput = document.getElementById("urlInput");
+  const connectBtn = document.getElementById("connectBtn");
+  const disconnectBtn = document.getElementById("disconnectBtn");
+  const statusDot = document.getElementById("statusDot");
+  const statusText = document.getElementById("statusText");
+  const chat = document.getElementById("chat");
+  const messageInput = document.getElementById("messageInput");
+  const sendBtn = document.getElementById("sendBtn");
+
+  let ws = null;
+  let currentAgentBubble = null;
+
+  function setStatus(state) {
+    statusDot.className = "dot " + state;
+    statusText.textContent = state.charAt(0).toUpperCase() + state.slice(1);
+  }
+
+  function addMessage(text, cls) {
+    const el = document.createElement("div");
+    el.className = "msg " + cls;
+    el.textContent = text;
+    chat.appendChild(el);
+    chat.scrollTop = chat.scrollHeight;
+    return el;
+  }
+
+  function setInputEnabled(enabled) {
+    messageInput.disabled = !enabled;
+    sendBtn.disabled = !enabled;
+    if (enabled) messageInput.focus();
+  }
+
+  function doConnect() {
+    const url = urlInput.value.trim();
+    if (!url) return;
+    setStatus("connecting");
+    connectBtn.disabled = true;
+
+    ws = new WebSocket(url);
+
+    ws.addEventListener("open", function () {
+      setStatus("connected");
+      disconnectBtn.disabled = false;
+      setInputEnabled(true);
+      addMessage("Connected to " + url, "system");
+    });
+
+    ws.addEventListener("message", function (event) {
+      let msg;
+      try { msg = JSON.parse(event.data); } catch { return; }
+
+      switch (msg.type) {
+        case "stream_chunk": {
+          const token = (msg.payload && msg.payload.token) || "";
+          if (!currentAgentBubble) {
+            currentAgentBubble = addMessage("", "agent");
+          }
+          currentAgentBubble.textContent += token + " ";
+          chat.scrollTop = chat.scrollHeight;
+          break;
+        }
+        case "stream_end":
+          currentAgentBubble = null;
+          addMessage("— stream complete —", "system");
+          setInputEnabled(true);
+          break;
+        case "result":
+          currentAgentBubble = null;
+          addMessage(JSON.stringify(msg.payload, null, 2), "agent");
+          setInputEnabled(true);
+          break;
+        case "error":
+          currentAgentBubble = null;
+          addMessage("Error: " + JSON.stringify(msg.error), "system");
+          setInputEnabled(true);
+          break;
+        case "ping":
+          ws.send(JSON.stringify({ action: "pong" }));
+          break;
+        default:
+          break;
+      }
+    });
+
+    ws.addEventListener("close", function () {
+      cleanup();
+      addMessage("Connection closed", "system");
+    });
+
+    ws.addEventListener("error", function () {
+      cleanup();
+      addMessage("Connection error", "system");
+    });
+  }
+
+  function doDisconnect() {
+    if (ws) {
+      ws.close();
+    }
+  }
+
+  function cleanup() {
+    ws = null;
+    currentAgentBubble = null;
+    setStatus("disconnected");
+    connectBtn.disabled = false;
+    disconnectBtn.disabled = true;
+    setInputEnabled(false);
+  }
+
+  function doSend() {
+    const text = messageInput.value.trim();
+    if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
+    addMessage(text, "user");
+    ws.send(JSON.stringify({
+      action: "invoke",
+      payload: { message: text }
+    }));
+    messageInput.value = "";
+    setInputEnabled(false);
+  }
+
+  connectBtn.addEventListener("click", doConnect);
+  disconnectBtn.addEventListener("click", doDisconnect);
+  sendBtn.addEventListener("click", doSend);
+  messageInput.addEventListener("keydown", function (e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      doSend();
+    }
+  });
+})();
+</script>
+</body>
+</html>
