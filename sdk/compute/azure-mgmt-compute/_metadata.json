@@ -5,8 +5,8 @@
     "ComputeGallery": "2025-03-03",
     "ComputeSku": "2021-07-01"
   },
-  "commit": "843ab81f0fb6e0d22bca64e1c73ffe64d1681ca9",
+  "commit": "b3944c3f75fb842840b43e8bb82fa2cd316aa544",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/compute/resource-manager/Microsoft.Compute/Compute",
-  "emitterVersion": "0.61.2"
+  "emitterVersion": "0.61.3"
 }
