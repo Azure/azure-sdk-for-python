@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
+# pylint: disable=too-many-statements
 """Event-pipeline orchestration for the Responses server.
 
 This module is intentionally free of Starlette imports: it operates purely on
@@ -14,12 +15,6 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, AsyncIterator, Callable, cast
-
-logger = logging.getLogger("azure.ai.agentserver")
-
-if TYPE_CHECKING:
-    from .._response_context import ResponseContext
-    from ..models._generated import AgentReference, CreateResponse
 
 import anyio
 
@@ -50,6 +45,13 @@ from ..streaming._state_machine import EventStreamValidator
 from ._event_subject import _ResponseEventSubject
 from ._execution_context import _ExecutionContext
 from ._runtime_state import _RuntimeState
+
+if TYPE_CHECKING:
+    from .._response_context import ResponseContext
+    from ..models._generated import AgentReference, CreateResponse
+
+
+logger = logging.getLogger("azure.ai.agentserver")
 
 
 def _check_first_event_contract(normalized: generated_models.ResponseStreamEvent, response_id: str) -> str | None:
@@ -164,7 +166,7 @@ def _validate_handler_event(coerced: generated_models.ResponseStreamEvent) -> st
     return None
 
 
-async def _run_background_non_stream(
+async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-many-branches
     *,
     create_fn: Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]],
     parsed: CreateResponse,
@@ -208,6 +210,10 @@ async def _run_background_non_stream(
     :keyword type store: bool
     :keyword agent_session_id: Resolved session ID (B39).
     :keyword type agent_session_id: str | None
+    :keyword conversation_id: Optional conversation ID for multi-turn sessions.
+    :keyword type conversation_id: str | None
+    :keyword history_limit: Maximum number of history items to include.
+    :keyword type history_limit: int
     :return: None
     :rtype: None
     """
@@ -703,7 +709,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 _initial_response_obj, ctx.input_items or None, _history_ids, isolation=_isolation
             )
 
-    async def _process_handler_events(
+    async def _process_handler_events(  # pylint: disable=too-many-return-statements
         self,
         ctx: _ExecutionContext,
         state: _PipelineState,

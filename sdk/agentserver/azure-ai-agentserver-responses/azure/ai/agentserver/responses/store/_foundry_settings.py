@@ -55,13 +55,13 @@ class FoundryStorageSettings:
         base = endpoint.rstrip("/") + "/storage/"
         return cls(storage_base_url=base)
 
-    def build_url(self, path: str, **extra_params: str) -> str:
+    def build_url(self, path: str, **extra_params: str) -> str:  # pylint: disable=docstring-keyword-should-match-keyword-only
         """Build a full storage API URL for *path* with ``api-version`` appended.
 
         :param path: The resource path segment, e.g. ``responses/abc123``.
         :type path: str
-        :param extra_params: Additional query parameters; values are URL-encoded automatically.
-        :type extra_params: str
+        :keyword extra_params: Additional query parameters; values are URL-encoded automatically.
+        :paramtype extra_params: str
         :returns: The complete URL string.
         :rtype: str
         """

@@ -34,7 +34,7 @@ EVENT_TYPE = generated_models.ResponseStreamEventType
 
 # Event types whose payload is a full Response snapshot.
 # Lifecycle events nest under a "response" key on the wire.
-_RESPONSE_SNAPSHOT_EVENT_TYPES = _internals._RESPONSE_SNAPSHOT_EVENT_TYPES
+_RESPONSE_SNAPSHOT_EVENT_TYPES = _internals._RESPONSE_SNAPSHOT_EVENT_TYPES  # pylint: disable=protected-access
 
 
 def _resolve_conversation_param(raw: Any) -> str | None:

@@ -50,7 +50,13 @@ class ResponsesServerOptions:
 
     @classmethod
     def from_env(cls, environ: Mapping[str, str] | None = None) -> "ResponsesServerOptions":
-        """Create options from environment variables."""
+        """Create options from environment variables.
+
+        :param environ: Optional mapping of environment variables. Defaults to ``os.environ``.
+        :type environ: Mapping[str, str] | None
+        :returns: A new options instance populated from environment variables.
+        :rtype: ResponsesServerOptions
+        """
         source: Mapping[str, str] = os.environ if environ is None else environ
 
         def _first_non_empty(*keys: str) -> str | None:
@@ -87,5 +93,8 @@ class ResponsesServerOptions:
 
     @property
     def sse_keep_alive_enabled(self) -> bool:
-        """Return whether periodic SSE keep-alive comments are enabled."""
+        """Return whether periodic SSE keep-alive comments are enabled.
+
+        :rtype: bool
+        """
         return self.sse_keep_alive_interval_seconds is not None

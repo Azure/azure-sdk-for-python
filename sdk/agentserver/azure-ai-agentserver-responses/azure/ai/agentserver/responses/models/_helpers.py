@@ -28,14 +28,34 @@ from ._generated.sdk.models._utils.model_base import _deserialize
 
 
 def _get_field(obj: Any, field: str, default: Any = None) -> Any:
-    """Get *field* from a model instance or a plain dict."""
+    """Get *field* from a model instance or a plain dict.
+
+    :param obj: The model instance or dict to read from.
+    :type obj: Any
+    :param field: The field name to retrieve.
+    :type field: str
+    :param default: The default value if the field is missing.
+    :type default: Any
+    :returns: The field value, or *default*.
+    :rtype: Any
+    """
     if isinstance(obj, dict):
         return obj.get(field, default)
     return getattr(obj, field, default)
 
 
 def _is_type(obj: Any, model_cls: type, type_value: str) -> bool:
-    """Check whether *obj* is *model_cls* or a dict with matching ``type``."""
+    """Check whether *obj* is *model_cls* or a dict with matching ``type``.
+
+    :param obj: The object to check.
+    :type obj: Any
+    :param model_cls: The model class to check against.
+    :type model_cls: type
+    :param type_value: The string type discriminator to match in dicts.
+    :type type_value: str
+    :returns: True if *obj* matches the model class or type value.
+    :rtype: bool
+    """
     if isinstance(obj, model_cls):
         return True
     if isinstance(obj, dict):

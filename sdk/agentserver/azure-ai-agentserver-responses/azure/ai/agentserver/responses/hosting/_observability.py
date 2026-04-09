@@ -218,7 +218,13 @@ def extract_request_id(headers: Mapping[str, str]) -> str | None:
 def _resolve_agent_fields(
     agent_reference: MutableMapping[str, Any] | dict[str, Any] | None,
 ) -> tuple[str | None, str | None, str | None]:
-    """Return ``(agent_name, agent_version, agent_id)`` from *agent_reference*."""
+    """Return ``(agent_name, agent_version, agent_id)`` from *agent_reference*.
+
+    :param agent_reference: Agent reference mapping containing name and version fields.
+    :type agent_reference: MutableMapping[str, Any] | dict[str, Any] | None
+    :return: A tuple of (agent_name, agent_version, agent_id).
+    :rtype: tuple[str | None, str | None, str | None]
+    """
     if agent_reference is None or not isinstance(agent_reference, (dict, MutableMapping)):
         return None, None, None
     name = agent_reference.get("name") or None

@@ -246,7 +246,9 @@ def extract_response_fields(
     """Pull ``agent_reference`` and ``model`` from a response in one pass.
 
     :param response: The response envelope to inspect.
+    :type response: ~azure.ai.agentserver.responses.models.ResponseObject
     :returns: Tuple of (agent_reference or None, model string or None).
+    :rtype: tuple[~azure.ai.agentserver.responses.models.AgentReference | dict[str, Any] | None, str | None]
     """
     payload = coerce_model_mapping(response)
     if not isinstance(payload, dict):

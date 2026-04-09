@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
+# pylint: disable=too-many-return-statements
 """HTTP endpoint handler for the Responses server.
 
 This module owns all Starlette I/O: ``Request`` parsing, route-level
@@ -15,6 +16,8 @@ import logging
 import threading
 from typing import TYPE_CHECKING, Any
 
+from opentelemetry import baggage as _otel_baggage
+from opentelemetry import context as _otel_context
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
@@ -25,6 +28,7 @@ from azure.ai.agentserver.responses.models._generated import CreateResponse
 from .._options import ResponsesServerOptions
 from .._response_context import IsolationContext, ResponseContext
 from ..models._helpers import get_input_expanded, to_output_item
+from ..models.errors import RequestValidationError
 from ..models.runtime import ResponseExecution, ResponseModeFlags, build_cancelled_response, build_failed_response
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..streaming._helpers import EVENT_TYPE, _encode_sse
@@ -72,11 +76,6 @@ from ._validation import (
 if TYPE_CHECKING:
     from ._routing import ResponsesAgentServerHost
 
-from opentelemetry import baggage as _otel_baggage
-from opentelemetry import context as _otel_context
-
-from ..models.errors import RequestValidationError
-
 logger = logging.getLogger("azure.ai.agentserver")
 
 # OTel span attribute keys for error tagging (§7.2)
@@ -85,7 +84,13 @@ _ATTR_ERROR_MESSAGE = "azure.ai.agentserver.responses.error.message"
 
 
 def _classify_error_code(exc: BaseException) -> str:
-    """Return an error code string for an exception, matching API error classification."""
+    """Return an error code string for an exception, matching API error classification.
+
+    :param exc: The exception to classify.
+    :type exc: BaseException
+    :return: An error code string.
+    :rtype: str
+    """
     if isinstance(exc, RequestValidationError):
         return exc.code
     if isinstance(exc, ValueError):
@@ -100,6 +105,11 @@ def _extract_isolation(request: Request) -> IsolationContext:
     ``x-agent-chat-isolation-key``.  Keys are ``None`` when the header
     is absent (e.g. local development) and empty string when sent
     with no value.
+
+    :param request: The incoming Starlette HTTP request.
+    :type request: Request
+    :return: An isolation context with user and chat keys.
+    :rtype: IsolationContext
     """
     return IsolationContext(
         user_key=request.headers.get("x-agent-user-isolation-key"),
@@ -298,20 +308,20 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         objects share a single source of truth for mode flags, input
         items, and conversation-threading fields.
 
-        :param payload: Raw JSON payload dict.
-        :type payload: dict[str, Any]
-        :param parsed: Validated :class:`CreateResponse` model.
-        :type parsed: CreateResponse
-        :param response_id: Assigned response identifier.
-        :type response_id: str
-        :param agent_reference: Normalised agent reference model or dictionary.
-        :type agent_reference: AgentReference | dict[str, Any]
+        :keyword payload: Raw JSON payload dict.
+        :paramtype payload: dict[str, Any]
+        :keyword parsed: Validated :class:`CreateResponse` model.
+        :paramtype parsed: CreateResponse
+        :keyword response_id: Assigned response identifier.
+        :paramtype response_id: str
+        :keyword agent_reference: Normalised agent reference model or dictionary.
+        :paramtype agent_reference: AgentReference | dict[str, Any]
         :keyword agent_session_id: Resolved session ID (B39), or ``None``.
-        :keyword type agent_session_id: str | None
-        :param span: Active observability span for this request.
-        :type span: CreateSpan
-        :param request: Starlette HTTP request (for headers / query params).
-        :type request: Request
+        :paramtype agent_session_id: str | None
+        :keyword span: Active observability span for this request.
+        :paramtype span: CreateSpan
+        :keyword request: Starlette HTTP request (for headers / query params).
+        :paramtype request: Request
         :return: A fully-populated :class:`_ExecutionContext` with its
                     ``context`` field already set.
         :rtype: _ExecutionContext
@@ -369,9 +379,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         the parsed request exactly once.
 
         :param ctx: The execution context that owns the protocol fields.
-        :param raw_body: The raw JSON payload dict.
-        :param request: The Starlette HTTP request.
+        :type ctx: _ExecutionContext
+        :keyword raw_body: The raw JSON payload dict.
+        :paramtype raw_body: dict[str, Any]
+        :keyword request: The Starlette HTTP request.
+        :paramtype request: Request
         :return: A fully-populated :class:`ResponseContext`.
+        :rtype: ResponseContext
         """
         mode_flags = ResponseModeFlags(stream=ctx.stream, store=ctx.store, background=ctx.background)
         client_headers = {k: v for k, v in request.headers.items() if k.lower().startswith("x-client-")}
@@ -400,7 +414,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     # Route handlers
     # ------------------------------------------------------------------
 
-    async def handle_create(self, request: Request) -> Response:  # pylint: disable=too-many-return-statements
+    async def handle_create(self, request: Request) -> Response:  # pylint: disable=too-many-locals,too-many-statements
         """Route handler for ``POST /responses``.
 
         Parses and validates the create request, builds an
@@ -607,7 +621,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 except ValueError:
                     pass
 
-    async def handle_get(self, request: Request) -> Response:  # pylint: disable=too-many-return-statements
+    async def handle_get(self, request: Request) -> Response:
         """Route handler for ``GET /responses/{response_id}``.
 
         Returns the response snapshot or replays SSE events if
@@ -688,6 +702,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         Returns the integer cursor value (defaulting to ``-1``) or an
         error :class:`Response` when the value is not a valid integer.
+
+        :param request: The incoming Starlette HTTP request.
+        :type request: Request
+        :return: The parsed cursor value or an error response.
+        :rtype: int | Response
         """
         cursor_raw = request.query_params.get("starting_after")
         if cursor_raw is None:
@@ -702,7 +721,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             )
 
     def _build_live_stream_response(self, record: ResponseExecution, starting_after: int) -> StreamingResponse:
-        """Build a live SSE subscription response for an in-flight record."""
+        """Build a live SSE subscription response for an in-flight record.
+
+        :param record: The in-flight response execution record.
+        :type record: ResponseExecution
+        :param starting_after: The cursor position to start streaming from.
+        :type starting_after: int
+        :return: A streaming response with live SSE events.
+        :rtype: StreamingResponse
+        """
         _cursor = starting_after
 
         async def _stream_from_subject():
@@ -719,6 +746,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         Returns a ``StreamingResponse`` if replay events are available,
         an error ``Response`` for invalid query parameters, or ``None``
         when no replay data exists.
+
+        :param request: The incoming Starlette HTTP request.
+        :type request: Request
+        :param response_id: The response identifier to replay.
+        :type response_id: str
+        :keyword isolation: Optional isolation context for multi-tenant filtering.
+        :paramtype isolation: IsolationContext | None
+        :return: A streaming replay response, an error response, or ``None``.
+        :rtype: Response | None
         """
         if self._stream_provider is None:
             return None
@@ -793,7 +829,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             status_code=200,
         )
 
-    async def handle_cancel(self, request: Request) -> Response:  # pylint: disable=too-many-return-statements
+    async def handle_cancel(self, request: Request) -> Response:
         """Route handler for ``POST /responses/{response_id}/cancel``.
 
         :param request: Incoming Starlette request.

@@ -13,9 +13,6 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest
 
 from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-defined]
-
-if TYPE_CHECKING:
-    from .._response_context import IsolationContext
 from ._foundry_errors import raise_for_storage_error
 from ._foundry_serializer import (
     deserialize_history_ids,
@@ -28,6 +25,9 @@ from ._foundry_serializer import (
 )
 from ._foundry_settings import FoundryStorageSettings
 
+if TYPE_CHECKING:
+    from .._response_context import IsolationContext
+
 _FOUNDRY_TOKEN_SCOPE = "https://ai.azure.com/.default"
 _JSON_CONTENT_TYPE = "application/json; charset=utf-8"
 _USER_ISOLATION_HEADER = "x-agent-user-isolation-key"
@@ -39,7 +39,13 @@ def _encode(value: str) -> str:
 
 
 def _apply_isolation_headers(request: HttpRequest, isolation: IsolationContext | None) -> None:
-    """Add isolation key headers to an outbound HTTP request when present."""
+    """Add isolation key headers to an outbound HTTP request when present.
+
+    :param request: The outbound HTTP request to modify.
+    :type request: ~azure.core.rest.HttpRequest
+    :param isolation: Isolation context containing user/chat keys, or ``None``.
+    :type isolation: ~azure.ai.agentserver.responses.IsolationContext | None
+    """
     if isolation is None:
         return
     if isolation.user_key is not None:

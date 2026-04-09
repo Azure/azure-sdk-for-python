@@ -50,7 +50,7 @@ class IsolationContext:
         ``None`` when the header was not sent."""
 
 
-class ResponseContext:
+class ResponseContext:  # pylint: disable=too-many-instance-attributes
     """Runtime context exposed to response handlers and used by hosting orchestration.
 
     - response identifier
@@ -166,7 +166,11 @@ class ResponseContext:
     # ------------------------------------------------------------------
 
     async def _get_input_items_resolved(self) -> Sequence[Item]:
-        """Resolve and cache input items with references resolved."""
+        """Resolve and cache input items with references resolved.
+
+        :returns: A tuple of resolved input items.
+        :rtype: Sequence[Item]
+        """
         if self._input_items_resolved_cache is not None:
             return self._input_items_resolved_cache
 
@@ -202,7 +206,11 @@ class ResponseContext:
         return self._input_items_resolved_cache
 
     async def _get_input_items_unresolved(self) -> Sequence[Item]:
-        """Return input items without resolving references."""
+        """Return input items without resolving references.
+
+        :returns: A tuple of unresolved input items.
+        :rtype: Sequence[Item]
+        """
         if self._input_items_unresolved_cache is not None:
             return self._input_items_unresolved_cache
 
@@ -211,7 +219,11 @@ class ResponseContext:
         return self._input_items_unresolved_cache
 
     def _expand_input(self) -> list[Item]:
-        """Normalize raw input into typed Item instances."""
+        """Normalize raw input into typed Item instances.
+
+        :returns: A list of typed Item instances.
+        :rtype: list[Item]
+        """
         if self.request is not None:
             return get_input_expanded(self.request)
         return list(self._input_items)  # type: ignore[arg-type]

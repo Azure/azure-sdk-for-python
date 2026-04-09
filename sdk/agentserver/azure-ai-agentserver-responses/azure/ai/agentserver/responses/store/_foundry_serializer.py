@@ -79,7 +79,7 @@ def deserialize_paged_items(body: str) -> list[OutputItem]:
     :rtype: list[OutputItem]
     """
     data = json.loads(body)
-    return [OutputItem._deserialize(item, []) for item in data.get("data", [])]  # type: ignore[attr-defined]
+    return [OutputItem._deserialize(item, []) for item in data.get("data", [])]  # type: ignore[attr-defined]  # pylint: disable=protected-access
 
 
 def deserialize_items_array(body: str) -> list[OutputItem | None]:
@@ -99,7 +99,7 @@ def deserialize_items_array(body: str) -> list[OutputItem | None]:
         if item is None:
             result.append(None)
         else:
-            result.append(OutputItem._deserialize(item, []))  # type: ignore[attr-defined]
+            result.append(OutputItem._deserialize(item, []))  # type: ignore[attr-defined]  # pylint: disable=protected-access
     return result
 
 

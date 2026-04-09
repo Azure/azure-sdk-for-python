@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-import asyncio
+import asyncio  # pylint: disable=do-not-import-asyncio
 import contextlib
 from collections import defaultdict
 from copy import deepcopy
@@ -61,7 +61,11 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
     @contextlib.asynccontextmanager
     async def _locked(self) -> AsyncIterator[None]:
-        """Acquire the lock and purge expired entries."""
+        """Acquire the lock and purge expired entries.
+
+        :returns: An async context manager that yields ``None`` once the lock is acquired.
+        :rtype: AsyncIterator[None]
+        """
         async with self._lock:
             self._purge_expired_unlocked()
             yield
@@ -85,6 +89,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :type input_items: Iterable[OutputItem] | None
         :param history_item_ids: Optional history item IDs to link to the response.
         :type history_item_ids: Iterable[str] | None
+        :keyword isolation: Isolation context for multi-tenant partitioning.
+        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :rtype: None
         :raises ValueError: If a non-deleted response with the same ID already exists.
         """
@@ -127,6 +133,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         :param response_id: The unique identifier of the response to retrieve.
         :type response_id: str
+        :keyword isolation: Isolation context for multi-tenant partitioning.
+        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :returns: A deep copy of the stored response envelope.
         :rtype: ~azure.ai.agentserver.responses.models._generated.Response
         :raises KeyError: If the response does not exist or has been deleted.
@@ -145,6 +153,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         :param response: The response envelope with updated fields.
         :type response: ~azure.ai.agentserver.responses.models._generated.Response
+        :keyword isolation: Isolation context for multi-tenant partitioning.
+        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :rtype: None
         :raises KeyError: If the response does not exist or has been deleted.
         """
@@ -165,6 +175,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         :param response_id: The unique identifier of the response to delete.
         :type response_id: str
+        :keyword isolation: Isolation context for multi-tenant partitioning.
+        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :rtype: None
         :raises KeyError: If the response does not exist or has already been deleted.
         """
@@ -200,6 +212,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :type after: str | None
         :param before: Cursor ID; only return items before this ID.
         :type before: str | None
+        :keyword isolation: Isolation context for multi-tenant partitioning.
+        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :returns: A list of input/history items matching the pagination criteria.
         :rtype: list[OutputItem]
         :raises KeyError: If the response does not exist.
@@ -248,6 +262,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         :param item_ids: The item identifiers to look up.
         :type item_ids: Iterable[str]
+        :keyword isolation: Isolation context for multi-tenant partitioning.
+        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :returns: A list of output items in the same order as *item_ids*; missing items are ``None``.
         :rtype: list[OutputItem | None]
         """
@@ -275,6 +291,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :type conversation_id: str | None
         :param limit: Maximum number of history item IDs to return.
         :type limit: int
+        :keyword isolation: Isolation context for multi-tenant partitioning.
+        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :returns: A list of history item IDs within the given scope.
         :rtype: list[str]
         """
@@ -511,6 +529,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :type response_id: str
         :param events: Ordered list of event instances.
         :type events: list[ResponseStreamEvent]
+        :keyword isolation: Isolation context for multi-tenant partitioning.
+        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :rtype: None
         """
         now = datetime.now(timezone.utc)
@@ -535,6 +555,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         :param response_id: The unique identifier of the response whose events to retrieve.
         :type response_id: str
+        :keyword isolation: Isolation context for multi-tenant partitioning.
+        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :returns: A deep-copied list of event instances, or ``None`` if not found.
         :rtype: list[ResponseStreamEvent] | None
         """
@@ -558,6 +580,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         :param response_id: The unique identifier of the response whose events to remove.
         :type response_id: str
+        :keyword isolation: Isolation context for multi-tenant partitioning.
+        :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :rtype: None
         """
         async with self._locked():

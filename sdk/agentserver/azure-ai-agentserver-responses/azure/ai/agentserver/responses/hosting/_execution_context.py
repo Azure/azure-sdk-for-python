@@ -14,7 +14,7 @@ if TYPE_CHECKING:
     from ._observability import CreateSpan
 
 
-class _ExecutionContext:
+class _ExecutionContext:  # pylint: disable=too-many-instance-attributes
     """Holds all per-request state for a single create-response call.
 
     Passed between the routing layer and the orchestrator. All fields

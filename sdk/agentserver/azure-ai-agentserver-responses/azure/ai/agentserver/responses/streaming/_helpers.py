@@ -163,6 +163,8 @@ def _apply_stream_event_defaults(
     :keyword type sequence_number: int | None
     :keyword agent_session_id: Resolved session ID (S-038).
     :keyword type agent_session_id: str | None
+    :keyword conversation_id: Optional conversation ID to associate with the event.
+    :paramtype conversation_id: str | None
     :returns: The event with defaults applied (same object, mutated in-place).
     :rtype: ResponseStreamEvent
     """
@@ -221,6 +223,8 @@ def _extract_response_snapshot_from_events(
     :keyword type remove_sequence_number: bool
     :keyword agent_session_id: Resolved session ID (S-038).
     :keyword type agent_session_id: str | None
+    :keyword conversation_id: Optional conversation ID to associate with the snapshot.
+    :paramtype conversation_id: str | None
     :returns: A dict representing the response snapshot payload.
     :rtype: dict[str, Any]
     """

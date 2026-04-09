@@ -48,7 +48,10 @@ class StreamEventRecord:
 
     @property
     def terminal(self) -> bool:
-        """Return True when this event is one of the terminal response events."""
+        """Return True when this event is one of the terminal response events.
+
+        :rtype: bool
+        """
         return self.event_type in {
             EVENT_TYPE.RESPONSE_COMPLETED.value,
             EVENT_TYPE.RESPONSE_FAILED.value,
@@ -57,7 +60,15 @@ class StreamEventRecord:
 
     @classmethod
     def from_generated(cls, event: ResponseStreamEvent, payload: Mapping[str, Any]) -> "StreamEventRecord":
-        """Create a stream event record from a generated response stream event model."""
+        """Create a stream event record from a generated response stream event model.
+
+        :param event: The generated response stream event.
+        :type event: ResponseStreamEvent
+        :param payload: The event payload mapping.
+        :type payload: Mapping[str, Any]
+        :returns: A new stream event record.
+        :rtype: StreamEventRecord
+        """
         return cls(sequence_number=event.sequence_number, event_type=event.type, payload=payload)
 
 

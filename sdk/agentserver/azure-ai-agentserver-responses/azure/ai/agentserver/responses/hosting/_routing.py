@@ -53,7 +53,13 @@ logger = logging.getLogger("azure.ai.agentserver")
 
 
 async def _sync_to_async_gen(sync_gen: types.GeneratorType) -> AsyncIterator:
-    """Wrap a synchronous generator into an async generator."""
+    """Wrap a synchronous generator into an async generator.
+
+    :param sync_gen: A synchronous generator to wrap.
+    :type sync_gen: types.GeneratorType
+    :return: An async iterator yielding items from the synchronous generator.
+    :rtype: AsyncIterator
+    """
     for item in sync_gen:
         yield item
 
@@ -282,6 +288,11 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         Supports sync generators, async generators, coroutines (async def
         that returns), and AsyncIterables (e.g. TextResponse).
+
+        :param result: The handler result to normalize.
+        :type result: Any
+        :return: An async iterator of response stream events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if isinstance(result, types.GeneratorType):
             return _sync_to_async_gen(result)
@@ -296,7 +307,13 @@ class ResponsesAgentServerHost(AgentServerHost):
         return result  # type: ignore[return-value]
 
     async def _await_and_normalize(self, coro: Any) -> AsyncIterator[ResponseStreamEvent]:  # type: ignore[misc]
-        """Await a coroutine and yield events from its normalised result."""
+        """Await a coroutine and yield events from its normalised result.
+
+        :param coro: A coroutine to await.
+        :type coro: Any
+        :return: An async iterator of response stream events from the awaited result.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
         inner = await coro
         async for event in self._normalize_handler_result(inner):
             yield event
