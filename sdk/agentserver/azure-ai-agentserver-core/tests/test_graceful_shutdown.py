@@ -5,6 +5,7 @@
 import asyncio
 import logging
 import os
+import signal
 from unittest import mock
 
 import pytest
@@ -303,3 +304,71 @@ async def test_zero_timeout_skips_shutdown_handler() -> None:
 
     await agent(scope, receive, send)
     assert completed is False  # handler was NOT called
+
+
+# ------------------------------------------------------------------ #
+# SIGTERM handler registration in run()
+# ------------------------------------------------------------------ #
+
+
+class TestSigtermHandler:
+    """Tests for SIGTERM signal handler installed by run()."""
+
+    def _restore_sigterm(self):
+        """Fixture-like helper: save and restore the SIGTERM handler."""
+        original = signal.getsignal(signal.SIGTERM)
+        yield
+        signal.signal(signal.SIGTERM, original)
+
+    def test_run_installs_sigterm_handler(self) -> None:
+        """run() registers a SIGTERM handler that logs and re-raises."""
+        original = signal.getsignal(signal.SIGTERM)
+        try:
+            agent = AgentServerHost(graceful_shutdown_timeout=5)
+            handler_at_serve_time = None
+
+            def fake_asyncio_run(coroutine):
+                nonlocal handler_at_serve_time
+                handler_at_serve_time = signal.getsignal(signal.SIGTERM)
+                coroutine.close()
+
+            with mock.patch("asyncio.run", side_effect=fake_asyncio_run):
+                agent.run(host="127.0.0.1", port=9999)
+
+            assert handler_at_serve_time is not None
+            assert callable(handler_at_serve_time)
+            assert handler_at_serve_time is not original
+        finally:
+            signal.signal(signal.SIGTERM, original)
+
+    def test_sigterm_handler_logs_and_re_raises(self, caplog: pytest.LogCaptureFixture) -> None:
+        """The installed SIGTERM handler logs then re-raises via os.kill."""
+        original = signal.getsignal(signal.SIGTERM)
+        try:
+            agent = AgentServerHost(graceful_shutdown_timeout=5)
+            handler_at_serve_time = None
+
+            def fake_asyncio_run(coroutine):
+                nonlocal handler_at_serve_time
+                handler_at_serve_time = signal.getsignal(signal.SIGTERM)
+                coroutine.close()
+
+            with mock.patch("asyncio.run", side_effect=fake_asyncio_run):
+                agent.run(host="127.0.0.1", port=9999)
+
+            assert callable(handler_at_serve_time)
+
+            # Invoke the handler and verify it:
+            # 1) logs the message
+            # 2) restores the original handler
+            # 3) calls os.kill to re-raise
+            with (
+                caplog.at_level(logging.INFO, logger="azure.ai.agentserver"),
+                mock.patch("os.kill") as mock_kill,
+            ):
+                handler_at_serve_time(signal.SIGTERM, None)
+
+            assert any("SIGTERM received" in r.message for r in caplog.records)
+            mock_kill.assert_called_once_with(os.getpid(), signal.SIGTERM)
+        finally:
+            signal.signal(signal.SIGTERM, original)
