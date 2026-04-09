@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Configuration resolution helpers for AgentHost hosting.
+"""Configuration resolution helpers for AgentServerHost.
 
 Each ``resolve_*`` function follows the same hierarchy:
 1. Explicit argument (if not *None*)
@@ -15,8 +15,108 @@ misconfiguration is surfaced at startup rather than silently masked.
 """
 import os
 from typing import Optional
+from typing_extensions import Self
 
-from ._constants import Constants
+# ======================================================================
+# Environment variable keys (internal — users access values via AgentConfig)
+# ======================================================================
+
+_ENV_FOUNDRY_AGENT_NAME = "FOUNDRY_AGENT_NAME"
+_ENV_FOUNDRY_AGENT_VERSION = "FOUNDRY_AGENT_VERSION"
+_ENV_FOUNDRY_PROJECT_ENDPOINT = "FOUNDRY_PROJECT_ENDPOINT"
+_ENV_FOUNDRY_PROJECT_ARM_ID = "FOUNDRY_PROJECT_ARM_ID"
+_ENV_FOUNDRY_AGENT_SESSION_ID = "FOUNDRY_AGENT_SESSION_ID"
+_ENV_PORT = "PORT"
+_ENV_APPLICATIONINSIGHTS_CONNECTION_STRING = "APPLICATIONINSIGHTS_CONNECTION_STRING"
+_ENV_OTEL_EXPORTER_OTLP_ENDPOINT = "OTEL_EXPORTER_OTLP_ENDPOINT"
+_ENV_SSE_KEEPALIVE_INTERVAL = "SSE_KEEPALIVE_INTERVAL"
+
+_DEFAULT_PORT = 8088
+_DEFAULT_SSE_KEEPALIVE_INTERVAL = 15
+
+
+# ======================================================================
+# AgentConfig — resolved environment values
+# ======================================================================
+
+
+class AgentConfig:
+    """Resolved configuration for an agent server host.
+
+    All values are populated from environment variables at creation time.
+    Access via ``app.config``::
+
+        app = InvocationAgentServerHost()
+        print(app.config.agent_name)
+        print(app.config.project_endpoint)
+
+    :param agent_name: Agent name from ``FOUNDRY_AGENT_NAME``.
+    :param agent_version: Agent version from ``FOUNDRY_AGENT_VERSION``.
+    :param agent_id: Combined identifier (``"name:version"`` or ``"name"`` or ``""``).
+    :param project_endpoint: Foundry project endpoint from ``FOUNDRY_PROJECT_ENDPOINT``.
+    :param project_id: Foundry project ARM resource ID from ``FOUNDRY_PROJECT_ARM_ID``.
+    :param session_id: Default session ID from ``FOUNDRY_AGENT_SESSION_ID``.
+    :param port: Server port from ``PORT`` (default 8088).
+    :param appinsights_connection_string: Application Insights connection string.
+    :param otlp_endpoint: OTLP exporter endpoint.
+    :param sse_keepalive_interval: SSE keep-alive interval in seconds (0 = disabled).
+    """
+
+    def __init__(
+        self,
+        *,
+        agent_name: str,
+        agent_version: str,
+        agent_id: str,
+        project_endpoint: str,
+        project_id: str,
+        session_id: str,
+        port: int,
+        appinsights_connection_string: str,
+        otlp_endpoint: str,
+        sse_keepalive_interval: int,
+    ) -> None:
+        self.agent_name = agent_name
+        self.agent_version = agent_version
+        self.agent_id = agent_id
+        self.project_endpoint = project_endpoint
+        self.project_id = project_id
+        self.session_id = session_id
+        self.port = port
+        self.appinsights_connection_string = appinsights_connection_string
+        self.otlp_endpoint = otlp_endpoint
+        self.sse_keepalive_interval = sse_keepalive_interval
+
+    @classmethod
+    def from_env(cls) -> Self:
+        """Create an ``AgentConfig`` by reading all platform environment variables.
+
+        :return: A frozen config with resolved values.
+        :rtype: AgentConfig
+        """
+        agent_name = os.environ.get(_ENV_FOUNDRY_AGENT_NAME, "")
+        agent_version = os.environ.get(_ENV_FOUNDRY_AGENT_VERSION, "")
+
+        if agent_name and agent_version:
+            agent_id = f"{agent_name}:{agent_version}"
+        elif agent_name:
+            agent_id = agent_name
+        else:
+            agent_id = ""
+
+        return cls(
+            agent_name=agent_name,
+            agent_version=agent_version,
+            agent_id=agent_id,
+            project_endpoint=os.environ.get(_ENV_FOUNDRY_PROJECT_ENDPOINT, ""),
+            project_id=os.environ.get(_ENV_FOUNDRY_PROJECT_ARM_ID, ""),
+            session_id=os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_ID, ""),
+            port=resolve_port(None),
+            appinsights_connection_string=os.environ.get(
+                _ENV_APPLICATIONINSIGHTS_CONNECTION_STRING, ""),
+            otlp_endpoint=os.environ.get(_ENV_OTEL_EXPORTER_OTLP_ENDPOINT, ""),
+            sse_keepalive_interval=resolve_sse_keepalive_interval(None),
+        )
 
 
 def _parse_int_env(var_name: str) -> Optional[int]:
@@ -88,10 +188,10 @@ def resolve_port(port: Optional[int]) -> int:
     """
     if port is not None:
         return _validate_port(_require_int("port", port), "port")
-    env_port = _parse_int_env(Constants.PORT)
+    env_port = _parse_int_env("PORT")
     if env_port is not None:
-        return _validate_port(env_port, Constants.PORT)
-    return Constants.DEFAULT_PORT
+        return _validate_port(env_port, "PORT")
+    return _DEFAULT_PORT
 
 
 _DEFAULT_GRACEFUL_SHUTDOWN_TIMEOUT = 30
@@ -133,7 +233,7 @@ def resolve_appinsights_connection_string(
     if connection_string is not None:
         return connection_string
     return os.environ.get(
-        Constants.APPLICATIONINSIGHTS_CONNECTION_STRING
+        _ENV_APPLICATIONINSIGHTS_CONNECTION_STRING
     )
 
 
@@ -164,7 +264,7 @@ def resolve_agent_name() -> str:
     :return: The agent name, or an empty string if not set.
     :rtype: str
     """
-    return os.environ.get(Constants.FOUNDRY_AGENT_NAME, "")
+    return os.environ.get(_ENV_FOUNDRY_AGENT_NAME, "")
 
 
 def resolve_agent_version() -> str:
@@ -173,7 +273,7 @@ def resolve_agent_version() -> str:
     :return: The agent version, or an empty string if not set.
     :rtype: str
     """
-    return os.environ.get(Constants.FOUNDRY_AGENT_VERSION, "")
+    return os.environ.get(_ENV_FOUNDRY_AGENT_VERSION, "")
 
 
 def resolve_project_id() -> str:
@@ -185,7 +285,26 @@ def resolve_project_id() -> str:
     :return: The project ARM resource ID, or an empty string if not set.
     :rtype: str
     """
-    return os.environ.get(Constants.FOUNDRY_PROJECT_ARM_ID, "")
+    return os.environ.get(_ENV_FOUNDRY_PROJECT_ARM_ID, "")
+
+
+def resolve_sse_keepalive_interval(interval: Optional[int] = None) -> int:
+    """Resolve the SSE keep-alive interval from argument, env var, or default.
+
+    Resolution order: explicit *interval* → ``SSE_KEEPALIVE_INTERVAL`` env var
+    → ``15`` (seconds).  A value of ``0`` disables keep-alive.
+
+    :param interval: Explicitly requested interval in seconds, or None.
+    :type interval: Optional[int]
+    :return: The resolved interval in seconds (0 means disabled).
+    :rtype: int
+    """
+    if interval is not None:
+        return max(0, _require_int("sse_keepalive_interval", interval))
+    env_val = _parse_int_env(_ENV_SSE_KEEPALIVE_INTERVAL)
+    if env_val is not None:
+        return max(0, env_val)
+    return _DEFAULT_SSE_KEEPALIVE_INTERVAL
 
 
 def resolve_otlp_endpoint() -> Optional[str]:
@@ -194,5 +313,5 @@ def resolve_otlp_endpoint() -> Optional[str]:
     :return: The OTLP endpoint URL, or None if not set or empty.
     :rtype: Optional[str]
     """
-    value = os.environ.get(Constants.OTEL_EXPORTER_OTLP_ENDPOINT, "")
+    value = os.environ.get(_ENV_OTEL_EXPORTER_OTLP_ENDPOINT, "")
     return value if value else None

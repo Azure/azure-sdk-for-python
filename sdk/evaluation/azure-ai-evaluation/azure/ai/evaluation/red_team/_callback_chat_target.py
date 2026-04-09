@@ -141,8 +141,25 @@ class _CallbackChatTarget(PromptChatTarget):
         # Get conversation history and convert to chat message format
         conversation_history = self._memory.get_conversation(conversation_id=request.conversation_id)
         messages: List[Dict[str, str]] = []
+        extracted_contexts: List[Dict[str, Any]] = []
         for msg in conversation_history:
             for piece in msg.message_pieces:
+                # Any SeedPrompt marked with is_context=True should be excluded from
+                # prior conversation messages so sensitive context does not leak into
+                # chat history. When a tool_name is present, extract it for the
+                # context dict used by the callback to build FunctionTool injections.
+                pm = getattr(piece, "prompt_metadata", None)
+                if isinstance(pm, dict) and pm.get("is_context") is True:
+                    if pm.get("tool_name"):
+                        extracted_contexts.append(
+                            {
+                                "content": self._resolve_content(piece),
+                                "tool_name": pm["tool_name"],
+                                "context_type": pm.get("context_type", "text"),
+                            }
+                        )
+                    continue
+
                 messages.append(
                     {
                         "role": (piece.api_role if hasattr(piece, "api_role") else str(piece.role)),
@@ -187,6 +204,18 @@ class _CallbackChatTarget(PromptChatTarget):
                     logger.debug(f"Extracted agent context: {len(contexts)} context source(s), tool_names={tool_names}")
                 else:
                     logger.debug(f"Extracted model context: {len(contexts)} context source(s)")
+
+        # Fallback: use tool context extracted from conversation history above.
+        # In the Foundry path, context SeedPrompts are stored as
+        # prepended_conversation with tool_name in prompt_metadata. They were
+        # filtered out of the messages list and collected into extracted_contexts.
+        if not context_dict.get("contexts") and extracted_contexts:
+            context_dict = {"contexts": extracted_contexts}
+            tool_names = [c["tool_name"] for c in extracted_contexts]
+            logger.debug(
+                f"Extracted tool context from conversation history: "
+                f"{len(extracted_contexts)} context source(s), tool_names={tool_names}"
+            )
 
         # Invoke callback with exception translation for retry handling
         try:
