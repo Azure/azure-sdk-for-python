@@ -79,8 +79,6 @@ These samples require additional setup or Azure services:
 | [sample_evaluations_ai_assisted.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_ai_assisted.py) | AI-assisted and NLP-based evaluators: Similarity, ROUGE, METEOR, GLEU, F1, BLEU |
 | [sample_eval_catalog_code_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_code_based_evaluators.py) | Custom code-based (inline) evaluators |
 | [sample_eval_catalog_prompt_based_evaluators.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog_prompt_based_evaluators.py) | Custom prompt-based evaluators |
-| [sample_custom_eval_upload_simple.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_custom_eval_upload_simple.py) | Custom code-based evaluator with upload — simple example (AnswerLength) |
-| [sample_custom_eval_upload_advanced.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_custom_eval_upload_advanced.py) | Custom code-based evaluator with upload — advanced example (FriendlyEvaluator with LLM judge) |
 
 ### Agentic Evaluators
 
@@ -104,15 +102,6 @@ Located in the [agentic_evaluators](https://github.com/Azure/azure-sdk-for-pytho
 | [sample_tool_selection.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/agentic_evaluators/sample_tool_selection.py) | Evaluate tool selection |
 | [sample_generic_agentic_evaluator](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/evaluations/agentic_evaluators/sample_generic_agentic_evaluator) | Generic agentic evaluator example |
 
-
-### Custom Evaluators
-
-Located in the [custom_evaluators](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/evaluations/custom_evaluators) subfolder, these are example evaluator implementations used by the upload samples above:
-
-| Path | Description |
-|------|-------------|
-| [custom_evaluators/answer_length_evaluator/](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/evaluations/custom_evaluators/answer_length_evaluator) | Code-based evaluator that measures answer length |
-| [custom_evaluators/friendly_evaluator/](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ai/azure-ai-projects/samples/evaluations/custom_evaluators/friendly_evaluator) | LLM-based evaluator that judges response friendliness |
 
 ### Evaluation Result Insights & Analysis
 

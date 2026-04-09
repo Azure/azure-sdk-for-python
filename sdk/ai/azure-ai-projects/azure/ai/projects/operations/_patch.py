@@ -15,13 +15,13 @@ from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _BETA_OPERATION_FEATU
 from ._patch_agents import AgentsOperations
 from ._patch_datasets import DatasetsOperations
 from ._patch_evaluation_rules import EvaluationRulesOperations
-from ._patch_evaluators import BetaEvaluatorsOperations
 from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
 from ._operations import (
     BetaAgentsOperations,
     BetaEvaluationTaxonomiesOperations,
+    BetaEvaluatorsOperations,
     BetaInsightsOperations,
     BetaOperations as GeneratedBetaOperations,
     BetaRedTeamsOperations,
