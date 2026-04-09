@@ -47,6 +47,8 @@ from ci_tools.logging import configure_logging, logger
 __all__ = ["main", "build_parser"]
 __version__ = "0.0.0"
 
+CFS_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+
 
 def build_parser() -> argparse.ArgumentParser:
     """Create and return the top-level ArgumentParser for the CLI."""
@@ -55,6 +57,12 @@ def build_parser() -> argparse.ArgumentParser:
     # global flag: allow --isolate to appear before the subcommand as well
     parser.add_argument(
         "--isolate", action="store_true", default=False, help="If set, run in an isolated virtual environment."
+    )
+    parser.add_argument(
+        "--pypi",
+        action="store_true",
+        default=False,
+        help="Use PyPI directly instead of the CFS (Central Feed Services) feed.",
     )
 
     # mutually exclusive logging options
@@ -146,6 +154,20 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         uv_path = shutil.which("uv")
         if uv_path:
             os.environ["TOX_PIP_IMPL"] = "uv"
+
+    # Set CFS as default package index unless --pypi is specified
+    if args.pypi:
+        # Clear any CFS env vars so pip/uv fall back to PyPI
+        os.environ.pop("PIP_INDEX_URL", None)
+        os.environ.pop("UV_DEFAULT_INDEX", None)
+        logger.info("Using PyPI directly (--pypi flag set)")
+    else:
+        os.environ.setdefault("PIP_INDEX_URL", CFS_INDEX_URL)
+        os.environ.setdefault("UV_DEFAULT_INDEX", f"azure-sdk={CFS_INDEX_URL}")
+        # Enable keyring-based auth for uv subprocesses (if keyring + artifacts-keyring are installed).
+        # CI overrides this to "disabled" and uses token-based auth instead.
+        os.environ.setdefault("UV_KEYRING_PROVIDER", "subprocess")
+        logger.info("Using CFS feed: %s", CFS_INDEX_URL)
 
     try:
         result = args.func(args)

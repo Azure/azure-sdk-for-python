@@ -104,7 +104,6 @@ class apistub(Check):
                     [
                         "-r",
                         os.path.join(REPO_ROOT, "eng", "apiview_reqs.txt"),
-                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
                     ],
                     package_dir,
                 )

@@ -26,9 +26,6 @@ EXCLUDED_PKGS = [
     "azure-common",
 ]
 
-# index URL to devops feed
-DEV_INDEX_URL = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple"
-
 TEST_TOOLS_REQUIREMENTS = os.path.join(REPO_ROOT, "eng/test_tools.txt")
 
 
@@ -103,11 +100,9 @@ def install_packages(executable: str, packages: List[str], working_directory: st
 
     logger.info("Installing dev build version for packages: %s", packages)
 
-    commands = [*packages, "--index-url", DEV_INDEX_URL]
-
-    # install dev build of azure packages
+    # install dev build of azure packages (index URL comes from PIP_INDEX_URL env var)
     try:
-        install_into_venv(executable, commands, working_directory)
+        install_into_venv(executable, packages, working_directory)
     except Exception as e:
         logger.error(f"Failed to install packages: {e}")
         raise e
