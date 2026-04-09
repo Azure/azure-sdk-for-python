@@ -59,15 +59,15 @@ def add_sanitizers(test_proxy):
     add_uri_string_sanitizer()
     # Register the longer URL2 sanitizer FIRST to prevent URL1's sanitizer from partially matching within URL2
     add_general_string_sanitizer(
-        value="https://Sanitized.vault.azure.net/secrets/TestSecret2/",
+        value="https://Sanitized.vault.azure.net/secrets/fake-secret2/",
         target=os.environ.get(
-            "APPCONFIGURATION_KEYVAULT_SECRET_URL2", "https://Sanitized.vault.azure.net/secrets/TestSecret2/"
+            "APPCONFIGURATION_KEYVAULT_SECRET_URL2", "https://Sanitized.vault.azure.net/secrets/fake-secret2/"
         ),
     )
     add_general_string_sanitizer(
-        value="https://Sanitized.vault.azure.net/secrets/TestSecret/",
+        value="https://Sanitized.vault.azure.net/secrets/fake-secret/",
         target=os.environ.get(
-            "APPCONFIGURATION_KEYVAULT_SECRET_URL", "https://Sanitized.vault.azure.net/secrets/TestSecret/"
+            "APPCONFIGURATION_KEYVAULT_SECRET_URL", "https://Sanitized.vault.azure.net/secrets/fake-secret/"
         ),
     )
     add_remove_header_sanitizer(headers="Correlation-Context")
@@ -81,3 +81,14 @@ def add_sanitizers(test_proxy):
     #  - AZSDK3430: $..id
     #  - AZSDK3447: $.key
     remove_batch_sanitizers(["AZSDK3430", "AZSDK3447"])
+
+
+@pytest.fixture(autouse=True)
+def no_startup_backoff(request, monkeypatch):
+    """Skip startup backoff delays in all tests except those testing backoff directly."""
+    if request.fspath.basename == "test_startup_retry.py":
+        return
+    monkeypatch.setattr(
+        "azure.appconfiguration.provider._azureappconfigurationprovider._get_startup_backoff",
+        lambda *args, **kwargs: (0, False),
+    )

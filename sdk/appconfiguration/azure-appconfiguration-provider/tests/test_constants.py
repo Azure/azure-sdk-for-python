@@ -7,5 +7,5 @@ APPCONFIGURATION_CONNECTION_STRING = (
     "Secret=lamefakesecretlamefakesecretlamefakesecrett="  # cspell: disable-line
 )
 APPCONFIGURATION_ENDPOINT_STRING = "https://Sanitized.azconfig.io"
-APPCONFIGURATION_KEYVAULT_SECRET_URL = "https://Sanitized.vault.azure.net/secrets/TestSecret/"
-APPCONFIGURATION_KEYVAULT_SECRET_URL2 = "https://Sanitized.vault.azure.net/secrets/TestSecret2/"
+APPCONFIGURATION_KEYVAULT_SECRET_URL = "https://Sanitized.vault.azure.net/secrets/fake-secret/"
+APPCONFIGURATION_KEYVAULT_SECRET_URL2 = "https://Sanitized.vault.azure.net/secrets/fake-secret2/"
