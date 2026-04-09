@@ -43,11 +43,11 @@ def test_output_item_message_yields_full_lifecycle() -> None:
 
     # Verify text content in delta event
     delta_event = events[2]
-    assert delta_event["payload"]["delta"] == "Hello world"
+    assert delta_event["delta"] == "Hello world"
 
     # Verify text content in done event
     done_event = events[3]
-    assert done_event["payload"]["text"] == "Hello world"
+    assert done_event["text"] == "Hello world"
 
 
 # ---- output_item_function_call() ----
@@ -67,15 +67,15 @@ def test_output_item_function_call_yields_full_lifecycle() -> None:
     ]
 
     # Verify function name in added event
-    added_item = events[0]["payload"]["item"]
+    added_item = events[0]["item"]
     assert added_item["name"] == "get_weather"
     assert added_item["call_id"] == "call_abc"
 
     # Verify arguments in delta
-    assert events[1]["payload"]["delta"] == '{"city":"Seattle"}'
+    assert events[1]["delta"] == '{"city":"Seattle"}'
 
     # Verify arguments in done
-    assert events[2]["payload"]["arguments"] == '{"city":"Seattle"}'
+    assert events[2]["arguments"] == '{"city":"Seattle"}'
 
 
 # ---- output_item_function_call_output() ----
@@ -93,7 +93,7 @@ def test_output_item_function_call_output_yields_added_and_done() -> None:
     ]
 
     # Verify output content
-    added_item = events[0]["payload"]["item"]
+    added_item = events[0]["item"]
     assert added_item["call_id"] == "call_abc"
     assert added_item["output"] == "Sunny, 72F"
 
@@ -117,10 +117,10 @@ def test_output_item_reasoning_item_yields_full_lifecycle() -> None:
     ]
 
     # Verify summary text in delta
-    assert events[2]["payload"]["delta"] == "The user asked about weather"
+    assert events[2]["delta"] == "The user asked about weather"
 
     # Verify summary text in done
-    assert events[3]["payload"]["text"] == "The user asked about weather"
+    assert events[3]["text"] == "The user asked about weather"
 
 
 # ---- Sequence number continuity across generators ----
@@ -135,7 +135,7 @@ def test_sequence_numbers_are_continuous_across_generators() -> None:
     all_events.extend(stream.output_item_message("hi"))
     all_events.append(stream.emit_completed())
 
-    seq_numbers = [e["payload"]["sequence_number"] for e in all_events]
+    seq_numbers = [e["sequence_number"] for e in all_events]
     assert seq_numbers == list(range(len(all_events)))
 
 
@@ -191,12 +191,12 @@ async def test_aoutput_item_message_streams_deltas() -> None:
     ]
 
     # Verify individual deltas
-    assert events[2]["payload"]["delta"] == "Hello"
-    assert events[3]["payload"]["delta"] == " world"
-    assert events[4]["payload"]["delta"] == "!"
+    assert events[2]["delta"] == "Hello"
+    assert events[3]["delta"] == " world"
+    assert events[4]["delta"] == "!"
 
     # Verify accumulated done text
-    assert events[5]["payload"]["text"] == "Hello world!"
+    assert events[5]["text"] == "Hello world!"
 
 
 @pytest.mark.asyncio
@@ -225,9 +225,9 @@ async def test_aoutput_item_function_call_streams_arguments() -> None:
 
     # added, delta, delta, args_done, item_done
     assert len(events) == 5
-    assert events[1]["payload"]["delta"] == '{"city":'
-    assert events[2]["payload"]["delta"] == '"Seattle"}'
-    assert events[3]["payload"]["arguments"] == '{"city":"Seattle"}'
+    assert events[1]["delta"] == '{"city":'
+    assert events[2]["delta"] == '"Seattle"}'
+    assert events[3]["arguments"] == '{"city":"Seattle"}'
 
 
 @pytest.mark.asyncio
@@ -269,6 +269,6 @@ async def test_aoutput_item_reasoning_item_streams_deltas() -> None:
 
     # added, part_added, delta, delta, text_done, part_done, item_done
     assert len(events) == 7
-    assert events[2]["payload"]["delta"] == "Let me "
-    assert events[3]["payload"]["delta"] == "think..."
-    assert events[4]["payload"]["text"] == "Let me think..."
+    assert events[2]["delta"] == "Let me "
+    assert events[3]["delta"] == "think..."
+    assert events[4]["text"] == "Let me think..."

@@ -12,7 +12,7 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest
 
-from ..models._generated import ResponseObject  # type: ignore[attr-defined]
+from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-defined]
 
 if TYPE_CHECKING:
     from .._response_context import IsolationContext
@@ -117,7 +117,7 @@ class FoundryStorageProvider:
     async def create_response(
         self,
         response: ResponseObject,
-        input_items: Iterable[Any] | None,
+        input_items: Iterable[OutputItem] | None,
         history_item_ids: Iterable[str] | None,
         *,
         isolation: IsolationContext | None = None,
@@ -126,8 +126,8 @@ class FoundryStorageProvider:
 
         :param response: The initial response snapshot.
         :type response: ResponseObject
-        :param input_items: Ordered input items for this response turn.
-        :type input_items: Iterable[Any] | None
+        :param input_items: Resolved output items for this response turn.
+        :type input_items: Iterable[OutputItem] | None
         :param history_item_ids: Item IDs from the prior conversation turn, if any.
         :type history_item_ids: Iterable[str] | None
         :keyword isolation: Isolation context for multi-tenant partitioning.
@@ -203,7 +203,7 @@ class FoundryStorageProvider:
         before: str | None = None,
         *,
         isolation: IsolationContext | None = None,
-    ) -> list[Any]:
+    ) -> list[OutputItem]:
         """Retrieve a page of input items for the given response.
 
         :param response_id: The response whose input items are being listed.
@@ -219,7 +219,7 @@ class FoundryStorageProvider:
         :keyword isolation: Isolation context for multi-tenant partitioning.
         :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :returns: A list of deserialized :class:`OutputItem` instances.
-        :rtype: list[Any]
+        :rtype: list[OutputItem]
         :raises FoundryResourceNotFoundError: If the response does not exist.
         :raises FoundryApiError: On other non-success HTTP response.
         """
@@ -241,7 +241,7 @@ class FoundryStorageProvider:
 
     async def get_items(
         self, item_ids: Iterable[str], *, isolation: IsolationContext | None = None
-    ) -> list[Any | None]:
+    ) -> list[OutputItem | None]:
         """Retrieve multiple items by their IDs in a single batch request.
 
         Positions in the returned list correspond to positions in *item_ids*.
@@ -252,7 +252,7 @@ class FoundryStorageProvider:
         :keyword isolation: Isolation context for multi-tenant partitioning.
         :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :returns: A list of :class:`OutputItem` instances (or ``None`` for missing items).
-        :rtype: list[Any | None]
+        :rtype: list[OutputItem | None]
         :raises FoundryApiError: On non-success HTTP response.
         """
         ids = list(item_ids)

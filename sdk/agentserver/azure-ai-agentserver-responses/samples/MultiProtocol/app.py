@@ -40,14 +40,19 @@ Usage::
     curl http://localhost:8088/readiness
 """
 
-from typing import Any
+import asyncio
 
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.invocations import InvocationAgentServerHost
-from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponseEventStream, get_input_text
-
+from azure.ai.agentserver.responses import (
+    CreateResponse,
+    ResponseContext,
+    ResponseEventStream,
+    ResponsesAgentServerHost,
+    get_input_text,
+)
 
 # =====================================================================
 # 1. Create the server — multi-protocol via cooperative inheritance
@@ -93,9 +98,9 @@ responses = server
 
 @responses.create_handler
 def echo_response_handler(
-    request: Any,
-    context: Any,
-    cancellation_signal: Any,
+    request: CreateResponse,
+    context: ResponseContext,
+    cancellation_signal: asyncio.Event,
 ):
     """Handle a response request by echoing the input as a streamed message."""
     stream = ResponseEventStream(

@@ -6,11 +6,13 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from dataclasses import dataclass
-from typing import Any
-
-from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
+from typing import TYPE_CHECKING, Any
 
 from .._response_context import ResponseContext
+from ..models._generated import AgentReference, CreateResponse, OutputItem
+
+if TYPE_CHECKING:
+    from ._observability import CreateSpan
 
 
 @dataclass(slots=True)
@@ -22,17 +24,17 @@ class _ExecutionContext:
     """
 
     response_id: str
-    agent_reference: Any
+    agent_reference: AgentReference | dict[str, Any]
     model: str | None
     store: bool
     background: bool
     stream: bool
-    input_items: list[InputParam]
+    input_items: list[OutputItem]
     previous_response_id: str | None
     conversation_id: str | None
     cancellation_signal: asyncio.Event
-    span: Any
-    parsed: Any
+    span: CreateSpan
+    parsed: CreateResponse
     agent_session_id: str | None = None
     context: ResponseContext | None = None
     user_isolation_key: str | None = None

@@ -51,7 +51,7 @@ def _cancellable_bg_response_handler(request: Any, context: Any, cancellation_si
     async def _events():
         yield {
             "type": "response.created",
-            "payload": {
+            "response": {
                 "status": "in_progress",
                 "output": [],
             },
@@ -91,21 +91,21 @@ def _incomplete_response_handler(request: Any, context: Any, cancellation_signal
     async def _events():
         yield {
             "type": "response.created",
-            "payload": {
+            "response": {
                 "status": "queued",
                 "output": [],
             },
         }
         yield {
             "type": "response.in_progress",
-            "payload": {
+            "response": {
                 "status": "in_progress",
                 "output": [],
             },
         }
         yield {
             "type": "response.incomplete",
-            "payload": {
+            "response": {
                 "status": "incomplete",
                 "output": [],
             },
@@ -435,7 +435,7 @@ def _stubborn_handler(request: Any, context: Any, cancellation_signal: Any):
     async def _events():
         yield {
             "type": "response.created",
-            "payload": {
+            "response": {
                 "status": "in_progress",
                 "output": [],
             },
@@ -543,7 +543,7 @@ def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_
         async def _events():
             yield {
                 "type": "response.created",
-                "payload": {"status": "in_progress", "output": []},
+                "response": {"status": "in_progress", "output": []},
             }
             # Deliberatly ignores cancellation_signal — simulates uncooperative handler.
             # The short sleep ensures the handler is still "running" when cancel comes in,
@@ -551,7 +551,7 @@ def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_
             await asyncio.sleep(0.5)
             yield {
                 "type": "response.completed",
-                "payload": {"status": "completed", "output": []},
+                "response": {"status": "completed", "output": []},
             }
 
         return _events()
@@ -596,7 +596,7 @@ def test_cancel__in_progress_response_triggers_cancellation_signal() -> None:
         async def _events():
             yield {
                 "type": "response.created",
-                "payload": {"status": "in_progress", "output": []},
+                "response": {"status": "in_progress", "output": []},
             }
             # Block until cancel; the asyncio.sleep yields to the event loop
             # so the cancel endpoint's signal actually propagates.

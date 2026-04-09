@@ -13,24 +13,26 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import contextvars
 import logging
 import threading
-from copy import deepcopy
 from typing import TYPE_CHECKING, Any
 
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.core import end_span, flush_spans, trace_stream
+from azure.ai.agentserver.responses.models._generated import AgentReference
 from azure.ai.agentserver.responses.models._generated.sdk.models.models._models import CreateResponse
 
 from .._options import ResponsesServerOptions
 from .._response_context import IsolationContext, ResponseContext
-from ..models.runtime import ResponseModeFlags, build_cancelled_response, build_failed_response
+from ..models._helpers import get_input_expanded, to_output_item
+from ..models.runtime import ResponseExecution, ResponseModeFlags, build_cancelled_response, build_failed_response
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..streaming._helpers import EVENT_TYPE, _encode_sse
-from ..streaming._sse import encode_sse_payload
+from ..streaming._sse import encode_sse_any_event
 from ..streaming._state_machine import LifecycleStateMachineError, normalize_lifecycle_events
 from ._execution_context import _ExecutionContext
 from ._observability import (
+    CreateSpan,
     _initial_create_span_tags,
     build_create_otel_attrs,
     build_create_span_tags,
@@ -201,8 +203,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             normalize_lifecycle_events(
                 response_id="resp_validation",
                 events=[
-                    {"type": EVENT_TYPE.RESPONSE_CREATED.value, "payload": {"status": "in_progress"}},
-                    {"type": EVENT_TYPE.RESPONSE_COMPLETED.value, "payload": {"status": "completed"}},
+                    {"type": EVENT_TYPE.RESPONSE_CREATED.value, "response": {"status": "in_progress"}},
+                    {"type": EVENT_TYPE.RESPONSE_COMPLETED.value, "response": {"status": "completed"}},
                 ],
             )
         except LifecycleStateMachineError as exc:
@@ -280,12 +282,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     def _build_execution_context(
         self,
         *,
-        payload: Any,
+        payload: dict[str, Any],
         parsed: CreateResponse,
         response_id: str,
-        agent_reference: Any,
+        agent_reference: AgentReference | dict[str, Any],
         agent_session_id: str | None = None,
-        span: Any,
+        span: CreateSpan,
         request: Request,
     ) -> _ExecutionContext:
         """Build an :class:`_ExecutionContext` from the parsed request.
@@ -297,17 +299,17 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         items, and conversation-threading fields.
 
         :param payload: Raw JSON payload dict.
-        :type payload: Any
+        :type payload: dict[str, Any]
         :param parsed: Validated :class:`CreateResponse` model.
         :type parsed: CreateResponse
         :param response_id: Assigned response identifier.
         :type response_id: str
-        :param agent_reference: Normalised agent reference dictionary.
-        :type agent_reference: Any
+        :param agent_reference: Normalised agent reference model or dictionary.
+        :type agent_reference: AgentReference | dict[str, Any]
         :keyword agent_session_id: Resolved session ID (B39), or ``None``.
         :keyword type agent_session_id: str | None
         :param span: Active observability span for this request.
-        :type span: Any
+        :type span: CreateSpan
         :param request: Starlette HTTP request (for headers / query params).
         :type request: Request
         :return: A fully-populated :class:`_ExecutionContext` with its
@@ -318,7 +320,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         store = True if getattr(parsed, "store", None) is None else bool(parsed.store)
         background = bool(getattr(parsed, "background", False))
         model = getattr(parsed, "model", None)
-        input_items = [deepcopy(item) for item in (parsed.input or [])]
+        _expanded = get_input_expanded(parsed)
+        input_items = [out for item in _expanded if (out := to_output_item(item, response_id)) is not None]
         previous_response_id: str | None = (
             parsed.previous_response_id
             if isinstance(parsed.previous_response_id, str) and parsed.previous_response_id
@@ -356,7 +359,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         self,
         ctx: _ExecutionContext,
         *,
-        raw_body: Any,
+        raw_body: dict[str, Any],
         request: Request,
     ) -> ResponseContext:
         """Derive a :class:`ResponseContext` from an :class:`_ExecutionContext`.
@@ -698,13 +701,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 param="starting_after",
             )
 
-    def _build_live_stream_response(self, record: Any, starting_after: int) -> StreamingResponse:
+    def _build_live_stream_response(self, record: ResponseExecution, starting_after: int) -> StreamingResponse:
         """Build a live SSE subscription response for an in-flight record."""
         _cursor = starting_after
 
         async def _stream_from_subject():
             async for event in record.subject.subscribe(cursor=_cursor):  # type: ignore[union-attr]
-                yield encode_sse_payload(event["type"], event["payload"])
+                yield encode_sse_any_event(event)
 
         return StreamingResponse(_stream_from_subject(), media_type="text/event-stream", headers=self._sse_headers)
 
@@ -726,7 +729,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             parsed_cursor = self._parse_starting_after(request)
             if isinstance(parsed_cursor, Response):
                 return parsed_cursor
-            filtered = [e for e in replay_events if e["payload"]["sequence_number"] > parsed_cursor]
+            filtered = [e for e in replay_events if e["sequence_number"] > parsed_cursor]
             return StreamingResponse(
                 _encode_sse(filtered),
                 media_type="text/event-stream",
@@ -953,10 +956,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         first_id = _extract_item_id(page[0]) if page else None
         last_id = _extract_item_id(page[-1]) if page else None
 
+        page_data = [item.as_dict() if hasattr(item, "as_dict") else item for item in page]
+
         return JSONResponse(
             {
                 "object": "list",
-                "data": page,
+                "data": page_data,
                 "first_id": first_id,
                 "last_id": last_id,
                 "has_more": has_more,

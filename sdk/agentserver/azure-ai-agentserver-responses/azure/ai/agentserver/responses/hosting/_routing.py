@@ -8,20 +8,44 @@ as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 
 from __future__ import annotations
 
+import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import types
-from typing import Any, AsyncIterator, Callable, Optional
+from collections.abc import AsyncIterable, Generator
+from typing import Any, AsyncIterator, Callable, Optional, Union
 
 from starlette.routing import Route
 
 from azure.ai.agentserver.core import AgentServerHost
 
 from .._options import ResponsesServerOptions
+from .._response_context import ResponseContext
+from ..models._generated import CreateResponse, ResponseStreamEvent
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..store._memory import InMemoryResponseProvider
 from ._endpoint_handler import _ResponseEndpointHandler
 from ._orchestrator import _ResponseOrchestrator
 from ._runtime_state import _RuntimeState
+
+CreateHandlerFn = Callable[
+    [CreateResponse, ResponseContext, asyncio.Event],
+    Union[
+        AsyncIterable[Union[ResponseStreamEvent, dict[str, Any]]],
+        Generator[Union[ResponseStreamEvent, dict[str, Any]], Any, None],
+    ],
+]
+"""Type alias for the user-registered create-response handler function.
+
+The handler receives:
+- ``request``: The parsed :class:`CreateResponse` model.
+- ``context``: The :class:`ResponseContext` for the current request.
+- ``cancellation_signal``: An :class:`asyncio.Event` set when cancellation is requested.
+
+It must return one of:
+- A ``TextResponse`` for text-only responses (it implements ``AsyncIterable``).
+- An ``AsyncIterable`` (async generator) of :class:`ResponseStreamEvent` instances.
+- A synchronous ``Generator`` of :class:`ResponseStreamEvent` instances.
+"""
 
 logger = logging.getLogger("azure.ai.agentserver")
 
@@ -77,7 +101,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         **kwargs: Any,
     ) -> None:
         # Handler slot — populated via @app.create_handler decorator
-        self._create_fn: Optional[Callable] = None
+        self._create_fn: Optional[CreateHandlerFn] = None
 
         # Normalize prefix
         normalized_prefix = prefix.strip()
@@ -187,7 +211,7 @@ class ResponsesAgentServerHost(AgentServerHost):
     # Handler decorator
     # ------------------------------------------------------------------
 
-    def create_handler(self, fn: Callable) -> Callable:
+    def create_handler(self, fn: CreateHandlerFn) -> CreateHandlerFn:
         """Register a function as the create-response handler.
 
         The handler function must accept exactly three positional parameters:
@@ -201,9 +225,9 @@ class ResponsesAgentServerHost(AgentServerHost):
                 yield event
 
         :param fn: A callable accepting (request, context, cancellation_signal).
-        :type fn: Callable
+        :type fn: CreateHandlerFn
         :return: The original function (unmodified).
-        :rtype: Callable
+        :rtype: CreateHandlerFn
         """
         self._create_fn = fn
         return fn
@@ -212,7 +236,12 @@ class ResponsesAgentServerHost(AgentServerHost):
     # Dispatch (internal)
     # ------------------------------------------------------------------
 
-    def _dispatch_create(self, request, context, cancellation_signal):  # type: ignore[no-untyped-def]
+    def _dispatch_create(
+        self,
+        request: CreateResponse,
+        context: ResponseContext,
+        cancellation_signal: asyncio.Event,
+    ) -> AsyncIterator[ResponseStreamEvent]:
         """Dispatch to the registered create handler.
 
         Called by the orchestrator when processing a create request.
@@ -221,17 +250,21 @@ class ResponsesAgentServerHost(AgentServerHost):
         ``await __anext__()`` uniformly.
 
         :param request: The parsed create-response request.
-        :type request: Any
+        :type request: CreateResponse
         :param context: The response context for the request.
-        :type context: Any
+        :type context: ResponseContext
         :param cancellation_signal: The cancellation signal for the request.
-        :type cancellation_signal: Any
+        :type cancellation_signal: asyncio.Event
         :returns: The result from the registered create handler callable.
-        :rtype: Any
+        :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if self._create_fn is None:
             raise NotImplementedError("No create handler registered. Use the @app.create_handler decorator.")
         result = self._create_fn(request, context, cancellation_signal)
         if isinstance(result, types.GeneratorType):
             return _sync_to_async_gen(result)
-        return result
+        # If the handler returned an AsyncIterable (e.g. TextResponse), convert
+        # to an AsyncIterator so the orchestrator can __anext__() uniformly.
+        if hasattr(result, "__aiter__") and not hasattr(result, "__anext__"):
+            return result.__aiter__()  # type: ignore[union-attr, return-value]
+        return result  # type: ignore[return-value]

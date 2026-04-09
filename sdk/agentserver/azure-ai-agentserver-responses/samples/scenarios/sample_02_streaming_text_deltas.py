@@ -2,25 +2,26 @@
 # Licensed under the MIT license.
 """Sample 02 — Streaming Text Deltas.
 
-Demonstrates token-by-token streaming using an async handler and
-``aoutput_item_message`` with an async iterable of string chunks.
-Each chunk is emitted as a separate ``output_text.delta`` SSE event,
-enabling real-time streaming to the client.
+Demonstrates token-by-token streaming using ``TextResponse`` with
+``create_text_stream``.  Each chunk yielded by the async generator is
+emitted as a separate ``output_text.delta`` SSE event, enabling
+real-time streaming to the client.
 
-Pattern: async handler, streaming deltas via AsyncIterable[str].
+``TextResponse`` handles the full SSE lifecycle automatically.
+
+Pattern: TextResponse with create_text_stream (AsyncIterable[str]).
 
 Run:
     python samples/scenarios/sample_02_streaming_text_deltas.py
 """
 
 import asyncio
-from typing import Any
 
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
-    ResponseEventStream,
     ResponsesAgentServerHost,
+    TextResponse,
     get_input_text,
 )
 
@@ -28,16 +29,8 @@ app = ResponsesAgentServerHost()
 
 
 @app.create_handler
-async def handler(
-    request: CreateResponse,
-    context: ResponseContext,
-    cancellation_signal: Any,
-):
-    """Stream tokens one at a time using aoutput_item_message."""
-    stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-    yield stream.emit_created()
-    yield stream.emit_in_progress()
-
+def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    """Stream tokens one at a time using TextResponse."""
     user_text = get_input_text(request) or "world"
 
     async def generate_tokens():
@@ -46,9 +39,11 @@ async def handler(
             await asyncio.sleep(0.1)
             yield token
 
-    async for event in stream.aoutput_item_message(generate_tokens()):
-        yield event
-    yield stream.emit_completed()
+    return TextResponse(
+        context,
+        request,
+        create_text_stream=generate_tokens,
+    )
 
 
 def main() -> None:

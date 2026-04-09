@@ -594,7 +594,7 @@ def test_s007_wrong_first_event_sync() -> None:
             # Raw dict bypasses ResponseEventStream validation so _check_first_event_contract runs
             yield {
                 "type": "response.in_progress",
-                "payload": {
+                "response": {
                     "status": "in_progress",
                     "object": "response",
                 },
@@ -627,7 +627,7 @@ def test_s007_wrong_first_event_stream() -> None:
         async def _events():
             yield {
                 "type": "response.in_progress",
-                "payload": {
+                "response": {
                     "status": "in_progress",
                     "object": "response",
                 },
@@ -682,7 +682,7 @@ def test_s008_mismatched_id_stream() -> None:
             # Emit response.created with a deliberately wrong id
             yield {
                 "type": "response.created",
-                "payload": {
+                "response": {
                     "id": "caresp_WRONG00000000000000000000000000000000000000000000",
                     "response_id": "caresp_WRONG00000000000000000000000000000000000000000000",
                     "status": "queued",
@@ -735,7 +735,7 @@ def test_s009_terminal_status_on_created_stream() -> None:
         async def _events():
             yield {
                 "type": "response.created",
-                "payload": {
+                "response": {
                     "status": "completed",
                     "object": "response",
                 },

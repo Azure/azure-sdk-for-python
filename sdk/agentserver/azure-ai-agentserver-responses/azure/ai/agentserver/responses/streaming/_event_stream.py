@@ -11,6 +11,7 @@ from typing import Any, AsyncIterator, Iterator
 
 from .._id_generator import IdGenerator
 from ..models import _generated as generated_models
+from ..models._generated import AgentReference
 from . import _internals
 from ._builders import (
     OutputItemBuilder,
@@ -26,9 +27,14 @@ from ._builders import (
     OutputItemReasoningItemBuilder,
     OutputItemWebSearchCallBuilder,
 )
+from ._internals import construct_event_model
 from ._state_machine import EventStreamValidator
 
 EVENT_TYPE = generated_models.ResponseStreamEventType
+
+# Event types whose payload is a full Response snapshot.
+# Lifecycle events nest under a "response" key on the wire.
+_RESPONSE_SNAPSHOT_EVENT_TYPES = _internals._RESPONSE_SNAPSHOT_EVENT_TYPES
 
 
 def _resolve_conversation_param(raw: Any) -> str | None:
@@ -64,7 +70,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self,
         *,
         response_id: str | None = None,
-        agent_reference: dict[str, Any] | None = None,
+        agent_reference: AgentReference | dict[str, Any] | None = None,
         model: str | None = None,
         request: generated_models.CreateResponse | dict[str, Any] | None = None,
         response: generated_models.ResponseObject | dict[str, Any] | None = None,
@@ -73,8 +79,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
 
         :param response_id: Unique identifier for the response. Inferred from *response* if omitted.
         :type response_id: str | None
-        :param agent_reference: Optional agent reference metadata dict.
-        :type agent_reference: dict[str, Any] | None
+        :param agent_reference: Optional agent reference model or metadata dict.
+        :type agent_reference: AgentReference | dict[str, Any] | None
         :param model: Optional model identifier to stamp on the response.
         :type model: str | None
         :param request: Optional create-response request to seed the response envelope from.
@@ -139,7 +145,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             self._response.agent_reference = deepcopy(agent_reference)  # type: ignore[assignment]
 
         self._agent_reference, self._model = _internals.extract_response_fields(self._response)
-        self._events: list[dict[str, Any]] = []
+        self._events: list[generated_models.ResponseStreamEvent] = []
         self._validator = EventStreamValidator()
         self._output_index = 0
 
@@ -152,57 +158,57 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         return self._response
 
-    def emit_queued(self) -> dict[str, Any]:
+    def emit_queued(self) -> generated_models.ResponseStreamEvent:
         """Emit a ``response.queued`` lifecycle event.
 
-        :returns: The emitted event dict with type and payload.
-        :rtype: dict[str, Any]
+        :returns: The emitted event model instance.
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
         """
         self._response.status = "queued"
         return self.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_QUEUED.value,
-                "payload": self._response_payload(),
+                "response": self._response_payload(),
             }
         )
 
-    def emit_created(self, *, status: str = "in_progress") -> dict[str, Any]:
+    def emit_created(self, *, status: str = "in_progress") -> generated_models.ResponseStreamEvent:
         """Emit a ``response.created`` lifecycle event.
 
         :keyword status: Initial status to set on the response. Defaults to ``"in_progress"``.
         :keyword type status: str
-        :returns: The emitted event dict with type and payload.
-        :rtype: dict[str, Any]
+        :returns: The emitted event model instance.
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
         """
         self._response.status = status  # type: ignore[assignment]
         return self.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_CREATED.value,
-                "payload": self._response_payload(),
+                "response": self._response_payload(),
             }
         )
 
-    def emit_in_progress(self) -> dict[str, Any]:
+    def emit_in_progress(self) -> generated_models.ResponseStreamEvent:
         """Emit a ``response.in_progress`` lifecycle event.
 
-        :returns: The emitted event dict with type and payload.
-        :rtype: dict[str, Any]
+        :returns: The emitted event model instance.
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
         """
         self._response.status = "in_progress"
         return self.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
-                "payload": self._response_payload(),
+                "response": self._response_payload(),
             }
         )
 
-    def emit_completed(self, *, usage: generated_models.ResponseUsage | dict[str, Any] | None = None) -> dict[str, Any]:
+    def emit_completed(self, *, usage: generated_models.ResponseUsage | dict[str, Any] | None = None) -> generated_models.ResponseStreamEvent:
         """Emit a ``response.completed`` terminal lifecycle event.
 
         :keyword usage: Optional usage statistics to attach to the response.
         :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
-        :returns: The emitted event dict with type and payload.
-        :rtype: dict[str, Any]
+        :returns: The emitted event model instance.
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
         """
         self._response.status = "completed"
         self._response.error = None  # type: ignore[assignment]
@@ -211,7 +217,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         return self.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_COMPLETED.value,
-                "payload": self._response_payload(),
+                "response": self._response_payload(),
             }
         )
 
@@ -221,7 +227,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         code: str | generated_models.ResponseErrorCode = "server_error",
         message: str = "An internal server error occurred.",
         usage: generated_models.ResponseUsage | dict[str, Any] | None = None,
-    ) -> dict[str, Any]:
+    ) -> generated_models.ResponseStreamEvent:
         """Emit a ``response.failed`` terminal lifecycle event.
 
         :keyword code: Error code describing the failure.
@@ -230,8 +236,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :keyword type message: str
         :keyword usage: Optional usage statistics to attach to the response.
         :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
-        :returns: The emitted event dict with type and payload.
-        :rtype: dict[str, Any]
+        :returns: The emitted event model instance.
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
         """
         self._response.status = "failed"
         self._response.incomplete_details = None  # type: ignore[assignment]
@@ -245,7 +251,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         return self.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_FAILED.value,
-                "payload": self._response_payload(),
+                "response": self._response_payload(),
             }
         )
 
@@ -254,7 +260,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         *,
         reason: str | None = None,
         usage: generated_models.ResponseUsage | dict[str, Any] | None = None,
-    ) -> dict[str, Any]:
+    ) -> generated_models.ResponseStreamEvent:
         """Emit a ``response.incomplete`` terminal lifecycle event.
 
         :keyword reason: Optional reason for incompleteness.
@@ -263,8 +269,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :keyword usage: Optional usage statistics to attach to the response.
         :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any]
                                 | None
-        :returns: The emitted event dict with type and payload.
-        :rtype: dict[str, Any]
+        :returns: The emitted event model instance.
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
         """
         self._response.status = "incomplete"
         self._response.error = None  # type: ignore[assignment]
@@ -280,7 +286,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         return self.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_INCOMPLETE.value,
-                "payload": self._response_payload(),
+                "response": self._response_payload(),
             }
         )
 
@@ -472,34 +478,44 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             name=name,
         )
 
-    def events(self) -> list[dict[str, Any]]:
-        """Return a deep copy of all events emitted so far (before finalization).
+    def events(self) -> list[generated_models.ResponseStreamEvent]:
+        """Return copies of all events emitted so far as typed model instances.
 
-        :returns: A list of deep-copied event dicts.
-        :rtype: list[dict[str, Any]]
+        :returns: A list of ``ResponseStreamEvent`` model instances.
+        :rtype: list[~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent]
         """
-        return [deepcopy(event) for event in self._events]
+        return [construct_event_model(event.as_dict()) for event in self._events]
 
-    def emit_event(self, event: dict[str, Any]) -> dict[str, Any]:
+    def emit_event(self, event: dict[str, Any]) -> generated_models.ResponseStreamEvent:
         """Emit a single event, applying defaults and validating the stream.
 
-        :param event: The raw event dict to emit.
+        Accepts a **wire-format** dict (no ``"payload"`` wrapper), constructs
+        a typed ``ResponseStreamEvent`` model instance via polymorphic
+        deserialization, stamps defaults and sequence number, stores the
+        model, and returns it.
+
+        :param event: A wire-format event dict.
         :type event: dict[str, Any]
-        :returns: A deep copy of the normalized and validated event.
-        :rtype: dict[str, Any]
+        :returns: The typed event model instance.
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
         """
         candidate = deepcopy(event)
-        _internals.apply_common_defaults(
-            [candidate], response_id=self._response_id, agent_reference=self._agent_reference, model=self._model
-        )
-        _internals.track_completed_output_item(self._response, candidate)
-        payload = candidate.get("payload")
-        if isinstance(payload, dict):
-            payload["sequence_number"] = len(self._events)
+        # Stamp sequence number before model construction
+        candidate["sequence_number"] = len(self._events)
 
-        self._events.append(candidate)
-        self._validator.validate_next(candidate)
-        return deepcopy(candidate)
+        # Construct typed model via polymorphic deserialization
+        model = construct_event_model(candidate)
+
+        # Apply response-level defaults to lifecycle events
+        _internals.apply_common_defaults(
+            [model], response_id=self._response_id, agent_reference=self._agent_reference, model=self._model
+        )
+        # Track completed output items on the response envelope
+        _internals.track_completed_output_item(self._response, model)
+
+        self._events.append(model)
+        self._validator.validate_next(model)
+        return model
 
     # ---- Generator convenience methods (S-056/S-057) ----
     # Output-item convenience generators that encapsulate the full lifecycle.
@@ -691,7 +707,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         return stamped
 
     def _set_terminal_fields(self, *, usage: generated_models.ResponseUsage | dict[str, Any] | None) -> None:
-        """Set terminal fields on the response envelope (completed_at, usage, output_text).
+        """Set terminal fields on the response envelope (completed_at, usage).
 
         :keyword usage: Optional usage statistics to attach.
         :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
@@ -703,4 +719,3 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         else:
             self._response.completed_at = None  # type: ignore[assignment]
         self._response.usage = _internals.coerce_usage(usage)
-        self._response.output_text = _internals.compute_output_text(self._response)

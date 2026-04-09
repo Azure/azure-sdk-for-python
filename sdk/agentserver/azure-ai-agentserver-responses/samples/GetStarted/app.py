@@ -6,6 +6,8 @@ Run:
     python samples/GetStarted/app.py
 """
 
+import asyncio
+
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
@@ -18,7 +20,7 @@ app = ResponsesAgentServerHost()
 
 
 @app.create_handler
-def my_handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
+def my_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     return TextResponse(
         context,
         request,

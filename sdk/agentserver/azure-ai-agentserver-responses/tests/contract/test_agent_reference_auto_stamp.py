@@ -76,7 +76,7 @@ def _handler_with_handler_set_agent_ref(request: Any, context: Any, cancellation
         # Use the builder then override agent_reference on the emitted event
         msg = stream.add_output_item_message()
         added_event = msg.emit_added()
-        added_event["payload"]["item"]["agent_reference"] = {
+        added_event["item"]["agent_reference"] = {
             "type": "agent_reference",
             "name": "handler-agent",
             "version": "9.0",
@@ -84,7 +84,7 @@ def _handler_with_handler_set_agent_ref(request: Any, context: Any, cancellation
         yield added_event
 
         done_event = msg.emit_done()
-        done_event["payload"]["item"]["agent_reference"] = {
+        done_event["item"]["agent_reference"] = {
             "type": "agent_reference",
             "name": "handler-agent",
             "version": "9.0",
@@ -110,30 +110,26 @@ def _direct_yield_handler(request: Any, context: Any, cancellation_signal: Any):
         item_id = f"caitem_{context.response_id[7:25]}directyield00000000000000000001"
         yield {
             "type": "response.output_item.added",
-            "payload": {
-                "item": {
-                    "id": item_id,
-                    "type": "message",
-                    "role": "assistant",
-                    "status": "in_progress",
-                    "content": [],
-                    # agent_reference intentionally NOT set
-                },
-                "output_index": 0,
+            "item": {
+                "id": item_id,
+                "type": "message",
+                "role": "assistant",
+                "status": "in_progress",
+                "content": [],
+                # agent_reference intentionally NOT set
             },
+            "output_index": 0,
         }
         yield {
             "type": "response.output_item.done",
-            "payload": {
-                "item": {
-                    "id": item_id,
-                    "type": "message",
-                    "role": "assistant",
-                    "status": "completed",
-                    "content": [],
-                },
-                "output_index": 0,
+            "item": {
+                "id": item_id,
+                "type": "message",
+                "role": "assistant",
+                "status": "completed",
+                "content": [],
             },
+            "output_index": 0,
         }
 
         yield stream.emit_completed()

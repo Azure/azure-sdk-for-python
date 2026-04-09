@@ -67,12 +67,10 @@ class ReasoningSummaryPartBuilder:
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_REASONING_SUMMARY_PART_ADDED.value,
-                "payload": {
-                    "item_id": self._item_id,
-                    "output_index": self._output_index,
-                    "summary_index": self._summary_index,
-                    "part": {"type": "summary_text", "text": ""},
-                },
+                "item_id": self._item_id,
+                "output_index": self._output_index,
+                "summary_index": self._summary_index,
+                "part": {"type": "summary_text", "text": ""},
             }
         )
 
@@ -87,12 +85,10 @@ class ReasoningSummaryPartBuilder:
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_REASONING_SUMMARY_TEXT_DELTA.value,
-                "payload": {
-                    "item_id": self._item_id,
-                    "output_index": self._output_index,
-                    "summary_index": self._summary_index,
-                    "delta": text,
-                },
+                "item_id": self._item_id,
+                "output_index": self._output_index,
+                "summary_index": self._summary_index,
+                "delta": text,
             }
         )
 
@@ -108,12 +104,10 @@ class ReasoningSummaryPartBuilder:
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_REASONING_SUMMARY_TEXT_DONE.value,
-                "payload": {
-                    "item_id": self._item_id,
-                    "output_index": self._output_index,
-                    "summary_index": self._summary_index,
-                    "text": final_text,
-                },
+                "item_id": self._item_id,
+                "output_index": self._output_index,
+                "summary_index": self._summary_index,
+                "text": final_text,
             }
         )
 
@@ -130,12 +124,10 @@ class ReasoningSummaryPartBuilder:
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_REASONING_SUMMARY_PART_DONE.value,
-                "payload": {
-                    "item_id": self._item_id,
-                    "output_index": self._output_index,
-                    "summary_index": self._summary_index,
-                    "part": {"type": "summary_text", "text": self._final_text or ""},
-                },
+                "item_id": self._item_id,
+                "output_index": self._output_index,
+                "summary_index": self._summary_index,
+                "part": {"type": "summary_text", "text": self._final_text or ""},
             }
         )
 

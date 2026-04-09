@@ -89,11 +89,9 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA.value,
-                "payload": {
-                    "item_id": self._item_id,
-                    "output_index": self._output_index,
-                    "delta": delta,
-                },
+                "item_id": self._item_id,
+                "output_index": self._output_index,
+                "delta": delta,
             }
         )
 
@@ -109,12 +107,10 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE.value,
-                "payload": {
-                    "item_id": self._item_id,
-                    "output_index": self._output_index,
-                    "name": self._name,
-                    "arguments": arguments,
-                },
+                "item_id": self._item_id,
+                "output_index": self._output_index,
+                "name": self._name,
+                "arguments": arguments,
             }
         )
 

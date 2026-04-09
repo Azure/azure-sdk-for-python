@@ -20,6 +20,8 @@ Run:
     python samples/scenarios/sample_04_function_calling.py
 """
 
+from __future__ import annotations
+
 import asyncio
 import json
 
@@ -39,7 +41,9 @@ def _find_function_call_output(request: CreateResponse) -> str | None:
     """Return the output string from the first function_call_output item, or None."""
     for item in get_input_expanded(request):
         if isinstance(item, FunctionCallOutputItemParam):
-            return item.output
+            output = item.output
+            if isinstance(output, str):
+                return output
     return None
 
 

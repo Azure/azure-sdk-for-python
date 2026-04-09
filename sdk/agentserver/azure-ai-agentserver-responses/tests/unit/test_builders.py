@@ -29,7 +29,7 @@ def test_text_content_builder__emits_added_delta_done_events() -> None:
     assert added["type"] == "response.content_part.added"
     assert delta["type"] == "response.output_text.delta"
     assert done["type"] == "response.output_text.done"
-    assert done["payload"]["text"] == "hello"
+    assert done["text"] == "hello"
 
 
 def test_text_content_builder__emit_done_merges_all_delta_fragments() -> None:
@@ -46,7 +46,7 @@ def test_text_content_builder__emit_done_merges_all_delta_fragments() -> None:
     done = text.emit_done()
 
     assert done["type"] == "response.output_text.done"
-    assert done["payload"]["text"] == "hello world"
+    assert done["text"] == "hello world"
     assert text.final_text == "hello world"
 
 
@@ -67,8 +67,8 @@ def test_output_item_message_builder__emits_added_content_done_and_done() -> Non
     assert added["type"] == "response.output_item.added"
     assert content_done["type"] == "response.content_part.done"
     assert done["type"] == "response.output_item.done"
-    assert done["payload"]["item"]["type"] == "message"
-    assert done["payload"]["item"]["content"][0]["text"] == "alpha"
+    assert done["item"]["type"] == "message"
+    assert done["item"]["content"][0]["text"] == "alpha"
 
 
 def test_output_item_function_call_builder__emits_arguments_and_done_events() -> None:
@@ -86,9 +86,9 @@ def test_output_item_function_call_builder__emits_arguments_and_done_events() ->
     assert delta["type"] == "response.function_call_arguments.delta"
     assert args_done["type"] == "response.function_call_arguments.done"
     assert done["type"] == "response.output_item.done"
-    assert done["payload"]["item"]["name"] == "get_weather"
-    assert done["payload"]["item"]["call_id"] == "call_1"
-    assert done["payload"]["item"]["arguments"] == '{"location": "Seattle"}'
+    assert done["item"]["name"] == "get_weather"
+    assert done["item"]["call_id"] == "call_1"
+    assert done["item"]["arguments"] == '{"location": "Seattle"}'
 
 
 def test_output_item_function_call_output_builder__emits_added_and_done_events() -> None:
@@ -101,10 +101,10 @@ def test_output_item_function_call_output_builder__emits_added_and_done_events()
 
     assert isinstance(function_output, OutputItemFunctionCallOutputBuilder)
     assert added["type"] == "response.output_item.added"
-    assert added["payload"]["item"]["type"] == "function_call_output"
-    assert added["payload"]["item"]["call_id"] == "call_1"
+    assert added["item"]["type"] == "function_call_output"
+    assert added["item"]["call_id"] == "call_1"
     assert done["type"] == "response.output_item.done"
-    assert done["payload"]["item"]["output"] == "result"
+    assert done["item"]["output"] == "result"
 
 
 def test_output_item_events__item_has_response_id_and_agent_reference() -> None:
@@ -119,10 +119,10 @@ def test_output_item_events__item_has_response_id_and_agent_reference() -> None:
     added = function_call.emit_added()
     done = function_call.emit_done()
 
-    assert added["payload"]["item"]["response_id"] == "resp_builder_3c"
-    assert added["payload"]["item"]["agent_reference"]["name"] == "agent-a"
-    assert done["payload"]["item"]["response_id"] == "resp_builder_3c"
-    assert done["payload"]["item"]["agent_reference"]["name"] == "agent-a"
+    assert added["item"]["response_id"] == "resp_builder_3c"
+    assert added["item"]["agent_reference"]["name"] == "agent-a"
+    assert done["item"]["response_id"] == "resp_builder_3c"
+    assert done["item"]["agent_reference"]["name"] == "agent-a"
 
 
 def test_stream_builders__share_global_sequence_number() -> None:
@@ -132,7 +132,7 @@ def test_stream_builders__share_global_sequence_number() -> None:
     message = stream.add_output_item_message()
     event = message.emit_added()
 
-    assert event["payload"]["sequence_number"] == 2
+    assert event["sequence_number"] == 2
 
 
 def test_message_builder__output_index_increments_across_factories() -> None:
@@ -196,46 +196,46 @@ def test_builder_events__include_required_payload_fields_per_event_type() -> Non
     reasoning_item_done = reasoning.emit_done()
 
     assert code_delta["type"] == "response.code_interpreter_call_code.delta"
-    assert code_delta["payload"]["item_id"] == code_interpreter.item_id
-    assert code_delta["payload"]["delta"] == "print('hi')"
+    assert code_delta["item_id"] == code_interpreter.item_id
+    assert code_delta["delta"] == "print('hi')"
 
     assert code_done["type"] == "response.code_interpreter_call_code.done"
-    assert code_done["payload"]["item_id"] == code_interpreter.item_id
-    assert code_done["payload"]["code"] == "print('hi')"
+    assert code_done["item_id"] == code_interpreter.item_id
+    assert code_done["code"] == "print('hi')"
 
     assert partial_image["type"] == "response.image_generation_call.partial_image"
-    assert partial_image["payload"]["item_id"] == image_gen.item_id
-    assert partial_image["payload"]["partial_image_index"] == 0
-    assert partial_image["payload"]["partial_image_b64"] == "ZmFrZS1pbWFnZQ=="
+    assert partial_image["item_id"] == image_gen.item_id
+    assert partial_image["partial_image_index"] == 0
+    assert partial_image["partial_image_b64"] == "ZmFrZS1pbWFnZQ=="
 
     assert input_done["type"] == "response.custom_tool_call_input.done"
-    assert input_done["payload"]["item_id"] == custom_tool.item_id
-    assert input_done["payload"]["input"] == '{"ok": true}'
+    assert input_done["item_id"] == custom_tool.item_id
+    assert input_done["input"] == '{"ok": true}'
 
     assert args_done["type"] == "response.function_call_arguments.done"
-    assert args_done["payload"]["item_id"] == function_call.item_id
-    assert args_done["payload"]["name"] == "tool_fn"
-    assert args_done["payload"]["arguments"] == '{"city": "Seattle"}'
+    assert args_done["item_id"] == function_call.item_id
+    assert args_done["name"] == "tool_fn"
+    assert args_done["arguments"] == '{"city": "Seattle"}'
 
     assert mcp_args_done["type"] == "response.mcp_call_arguments.done"
-    assert mcp_args_done["payload"]["item_id"] == mcp_call.item_id
-    assert mcp_args_done["payload"]["arguments"] == '{"arg": 1}'
+    assert mcp_args_done["item_id"] == mcp_call.item_id
+    assert mcp_args_done["arguments"] == '{"arg": 1}'
 
     assert refusal_part_done["type"] == "response.content_part.done"
-    assert refusal_part_done["payload"]["part"]["type"] == "refusal"
-    assert refusal_part_done["payload"]["part"]["refusal"] == "cannot comply"
+    assert refusal_part_done["part"]["type"] == "refusal"
+    assert refusal_part_done["part"]["refusal"] == "cannot comply"
 
     assert summary_added["type"] == "response.reasoning_summary_part.added"
-    assert summary_added["payload"]["part"]["type"] == "summary_text"
-    assert summary_added["payload"]["part"]["text"] == ""
+    assert summary_added["part"]["type"] == "summary_text"
+    assert summary_added["part"]["text"] == ""
 
     assert summary_done["type"] == "response.reasoning_summary_part.done"
-    assert summary_done["payload"]["part"]["type"] == "summary_text"
-    assert summary_done["payload"]["part"]["text"] == "short reason"
+    assert summary_done["part"]["type"] == "summary_text"
+    assert summary_done["part"]["text"] == "short reason"
 
     assert reasoning_item_done["type"] == "response.output_item.done"
-    assert reasoning_item_done["payload"]["item"]["summary"][0]["type"] == "summary_text"
-    assert reasoning_item_done["payload"]["item"]["summary"][0]["text"] == "short reason"
+    assert reasoning_item_done["item"]["summary"][0]["type"] == "summary_text"
+    assert reasoning_item_done["item"]["summary"][0]["text"] == "short reason"
 
 
 def test_stream_item_id_generation__uses_dotnet_shape_and_response_partition_key() -> None:
@@ -271,10 +271,10 @@ def test_response_event_stream__exposes_mutable_response_snapshot_for_lifecycle_
     created = stream.emit_created()
 
     assert created["type"] == "response.created"
-    assert created["payload"]["id"] == "resp_builder_snapshot"
-    assert created["payload"]["model"] == "gpt-4o-mini"
-    assert created["payload"]["temperature"] == 1
-    assert created["payload"]["metadata"] == {"source": "unit-test"}
+    assert created["response"]["id"] == "resp_builder_snapshot"
+    assert created["response"]["model"] == "gpt-4o-mini"
+    assert created["response"]["temperature"] == 1
+    assert created["response"]["metadata"] == {"source": "unit-test"}
 
 
 def test_response_event_stream__tracks_completed_output_items_into_response_output() -> None:

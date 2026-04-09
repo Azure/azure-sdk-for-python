@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping, MutableMapping
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Protocol, runtime_checkable
@@ -200,14 +201,14 @@ def _initial_create_span_tags() -> dict[str, Any]:
     }
 
 
-def extract_request_id(headers: Any) -> str | None:
+def extract_request_id(headers: Mapping[str, str]) -> str | None:
     """Extract and truncate the ``X-Request-Id`` header value.
 
     Returns the value truncated to 256 characters, or ``None`` when the
     header is absent.
 
     :param headers: HTTP request headers mapping.
-    :type headers: Any
+    :type headers: Mapping[str, str]
     :return: Truncated request ID string, or ``None``.
     :rtype: str | None
     """
@@ -216,10 +217,10 @@ def extract_request_id(headers: Any) -> str | None:
 
 
 def _resolve_agent_fields(
-    agent_reference: dict[str, Any] | None,
+    agent_reference: MutableMapping[str, Any] | dict[str, Any] | None,
 ) -> tuple[str | None, str | None, str | None]:
     """Return ``(agent_name, agent_version, agent_id)`` from *agent_reference*."""
-    if not isinstance(agent_reference, dict):
+    if agent_reference is None or not isinstance(agent_reference, (dict, MutableMapping)):
         return None, None, None
     name = agent_reference.get("name") or None
     version = agent_reference.get("version") or None

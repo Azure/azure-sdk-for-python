@@ -4,6 +4,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from typing import Any
 
@@ -16,6 +17,7 @@ from azure.ai.agentserver.responses import (
     ResponseEventStream,
     ResponsesAgentServerHost,
     ResponsesServerOptions,
+    TextResponse,
     get_input_expanded,
     get_input_text,
 )
@@ -88,28 +90,13 @@ def _base_payload(input_value: Any = "hello", **overrides) -> dict[str, Any]:
 # ---------------------------------------------------------------------------
 
 
-def _sample1_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
-    """Echo handler: returns the user's input text."""
-
-    async def _events():
-        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-        yield stream.emit_created()
-
-        msg = stream.add_output_item_message()
-        yield msg.emit_added()
-
-        text_content = msg.add_text_content()
-        yield text_content.emit_added()
-
-        user_text = get_input_text(request)
-        yield text_content.emit_delta(user_text)
-        yield text_content.emit_done()
-        yield msg.emit_content_done(text_content)
-        yield msg.emit_done()
-
-        yield stream.emit_completed()
-
-    return _events()
+def _sample1_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    """Echo handler: returns the user's input text using TextResponse."""
+    return TextResponse(
+        context,
+        request,
+        create_text=lambda: get_input_text(request),
+    )
 
 
 def test_sample1_echo_handler_echoes_input_text() -> None:
@@ -154,30 +141,20 @@ def test_sample1_echo_handler_structured_input() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample2_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
-    """Streaming handler: emits text in token-by-token deltas."""
+def _sample2_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    """Streaming handler: emits text in token-by-token deltas using TextResponse."""
+    user_text = get_input_text(request)
+    tokens = user_text.split() if user_text else ["Hello", "World"]
 
-    async def _events():
-        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-        yield stream.emit_created()
-
-        msg = stream.add_output_item_message()
-        yield msg.emit_added()
-
-        text_content = msg.add_text_content()
-        yield text_content.emit_added()
-
-        user_text = get_input_text(request)
-        tokens = user_text.split() if user_text else ["Hello", "World"]
+    async def _stream():
         for token in tokens:
-            yield text_content.emit_delta(token + " ")
-        yield text_content.emit_done()
-        yield msg.emit_content_done(text_content)
-        yield msg.emit_done()
+            yield token + " "
 
-        yield stream.emit_completed()
-
-    return _events()
+    return TextResponse(
+        context,
+        request,
+        create_text_stream=_stream,
+    )
 
 
 def test_sample2_streaming_handler_streams_token_deltas() -> None:
@@ -208,7 +185,7 @@ def test_sample2_streaming_handler_non_streaming_returns_full_text() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample3_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+def _sample3_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Full lifecycle handler: emits all standard lifecycle event types."""
 
     async def _events():
@@ -269,7 +246,7 @@ def test_sample3_greeting_includes_input() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample4_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+def _sample4_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Function-calling handler: emits get_weather function call on first turn,
     and a text response on second turn when function_call_output is present."""
 
@@ -354,34 +331,16 @@ def test_sample4_turn2_returns_weather_text() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample5_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
-    """Conversation history handler: welcome on first turn,
+def _sample5_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    """Conversation history handler using TextResponse: welcome on first turn,
     references previous_response_id on second turn."""
+    has_previous = request.previous_response_id is not None and str(request.previous_response_id).strip() != ""
+    if has_previous:
+        text = f"Following up on {request.previous_response_id}: {get_input_text(request)}"
+    else:
+        text = f"Welcome! You said: {get_input_text(request)}"
 
-    async def _events():
-        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-        yield stream.emit_created()
-
-        msg = stream.add_output_item_message()
-        yield msg.emit_added()
-
-        text_content = msg.add_text_content()
-        yield text_content.emit_added()
-
-        has_previous = request.previous_response_id is not None and str(request.previous_response_id).strip() != ""
-        if has_previous:
-            reply = f"Following up on {request.previous_response_id}: {get_input_text(request)}"
-        else:
-            reply = f"Welcome! You said: {get_input_text(request)}"
-
-        yield text_content.emit_delta(reply)
-        yield text_content.emit_done()
-        yield msg.emit_content_done(text_content)
-        yield msg.emit_done()
-
-        yield stream.emit_completed()
-
-    return _events()
+    return TextResponse(context, request, create_text=lambda: text)
 
 
 def test_sample5_first_turn_welcome() -> None:
@@ -423,7 +382,7 @@ def test_sample5_second_turn_references_history() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample6_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
+def _sample6_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Multi-output handler: emits a reasoning item then a message item."""
 
     async def _events():
@@ -487,27 +446,13 @@ def test_sample6_non_streaming_both_output_items() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample7_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
-    """Handler that reports which model is used."""
-
-    async def _events():
-        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-        yield stream.emit_created()
-
-        msg = stream.add_output_item_message()
-        yield msg.emit_added()
-
-        text_content = msg.add_text_content()
-        yield text_content.emit_added()
-
-        yield text_content.emit_delta(f"[model={request.model}]")
-        yield text_content.emit_done()
-        yield msg.emit_content_done(text_content)
-        yield msg.emit_done()
-
-        yield stream.emit_completed()
-
-    return _events()
+def _sample7_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    """Handler that reports which model is used, via TextResponse."""
+    return TextResponse(
+        context,
+        request,
+        create_text=lambda: f"[model={request.model}]",
+    )
 
 
 def test_sample7_custom_options_applied() -> None:
@@ -547,28 +492,13 @@ def test_sample7_explicit_model_overrides_default() -> None:
 # ---------------------------------------------------------------------------
 
 
-def _sample8_response_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
-    """Responses handler for the mixin test."""
-
-    async def _events():
-        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-        yield stream.emit_created()
-
-        msg = stream.add_output_item_message()
-        yield msg.emit_added()
-
-        text_content = msg.add_text_content()
-        yield text_content.emit_added()
-
-        user_text = get_input_text(request)
-        yield text_content.emit_delta(f"[Response] Echo: {user_text}")
-        yield text_content.emit_done()
-        yield msg.emit_content_done(text_content)
-        yield msg.emit_done()
-
-        yield stream.emit_completed()
-
-    return _events()
+def _sample8_response_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    """Responses handler for the mixin test, via TextResponse."""
+    return TextResponse(
+        context,
+        request,
+        create_text=lambda: f"[Response] Echo: {get_input_text(request)}",
+    )
 
 
 def test_sample8_mixin_composition_both_protocols() -> None:
@@ -634,25 +564,12 @@ def test_sample9_self_hosted_responses_under_prefix() -> None:
 
     responses_app = ResponsesAgentServerHost()
 
-    def _handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
-        async def _events():
-            stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-            yield stream.emit_created()
-
-            msg = stream.add_output_item_message()
-            yield msg.emit_added()
-
-            text_content = msg.add_text_content()
-            yield text_content.emit_added()
-
-            yield text_content.emit_delta(f"Self-hosted: {get_input_text(request)}")
-            yield text_content.emit_done()
-            yield msg.emit_content_done(text_content)
-            yield msg.emit_done()
-
-            yield stream.emit_completed()
-
-        return _events()
+    def _handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+        return TextResponse(
+            context,
+            request,
+            create_text=lambda: f"Self-hosted: {get_input_text(request)}",
+        )
 
     responses_app.create_handler(_handler)
 
@@ -676,29 +593,90 @@ def test_sample9_self_hosted_responses_under_prefix() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Sample 10: Streaming Upstream — Forward from async generator
+# Sample 10: Streaming Upstream — Raw events, no ResponseEventStream
 # ---------------------------------------------------------------------------
 
 
-def _sample10_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
-    """Streaming upstream handler: streams tokens from a mock upstream."""
+def _sample10_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    """Streaming upstream handler: yields raw event dicts, matching .NET pattern."""
 
-    async def _mock_upstream(prompt: str):
+    async def _mock_upstream_events(prompt: str):
+        """Simulate upstream SSE stream events (lifecycle + content)."""
+        # Upstream lifecycle — handler will skip these
+        yield {"type": "response.created"}
+        yield {"type": "response.in_progress"}
+        # Upstream content — handler will yield these directly
+        yield {
+            "type": "response.output_item.added",
+            "output_index": 0,
+            "item": {"id": "item_up_001", "type": "message", "role": "assistant", "content": []},
+        }
+        yield {"type": "response.content_part.added", "output_index": 0, "content_index": 0,
+               "part": {"type": "output_text", "text": ""}}
         tokens = ["Upstream says: ", "Hello", ", ", prompt, "!"]
         for token in tokens:
-            yield token
+            yield {"type": "response.output_text.delta", "output_index": 0, "content_index": 0, "delta": token}
+        full = "".join(tokens)
+        yield {"type": "response.output_text.done", "output_index": 0, "content_index": 0, "text": full}
+        yield {"type": "response.content_part.done", "output_index": 0, "content_index": 0,
+               "part": {"type": "output_text", "text": full}}
+        yield {
+            "type": "response.output_item.done",
+            "output_index": 0,
+            "item": {
+                "id": "item_up_001", "type": "message", "role": "assistant",
+                "content": [{"type": "output_text", "text": full}],
+            },
+        }
+        yield {"type": "response.completed"}
 
     async def _events():
-        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-        yield stream.emit_created()
+        # Build response snapshot by hand — no ResponseEventStream.
+        snapshot: dict[str, Any] = {
+            "id": context.response_id,
+            "object": "response",
+            "status": "in_progress",
+            "model": request.model or "",
+            "output": [],
+        }
+
+        # Lifecycle events nest the snapshot under "response"
+        # — matching the SSE wire format.
+        yield {"type": "response.created", "response": snapshot}
+        yield {"type": "response.in_progress", "response": snapshot}
 
         user_text = get_input_text(request) or "world"
-        upstream_tokens = _mock_upstream(user_text)
+        output_items: list[dict[str, Any]] = []
+        upstream_failed = False
 
-        async for event in stream.aoutput_item_message(upstream_tokens):
+        async for event in _mock_upstream_events(user_text):
+            etype = event["type"]
+            if etype in ("response.created", "response.in_progress"):
+                continue
+            if etype == "response.completed":
+                break
+            if etype == "response.failed":
+                upstream_failed = True
+                break
+
+            # Clear upstream response_id on output items.
+            if etype == "response.output_item.added":
+                event.get("item", {}).pop("response_id", None)  # type: ignore[union-attr]
+            elif etype == "response.output_item.done":
+                item: dict[str, Any] = event.get("item", {})  # type: ignore[assignment]
+                item.pop("response_id", None)
+                output_items.append(item)
+
             yield event
 
-        yield stream.emit_completed()
+        if upstream_failed:
+            snapshot["status"] = "failed"
+            snapshot["error"] = {"code": "server_error", "message": "Upstream request failed"}
+            yield {"type": "response.failed", "response": snapshot}
+        else:
+            snapshot["status"] = "completed"
+            snapshot["output"] = output_items
+            yield {"type": "response.completed", "response": snapshot}
 
     return _events()
 
@@ -737,25 +715,37 @@ def test_sample10_streaming_upstream_non_streaming_returns_full_text() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Sample 11: Non-Streaming Upstream — Forward complete response
+# Sample 11: Non-Streaming Upstream — Output item builders
 # ---------------------------------------------------------------------------
 
 
-def _sample11_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: Any):
-    """Non-streaming upstream handler: calls mock upstream, emits result."""
+def _sample11_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    """Non-streaming upstream handler: iterates upstream output items via builders."""
 
-    def _mock_upstream_call(prompt: str) -> str:
-        return f"Upstream non-streaming reply to: {prompt}"
+    def _mock_upstream_call(prompt: str) -> list[dict[str, Any]]:
+        """Simulate upstream non-streaming response returning output items."""
+        return [
+            {
+                "type": "message",
+                "content": [{"type": "output_text", "text": f"Upstream non-streaming reply to: {prompt}"}],
+            }
+        ]
 
     async def _events():
-        stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+        stream = ResponseEventStream(response_id=context.response_id, request=request)
         yield stream.emit_created()
+        yield stream.emit_in_progress()
 
         user_text = get_input_text(request) or "world"
-        upstream_reply = _mock_upstream_call(user_text)
+        upstream_items = _mock_upstream_call(user_text)
 
-        for event in stream.output_item_message(upstream_reply):
-            yield event
+        for item in upstream_items:
+            if item["type"] == "message":
+                text = "".join(
+                    part["text"] for part in item["content"] if part.get("type") == "output_text"
+                )
+                for event in stream.output_item_message(text):
+                    yield event
 
         yield stream.emit_completed()
 

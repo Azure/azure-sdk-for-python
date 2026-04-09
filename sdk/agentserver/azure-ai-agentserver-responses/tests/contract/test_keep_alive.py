@@ -24,7 +24,7 @@ def _make_slow_handler(delay_seconds: float = 0.5, event_count: int = 2):
                     await asyncio.sleep(delay_seconds)
                 yield {
                     "type": "response.created" if i == 0 else "response.completed",
-                    "payload": {
+                    "response": {
                         "status": "in_progress" if i == 0 else "completed",
                     },
                 }

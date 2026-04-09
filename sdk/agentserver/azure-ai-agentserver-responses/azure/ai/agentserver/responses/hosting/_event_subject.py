@@ -5,7 +5,9 @@
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
-from typing import Any, AsyncIterator
+from typing import AsyncIterator
+
+from ..models._generated import ResponseStreamEvent
 
 
 class _ResponseEventSubject:
@@ -28,16 +30,16 @@ class _ResponseEventSubject:
 
     def __init__(self) -> None:
         """Initialise the subject with an empty event buffer and no subscribers."""
-        self._events: list[dict[str, Any]] = []
-        self._subscribers: list[asyncio.Queue[Any]] = []
+        self._events: list[ResponseStreamEvent] = []
+        self._subscribers: list[asyncio.Queue[ResponseStreamEvent | object]] = []
         self._done: bool = False
         self._lock: asyncio.Lock = asyncio.Lock()
 
-    async def publish(self, event: dict[str, Any]) -> None:
+    async def publish(self, event: ResponseStreamEvent) -> None:
         """Push a new event to all current subscribers and append it to the replay buffer.
 
-        :param event: The normalised event dict (``{"type": str, "payload": dict}``).
-        :type event: dict[str, Any]
+        :param event: The normalised event (``ResponseStreamEvent`` model instance).
+        :type event: ResponseStreamEvent
         """
         async with self._lock:
             self._events.append(event)
@@ -55,21 +57,21 @@ class _ResponseEventSubject:
             for q in self._subscribers:
                 q.put_nowait(self._DONE)
 
-    async def subscribe(self, cursor: int = -1) -> AsyncIterator[dict[str, Any]]:
+    async def subscribe(self, cursor: int = -1) -> AsyncIterator[ResponseStreamEvent]:
         """Subscribe to events, yielding buffered history then live events.
 
         :param cursor: Sequence-number cursor.  Only events whose
-            ``payload["sequence_number"]`` is strictly greater than *cursor* are
+            ``sequence_number`` is strictly greater than *cursor* are
             yielded.  Pass ``-1`` (default) to receive all events.
         :type cursor: int
-        :returns: An async iterator of normalised event dicts.
-        :rtype: AsyncIterator[dict[str, Any]]
+        :returns: An async iterator of event instances.
+        :rtype: AsyncIterator[ResponseStreamEvent]
         """
-        q: asyncio.Queue[Any] = asyncio.Queue()
+        q: asyncio.Queue[ResponseStreamEvent | object] = asyncio.Queue()
         async with self._lock:
             # Replay all buffered events that are after the cursor
             for event in self._events:
-                if event["payload"]["sequence_number"] > cursor:
+                if event["sequence_number"] > cursor:
                     q.put_nowait(event)
             if self._done:
                 # Stream already completed — put sentinel so iterator exits after replay

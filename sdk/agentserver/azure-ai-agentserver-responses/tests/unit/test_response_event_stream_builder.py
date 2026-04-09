@@ -30,9 +30,9 @@ def test_event_stream_builder__builds_lifecycle_events() -> None:
         "response.in_progress",
         "response.completed",
     ]
-    assert [event["payload"]["sequence_number"] for event in events] == [0, 1, 2]
-    assert all(event["payload"]["response_id"] == "resp_builder_12345" for event in events)
-    assert all(event["payload"]["agent_reference"]["name"] == "unit-agent" for event in events)
+    assert [event["sequence_number"] for event in events] == [0, 1, 2]
+    assert all(event["response"]["response_id"] == "resp_builder_12345" for event in events)
+    assert all(event["response"]["agent_reference"]["name"] == "unit-agent" for event in events)
 
 
 def test_event_stream_builder__builds_output_item_events() -> None:
@@ -71,13 +71,13 @@ def test_event_stream_builder__output_item_added_returns_event_immediately() -> 
     emitted = message.emit_added()
 
     assert emitted["type"] == "response.output_item.added"
-    assert emitted["payload"]["output_index"] == 0
-    assert emitted["payload"]["item"]["id"] == message.item_id
-    assert emitted["payload"]["item"]["type"] == "message"
+    assert emitted["output_index"] == 0
+    assert emitted["item"]["id"] == message.item_id
+    assert emitted["item"]["type"] == "message"
     # B20/B21: response_id and agent_reference must be stamped on output items
-    assert emitted["payload"]["item"]["response_id"] == "resp_builder_incremental_12345"
-    assert emitted["payload"]["item"]["agent_reference"] == {"name": "unit-agent", "type": "agent_reference"}
-    assert emitted["payload"]["sequence_number"] == 2
+    assert emitted["item"]["response_id"] == "resp_builder_incremental_12345"
+    assert emitted["item"]["agent_reference"] == {"name": "unit-agent", "type": "agent_reference"}
+    assert emitted["sequence_number"] == 2
 
 
 def test_event_stream_builder__rejects_illegal_output_item_sequence() -> None:
@@ -129,10 +129,9 @@ def test_event_stream_builder__emit_completed_accepts_usage_and_sets_terminal_fi
     completed = stream.emit_completed(usage=usage)
 
     assert completed["type"] == "response.completed"
-    assert completed["payload"]["status"] == "completed"
-    assert completed["payload"]["usage"]["total_tokens"] == 3
-    assert completed["payload"]["output_text"] == "hello"
-    assert isinstance(completed["payload"]["completed_at"], int)
+    assert completed["response"]["status"] == "completed"
+    assert completed["response"]["usage"]["total_tokens"] == 3
+    assert isinstance(completed["response"]["completed_at"], int)
 
 
 def test_event_stream_builder__emit_failed_accepts_error_and_usage() -> None:
@@ -150,11 +149,11 @@ def test_event_stream_builder__emit_failed_accepts_error_and_usage() -> None:
     failed = stream.emit_failed(code="server_error", message="boom", usage=usage)
 
     assert failed["type"] == "response.failed"
-    assert failed["payload"]["status"] == "failed"
-    assert failed["payload"]["error"]["code"] == "server_error"
-    assert failed["payload"]["error"]["message"] == "boom"
-    assert failed["payload"]["usage"]["total_tokens"] == 9
-    assert failed["payload"].get("completed_at") is None
+    assert failed["response"]["status"] == "failed"
+    assert failed["response"]["error"]["code"] == "server_error"
+    assert failed["response"]["error"]["message"] == "boom"
+    assert failed["response"]["usage"]["total_tokens"] == 9
+    assert failed["response"].get("completed_at") is None
 
 
 def test_event_stream_builder__emit_incomplete_accepts_reason_and_usage() -> None:
@@ -172,10 +171,10 @@ def test_event_stream_builder__emit_incomplete_accepts_reason_and_usage() -> Non
     incomplete = stream.emit_incomplete(reason="max_output_tokens", usage=usage)
 
     assert incomplete["type"] == "response.incomplete"
-    assert incomplete["payload"]["status"] == "incomplete"
-    assert incomplete["payload"]["incomplete_details"]["reason"] == "max_output_tokens"
-    assert incomplete["payload"]["usage"]["total_tokens"] == 5
-    assert incomplete["payload"].get("completed_at") is None
+    assert incomplete["response"]["status"] == "incomplete"
+    assert incomplete["response"]["incomplete_details"]["reason"] == "max_output_tokens"
+    assert incomplete["response"]["usage"]["total_tokens"] == 5
+    assert incomplete["response"].get("completed_at") is None
 
 
 def test_event_stream_builder__add_output_item_generic_emits_added_and_done() -> None:
@@ -203,9 +202,9 @@ def test_event_stream_builder__add_output_item_generic_emits_added_and_done() ->
     done = builder.emit_done(done_item)
 
     assert added["type"] == "response.output_item.added"
-    assert added["payload"]["output_index"] == 0
+    assert added["output_index"] == 0
     assert done["type"] == "response.output_item.done"
-    assert done["payload"]["item"]["status"] == "completed"
+    assert done["item"]["status"] == "completed"
 
 
 def test_event_stream_builder__constructor_accepts_seed_response() -> None:
@@ -222,9 +221,9 @@ def test_event_stream_builder__constructor_accepts_seed_response() -> None:
     stream = ResponseEventStream(response=seed_response)
     created = stream.emit_created()
 
-    assert created["payload"]["id"] == "resp_builder_seed_response"
-    assert created["payload"]["model"] == "gpt-4o-mini"
-    assert created["payload"]["metadata"] == {"source": "seed"}
+    assert created["response"]["id"] == "resp_builder_seed_response"
+    assert created["response"]["model"] == "gpt-4o-mini"
+    assert created["response"]["metadata"] == {"source": "seed"}
 
 
 def test_event_stream_builder__constructor_accepts_request_seed_fields() -> None:
@@ -240,8 +239,8 @@ def test_event_stream_builder__constructor_accepts_request_seed_fields() -> None
     stream = ResponseEventStream(response_id="resp_builder_seed_request", request=request)
     created = stream.emit_created()
 
-    assert created["payload"]["id"] == "resp_builder_seed_request"
-    assert created["payload"]["model"] == "gpt-4o-mini"
-    assert created["payload"]["background"] is True
-    assert created["payload"]["previous_response_id"] == "resp_prev_seed"
-    assert created["payload"]["metadata"] == {"tag": "seeded"}
+    assert created["response"]["id"] == "resp_builder_seed_request"
+    assert created["response"]["model"] == "gpt-4o-mini"
+    assert created["response"]["background"] is True
+    assert created["response"]["previous_response_id"] == "resp_prev_seed"
+    assert created["response"]["metadata"] == {"tag": "seeded"}

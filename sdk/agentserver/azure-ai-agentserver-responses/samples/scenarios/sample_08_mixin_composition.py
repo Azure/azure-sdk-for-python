@@ -17,17 +17,16 @@ Run:
 """
 
 import asyncio
-from typing import Any
 
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
-    ResponseEventStream,
     ResponsesAgentServerHost,
+    TextResponse,
     get_input_text,
 )
 
@@ -53,17 +52,13 @@ async def handle_invoke(request: Request) -> Response:
 
 
 @app.create_handler
-def handle_response(
-    request: CreateResponse,
-    context: ResponseContext,
-    cancellation_signal: asyncio.Event,
-):
+def handle_response(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo response: returns the user's input text."""
-    stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-    yield stream.emit_created()
-    yield stream.emit_in_progress()
-    yield from stream.output_item_message(f"[Response] Echo: {get_input_text(request)}")
-    yield stream.emit_completed()
+    return TextResponse(
+        context,
+        request,
+        create_text=lambda: f"[Response] Echo: {get_input_text(request)}",
+    )
 
 
 def main() -> None:

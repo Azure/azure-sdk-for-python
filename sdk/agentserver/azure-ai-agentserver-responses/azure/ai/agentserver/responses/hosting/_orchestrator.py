@@ -12,10 +12,11 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, AsyncIterator
+from typing import TYPE_CHECKING, Any, AsyncIterator, Callable
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
+    from ..models._generated import AgentReference, CreateResponse
 
 import anyio
 
@@ -39,34 +40,35 @@ from ..streaming._helpers import (
     _coerce_handler_event,
     _extract_response_snapshot_from_events,
 )
-from ..streaming._sse import encode_keep_alive_comment, encode_sse_payload, new_stream_counter
+from ..streaming._internals import construct_event_model
+from ..streaming._sse import encode_keep_alive_comment, encode_sse_any_event, new_stream_counter
 from ..streaming._state_machine import EventStreamValidator
 from ._event_subject import _ResponseEventSubject
 from ._execution_context import _ExecutionContext
 from ._runtime_state import _RuntimeState
 
 
-def _check_first_event_contract(normalized: dict[str, Any], response_id: str) -> str | None:
+def _check_first_event_contract(normalized: generated_models.ResponseStreamEvent, response_id: str) -> str | None:
     """Return an error message if the first handler event violates FR-006/FR-007, else None.
 
     - FR-006: The first event MUST be ``response.created`` with matching ``id``.
     - FR-007: The ``status`` in ``response.created`` MUST be non-terminal.
 
-    :param normalized: Normalised first event dict.
-    :type normalized: dict[str, Any]
+    :param normalized: Normalised first event (``ResponseStreamEvent`` model instance).
+    :type normalized: ResponseStreamEvent
     :param response_id: Library-assigned response identifier.
     :type response_id: str
     :return: Violation message string, or ``None`` if no violation.
     :rtype: str | None
     """
     event_type = normalized.get("type")
-    payload = normalized.get("payload") or {}
+    response = normalized.get("response") or {}
     if event_type != "response.created":
         return f"first event must be response.created, got '{event_type}'"
-    emitted_id = payload.get("id")
+    emitted_id = response.get("id")
     if emitted_id and emitted_id != response_id:
         return f"response.created id '{emitted_id}' != assigned id '{response_id}'"
-    emitted_status = payload.get("status")
+    emitted_status = response.get("status")
     if emitted_status in {"completed", "failed", "cancelled", "incomplete"}:
         return f"response.created status must be non-terminal, got '{emitted_status}'"
     return None
@@ -123,7 +125,7 @@ _OUTPUT_ITEM_EVENT_TYPES: frozenset[str] = frozenset(
     }
 )
 
-# Response-level lifecycle events whose payload carries a full Response snapshot.
+# Response-level lifecycle events whose ``response`` field carries a full Response snapshot.
 # Used by FR-008a output manipulation detection.
 _RESPONSE_SNAPSHOT_TYPES: frozenset[str] = frozenset(
     {
@@ -136,44 +138,39 @@ _RESPONSE_SNAPSHOT_TYPES: frozenset[str] = frozenset(
 )
 
 
-def _validate_handler_event(coerced: dict[str, Any]) -> str | None:
+def _validate_handler_event(coerced: generated_models.ResponseStreamEvent) -> str | None:
     """Return an error message if a coerced handler event has invalid structure, else None.
 
     Lightweight structural checks (B30):
-    - ``payload`` must be a dict.
-    - For ``response.output_item.*`` events the payload must contain ``output_index``
-      and at least one of ``item_id`` or ``item``.
+    - For ``response.output_item.*`` events the model/dict must contain
+      ``output_index`` and at least one of ``item_id`` or ``item``.
 
-    :param coerced: Coerced event dict (``{"type": ..., "payload": ...}``).
-    :type coerced: dict[str, Any]
+    :param coerced: Coerced event (``ResponseStreamEvent`` model instance).
+    :type coerced: ResponseStreamEvent
     :return: Violation message string, or ``None`` if valid.
     :rtype: str | None
     """
-    payload = coerced.get("payload")
-    if not isinstance(payload, dict):
-        return f"event payload must be a dict, got {type(payload).__name__}"
-
     event_type = coerced.get("type", "")
     if event_type in _OUTPUT_ITEM_EVENT_TYPES:
-        if "output_index" not in payload:
-            return f"{event_type} payload missing required field 'output_index'"
-        if "item_id" not in payload and "item" not in payload:
-            return f"{event_type} payload must include 'item_id' or 'item'"
+        if coerced.get("output_index") is None:
+            return f"{event_type} missing required field 'output_index'"
+        if coerced.get("item_id") is None and coerced.get("item") is None:
+            return f"{event_type} must include 'item_id' or 'item'"
 
     return None
 
 
 async def _run_background_non_stream(
     *,
-    create_fn: Any,
-    parsed: Any,
+    create_fn: Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]],
+    parsed: CreateResponse,
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
     record: ResponseExecution,
     response_id: str,
-    agent_reference: dict[str, Any],
+    agent_reference: AgentReference | dict[str, Any],
     model: str | None,
-    provider: Any = None,
+    provider: ResponseProviderProtocol | None = None,
     store: bool = True,
     agent_session_id: str | None = None,
     conversation_id: str | None = None,
@@ -185,9 +182,9 @@ async def _run_background_non_stream(
     record status to ``completed``, ``failed``, or ``cancelled``.
 
     :keyword create_fn: The handler's async generator callable.
-    :keyword type create_fn: Any
+    :keyword type create_fn: Callable[..., AsyncIterator[ResponseStreamEvent]]
     :keyword parsed: Parsed ``CreateResponse`` model instance.
-    :keyword type parsed: Any
+    :keyword type parsed: CreateResponse
     :keyword context: Runtime response context for this request.
     :keyword type context: ResponseContext
     :keyword cancellation_signal: Event signalling that cancellation was requested.
@@ -196,13 +193,13 @@ async def _run_background_non_stream(
     :keyword type record: ResponseExecution
     :keyword response_id: The response ID for this execution.
     :keyword type response_id: str
-    :keyword agent_reference: Normalized agent reference dictionary.
-    :keyword type agent_reference: dict[str, Any]
+    :keyword agent_reference: Normalized agent reference model or dictionary.
+    :keyword type agent_reference: AgentReference | dict[str, Any]
     :keyword model: Model name, or ``None``.
     :keyword type model: str | None
     :keyword provider: Optional persistence provider; when set and ``store`` is ``True``,
         ``update_response`` is called after terminal state is reached.
-    :keyword type provider: Any
+    :keyword type provider: ResponseProviderProtocol | None
     :keyword store: Whether the response should be persisted via the provider.
     :keyword type store: bool
     :keyword agent_session_id: Resolved session ID (B39).
@@ -211,7 +208,7 @@ async def _run_background_non_stream(
     :rtype: None
     """
     record.transition_to("in_progress")
-    handler_events: list[dict[str, Any]] = []
+    handler_events: list[generated_models.ResponseStreamEvent] = []
     validator = EventStreamValidator()
     output_item_count = 0
     _provider_created = False  # tracks whether create_response was called
@@ -247,8 +244,8 @@ async def _run_background_non_stream(
                     first_event_processed = True
 
                     # FR-008a: output manipulation detection on response.created
-                    created_payload = normalized.get("payload") or {}
-                    created_output = created_payload.get("output")
+                    created_response = normalized.get("response") or {}
+                    created_output = created_response.get("output")
                     if isinstance(created_output, list) and len(created_output) != 0:
                         raise ValueError(
                             f"Handler directly modified Response.Output "
@@ -302,8 +299,8 @@ async def _run_background_non_stream(
                     # FR-008a: detect direct Output manipulation on response.* events
                     n_type = normalized.get("type", "")
                     if n_type in _RESPONSE_SNAPSHOT_TYPES:
-                        n_payload = normalized.get("payload") or {}
-                        n_output = n_payload.get("output")
+                        n_response = normalized.get("response") or {}
+                        n_output = n_response.get("output")
                         if isinstance(n_output, list) and len(n_output) > output_item_count:
                             raise ValueError(
                                 f"Output item count mismatch "
@@ -448,7 +445,7 @@ class _PipelineState:
     __slots__ = ("handler_events", "bg_record", "captured_error", "validator")
 
     def __init__(self) -> None:
-        self.handler_events: list[dict[str, Any]] = []
+        self.handler_events: list[generated_models.ResponseStreamEvent] = []
         self.bg_record: ResponseExecution | None = None
         self.captured_error: Exception | None = None
         self.validator: EventStreamValidator = EventStreamValidator()
@@ -475,7 +472,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         *,
-        create_fn: Any,
+        create_fn: Callable[..., AsyncIterator[generated_models.ResponseStreamEvent]],
         runtime_state: _RuntimeState,
         runtime_options: ResponsesServerOptions,
         provider: ResponseProviderProtocol,
@@ -484,7 +481,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         """Initialise the orchestrator.
 
         :param create_fn: The bound ``create_fn`` method from the registered handler.
-        :type create_fn: Any
+        :type create_fn: Callable[..., AsyncIterator[ResponseStreamEvent]]
         :param runtime_state: In-memory execution record store.
         :type runtime_state: _RuntimeState
         :param runtime_options: Server runtime options (keep-alive, etc.).
@@ -505,8 +502,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
     # ------------------------------------------------------------------
 
     async def _normalize_and_append(
-        self, ctx: _ExecutionContext, state: _PipelineState, handler_event: Any
-    ) -> dict[str, Any]:
+        self, ctx: _ExecutionContext, state: _PipelineState, handler_event: generated_models.ResponseStreamEvent | dict[str, Any]
+    ) -> generated_models.ResponseStreamEvent:
         """Coerce, validate, normalise, and append a handler event to the pipeline state.
 
         Also propagates the event into the background record and its subject when active.
@@ -519,9 +516,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :param state: Mutable pipeline state for this invocation.
         :type state: _PipelineState
         :param handler_event: Raw event emitted by the handler.
-        :type handler_event: Any
-        :return: The normalised event dictionary.
-        :rtype: dict[str, Any]
+        :type handler_event: ResponseStreamEvent | dict[str, Any]
+        :return: The normalised event (``ResponseStreamEvent`` model instance).
+        :rtype: ResponseStreamEvent
         :raises ValueError: If the coerced event fails structural validation (B30).
         """
         coerced = _coerce_handler_event(handler_event)
@@ -546,37 +543,37 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         return normalized
 
     @staticmethod
-    def _has_terminal_event(handler_events: list[dict[str, Any]]) -> bool:
+    def _has_terminal_event(handler_events: list[generated_models.ResponseStreamEvent]) -> bool:
         """Return ``True`` if any terminal event has been emitted.
 
         :param handler_events: List of normalised handler events.
-        :type handler_events: list[dict[str, Any]]
+        :type handler_events: list[ResponseStreamEvent]
         :return: Whether a terminal event is present.
         :rtype: bool
         """
         return any(e["type"] in _ResponseOrchestrator._TERMINAL_SSE_TYPES for e in handler_events)
 
-    async def _cancel_terminal_sse_dict(self, ctx: _ExecutionContext, state: _PipelineState) -> dict[str, Any]:
-        """Build, normalise, append, and return a cancel-terminal event dict.
+    async def _cancel_terminal_sse_dict(self, ctx: _ExecutionContext, state: _PipelineState) -> generated_models.ResponseStreamEvent:
+        """Build, normalise, append, and return a cancel-terminal event.
 
-        Returns the raw normalised event dictionary so that it can be consumed
+        Returns the normalised event (model instance) so that it can be consumed
         by the shared :meth:`_process_handler_events` pipeline.
 
         :param ctx: Current execution context (immutable inputs).
         :type ctx: _ExecutionContext
         :param state: Mutable pipeline state for this invocation.
         :type state: _PipelineState
-        :return: Normalised cancel-terminal event dictionary.
-        :rtype: dict[str, Any]
+        :return: Normalised cancel-terminal event.
+        :rtype: ResponseStreamEvent
         """
         cancel_event: dict[str, Any] = {
             "type": EVENT_TYPE.RESPONSE_FAILED.value,
-            "payload": _build_cancelled_response(ctx.response_id, ctx.agent_reference, ctx.model).as_dict(),
+            "response": _build_cancelled_response(ctx.response_id, ctx.agent_reference, ctx.model).as_dict(),
         }
         return await self._normalize_and_append(ctx, state, cancel_event)
 
-    async def _make_failed_event(self, ctx: _ExecutionContext, state: _PipelineState) -> dict[str, Any]:
-        """Build, normalise, append, and return a ``response.failed`` event dict.
+    async def _make_failed_event(self, ctx: _ExecutionContext, state: _PipelineState) -> generated_models.ResponseStreamEvent:
+        """Build, normalise, append, and return a ``response.failed`` event.
 
         Used for S-035 (handler exception after ``response.created``) and
         S-015 (handler completed without emitting a terminal event).
@@ -585,12 +582,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :type ctx: _ExecutionContext
         :param state: Mutable pipeline state for this invocation.
         :type state: _PipelineState
-        :return: Normalised ``response.failed`` event dictionary.
-        :rtype: dict[str, Any]
+        :return: Normalised ``response.failed`` event.
+        :rtype: ResponseStreamEvent
         """
         failed_event: dict[str, Any] = {
             "type": EVENT_TYPE.RESPONSE_FAILED.value,
-            "payload": {
+            "response": {
                 "id": ctx.response_id,
                 "object": "response",
                 "status": "failed",
@@ -601,7 +598,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         return await self._normalize_and_append(ctx, state, failed_event)
 
     async def _register_bg_execution(
-        self, ctx: _ExecutionContext, state: _PipelineState, first_normalized: dict[str, Any]
+        self, ctx: _ExecutionContext, state: _PipelineState, first_normalized: generated_models.ResponseStreamEvent
     ) -> None:
         """Create, seed, and register the background+stream execution record.
 
@@ -615,7 +612,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :param state: Mutable pipeline state for this invocation.
         :type state: _PipelineState
         :param first_normalized: The first normalised handler event.
-        :type first_normalized: dict[str, Any]
+        :type first_normalized: ResponseStreamEvent
         """
         initial_payload = _extract_response_snapshot_from_events(
             state.handler_events,
@@ -662,8 +659,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         self,
         ctx: _ExecutionContext,
         state: _PipelineState,
-        handler_iterator: Any,
-    ) -> AsyncIterator[dict[str, Any]]:
+        handler_iterator: AsyncIterator[generated_models.ResponseStreamEvent],
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Shared event pipeline: coerce → normalise → apply_event → subject publish.
 
         This async generator is the single authoritative event pipeline consumed by
@@ -691,9 +688,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :type state: _PipelineState
         :param handler_iterator: Async generator returned by the handler's
             ``create_fn`` factory.
-        :type handler_iterator: Any
-        :return: Async iterator of normalised event dictionaries.
-        :rtype: AsyncIterator[dict[str, Any]]
+        :type handler_iterator: AsyncIterator[ResponseStreamEvent]
+        :return: Async iterator of normalised events (``ResponseStreamEvent`` model instances).
+        :rtype: AsyncIterator[ResponseStreamEvent]
         """
         # --- First event ---
         try:
@@ -714,10 +711,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # S-024: Known cancellation before first event.
             if ctx.cancellation_signal.is_set():
                 state.captured_error = asyncio.CancelledError()
-                yield {
-                    "type": EVENT_TYPE.ERROR.value,
-                    "payload": {"message": "An internal server error occurred.", "param": None, "code": None},
-                }
+                yield construct_event_model(
+                    {"type": "error", "message": "An internal server error occurred.", "param": None, "code": None, "sequence_number": 0}
+                )
                 return
             # Unknown CancelledError (e.g. event-loop teardown) — re-raise.
             raise
@@ -725,10 +721,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # B8: Pre-creation error → emit a standalone `error` event only.
             # No response.created precedes it; this is the contract-mandated shape.
             state.captured_error = exc
-            yield {
-                "type": EVENT_TYPE.ERROR.value,
-                "payload": {"message": "An internal server error occurred.", "param": None, "code": None},
-            }
+            yield construct_event_model(
+                {"type": "error", "message": "An internal server error occurred.", "param": None, "code": None, "sequence_number": 0}
+            )
             return
 
         # Normalise the first event manually (before _normalize_and_append so we
@@ -739,10 +734,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         b30_violation = _validate_handler_event(first_coerced)
         if b30_violation:
             state.captured_error = ValueError(b30_violation)
-            yield {
-                "type": EVENT_TYPE.ERROR.value,
-                "payload": {"message": "An internal server error occurred.", "param": None, "code": None},
-            }
+            yield construct_event_model(
+                {"type": "error", "message": "An internal server error occurred.", "param": None, "code": None, "sequence_number": 0}
+            )
             return
 
         first_normalized = _apply_stream_event_defaults(
@@ -762,10 +756,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         violation = _check_first_event_contract(first_normalized, ctx.response_id)
         if violation:
             state.captured_error = RuntimeError(violation)
-            yield {
-                "type": EVENT_TYPE.ERROR.value,
-                "payload": {"message": "An internal server error occurred.", "param": None, "code": None},
-            }
+            yield construct_event_model(
+                {"type": "error", "message": "An internal server error occurred.", "param": None, "code": None, "sequence_number": 0}
+            )
             return
 
         state.handler_events.append(first_normalized)
@@ -774,8 +767,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # FR-008a: output manipulation detection on response.created.
         # If the handler directly added items to response.output instead of
         # using builder events, the output list will be non-empty.
-        created_payload = first_normalized.get("payload") or {}
-        created_output = created_payload.get("output")
+        created_response = first_normalized.get("response") or {}
+        created_output = created_response.get("output")
         if isinstance(created_output, list) and len(created_output) != 0:
             state.captured_error = ValueError(
                 f"Handler directly modified Response.Output "
@@ -804,8 +797,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 if _pre_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
                     output_item_count += 1
                 if _pre_type in _RESPONSE_SNAPSHOT_TYPES:
-                    _pre_payload = _pre_coerced.get("payload") or {}
-                    _pre_output = _pre_payload.get("output")
+                    _pre_response = _pre_coerced.get("response") or {}
+                    _pre_output = _pre_response.get("output")
                     if isinstance(_pre_output, list) and len(_pre_output) > output_item_count:
                         state.captured_error = ValueError(
                             f"Output item count mismatch "
@@ -1056,7 +1049,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 # Simple fast path for non-background streaming.
                 try:
                     async for event in self._process_handler_events(ctx, state, handler_iterator):
-                        yield encode_sse_payload(event["type"], event["payload"])
+                        yield encode_sse_any_event(event)
                 finally:
                     await _finalize()
                 return
@@ -1073,7 +1066,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             async def _bg_producer_inner() -> None:
                 try:
                     async for event in self._process_handler_events(ctx, state, handler_iterator):
-                        await bg_queue.put(encode_sse_payload(event["type"], event["payload"]))
+                        await bg_queue.put(encode_sse_any_event(event))
                 except Exception as exc:  # pylint: disable=broad-exception-caught
                     state.captured_error = exc
                 finally:
@@ -1122,7 +1115,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         async def _handler_producer() -> None:
             try:
                 async for event in self._process_handler_events(ctx, state, handler_iterator):
-                    await merge_queue.put(encode_sse_payload(event["type"], event["payload"]))
+                    await merge_queue.put(encode_sse_any_event(event))
             finally:
                 await merge_queue.put(_SENTINEL)
 

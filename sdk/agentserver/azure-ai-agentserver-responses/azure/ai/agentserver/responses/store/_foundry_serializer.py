@@ -12,15 +12,15 @@ from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-
 
 def serialize_create_request(
     response: ResponseObject,
-    input_items: Iterable[Any] | None,
+    input_items: Iterable[OutputItem] | None,
     history_item_ids: Iterable[str] | None,
 ) -> bytes:
     """Serialize a create-response request envelope to JSON bytes.
 
     :param response: The initial response snapshot.
     :type response: ResponseObject
-    :param input_items: Ordered input items to store alongside the response.
-    :type input_items: Iterable[Any] | None
+    :param input_items: Resolved output items to store alongside the response.
+    :type input_items: Iterable[OutputItem] | None
     :param history_item_ids: Item IDs drawn from a prior conversation turn.
     :type history_item_ids: Iterable[str] | None
     :returns: UTF-8 encoded JSON body.
@@ -67,7 +67,7 @@ def deserialize_response(body: str) -> ResponseObject:
     return ResponseObject(json.loads(body))  # type: ignore[call-arg]
 
 
-def deserialize_paged_items(body: str) -> list[Any]:
+def deserialize_paged_items(body: str) -> list[OutputItem]:
     """Deserialize a paged-response JSON body, extracting the ``data`` array.
 
     The discriminator field ``type`` on each item determines the concrete
@@ -76,13 +76,13 @@ def deserialize_paged_items(body: str) -> list[Any]:
     :param body: The raw JSON response text from the storage API.
     :type body: str
     :returns: A list of deserialized :class:`OutputItem` instances.
-    :rtype: list[Any]
+    :rtype: list[OutputItem]
     """
     data = json.loads(body)
     return [OutputItem._deserialize(item, []) for item in data.get("data", [])]  # type: ignore[attr-defined]
 
 
-def deserialize_items_array(body: str) -> list[Any | None]:
+def deserialize_items_array(body: str) -> list[OutputItem | None]:
     """Deserialize a JSON array of items, preserving ``null`` gaps.
 
     Null entries in the array indicate that no item was found for the
@@ -91,11 +91,11 @@ def deserialize_items_array(body: str) -> list[Any | None]:
     :param body: The raw JSON response text from the storage API.
     :type body: str
     :returns: A list of deserialized :class:`OutputItem` instances or ``None`` for missing items.
-    :rtype: list[Any | None]
+    :rtype: list[OutputItem | None]
     """
-    items: list[Any] = json.loads(body)
-    result: list[Any | None] = []
-    for item in items:
+    raw_items: list[dict | None] = json.loads(body)
+    result: list[OutputItem | None] = []
+    for item in raw_items:
         if item is None:
             result.append(None)
         else:

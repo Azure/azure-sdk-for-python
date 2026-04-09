@@ -8,9 +8,13 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Literal, Mapping
+from typing import TYPE_CHECKING, Any, Literal, Mapping
 
-from ._generated import ResponseObject, ResponseStreamEvent, ResponseStreamEventType
+from ._generated import AgentReference, OutputItem, ResponseObject, ResponseStreamEvent, ResponseStreamEventType
+
+if TYPE_CHECKING:
+    from .._response_context import ResponseContext
+    from ..hosting._event_subject import _ResponseEventSubject
 
 EVENT_TYPE = ResponseStreamEventType
 
@@ -72,13 +76,13 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         cancel_requested: bool = False,
         client_disconnected: bool = False,
         response_created_seen: bool = False,
-        subject: Any | None = None,
+        subject: _ResponseEventSubject | None = None,
         cancel_signal: asyncio.Event | None = None,
-        input_items: list[dict[str, Any]] | None = None,
+        input_items: list[OutputItem] | None = None,
         previous_response_id: str | None = None,
-        response_context: Any | None = None,
+        response_context: ResponseContext | None = None,
         initial_model: str | None = None,
-        initial_agent_reference: dict[str, Any] | None = None,
+        initial_agent_reference: AgentReference | dict[str, Any] | None = None,
     ) -> None:
         self.response_id = response_id
         self.mode_flags = mode_flags
@@ -93,7 +97,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         self.response_created_seen = response_created_seen
         self.subject = subject
         self.cancel_signal = cancel_signal if cancel_signal is not None else asyncio.Event()
-        self.input_items: list[dict[str, Any]] = input_items if input_items is not None else []
+        self.input_items: list[OutputItem] = input_items if input_items is not None else []
         self.previous_response_id = previous_response_id
         self.response_context = response_context
         self.initial_model = initial_model
@@ -178,16 +182,16 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
             return self.response_created_signal.is_set()
         return True
 
-    def apply_event(self, normalized: dict[str, Any], all_events: list[dict[str, Any]]) -> None:
+    def apply_event(self, normalized: ResponseStreamEvent, all_events: list[ResponseStreamEvent]) -> None:
         """Apply a normalised stream event — updates self.response and self.status.
 
         Does nothing if the execution is already ``"cancelled"``.
 
-        :param normalized: The normalised event dictionary (``{"type": ..., "payload": {...}}``).
-        :type normalized: dict[str, Any]
+        :param normalized: The normalised event (``ResponseStreamEvent`` model instance).
+        :type normalized: ResponseStreamEvent
         :param all_events: The full ordered list of handler events seen so far
             (used to extract the latest response snapshot).
-        :type all_events: list[dict[str, Any]]
+        :type all_events: list[ResponseStreamEvent]
         """
         # Lazy imports to avoid circular dependency (models.runtime ← streaming._helpers ← models.__init__)
         from ..streaming._helpers import (
@@ -198,7 +202,6 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
         if self.status == "cancelled":
             return
         event_type = normalized.get("type")
-        payload = normalized.get("payload", {})
         if event_type in _RESPONSE_SNAPSHOT_EVENT_TYPES:
             agent_reference = (
                 self.response.get("agent_reference") if self.response is not None else {}  # type: ignore[union-attr]
@@ -215,25 +218,29 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
             if isinstance(resolved, str):
                 self.status = resolved
         elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
-            item = payload.get("item")
-            if isinstance(item, dict) and self.response is not None:
-                output = self.response.setdefault("output", [])
-                if isinstance(output, list):
-                    output.append(deepcopy(item))
+            item = normalized.get("item")
+            if item is not None and self.response is not None:
+                item_dict = item.as_dict() if hasattr(item, "as_dict") else item
+                if isinstance(item_dict, dict):
+                    output = self.response.setdefault("output", [])
+                    if isinstance(output, list):
+                        output.append(deepcopy(item_dict))
         elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value:
-            item = payload.get("item")
-            output_index = payload.get("output_index")
-            if isinstance(item, dict) and isinstance(output_index, int) and self.response is not None:
-                output = self.response.get("output", [])
-                if isinstance(output, list) and 0 <= output_index < len(output):
-                    output[output_index] = deepcopy(item)
+            item = normalized.get("item")
+            output_index = normalized.get("output_index")
+            if item is not None and isinstance(output_index, int) and self.response is not None:
+                item_dict = item.as_dict() if hasattr(item, "as_dict") else item
+                if isinstance(item_dict, dict):
+                    output = self.response.get("output", [])
+                    if isinstance(output, list) and 0 <= output_index < len(output):
+                        output[output_index] = deepcopy(item_dict)
 
     @property
-    def agent_reference(self) -> dict[str, Any]:
+    def agent_reference(self) -> AgentReference | dict[str, Any]:
         """Extract agent_reference from the stored response snapshot.
 
-        :returns: The agent reference dict, or empty dict if no response snapshot is set.
-        :rtype: dict[str, Any]
+        :returns: The agent reference model or dict, or empty dict if no response snapshot is set.
+        :rtype: AgentReference | dict[str, Any]
         """
         if self.response is not None:
             return self.response.get("agent_reference") or {}  # type: ignore[return-value]
@@ -291,7 +298,7 @@ class StreamReplayState:
 
 def build_cancelled_response(
     response_id: str,
-    agent_reference: dict[str, Any],
+    agent_reference: AgentReference | dict[str, Any],
     model: str | None,
     created_at: datetime | None = None,
 ) -> ResponseObject:
@@ -299,8 +306,8 @@ def build_cancelled_response(
 
     :param response_id: The response identifier.
     :type response_id: str
-    :param agent_reference: The agent reference metadata dict.
-    :type agent_reference: dict[str, Any]
+    :param agent_reference: The agent reference model or metadata dict.
+    :type agent_reference: AgentReference | dict[str, Any]
     :param model: Optional model identifier.
     :type model: str | None
     :param created_at: Optional creation timestamp; defaults to now if omitted.
@@ -324,7 +331,7 @@ def build_cancelled_response(
 
 def build_failed_response(
     response_id: str,
-    agent_reference: dict[str, Any],
+    agent_reference: AgentReference | dict[str, Any],
     model: str | None,
     created_at: datetime | None = None,
     error_message: str = "An internal server error occurred.",
@@ -333,8 +340,8 @@ def build_failed_response(
 
     :param response_id: The response identifier.
     :type response_id: str
-    :param agent_reference: The agent reference metadata dict.
-    :type agent_reference: dict[str, Any]
+    :param agent_reference: The agent reference model or metadata dict.
+    :type agent_reference: AgentReference | dict[str, Any]
     :param model: Optional model identifier.
     :type model: str | None
     :param created_at: Optional creation timestamp; defaults to now if omitted.

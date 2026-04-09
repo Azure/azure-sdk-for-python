@@ -179,9 +179,9 @@ class TestSessionIdStamping:
     """Tests for B39 — agent_session_id auto-stamping on response events."""
 
     def test_session_id_stamped_on_response_created(self):
-        """B39: agent_session_id is stamped on response.created payload."""
+        """B39: agent_session_id is stamped on response.created event."""
         events = [
-            {"type": "response.created", "payload": {"id": "resp_1", "status": "in_progress"}},
+            {"type": "response.created", "response": {"id": "resp_1", "status": "in_progress"}},
         ]
         apply_common_defaults(
             events,
@@ -190,12 +190,12 @@ class TestSessionIdStamping:
             model=None,
             agent_session_id="test-session",
         )
-        assert events[0]["payload"]["agent_session_id"] == "test-session"
+        assert events[0]["response"]["agent_session_id"] == "test-session"
 
     def test_session_id_stamped_on_response_completed(self):
-        """B39: agent_session_id is stamped on response.completed payload."""
+        """B39: agent_session_id is stamped on response.completed event."""
         events = [
-            {"type": "response.completed", "payload": {"id": "resp_1", "status": "completed"}},
+            {"type": "response.completed", "response": {"id": "resp_1", "status": "completed"}},
         ]
         apply_common_defaults(
             events,
@@ -204,14 +204,14 @@ class TestSessionIdStamping:
             model=None,
             agent_session_id="completed-session",
         )
-        assert events[0]["payload"]["agent_session_id"] == "completed-session"
+        assert events[0]["response"]["agent_session_id"] == "completed-session"
 
     def test_session_id_forcibly_stamped_overrides_handler(self):
         """B39: agent_session_id is forcibly set, even if handler sets it."""
         events = [
             {
                 "type": "response.created",
-                "payload": {"id": "resp_1", "agent_session_id": "handler-set"},
+                "response": {"id": "resp_1", "agent_session_id": "handler-set"},
             },
         ]
         apply_common_defaults(
@@ -222,12 +222,12 @@ class TestSessionIdStamping:
             agent_session_id="library-resolved",
         )
         # Library-resolved session ID overrides handler-set value
-        assert events[0]["payload"]["agent_session_id"] == "library-resolved"
+        assert events[0]["response"]["agent_session_id"] == "library-resolved"
 
     def test_no_session_id_when_none(self):
         """B39: no stamping when agent_session_id is None."""
         events = [
-            {"type": "response.created", "payload": {"id": "resp_1"}},
+            {"type": "response.created", "response": {"id": "resp_1"}},
         ]
         apply_common_defaults(
             events,
@@ -236,12 +236,12 @@ class TestSessionIdStamping:
             model=None,
             agent_session_id=None,
         )
-        assert "agent_session_id" not in events[0]["payload"]
+        assert "agent_session_id" not in events[0]["response"]
 
     def test_non_lifecycle_events_not_stamped(self):
         """B39: non-response.* events are not stamped."""
         events = [
-            {"type": "response.output_text.delta", "payload": {"text": "hello"}},
+            {"type": "response.output_text.delta", "delta": "hello"},
         ]
         apply_common_defaults(
             events,
@@ -250,7 +250,7 @@ class TestSessionIdStamping:
             model=None,
             agent_session_id="should-not-appear",
         )
-        assert "agent_session_id" not in events[0]["payload"]
+        assert "agent_session_id" not in events[0]
 
     def test_session_id_stamped_on_all_lifecycle_types(self):
         """B39: stamped on all response.* lifecycle event types."""
@@ -263,7 +263,7 @@ class TestSessionIdStamping:
             "response.incomplete",
         ]
         for event_type in lifecycle_types:
-            events = [{"type": event_type, "payload": {"id": "resp_1"}}]
+            events = [{"type": event_type, "response": {"id": "resp_1"}}]
             apply_common_defaults(
                 events,
                 response_id="resp_1",
@@ -271,6 +271,6 @@ class TestSessionIdStamping:
                 model=None,
                 agent_session_id="all-types-session",
             )
-            assert events[0]["payload"]["agent_session_id"] == "all-types-session", (
+            assert events[0]["response"]["agent_session_id"] == "all-types-session", (
                 f"Missing agent_session_id on {event_type}"
             )

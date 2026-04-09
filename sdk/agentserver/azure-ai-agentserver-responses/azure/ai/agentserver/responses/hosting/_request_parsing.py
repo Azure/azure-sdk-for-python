@@ -9,6 +9,7 @@ from copy import deepcopy
 from typing import Any, Mapping
 
 from .._id_generator import IdGenerator
+from ..models._generated import AgentReference, CreateResponse
 from ..models.errors import RequestValidationError
 
 _X_AGENT_RESPONSE_ID_HEADER = "x-agent-response-id"
@@ -16,11 +17,11 @@ _X_AGENT_RESPONSE_ID_HEADER = "x-agent-response-id"
 _DEFAULT_AGENT_REFERENCE_NAME = "server-default-agent"
 
 
-def _extract_input_items(raw_payload: Any) -> list[dict[str, Any]]:
+def _extract_input_items(raw_payload: dict[str, Any]) -> list[dict[str, Any]]:
     """Extract and deep-copy the ``input`` items array from a raw request payload.
 
     :param raw_payload: Raw decoded JSON request body.
-    :type raw_payload: Any
+    :type raw_payload: dict[str, Any]
     :return: List of deep-copied input item dictionaries, or empty list if absent.
     :rtype: list[dict[str, Any]]
     """
@@ -38,11 +39,11 @@ def _extract_input_items(raw_payload: Any) -> list[dict[str, Any]]:
     return extracted
 
 
-def _extract_previous_response_id(raw_payload: Any) -> str | None:
+def _extract_previous_response_id(raw_payload: dict[str, Any]) -> str | None:
     """Extract the ``previous_response_id`` string from a raw request payload.
 
     :param raw_payload: Raw decoded JSON request body.
-    :type raw_payload: Any
+    :type raw_payload: dict[str, Any]
     :return: The previous response ID string, or ``None`` if absent or invalid.
     :rtype: str | None
     """
@@ -109,18 +110,18 @@ def _validate_response_id(response_id: str) -> None:
         )
 
 
-def _normalize_agent_reference(value: Any) -> dict[str, Any]:
-    """Normalize an agent reference value into a validated dictionary.
+def _normalize_agent_reference(value: Any) -> AgentReference | dict[str, Any]:
+    """Normalize an agent reference value into a validated model or empty dict.
 
-    If *value* is ``None``, an empty dict is returned (matching .NET null behaviour).
-    Callers interpret an empty dict as "no agent_reference was provided in the
-    request" and skip auto-stamping output items.
+    If *value* is ``None``, an empty dict is returned as a sentinel for
+    "no agent_reference was provided".  Callers use truthiness to detect
+    the sentinel and skip auto-stamping output items.
 
     :param value: Raw agent reference from the request (dict, model, or ``None``).
     :type value: Any
-    :return: Normalized agent reference dictionary with ``type`` and ``name`` keys,
+    :return: An :class:`AgentReference` model instance,
         or ``{}`` when no agent_reference was provided.
-    :rtype: dict[str, Any]
+    :rtype: AgentReference | dict[str, Any]
     :raises RequestValidationError: If the value is not a valid agent reference.
     """
     if value is None:
@@ -156,17 +157,17 @@ def _normalize_agent_reference(value: Any) -> dict[str, Any]:
         )
 
     candidate["name"] = name.strip()
-    return candidate
+    return AgentReference(candidate)
 
 
-def _prevalidate_identity_payload(payload: Any) -> None:
+def _prevalidate_identity_payload(payload: dict[str, Any]) -> None:
     """Pre-validate identity-related fields in the raw request payload.
 
     Checks ``response_id`` format and ``agent_reference`` structure before full
     model parsing, so that identity errors surface early.
 
     :param payload: Raw decoded JSON request body.
-    :type payload: Any
+    :type payload: dict[str, Any]
     :return: None
     :rtype: None
     :raises RequestValidationError: If identity fields are malformed.
@@ -212,10 +213,10 @@ def _prevalidate_identity_payload(payload: Any) -> None:
 
 
 def _resolve_identity_fields(
-    parsed: Any,
+    parsed: CreateResponse,
     *,
     request_headers: Mapping[str, str] | None = None,
-) -> tuple[str, dict[str, Any]]:
+) -> tuple[str, AgentReference | dict[str, Any]]:
     """Resolve the response ID and agent reference from a parsed create request.
 
     **B38 — Response ID Resolution**: If the incoming request includes an
@@ -225,11 +226,13 @@ def _resolve_identity_fields(
     ``conversation`` ID as partition-key hint when available.
 
     :param parsed: Parsed ``CreateResponse`` model instance.
-    :type parsed: Any
+    :type parsed: CreateResponse
     :keyword request_headers: HTTP request headers mapping.
     :keyword type request_headers: Mapping[str, str] | None
-    :return: A tuple of ``(response_id, agent_reference)``.
-    :rtype: tuple[str, dict[str, Any]]
+    :return: A tuple of ``(response_id, agent_reference)``.  The agent reference
+        is an :class:`AgentReference` model when provided, or an empty ``dict``
+        sentinel when absent.
+    :rtype: tuple[str, AgentReference | dict[str, Any]]
     :raises RequestValidationError: If the resolved response ID is invalid.
     """
     # B38: header override takes highest precedence
@@ -264,14 +267,14 @@ def _resolve_identity_fields(
     return response_id, agent_reference
 
 
-def _resolve_conversation_id(parsed: Any) -> str | None:
+def _resolve_conversation_id(parsed: CreateResponse) -> str | None:
     """Extract the conversation ID from a parsed ``CreateResponse`` request.
 
     Handles both a plain string value and a ``ConversationParam_2`` object
     (which carries the ID in its ``.id`` attribute).
 
     :param parsed: The parsed ``CreateResponse`` model instance.
-    :type parsed: Any
+    :type parsed: CreateResponse
     :returns: The conversation ID string, or ``None`` if not present.
     :rtype: str | None
     """
@@ -286,7 +289,7 @@ def _resolve_conversation_id(parsed: Any) -> str | None:
     return None
 
 
-def _resolve_session_id(parsed: Any, payload: Any, *, env_session_id: str = "") -> str:
+def _resolve_session_id(parsed: CreateResponse, payload: dict[str, Any], *, env_session_id: str = "") -> str:
     """Resolve the session ID for a create-response request.
 
     **B39 — Session ID Resolution**: The library resolves ``agent_session_id``
@@ -297,9 +300,9 @@ def _resolve_session_id(parsed: Any, payload: Any, *, env_session_id: str = "") 
     3. Generated UUID (freshly generated as a string)
 
     :param parsed: Parsed ``CreateResponse`` model instance.
-    :type parsed: Any
+    :type parsed: CreateResponse
     :param payload: Raw JSON payload dict.
-    :type payload: Any
+    :type payload: dict[str, Any]
     :keyword env_session_id: Platform-supplied session ID from ``AgentConfig``
         (sourced from ``FOUNDRY_AGENT_SESSION_ID`` env var).  Defaults to ``""``.
     :keyword type env_session_id: str

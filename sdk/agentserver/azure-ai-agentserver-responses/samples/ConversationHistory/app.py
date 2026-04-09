@@ -6,6 +6,7 @@ Run:
     python samples/ConversationHistory/app.py
 """
 
+import asyncio
 from collections.abc import Sequence
 
 from azure.ai.agentserver.responses import (
@@ -47,7 +48,7 @@ server = ResponsesAgentServerHost(
 
 
 @server.create_handler
-def create(request: CreateResponse, context: ResponseContext, cancellation_signal):
+def create(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     async def _build():
         history = await context.get_history()
         current_input = get_input_text(request)

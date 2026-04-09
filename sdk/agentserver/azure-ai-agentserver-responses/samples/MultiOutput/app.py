@@ -8,8 +8,12 @@ Run:
 
 import asyncio
 
-from azure.ai.agentserver.responses import ResponsesAgentServerHost, ResponseContext, CreateResponse, ResponseEventStream
-
+from azure.ai.agentserver.responses import (
+    CreateResponse,
+    ResponseContext,
+    ResponseEventStream,
+    ResponsesAgentServerHost,
+)
 
 server = ResponsesAgentServerHost()
 

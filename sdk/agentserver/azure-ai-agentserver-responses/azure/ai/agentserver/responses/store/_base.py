@@ -4,9 +4,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Iterable, Protocol, runtime_checkable
+from typing import TYPE_CHECKING, Iterable, Protocol, runtime_checkable
 
-from ..models._generated import ResponseObject
+from ..models._generated import OutputItem, ResponseObject, ResponseStreamEvent
 
 if TYPE_CHECKING:
     from .._response_context import IsolationContext
@@ -27,7 +27,7 @@ class ResponseProviderProtocol(Protocol):
     async def create_response(
         self,
         response: ResponseObject,
-        input_items: Iterable[Any] | None,
+        input_items: Iterable[OutputItem] | None,
         history_item_ids: Iterable[str] | None,
         *,
         isolation: IsolationContext | None = None,
@@ -36,8 +36,8 @@ class ResponseProviderProtocol(Protocol):
 
         :param response: The response envelope to persist.
         :type response: ~azure.ai.agentserver.responses.models._generated.ResponseObject
-        :param input_items: Optional input items to associate with the response.
-        :type input_items: Iterable[Any] | None
+        :param input_items: Optional resolved output items to associate with the response.
+        :type input_items: Iterable[OutputItem] | None
         :param history_item_ids: Optional history item IDs to link to the response.
         :type history_item_ids: Iterable[str] | None
         :keyword isolation: Isolation context for multi-tenant partitioning.
@@ -88,7 +88,7 @@ class ResponseProviderProtocol(Protocol):
         before: str | None = None,
         *,
         isolation: IsolationContext | None = None,
-    ) -> list[Any]:
+    ) -> list[OutputItem]:
         """Get response input/history items for one response ID using cursor pagination.
 
         :param response_id: The unique identifier of the response whose items to fetch.
@@ -103,22 +103,22 @@ class ResponseProviderProtocol(Protocol):
         :type before: str | None
         :keyword isolation: Isolation context for multi-tenant partitioning.
         :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
-        :returns: A list of input/history items matching the pagination criteria.
-        :rtype: list[Any]
+        :returns: A list of output items matching the pagination criteria.
+        :rtype: list[OutputItem]
         """
         ...
 
     async def get_items(
         self, item_ids: Iterable[str], *, isolation: IsolationContext | None = None
-    ) -> list[Any | None]:
+    ) -> list[OutputItem | None]:
         """Get items by ID (missing IDs produce ``None`` entries).
 
         :param item_ids: The item identifiers to look up.
         :type item_ids: Iterable[str]
         :keyword isolation: Isolation context for multi-tenant partitioning.
         :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
-        :returns: A list of items in the same order as *item_ids*; missing items are ``None``.
-        :rtype: list[Any | None]
+        :returns: A list of output items in the same order as *item_ids*; missing items are ``None``.
+        :rtype: list[OutputItem | None]
         """
         ...
 
@@ -158,20 +158,19 @@ class ResponseStreamProviderProtocol(Protocol):
     async def save_stream_events(
         self,
         response_id: str,
-        events: list[dict[str, Any]],
+        events: list[ResponseStreamEvent],
         *,
         isolation: IsolationContext | None = None,
     ) -> None:
         """Persist the complete ordered list of SSE events for a response.
 
         Called once when the background+stream response reaches terminal state.
-        The *events* list uses the same normalised format that the SSE encoding
-        layer expects: ``[{"type": str, "payload": dict}, ...]``.
+        The *events* list contains ``ResponseStreamEvent`` model instances.
 
         :param response_id: The unique identifier of the response.
         :type response_id: str
-        :param events: Ordered list of normalised SSE event dicts to persist.
-        :type events: list[dict[str, Any]]
+        :param events: Ordered list of event instances to persist.
+        :type events: list[ResponseStreamEvent]
         :keyword isolation: Isolation context for multi-tenant partitioning.
         :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
         :rtype: None
@@ -182,15 +181,15 @@ class ResponseStreamProviderProtocol(Protocol):
         response_id: str,
         *,
         isolation: IsolationContext | None = None,
-    ) -> list[dict[str, Any]] | None:
+    ) -> list[ResponseStreamEvent] | None:
         """Retrieve the persisted SSE events for a response.
 
         :param response_id: The unique identifier of the response whose events to retrieve.
         :type response_id: str
         :keyword isolation: Isolation context for multi-tenant partitioning.
         :paramtype isolation: ~azure.ai.agentserver.responses.IsolationContext | None
-        :returns: The ordered list of normalised SSE event dicts, or ``None`` if not found.
-        :rtype: list[dict[str, Any]] | None
+        :returns: The ordered list of event instances, or ``None`` if not found.
+        :rtype: list[ResponseStreamEvent] | None
         """
 
     async def delete_stream_events(

@@ -175,7 +175,7 @@ def _web_search_handler():
 
     The OpenAI SDK requires ``action`` to be a discriminated union member
     (``ActionSearch``, etc.) so we use the low-level builder and override
-    the item payloads to include a valid search action.
+    the item to include a valid search action.
     """
 
     def handler(request, context, cancellation_signal):
@@ -183,15 +183,15 @@ def _web_search_handler():
             s = ResponseEventStream(response_id=context.response_id, model=request.model)
             yield s.emit_created()
             b = s.add_output_item_web_search_call()
-            # Override the added payload to include a valid action.
+            # Override the added item to include a valid action.
             added = b.emit_added()
-            item = added.get("payload", {}).get("item", {})
+            item = added.get("item", {})
             item["action"] = {"type": "search", "query": "test query"}
             yield added
             yield b.emit_searching()
             yield b.emit_completed()
             done = b.emit_done()
-            done_item = done.get("payload", {}).get("item", {})
+            done_item = done.get("item", {})
             done_item["action"] = {"type": "search", "query": "test query"}
             yield done
             yield s.emit_completed()

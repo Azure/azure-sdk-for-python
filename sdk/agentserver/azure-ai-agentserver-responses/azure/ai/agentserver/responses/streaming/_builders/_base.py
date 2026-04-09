@@ -92,13 +92,13 @@ class BaseOutputItemBuilder:
             )
         self._lifecycle_state = new_state
 
-    def _emit_added(self, item: dict[str, Any]) -> dict[str, Any]:
+    def _emit_added(self, item: dict[str, Any]) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.added`` event with lifecycle guard.
 
-        :param item: The output item dict to include in the event payload.
+        :param item: The output item dict to include in the event.
         :type item: dict[str, Any]
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         :raises ValueError: If the builder is not in ``NOT_STARTED`` state.
         """
         self._ensure_transition(BuilderLifecycleState.NOT_STARTED, BuilderLifecycleState.ADDED)
@@ -106,20 +106,18 @@ class BaseOutputItemBuilder:
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value,
-                "payload": {
-                    "output_index": self._output_index,
-                    "item": stamped_item,
-                },
+                "output_index": self._output_index,
+                "item": stamped_item,
             }
         )
 
-    def _emit_done(self, item: dict[str, Any]) -> dict[str, Any]:
+    def _emit_done(self, item: dict[str, Any]) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.done`` event with lifecycle guard.
 
-        :param item: The completed output item dict to include in the event payload.
+        :param item: The completed output item dict to include in the event.
         :type item: dict[str, Any]
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         :raises ValueError: If the builder is not in ``ADDED`` state.
         """
         self._ensure_transition(BuilderLifecycleState.ADDED, BuilderLifecycleState.DONE)
@@ -127,40 +125,39 @@ class BaseOutputItemBuilder:
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value,
-                "payload": {
-                    "output_index": self._output_index,
-                    "item": stamped_item,
-                },
+                "output_index": self._output_index,
+                "item": stamped_item,
             }
         )
 
-    def _emit_item_state_event(self, event_type: str, *, extra_payload: dict[str, Any] | None = None) -> dict[str, Any]:
+    def _emit_item_state_event(self, event_type: str, *, extra_payload: dict[str, Any] | None = None) -> generated_models.ResponseStreamEvent:
         """Emit an item-level state event (e.g., in-progress, searching, completed).
 
         :param event_type: The event type string.
         :type event_type: str
-        :keyword extra_payload: Optional additional payload fields to merge.
+        :keyword extra_payload: Optional additional fields to merge.
         :paramtype extra_payload: dict[str, Any] | None
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         """
-        payload: dict[str, Any] = {
+        event: dict[str, Any] = {
+            "type": event_type,
             "item_id": self._item_id,
             "output_index": self._output_index,
         }
         if extra_payload:
-            payload.update(deepcopy(extra_payload))
-        return self._stream.emit_event({"type": event_type, "payload": payload})
+            event.update(deepcopy(extra_payload))
+        return self._stream.emit_event(event)
 
 
 class OutputItemBuilder(BaseOutputItemBuilder):
     """Generic output-item builder for item types without dedicated scoped builders."""
 
-    def _coerce_item(self, item: Any) -> dict[str, Any]:
+    def _coerce_item(self, item: generated_models.OutputItem | dict[str, Any]) -> dict[str, Any]:
         """Coerce an item to a plain dict.
 
         :param item: A dict or a generated model with ``as_dict()``.
-        :type item: Any
+        :type item: OutputItem | dict[str, Any]
         :returns: A deep-copied dict representation of the item.
         :rtype: dict[str, Any]
         :raises TypeError: If *item* is not a dict or model with ``as_dict()``.
@@ -168,25 +165,25 @@ class OutputItemBuilder(BaseOutputItemBuilder):
         if isinstance(item, dict):
             return deepcopy(item)
         if hasattr(item, "as_dict"):
-            return deepcopy(item.as_dict())
+            return item.as_dict()
         raise TypeError("item must be a dict or a generated model with as_dict()")
 
-    def emit_added(self, item: Any) -> dict[str, Any]:
+    def emit_added(self, item: generated_models.OutputItem | dict[str, Any]) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.added`` event for a generic item.
 
         :param item: The output item (dict or model with ``as_dict()``).
-        :type item: Any
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :type item: OutputItem | dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         """
         return self._emit_added(self._coerce_item(item))
 
-    def emit_done(self, item: Any) -> dict[str, Any]:
+    def emit_done(self, item: generated_models.OutputItem | dict[str, Any]) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.done`` event for a generic item.
 
         :param item: The completed output item (dict or model with ``as_dict()``).
-        :type item: Any
-        :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :type item: OutputItem | dict[str, Any]
+        :returns: The emitted event.
+        :rtype: ResponseStreamEvent
         """
         return self._emit_done(self._coerce_item(item))

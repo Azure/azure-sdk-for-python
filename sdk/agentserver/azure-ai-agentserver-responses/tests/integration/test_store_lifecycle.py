@@ -27,7 +27,7 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
     """Handler that emits response.created then blocks until cancelled (Phase 3)."""
 
     async def _events():
-        yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
+        yield {"type": "response.created", "response": {"status": "in_progress", "output": []}}
         while not cancellation_signal.is_set():
             await asyncio.sleep(0.01)
 

@@ -10,7 +10,7 @@ Shows how to configure the server with custom runtime options:
   - A handler that relies on ``request.model``, which is automatically
     filled from ``default_model`` when the client omits it.
 
-Pattern: custom options, default model, debug logging.
+Pattern: TextResponse with custom options, default model, debug logging.
 
 Run:
     python samples/scenarios/sample_07_customization.py
@@ -21,9 +21,9 @@ import asyncio
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
-    ResponseEventStream,
     ResponsesAgentServerHost,
     ResponsesServerOptions,
+    TextResponse,
     get_input_text,
 )
 
@@ -37,21 +37,13 @@ app = ResponsesAgentServerHost(options=options, log_level="DEBUG")
 
 
 @app.create_handler
-def handler(
-    request: CreateResponse,
-    context: ResponseContext,
-    cancellation_signal: asyncio.Event,
-):
+def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo handler that reports which model is being used."""
-    stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-    yield stream.emit_created()
-    yield stream.emit_in_progress()
-
-    input_text = get_input_text(request)
-    yield from stream.output_item_message(
-        f"[model={request.model}] Echo: {input_text}"
+    return TextResponse(
+        context,
+        request,
+        create_text=lambda: f"[model={request.model}] Echo: {get_input_text(request)}",
     )
-    yield stream.emit_completed()
 
 
 def main() -> None:

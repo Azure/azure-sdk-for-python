@@ -64,7 +64,7 @@ def _throwing_after_created_bg_handler(request: Any, context: Any, cancellation_
     """
 
     async def _events():
-        yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
+        yield {"type": "response.created", "response": {"status": "in_progress", "output": []}}
         raise RuntimeError("Simulated handler failure")
 
     return _events()
@@ -74,7 +74,7 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
     """Handler that emits response.created then blocks until cancelled (Phase 3)."""
 
     async def _events():
-        yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
+        yield {"type": "response.created", "response": {"status": "in_progress", "output": []}}
         while not cancellation_signal.is_set():
             await asyncio.sleep(0.01)
 
@@ -85,8 +85,8 @@ def _incomplete_bg_handler(request: Any, context: Any, cancellation_signal: Any)
     """Background handler that emits an incomplete terminal event."""
 
     async def _events():
-        yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
-        yield {"type": "response.incomplete", "payload": {"status": "incomplete", "output": []}}
+        yield {"type": "response.created", "response": {"status": "in_progress", "output": []}}
+        yield {"type": "response.incomplete", "response": {"status": "incomplete", "output": []}}
 
     return _events()
 

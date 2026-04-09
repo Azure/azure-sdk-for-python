@@ -276,3 +276,94 @@ def get_content_expanded(message: ItemMessage) -> list[MessageContent]:
     """
     content = _get_field(message, "content")
     return list(content) if content else []
+
+
+# ---------------------------------------------------------------------------
+# Item → OutputItem conversion
+# ---------------------------------------------------------------------------
+
+# Item types whose OutputItem counterpart has a ``status`` field AND should
+# be set to ``"completed"`` during conversion.  This is an **opt-in** list:
+# any item type NOT listed here will NOT receive a status value.  This
+# prevents newly-added item types from accidentally gaining a status field.
+_COMPLETED_STATUS_ITEM_TYPES = frozenset(
+    {
+        "message",  # OutputItemMessage
+        "function_call",  # OutputItemFunctionToolCall
+        "function_call_output",  # FunctionToolCallOutputResource
+        "computer_call",  # OutputItemComputerToolCall
+        "computer_call_output",  # OutputItemComputerToolCallOutputResource
+        "file_search_call",  # OutputItemFileSearchToolCall
+        "web_search_call",  # OutputItemWebSearchToolCall
+        "image_generation_call",  # OutputItemImageGenToolCall
+        "code_interpreter_call",  # OutputItemCodeInterpreterToolCall
+        "local_shell_call",  # OutputItemLocalShellToolCall
+        "local_shell_call_output",  # OutputItemLocalShellToolCallOutput
+        "shell_call",  # OutputItemFunctionShellCall
+        "shell_call_output",  # OutputItemFunctionShellCallOutput
+        "mcp_call",  # OutputItemMcpToolCall
+        "reasoning",  # OutputItemReasoningItem
+    }
+)
+
+# Item types whose original status should be preserved as-is rather than
+# overwritten.  The enum string values are identical between Param and
+# Output models (e.g. ``"in_progress"``, ``"completed"``), so the dict
+# representation transfers directly.
+_PRESERVE_STATUS_ITEM_TYPES = frozenset(
+    {
+        "output_message",  # ItemOutputMessage – status semantics preserved
+        "apply_patch_call",  # ApplyPatchToolCallItemParam → ApplyPatchCallStatus
+        "apply_patch_call_output",  # ApplyPatchToolCallOutputItemParam → ApplyPatchCallOutputStatus
+    }
+)
+
+
+def to_output_item(item: Item, response_id: str | None = None) -> OutputItem | None:
+    """Convert an :class:`Item` to the corresponding :class:`OutputItem`.
+
+    Generates a type-specific ID via :meth:`IdGenerator.new_item_id` and
+    applies status according to per-type rules:
+
+    * **Completed** — explicitly listed types get ``status = "completed"``.
+    * **Preserve status** — types whose original status must be kept
+      (``ItemOutputMessage``, ``ApplyPatch*``).
+    * **No status** — all other types (including any future types) receive
+      no status value.  This opt-in design prevents newly-added item types
+      from accidentally gaining a status field.
+
+    Returns ``None`` for :class:`ItemReferenceParam` or unrecognised types.
+
+    The conversion leverages ``_deserialize(OutputItem, data)`` which
+    resolves the correct subtype via the ``type`` discriminator.  All 24
+    input/output discriminator pairs share the same string values, so the
+    dict representation produced by ``dict(item)`` is directly compatible
+    with ``OutputItem`` deserialization.
+
+    :param item: The input item to convert.
+    :type item: Item
+    :param response_id: An existing ID (typically the response ID) used as
+        a partition-key hint for the generated item ID.
+    :type response_id: str | None
+    :returns: The converted output item, or ``None`` if non-convertible.
+    :rtype: OutputItem | None
+    """
+    # Avoid circular import — IdGenerator lives one level up.
+    from .._id_generator import IdGenerator
+
+    item_id = IdGenerator.new_item_id(item, response_id)
+    if item_id is None:
+        return None  # ItemReferenceParam or unrecognised
+
+    data = dict(item)
+    data["id"] = item_id
+
+    item_type = data.get("type", "")
+
+    # ── Status handling (opt-in) ─────────────────────────────────────
+    if item_type in _COMPLETED_STATUS_ITEM_TYPES:
+        data["status"] = "completed"
+    elif item_type in _PRESERVE_STATUS_ITEM_TYPES:
+        pass  # keep the original status from the input item
+
+    return _deserialize(OutputItem, data)

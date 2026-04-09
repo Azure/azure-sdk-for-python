@@ -8,6 +8,7 @@ from collections.abc import AsyncIterable
 from copy import deepcopy
 from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator
 
+from ...models import _generated as generated_models
 from ._base import EVENT_TYPE, BaseOutputItemBuilder, BuilderLifecycleState
 
 if TYPE_CHECKING:
@@ -56,11 +57,11 @@ class TextContentBuilder:
         """
         return self._content_index
 
-    def emit_added(self) -> dict[str, Any]:
+    def emit_added(self) -> generated_models.ResponseStreamEvent:
         """Emit a ``content_part.added`` event for this text content.
 
         :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :rtype: ResponseStreamEvent
         :raises ValueError: If the builder is not in ``NOT_STARTED`` state.
         """
         if self._lifecycle_state is not BuilderLifecycleState.NOT_STARTED:
@@ -69,39 +70,35 @@ class TextContentBuilder:
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_CONTENT_PART_ADDED.value,
-                "payload": {
-                    "item_id": self._item_id,
-                    "output_index": self._output_index,
-                    "content_index": self._content_index,
-                    "part": {"type": "output_text", "text": "", "annotations": [], "logprobs": []},
-                },
+                "item_id": self._item_id,
+                "output_index": self._output_index,
+                "content_index": self._content_index,
+                "part": {"type": "output_text", "text": "", "annotations": [], "logprobs": []},
             }
         )
 
-    def emit_delta(self, text: str) -> dict[str, Any]:
+    def emit_delta(self, text: str) -> generated_models.ResponseStreamEvent:
         if self._lifecycle_state is not BuilderLifecycleState.ADDED:
             raise ValueError(f"cannot call emit_delta in '{self._lifecycle_state.value}' state")
         self._delta_fragments.append(text)
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_OUTPUT_TEXT_DELTA.value,
-                "payload": {
-                    "item_id": self._item_id,
-                    "output_index": self._output_index,
-                    "content_index": self._content_index,
-                    "delta": text,
-                    "logprobs": [],
-                },
+                "item_id": self._item_id,
+                "output_index": self._output_index,
+                "content_index": self._content_index,
+                "delta": text,
+                "logprobs": [],
             }
         )
 
-    def emit_done(self, final_text: str | None = None) -> dict[str, Any]:
+    def emit_done(self, final_text: str | None = None) -> generated_models.ResponseStreamEvent:
         """Emit a text done event with the merged final text.
 
         :param final_text: Optional override for the final text; uses merged deltas if ``None``.
         :type final_text: str | None
         :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :rtype: ResponseStreamEvent
         :raises ValueError: If the builder is not in ``ADDED`` state.
         """
         if self._lifecycle_state is not BuilderLifecycleState.ADDED:
@@ -114,36 +111,32 @@ class TextContentBuilder:
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_OUTPUT_TEXT_DONE.value,
-                "payload": {
-                    "item_id": self._item_id,
-                    "output_index": self._output_index,
-                    "content_index": self._content_index,
-                    "text": merged_text,
-                    "logprobs": [],
-                },
+                "item_id": self._item_id,
+                "output_index": self._output_index,
+                "content_index": self._content_index,
+                "text": merged_text,
+                "logprobs": [],
             }
         )
 
-    def emit_annotation_added(self, annotation: dict[str, Any]) -> dict[str, Any]:
+    def emit_annotation_added(self, annotation: dict[str, Any]) -> generated_models.ResponseStreamEvent:
         """Emit a text annotation added event.
 
         :param annotation: The annotation dict to attach.
         :type annotation: dict[str, Any]
         :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :rtype: ResponseStreamEvent
         """
         annotation_index = self._annotation_index
         self._annotation_index += 1
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED.value,
-                "payload": {
-                    "item_id": self._item_id,
-                    "output_index": self._output_index,
-                    "content_index": self._content_index,
-                    "annotation_index": annotation_index,
-                    "annotation": deepcopy(annotation),
-                },
+                "item_id": self._item_id,
+                "output_index": self._output_index,
+                "content_index": self._content_index,
+                "annotation_index": annotation_index,
+                "annotation": deepcopy(annotation),
             }
         )
 
@@ -188,11 +181,11 @@ class RefusalContentBuilder:
         """
         return self._content_index
 
-    def emit_added(self) -> dict[str, Any]:
+    def emit_added(self) -> generated_models.ResponseStreamEvent:
         """Emit a ``content_part.added`` event for this refusal content.
 
         :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :rtype: ResponseStreamEvent
         :raises ValueError: If the builder is not in ``NOT_STARTED`` state.
         """
         if self._lifecycle_state is not BuilderLifecycleState.NOT_STARTED:
@@ -201,42 +194,38 @@ class RefusalContentBuilder:
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_CONTENT_PART_ADDED.value,
-                "payload": {
-                    "item_id": self._item_id,
-                    "output_index": self._output_index,
-                    "content_index": self._content_index,
-                    "part": {"type": "refusal", "refusal": ""},
-                },
+                "item_id": self._item_id,
+                "output_index": self._output_index,
+                "content_index": self._content_index,
+                "part": {"type": "refusal", "refusal": ""},
             }
         )
 
-    def emit_delta(self, text: str) -> dict[str, Any]:
+    def emit_delta(self, text: str) -> generated_models.ResponseStreamEvent:
         """Emit a refusal delta event.
 
         :param text: The incremental refusal text fragment.
         :type text: str
         :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :rtype: ResponseStreamEvent
         """
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_REFUSAL_DELTA.value,
-                "payload": {
-                    "item_id": self._item_id,
-                    "output_index": self._output_index,
-                    "content_index": self._content_index,
-                    "delta": text,
-                },
+                "item_id": self._item_id,
+                "output_index": self._output_index,
+                "content_index": self._content_index,
+                "delta": text,
             }
         )
 
-    def emit_done(self, final_refusal: str) -> dict[str, Any]:
+    def emit_done(self, final_refusal: str) -> generated_models.ResponseStreamEvent:
         """Emit a refusal done event.
 
         :param final_refusal: The final, complete refusal text.
         :type final_refusal: str
         :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :rtype: ResponseStreamEvent
         :raises ValueError: If the builder is not in ``ADDED`` state.
         """
         if self._lifecycle_state is not BuilderLifecycleState.ADDED:
@@ -246,12 +235,10 @@ class RefusalContentBuilder:
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_REFUSAL_DONE.value,
-                "payload": {
-                    "item_id": self._item_id,
-                    "output_index": self._output_index,
-                    "content_index": self._content_index,
-                    "refusal": final_refusal,
-                },
+                "item_id": self._item_id,
+                "output_index": self._output_index,
+                "content_index": self._content_index,
+                "refusal": final_refusal,
             }
         )
 
@@ -278,11 +265,11 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         self._content_index = 0
         self._completed_contents: list[dict[str, Any]] = []
 
-    def emit_added(self) -> dict[str, Any]:
+    def emit_added(self) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.added`` event for this message item.
 
         :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :rtype: ResponseStreamEvent
         """
         return self._emit_added(
             {
@@ -324,13 +311,13 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
             item_id=self._item_id,
         )
 
-    def emit_content_done(self, content_builder: TextContentBuilder | RefusalContentBuilder) -> dict[str, Any]:
+    def emit_content_done(self, content_builder: TextContentBuilder | RefusalContentBuilder) -> generated_models.ResponseStreamEvent:
         """Emit a ``content_part.done`` event for a completed content part.
 
         :param content_builder: The content builder whose final state to emit.
         :type content_builder: TextContentBuilder | RefusalContentBuilder
         :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :rtype: ResponseStreamEvent
         """
         if isinstance(content_builder, TextContentBuilder):
             part = {
@@ -351,20 +338,18 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_CONTENT_PART_DONE.value,
-                "payload": {
-                    "item_id": self._item_id,
-                    "output_index": self._output_index,
-                    "content_index": content_index,
-                    "part": deepcopy(part),
-                },
+                "item_id": self._item_id,
+                "output_index": self._output_index,
+                "content_index": content_index,
+                "part": deepcopy(part),
             }
         )
 
-    def emit_done(self) -> dict[str, Any]:
+    def emit_done(self) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.done`` event for this message item.
 
         :returns: The emitted event dict.
-        :rtype: dict[str, Any]
+        :rtype: ResponseStreamEvent
         :raises ValueError: If no content parts have been completed.
         """
         if len(self._completed_contents) == 0:
@@ -381,7 +366,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
 
     # ---- Sub-item convenience generators (S-053) ----
 
-    def text_content(self, text: str) -> Iterator[dict[str, Any]]:
+    def text_content(self, text: str) -> Iterator[generated_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a text content part.
 
         Creates the sub-builder, emits ``content_part.added``,
@@ -390,7 +375,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         :param text: The complete text content.
         :type text: str
         :returns: An iterator of event dicts.
-        :rtype: Iterator[dict[str, Any]]
+        :rtype: Iterator[ResponseStreamEvent]
         """
         tc = self.add_text_content()
         yield tc.emit_added()
@@ -398,7 +383,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         yield tc.emit_done(text)
         yield self.emit_content_done(tc)
 
-    async def atext_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[dict[str, Any]]:
+    async def atext_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`text_content` with streaming support.
 
         When *text* is a string, behaves identically to :meth:`text_content`.
@@ -409,7 +394,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         :param text: Complete text or async iterable of text chunks.
         :type text: str | AsyncIterable[str]
         :returns: An async iterator of event dicts.
-        :rtype: AsyncIterator[dict[str, Any]]
+        :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if isinstance(text, str):
             for event in self.text_content(text):
@@ -422,7 +407,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         yield tc.emit_done()
         yield self.emit_content_done(tc)
 
-    def refusal_content(self, text: str) -> Iterator[dict[str, Any]]:
+    def refusal_content(self, text: str) -> Iterator[generated_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a refusal content part.
 
         Creates the sub-builder, emits ``content_part.added``,
@@ -431,7 +416,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         :param text: The complete refusal text.
         :type text: str
         :returns: An iterator of event dicts.
-        :rtype: Iterator[dict[str, Any]]
+        :rtype: Iterator[ResponseStreamEvent]
         """
         rc = self.add_refusal_content()
         yield rc.emit_added()
@@ -439,7 +424,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         yield rc.emit_done(text)
         yield self.emit_content_done(rc)
 
-    async def arefusal_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[dict[str, Any]]:
+    async def arefusal_content(self, text: str | AsyncIterable[str]) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`refusal_content` with streaming support.
 
         When *text* is a string, behaves identically to :meth:`refusal_content`.
@@ -450,7 +435,7 @@ class OutputItemMessageBuilder(BaseOutputItemBuilder):
         :param text: Complete refusal text or async iterable of text chunks.
         :type text: str | AsyncIterable[str]
         :returns: An async iterator of event dicts.
-        :rtype: AsyncIterator[dict[str, Any]]
+        :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if isinstance(text, str):
             for event in self.refusal_content(text):

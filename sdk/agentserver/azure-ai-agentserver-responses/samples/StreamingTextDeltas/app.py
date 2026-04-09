@@ -31,7 +31,7 @@ async def _generate_tokens():
 
 
 @app.create_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
+def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     return TextResponse(
         context,
         request,

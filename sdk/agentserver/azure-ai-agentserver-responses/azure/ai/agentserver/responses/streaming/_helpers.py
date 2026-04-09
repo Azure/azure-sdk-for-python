@@ -4,14 +4,16 @@
 
 from __future__ import annotations
 
+from collections.abc import MutableMapping
 from copy import deepcopy
 from typing import Any, AsyncIterator
 
 from ..models import _generated as generated_models
+from ..models._generated import AgentReference
 from . import _internals
 from ._event_stream import ResponseEventStream
 from ._internals import _RESPONSE_SNAPSHOT_EVENT_TYPES
-from ._sse import encode_sse_payload
+from ._sse import encode_sse_event
 
 EVENT_TYPE = generated_models.ResponseStreamEventType
 
@@ -35,56 +37,85 @@ def _build_events(
     response_id: str,
     *,
     include_progress: bool,
-    agent_reference: dict[str, Any],
+    agent_reference: AgentReference | dict[str, Any],
     model: str | None,
-) -> list[dict[str, Any]]:
+) -> list[generated_models.ResponseStreamEvent]:
     """Build a minimal lifecycle event sequence for a response.
+
+    Returns ``ResponseStreamEvent`` model instances representing the standard
+    lifecycle: ``response.created`` → (optionally) ``response.in_progress`` →
+    ``response.completed``.
 
     :param response_id: Unique identifier for the response.
     :type response_id: str
     :keyword include_progress: Whether to include an ``in_progress`` event.
     :keyword type include_progress: bool
-    :keyword agent_reference: Agent reference metadata dict.
-    :keyword type agent_reference: dict[str, Any]
+    :keyword agent_reference: Agent reference model or metadata dict.
+    :keyword type agent_reference: AgentReference | dict[str, Any]
     :keyword model: Optional model identifier.
     :keyword type model: str | None
-    :returns: A list of event dicts containing created and completed (and optionally in_progress) events.
-    :rtype: list[dict[str, Any]]
+    :returns: A list of typed ``ResponseStreamEvent`` model instances.
+    :rtype: list[~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent]
     """
     stream = ResponseEventStream(
         response_id=response_id,
         agent_reference=agent_reference,
         model=model,
     )
-    events = [stream.emit_created(status="in_progress")]
+    stream.emit_created(status="in_progress")
     if include_progress:
-        events.append(stream.emit_in_progress())
-    events.append(stream.emit_completed())
-    return events
+        stream.emit_in_progress()
+    stream.emit_completed()
+    return list(stream._events)  # pylint: disable=protected-access
 
 
-async def _encode_sse(events: list[dict[str, Any]]) -> AsyncIterator[str]:
-    """Encode a list of event dicts as SSE-formatted strings.
+async def _encode_sse(events: list[generated_models.ResponseStreamEvent]) -> AsyncIterator[str]:
+    """Encode a list of ``ResponseStreamEvent`` model instances as SSE-formatted strings.
 
-    :param events: The event dicts to encode.
-    :type events: list[dict[str, Any]]
+    :param events: The events to encode.
+    :type events: list[ResponseStreamEvent]
     :returns: An async iterator yielding SSE-formatted strings.
     :rtype: AsyncIterator[str]
     """
     for event in events:
-        yield encode_sse_payload(event["type"], event["payload"])
+        yield encode_sse_event(event)
 
 
-def _coerce_handler_event(handler_event: Any) -> dict[str, Any]:
-    """Coerce a handler event to a normalized ``{"type": ..., "payload": ...}`` dict.
+def _coerce_handler_event(
+    handler_event: generated_models.ResponseStreamEvent | dict[str, Any],
+) -> generated_models.ResponseStreamEvent:
+    """Coerce a handler event to a ``ResponseStreamEvent`` model instance.
 
-    :param handler_event: The event to normalize (dict or model with ``as_dict()``).
-    :type handler_event: Any
-    :returns: A normalized event dict with ``type`` and ``payload`` keys.
-    :rtype: dict[str, Any]
+    Handlers may yield events in any of these shapes:
+
+    - **Generated event models** (already typed)::
+
+          ResponseCreatedEvent(response={...}, sequence_number=0)
+
+    - **Wire / SSE format** for lifecycle events::
+
+          {"type": "response.created", "response": {"id": "...", "status": "in_progress", ...}, "sequence_number": 0}
+
+    - **Wire / SSE format** for content events::
+
+          {"type": "response.output_text.delta", "output_index": 0, "delta": "Hello", "sequence_number": 3}
+
+    All shapes are normalised to a ``ResponseStreamEvent`` model instance
+    for typed internal pipeline processing.
+
+    :param handler_event: The event to normalize (dict or model instance).
+    :type handler_event: ResponseStreamEvent | dict[str, Any]
+    :returns: A typed ``ResponseStreamEvent`` model instance.
+    :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
     :raises TypeError: If the event is not a dict or a model with ``as_dict()``.
     :raises ValueError: If the event does not include a non-empty ``type``.
     """
+    from ._internals import construct_event_model  # pylint: disable=import-outside-toplevel
+
+    # Already a typed model — return a copy via as_dict() round-trip.
+    if isinstance(handler_event, generated_models.ResponseStreamEvent):
+        return construct_event_model(handler_event.as_dict())
+
     if isinstance(handler_event, dict):
         event_data = deepcopy(handler_event)
     elif hasattr(handler_event, "as_dict"):
@@ -96,54 +127,44 @@ def _coerce_handler_event(handler_event: Any) -> dict[str, Any]:
     if not isinstance(event_type, str) or not event_type:
         raise ValueError("handler event must include a non-empty 'type'")
 
-    payload = event_data.get("payload")
-    if isinstance(payload, dict):
-        normalized_payload = deepcopy(payload)
-    else:
-        normalized_payload = {key: deepcopy(value) for key, value in event_data.items() if key != "type"}
-
-    return {"type": event_type, "payload": normalized_payload}
+    return construct_event_model(event_data)
 
 
 def _apply_stream_event_defaults(
-    event: dict[str, Any],
+    event: generated_models.ResponseStreamEvent,
     *,
     response_id: str,
-    agent_reference: dict[str, Any],
+    agent_reference: AgentReference | dict[str, Any],
     model: str | None,
     sequence_number: int | None,
     agent_session_id: str | None = None,
     conversation_id: str | None = None,
-) -> dict[str, Any]:
-    """Apply response-level defaults to an event payload.
+) -> generated_models.ResponseStreamEvent:
+    """Apply response-level defaults to a ``ResponseStreamEvent`` model instance.
 
-    For lifecycle events whose payload is a ``Response`` snapshot
-    (``response.created``, ``response.queued``, ``response.in_progress``,
-    ``response.completed``, ``response.failed``, ``response.incomplete``),
-    stamps ``id``, ``response_id``, ``object``, ``agent_reference``,
-    ``model``, and ``agent_session_id`` using ``setdefault`` so
-    handler-supplied values are not overwritten (except
-    ``agent_session_id`` which is forcibly stamped per S-038).
-    For all other event types the payload is left untouched — those events have
-    different schemas per the contract and do not carry these fields.
+    For lifecycle events whose ``response`` attribute carries a ``Response``
+    snapshot, stamps ``id``, ``response_id``, ``object``, ``agent_reference``,
+    ``model``, and ``agent_session_id`` using ``setdefault`` so handler-supplied
+    values are not overwritten (except ``agent_session_id`` which is forcibly
+    stamped per S-038).
 
-    ``sequence_number`` is always applied (or removed) regardless of event type,
+    ``sequence_number`` is always applied at the top level of the event,
     because it lives on the ``ResponseStreamEvent`` base class.
 
-    :param event: The event dict to enrich.
-    :type event: dict[str, Any]
+    :param event: The event model instance to enrich.
+    :type event: ResponseStreamEvent
     :keyword response_id: Response ID to stamp in lifecycle-event payloads.
     :keyword type response_id: str
-    :keyword agent_reference: Agent reference metadata dict.
-    :keyword type agent_reference: dict[str, Any]
+    :keyword agent_reference: Agent reference model or metadata dict.
+    :keyword type agent_reference: AgentReference | dict[str, Any]
     :keyword model: Optional model identifier.
     :keyword type model: str | None
-    :keyword sequence_number: Optional sequence number to set; removed if ``None``.
+    :keyword sequence_number: Optional sequence number to set; ``None`` leaves it unchanged.
     :keyword type sequence_number: int | None
     :keyword agent_session_id: Resolved session ID (S-038).
     :keyword type agent_session_id: str | None
-    :returns: A deep copy of the event with defaults applied.
-    :rtype: dict[str, Any]
+    :returns: The event with defaults applied (same object, mutated in-place).
+    :rtype: ResponseStreamEvent
     """
     normalized = event  # caller (_coerce_handler_event) already deep-copied
     # Delegate lifecycle-event stamping to the canonical implementation in _internals.
@@ -155,15 +176,11 @@ def _apply_stream_event_defaults(
         agent_session_id=agent_session_id,
         conversation_id=conversation_id,
     )
-    payload = normalized.get("payload")
-    if not isinstance(payload, dict):
-        payload = {}
-        normalized["payload"] = payload
     # Stamp response_id and agent_reference on output items (B20/B21)
     event_type = normalized.get("type", "")
     if event_type in ("response.output_item.added", "response.output_item.done"):
-        item = payload.get("item")
-        if isinstance(item, dict):
+        item = normalized.get("item")
+        if isinstance(item, (dict, MutableMapping)):
             item.setdefault("response_id", response_id)
             if agent_reference:
                 # Use explicit None check instead of setdefault so that
@@ -172,17 +189,15 @@ def _apply_stream_event_defaults(
                     item["agent_reference"] = agent_reference
 
     if sequence_number is not None:
-        payload["sequence_number"] = sequence_number
-    else:
-        payload.pop("sequence_number", None)
+        normalized["sequence_number"] = sequence_number
     return normalized
 
 
 def _extract_response_snapshot_from_events(
-    events: list[dict[str, Any]],
+    events: list[generated_models.ResponseStreamEvent],
     *,
     response_id: str,
-    agent_reference: dict[str, Any],
+    agent_reference: AgentReference | dict[str, Any],
     model: str | None,
     remove_sequence_number: bool = False,
     agent_session_id: str | None = None,
@@ -198,8 +213,8 @@ def _extract_response_snapshot_from_events(
     :type events: list[dict[str, Any]]
     :keyword response_id: Response ID for default stamping.
     :keyword type response_id: str
-    :keyword agent_reference: Agent reference metadata dict.
-    :keyword type agent_reference: dict[str, Any]
+    :keyword agent_reference: Agent reference model or metadata dict.
+    :keyword type agent_reference: AgentReference | dict[str, Any]
     :keyword model: Optional model identifier.
     :keyword type model: str | None
     :keyword remove_sequence_number: Whether to strip ``sequence_number`` from the result.
@@ -211,9 +226,12 @@ def _extract_response_snapshot_from_events(
     """
     for event in reversed(events):
         event_type = event.get("type")
-        payload = event.get("payload")
-        if event_type in _RESPONSE_SNAPSHOT_EVENT_TYPES and isinstance(payload, dict):
-            snapshot = deepcopy(payload)
+        snapshot_source = event.get("response")
+        if event_type in _RESPONSE_SNAPSHOT_EVENT_TYPES and isinstance(snapshot_source, MutableMapping):
+            if hasattr(snapshot_source, "as_dict"):
+                snapshot = snapshot_source.as_dict()
+            else:
+                snapshot = deepcopy(dict(snapshot_source))
             snapshot.setdefault("id", response_id)
             snapshot.setdefault("response_id", response_id)
             snapshot.setdefault("agent_reference", deepcopy(agent_reference))
@@ -237,14 +255,17 @@ def _extract_response_snapshot_from_events(
         agent_reference=agent_reference,
         model=model,
     )
-    fallback_payload = deepcopy(fallback_events[-1]["payload"])
-    fallback_payload.setdefault("output", [])
+    # _build_events returns model instances — extract snapshot from the last lifecycle event.
+    last_event = fallback_events[-1]
+    last_wire = last_event.as_dict()
+    fallback_snapshot = dict(last_wire.get("response", {}))
+    fallback_snapshot.setdefault("output", [])
     # S-038: forcibly stamp session ID on fallback snapshot
     if agent_session_id is not None:
-        fallback_payload["agent_session_id"] = agent_session_id
+        fallback_snapshot["agent_session_id"] = agent_session_id
     # S-040: forcibly stamp conversation on fallback snapshot
     if conversation_id is not None:
-        fallback_payload["conversation"] = {"id": conversation_id}
+        fallback_snapshot["conversation"] = {"id": conversation_id}
     if remove_sequence_number:
-        fallback_payload.pop("sequence_number", None)
-    return strip_nulls(fallback_payload)
+        fallback_snapshot.pop("sequence_number", None)
+    return strip_nulls(fallback_snapshot)

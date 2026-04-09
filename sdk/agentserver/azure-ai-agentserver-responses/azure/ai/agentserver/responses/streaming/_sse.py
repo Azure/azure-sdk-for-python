@@ -10,7 +10,6 @@ from contextvars import ContextVar
 from typing import Any, Mapping
 
 from ..models._generated import ResponseStreamEvent
-from ._internals import _RESPONSE_SNAPSHOT_EVENT_TYPES
 
 _stream_counter_var: ContextVar[itertools.count] = ContextVar("_stream_counter_var")
 
@@ -117,32 +116,28 @@ def encode_sse_event(event: ResponseStreamEvent) -> str:
     :returns: Encoded SSE payload string.
     :rtype: str
     """
+    if hasattr(event, "as_dict"):
+        wire = event.as_dict()
+        event_type = str(wire.get("type", ""))
+        _ensure_sequence_number(event, wire)
+        return _build_sse_frame(event_type, wire)
+    # Fallback for non-model event objects (e.g. plain dataclass-like)
     event_type, payload = _coerce_payload(event)
     _ensure_sequence_number(event, payload)
     return _build_sse_frame(event_type, {"type": event_type, **payload})
 
 
-def encode_sse_payload(event_type: str, payload: Mapping[str, Any]) -> str:
-    """Encode an event type + payload pair into SSE wire format.
+def encode_sse_any_event(event: ResponseStreamEvent) -> str:
+    """Encode a ``ResponseStreamEvent`` model instance to SSE format.
 
-    :param event_type: The SSE event type name.
-    :type event_type: str
-    :param payload: The payload mapping to encode.
-    :type payload: Mapping[str, Any]
-    :returns: The encoded SSE frame string.
+    Delegates to :func:`encode_sse_event`.
+
+    :param event: The event to encode.
+    :type event: ResponseStreamEvent
+    :returns: Encoded SSE frame string.
     :rtype: str
     """
-    event = {"type": event_type, **dict(payload)}
-    normalized_type, normalized_payload = _coerce_payload(event)
-    _ensure_sequence_number(event, normalized_payload)
-    if normalized_type in _RESPONSE_SNAPSHOT_EVENT_TYPES:
-        seq = normalized_payload.pop("sequence_number", None)
-        data: dict[str, Any] = {"type": normalized_type, "response": normalized_payload}
-        if seq is not None:
-            data["sequence_number"] = seq
-    else:
-        data = {"type": normalized_type, **normalized_payload}
-    return _build_sse_frame(normalized_type, data)
+    return encode_sse_event(event)
 
 
 def encode_keep_alive_comment(comment: str = "keep-alive") -> str:

@@ -13,7 +13,7 @@ from datetime import datetime, timedelta, timezone
 from typing import Any, AsyncIterator, Dict, Iterable
 
 from .._response_context import IsolationContext
-from ..models._generated import ResponseObject
+from ..models._generated import OutputItem, ResponseObject, ResponseStreamEvent
 from ..models._helpers import get_conversation_id
 from ..models.runtime import ResponseExecution, ResponseModeFlags, ResponseStatus, StreamEventRecord, StreamReplayState
 from ._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
@@ -44,9 +44,9 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         """Initialize in-memory state and an async mutation lock."""
         self._entries: Dict[str, _StoreEntry] = {}
         self._lock = asyncio.Lock()
-        self._item_store: Dict[str, Any] = {}
+        self._item_store: Dict[str, OutputItem] = {}
         self._conversation_responses: defaultdict[str, list[str]] = defaultdict(list)
-        self._stream_events: Dict[str, list[dict[str, Any]]] = {}
+        self._stream_events: Dict[str, list[ResponseStreamEvent]] = {}
 
     @contextlib.asynccontextmanager
     async def _locked(self) -> AsyncIterator[None]:
@@ -58,7 +58,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
     async def create_response(
         self,
         response: ResponseObject,
-        input_items: Iterable[Any] | None,
+        input_items: Iterable[OutputItem] | None,
         history_item_ids: Iterable[str] | None,
         *,
         isolation: IsolationContext | None = None,
@@ -70,8 +70,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         :param response: The response envelope to persist.
         :type response: ~azure.ai.agentserver.responses.models._generated.Response
-        :param input_items: Optional input items to associate with the response.
-        :type input_items: Iterable[Any] | None
+        :param input_items: Optional resolved output items to associate with the response.
+        :type input_items: Iterable[OutputItem] | None
         :param history_item_ids: Optional history item IDs to link to the response.
         :type history_item_ids: Iterable[str] | None
         :rtype: None
@@ -173,7 +173,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         before: str | None = None,
         *,
         isolation: IsolationContext | None = None,
-    ) -> list[Any]:
+    ) -> list[OutputItem]:
         """Retrieve input/history items for a response with basic cursor paging.
 
         Returns deep copies of stored items, combining history and input item IDs
@@ -190,7 +190,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         :param before: Cursor ID; only return items before this ID.
         :type before: str | None
         :returns: A list of input/history items matching the pagination criteria.
-        :rtype: list[Any]
+        :rtype: list[OutputItem]
         :raises KeyError: If the response does not exist.
         :raises ValueError: If the response has been deleted.
         """
@@ -230,15 +230,15 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         item_ids: Iterable[str],
         *,
         isolation: IsolationContext | None = None,
-    ) -> list[Any | None]:
+    ) -> list[OutputItem | None]:
         """Retrieve items by ID, preserving request order.
 
         Returns deep copies of stored items. Missing IDs produce ``None`` entries.
 
         :param item_ids: The item identifiers to look up.
         :type item_ids: Iterable[str]
-        :returns: A list of items in the same order as *item_ids*; missing items are ``None``.
-        :rtype: list[Any | None]
+        :returns: A list of output items in the same order as *item_ids*; missing items are ``None``.
+        :rtype: list[OutputItem | None]
         """
         async with self._locked():
             return [
@@ -487,7 +487,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
     async def save_stream_events(
         self,
         response_id: str,
-        events: list[dict[str, Any]],
+        events: list[ResponseStreamEvent],
         *,
         isolation: IsolationContext | None = None,
     ) -> None:
@@ -498,12 +498,12 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         :param response_id: The unique identifier of the response.
         :type response_id: str
-        :param events: Ordered list of normalised SSE event dicts.
-        :type events: list[dict[str, Any]]
+        :param events: Ordered list of event instances.
+        :type events: list[ResponseStreamEvent]
         :rtype: None
         """
         now = datetime.now(timezone.utc)
-        stamped: list[dict[str, Any]] = []
+        stamped: list[ResponseStreamEvent] = []
         for ev in events:
             copy = deepcopy(ev)
             copy.setdefault("_saved_at", now)
@@ -516,7 +516,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
         response_id: str,
         *,
         isolation: IsolationContext | None = None,
-    ) -> list[dict[str, Any]] | None:
+    ) -> list[ResponseStreamEvent] | None:
         """Retrieve the persisted SSE events for ``response_id``, excluding expired events.
 
         Events older than the entry's ``replay_event_ttl_seconds`` (default 600s / 10 minutes,
@@ -524,8 +524,8 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         :param response_id: The unique identifier of the response whose events to retrieve.
         :type response_id: str
-        :returns: A deep-copied list of normalised SSE event dicts, or ``None`` if not found.
-        :rtype: list[dict[str, Any]] | None
+        :returns: A deep-copied list of event instances, or ``None`` if not found.
+        :rtype: list[ResponseStreamEvent] | None
         """
         async with self._locked():
             events = self._stream_events.get(response_id)

@@ -19,7 +19,7 @@ def test_lifecycle_state_machine__requires_response_created_as_first_event() -> 
             events=[
                 {
                     "type": "response.in_progress",
-                    "payload": {"status": "in_progress"},
+                    "response": {"status": "in_progress"},
                 }
             ],
         )
@@ -30,9 +30,9 @@ def test_lifecycle_state_machine__rejects_multiple_terminal_events() -> None:
         normalize_lifecycle_events(
             response_id="resp_123",
             events=[
-                {"type": "response.created", "payload": {"status": "queued"}},
-                {"type": "response.completed", "payload": {"status": "completed"}},
-                {"type": "response.failed", "payload": {"status": "failed"}},
+                {"type": "response.created", "response": {"status": "queued"}},
+                {"type": "response.completed", "response": {"status": "completed"}},
+                {"type": "response.failed", "response": {"status": "failed"}},
             ],
         )
 
@@ -41,13 +41,13 @@ def test_lifecycle_state_machine__auto_appends_failed_when_terminal_missing() ->
     normalized = normalize_lifecycle_events(
         response_id="resp_123",
         events=[
-            {"type": "response.created", "payload": {"status": "queued"}},
-            {"type": "response.in_progress", "payload": {"status": "in_progress"}},
+            {"type": "response.created", "response": {"status": "queued"}},
+            {"type": "response.in_progress", "response": {"status": "in_progress"}},
         ],
     )
 
     assert normalized[-1]["type"] == "response.failed"
-    assert normalized[-1]["payload"]["status"] == "failed"
+    assert normalized[-1]["response"]["status"] == "failed"
 
 
 def test_lifecycle_state_machine__rejects_out_of_order_transitions() -> None:
@@ -55,25 +55,25 @@ def test_lifecycle_state_machine__rejects_out_of_order_transitions() -> None:
         normalize_lifecycle_events(
             response_id="resp_123",
             events=[
-                {"type": "response.created", "payload": {"status": "queued"}},
-                {"type": "response.completed", "payload": {"status": "completed"}},
-                {"type": "response.in_progress", "payload": {"status": "in_progress"}},
+                {"type": "response.created", "response": {"status": "queued"}},
+                {"type": "response.completed", "response": {"status": "completed"}},
+                {"type": "response.in_progress", "response": {"status": "in_progress"}},
             ],
         )
 
 
-def test_lifecycle_state_machine__returns_deep_copied_payload_snapshots() -> None:
+def test_lifecycle_state_machine__returns_deep_copied_response_snapshots() -> None:
     original_events = [
         {
             "type": "response.created",
-            "payload": {
+            "response": {
                 "status": "queued",
                 "metadata": {"nested": "before"},
             },
         },
         {
             "type": "response.completed",
-            "payload": {
+            "response": {
                 "status": "completed",
                 "metadata": {"nested": "before"},
             },
@@ -82,5 +82,5 @@ def test_lifecycle_state_machine__returns_deep_copied_payload_snapshots() -> Non
 
     normalized = normalize_lifecycle_events(response_id="resp_123", events=original_events)
 
-    original_events[0]["payload"]["metadata"]["nested"] = "after"
-    assert normalized[0]["payload"]["metadata"]["nested"] == "before"
+    original_events[0]["response"]["metadata"]["nested"] = "after"
+    assert normalized[0]["response"]["metadata"]["nested"] == "before"

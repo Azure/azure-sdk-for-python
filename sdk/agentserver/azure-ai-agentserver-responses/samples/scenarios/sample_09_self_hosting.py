@@ -9,7 +9,7 @@ URL prefix (e.g. ``/api/responses``).
 Because ``ResponsesAgentServerHost`` **is** a Starlette application,
 it can be used as a sub-application via ``starlette.routing.Mount``.
 
-Pattern: Starlette Mount, sub-application composition.
+Pattern: Starlette Mount, sub-application composition, TextResponse.
 
 Run:
     python samples/scenarios/sample_09_self_hosting.py
@@ -23,8 +23,8 @@ from starlette.routing import Mount
 from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
-    ResponseEventStream,
     ResponsesAgentServerHost,
+    TextResponse,
     get_input_text,
 )
 
@@ -33,17 +33,13 @@ responses_app = ResponsesAgentServerHost()
 
 
 @responses_app.create_handler
-def handler(
-    request: CreateResponse,
-    context: ResponseContext,
-    cancellation_signal: asyncio.Event,
-):
+def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo handler mounted under /api."""
-    stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-    yield stream.emit_created()
-    yield stream.emit_in_progress()
-    yield from stream.output_item_message(f"Self-hosted echo: {get_input_text(request)}")
-    yield stream.emit_completed()
+    return TextResponse(
+        context,
+        request,
+        create_text=lambda: f"Self-hosted echo: {get_input_text(request)}",
+    )
 
 
 # Mount into a parent Starlette app

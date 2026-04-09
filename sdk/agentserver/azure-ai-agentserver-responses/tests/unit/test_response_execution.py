@@ -127,7 +127,7 @@ def test_apply_event_response_snapshot_updates_status() -> None:
     events = [
         {
             "type": "response.created",
-            "payload": {
+            "response": {
                 "id": execution.response_id,
                 "response_id": execution.response_id,
                 "agent_reference": {"name": "test-agent"},
@@ -138,7 +138,7 @@ def test_apply_event_response_snapshot_updates_status() -> None:
         },
         {
             "type": "response.completed",
-            "payload": {
+            "response": {
                 "id": execution.response_id,
                 "response_id": execution.response_id,
                 "agent_reference": {"name": "test-agent"},
@@ -166,7 +166,7 @@ def test_apply_event_cancelled_is_noop() -> None:
     events = [
         {
             "type": "response.completed",
-            "payload": {
+            "response": {
                 "id": execution.response_id,
                 "response_id": execution.response_id,
                 "agent_reference": {},
@@ -203,7 +203,7 @@ def test_apply_event_output_item_added() -> None:
     )
 
     item = {"id": "item_1", "type": "text"}
-    event = {"type": "response.output_item.added", "payload": {"item": item}}
+    event = {"type": "response.output_item.added", "output_index": 0, "item": item}
     execution.apply_event(event, [event])
 
     output = execution.response.get("output", [])

@@ -77,12 +77,12 @@ def _handler_with_custom_response_id(custom_id: str):
             # Use the builder to create the item, then modify response_id on the emitted event
             msg = stream.add_output_item_message()
             added_event = msg.emit_added()
-            # Override response_id on the payload's item to test handler-set precedence
-            added_event["payload"]["item"]["response_id"] = custom_id
+            # Override response_id on the item to test handler-set precedence
+            added_event["item"]["response_id"] = custom_id
             yield added_event
 
             done_event = msg.emit_done()
-            done_event["payload"]["item"]["response_id"] = custom_id
+            done_event["item"]["response_id"] = custom_id
             yield done_event
 
             yield stream.emit_completed()
@@ -134,35 +134,31 @@ def _direct_yield_handler(request: Any, context: Any, cancellation_signal: Any):
         stream = ResponseEventStream(response_id=context.response_id, model=getattr(request, "model", None))
         yield stream.emit_created()
 
-        # Directly yield output_item events without response_id using payload format
+        # Directly yield output_item events without response_id using wire format
         item_id = f"caitem_{context.response_id[7:25]}directyield00000000000000000001"
         yield {
             "type": "response.output_item.added",
-            "payload": {
-                "item": {
-                    "id": item_id,
-                    "type": "message",
-                    "role": "assistant",
-                    "status": "in_progress",
-                    "content": [],
-                    # response_id intentionally NOT set — Layer 2 should stamp it
-                },
-                "output_index": 0,
+            "item": {
+                "id": item_id,
+                "type": "message",
+                "role": "assistant",
+                "status": "in_progress",
+                "content": [],
+                # response_id intentionally NOT set — Layer 2 should stamp it
             },
+            "output_index": 0,
         }
         yield {
             "type": "response.output_item.done",
-            "payload": {
-                "item": {
-                    "id": item_id,
-                    "type": "message",
-                    "role": "assistant",
-                    "status": "completed",
-                    "content": [],
-                    # response_id intentionally NOT set
-                },
-                "output_index": 0,
+            "item": {
+                "id": item_id,
+                "type": "message",
+                "role": "assistant",
+                "status": "completed",
+                "content": [],
+                # response_id intentionally NOT set
             },
+            "output_index": 0,
         }
 
         yield stream.emit_completed()

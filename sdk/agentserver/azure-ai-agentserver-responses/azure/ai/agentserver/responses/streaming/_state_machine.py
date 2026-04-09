@@ -82,8 +82,8 @@ class EventStreamValidator:
                     raise LifecycleStateMachineError("multiple terminal lifecycle events are not allowed")
                 allowed_statuses = _TERMINAL_TYPE_STATUS.get(event_type)
                 if allowed_statuses is not None:
-                    payload = event.get("payload", {})
-                    actual_status = payload.get("status") if isinstance(payload, dict) else None
+                    response = event.get("response")
+                    actual_status = response.get("status") if isinstance(response, Mapping) else None
                     if actual_status and actual_status not in allowed_statuses:
                         expected = " or ".join(sorted(allowed_statuses))
                         raise LifecycleStateMachineError(
@@ -101,9 +101,7 @@ class EventStreamValidator:
         if self._terminal_seen:
             raise LifecycleStateMachineError("output item events cannot appear after terminal lifecycle event")
 
-        payload = event.get("payload")
-        payload_mapping = payload if isinstance(payload, Mapping) else {}
-        output_index_raw = payload_mapping.get("output_index", 0)
+        output_index_raw = event.get("output_index", 0)
         output_index = output_index_raw if isinstance(output_index_raw, int) and output_index_raw >= 0 else 0
 
         if event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
@@ -148,10 +146,10 @@ def normalize_lifecycle_events(
 ) -> list[dict[str, Any]]:
     """Normalize lifecycle events with ordering and terminal-state guarantees.
 
-    Applies ``id`` and ``model`` defaults to each payload, validates ordering,
+    Applies ``id`` and ``model`` defaults to each event, validates ordering,
     and appends a synthetic ``response.failed`` terminal event when none is present.
 
-    :keyword response_id: Response ID to stamp in each event payload.
+    :keyword response_id: Response ID to stamp in each event.
     :keyword type response_id: str
     :keyword events: The sequence of raw lifecycle event mappings.
     :keyword type events: Sequence[Mapping[str, Any]]
@@ -168,7 +166,7 @@ def normalize_lifecycle_events(
         if not isinstance(event_type, str) or not event_type:
             raise LifecycleStateMachineError("each lifecycle event must include a non-empty type")
 
-        payload_raw = raw_event.get("payload")
+        payload_raw = raw_event.get("response")
         payload_raw_dict = deepcopy(payload_raw) if isinstance(payload_raw, Mapping) else {}
         payload = cast(MutableMapping[str, Any], payload_raw_dict)
 
@@ -177,18 +175,19 @@ def normalize_lifecycle_events(
         if default_model is not None:
             payload.setdefault("model", default_model)
 
-        normalized.append({"type": event_type, "payload": payload})
+        normalized.append({"type": event_type, "response": payload, "sequence_number": 0})
 
     if not normalized:
         normalized = [
             {
                 "type": EVENT_TYPE.RESPONSE_CREATED.value,
-                "payload": {
+                "response": {
                     "id": response_id,
                     "object": "response",
                     "status": "in_progress",
                     "model": default_model,
                 },
+                "sequence_number": 0,
             }
         ]
 
@@ -200,12 +199,13 @@ def normalize_lifecycle_events(
         normalized.append(
             {
                 "type": EVENT_TYPE.RESPONSE_FAILED.value,
-                "payload": {
+                "response": {
                     "id": response_id,
                     "object": "response",
                     "status": "failed",
                     "model": default_model,
                 },
+                "sequence_number": 0,
             }
         )
 

@@ -1,20 +1,28 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Sample 11 — Non-Streaming Upstream (forward to upstream, emit items).
+"""Sample 11 — Non-Streaming Upstream (call upstream, build event stream).
 
 Demonstrates forwarding a request to an upstream OpenAI-compatible API
-that returns a complete (non-streaming) response, then emitting the
-upstream output text as local response events using the ``openai`` SDK.
+that returns a complete (non-streaming) response, then using the builder
+API to construct output items for the client.
 
-Pattern: async handler, upstream non-streaming, output_item_message.
+The handler calls the upstream without streaming, waits for the complete
+response, and uses ``output_item_message`` and ``output_item_reasoning_item``
+to emit ``output_item.added`` / ``output_item.done`` pairs for each item.
+
+This pattern is useful when your handler needs to inspect or transform the
+full response before streaming it to the client — for example, filtering
+output items, injecting additional context, or calling multiple upstreams.
+
+Pattern: ResponseEventStream, upstream non-streaming, output item builders.
 
 Run:
-    UPSTREAM_ENDPOINT=http://localhost:5211 OPENAI_API_KEY=your-key \
+    UPSTREAM_ENDPOINT=http://localhost:5211 OPENAI_API_KEY=your-key \\
         python samples/scenarios/sample_11_non_streaming_upstream.py
 """
 
+import asyncio
 import os
-from typing import Any
 
 import openai
 
@@ -23,9 +31,8 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
     ResponseEventStream,
     ResponsesAgentServerHost,
-    get_input_text,
+    get_input_expanded,
 )
-
 
 app = ResponsesAgentServerHost()
 
@@ -34,35 +41,52 @@ app = ResponsesAgentServerHost()
 async def handler(
     request: CreateResponse,
     context: ResponseContext,
-    cancellation_signal: Any,
+    cancellation_signal: asyncio.Event,
 ):
-    """Call upstream (non-streaming), emit result as a message item."""
+    """Call upstream (non-streaming), emit every output item."""
     upstream = openai.AsyncOpenAI(
         base_url=os.environ.get("UPSTREAM_ENDPOINT", "https://api.openai.com/v1"),
         api_key=os.environ.get("OPENAI_API_KEY", "your-api-key"),
     )
 
-    user_text = get_input_text(request) or "hello"
+    # Build the upstream request — translate every input item.
+    # Both model stacks share the same JSON wire contract, so
+    # serializing our Item to dict round-trips to the OpenAI SDK.
+    input_items = [item.as_dict() for item in get_input_expanded(request)]
 
+    # Call upstream without streaming and get the complete response.
     result = await upstream.responses.create(
         model=request.model or "gpt-4o-mini",
-        input=user_text,
+        input=input_items,
     )
 
-    # Extract output text from the upstream response
-    output_text = ""
-    for item in result.output:
-        if item.type == "message":
-            for part in item.content:
-                if part.type == "output_text":
-                    output_text += part.text
-
-    stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+    # Build a standard SSE event stream.  Seed from the request to
+    # preserve metadata, conversation, and agent reference.
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
 
-    for event in stream.output_item_message(output_text):
-        yield event
+    # Translate every upstream output item back into local events.
+    # Use the convenience generators to emit the full lifecycle for
+    # each output-item type.
+    for upstream_item in result.output:
+        if upstream_item.type == "message":
+            # Extract text content from the message.
+            output_text = ""
+            for part in upstream_item.content:
+                if part.type == "output_text":
+                    output_text += part.text
+            for event in stream.output_item_message(output_text):
+                yield event
+        elif upstream_item.type == "reasoning":
+            # Extract reasoning summary text.
+            summary = ""
+            for part in upstream_item.summary:
+                if part.type == "summary_text":
+                    summary += part.text
+            for event in stream.output_item_reasoning_item(summary):
+                yield event
+        # Add additional item types as needed (function_call, etc.)
 
     yield stream.emit_completed()
 

@@ -13,6 +13,7 @@ from ._helpers import (
     get_instruction_items,
     get_output_item_id,
     get_tool_choice_expanded,
+    to_output_item,
 )
 from .runtime import (
     ResponseExecution,
@@ -36,5 +37,6 @@ __all__ = [
     "get_instruction_items",
     "get_output_item_id",
     "get_tool_choice_expanded",
+    "to_output_item",
     *_generated_all,
 ]

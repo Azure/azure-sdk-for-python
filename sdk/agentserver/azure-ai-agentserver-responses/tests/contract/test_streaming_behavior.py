@@ -206,7 +206,7 @@ def test_streaming__forwards_emitted_event_before_late_handler_failure() -> None
         async def _events():
             yield {
                 "type": "response.created",
-                "payload": {
+                "response": {
                     "status": "in_progress",
                 },
             }

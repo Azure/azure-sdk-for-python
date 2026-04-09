@@ -6,7 +6,10 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import Any, Mapping
+from typing import TYPE_CHECKING, Any, Mapping
+
+if TYPE_CHECKING:
+    from .hosting._observability import CreateSpanHook
 
 
 @dataclass
@@ -18,7 +21,7 @@ class ResponsesServerOptions:
     default_fetch_history_count: int = 100
     sse_keep_alive_interval_seconds: int | None = None
     shutdown_grace_period_seconds: int = 10
-    create_span_hook: Any | None = None
+    create_span_hook: CreateSpanHook | None = None
 
     def __post_init__(self) -> None:
         if self.additional_server_identity is not None:

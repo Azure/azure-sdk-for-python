@@ -280,7 +280,7 @@ def test_hosting__shutdown_signals_inflight_background_execution() -> None:
         async def _events():
             yield {
                 "type": "response.created",
-                "payload": {
+                "response": {
                     "status": "in_progress",
                     "output": [],
                 },

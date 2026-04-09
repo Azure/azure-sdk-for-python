@@ -394,7 +394,7 @@ def test_bg_stream_cancelled_subject_completed() -> None:
 
     def _blocking_bg_stream_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
-            yield {"type": "response.created", "payload": {"status": "in_progress", "output": []}}
+            yield {"type": "response.created", "response": {"status": "in_progress", "output": []}}
             gate_started.append(True)
             # Block until cancelled
             while not cancellation_signal.is_set():
@@ -407,7 +407,7 @@ def test_bg_stream_cancelled_subject_completed() -> None:
     import threading
 
     _app = ResponsesAgentServerHost()
-    _app.create_handler(_blocking_bg_stream_handler)
+    _app.create_handler(_blocking_bg_stream_handler)  # type: ignore[arg-type]  # yields raw dicts to test coercion
     app = _app
 
     response_id = IdGenerator.new_response_id()
@@ -471,7 +471,7 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
     async def _events():
         yield {
             "type": "response.created",
-            "payload": {"status": "in_progress", "output": []},
+            "response": {"status": "in_progress", "output": []},
         }
         while not cancellation_signal.is_set():
             await asyncio.sleep(0.01)
@@ -482,7 +482,7 @@ def _cancellable_bg_handler(request: Any, context: Any, cancellation_signal: Any
 def test_get__in_progress_bg_response_returns_200() -> None:
     """GET on a background response that is still in_progress returns 200 with status in_progress."""
     app = ResponsesAgentServerHost()
-    app.create_handler(_cancellable_bg_handler)
+    app.create_handler(_cancellable_bg_handler)  # type: ignore[arg-type]  # yields raw dicts to test coercion
     client = TestClient(app)
 
     create = client.post(
@@ -503,7 +503,7 @@ def test_get__in_progress_bg_response_returns_200() -> None:
 def test_get__cancelled_bg_returns_200_with_cancelled_status() -> None:
     """GET on a cancelled background response returns 200 with status=cancelled and empty output."""
     app = ResponsesAgentServerHost()
-    app.create_handler(_cancellable_bg_handler)
+    app.create_handler(_cancellable_bg_handler)  # type: ignore[arg-type]  # yields raw dicts to test coercion
     client = TestClient(app)
 
     create = client.post(
