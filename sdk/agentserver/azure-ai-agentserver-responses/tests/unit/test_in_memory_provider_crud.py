@@ -326,14 +326,14 @@ def test_history__deleted_response_excluded() -> None:
     provider = InMemoryResponseProvider()
     asyncio.run(
         provider.create_response(
-            _response("resp_hdel", output=[_output_message("out_hdel", "msg")]),
-            [_input_item("in_hdel", "q")],
+            _response("resp_hist_del", output=[_output_message("out_hist_del", "msg")]),
+            [_input_item("in_hist_del", "q")],
             None,
         )
     )
-    asyncio.run(provider.delete_response("resp_hdel"))
+    asyncio.run(provider.delete_response("resp_hist_del"))
 
-    ids = asyncio.run(provider.get_history_item_ids("resp_hdel", None, 100))
+    ids = asyncio.run(provider.get_history_item_ids("resp_hist_del", None, 100))
     assert ids == []
 
 

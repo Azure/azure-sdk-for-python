@@ -8,11 +8,7 @@
       "funcs",
       "addl",
       "badid",
-      "etype",
-      "aoutput",
-      "Fslash",
-      "hdel",
-      "Ñoño"
+      "aoutput"
     ],
     "ignorePaths": [
       "*.csv",

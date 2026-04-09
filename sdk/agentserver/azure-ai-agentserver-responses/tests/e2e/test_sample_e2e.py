@@ -639,19 +639,19 @@ def _sample10_handler(request: CreateResponse, context: ResponseContext, cancell
         upstream_failed = False
 
         async for event in _mock_upstream_events(user_text):
-            etype = event["type"]
-            if etype in ("response.created", "response.in_progress"):
+            event_type = event["type"]
+            if event_type in ("response.created", "response.in_progress"):
                 continue
-            if etype == "response.completed":
+            if event_type == "response.completed":
                 break
-            if etype == "response.failed":
+            if event_type == "response.failed":
                 upstream_failed = True
                 break
 
             # Clear upstream response_id on output items.
-            if etype == "response.output_item.added":
+            if event_type == "response.output_item.added":
                 event.get("item", {}).pop("response_id", None)  # type: ignore[union-attr]
-            elif etype == "response.output_item.done":
+            elif event_type == "response.output_item.done":
                 item: dict[str, Any] = event.get("item", {})  # type: ignore[assignment]
                 item.pop("response_id", None)
                 output_items.append(item)

@@ -335,7 +335,7 @@ class TestEmitTextMessage:
         assert resp.output[0].content[0].text == long
 
     def test_unicode_text(self):
-        text = "Hello 🌍! Ñoño. 日本語テスト"
+        text = "Hello 🌍! café. 日本語テスト"
         client = _make_sdk_client(_text_message_handler(text))
         resp = client.responses.create(model="test", input="hi")
         assert resp.output[0].content[0].text == text

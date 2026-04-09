@@ -189,11 +189,11 @@ async def test_get_response__raises_not_found_on_404(credential: Any, settings: 
 async def test_get_response__url_encodes_special_characters(credential: Any, settings: FoundryStorageSettings) -> None:
     provider = _make_provider(credential, settings, _make_response(200, _RESPONSE_DICT))
 
-    await provider.get_response("id with spaces/slash")
+    await provider.get_response("id with spaces/path")
 
     request = provider._client.send_request.call_args[0][0]
     assert " " not in request.url
-    assert "id%20with%20spaces%2Fslash" in request.url
+    assert "id%20with%20spaces%2Fpath" in request.url
 
 
 # ===========================================================================

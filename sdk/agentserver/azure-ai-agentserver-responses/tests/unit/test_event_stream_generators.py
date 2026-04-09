@@ -151,7 +151,7 @@ async def _collect(async_iter):
 
 
 @pytest.mark.asyncio
-async def test_aoutput_item_message_yields_same_as_sync() -> None:
+async def test_async_output_item_message_yields_same_as_sync() -> None:
     stream = _started_stream()
     sync_events = list(stream.output_item_message("hello async"))
 
@@ -164,7 +164,7 @@ async def test_aoutput_item_message_yields_same_as_sync() -> None:
 
 
 @pytest.mark.asyncio
-async def test_aoutput_item_message_streams_deltas() -> None:
+async def test_async_output_item_message_streams_deltas() -> None:
     """Verify that AsyncIterable[str] input produces one delta per chunk."""
 
     async def chunks():
@@ -200,7 +200,7 @@ async def test_aoutput_item_message_streams_deltas() -> None:
 
 
 @pytest.mark.asyncio
-async def test_aoutput_item_function_call_yields_same_as_sync() -> None:
+async def test_async_output_item_function_call_yields_same_as_sync() -> None:
     stream = _started_stream()
     sync_events = list(stream.output_item_function_call("fn", "call_1", '{"x":1}'))
 
@@ -213,7 +213,7 @@ async def test_aoutput_item_function_call_yields_same_as_sync() -> None:
 
 
 @pytest.mark.asyncio
-async def test_aoutput_item_function_call_streams_arguments() -> None:
+async def test_async_output_item_function_call_streams_arguments() -> None:
     """Verify streaming arguments via AsyncIterable[str]."""
 
     async def arg_chunks():
@@ -231,7 +231,7 @@ async def test_aoutput_item_function_call_streams_arguments() -> None:
 
 
 @pytest.mark.asyncio
-async def test_aoutput_item_function_call_output_yields_same_as_sync() -> None:
+async def test_async_output_item_function_call_output_yields_same_as_sync() -> None:
     stream = _started_stream()
     sync_events = list(stream.output_item_function_call_output("call_1", "result"))
 
@@ -244,7 +244,7 @@ async def test_aoutput_item_function_call_output_yields_same_as_sync() -> None:
 
 
 @pytest.mark.asyncio
-async def test_aoutput_item_reasoning_item_yields_same_as_sync() -> None:
+async def test_async_output_item_reasoning_item_yields_same_as_sync() -> None:
     stream = _started_stream()
     sync_events = list(stream.output_item_reasoning_item("thinking..."))
 
@@ -257,7 +257,7 @@ async def test_aoutput_item_reasoning_item_yields_same_as_sync() -> None:
 
 
 @pytest.mark.asyncio
-async def test_aoutput_item_reasoning_item_streams_deltas() -> None:
+async def test_async_output_item_reasoning_item_streams_deltas() -> None:
     """Verify streaming reasoning summary via AsyncIterable[str]."""
 
     async def summary_chunks():
