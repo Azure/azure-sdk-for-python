@@ -231,6 +231,9 @@ def test_x_platform_server_header__present_on_post_response() -> None:
     header = response.headers.get("x-platform-server")
     assert header is not None, "x-platform-server header must be present per B19"
     assert isinstance(header, str) and len(header) > 0
+    # Both core and responses segments must appear
+    assert "azure-ai-agentserver-core/" in header
+    assert "azure-ai-agentserver-responses/" in header
 
 
 def test_x_platform_server_header__present_on_get_response() -> None:

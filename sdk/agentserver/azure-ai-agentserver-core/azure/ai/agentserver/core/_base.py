@@ -18,6 +18,7 @@ from starlette.responses import Response
 from starlette.routing import Route
 
 from . import _config, _tracing
+from ._server_version import build_server_version
 from ._version import VERSION as _CORE_VERSION
 
 logger = logging.getLogger("azure.ai.agentserver")
@@ -25,23 +26,25 @@ logger = logging.getLogger("azure.ai.agentserver")
 # Pre-built health-check response to avoid per-request allocation.
 _HEALTHY_BODY = b'{"status":"healthy"}'
 
-# Server identity header per spec: {sdk}/{version} (python/{runtime})
-_PLATFORM_SERVER_VALUE = (
-    f"azure-ai-agentserver-core/{_CORE_VERSION} "
-    f"(python/{sys.version_info.major}.{sys.version_info.minor})"
-)
-
 # Sentinel attribute name set on the console handler to prevent adding duplicates
 # across multiple AgentServerHost instantiations.
 _CONSOLE_HANDLER_ATTR = "_agentserver_console"
 
 
 class _PlatformHeaderMiddleware(BaseHTTPMiddleware):
-    """Middleware that adds x-platform-server identity header to all responses."""
+    """Middleware that adds ``x-platform-server`` version header to all responses.
+
+    Takes a callable that returns the current header value so protocol
+    hosts can register additional segments after construction.
+    """
+
+    def __init__(self, app: Any, *, get_server_version: Callable[[], str]) -> None:  # type: ignore[override]
+        super().__init__(app)
+        self._get_server_version = get_server_version
 
     async def dispatch(self, request: Request, call_next):  # type: ignore[no-untyped-def, override]
         response = await call_next(request)
-        response.headers["x-platform-server"] = _PLATFORM_SERVER_VALUE
+        response.headers["x-platform-server"] = self._get_server_version()
         return response
 
 
@@ -102,6 +105,14 @@ class AgentServerHost(Starlette):
     ) -> None:
         # Shutdown handler slot (server-level lifecycle) -------------------
         self._shutdown_fn: Optional[Callable[[], Awaitable[None]]] = None
+
+        # Server version segments for the x-platform-server header.
+        # Protocol packages call register_server_version() to add their
+        # own portion; the middleware joins them at response time.
+        self._server_version_segments: list[str] = []
+        self.register_server_version(
+            build_server_version("azure-ai-agentserver-core", _CORE_VERSION)
+        )
 
         # Logging ----------------------------------------------------------
         resolved_level = _config.resolve_log_level(log_level)
@@ -171,9 +182,45 @@ class AgentServerHost(Starlette):
         super().__init__(
             routes=all_routes,
             lifespan=_lifespan,
-            middleware=[Middleware(_PlatformHeaderMiddleware)],
+            middleware=[
+                Middleware(_PlatformHeaderMiddleware, get_server_version=self._build_server_version),
+            ],
             **kwargs,
         )
+
+    # ------------------------------------------------------------------
+    # Server version (x-platform-server header)
+    # ------------------------------------------------------------------
+
+    def register_server_version(self, version_segment: str) -> None:
+        """Register a version segment for the ``x-platform-server`` header.
+
+        Protocol packages (e.g. responses, invocations) call this in their
+        ``__init__`` to add their own portion.  Handler developers can also
+        call it to append a custom version string.  Duplicates are ignored.
+
+        Use :func:`~azure.ai.agentserver.core.build_server_version` to
+        build a standard segment::
+
+            from azure.ai.agentserver.core import build_server_version
+
+            app.register_server_version(
+                build_server_version("my-library", "2.0.0")
+            )
+
+        :param version_segment: The version string to register.
+        :type version_segment: str
+        :raises ValueError: If *version_segment* is empty or whitespace-only.
+        """
+        if not version_segment or not version_segment.strip():
+            raise ValueError("Version segment must not be empty.")
+        normalized = version_segment.strip()
+        if normalized not in self._server_version_segments:
+            self._server_version_segments.append(normalized)
+
+    def _build_server_version(self) -> str:
+        """Join all registered segments into the header value."""
+        return " ".join(self._server_version_segments)
 
     # ------------------------------------------------------------------
     # Tracing (for protocol subclasses)

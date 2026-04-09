@@ -16,10 +16,11 @@ from typing import Any, AsyncIterator, Callable, Optional, Union
 
 from starlette.routing import Route
 
-from azure.ai.agentserver.core import AgentServerHost
+from azure.ai.agentserver.core import AgentServerHost, build_server_version
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseContext
+from .._version import VERSION as _RESPONSES_VERSION
 from ..models._generated import CreateResponse, ResponseStreamEvent
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..store._memory import InMemoryResponseProvider
@@ -203,6 +204,16 @@ class ResponsesAgentServerHost(AgentServerHost):
         # Merge with any routes from sibling mixins via cooperative init
         existing = list(kwargs.pop("routes", None) or [])
         super().__init__(routes=existing + response_routes, **kwargs)
+
+        # Register the responses protocol version on the host so the
+        # x-platform-server header includes this package's version.
+        self.register_server_version(
+            build_server_version("azure-ai-agentserver-responses", _RESPONSES_VERSION)
+        )
+
+        # Allow handler developers to append their own version segment.
+        if runtime_options.additional_server_version:
+            self.register_server_version(runtime_options.additional_server_version)
 
         # Register shutdown handler on self (inherited from AgentServerHost)
         self.shutdown_handler(endpoint.handle_shutdown)

@@ -58,7 +58,7 @@ def test_hosting__registers_create_get_cancel_routes_under_prefix() -> None:
 
 def test_hosting__options_are_applied_to_runtime_behavior() -> None:
     options = ResponsesServerOptions(
-        additional_server_identity="integration-suite",
+        additional_server_version="integration-suite",
         default_model="gpt-4o-mini",
         sse_keep_alive_interval_seconds=5,
     )
@@ -105,7 +105,7 @@ def test_hosting__client_disconnect_behavior_remains_contract_compliant() -> Non
 def test_hosting__create_emits_single_root_span_with_key_tags_and_identity_header() -> None:
     hook = InMemoryCreateSpanHook()
     options = ResponsesServerOptions(
-        additional_server_identity="integration-suite",
+        additional_server_version="integration-suite",
         create_span_hook=hook,
     )
     client = _build_client(options=options)

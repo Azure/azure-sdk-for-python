@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Observability and identity header helpers."""
+"""Observability and server version header helpers."""
 
 from __future__ import annotations
 
@@ -14,7 +14,7 @@ if TYPE_CHECKING:
 
 
 def build_platform_server_header(sdk_name: str, version: str, runtime: str, extra: str | None = None) -> str:
-    """Build the platform server identity header value.
+    """Build the platform server user-agent header value.
 
     :param sdk_name: SDK package name.
     :type sdk_name: str
@@ -22,9 +22,9 @@ def build_platform_server_header(sdk_name: str, version: str, runtime: str, extr
     :type version: str
     :param runtime: Runtime marker, such as python/3.10.
     :type runtime: str
-    :param extra: Optional additional identity suffix.
+    :param extra: Optional additional user-agent suffix.
     :type extra: str | None
-    :returns: Formatted identity header value.
+    :returns: Formatted user-agent header value.
     :rtype: str
     """
     base_value = f"{sdk_name}/{version} ({runtime})"

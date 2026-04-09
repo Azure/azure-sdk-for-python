@@ -23,12 +23,14 @@ __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 from ._base import AgentServerHost
 from ._config import AgentConfig
 from ._errors import create_error_response
+from ._server_version import build_server_version
 from ._tracing import end_span, flush_spans, record_error, trace_stream
 from ._version import VERSION
 
 __all__ = [
     "AgentConfig",
     "AgentServerHost",
+    "build_server_version",
     "create_error_response",
     "end_span",
     "flush_spans",

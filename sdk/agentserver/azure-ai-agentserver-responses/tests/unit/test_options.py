@@ -14,7 +14,7 @@ def test_options__defaults_match_public_contract() -> None:
 
     assert options.default_fetch_history_count == 100
     assert options.default_model is None
-    assert options.additional_server_identity is None
+    assert options.additional_server_version is None
     assert options.sse_keep_alive_enabled is False
 
 

@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 class ResponsesServerOptions:
     """Configuration values for hosting and runtime behavior."""
 
-    additional_server_identity: str | None = None
+    additional_server_version: str | None = None
     default_model: str | None = None
     default_fetch_history_count: int = 100
     sse_keep_alive_interval_seconds: int | None = None
@@ -24,9 +24,9 @@ class ResponsesServerOptions:
     create_span_hook: CreateSpanHook | None = None
 
     def __post_init__(self) -> None:
-        if self.additional_server_identity is not None:
-            normalized = self.additional_server_identity.strip()
-            self.additional_server_identity = normalized or None
+        if self.additional_server_version is not None:
+            normalized = self.additional_server_version.strip()
+            self.additional_server_version = normalized or None
         if self.default_model is not None:
             normalized_model = self.default_model.strip()
             self.default_model = normalized_model or None
