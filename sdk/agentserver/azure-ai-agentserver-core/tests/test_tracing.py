@@ -324,12 +324,11 @@ class TestFoundryEnrichmentSpanProcessor:
         finally:
             _otel_context.detach(token)
 
-        child_attrs = dict(collector.spans[0].attributes)
-        parent_attrs = dict(collector.spans[1].attributes)
-        assert child_attrs["microsoft.session.id"] == "sess-456"
-        assert child_attrs["gen_ai.conversation.id"] == "conv-789"
-        assert parent_attrs["microsoft.session.id"] == "sess-456"
-        assert parent_attrs["gen_ai.conversation.id"] == "conv-789"
+        spans_by_name = {s.name: dict(s.attributes) for s in collector.spans}
+        assert spans_by_name["child"]["microsoft.session.id"] == "sess-456"
+        assert spans_by_name["child"]["gen_ai.conversation.id"] == "conv-789"
+        assert spans_by_name["parent"]["microsoft.session.id"] == "sess-456"
+        assert spans_by_name["parent"]["gen_ai.conversation.id"] == "conv-789"
 
 
 # ------------------------------------------------------------------ #
