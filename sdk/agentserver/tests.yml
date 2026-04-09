@@ -1,22 +1,13 @@
 trigger: none
 
-pr:
-  branches:
-    include:
-    - main
-    - feature/*
-    - hotfix/*
-    - release/*
-  paths:
-    include:
-    - sdk/agentserver/
-
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
+      BuildTargetingString: azure-ai-*
       ServiceDirectory: agentserver
       TestMarkArgument: tracing_e2e
       TestTimeoutInMinutes: 60
       EnvVars:
+        AZURE_SKIP_LIVE_RECORDING: 'true'
         AZURE_TEST_RUN_LIVE: 'true'
 
