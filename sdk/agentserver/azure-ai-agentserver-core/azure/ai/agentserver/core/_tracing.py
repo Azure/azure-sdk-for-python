@@ -42,7 +42,11 @@ _ATTR_GEN_AI_CONVERSATION_ID = "gen_ai.conversation.id"
 _ATTR_FOUNDRY_PROJECT_ID = "microsoft.foundry.project.id"
 _ATTR_SESSION_ID = "microsoft.session.id"
 
-# Baggage keys set by the invocations and responses packages
+# Baggage keys consumed by tracing.
+# Currently, the invocations package sets the session-id baggage key.
+# The conversation-id baggage key is defined for propagation/mapping, but
+# is not currently set elsewhere in this repo.  Incoming requests from
+# the calling service may carry either key as W3C baggage.
 _BAGGAGE_SESSION_ID = "azure.ai.agentserver.session_id"
 _BAGGAGE_CONVERSATION_ID = "azure.ai.agentserver.conversation_id"
 
