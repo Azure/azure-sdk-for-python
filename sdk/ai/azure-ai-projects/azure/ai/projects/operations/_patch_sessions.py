@@ -8,7 +8,8 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import Any, overload
+from pathlib import Path
+from typing import Any
 from azure.core.tracing.decorator import distributed_trace
 from ._operations import BetaAgentsOperations as GeneratedBetaAgentsOperations
 from .. import models as _models
@@ -58,6 +59,13 @@ class BetaAgentsOperations(GeneratedBetaAgentsOperations):
         :raises FileNotFoundError: If *content_or_file_path* is a ``str`` and the file does not exist.
         """
         if isinstance(content_or_file_path, str):
+
+            file_path = Path(content_or_file_path)
+            if not file_path.exists():
+                raise ValueError(f"The provided file `{content_or_file_path}` does not exist.")
+            if file_path.is_dir():
+                raise ValueError(f"Provide a valid file path, not a folder path  `{content_or_file_path}`.")
+
             with open(content_or_file_path, "rb") as f:
                 content: bytes = f.read()
         else:
