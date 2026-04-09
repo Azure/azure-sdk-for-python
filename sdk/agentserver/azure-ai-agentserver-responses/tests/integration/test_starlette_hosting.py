@@ -270,7 +270,7 @@ def test_hosting__multi_protocol_composition() -> None:
     assert health_response.status_code == 200
 
 
-@pytest.mark.skip(reason="Shutdown handler registration under investigation after _hosting.py refactor")
+@pytest.mark.skip(reason="Starlette Router.shutdown removed in newer versions; needs alternative shutdown trigger")
 def test_hosting__shutdown_signals_inflight_background_execution() -> None:
     started_gate = EventGate()
     cancelled_gate = EventGate()

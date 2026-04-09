@@ -264,7 +264,7 @@ def test_cancel__returns_failed_for_immediate_handler_failure() -> None:
     assert payload.get("status") == "failed"
 
 
-@pytest.mark.skip(reason="S-024: Starlette TestClient teardown sends spurious CancelledErrors")
+@pytest.mark.skip(reason="S-024: Unknown CancelledError swallowed by shielded runner — needs orchestrator fix")
 def test_cancel__unknown_cancellation_exception_is_treated_as_failed() -> None:
     """S-024: An unknown CancelledError (not from cancel signal) should be
     treated as a handler error, transitioning the response to failed."""

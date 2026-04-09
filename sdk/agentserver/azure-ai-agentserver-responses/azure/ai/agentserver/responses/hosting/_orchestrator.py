@@ -225,7 +225,8 @@ async def _run_background_non_stream(
                 create_fn(parsed, context, cancellation_signal), cancellation_signal
             ):
                 if cancellation_signal.is_set():
-                    record.transition_to("cancelled")
+                    if record.status not in ("cancelled", "completed", "failed", "incomplete"):
+                        record.transition_to("cancelled")
                     return
 
                 coerced = _coerce_handler_event(handler_event)
@@ -318,7 +319,7 @@ async def _run_background_non_stream(
             # unknown.  Known cancellation → transition to "cancelled".
             # Unknown CancelledError (e.g. event-loop teardown) is re-raised.
             if cancellation_signal.is_set():
-                if record.status != "cancelled":
+                if record.status not in ("cancelled", "completed", "failed", "incomplete"):
                     record.transition_to("cancelled")
                 if not first_event_processed:
                     record.response_failed_before_events = True
@@ -348,7 +349,8 @@ async def _run_background_non_stream(
             return
 
         if cancellation_signal.is_set():
-            record.transition_to("cancelled")
+            if record.status not in ("cancelled", "completed", "failed", "incomplete"):
+                record.transition_to("cancelled")
             record.response_created_signal.set()  # unblock run_background on cancellation
             return
 
