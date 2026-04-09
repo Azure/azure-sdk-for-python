@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
 from copy import deepcopy
-from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Literal, Mapping, cast
 
@@ -22,23 +21,30 @@ ResponseStatus = Literal["queued", "in_progress", "completed", "failed", "cancel
 TerminalResponseStatus = Literal["completed", "failed", "cancelled", "incomplete"]
 
 
-@dataclass(frozen=True)
 class ResponseModeFlags:
     """Execution mode flags captured from the create request."""
 
-    stream: bool
-    store: bool
-    background: bool
+    def __init__(self, *, stream: bool, store: bool, background: bool) -> None:
+        self.stream = stream
+        self.store = store
+        self.background = background
 
 
-@dataclass
 class StreamEventRecord:
     """A persisted record for one emitted stream event."""
 
-    sequence_number: int
-    event_type: str
-    payload: Mapping[str, Any]
-    emitted_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    def __init__(
+        self,
+        *,
+        sequence_number: int,
+        event_type: str,
+        payload: Mapping[str, Any],
+        emitted_at: datetime | None = None,
+    ) -> None:
+        self.sequence_number = sequence_number
+        self.event_type = event_type
+        self.payload = payload
+        self.emitted_at = emitted_at if emitted_at is not None else datetime.now(timezone.utc)
 
     @property
     def terminal(self) -> bool:

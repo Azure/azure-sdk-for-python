@@ -8,7 +8,6 @@ import asyncio
 import contextlib
 from collections import defaultdict
 from copy import deepcopy
-from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Any, AsyncIterator, Dict, Iterable
 
@@ -22,19 +21,31 @@ _DEFAULT_REPLAY_EVENT_TTL_SECONDS: int = 600
 """Minimum per-event replay TTL (10 minutes) per spec B35."""
 
 
-@dataclass
 class _StoreEntry:
     """Container for one response execution and its replay state."""
 
-    execution: ResponseExecution
-    replay: StreamReplayState
-    response: ResponseObject | None = None
-    input_item_ids: list[str] | None = None
-    output_item_ids: list[str] | None = None
-    history_item_ids: list[str] | None = None
-    deleted: bool = False
-    expires_at: datetime | None = None
-    replay_event_ttl_seconds: int = _DEFAULT_REPLAY_EVENT_TTL_SECONDS
+    def __init__(
+        self,
+        *,
+        execution: ResponseExecution,
+        replay: StreamReplayState,
+        response: ResponseObject | None = None,
+        input_item_ids: list[str] | None = None,
+        output_item_ids: list[str] | None = None,
+        history_item_ids: list[str] | None = None,
+        deleted: bool = False,
+        expires_at: datetime | None = None,
+        replay_event_ttl_seconds: int = _DEFAULT_REPLAY_EVENT_TTL_SECONDS,
+    ) -> None:
+        self.execution = execution
+        self.replay = replay
+        self.response = response
+        self.input_item_ids = input_item_ids
+        self.output_item_ids = output_item_ids
+        self.history_item_ids = history_item_ids
+        self.deleted = deleted
+        self.expires_at = expires_at
+        self.replay_event_ttl_seconds = replay_event_ttl_seconds
 
 
 class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderProtocol):

@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Sequence, cast
 
@@ -25,7 +24,6 @@ if TYPE_CHECKING:
     from .store._base import ResponseProviderProtocol
 
 
-@dataclass(frozen=True)
 class IsolationContext:
     """Platform-injected isolation keys for multi-tenant state partitioning.
 
@@ -42,13 +40,14 @@ class IsolationContext:
     string.  Use ``is None`` to detect whether the header was present at all.
     """
 
-    user_key: str | None = None
-    """Partition key for user-private state (from ``x-agent-user-isolation-key``).
-    ``None`` when the header was not sent."""
+    def __init__(self, *, user_key: str | None = None, chat_key: str | None = None) -> None:
+        self.user_key = user_key
+        """Partition key for user-private state (from ``x-agent-user-isolation-key``).
+        ``None`` when the header was not sent."""
 
-    chat_key: str | None = None
-    """Partition key for conversation/shared state (from ``x-agent-chat-isolation-key``).
-    ``None`` when the header was not sent."""
+        self.chat_key = chat_key
+        """Partition key for conversation/shared state (from ``x-agent-chat-isolation-key``).
+        ``None`` when the header was not sent."""
 
 
 class ResponseContext:

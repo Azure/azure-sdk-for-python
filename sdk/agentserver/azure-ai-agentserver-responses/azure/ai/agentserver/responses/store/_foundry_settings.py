@@ -4,7 +4,6 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from urllib.parse import quote as _url_quote
 
 from azure.ai.agentserver.core._config import AgentConfig
@@ -16,11 +15,11 @@ def _encode(value: str) -> str:
     return _url_quote(value, safe="")
 
 
-@dataclass(frozen=True)
 class FoundryStorageSettings:
     """Immutable runtime configuration for :class:`FoundryStorageProvider`."""
 
-    storage_base_url: str
+    def __init__(self, *, storage_base_url: str) -> None:
+        self.storage_base_url = storage_base_url
 
     @classmethod
     def from_env(cls) -> "FoundryStorageSettings":

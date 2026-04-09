@@ -5,7 +5,6 @@
 from __future__ import annotations
 
 import asyncio  # pylint: disable=do-not-import-asyncio
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any
 
 from .._response_context import ResponseContext
@@ -15,7 +14,6 @@ if TYPE_CHECKING:
     from ._observability import CreateSpan
 
 
-@dataclass
 class _ExecutionContext:
     """Holds all per-request state for a single create-response call.
 
@@ -23,19 +21,39 @@ class _ExecutionContext:
     except ``context`` are set once at construction.
     """
 
-    response_id: str
-    agent_reference: AgentReference | dict[str, Any]
-    model: str | None
-    store: bool
-    background: bool
-    stream: bool
-    input_items: list[OutputItem]
-    previous_response_id: str | None
-    conversation_id: str | None
-    cancellation_signal: asyncio.Event
-    span: CreateSpan
-    parsed: CreateResponse
-    agent_session_id: str | None = None
-    context: ResponseContext | None = None
-    user_isolation_key: str | None = None
-    chat_isolation_key: str | None = None
+    def __init__(
+        self,
+        *,
+        response_id: str,
+        agent_reference: AgentReference | dict[str, Any],
+        model: str | None,
+        store: bool,
+        background: bool,
+        stream: bool,
+        input_items: list[OutputItem],
+        previous_response_id: str | None,
+        conversation_id: str | None,
+        cancellation_signal: asyncio.Event,
+        span: "CreateSpan",
+        parsed: CreateResponse,
+        agent_session_id: str | None = None,
+        context: ResponseContext | None = None,
+        user_isolation_key: str | None = None,
+        chat_isolation_key: str | None = None,
+    ) -> None:
+        self.response_id = response_id
+        self.agent_reference = agent_reference
+        self.model = model
+        self.store = store
+        self.background = background
+        self.stream = stream
+        self.input_items = input_items
+        self.previous_response_id = previous_response_id
+        self.conversation_id = conversation_id
+        self.cancellation_signal = cancellation_signal
+        self.span = span
+        self.parsed = parsed
+        self.agent_session_id = agent_session_id
+        self.context = context
+        self.user_isolation_key = user_isolation_key
+        self.chat_isolation_key = chat_isolation_key

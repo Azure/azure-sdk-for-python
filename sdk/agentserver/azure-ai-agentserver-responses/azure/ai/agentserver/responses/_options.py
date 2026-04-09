@@ -5,37 +5,48 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Mapping
 
 if TYPE_CHECKING:
     from .hosting._observability import CreateSpanHook
 
 
-@dataclass
 class ResponsesServerOptions:
     """Configuration values for hosting and runtime behavior."""
 
-    additional_server_version: str | None = None
-    default_model: str | None = None
-    default_fetch_history_count: int = 100
-    sse_keep_alive_interval_seconds: int | None = None
-    shutdown_grace_period_seconds: int = 10
-    create_span_hook: CreateSpanHook | None = None
+    def __init__(
+        self,
+        *,
+        additional_server_version: str | None = None,
+        default_model: str | None = None,
+        default_fetch_history_count: int = 100,
+        sse_keep_alive_interval_seconds: int | None = None,
+        shutdown_grace_period_seconds: int = 10,
+        create_span_hook: "CreateSpanHook | None" = None,
+    ) -> None:
+        if additional_server_version is not None:
+            normalized = additional_server_version.strip()
+            additional_server_version = normalized or None
+        self.additional_server_version = additional_server_version
 
-    def __post_init__(self) -> None:
-        if self.additional_server_version is not None:
-            normalized = self.additional_server_version.strip()
-            self.additional_server_version = normalized or None
-        if self.default_model is not None:
-            normalized_model = self.default_model.strip()
-            self.default_model = normalized_model or None
-        if self.sse_keep_alive_interval_seconds is not None and self.sse_keep_alive_interval_seconds <= 0:
+        if default_model is not None:
+            normalized_model = default_model.strip()
+            default_model = normalized_model or None
+        self.default_model = default_model
+
+        if sse_keep_alive_interval_seconds is not None and sse_keep_alive_interval_seconds <= 0:
             raise ValueError("sse_keep_alive_interval_seconds must be > 0 when set")
-        if self.default_fetch_history_count <= 0:
+        self.sse_keep_alive_interval_seconds = sse_keep_alive_interval_seconds
+
+        if default_fetch_history_count <= 0:
             raise ValueError("default_fetch_history_count must be > 0")
-        if self.shutdown_grace_period_seconds <= 0:
+        self.default_fetch_history_count = default_fetch_history_count
+
+        if shutdown_grace_period_seconds <= 0:
             raise ValueError("shutdown_grace_period_seconds must be > 0")
+        self.shutdown_grace_period_seconds = shutdown_grace_period_seconds
+
+        self.create_span_hook = create_span_hook
 
     @classmethod
     def from_env(cls, environ: Mapping[str, str] | None = None) -> "ResponsesServerOptions":
