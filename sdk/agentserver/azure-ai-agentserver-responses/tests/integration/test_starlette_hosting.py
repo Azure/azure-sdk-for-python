@@ -14,6 +14,7 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
+from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from tests._helpers import EventGate
 
 
@@ -270,75 +271,94 @@ def test_hosting__multi_protocol_composition() -> None:
     assert health_response.status_code == 200
 
 
-@pytest.mark.skip(reason="Starlette Router.shutdown removed in newer versions; needs alternative shutdown trigger")
-def test_hosting__shutdown_signals_inflight_background_execution() -> None:
-    started_gate = EventGate()
-    cancelled_gate = EventGate()
-    shutdown_gate = EventGate()
+@pytest.mark.asyncio
+async def test_hosting__shutdown_signals_inflight_background_execution() -> None:
+    """Verify that graceful shutdown cancels in-flight background responses.
+
+    Uses a real Hypercorn server so that shutdown triggers the Starlette
+    lifespan exit, which calls our handle_shutdown() handler.
+    """
+    import socket
+    from hypercorn.asyncio import serve as _hc_serve
+    from hypercorn.config import Config as _HcConfig
+
+    handler_started = asyncio.Event()
+    handler_cancelled = asyncio.Event()
+    shutdown_seen = asyncio.Event()
 
     def _shutdown_aware_handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
-            yield {
-                "type": "response.created",
-                "response": {
-                    "status": "in_progress",
-                    "output": [],
-                },
-            }
-            started_gate.signal(True)
+            stream = ResponseEventStream(
+                response_id=context.response_id,
+                model=getattr(request, "model", None),
+            )
+            yield stream.emit_created()
+            yield stream.emit_in_progress()
+            handler_started.set()
 
             while True:
                 if context.is_shutdown_requested:
-                    shutdown_gate.signal(True)
+                    shutdown_seen.set()
                 if cancellation_signal.is_set():
-                    cancelled_gate.signal(True)
+                    handler_cancelled.set()
+                    yield stream.emit_incomplete(reason="cancelled")
                     return
                 await asyncio.sleep(0.01)
 
         return _events()
 
-    app = ResponsesAgentServerHost(
+    test_app = ResponsesAgentServerHost(
         options=ResponsesServerOptions(shutdown_grace_period_seconds=2),
     )
-    app.create_handler(_shutdown_aware_handler)
+    test_app.create_handler(_shutdown_aware_handler)
 
-    create_result: dict[str, Any] = {}
-    get_result: dict[str, Any] = {}
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(("127.0.0.1", 0))
+    port = sock.getsockname()[1]
+    sock.close()
 
-    with TestClient(app) as client:
-        create_response = client.post(
-            "/responses",
-            json={
-                "model": "gpt-4o-mini",
-                "input": "hello",
-                "stream": False,
-                "store": True,
-                "background": True,
-            },
-        )
-        assert create_response.status_code == 200
-        response_id = create_response.json()["id"]
-        create_result["response_id"] = response_id
+    hc_config = _HcConfig()
+    hc_config.bind = [f"127.0.0.1:{port}"]
+    shutdown_event = asyncio.Event()
 
-        def _issue_get() -> None:
-            try:
-                get_result["response"] = client.get(f"/responses/{response_id}")
-            except Exception as exc:  # pragma: no cover - surfaced via assertion below.
-                get_result["error"] = exc
+    server_task = asyncio.create_task(
+        _hc_serve(test_app, hc_config, shutdown_trigger=shutdown_event.wait)  # type: ignore[arg-type]
+    )
+    await asyncio.sleep(0.5)
 
-        get_thread = threading.Thread(target=_issue_get, daemon=True)
-        get_thread.start()
+    try:
+        import httpx
 
-        started, _ = started_gate.wait(timeout_s=2.0)
-        assert started, "Expected background handler execution to start before shutdown"
-        assert client.portal is not None
-        client.portal.call(app.router.shutdown)
+        async with httpx.AsyncClient(
+            base_url=f"http://127.0.0.1:{port}",
+            timeout=httpx.Timeout(10.0),
+        ) as client:
+            # Create a background response
+            create_resp = await client.post(
+                "/responses",
+                json={
+                    "model": "gpt-4o-mini",
+                    "input": "hello",
+                    "stream": False,
+                    "store": True,
+                    "background": True,
+                },
+            )
+            assert create_resp.status_code == 200
+            response_id = create_resp.json()["id"]
 
-        cancelled, _ = cancelled_gate.wait(timeout_s=2.0)
-        shutdown_seen, _ = shutdown_gate.wait(timeout_s=2.0)
-        assert cancelled, "Expected shutdown to trigger cancellation_signal for in-flight execution"
-        assert shutdown_seen, "Expected shutdown to set context.is_shutdown_requested"
+            # Wait for handler to start
+            await asyncio.wait_for(handler_started.wait(), timeout=3.0)
 
-        get_thread.join(timeout=2.0)
-        assert not get_thread.is_alive(), "Expected in-flight GET request to finish after shutdown"
-        assert get_result.get("error") is None, str(get_result.get("error"))
+            # Trigger graceful shutdown
+            shutdown_event.set()
+
+            # Wait for handler to see shutdown + cancellation
+            await asyncio.wait_for(handler_cancelled.wait(), timeout=5.0)
+
+            assert handler_cancelled.is_set(), "Shutdown should trigger cancellation_signal"
+            assert shutdown_seen.is_set(), "Shutdown should set context.is_shutdown_requested"
+
+    finally:
+        shutdown_event.set()  # ensure shutdown in case of test failure
+        await asyncio.wait_for(server_task, timeout=10.0)
