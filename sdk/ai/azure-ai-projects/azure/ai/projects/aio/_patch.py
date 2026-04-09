@@ -109,14 +109,22 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         The AsyncOpenAI client constructor is called with:
 
         * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai/v1" appended.
+          If ``agent_name`` is provided (and ``allow_preview=True`` was set on the AIProjectClient), ``base_url``
+          is instead set to the Agent's endpoint ``{endpoint}/agents/{agent_name}/endpoint/openai/v1``.
           Can be overridden by passing ``base_url`` as a keyword argument.
         * ``api_key`` set to a get_bearer_token_provider() callable that uses the TokenCredential provided to the
           AIProjectClient constructor, with scope "https://ai.azure.com/.default".
           Can be overridden by passing ``api_key`` as a keyword argument.
 
+        :param agent_name: Optional name of an Agent. When provided, the AsyncOpenAI client's ``base_url``
+            is pointed at the Agent's endpoint. Requires ``allow_preview=True`` to have been set on the
+            AIProjectClient constructor; otherwise a :exc:`ValueError` is raised.
+        :type agent_name: str or None
+
         :return: An authenticated AsyncOpenAI client
         :rtype: ~openai.AsyncOpenAI
 
+        :raises ValueError: If ``agent_name`` is provided but ``allow_preview=True`` was not set on the client.
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
