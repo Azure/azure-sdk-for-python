@@ -70,6 +70,6 @@ testpaths = ["tests"]
 pythonpath = ["."]
 
 [tool.uv.sources]
-azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core" }
+azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
 azure-core = { path = "../../core/azure-core" }
 azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
