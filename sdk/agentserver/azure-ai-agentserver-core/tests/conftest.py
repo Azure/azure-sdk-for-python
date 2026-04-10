@@ -61,14 +61,22 @@ def appinsights_resource_id():
 def logs_query_client():
     """Create a ``LogsQueryClient`` for querying Application Insights.
 
-    The pipeline sets ``AZURESUBSCRIPTION_TENANT_ID`` via the Azure PowerShell
-    task's service connection.  We copy it to ``AZURE_TENANT_ID`` which
-    ``DefaultAzureCredential`` reads automatically.
+    In CI the pipeline runs inside ``AzurePowerShell@5`` which authenticates
+    via the service connection.  We detect this by checking for
+    ``AZURESUBSCRIPTION_TENANT_ID`` and use ``AzurePowerShellCredential``
+    directly so the token is issued from the correct tenant.
+    Locally we fall back to ``DefaultAzureCredential``.
     """
-    from azure.identity import DefaultAzureCredential
     from azure.monitor.query import LogsQueryClient
 
-    tenant_id = os.environ.get("AZURESUBSCRIPTION_TENANT_ID")
-    if tenant_id and not os.environ.get("AZURE_TENANT_ID"):
-        os.environ["AZURE_TENANT_ID"] = tenant_id
-    return LogsQueryClient(DefaultAzureCredential())
+    if os.environ.get("AZURESUBSCRIPTION_TENANT_ID"):
+        from azure.identity import AzurePowerShellCredential
+
+        credential = AzurePowerShellCredential(
+            tenant_id=os.environ["AZURESUBSCRIPTION_TENANT_ID"],
+        )
+    else:
+        from azure.identity import DefaultAzureCredential
+
+        credential = DefaultAzureCredential()
+    return LogsQueryClient(credential)

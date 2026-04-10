@@ -42,14 +42,25 @@ def appinsights_resource_id():
 
 @pytest.fixture()
 def logs_query_client():
-    """Create an Azure Monitor LogsQueryClient authenticated via DefaultAzureCredential."""
-    from azure.identity import DefaultAzureCredential
+    """Create a ``LogsQueryClient`` for querying Application Insights.
+
+    In CI the pipeline runs inside ``AzurePowerShell@5`` — use
+    ``AzurePowerShellCredential`` directly to get a token from the correct
+    tenant.  Locally fall back to ``DefaultAzureCredential``.
+    """
     from azure.monitor.query import LogsQueryClient
 
-    tenant_id = os.environ.get("AZURESUBSCRIPTION_TENANT_ID")
-    if tenant_id and not os.environ.get("AZURE_TENANT_ID"):
-        os.environ["AZURE_TENANT_ID"] = tenant_id
-    return LogsQueryClient(DefaultAzureCredential())
+    if os.environ.get("AZURESUBSCRIPTION_TENANT_ID"):
+        from azure.identity import AzurePowerShellCredential
+
+        credential = AzurePowerShellCredential(
+            tenant_id=os.environ["AZURESUBSCRIPTION_TENANT_ID"],
+        )
+    else:
+        from azure.identity import DefaultAzureCredential
+
+        credential = DefaultAzureCredential()
+    return LogsQueryClient(credential)
 
 
 # ---------------------------------------------------------------------------
