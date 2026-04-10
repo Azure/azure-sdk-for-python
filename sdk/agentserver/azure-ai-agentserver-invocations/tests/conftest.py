@@ -47,10 +47,9 @@ def logs_query_client():
     from azure.monitor.query import LogsQueryClient
 
     tenant_id = os.environ.get("AZURESUBSCRIPTION_TENANT_ID")
-    kwargs = {"additionally_allowed_tenants": ["*"]}
-    if tenant_id:
-        kwargs["tenant_id"] = tenant_id
-    return LogsQueryClient(DefaultAzureCredential(**kwargs))
+    if tenant_id and not os.environ.get("AZURE_TENANT_ID"):
+        os.environ["AZURE_TENANT_ID"] = tenant_id
+    return LogsQueryClient(DefaultAzureCredential())
 
 
 # ---------------------------------------------------------------------------
