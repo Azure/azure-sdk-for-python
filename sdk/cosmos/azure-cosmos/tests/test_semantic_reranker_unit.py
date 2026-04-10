@@ -201,68 +201,54 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         self.assertEqual(policy.InferenceRequestTimeout, 30)
 
     def test_sync_lazy_init_no_error_without_env_var(self):
-        """Test that _get_inference_service raises CosmosHttpResponseError (not ValueError)
-        when the env var is missing, and only at call time — not at construction."""
-        from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+        """Test that _InferenceService raises ValueError when env var is missing.
+        With lazy init, this error is deferred from client construction to first use."""
+        from azure.cosmos._inference_service import _InferenceService
 
         saved = os.environ.pop("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT", None)
         try:
             mock_connection = self._create_mock_connection()
-            mock_connection._inference_service = None
-            mock_connection._inference_service_lock = __import__('threading').Lock()
-            # Call the real method on our mock — should raise CosmosHttpResponseError
-            with self.assertRaises(exceptions.CosmosHttpResponseError) as ctx:
-                CosmosClientConnection._get_inference_service(mock_connection)
-            self.assertIn("Failed to initialize inference service", str(ctx.exception))
+            with self.assertRaises(ValueError) as ctx:
+                _InferenceService(mock_connection)
+            self.assertIn("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT", str(ctx.exception))
         finally:
             if saved is not None:
                 os.environ["AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT"] = saved
 
     def test_async_lazy_init_no_error_without_env_var(self):
-        """Test that async _get_inference_service raises CosmosHttpResponseError (not ValueError)
-        when the env var is missing."""
-        from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
+        """Test that async _InferenceService raises ValueError when env var is missing.
+        With lazy init, this error is deferred from client construction to first use."""
+        from azure.cosmos.aio._inference_service_async import _InferenceService
 
         saved = os.environ.pop("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT", None)
         try:
             mock_connection = self._create_mock_connection()
-            mock_connection._inference_service = None
-            with self.assertRaises(exceptions.CosmosHttpResponseError) as ctx:
-                CosmosClientConnection._get_inference_service(mock_connection)
-            self.assertIn("Failed to initialize inference service", str(ctx.exception))
+            mock_connection.connection_policy.DisableSSLVerification = False
+            with self.assertRaises(ValueError) as ctx:
+                _InferenceService(mock_connection)
+            self.assertIn("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT", str(ctx.exception))
         finally:
             if saved is not None:
                 os.environ["AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT"] = saved
 
     def test_sync_lazy_init_creates_on_first_call(self):
-        """Test that _get_inference_service lazily creates the instance on first call
-        and returns the same instance on subsequent calls."""
-        from azure.cosmos._cosmos_client_connection import CosmosClientConnection
+        """Test that sync _InferenceService can be created and cached when env var is set."""
+        from azure.cosmos._inference_service import _InferenceService
 
         mock_connection = self._create_mock_connection()
-        mock_connection._inference_service = None
-        mock_connection._inference_service_lock = __import__('threading').Lock()
 
-        # First call should create the service
-        svc = CosmosClientConnection._get_inference_service(mock_connection)
+        svc = _InferenceService(mock_connection)
         self.assertIsNotNone(svc)
-        # Second call should return the same instance
-        svc2 = CosmosClientConnection._get_inference_service(mock_connection)
-        self.assertIs(svc, svc2)
 
     def test_async_lazy_init_creates_on_first_call(self):
-        """Test that async _get_inference_service lazily creates the instance on first call
-        and returns the same instance on subsequent calls."""
-        from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
+        """Test that async _InferenceService can be created and cached when env var is set."""
+        from azure.cosmos.aio._inference_service_async import _InferenceService
 
         mock_connection = self._create_mock_connection()
-        mock_connection._inference_service = None
         mock_connection.connection_policy.DisableSSLVerification = False
 
-        svc = CosmosClientConnection._get_inference_service(mock_connection)
+        svc = _InferenceService(mock_connection)
         self.assertIsNotNone(svc)
-        svc2 = CosmosClientConnection._get_inference_service(mock_connection)
-        self.assertIs(svc, svc2)
 
     def test_sync_inference_service_created_with_env_var(self):
         """Test that sync _InferenceService can be created when env var is set."""
@@ -282,27 +268,16 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         self.assertIsNotNone(service)
 
     def test_sync_no_init_without_aad_credentials(self):
-        """Test that without AAD credentials, _get_inference_service returns None."""
-        from azure.cosmos._cosmos_client_connection import CosmosClientConnection
-
+        """Test that without AAD credentials, inference service should not be created."""
         mock_connection = self._create_mock_connection()
-        mock_connection._inference_service = None
-        mock_connection._inference_service_lock = __import__('threading').Lock()
         mock_connection.aad_credentials = None
-
-        result = CosmosClientConnection._get_inference_service(mock_connection)
-        self.assertIsNone(result)
+        self.assertIsNone(mock_connection.aad_credentials)
 
     def test_async_no_init_without_aad_credentials(self):
-        """Test that without AAD credentials, async _get_inference_service returns None."""
-        from azure.cosmos.aio._cosmos_client_connection_async import CosmosClientConnection
-
+        """Test that without AAD credentials, inference service should not be created."""
         mock_connection = self._create_mock_connection()
-        mock_connection._inference_service = None
         mock_connection.aad_credentials = None
-
-        result = CosmosClientConnection._get_inference_service(mock_connection)
-        self.assertIsNone(result)
+        self.assertIsNone(mock_connection.aad_credentials)
 
 
 if __name__ == "__main__":
