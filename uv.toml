@@ -1,4 +1,3 @@
 [[index]]
-name = "azure-sdk"
 url = "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
 default = true
