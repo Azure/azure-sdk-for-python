@@ -397,29 +397,3 @@ def test_hosting__client_headers_keys_are_normalized_to_lowercase() -> None:
     assert captured_headers["x-client-foo"] == "bar"
     assert captured_headers["x-client-baz"] == "qux"
 
-
-def test_hosting__deprecated_provider_kwarg_still_works() -> None:
-    """The deprecated 'provider' kwarg is accepted with a deprecation warning."""
-    provider = InMemoryResponseProvider()
-    with warnings.catch_warnings(record=True) as w:
-        warnings.simplefilter("always")
-        app = ResponsesAgentServerHost(provider=provider)  # type: ignore[call-arg]
-        assert len(w) == 1
-        assert issubclass(w[0].category, DeprecationWarning)
-        assert "provider" in str(w[0].message)
-
-    app.create_handler(_noop_response_handler)
-    client = TestClient(app)
-
-    resp = client.post(
-        "/responses",
-        json={"model": "test", "input": "hi", "stream": False, "store": True, "background": False},
-    )
-    assert resp.status_code == 200
-
-
-def test_hosting__store_and_provider_together_raises_type_error() -> None:
-    """Passing both 'store' and 'provider' raises TypeError."""
-    provider = InMemoryResponseProvider()
-    with pytest.raises(TypeError, match="Cannot pass both"):
-        ResponsesAgentServerHost(store=provider, provider=provider)  # type: ignore[call-arg]

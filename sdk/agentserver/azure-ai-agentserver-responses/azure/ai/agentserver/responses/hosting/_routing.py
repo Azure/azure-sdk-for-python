@@ -11,7 +11,6 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import types
-import warnings
 from collections.abc import AsyncIterable, Awaitable, Generator
 from typing import Any, AsyncIterator, Callable, Optional, Union
 
@@ -97,9 +96,6 @@ class ResponsesAgentServerHost(AgentServerHost):
     :param store: Optional persistence provider for response
         envelopes and input items.
     :type store: ResponseProviderProtocol | None
-    :param provider: Deprecated alias for *store*.  Will be removed in a
-        future release.
-    :type provider: ResponseProviderProtocol | None
     """
 
     _INSTRUMENTATION_SCOPE = "Azure.AI.AgentServer.Responses"
@@ -110,22 +106,10 @@ class ResponsesAgentServerHost(AgentServerHost):
         prefix: str = "",
         options: ResponsesServerOptions | None = None,
         store: ResponseProviderProtocol | None = None,
-        provider: ResponseProviderProtocol | None = None,
         **kwargs: Any,
     ) -> None:
         # Handler slot — populated via @app.create_handler decorator
         self._create_fn: Optional[CreateHandlerFn] = None
-
-        # Resolve deprecated ``provider`` kwarg → ``store``.
-        if provider is not None:
-            if store is not None:
-                raise TypeError("Cannot pass both 'store' and 'provider'; use 'store' only.")
-            warnings.warn(
-                "The 'provider' parameter is deprecated; use 'store' instead.",
-                DeprecationWarning,
-                stacklevel=2,
-            )
-            store = provider
 
         # Normalize prefix
         normalized_prefix = prefix.strip()
