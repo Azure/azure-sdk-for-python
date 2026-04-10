@@ -1,11 +1,13 @@
 azure.ai.agentserver.responses package
 ======================================
 
+.. We do this to handle duplicate exports causing problems with Sphinx autodoc
+
 .. automodule:: azure.ai.agentserver.responses
    :members:
    :undoc-members:
    :inherited-members:
-   :exclude-members: ResponsesAgentServerHost, CreateResponse, ResponseObject
+   :exclude-members: ResponsesAgentServerHost, CreateResponse, ResponseObject, ResponseEventStream
 
 Subpackages
 -----------

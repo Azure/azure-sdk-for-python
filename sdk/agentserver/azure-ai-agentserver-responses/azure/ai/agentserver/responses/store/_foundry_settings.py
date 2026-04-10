@@ -60,8 +60,6 @@ class FoundryStorageSettings:
 
         :param path: The resource path segment, e.g. ``responses/abc123``.
         :type path: str
-        :keyword extra_params: Additional query parameters; values are URL-encoded automatically.
-        :paramtype extra_params: str
         :returns: The complete URL string.
         :rtype: str
         """
