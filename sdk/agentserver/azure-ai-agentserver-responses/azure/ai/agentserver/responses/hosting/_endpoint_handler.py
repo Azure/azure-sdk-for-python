@@ -32,7 +32,7 @@ from ..models.runtime import ResponseExecution, ResponseModeFlags, build_cancell
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..streaming._helpers import EVENT_TYPE, _encode_sse
 from ..streaming._sse import encode_sse_any_event
-from ..streaming._state_machine import LifecycleStateMachineError, normalize_lifecycle_events
+from ..streaming._state_machine import normalize_lifecycle_events
 from ._execution_context import _ExecutionContext
 from ._observability import (
     CreateSpan,
