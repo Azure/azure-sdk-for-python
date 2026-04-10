@@ -515,8 +515,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         # Track completed output items on the response envelope
         _internals.track_completed_output_item(self._response, model)
 
+        self._validator.validate_next(candidate)
         self._events.append(model)
-        self._validator.validate_next(model)
         return model
 
     # ---- Generator convenience methods (S-056/S-057) ----

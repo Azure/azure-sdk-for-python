@@ -101,6 +101,8 @@ def _build_sse_frame(event_type: str, payload: dict[str, Any]) -> str:
     :returns: A complete SSE frame string with trailing newlines.
     :rtype: str
     """
+    # Sanitize event_type to prevent SSE response splitting via newline injection
+    event_type = event_type.replace("\n", "").replace("\r", "")
     lines = [f"event: {event_type}"]
     lines.append(f"data: {json.dumps(payload)}")
     lines.append("")

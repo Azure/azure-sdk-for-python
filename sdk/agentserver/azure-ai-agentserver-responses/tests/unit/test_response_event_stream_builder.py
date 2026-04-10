@@ -9,7 +9,6 @@ import pytest
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.models import _generated as generated_models
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
-from azure.ai.agentserver.responses.streaming._state_machine import LifecycleStateMachineError
 
 
 def test_event_stream_builder__builds_lifecycle_events() -> None:
@@ -91,7 +90,7 @@ def test_event_stream_builder__rejects_illegal_output_item_sequence() -> None:
 
 
 def test_event_stream_builder__rejects_invalid_global_stream_order() -> None:
-    with pytest.raises(LifecycleStateMachineError):
+    with pytest.raises(ValueError):
         stream = ResponseEventStream(response_id="resp_builder_bad_order_12345")
         stream.emit_created(status="queued")
         stream.emit_in_progress()

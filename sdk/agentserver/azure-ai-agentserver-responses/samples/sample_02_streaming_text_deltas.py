@@ -1,11 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Sample 02 — Streaming Text Deltas.
+"""Sample 02 — Token-by-Token Streaming.
 
 Demonstrates token-by-token streaming using ``TextResponse`` with
 ``create_text_stream``.  Each chunk yielded by the async generator is
 emitted as a separate ``output_text.delta`` SSE event, enabling
-real-time streaming to the client.
+real-time token-by-token streaming to the client.
 
 The ``configure`` callback sets ``Response.temperature`` on the response
 envelope before ``response.created`` is emitted.
