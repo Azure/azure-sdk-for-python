@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from azure.ai.agentserver.responses.streaming._builders import (
+from azure.ai.agentserver.responses import (
     OutputItemFunctionCallBuilder,
     OutputItemFunctionCallOutputBuilder,
     OutputItemMessageBuilder,

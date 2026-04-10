@@ -1,33 +1,48 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""Sample 10 — Transforming Upstream Proxy.
+"""Sample 10 — Streaming Upstream (forward to OpenAI-compatible server).
 
-Shows how to proxy an upstream OpenAI-compatible API while *transforming*
-the response stream.  This is not a transparent relay — the handler
-injects a system-context prefix, redacts text matching a blocklist, and
-appends a word-count annotation after each message.
+Demonstrates how to forward a request to an upstream OpenAI-compatible API
+that returns streaming Server-Sent Events, translating each upstream
+chunk into local response events using the ``openai`` Python SDK.
 
-The pattern is useful whenever you need an LLM but want to post-process
-its output: content filtering, citation injection, guardrails, or
-multi-model fan-out with result merging.
+The handler **owns the response lifecycle** — it constructs its own
+``response.created``, ``response.in_progress``, and terminal events — while
+translating upstream **content events** (output items, text deltas,
+function-call arguments, reasoning, tool calls) and yielding them directly.
+Both model stacks share the same JSON wire contract, so content events
+round-trip with full fidelity.
 
-Both the Responses protocol and the OpenAI SDK share the same SSE wire
-format, so content events (deltas, output items) round-trip with full
-fidelity — only the parts you touch are changed.
+This is **not** a transparent proxy.  The sample showcases type
+compatibility between the two model stacks.  In practice you would add
+orchestration logic — filtering outputs, injecting items, calling multiple
+upstreams, or transforming content — between the upstream call and the
+``yield``.
 
 Usage::
 
+    # Start the server (set upstream endpoint and API key)
     UPSTREAM_ENDPOINT=http://localhost:5211 OPENAI_API_KEY=your-key \
         python sample_10_streaming_upstream.py
 
+    # Send a streaming request
     curl -N -X POST http://localhost:8088/responses \
         -H "Content-Type: application/json" \
         -d '{"model": "gpt-4o-mini", "input": "Say hello!", "stream": true}'
+    # -> event: response.created            data: {"response": {"status": "in_progress", ...}}
+    # -> event: response.in_progress        data: {"response": {"status": "in_progress", ...}}
+    # -> event: response.output_item.added  data: {"item": {"type": "message", ...}}
+    # -> event: response.content_part.added data: {"part": {"type": "output_text", ...}}
+    # -> event: response.output_text.delta  data: {"delta": "..."}
+    # -> ...                                     (more deltas)
+    # -> event: response.output_text.done   data: {"text": "..."}
+    # -> event: response.output_item.done   data: {"item": {"type": "message", ...}}
+    # -> event: response.completed          data: {"response": {"status": "completed", ...}}
 """
 
 import asyncio
 import os
-import re
+from typing import Any
 
 import openai
 
@@ -35,25 +50,34 @@ from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
     ResponsesAgentServerHost,
-    ResponseEventStream,
     get_input_expanded,
 )
 
 app = ResponsesAgentServerHost()
 
-# Words to redact from upstream output (case-insensitive).
-REDACT_PATTERNS: list[re.Pattern[str]] = [
-    re.compile(r"\b(CONFIDENTIAL)\b", re.IGNORECASE),
-]
 
-SYSTEM_PREFIX = "[via proxy] "
-
-
-def _redact(text: str) -> str:
-    """Replace blocklisted words with [REDACTED]."""
-    for pattern in REDACT_PATTERNS:
-        text = pattern.sub("[REDACTED]", text)
-    return text
+def _build_response_snapshot(request: CreateResponse, context: ResponseContext) -> dict[str, Any]:
+    """Construct a response snapshot dict from request + context."""
+    snapshot: dict[str, Any] = {
+        "id": context.response_id,
+        "object": "response",
+        "status": "in_progress",
+        "model": request.model or "",
+        "output": [],
+    }
+    if request.metadata is not None:
+        snapshot["metadata"] = request.metadata
+    if request.background is not None:
+        snapshot["background"] = request.background
+    if request.previous_response_id is not None:
+        snapshot["previous_response_id"] = request.previous_response_id
+    # Normalize conversation to ConversationReference form.
+    conv = request.conversation
+    if isinstance(conv, str):
+        snapshot["conversation"] = {"id": conv}
+    elif isinstance(conv, dict) and conv.get("id"):
+        snapshot["conversation"] = {"id": conv["id"]}
+    return snapshot
 
 
 @app.create_handler
@@ -62,25 +86,32 @@ async def handler(
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
 ):
-    """Forward to upstream, transform text deltas, annotate output."""
+    """Forward to upstream with streaming, translate content events back."""
     upstream = openai.AsyncOpenAI(
         base_url=os.environ.get("UPSTREAM_ENDPOINT", "https://api.openai.com/v1"),
         api_key=os.environ.get("OPENAI_API_KEY", "your-api-key"),
     )
 
+    # Build the upstream request — translate every input item.
+    # Both model stacks share the same JSON wire contract, so
+    # serializing our Item to dict round-trips to the OpenAI SDK.
     input_items = [item.as_dict() for item in get_input_expanded(request)]
 
-    # Use ResponseEventStream for lifecycle events — no manual snapshots.
-    stream = ResponseEventStream(
-        response_id=context.response_id,
-        model=request.model,
-    )
-    yield stream.emit_created()
-    yield stream.emit_in_progress()
+    # This handler owns the response lifecycle — construct the
+    # response snapshot directly instead of forwarding the upstream's.
+    # Seeding from the request preserves metadata, conversation, model.
+    snapshot = _build_response_snapshot(request, context)
 
-    # Track accumulated text so we can annotate at the end.
-    accumulated_text: list[str] = []
-    first_delta = True
+    # Lifecycle events nest the response snapshot under "response"
+    # — matching the SSE wire format.
+    yield {"type": "response.created", "response": snapshot}
+    yield {"type": "response.in_progress", "response": snapshot}
+
+    # Stream from the upstream.  Translate content events (output
+    # items, deltas, etc.) and yield them directly.  Skip upstream
+    # lifecycle events — we own the response envelope.
+    output_items: list[dict[str, Any]] = []
+    upstream_failed = False
 
     async with await upstream.responses.create(
         model=request.model or "gpt-4o-mini",
@@ -88,57 +119,40 @@ async def handler(
         stream=True,
     ) as upstream_stream:
         async for event in upstream_stream:
-            # Skip upstream lifecycle — we own the response envelope.
-            if event.type in (
-                "response.created",
-                "response.in_progress",
-                "response.completed",
-            ):
+            # Skip lifecycle events — we own the response envelope.
+            if event.type in ("response.created", "response.in_progress"):
                 continue
 
-            if event.type == "response.failed":
-                yield stream.emit_failed(
-                    error_code="upstream_error",
-                    error_message="Upstream request failed",
-                )
-                return
+            if event.type == "response.completed":
+                break
 
+            if event.type == "response.failed":
+                upstream_failed = True
+                break
+
+            # Translate the upstream event to a dict via the openai SDK.
             evt = event.model_dump()
 
-            # --- Transform: inject prefix into the first text delta ---
-            if event.type == "response.output_text.delta":
-                delta = _redact(evt.get("delta", ""))
-                if first_delta:
-                    delta = SYSTEM_PREFIX + delta
-                    first_delta = False
-                evt["delta"] = delta
-                accumulated_text.append(delta)
-
-            # --- Transform: redact completed text ---
-            elif event.type == "response.output_text.done":
-                evt["text"] = _redact(evt.get("text", ""))
-
-            # Clear upstream response_id so the orchestrator stamps ours.
-            if event.type in ("response.output_item.added", "response.output_item.done"):
+            # Clear upstream response_id on output items so the
+            # orchestrator's auto-stamp fills in this server's ID.
+            if event.type == "response.output_item.added":
                 evt.get("item", {}).pop("response_id", None)
+            elif event.type == "response.output_item.done":
+                item = evt.get("item", {})
+                item.pop("response_id", None)
+                output_items.append(item)
 
             yield evt
 
-    # --- Annotate: append word count as a second output item ---
-    full_text = "".join(accumulated_text)
-    word_count = len(full_text.split())
-    annotation = f"\n\n---\n📊 {word_count} words"
-
-    msg = stream.add_output_item_message()
-    yield msg.emit_added()
-    part = msg.add_text_content()
-    yield part.emit_added()
-    yield part.emit_delta(annotation)
-    yield part.emit_done()
-    yield msg.emit_content_done(part)
-    yield msg.emit_done()
-
-    yield stream.emit_completed()
+    # Emit terminal event — the handler decides the outcome.
+    if upstream_failed:
+        snapshot["status"] = "failed"
+        snapshot["error"] = {"code": "server_error", "message": "Upstream request failed"}
+        yield {"type": "response.failed", "response": snapshot}
+    else:
+        snapshot["status"] = "completed"
+        snapshot["output"] = output_items
+        yield {"type": "response.completed", "response": snapshot}
 
 
 def main() -> None:
