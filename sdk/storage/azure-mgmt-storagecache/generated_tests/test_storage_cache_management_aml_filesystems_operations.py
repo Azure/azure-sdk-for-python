@@ -22,7 +22,7 @@ class TestStorageCacheManagementAmlFilesystemsOperations(AzureMgmtRecordedTestCa
     @recorded_by_proxy
     def test_aml_filesystems_list(self, resource_group):
         response = self.client.aml_filesystems.list(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestStorageCacheManagementAmlFilesystemsOperations(AzureMgmtRecordedTestCa
     def test_aml_filesystems_list_by_resource_group(self, resource_group):
         response = self.client.aml_filesystems.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestStorageCacheManagementAmlFilesystemsOperations(AzureMgmtRecordedTestCa
         response = self.client.aml_filesystems.begin_delete(
             resource_group_name=resource_group.name,
             aml_filesystem_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestStorageCacheManagementAmlFilesystemsOperations(AzureMgmtRecordedTestCa
         response = self.client.aml_filesystems.get(
             resource_group_name=resource_group.name,
             aml_filesystem_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -81,6 +81,8 @@ class TestStorageCacheManagementAmlFilesystemsOperations(AzureMgmtRecordedTestCa
                     "mgsAddress": "str",
                     "mountCommand": "str",
                 },
+                "clusterUuid": "str",
+                "currentStorageCapacityTiB": 0.0,
                 "encryptionSettings": {"keyEncryptionKey": {"keyUrl": "str", "sourceVault": {"id": "str"}}},
                 "filesystemSubnet": "str",
                 "health": {"state": "str", "statusCode": "str", "statusDescription": "str"},
@@ -137,7 +139,7 @@ class TestStorageCacheManagementAmlFilesystemsOperations(AzureMgmtRecordedTestCa
                 "type": "str",
                 "zones": ["str"],
             },
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -161,7 +163,7 @@ class TestStorageCacheManagementAmlFilesystemsOperations(AzureMgmtRecordedTestCa
                 },
                 "tags": {"str": "str"},
             },
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -173,7 +175,7 @@ class TestStorageCacheManagementAmlFilesystemsOperations(AzureMgmtRecordedTestCa
         response = self.client.aml_filesystems.archive(
             resource_group_name=resource_group.name,
             aml_filesystem_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -185,7 +187,7 @@ class TestStorageCacheManagementAmlFilesystemsOperations(AzureMgmtRecordedTestCa
         response = self.client.aml_filesystems.cancel_archive(
             resource_group_name=resource_group.name,
             aml_filesystem_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself

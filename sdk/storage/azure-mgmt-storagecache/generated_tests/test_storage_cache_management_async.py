@@ -23,7 +23,7 @@ class TestStorageCacheManagementAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_check_aml_fs_subnets(self, resource_group):
         response = await self.client.check_aml_fs_subnets(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestStorageCacheManagementAsync(AzureMgmtRecordedTestCase):
     @recorded_by_proxy_async
     async def test_get_required_aml_fs_subnets_size(self, resource_group):
         response = await self.client.get_required_aml_fs_subnets_size(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself

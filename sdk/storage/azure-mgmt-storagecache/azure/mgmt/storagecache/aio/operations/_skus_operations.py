@@ -30,9 +30,9 @@ from ..._utils.serialization import Deserializer, Serializer
 from ...operations._skus_operations import build_list_request
 from .._configuration import StorageCacheManagementClientConfiguration
 
-List = list
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 
 class SkusOperations:

@@ -22,7 +22,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_caches_list(self, resource_group):
         response = self.client.caches.list(
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
     def test_caches_list_by_resource_group(self, resource_group):
         response = self.client.caches.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
         response = self.client.caches.begin_delete(
             resource_group_name=resource_group.name,
             cache_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
         response = self.client.caches.get(
             resource_group_name=resource_group.name,
             cache_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -176,7 +176,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
                 },
                 "zones": ["str"],
             },
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -188,7 +188,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
         response = self.client.caches.begin_update(
             resource_group_name=resource_group.name,
             cache_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -200,7 +200,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
         response = self.client.caches.begin_debug_info(
             resource_group_name=resource_group.name,
             cache_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -212,7 +212,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
         response = self.client.caches.begin_flush(
             resource_group_name=resource_group.name,
             cache_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -224,7 +224,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
         response = self.client.caches.begin_start(
             resource_group_name=resource_group.name,
             cache_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -236,7 +236,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
         response = self.client.caches.begin_stop(
             resource_group_name=resource_group.name,
             cache_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -248,7 +248,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
         response = self.client.caches.begin_start_priming_job(
             resource_group_name=resource_group.name,
             cache_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -260,7 +260,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
         response = self.client.caches.begin_stop_priming_job(
             resource_group_name=resource_group.name,
             cache_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -272,7 +272,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
         response = self.client.caches.begin_pause_priming_job(
             resource_group_name=resource_group.name,
             cache_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -284,7 +284,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
         response = self.client.caches.begin_resume_priming_job(
             resource_group_name=resource_group.name,
             cache_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -296,7 +296,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
         response = self.client.caches.begin_upgrade_firmware(
             resource_group_name=resource_group.name,
             cache_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -308,7 +308,7 @@ class TestStorageCacheManagementCachesOperations(AzureMgmtRecordedTestCase):
         response = self.client.caches.begin_space_allocation(
             resource_group_name=resource_group.name,
             cache_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

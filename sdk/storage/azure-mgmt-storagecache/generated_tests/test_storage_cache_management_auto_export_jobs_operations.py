@@ -25,7 +25,7 @@ class TestStorageCacheManagementAutoExportJobsOperations(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             aml_filesystem_name="str",
             auto_export_job_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestStorageCacheManagementAutoExportJobsOperations(AzureMgmtRecordedTestCa
             resource_group_name=resource_group.name,
             aml_filesystem_name="str",
             auto_export_job_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -84,7 +84,7 @@ class TestStorageCacheManagementAutoExportJobsOperations(AzureMgmtRecordedTestCa
                 "totalMiBExported": 0,
                 "type": "str",
             },
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -98,7 +98,7 @@ class TestStorageCacheManagementAutoExportJobsOperations(AzureMgmtRecordedTestCa
             aml_filesystem_name="str",
             auto_export_job_name="str",
             auto_export_job={"adminStatus": "str", "tags": {"str": "str"}},
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -110,7 +110,7 @@ class TestStorageCacheManagementAutoExportJobsOperations(AzureMgmtRecordedTestCa
         response = self.client.auto_export_jobs.list_by_aml_filesystem(
             resource_group_name=resource_group.name,
             aml_filesystem_name="str",
-            api_version="2025-07-01",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
