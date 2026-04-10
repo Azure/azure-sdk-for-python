@@ -42,6 +42,10 @@ stages:
                 inputs:
                   versionSpec: '3.12'
 
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  DevFeedName: ${{ parameters.DevFeedName }}
+
               - template: /eng/common/pipelines/templates/steps/retain-run.yml
 
               - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
@@ -124,6 +128,13 @@ stages:
                       - task: UsePythonVersion@0
                         inputs:
                           versionSpec: '3.9'
+
+                      - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                        parameters:
+                          DevFeedName: ${{ parameters.DevFeedName }}
+                          EnableTwineAuth: false
+                          EnablePipAuth: true
+                          EnableUvAuth: false
 
                       - script: |
                           python -m pip install -r $(Pipeline.Workspace)/release_artifact/release_requirements.txt
@@ -280,6 +291,10 @@ stages:
                   inputs:
                     versionSpec: '3.12.x'
 
+                - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                  parameters:
+                    DevFeedName: ${{ parameters.DevFeedName }}
+
                 - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
                 - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
@@ -307,6 +322,11 @@ stages:
             steps:
               - checkout: self
               - task: UsePythonVersion@0
+
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  DevFeedName: ${{ parameters.DevFeedName }}
+
               - script: |
                   python -m pip install "./eng/tools/azure-sdk-tools"
                 displayName: Install versioning tool dependencies
@@ -333,6 +353,7 @@ stages:
                 Daily: false
                 ArtifactName: ${{ parameters.ArtifactName }}
                 Artifact: ${{ artifact }}
+                DevFeedName: ${{ parameters.DevFeedName }}
 
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - stage: Integration
@@ -350,15 +371,17 @@ stages:
         - download: current
           artifact: ${{parameters.ArtifactName}}
           timeoutInMinutes: 5
+
         - task: UsePythonVersion@0
-        - script: |
-            set -e
-            python -m pip install twine
-          displayName: Install Twine
 
         - template: ../steps/auth-dev-feed.yml
           parameters:
             DevFeedName: ${{ parameters.DevFeedName }}
+        
+        - script: |
+            set -e
+            python -m pip install twine
+          displayName: Install Twine
 
         - ${{ each artifact in parameters.Artifacts }}:
           - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
@@ -411,6 +434,10 @@ stages:
             displayName: 'Use Python 3.11'
             inputs:
               versionSpec: '3.11'
+
+          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+            parameters:
+              DevFeedName: ${{ parameters.DevFeedName }}
 
           - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
