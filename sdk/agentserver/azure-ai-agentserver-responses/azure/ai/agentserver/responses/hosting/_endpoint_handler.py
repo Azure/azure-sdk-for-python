@@ -362,13 +362,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         )
 
         # Derive the public ResponseContext from the execution context.
-        ctx.context = self._create_response_context(ctx, request=request)
+        ctx.context = self._create_response_context(ctx, raw_body=payload, request=request)
         return ctx
 
     def _create_response_context(
         self,
         ctx: _ExecutionContext,
         *,
+        raw_body: dict[str, Any],
         request: Request,
     ) -> ResponseContext:
         """Derive a :class:`ResponseContext` from an :class:`_ExecutionContext`.
@@ -390,6 +391,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         context = ResponseContext(
             response_id=ctx.response_id,
             mode_flags=mode_flags,
+            raw_body=raw_body,
             request=ctx.parsed,
             provider=self._provider,
             input_items=ctx.input_items,
