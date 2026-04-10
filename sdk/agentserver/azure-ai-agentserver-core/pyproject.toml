@@ -65,16 +65,9 @@ known-first-party = ["azure.ai.agentserver.core"]
 combine-as-imports = true
 
 [tool.azure-sdk-build]
-<<<<<<< HEAD
-analyze_python_version = "3.11"
-breaking = false   # incompatible python version
-pyright = false
-verifytypes = false
-=======
 breaking = false
 mypy = true
 pyright = true
 verifytypes = true
 pylint = true
 type_check_samples = false
->>>>>>> main
