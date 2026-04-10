@@ -16,6 +16,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import ConfidentialLedgerCertificateClientConfiguration
 from ._operations import _ConfidentialLedgerCertificateClientOperationsMixin
+from ._redirect_caching_policy import RedirectCachingPolicy
 from ._utils.serialization import Deserializer, Serializer
 
 
@@ -50,13 +51,13 @@ class ConfidentialLedgerCertificateClient(_ConfidentialLedgerCertificateClientOp
                 self._config.user_agent_policy,
                 self._config.proxy_policy,
                 policies.ContentDecodePolicy(**kwargs),
-                self._config.redirect_policy,
+                RedirectCachingPolicy(**kwargs),
                 self._config.retry_policy,
                 self._config.authentication_policy,
                 self._config.custom_hook_policy,
                 self._config.logging_policy,
                 policies.DistributedTracingPolicy(**kwargs),
-                policies.SensitiveHeaderCleanupPolicy(**kwargs) if self._config.redirect_policy else None,
+                policies.SensitiveHeaderCleanupPolicy(disable_redirect_cleanup=True, **kwargs) if self._config.redirect_policy else None,
                 self._config.http_logging_policy,
             ]
         self._client: PipelineClient = PipelineClient(base_url=_endpoint, policies=_policies, **kwargs)
