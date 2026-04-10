@@ -80,9 +80,7 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
         retry_key = "_cosmos_aad_403_retried"
-        request_context = getattr(request, "context", None)
-        retry_context = getattr(request_context, "options", request_context)
-        already_retried = bool(retry_context.get(retry_key)) if retry_context is not None else False
+        already_retried = bool(request.context.get(retry_key)) if request.context is not None else False
 
         response = super().send(request)
 
@@ -97,8 +95,7 @@ class CosmosBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
             and substatus == SubStatusCodes.AAD_REQUEST_NOT_AUTHORIZED
             and not already_retried
         ):
-            if retry_context is not None:
-                retry_context[retry_key] = True
+            request.context[retry_key] = True
             self._token = None  # cached token is invalid
             response = super().send(request)
         return response
