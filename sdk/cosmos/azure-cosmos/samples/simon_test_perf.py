@@ -17,8 +17,8 @@ import aiohttp
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos import PartitionKey
-import azure.cosmos._timing_instrument  # noqa: F401 - installs timing hooks
-from azure.cosmos._timing import print_timing_summary
+import perf_timing_instrument  # noqa: F401 - installs timing hooks
+from perf_timing import print_timing_summary
 
 # ── Config ──────────────────────────────────────────────────────────────────
 ENDPOINT = os.environ.get("COSMOS_ENDPOINT", "")
