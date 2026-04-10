@@ -11,6 +11,7 @@ from __future__ import annotations
 import asyncio  # pylint: disable=do-not-import-asyncio
 import logging
 import types
+import warnings
 from collections.abc import AsyncIterable, Awaitable, Generator
 from typing import Any, AsyncIterator, Callable, Optional, Union
 
@@ -93,8 +94,11 @@ class ResponsesAgentServerHost(AgentServerHost):
     :type prefix: str
     :param options: Optional runtime options for the responses server.
     :type options: ResponsesServerOptions | None
-    :param provider: Optional persistence provider for response
+    :param store: Optional persistence provider for response
         envelopes and input items.
+    :type store: ResponseProviderProtocol | None
+    :param provider: Deprecated alias for *store*.  Will be removed in a
+        future release.
     :type provider: ResponseProviderProtocol | None
     """
 
@@ -105,11 +109,23 @@ class ResponsesAgentServerHost(AgentServerHost):
         *,
         prefix: str = "",
         options: ResponsesServerOptions | None = None,
+        store: ResponseProviderProtocol | None = None,
         provider: ResponseProviderProtocol | None = None,
         **kwargs: Any,
     ) -> None:
         # Handler slot — populated via @app.create_handler decorator
         self._create_fn: Optional[CreateHandlerFn] = None
+
+        # Resolve deprecated ``provider`` kwarg → ``store``.
+        if provider is not None:
+            if store is not None:
+                raise TypeError("Cannot pass both 'store' and 'provider'; use 'store' only.")
+            warnings.warn(
+                "The 'provider' parameter is deprecated; use 'store' instead.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+            store = provider
 
         # Normalize prefix
         normalized_prefix = prefix.strip()
@@ -140,7 +156,7 @@ class ResponsesAgentServerHost(AgentServerHost):
             "x-accel-buffering": "no",
         }
 
-        if provider is None:
+        if store is None:
             if config.project_endpoint:
                 from ..store._foundry_provider import FoundryStorageProvider
                 from ..store._foundry_settings import FoundryStorageSettings
@@ -151,9 +167,9 @@ class ResponsesAgentServerHost(AgentServerHost):
                     logger.warning("azure-identity not installed; Foundry auto-activation disabled")
                 else:
                     settings = FoundryStorageSettings.from_endpoint(config.project_endpoint)
-                    provider = FoundryStorageProvider(DefaultAzureCredential(), settings)
+                    store = FoundryStorageProvider(DefaultAzureCredential(), settings)
 
-        resolved_provider: ResponseProviderProtocol = provider if provider is not None else InMemoryResponseProvider()
+        resolved_provider: ResponseProviderProtocol = store if store is not None else InMemoryResponseProvider()
         stream_provider = resolved_provider if isinstance(resolved_provider, ResponseStreamProviderProtocol) else None
         runtime_state = _RuntimeState()
         orchestrator = _ResponseOrchestrator(

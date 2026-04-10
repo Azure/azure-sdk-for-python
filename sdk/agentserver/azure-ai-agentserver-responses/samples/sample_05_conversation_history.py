@@ -3,7 +3,7 @@
 """Sample 05 — Conversation History — Study Tutor.
 
 Demonstrates reading conversation history via ``context.get_history()``
-using ``TextResponse`` with an async ``create_text`` callback.  The study
+using ``TextResponse``.  The study
 tutor references previous turns to give contextual follow-up answers,
 demonstrating multi-turn conversational flows using
 ``previous_response_id``.
@@ -71,15 +71,11 @@ def _build_reply(current_input: str, history: Sequence[OutputItem]) -> str:
 
 
 @app.create_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Study tutor that reads and references conversation history."""
-
-    async def _build():
-        history = await context.get_history()
-        current_input = await context.get_input_text()
-        return _build_reply(current_input, history)
-
-    return TextResponse(context, request, create_text=_build)
+    history = await context.get_history()
+    current_input = await context.get_input_text()
+    return TextResponse(context, request, text=_build_reply(current_input, history))
 
 
 def main() -> None:

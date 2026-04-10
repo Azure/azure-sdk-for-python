@@ -74,7 +74,7 @@ class FoundryStorageProvider:
     Example::
 
         async with FoundryStorageProvider(credential=DefaultAzureCredential()) as provider:
-            app = ResponsesServer(handler=my_handler, provider=provider)
+            app = ResponsesServer(handler=my_handler, store=provider)
     """
 
     def __init__(

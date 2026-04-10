@@ -362,14 +362,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         )
 
         # Derive the public ResponseContext from the execution context.
-        ctx.context = self._create_response_context(ctx, raw_body=payload, request=request)
+        ctx.context = self._create_response_context(ctx, request=request)
         return ctx
 
     def _create_response_context(
         self,
         ctx: _ExecutionContext,
         *,
-        raw_body: dict[str, Any],
         request: Request,
     ) -> ResponseContext:
         """Derive a :class:`ResponseContext` from an :class:`_ExecutionContext`.
@@ -380,20 +379,17 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         :param ctx: The execution context that owns the protocol fields.
         :type ctx: _ExecutionContext
-        :keyword raw_body: The raw JSON payload dict.
-        :paramtype raw_body: dict[str, Any]
         :keyword request: The Starlette HTTP request.
         :paramtype request: Request
         :return: A fully-populated :class:`ResponseContext`.
         :rtype: ResponseContext
         """
         mode_flags = ResponseModeFlags(stream=ctx.stream, store=ctx.store, background=ctx.background)
-        client_headers = {k: v for k, v in request.headers.items() if k.lower().startswith("x-client-")}
+        client_headers = {k.lower(): v for k, v in request.headers.items() if k.lower().startswith("x-client-")}
 
         context = ResponseContext(
             response_id=ctx.response_id,
             mode_flags=mode_flags,
-            raw_body=raw_body,
             request=ctx.parsed,
             provider=self._provider,
             input_items=ctx.input_items,

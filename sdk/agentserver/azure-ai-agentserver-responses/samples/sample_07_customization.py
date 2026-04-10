@@ -52,15 +52,8 @@ app = ResponsesAgentServerHost(options=options, log_level="DEBUG")
 @app.create_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo handler that reports which model is being used."""
-
-    async def _create_text():
-        return f"[model={request.model}] Echo: {await context.get_input_text()}"
-
-    return TextResponse(
-        context,
-        request,
-        create_text=_create_text,
-    )
+    input_text = await context.get_input_text()
+    return TextResponse(context, request, text=f"[model={request.model}] Echo: {input_text}")
 
 
 def main() -> None:

@@ -41,15 +41,8 @@ responses_app = ResponsesAgentServerHost()
 @responses_app.create_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Echo handler mounted under /api."""
-
-    async def _create_text():
-        return f"Self-hosted echo: {await context.get_input_text()}"
-
-    return TextResponse(
-        context,
-        request,
-        create_text=_create_text,
-    )
+    input_text = await context.get_input_text()
+    return TextResponse(context, request, text=f"Self-hosted echo: {input_text}")
 
 
 # Mount into a parent Starlette app

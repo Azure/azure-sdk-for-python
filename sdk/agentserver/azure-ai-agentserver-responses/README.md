@@ -91,9 +91,8 @@ The `ResponseContext` provides request-scoped state:
 |---|---|
 | `response_id` | Unique ID for this response |
 | `is_shutdown_requested` | Whether the server is draining |
-| `raw_body` | Raw request body bytes |
 | `isolation` | `IsolationContext` with `user_key` and `chat_key` for multi-tenant state partitioning |
-| `client_headers` | Dictionary of `x-client-*` headers forwarded from the platform |
+| `client_headers` | Dictionary of `x-client-*` headers forwarded from the platform (keys normalized to lowercase) |
 | `query_parameters` | Dictionary of query string parameters |
 | `get_input_items()` | Load resolved input items as `Item` subtypes |
 | `get_input_text()` | Extract all text content from input items as a single string |

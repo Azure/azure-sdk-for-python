@@ -284,8 +284,8 @@ from azure.ai.agentserver.responses import ResponsesAgentServerHost
 # Use default in-memory provider (no configuration needed)
 app = ResponsesAgentServerHost()
 
-# Or provide a custom provider
-app = ResponsesAgentServerHost(provider=MyCustomProvider())
+# Or provide a custom store
+app = ResponsesAgentServerHost(store=MyCustomProvider())
 ```
 
 When deployed to Azure AI Foundry, durable persistence is enabled automatically —
@@ -512,9 +512,8 @@ order. This prevents protocol violations at development time.
 class ResponseContext:
     response_id: str                        # Library-generated response ID
     is_shutdown_requested: bool             # True when host is shutting down
-    raw_body: dict[str, Any] | None         # Raw JSON body (None for provider-replayed responses)
     request: CreateResponse | None          # Parsed request model
-    client_headers: dict[str, str]          # x-client-* headers from request
+    client_headers: dict[str, str]          # x-client-* headers from request (keys lowercase)
     query_parameters: dict[str, str]        # Query parameters from the HTTP request
     async def get_input_items() -> Sequence[Item]   # Resolved input items as Item subtypes
     async def get_input_text() -> str               # Extract all text content from input items

@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import asyncio
 import threading
+import warnings
 from typing import Any
 
 import pytest
@@ -14,6 +15,7 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
+from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from tests._helpers import EventGate
 
@@ -362,3 +364,62 @@ async def test_hosting__shutdown_signals_inflight_background_execution() -> None
     finally:
         shutdown_event.set()  # ensure shutdown in case of test failure
         await asyncio.wait_for(server_task, timeout=10.0)
+
+
+def test_hosting__client_headers_keys_are_normalized_to_lowercase() -> None:
+    """Verify that x-client-* headers are stored with lowercase keys."""
+    captured_headers: dict[str, str] = {}
+
+    def _header_capturing_handler(request: Any, context: Any, cancellation_signal: Any):
+        captured_headers.update(context.client_headers)
+
+        async def _events():
+            if False:  # pragma: no cover
+                yield None
+
+        return _events()
+
+    app = ResponsesAgentServerHost()
+    app.create_handler(_header_capturing_handler)
+    client = TestClient(app)
+
+    client.post(
+        "/responses",
+        json={"model": "test", "input": "hi", "stream": False, "store": True, "background": False},
+        headers={
+            "X-Client-Foo": "bar",
+            "x-client-baz": "qux",
+        },
+    )
+
+    assert "x-client-foo" in captured_headers
+    assert "x-client-baz" in captured_headers
+    assert captured_headers["x-client-foo"] == "bar"
+    assert captured_headers["x-client-baz"] == "qux"
+
+
+def test_hosting__deprecated_provider_kwarg_still_works() -> None:
+    """The deprecated 'provider' kwarg is accepted with a deprecation warning."""
+    provider = InMemoryResponseProvider()
+    with warnings.catch_warnings(record=True) as w:
+        warnings.simplefilter("always")
+        app = ResponsesAgentServerHost(provider=provider)  # type: ignore[call-arg]
+        assert len(w) == 1
+        assert issubclass(w[0].category, DeprecationWarning)
+        assert "provider" in str(w[0].message)
+
+    app.create_handler(_noop_response_handler)
+    client = TestClient(app)
+
+    resp = client.post(
+        "/responses",
+        json={"model": "test", "input": "hi", "stream": False, "store": True, "background": False},
+    )
+    assert resp.status_code == 200
+
+
+def test_hosting__store_and_provider_together_raises_type_error() -> None:
+    """Passing both 'store' and 'provider' raises TypeError."""
+    provider = InMemoryResponseProvider()
+    with pytest.raises(TypeError, match="Cannot pass both"):
+        ResponsesAgentServerHost(store=provider, provider=provider)  # type: ignore[call-arg]

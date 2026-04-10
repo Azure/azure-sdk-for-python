@@ -55,7 +55,6 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
 
     - response identifier
     - shutdown signal flag
-    - raw body access
     - async input/history resolution
     """
 
@@ -64,7 +63,6 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         *,
         response_id: str,
         mode_flags: ResponseModeFlags,
-        raw_body: dict[str, Any] | None = None,
         request: CreateResponse | None = None,
         created_at: datetime | None = None,
         provider: "ResponseProviderProtocol | None" = None,
@@ -78,7 +76,6 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
     ) -> None:
         self.response_id = response_id
         self.mode_flags = mode_flags
-        self.raw_body = raw_body
         self.request = request
         self.created_at = created_at if created_at is not None else datetime.now(timezone.utc)
         self.is_shutdown_requested: bool = False

@@ -6,15 +6,15 @@ Handles the full SSE lifecycle automatically:
 ``response.created`` → ``response.in_progress`` → message/content events
 → ``response.completed``.
 
-Use ``create_text`` when the complete text is available (or produced by a
-single async call).  Use ``create_text_stream`` when text arrives
+Use ``text`` when the complete text is available (a plain string, a sync
+callable, or an async callable).  Use ``text_stream`` when text arrives
 incrementally (e.g., token-by-token from an LLM).
 """
 
 from __future__ import annotations
 
 from collections.abc import AsyncIterable
-from typing import TYPE_CHECKING, Any, AsyncIterator, Awaitable, Callable
+from typing import TYPE_CHECKING, Any, AsyncIterator, Awaitable, Callable, Union
 
 from ..models import _generated as generated_models
 from ._event_stream import ResponseEventStream
@@ -41,36 +41,40 @@ class TextResponse:
     * ``response.output_item.done``
     * ``response.completed``
 
-    **Complete text mode** — provide ``create_text``::
+    **Plain string**::
+
+        return TextResponse(context, request, text="Hello!")
+
+    **Callable (sync or async)**::
 
         return TextResponse(context, request,
-            create_text=lambda: "Hello!")
+            text=lambda: "Hello!")
 
-    **Streaming mode** — provide ``create_text_stream``::
+    **Streaming mode** — provide ``text_stream``::
 
         async def tokens():
             for t in ["Hello", ", ", "world!"]:
                 yield t
 
         return TextResponse(context, request,
-            create_text_stream=tokens)
+            text_stream=tokens)
 
     :param context: The response context (provides the response ID).
     :type context: ~azure.ai.agentserver.responses.ResponseContext
     :param request: The incoming create-response request.
     :type request: ~azure.ai.agentserver.responses.models.CreateResponse
-    :param create_text: An async or sync callable that returns the complete
-        response text. Mutually exclusive with *create_text_stream*.
-    :type create_text: Callable[[], str | Awaitable[str]] | None
-    :param create_text_stream: A callable returning an async iterable of text
-        chunks. Mutually exclusive with *create_text*.
-    :type create_text_stream: Callable[[], AsyncIterable[str]] | None
+    :param text: A plain string, or a sync/async callable that returns the
+        complete response text. Mutually exclusive with *text_stream*.
+    :type text: str | Callable[[], str | Awaitable[str]] | None
+    :param text_stream: A callable returning an async iterable of text
+        chunks. Mutually exclusive with *text*.
+    :type text_stream: Callable[[], AsyncIterable[str]] | None
     :param configure: An optional callback to configure the
         :class:`ResponseObject` (e.g. set Temperature, Instructions, Metadata)
         before ``response.created`` is emitted.
     :type configure: Callable[[ResponseObject], None] | None
-    :raises ValueError: If neither or both of *create_text* and
-        *create_text_stream* are provided.
+    :raises ValueError: If neither or both of *text* and
+        *text_stream* are provided.
     """
 
     def __init__(
@@ -78,18 +82,38 @@ class TextResponse:
         context: "ResponseContext",
         request: "CreateResponse",
         *,
-        create_text: Callable[[], str | Awaitable[str]] | None = None,
+        text: Union[str, Callable[[], Union[str, Awaitable[str]]], None] = None,
+        text_stream: Callable[[], AsyncIterable[str]] | None = None,
+        # Deprecated aliases — kept for backward compatibility
+        create_text: Union[str, Callable[[], Union[str, Awaitable[str]]], None] = None,
         create_text_stream: Callable[[], AsyncIterable[str]] | None = None,
         configure: Callable[["ResponseObject"], None] | None = None,
     ) -> None:
-        if create_text is not None and create_text_stream is not None:
-            raise ValueError("Provide either create_text or create_text_stream, not both.")
-        if create_text is None and create_text_stream is None:
-            raise ValueError("Provide either create_text or create_text_stream.")
+        # Merge deprecated aliases into the new parameters
+        if create_text is not None:
+            if text is not None:
+                raise ValueError("Use 'text' or 'create_text', not both.")
+            text = create_text
+        if create_text_stream is not None:
+            if text_stream is not None:
+                raise ValueError("Use 'text_stream' or 'create_text_stream', not both.")
+            text_stream = create_text_stream
+
+        if text is not None and text_stream is not None:
+            raise ValueError("Provide either text or text_stream, not both.")
+        if text is None and text_stream is None:
+            raise ValueError("Provide either text or text_stream.")
+
+        # Normalise: if text is a plain str, wrap it in a lambda so the
+        # rest of the pipeline always deals with a callable.
+        if isinstance(text, str):
+            _literal = text
+            text = lambda: _literal  # noqa: E731
+
         self._context = context
         self._request = request
-        self._create_text = create_text
-        self._create_text_stream = create_text_stream
+        self._create_text = text
+        self._create_text_stream = text_stream
         self._configure = configure
 
     def __aiter__(self) -> AsyncIterator[generated_models.ResponseStreamEvent]:
