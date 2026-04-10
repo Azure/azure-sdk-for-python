@@ -5,8 +5,7 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterable
-from copy import deepcopy
-from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator
+from typing import TYPE_CHECKING, AsyncIterator, Iterator
 
 from ...models import _generated as generated_models
 from ._base import EVENT_TYPE, BaseOutputItemBuilder, BuilderLifecycleState
@@ -148,7 +147,7 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
         """
         super().__init__(stream=stream, output_index=output_index, item_id=item_id)
         self._summary_index = 0
-        self._completed_summaries: list[dict[str, Any]] = []
+        self._summary_builders: list[ReasoningSummaryPartBuilder] = []
 
     def emit_added(self) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.added`` event for this reasoning item.
@@ -166,16 +165,9 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
         """
         summary_index = self._summary_index
         self._summary_index += 1
-        return ReasoningSummaryPartBuilder(self._stream, self._output_index, summary_index, self._item_id)
-
-    def emit_summary_part_done(self, summary_part: ReasoningSummaryPartBuilder) -> None:
-        """Record a completed summary part for inclusion in the done event.
-
-        :param summary_part: The completed summary part builder.
-        :type summary_part: ReasoningSummaryPartBuilder
-        :rtype: None
-        """
-        self._completed_summaries.append({"type": "summary_text", "text": summary_part.final_text or ""})
+        part = ReasoningSummaryPartBuilder(self._stream, self._output_index, summary_index, self._item_id)
+        self._summary_builders.append(part)
+        return part
 
     def emit_done(self) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.done`` event for this reasoning item.
@@ -183,11 +175,12 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
         :returns: The emitted event.
         :rtype: ResponseStreamEvent
         """
+        summary_list = [{"type": "summary_text", "text": b.final_text or ""} for b in self._summary_builders]
         return self._emit_done(
             {
                 "type": "reasoning",
                 "id": self._item_id,
-                "summary": deepcopy(self._completed_summaries),
+                "summary": summary_list,
                 "status": "completed",
             }
         )
@@ -199,8 +192,7 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
 
         Creates the sub-builder, emits ``reasoning_summary_part.added``,
         ``reasoning_summary_text.delta``, ``reasoning_summary_text.done``,
-        ``reasoning_summary_part.done``, and registers the part with the
-        parent via :meth:`emit_summary_part_done`.
+        and ``reasoning_summary_part.done``.
 
         :param text: The complete summary text.
         :type text: str
@@ -212,7 +204,6 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
         yield part.emit_text_delta(text)
         yield part.emit_text_done(text)
         yield part.emit_done()
-        self.emit_summary_part_done(part)
 
     async def asummary_part(
         self,
@@ -243,4 +234,3 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
         final = "".join(accumulated)
         yield part.emit_text_done(final)
         yield part.emit_done()
-        self.emit_summary_part_done(part)

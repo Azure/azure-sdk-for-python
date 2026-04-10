@@ -118,7 +118,6 @@ async def handler_builder(
     yield summary.emit_text_delta(thought)
     yield summary.emit_text_done(thought)
     yield summary.emit_done()
-    reasoning.emit_summary_part_done(summary)
 
     yield reasoning.emit_done()
 

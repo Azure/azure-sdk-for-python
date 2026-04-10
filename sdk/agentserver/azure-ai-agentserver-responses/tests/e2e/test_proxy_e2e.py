@@ -132,7 +132,6 @@ def _emit_multi_output_handler(request: CreateResponse, context: ResponseContext
         yield sp.emit_text_delta(" the answer...")
         yield sp.emit_text_done("Thinking about the answer...")
         yield sp.emit_done()
-        reasoning.emit_summary_part_done(sp)
         yield reasoning.emit_done()
 
         # 2. Function call
@@ -316,9 +315,8 @@ def _make_upstream_integration_handler(upstream_client: openai.AsyncOpenAI):
                             yield reasoning_sp.emit_text_done(event.text)
 
                     elif event_type == "response.reasoning_summary_part.done":
-                        if reasoning_sp is not None and reasoning_builder is not None:
+                        if reasoning_sp is not None:
                             yield reasoning_sp.emit_done()
-                            reasoning_builder.emit_summary_part_done(reasoning_sp)
 
                     elif event_type == "response.output_item.done":
                         item = event.item

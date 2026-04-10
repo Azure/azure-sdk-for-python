@@ -734,7 +734,6 @@ yield summary.emit_added()
 yield summary.emit_text_delta("Let me think about this...")
 yield summary.emit_text_done("Let me think about this...")
 yield summary.emit_done()
-reasoning.emit_summary_part_done(summary)
 yield reasoning.emit_done()
 ```
 

@@ -194,7 +194,6 @@ def test_builder_events__include_required_payload_fields_per_event_type() -> Non
     summary_added = summary.emit_added()
     summary.emit_text_done("short reason")
     summary_done = summary.emit_done()
-    reasoning.emit_summary_part_done(summary)
     reasoning_item_done = reasoning.emit_done()
 
     assert code_delta["type"] == "response.code_interpreter_call_code.delta"
