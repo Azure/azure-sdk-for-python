@@ -6330,17 +6330,6 @@ class LocalSkillParam(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ManagedAgentIdentityBlueprint(_Model):
-    """ManagedAgentIdentityBlueprint.
-
-    :ivar name: Required.
-    :vartype name: str
-    """
-
-    name: str = rest_field(visibility=["read"])
-    """Required."""
-
-
 class ManagedAgentIdentityBlueprintReference(AgentBlueprintReference, discriminator="ManagedAgentIdentityBlueprint"):
     """ManagedAgentIdentityBlueprintReference.
 
@@ -7801,41 +7790,6 @@ class OpenApiTool(Tool, discriminator="openapi"):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.type = ToolType.OPENAPI  # type: ignore
-
-
-class PagedManagedAgentIdentityBlueprint(_Model):
-    """Paged collection of ManagedAgentIdentityBlueprint items.
-
-    :ivar value: The ManagedAgentIdentityBlueprint items on this page. Required.
-    :vartype value: list[~azure.ai.projects.models.ManagedAgentIdentityBlueprint]
-    :ivar next_link: The link to the next page of items.
-    :vartype next_link: str
-    """
-
-    value: list["_models.ManagedAgentIdentityBlueprint"] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The ManagedAgentIdentityBlueprint items on this page. Required."""
-    next_link: Optional[str] = rest_field(name="nextLink", visibility=["read", "create", "update", "delete", "query"])
-    """The link to the next page of items."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: list["_models.ManagedAgentIdentityBlueprint"],
-        next_link: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
 
 
 class PendingUploadRequest(_Model):
