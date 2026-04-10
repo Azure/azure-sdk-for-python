@@ -1,0 +1,4 @@
+directory: specification/datamigration/resource-manager/Microsoft.DataMigration/DataMigration
+commit: 18420c08307c8e20d55aa42b47178d571f9d0b44
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

@@ -1,11 +1,10 @@
 {
-  "commit": "de8103ff8e94ea51c56bb22094ded5d2dfc45a6a",
+  "apiVersion": "2025-09-01-preview",
+  "apiVersions": {
+    "Microsoft.DataMigration": "2025-09-01-preview"
+  },
+  "commit": "18420c08307c8e20d55aa42b47178d571f9d0b44",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/datamigration/resource-manager/Microsoft.DataMigration/DataMigration/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/home/v-chenjiang/spec/worktrees/sdk-azure-mgmt-datamigration/sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/datamigration/resource-manager/Microsoft.DataMigration/DataMigration/readme.md"
+  "typespec_src": "specification/datamigration/resource-manager/Microsoft.DataMigration/DataMigration",
+  "emitterVersion": "0.61.3"
 }
