@@ -12,10 +12,10 @@ from typing import IO, Literal, Optional, Union, cast
 CRC64_LENGTH = 8
 CV_TYPE_ERROR_MSG = "Data should be bytes or seekable IO[bytes] for content validation."
 
-_VALID_CV_OPTIONS = ("auto", "crc64", "md5")
+_VALID_CV_OPTIONS = ("auto", "crc64", "crc64-sm", "md5")
 
 CV_TYPE = Optional[Union[bool, Literal["auto", "crc64", "md5"]]]
-CV_TYPE_PARSED = Optional[Union[bool, Literal["crc64", "md5"]]]
+CV_TYPE_PARSED = Optional[Union[bool, Literal["crc64", "crc64-sm", "md5"]]]
 
 
 def _verify_extensions(module: str) -> None:
@@ -30,6 +30,8 @@ def _verify_extensions(module: str) -> None:
 
 def parse_validation_option(
     validate_content: CV_TYPE,
+    *,
+    force_structured_message: bool = False,
 ) -> CV_TYPE_PARSED:
     if validate_content is None:
         return None
@@ -38,18 +40,20 @@ def parse_validation_option(
     if isinstance(validate_content, bool):
         return validate_content
 
-    validate_content = validate_content.lower()
-    if validate_content not in _VALID_CV_OPTIONS:
+    parsed = validate_content.lower()
+    if parsed not in _VALID_CV_OPTIONS:
         raise ValueError("Invalid value for `validate_content` specified.")
 
     # Resolve auto
-    if validate_content == "auto":
-        validate_content = "crc64"
+    if parsed == "auto":
+        parsed = "crc64"
 
-    if validate_content == "crc64":
+    if parsed == "crc64":
         _verify_extensions("crc64")
+        if force_structured_message:
+            parsed = "crc64-sm"
 
-    return cast(CV_TYPE_PARSED, validate_content)
+    return cast(CV_TYPE_PARSED, parsed)
 
 
 def is_md5_validation(
@@ -69,7 +73,7 @@ def is_crc64_validation(
         return False
     if isinstance(validate_content, bool):
         return False
-    return validate_content == "crc64"
+    return validate_content in ("crc64", "crc64-sm")
 
 
 def calculate_content_md5(data: Union[bytes, IO[bytes]]) -> bytes:

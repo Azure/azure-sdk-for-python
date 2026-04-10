@@ -39,7 +39,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
 
     def _setup(self, account_name):
         token_credential = self.get_credential(ShareServiceClient)
-        self.ssc = ShareServiceClient(self.account_url(account_name, "file"), credential=token_credential, logging_enable=True)
+        self.ssc = ShareServiceClient(self.account_url(account_name, "file"), credential=token_credential, token_intent="backup", logging_enable=True)
         self.share_client = self.ssc.get_share_client(self.get_resource_name('utshare'))
         self.share_client.create_share()
 
@@ -240,7 +240,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         file.upload_file(data, max_concurrency=5)
 
         # Act
-        downloader = file.download_file(validate_content='crc64')
+        downloader = file.download_file(validate_content='crc64', max_concurrency=5)
         content = downloader.readall()
 
         downloader = file.download_file(offset=5 * 1024 * 1024, length=25 * 1024 * 1024, validate_content='crc64')

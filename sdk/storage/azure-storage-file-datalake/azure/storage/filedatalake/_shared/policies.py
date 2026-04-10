@@ -5,12 +5,11 @@
 # --------------------------------------------------------------------------
 
 import base64
-import hashlib
 import logging
 import random
 import re
 import uuid
-from io import SEEK_SET, UnsupportedOperation
+from io import BytesIO, SEEK_SET, UnsupportedOperation
 from time import time
 from typing import Any, Dict, Optional, TYPE_CHECKING, Union
 from urllib.parse import (
@@ -426,6 +425,10 @@ def _prepare_content_validation(request: "PipelineRequest") -> None:
             request.context["validate_content_md5"] = computed_md5
 
         elif is_crc64_validation(validate_content):
+            # For crc64-sm, force structured message even for bytes
+            if validate_content == "crc64-sm" and isinstance(data, bytes):
+                data = BytesIO(data)
+
             if isinstance(data, bytes):
                 request.http_request.headers[CRC64_HEADER] = encode_base64(
                     calculate_crc64_bytes(data)

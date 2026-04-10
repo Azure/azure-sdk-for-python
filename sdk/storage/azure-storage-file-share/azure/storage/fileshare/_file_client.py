@@ -609,7 +609,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         max_concurrency = kwargs.pop('max_concurrency', None)
         if max_concurrency is None:
             max_concurrency = DEFAULT_MAX_CONCURRENCY
-        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        validate_content = parse_validation_option(
+            kwargs.pop('validate_content', None),
+            force_structured_message=True
+        )
         progress_hook = kwargs.pop('progress_hook', None)
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
@@ -920,12 +923,14 @@ class ShareFileClient(StorageAccountHostsMixin):
             range_end = offset + length - 1  # Service actually uses an end-range inclusive index
 
         access_conditions = get_access_conditions(kwargs.pop('lease', None))
+        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
 
         return StorageStreamDownloader(
             client=self._client.file,
             config=self._config,
             start_range=offset,
             end_range=range_end,
+            validate_content=validate_content,
             name=self.file_name,
             path='/'.join(self.file_path),
             share=self.share_name,
@@ -1324,7 +1329,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         :returns: File-updated property dict (Etag and last modified).
         :rtype: Dict[str, Any]
         """
-        validate_content = parse_validation_option(kwargs.pop('validate_content', None))
+        validate_content = parse_validation_option(
+            kwargs.pop('validate_content', None),
+            force_structured_message=True
+        )
         timeout = kwargs.pop('timeout', None)
         encoding = kwargs.pop('encoding', 'UTF-8')
         file_last_write_mode = kwargs.pop('file_last_write_mode', None)

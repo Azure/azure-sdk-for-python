@@ -24,7 +24,7 @@ from test_content_validation import (
 class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
     async def _setup(self, account_name):
         token_credential = self.get_credential(ShareServiceClient, is_async=True)
-        self.ssc = ShareServiceClient(self.account_url(account_name, "file"), credential=token_credential, logging_enable=True)
+        self.ssc = ShareServiceClient(self.account_url(account_name, "file"), credential=token_credential, token_intent="backup", logging_enable=True)
         self.share_client = self.ssc.get_share_client(self.get_resource_name('utshare'))
         await self.share_client.create_share()
 
@@ -34,7 +34,8 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
             sync_share_client = SyncShareClient(
                 self.account_url(self.share_client.account_name, "file"),
                 self.share_client.share_name,
-                credential=sync_credential)
+                credential=sync_credential,
+                token_intent="backup")
             try:
                 sync_share_client.delete_share()
             except:
@@ -230,7 +231,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         await file.upload_file(data, max_concurrency=5)
 
         # Act
-        downloader = await file.download_file(validate_content='crc64')
+        downloader = await file.download_file(validate_content='crc64', max_concurrency=5)
         content = await downloader.readall()
 
         downloader = await file.download_file(offset=5 * 1024 * 1024, length=25 * 1024 * 1024, validate_content='crc64')
