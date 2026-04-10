@@ -1,10 +1,10 @@
 # Release History
 
-## 1.1.0 (2026-04-09)
+## 1.1.0 (2026-04-10)
 
 ### Features Added
 
-  - Model `IoTOperationsMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `IoTOperationsMgmtClient` added parameter `cloud_setting` in method `__init__`
   - Client `IoTOperationsMgmtClient` added operation group `dataflow_graph`
   - Client `IoTOperationsMgmtClient` added operation group `registry_endpoint`
   - Client `IoTOperationsMgmtClient` added operation group `akri_connector_template`
@@ -155,11 +155,11 @@
   - Added model `ResourceHealthStatus`
   - Added model `SecretProviderClassRef`
   - Added model `VolumeClaimResourceRequirementsClaims`
-  - Added model `AkriConnectorOperations`
-  - Added model `AkriConnectorTemplateOperations`
-  - Added model `AkriServiceOperations`
-  - Added model `DataflowGraphOperations`
-  - Added model `RegistryEndpointOperations`
+  - Added operation group `AkriConnectorOperations`
+  - Added operation group `AkriConnectorTemplateOperations`
+  - Added operation group `AkriServiceOperations`
+  - Added operation group `DataflowGraphOperations`
+  - Added operation group `RegistryEndpointOperations`
 
 ## 1.0.0 (2024-12-16)
 
