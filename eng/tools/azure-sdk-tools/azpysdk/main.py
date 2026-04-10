@@ -155,19 +155,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         if uv_path:
             os.environ["TOX_PIP_IMPL"] = "uv"
 
-    # Set CFS as default package index unless --pypi is specified
+    # default to CFS feed unless --pypi is specified, but allow explicit env var override (e.g. for CI)
     if args.pypi:
         # Clear any CFS env vars so pip/uv fall back to PyPI
         os.environ.pop("PIP_INDEX_URL", None)
         os.environ.pop("UV_DEFAULT_INDEX", None)
-        logger.info("Using PyPI directly (--pypi flag set)")
+        logger.info("Installing from PyPI (--pypi flag set)")
     else:
-        os.environ.setdefault("PIP_INDEX_URL", CFS_INDEX_URL)
-        os.environ.setdefault("UV_DEFAULT_INDEX", f"azure-sdk={CFS_INDEX_URL}")
-        # Enable keyring-based auth for uv subprocesses (if keyring + artifacts-keyring are installed).
-        # CI overrides this to "disabled" and uses token-based auth instead.
-        os.environ.setdefault("UV_KEYRING_PROVIDER", "subprocess")
-        logger.info("Using CFS feed: %s", CFS_INDEX_URL)
+        if not os.environ.get("PIP_INDEX_URL"):
+            os.environ.setdefault("PIP_INDEX_URL", CFS_INDEX_URL)
+        if not os.environ.get("UV_DEFAULT_INDEX"):
+            os.environ.setdefault("UV_DEFAULT_INDEX", CFS_INDEX_URL)
+        logger.info("Installing from CFS feed: %s", CFS_INDEX_URL)
 
     try:
         result = args.func(args)
