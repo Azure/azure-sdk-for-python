@@ -8,7 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, Dict, List, Tuple, Union, cast, Optional
+from typing import Any, Dict, List, Mapping, Tuple, Union, cast, Optional
 from azure.core.exceptions import HttpResponseError
 
 from ._models import IndexDocumentsBatch as IndexDocumentsBatchGenerated
@@ -55,7 +55,7 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
     def __repr__(self) -> str:
         return "<IndexDocumentsBatch [{} actions]>".format(len(self.actions) if self.actions else 0)[:1024]
 
-    def add_upload_actions(self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any) -> List[IndexAction]:
+    def add_upload_actions(self, *documents: Mapping[str, Any], **kwargs: Any) -> List[IndexAction]:
         # pylint: disable=unused-argument
         """Add documents to upload to the Azure search index.
 
@@ -65,13 +65,13 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
 
         :param documents: Documents to upload to an Azure search index. May be
             a single list of documents, or documents as individual parameters.
-        :type documents: dict or list[dict]
+        :type documents: Mapping[str, Any] or list[Mapping[str, Any]]
         :return: the added actions
         :rtype: list[~azure.search.documents.models.IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), IndexActionType.UPLOAD)
 
-    def add_delete_actions(self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any) -> List[IndexAction]:
+    def add_delete_actions(self, *documents: Mapping[str, Any], **kwargs: Any) -> List[IndexAction]:
         # pylint: disable=unused-argument
         """Add documents to delete from the Azure search index.
 
@@ -86,13 +86,13 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
 
         :param documents: Documents to delete from an Azure search index. May be
             a single list of documents, or documents as individual parameters.
-        :type documents: dict or list[dict]
+        :type documents: Mapping[str, Any] or list[Mapping[str, Any]]
         :return: the added actions
         :rtype: list[~azure.search.documents.models.IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), IndexActionType.DELETE)
 
-    def add_merge_actions(self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any) -> List[IndexAction]:
+    def add_merge_actions(self, *documents: Mapping[str, Any], **kwargs: Any) -> List[IndexAction]:
         # pylint: disable=unused-argument
         """Add documents to merge in to existing documents in the Azure search
         index.
@@ -104,14 +104,14 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
 
         :param documents: Documents to merge into an Azure search index. May be
             a single list of documents, or documents as individual parameters.
-        :type documents: dict or list[dict]
+        :type documents: Mapping[str, Any] or list[Mapping[str, Any]]
         :return: the added actions
         :rtype: list[~azure.search.documents.models.IndexAction]
         """
         return self._extend_batch(_flatten_args(documents), IndexActionType.MERGE)
 
     def add_merge_or_upload_actions(
-        self, *documents: Union[List[Dict], List[List[Dict]]], **kwargs: Any
+        self, *documents: Mapping[str, Any], **kwargs: Any
     ) -> List[IndexAction]:
         # pylint: disable=unused-argument
         """Add documents to merge in to existing documents in the Azure search
@@ -124,7 +124,7 @@ class IndexDocumentsBatch(IndexDocumentsBatchGenerated):
         :param documents: Documents to merge or upload into an Azure search
             index. May be a single list of documents, or documents as individual
             parameters.
-        :type documents: dict or list[dict]
+        :type documents: Mapping[str, Any] or list[Mapping[str, Any]]
         :return: the added actions
         :rtype: list[~azure.search.documents.models.IndexAction]
         """

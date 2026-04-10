@@ -5672,15 +5672,15 @@ class KnowledgeBaseModel(_Model):
 class KnowledgeBaseAzureOpenAIModel(KnowledgeBaseModel, discriminator="azureOpenAI"):
     """Specifies the Azure OpenAI resource used to do query planning.
 
-    :ivar kind: Required. Use Azure Open AI models for query planning.
-    :vartype kind: str or ~azure.search.documents.indexes.models.AZURE_OPEN_AI
+    :ivar kind: Required. Use Azure OpenAI models for query planning.
+    :vartype kind: str or ~azure.search.documents.indexes.models.AZURE_OPENAI
     :ivar azure_open_ai_parameters: Azure OpenAI parameters. Required.
     :vartype azure_open_ai_parameters:
      ~azure.search.documents.indexes.models.AzureOpenAIVectorizerParameters
     """
 
-    kind: Literal[KnowledgeBaseModelKind.AZURE_OPEN_AI] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
-    """Required. Use Azure Open AI models for query planning."""
+    kind: Literal[KnowledgeBaseModelKind.AZURE_OPENAI] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """Required. Use Azure OpenAI models for query planning."""
     azure_open_ai_parameters: "_models.AzureOpenAIVectorizerParameters" = rest_field(
         name="azureOpenAIParameters", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5702,7 +5702,7 @@ class KnowledgeBaseAzureOpenAIModel(KnowledgeBaseModel, discriminator="azureOpen
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind = KnowledgeBaseModelKind.AZURE_OPEN_AI  # type: ignore
+        self.kind = KnowledgeBaseModelKind.AZURE_OPENAI  # type: ignore
 
 
 class KnowledgeSourceReference(_Model):
