@@ -288,7 +288,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     def _build_execution_context(
         self,
         *,
-        payload: dict[str, Any],
         parsed: CreateResponse,
         response_id: str,
         agent_reference: AgentReference | dict[str, Any],
@@ -303,9 +302,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :class:`ResponseContext` is derived automatically so that both
         objects share a single source of truth for mode flags, input
         items, and conversation-threading fields.
-
-        :keyword payload: Raw JSON payload dict.
-        :paramtype payload: dict[str, Any]
         :keyword parsed: Validated :class:`CreateResponse` model.
         :paramtype parsed: CreateResponse
         :keyword response_id: Assigned response identifier.
@@ -455,7 +451,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         agent_session_id = _resolve_session_id(parsed, payload, env_session_id=config_session_id)
 
         ctx = self._build_execution_context(
-            payload=payload,
             parsed=parsed,
             response_id=response_id,
             agent_reference=agent_reference,
