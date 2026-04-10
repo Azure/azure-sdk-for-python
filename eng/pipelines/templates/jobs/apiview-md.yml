@@ -1,8 +1,3 @@
-parameters:
-  - name: MaxParallel
-    type: number
-    default: 8
-
 jobs:
   - job: RegenerateApiMd
     displayName: 'Regenerate api.md for all packages'
@@ -31,26 +26,15 @@ jobs:
         displayName: 'Install CI tools'
 
       - script: |
-          python -m pip install \
-            -r eng/apiview_reqs.txt \
-            --index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/ \
-            --extra-index-url https://pypi.org/simple/
-        displayName: 'Pre-install apiview requirements'
-
-      - script: |
           git config --global user.name "azure-sdk"
           git config --global user.email "azuresdk@microsoft.com"
         displayName: 'Configure git'
 
-      # Run azpysdk apiview --md for all packages in parallel using dispatch_checks.py.
-      # Each package is processed in its own isolated virtual environment to avoid
-      # cross-package dependency conflicts. The generated api.md is written directly
-      # into each package directory so git can detect the changes.
+      # Run `azpysdk apistub --md` for all packages.
+      # The generated api.md is written directly into each package directory
+      # so git can detect the changes.
       - script: |
-          python eng/scripts/dispatch_checks.py "azure-*" \
-            --checks="apiview" \
-            --max-parallel ${{ parameters.MaxParallel }} \
-            --disablecov
+          azpysdk apistub --md "azure-*"
         displayName: 'Regenerate api.md for all packages'
         continueOnError: true
 
@@ -76,7 +60,7 @@ jobs:
           PRBody: |
             This PR was automatically generated to regenerate `api.md` files across all Python SDK packages.
 
-            The `api.md` files are produced by `azpysdk apiview --md`, which runs the API stub generator and converts the output to a human-readable markdown file using `Export-APIViewMarkdown.ps1`.
+            The `api.md` files are produced by `azpysdk apistub --md`, which runs the API stub generator and converts the output to a human-readable markdown file using `Export-APIViewMarkdown.ps1`.
 
             **Why this PR was created**: the `apiview-stub-generator` version in `eng/apiview_reqs.txt` was updated, so all `api.md` files need to be regenerated to reflect any format changes.
 

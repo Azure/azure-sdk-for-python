@@ -6,8 +6,7 @@
 #   - Manual: can be triggered at any time via "Run pipeline" in Azure DevOps
 #
 # What it does:
-#   1. Runs `azpysdk apiview --md` for every Python SDK package (parallel
-#      dispatch via dispatch_checks.py).
+#   1. Runs `azpysdk apistub --md` for every Python SDK package.
 #   2. If any api.md files changed, opens a **draft PR** containing only
 #      those api.md updates for human review before merging.
 
@@ -31,4 +30,4 @@ extends:
       - stage: RegenerateApiMd
         displayName: 'Regenerate api.md'
         jobs:
-          - template: /eng/pipelines/templates/jobs/regenerate-apiview-md.yml
+          - template: /eng/pipelines/templates/jobs/apiview-md.yml
