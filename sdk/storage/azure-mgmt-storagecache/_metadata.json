@@ -1,11 +1,10 @@
 {
-  "commit": "aa822c9c01b9e83fbc8ad8ec4c308203a3c29287",
+  "apiVersion": "2026-01-01",
+  "apiVersions": {
+    "Microsoft.StorageCache": "2026-01-01"
+  },
+  "commit": "3aa055b5cb6f96e77680f3e8066688e7b66a6ee5",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/storagecache/resource-manager/Microsoft.StorageCache/StorageCache/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/home/v-chenjiang/spec/worktrees/sdk-azure-mgmt-storagecache/sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/storagecache/resource-manager/Microsoft.StorageCache/StorageCache/readme.md"
+  "typespec_src": "specification/storagecache/resource-manager/Microsoft.StorageCache/StorageCache",
+  "emitterVersion": "0.61.3"
 }
