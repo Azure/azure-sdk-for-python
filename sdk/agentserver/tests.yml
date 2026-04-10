@@ -1,5 +1,10 @@
 trigger: none
 
+pr:
+  paths:
+    include:
+      - sdk/agentserver/
+
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
