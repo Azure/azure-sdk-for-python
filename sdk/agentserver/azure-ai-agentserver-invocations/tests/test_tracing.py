@@ -349,11 +349,11 @@ def test_genai_attributes_on_invoke_span():
 
 
 # ---------------------------------------------------------------------------
-# Session ID in gen_ai.conversation.id
+# Session ID in microsoft.session.id
 # ---------------------------------------------------------------------------
 
 def test_session_id_in_conversation_id():
-    """Session ID is set as gen_ai.conversation.id on invoke span."""
+    """Session ID is set as microsoft.session.id on invoke span."""
     server = _make_tracing_server()
     client = TestClient(server)
     client.post(
@@ -365,7 +365,7 @@ def test_session_id_in_conversation_id():
     invoke_spans = [s for s in spans if "invoke_agent" in s.name]
     assert len(invoke_spans) >= 1
     attrs = dict(invoke_spans[0].attributes)
-    assert attrs.get("gen_ai.conversation.id") == "test-session"
+    assert attrs.get("microsoft.session.id") == "test-session"
 
 
 # ---------------------------------------------------------------------------
