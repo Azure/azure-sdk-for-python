@@ -208,16 +208,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         # Validate the lifecycle event state machine on startup so
         # misconfigured state machines surface immediately.
-        try:
-            normalize_lifecycle_events(
-                response_id="resp_validation",
-                events=[
-                    {"type": EVENT_TYPE.RESPONSE_CREATED.value, "response": {"status": "in_progress"}},
-                    {"type": EVENT_TYPE.RESPONSE_COMPLETED.value, "response": {"status": "completed"}},
-                ],
-            )
-        except LifecycleStateMachineError as exc:
-            raise RuntimeError(f"Invalid lifecycle event state machine configuration: {exc}") from exc
+        normalize_lifecycle_events(
+            response_id="resp_validation",
+            events=[
+                {"type": EVENT_TYPE.RESPONSE_CREATED.value, "response": {"status": "in_progress"}},
+                {"type": EVENT_TYPE.RESPONSE_COMPLETED.value, "response": {"status": "completed"}},
+            ],
+        )
 
     # ------------------------------------------------------------------
     # Span attribute helper

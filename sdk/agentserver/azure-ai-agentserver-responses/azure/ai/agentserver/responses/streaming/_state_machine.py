@@ -36,10 +36,6 @@ _EVENT_STAGES = {
 }
 
 
-class LifecycleStateMachineError(ValueError):
-    """Raised when lifecycle events violate ordering constraints."""
-
-
 class EventStreamValidator:
     """Incremental validator that maintains state across calls.
 
@@ -61,32 +57,32 @@ class EventStreamValidator:
         :param event: The event mapping to validate.
         :type event: Mapping[str, Any]
         :rtype: None
-        :raises LifecycleStateMachineError: If any ordering or structural constraint is violated.
+        :raises ValueError: If any ordering or structural constraint is violated.
         """
         event_type = event.get("type")
         if not isinstance(event_type, str) or not event_type:
-            raise LifecycleStateMachineError("each lifecycle event must include a non-empty type")
+            raise ValueError("each lifecycle event must include a non-empty type")
 
         if self._event_count == 0 and event_type != EVENT_TYPE.RESPONSE_CREATED.value:
-            raise LifecycleStateMachineError("first lifecycle event must be response.created")
+            raise ValueError("first lifecycle event must be response.created")
 
         self._event_count += 1
 
         stage = _EVENT_STAGES.get(event_type)
         if stage is not None:
             if stage < self._last_stage:
-                raise LifecycleStateMachineError("lifecycle events are out of order")
+                raise ValueError("lifecycle events are out of order")
             if event_type in _TERMINAL_EVENT_TYPES:
                 self._terminal_count += 1
                 if self._terminal_count > 1:
-                    raise LifecycleStateMachineError("multiple terminal lifecycle events are not allowed")
+                    raise ValueError("multiple terminal lifecycle events are not allowed")
                 allowed_statuses = _TERMINAL_TYPE_STATUS.get(event_type)
                 if allowed_statuses is not None:
                     response = event.get("response")
                     actual_status = response.get("status") if isinstance(response, Mapping) else None
                     if actual_status and actual_status not in allowed_statuses:
                         expected = " or ".join(sorted(allowed_statuses))
-                        raise LifecycleStateMachineError(
+                        raise ValueError(
                             f"terminal event '{event_type}' has status '{actual_status}', expected {expected}"
                         )
                 self._terminal_seen = True
@@ -97,28 +93,28 @@ class EventStreamValidator:
             return
 
         if self._last_stage < 0:
-            raise LifecycleStateMachineError("output item events cannot appear before response.created")
+            raise ValueError("output item events cannot appear before response.created")
         if self._terminal_seen:
-            raise LifecycleStateMachineError("output item events cannot appear after terminal lifecycle event")
+            raise ValueError("output item events cannot appear after terminal lifecycle event")
 
         output_index_raw = event.get("output_index", 0)
         output_index = output_index_raw if isinstance(output_index_raw, int) and output_index_raw >= 0 else 0
 
         if event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
             if output_index in self._done_indexes:
-                raise LifecycleStateMachineError("cannot add output item after it has been marked done")
+                raise ValueError("cannot add output item after it has been marked done")
             self._added_indexes.add(output_index)
             return
 
         if output_index not in self._added_indexes:
-            raise LifecycleStateMachineError("output item delta/done requires a preceding output_item.added")
+            raise ValueError("output item delta/done requires a preceding output_item.added")
 
         if event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value:
             self._done_indexes.add(output_index)
             return
 
         if event_type == OUTPUT_ITEM_DELTA_EVENT_TYPE and output_index in self._done_indexes:
-            raise LifecycleStateMachineError("output item delta cannot appear after output_item.done")
+            raise ValueError("output item delta cannot appear after output_item.done")
 
 
 def validate_response_event_stream(events: Sequence[Mapping[str, Any]]) -> None:
@@ -131,10 +127,10 @@ def validate_response_event_stream(events: Sequence[Mapping[str, Any]]) -> None:
     :param events: The sequence of event mappings to validate.
     :type events: Sequence[Mapping[str, Any]]
     :rtype: None
-    :raises LifecycleStateMachineError: If any ordering or structural constraint is violated.
+    :raises ValueError: If any ordering or structural constraint is violated.
     """
     if not events:
-        raise LifecycleStateMachineError("event stream cannot be empty")
+        raise ValueError("event stream cannot be empty")
 
     validator = EventStreamValidator()
     for event in events:
@@ -157,14 +153,14 @@ def normalize_lifecycle_events(
     :keyword type default_model: str | None
     :returns: A list of normalized event dicts with guaranteed terminal event.
     :rtype: list[dict[str, Any]]
-    :raises LifecycleStateMachineError: If a lifecycle event has no type or ordering is invalid.
+    :raises ValueError: If a lifecycle event has no type or ordering is invalid.
     """
     normalized: list[dict[str, Any]] = []
 
     for raw_event in events:
         event_type = raw_event.get("type")
         if not isinstance(event_type, str) or not event_type:
-            raise LifecycleStateMachineError("each lifecycle event must include a non-empty type")
+            raise ValueError("each lifecycle event must include a non-empty type")
 
         payload_raw = raw_event.get("response")
         payload_raw_dict = deepcopy(payload_raw) if isinstance(payload_raw, Mapping) else {}

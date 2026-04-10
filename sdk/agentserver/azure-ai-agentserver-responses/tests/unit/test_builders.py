@@ -4,13 +4,13 @@
 
 from __future__ import annotations
 
-from azure.ai.agentserver.responses import (
+from azure.ai.agentserver.responses.streaming import (
     OutputItemFunctionCallBuilder,
     OutputItemFunctionCallOutputBuilder,
     OutputItemMessageBuilder,
     TextContentBuilder,
+    ResponseEventStream,
 )
-from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 
 
