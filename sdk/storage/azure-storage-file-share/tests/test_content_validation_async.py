@@ -45,6 +45,25 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         return self.get_resource_name('file')
 
     @FileSharePreparer()
+    @pytest.mark.parametrize('a', ['auto', 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy_async
+    async def test_create_file_with_data(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        await self._setup(storage_account_name)
+        file = self.share_client.get_file_client(self._get_file_reference())
+        data = b'abc' * 512
+        assert_method = assert_structured_message if a in ('auto', 'crc64') else assert_content_md5
+
+        # Act
+        await file.create_file(len(data), data=data, validate_content=a, raw_request_hook=assert_method)
+
+        # Assert
+        content = await file.download_file()
+        assert await content.readall() == data
+
+    @FileSharePreparer()
     @pytest.mark.parametrize('a', [True, 'auto', 'md5', 'crc64'])  # a: validate_content
     @GenericTestProxyParametrize1()
     @recorded_by_proxy_async
@@ -225,7 +244,7 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
 
         await self._setup(storage_account_name)
         # The service will use 4 MiB for structured message chunk size, so make chunk size larger
-        self.share_client._config.max_chunk_get_size = 512
+        self.share_client._config.max_chunk_get_size = 5 * 1024 * 1024  # 5 MiB
         file = self.share_client.get_file_client(self._get_file_reference())
         data = b'abcde' * 30 * 1024 * 1024 + b'abcde'  # 150 MiB + 5
         await file.upload_file(data, max_concurrency=5)

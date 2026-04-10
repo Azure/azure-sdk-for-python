@@ -448,8 +448,13 @@ class ShareFileClient(StorageAccountHostsMixin):
                 Restore - apply changes without further modification.
 
         :paramtype file_property_semantics: Optional[Literal["New", "Restore"]]
-        :keyword data: Optional initial data to upload, up to 4MB.
-        :paramtype data: bytes
+        :keyword bytes data: Optional initial data to upload, up to 4MB.
+        :keyword validate_content:
+            Only applicable when `data` is provided.
+            Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the file.
+            Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5".
+            NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.
+        :paramtype validate_content: Union[Literal['auto', 'crc64', 'md5']]
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-file-service-operations.
@@ -472,6 +477,10 @@ class ShareFileClient(StorageAccountHostsMixin):
         content_settings = kwargs.pop('content_settings', None)
         metadata = kwargs.pop('metadata', None)
         timeout = kwargs.pop('timeout', None)
+        validate_content = parse_validation_option(
+            kwargs.pop('validate_content', None),
+            force_structured_message=True
+        )
         headers = kwargs.pop('headers', {})
         headers.update(add_metadata_headers(metadata))
         data = kwargs.pop('data', None)
@@ -499,6 +508,7 @@ class ShareFileClient(StorageAccountHostsMixin):
                 file_permission_key=permission_key,
                 file_http_headers=file_http_headers,
                 optionalbody=data,
+                validate_content=validate_content,
                 content_length=len(data) if data is not None else None,
                 lease_access_conditions=access_conditions,
                 headers=headers,

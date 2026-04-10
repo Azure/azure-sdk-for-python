@@ -135,6 +135,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
         file_mode: Optional[str] = None,
         file_property_semantics: Optional[Literal["New", "Restore"]] = None,
         data: Optional[bytes] = None,
+        validate_content: Optional[Literal['auto', 'crc64', 'md5']] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Any]: ...
