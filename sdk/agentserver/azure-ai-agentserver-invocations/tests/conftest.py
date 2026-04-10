@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 """Shared fixtures and factory functions for invocations tests."""
 import json
+import os
 from typing import Any
 
 import pytest
@@ -11,6 +12,40 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests against live Application Insights")
+
+
+# ---------------------------------------------------------------------------
+# E2E tracing fixtures
+# ---------------------------------------------------------------------------
+
+@pytest.fixture()
+def appinsights_connection_string():
+    """Return APPLICATIONINSIGHTS_CONNECTION_STRING or skip the test."""
+    cs = os.environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING")
+    if not cs:
+        pytest.skip("APPLICATIONINSIGHTS_CONNECTION_STRING not set")
+    return cs
+
+
+@pytest.fixture()
+def appinsights_resource_id():
+    """Return the App Insights resource ID provisioned by test-resources.bicep."""
+    rid = os.environ.get("APPLICATIONINSIGHTS_RESOURCE_ID")
+    if not rid:
+        pytest.skip("APPLICATIONINSIGHTS_RESOURCE_ID not set")
+    return rid
+
+
+@pytest.fixture()
+def logs_query_client():
+    """Create an Azure Monitor LogsQueryClient authenticated via DefaultAzureCredential."""
+    from azure.identity import DefaultAzureCredential
+    from azure.monitor.query import LogsQueryClient
+    return LogsQueryClient(DefaultAzureCredential())
 
 
 # ---------------------------------------------------------------------------

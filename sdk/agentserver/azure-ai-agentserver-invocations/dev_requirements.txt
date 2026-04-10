@@ -5,3 +5,5 @@ httpx
 pytest-asyncio
 opentelemetry-api>=1.40.0
 opentelemetry-sdk>=1.40.0
+azure-monitor-query>=1.4.0
+azure-identity>=1.21.0
