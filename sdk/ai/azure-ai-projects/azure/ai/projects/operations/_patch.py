@@ -18,8 +18,8 @@ from ._patch_evaluation_rules import EvaluationRulesOperations
 from ._patch_telemetry import TelemetryOperations
 from ._patch_connections import ConnectionsOperations
 from ._patch_memories import BetaMemoryStoresOperations
+from ._patch_sessions import BetaAgentsOperations
 from ._operations import (
-    BetaAgentsOperations,
     BetaEvaluationTaxonomiesOperations,
     BetaEvaluatorsOperations,
     BetaInsightsOperations,
@@ -117,6 +117,8 @@ class BetaOperations(GeneratedBetaOperations):
         super().__init__(*args, **kwargs)
         # Replace with patched class that includes upload()
         self.evaluators = BetaEvaluatorsOperations(self._client, self._config, self._serialize, self._deserialize)
+        # Replace with patched class that adds file-path overload to upload_session_file
+        self.agents = BetaAgentsOperations(self._client, self._config, self._serialize, self._deserialize)
         # Replace with patched class that includes begin_update_memories
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
 
