@@ -17,13 +17,15 @@
       "atext",
       "arefusal",
       "asummary",
-      "acode"
+      "acode",
+      "JVBE"
     ],
     "ignorePaths": [
       "*.csv",
       "*.json",
       "*.rst",
-      "samples/**",
+      "samples/*.py",
+      "samples/*.txt",
       "Makefile"
     ]
   }
