@@ -7,4 +7,3 @@ opentelemetry-sdk>=1.40.0
 azure-monitor-opentelemetry-exporter>=1.0.0b21
 azure-monitor-query>=1.2.0
 azure-identity
--e ../azure-ai-agentserver-invocations
