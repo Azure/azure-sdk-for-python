@@ -26,6 +26,7 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_MODEL_NAME - The deployment name of the AI model, as found under the "Name" column in
        the "Models + endpoints" tab in your Microsoft Foundry project.
+    3) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format '<registry>/<repository>[:<tag>|@<digest>]'
 """
 
 import os
@@ -43,7 +44,7 @@ load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 model_name = os.environ["FOUNDRY_MODEL_NAME"]
-image = os.environ["FOUNDRY_AGENT_IMAGE"]
+image = os.environ["FOUNDRY_AGENT_CONTAINER_IMAGE"]
 
 # Construct the paths to the data folder and data file used in this sample
 script_dir = os.path.dirname(os.path.abspath(__file__))
