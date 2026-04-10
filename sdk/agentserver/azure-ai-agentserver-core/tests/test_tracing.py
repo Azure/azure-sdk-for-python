@@ -5,6 +5,7 @@
 import os
 from unittest import mock
 
+from opentelemetry import baggage as _otel_baggage, context as _otel_context
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor, SpanExporter, SpanExportResult
 from opentelemetry.sdk.resources import Resource
@@ -236,6 +237,98 @@ class TestFoundryEnrichmentSpanProcessor:
         )
         fake_span = object()  # no _attributes at all
         proc._on_ending(fake_span)  # should not raise
+
+    # -- session ID and conversation ID from baggage -------------------
+
+    def test_session_id_from_baggage(self) -> None:
+        """session_id baggage is stamped as microsoft.session.id."""
+        proc = _FoundryEnrichmentSpanProcessor()
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.session_id", "session-456",
+        )
+        with tracer.start_as_current_span("span", context=ctx):
+            pass
+
+        attrs = dict(collector.spans[0].attributes)
+        assert attrs["microsoft.session.id"] == "session-456"
+        assert "gen_ai.conversation.id" not in attrs
+
+    def test_conversation_id_from_baggage(self) -> None:
+        """conversation_id baggage is stamped as gen_ai.conversation.id."""
+        proc = _FoundryEnrichmentSpanProcessor()
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.conversation_id", "conv-123",
+        )
+        with tracer.start_as_current_span("span", context=ctx):
+            pass
+
+        attrs = dict(collector.spans[0].attributes)
+        assert attrs["gen_ai.conversation.id"] == "conv-123"
+        assert "microsoft.session.id" not in attrs
+
+    def test_both_session_and_conversation_set_independently(self) -> None:
+        """When both baggage keys are present, both span attrs are set."""
+        proc = _FoundryEnrichmentSpanProcessor()
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.session_id", "session-456",
+        )
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.conversation_id", "conv-123", context=ctx,
+        )
+        with tracer.start_as_current_span("span", context=ctx):
+            pass
+
+        attrs = dict(collector.spans[0].attributes)
+        assert attrs["microsoft.session.id"] == "session-456"
+        assert attrs["gen_ai.conversation.id"] == "conv-123"
+
+    def test_no_ids_when_no_baggage(self) -> None:
+        """Neither attr is set when no baggage is present."""
+        proc = _FoundryEnrichmentSpanProcessor()
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        with tracer.start_as_current_span("span"):
+            pass
+
+        attrs = dict(collector.spans[0].attributes)
+        assert "microsoft.session.id" not in attrs
+        assert "gen_ai.conversation.id" not in attrs
+
+    def test_baggage_ids_propagate_to_child_spans(self) -> None:
+        """Child spans inherit both IDs from baggage."""
+        proc = _FoundryEnrichmentSpanProcessor()
+        provider, collector = self._create_provider(proc)
+        tracer = provider.get_tracer("test")
+
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.session_id", "session-456",
+        )
+        ctx = _otel_baggage.set_baggage(
+            "azure.ai.agentserver.conversation_id", "conv-789", context=ctx,
+        )
+        token = _otel_context.attach(ctx)
+        try:
+            with tracer.start_as_current_span("parent"):
+                with tracer.start_as_current_span("child"):
+                    pass
+        finally:
+            _otel_context.detach(token)
+
+        spans_by_name = {s.name: dict(s.attributes) for s in collector.spans}
+        assert spans_by_name["child"]["microsoft.session.id"] == "session-456"
+        assert spans_by_name["child"]["gen_ai.conversation.id"] == "conv-789"
+        assert spans_by_name["parent"]["microsoft.session.id"] == "session-456"
+        assert spans_by_name["parent"]["gen_ai.conversation.id"] == "conv-789"
 
 
 # ------------------------------------------------------------------ #
