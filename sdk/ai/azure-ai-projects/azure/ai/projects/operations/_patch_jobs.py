@@ -5,12 +5,16 @@
 # ------------------------------------
 """Customized training/jobs operations — flat CommandJob UX, no envelope required."""
 
+import hashlib
 import logging
-from datetime import datetime, timezone
+import os
+from fnmatch import fnmatch
 from os import PathLike
 from pathlib import Path
-from typing import Any, List, Optional, Union
+from typing import Any, List, Optional, Tuple, Union
 from urllib.parse import urlparse
+
+from azure.core.exceptions import ResourceNotFoundError
 
 from azure.core.paging import ItemPaged
 
@@ -25,6 +29,91 @@ from ..models._patch import _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_inse
 from ..models._enums import FoundryFeaturesOptInKeys
 
 _logger = logging.getLogger(__name__)
+
+
+def _resolve_symlink(path: Path) -> Path:
+    """Follow symlink chains until the real target is reached."""
+    while path.is_symlink():
+        link_path = path.resolve()
+        if not link_path.is_absolute():
+            link_path = path.parent.joinpath(link_path).resolve()
+        path = link_path
+    return path
+
+
+def _load_gitignore_patterns(directory: Path) -> List[str]:
+    """Load patterns from a .gitignore file in the given directory."""
+    gitignore_file = ".gitignore"
+    gitignore = directory / gitignore_file
+    if not gitignore.is_file():
+        return []
+    patterns = []
+    with open(gitignore, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.rstrip()
+            if line and not line.startswith("#"):
+                patterns.append(line)
+    return patterns
+
+
+def _is_excluded(rel_path: str, patterns: List[str]) -> bool:
+    """Check if a relative path matches any gitignore-style pattern."""
+    rel_path = rel_path.replace("\\", "/")
+    parts = rel_path.split("/")
+    for pattern in patterns:
+        stripped = pattern.rstrip("/")
+        for part in parts:
+            if fnmatch(part, stripped):
+                return True
+        if fnmatch(rel_path, pattern):
+            return True
+    return False
+
+
+def _update_hash(path: Path, sha: "hashlib._Hash") -> None:
+    """Read file at *path* in chunks and feed each chunk into *sha*."""
+    chunk_size = 1024
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(chunk_size), b""):
+            sha.update(chunk)
+
+
+def _collect_files(
+    directory: Path, ignore_patterns: List[str]
+) -> List[Tuple[Path, str]]:
+    """Collect all files in a directory, respecting gitignore patterns and resolving symlinks.
+
+    Returns a sorted list of (resolved_path, relative_posix_path) tuples.
+    """
+    files: List[Tuple[Path, str]] = []
+    for root, _, filenames in os.walk(directory, followlinks=True):
+        for filename in filenames:
+            abs_path = Path(root, filename)
+            rel_path = abs_path.relative_to(directory).as_posix()
+            if not _is_excluded(rel_path, ignore_patterns):
+                files.append((_resolve_symlink(abs_path), rel_path))
+    return sorted(files, key=lambda x: x[1].lower())
+
+
+def _content_hash(path: Path) -> str:
+    """Compute a truncated SHA-256 content hash for a file or directory.
+
+    Respects ``.gitignore`` when hashing directories.
+    """
+    path = _resolve_symlink(path)
+    sha = hashlib.sha256()
+    if path.is_file():
+        file_list = [(path, path.name)]
+    else:
+        ignore_patterns = _load_gitignore_patterns(path)
+        file_list = _collect_files(path, ignore_patterns)
+    sha.update(str(len(file_list)).encode())
+    for abs_path, rel_path in file_list:
+        sha.update(("#" + rel_path + "#").encode())
+        sha.update(str(os.path.getsize(abs_path)).encode())
+    for abs_path, _ in file_list:
+        _update_hash(abs_path, sha)
+    return sha.hexdigest()[:8]
 
 
 class TrainingJobsOperations(_GeneratedTrainingJobsOps):
@@ -69,7 +158,10 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
             )
 
     def _resolve_asset_uri(
-        self, uri: str, dataset_name: str, base_path: Optional[Union[str, PathLike[str]]] = None
+        self,
+        uri: str,
+        dataset_name: str,
+        base_path: Optional[Union[str, PathLike[str]]] = None,
     ) -> str:
         """Resolve a single URI to a dataset asset URI.
 
@@ -97,7 +189,16 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
             if resolved.exists():
                 local_path = resolved
         if local_path.exists():
-            version = "1"
+            version = _content_hash(local_path)
+
+            try:
+                existing = self._datasets.get(name=dataset_name, version=version)
+                if existing and existing.id:
+                    _logger.debug("[TrainingJobsOperations] Reusing existing dataset '%s' v%s.", dataset_name, version)
+                    return existing.id
+            except ResourceNotFoundError:
+                pass
+
             if local_path.is_dir():
                 _logger.debug(
                     "[TrainingJobsOperations] Uploading folder '%s' as dataset '%s' v%s.",
@@ -143,7 +244,7 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
         """
         if not isinstance(job.code, str):
             return
-        dataset_name = f"{name}-code-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
+        dataset_name = f"{name}-code"
         job.code = self._resolve_asset_uri(job.code, dataset_name, base_path=job._base_path)
 
     def _resolve_input_paths(self, name: str, job: CommandJob) -> None:
@@ -162,7 +263,7 @@ class TrainingJobsOperations(_GeneratedTrainingJobsOps):
                 continue
             if not isinstance(job_input.path, str):
                 continue
-            dataset_name = f"{name}-input-{input_key}-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
+            dataset_name = f"{name}-{input_key}"
             job_input.path = self._resolve_asset_uri(job_input.path, dataset_name, base_path=base_path)
 
     def _resolve_local_paths(self, name: str, job: CommandJob) -> None:

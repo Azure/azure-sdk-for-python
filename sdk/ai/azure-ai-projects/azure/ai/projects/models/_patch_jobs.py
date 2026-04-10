@@ -136,9 +136,7 @@ def _load_command_job(data: dict, base_dir: Optional[Path] = None) -> CommandJob
 
     inputs_data = data.pop("inputs", None)
     if isinstance(inputs_data, dict):
-        data["inputs"] = {
-            key: Input(**val) if isinstance(val, dict) else val for key, val in inputs_data.items()
-        }
+        data["inputs"] = {key: Input(**val) if isinstance(val, dict) else val for key, val in inputs_data.items()}
 
     job = CommandJob(**data)
     job._base_path = base_dir
