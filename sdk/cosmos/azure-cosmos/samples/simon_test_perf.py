@@ -50,6 +50,8 @@ class BenchmarkResult:
     p99_latency_ms: float
     avg_ru_per_query: float
     recall: float
+    avg_server_duration_ms: float
+    total_throttle_count: int
 
     @property
     def qps(self) -> float:
@@ -95,8 +97,11 @@ async def execute_search(
     query_vector: np.ndarray,
     top_k: int,
     search_list_multiplier: int | None = None,
-) -> tuple[list[int], float]:
-    """Execute a single vector search query."""
+) -> tuple[list[int], float, float, int]:
+    """Execute a single vector search query.
+    
+    Returns (result_ids, total_ru, server_duration_ms, throttle_count).
+    """
     vec_list = query_vector.tolist()
 
     if search_list_multiplier is not None:
@@ -129,12 +134,16 @@ async def execute_search(
     async for item in pager:
         result_ids.append(item["datasetId"])
 
-    total_ru = sum(
-        float(h.get("x-ms-request-charge", 0))
-        for h in pager.get_response_headers()
-    )
+    total_ru = 0.0
+    server_duration_ms = 0.0
+    throttle_count = 0
+    for h in pager.get_response_headers():
+        total_ru += float(h.get("x-ms-request-charge", 0))
+        server_duration_ms += float(h.get("x-ms-request-duration-ms", 0))
+        throttle_retry = int(h.get("x-ms-throttle-retry-count", 0))
+        throttle_count += throttle_retry
 
-    return result_ids, total_ru
+    return result_ids, total_ru, server_duration_ms, throttle_count
 
 
 async def run_at_concurrency(
@@ -154,13 +163,15 @@ async def run_at_concurrency(
     latencies: list[float] = []
     ru_charges: list[float] = []
     recall_scores: list[float] = []
+    server_durations: list[float] = []
+    total_throttle_count = 0
     query_count = 0
     error_count = 0
 
     deadline = time.monotonic() + duration_seconds
 
     async def worker(thread_id: int):
-        nonlocal query_count, error_count
+        nonlocal query_count, error_count, total_throttle_count
         rng = random.Random(thread_id)
         while time.monotonic() < deadline:
             query_idx = rng.randint(0, len(query_vectors) - 1)
@@ -168,13 +179,15 @@ async def run_at_concurrency(
 
             start = time.perf_counter()
             try:
-                result_ids, ru = await execute_search(
+                result_ids, ru, server_dur, throttles = await execute_search(
                     container, query_vec, top_k, search_list_multiplier
                 )
                 elapsed_ms = (time.perf_counter() - start) * 1000.0
 
                 latencies.append(elapsed_ms)
                 ru_charges.append(ru)
+                server_durations.append(server_dur)
+                total_throttle_count += throttles
                 query_count += 1
 
                 if gt_sets is not None and query_idx < len(gt_sets):
@@ -209,6 +222,8 @@ async def run_at_concurrency(
         p99_latency_ms=percentile(sorted_latencies, 0.99),
         avg_ru_per_query=sum(ru_charges) / len(ru_charges) if ru_charges else 0,
         recall=sum(recall_scores) / len(recall_scores) if recall_scores else 0,
+        avg_server_duration_ms=sum(server_durations) / len(server_durations) if server_durations else 0,
+        total_throttle_count=total_throttle_count,
     )
 
 
@@ -222,7 +237,9 @@ def print_result(result: BenchmarkResult, label: str | None = None):
           f"QPS={result.qps:.1f}, AvgLat={result.avg_latency_ms:.2f}ms, "
           f"P50={result.p50_latency_ms:.2f}ms, P95={result.p95_latency_ms:.2f}ms, "
           f"P99={result.p99_latency_ms:.2f}ms, AvgRU={result.avg_ru_per_query:.1f}, "
-          f"Recall={result.recall:.4f}")
+          f"Recall={result.recall:.4f}, "
+          f"AvgServerDur={result.avg_server_duration_ms:.2f}ms, "
+          f"Throttles={result.total_throttle_count}")
 
 
 async def main():
@@ -296,6 +313,8 @@ async def main():
         print(f"     Avg latency:     {best_result.avg_latency_ms:.2f} ms")
         print(f"     P50 / P95 / P99: {best_result.p50_latency_ms:.2f} / {best_result.p95_latency_ms:.2f} / {best_result.p99_latency_ms:.2f} ms")
         print(f"     Avg RU/query:    {best_result.avg_ru_per_query:.1f}")
+        print(f"     Avg server dur:  {best_result.avg_server_duration_ms:.2f} ms")
+        print(f"     Throttles:       {best_result.total_throttle_count}")
         print(f"     Recall@{TOP_K}:      {best_result.recall:.4f}")
     print("═" * 80)
 
