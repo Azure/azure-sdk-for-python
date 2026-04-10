@@ -45,7 +45,12 @@ def logs_query_client():
     """Create an Azure Monitor LogsQueryClient authenticated via DefaultAzureCredential."""
     from azure.identity import DefaultAzureCredential
     from azure.monitor.query import LogsQueryClient
-    return LogsQueryClient(DefaultAzureCredential())
+
+    tenant_id = os.environ.get("AZURESUBSCRIPTION_TENANT_ID")
+    kwargs = {"additionally_allowed_tenants": ["*"]}
+    if tenant_id:
+        kwargs["tenant_id"] = tenant_id
+    return LogsQueryClient(DefaultAzureCredential(**kwargs))
 
 
 # ---------------------------------------------------------------------------
