@@ -40,6 +40,15 @@ _ATTR_GEN_AI_RESPONSE_ID = "gen_ai.response.id"
 _ATTR_GEN_AI_OPERATION_NAME = "gen_ai.operation.name"
 _ATTR_GEN_AI_CONVERSATION_ID = "gen_ai.conversation.id"
 _ATTR_FOUNDRY_PROJECT_ID = "microsoft.foundry.project.id"
+_ATTR_SESSION_ID = "microsoft.session.id"
+
+# Baggage keys consumed by tracing.
+# Currently, the invocations package sets the session-id baggage key.
+# The conversation-id baggage key is defined for propagation/mapping, but
+# is not currently set elsewhere in this repo.  Incoming requests from
+# the calling service may carry either key as W3C baggage.
+_BAGGAGE_SESSION_ID = "azure.ai.agentserver.session_id"
+_BAGGAGE_CONVERSATION_ID = "azure.ai.agentserver.conversation_id"
 
 _SERVICE_NAME_VALUE = "azure.ai.agentserver"
 _GEN_AI_SYSTEM_VALUE = "azure.ai.agentserver"
@@ -160,7 +169,7 @@ def request_span(
     if operation_name:
         attrs[_ATTR_GEN_AI_OPERATION_NAME] = operation_name
     if session_id:
-        attrs[_ATTR_GEN_AI_CONVERSATION_ID] = session_id
+        attrs[_ATTR_SESSION_ID] = session_id
     if project_id:
         attrs[_ATTR_FOUNDRY_PROJECT_ID] = project_id
 
@@ -295,9 +304,19 @@ class _FoundryEnrichmentSpanProcessor:
         self.agent_id = agent_id
         self.project_id = project_id
 
-    def on_start(self, span: Any, parent_context: Any = None) -> None:  # pylint: disable=unused-argument
+    def on_start(self, span: Any, parent_context: Any = None) -> None:
         if self.project_id:
             span.set_attribute(_ATTR_FOUNDRY_PROJECT_ID, self.project_id)
+
+        # Stamp session and conversation IDs from baggage so child spans
+        # created by frameworks (LangChain, Semantic Kernel, etc.) inherit them.
+        ctx = parent_context or _otel_context.get_current()
+        session_id = _otel_baggage.get_baggage(_BAGGAGE_SESSION_ID, context=ctx)
+        if session_id:
+            span.set_attribute(_ATTR_SESSION_ID, session_id)
+        conversation_id = _otel_baggage.get_baggage(_BAGGAGE_CONVERSATION_ID, context=ctx)
+        if conversation_id:
+            span.set_attribute(_ATTR_GEN_AI_CONVERSATION_ID, conversation_id)
 
     def _on_ending(self, span: Any) -> None:
         # Set agent identity attributes at span end so they cannot be
