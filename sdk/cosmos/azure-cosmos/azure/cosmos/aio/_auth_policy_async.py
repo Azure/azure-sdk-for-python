@@ -81,18 +81,18 @@ class AsyncCosmosBearerTokenCredentialPolicy(AsyncBearerTokenCredentialPolicy):
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
         response = await super().send(request)
+        substatus = response.http_response.headers.get(HttpHeaders.SubStatus)
+        try:
+            substatus_code = int(substatus) if substatus is not None else 0
+        except (TypeError, ValueError):
+            substatus_code = 0
+
         if (
             response.http_response.status_code == 403
-            and int(response.http_response.headers.get(HttpHeaders.SubStatus, 0))
-            == SubStatusCodes.AAD_REQUEST_NOT_AUTHORIZED
+            and substatus_code == SubStatusCodes.AAD_REQUEST_NOT_AUTHORIZED
         ):
             self._token = None  # cached token is invalid
-            await self.on_request(request)
-            try:
-                response = await self.next.send(request)
-            except Exception:
-                self.on_exception(request)
-                raise
+            response = await super().send(request)
         return response
 
     async def authorize_request(self, request: PipelineRequest[HTTPRequestType], *scopes: str, **kwargs: Any) -> None:
