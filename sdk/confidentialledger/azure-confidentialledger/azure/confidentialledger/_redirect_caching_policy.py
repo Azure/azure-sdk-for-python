@@ -53,7 +53,10 @@ class _RedirectUrlCache:
 
     # -- Volatile.Write -------------------------------------------------
     def set(self, url: str) -> None:  # pylint: disable=redefined-builtin
-        """Extract and cache the base URL (scheme + host) from *url*."""
+        """Extract and cache the base URL (scheme + host) from *url*.
+
+        :param str url: The full redirect target URL.
+        """
         parsed = urlparse(url)
         base_url = f"{parsed.scheme}://{parsed.netloc}"
         with self._lock:
@@ -66,7 +69,13 @@ class _RedirectUrlCache:
 
 
 def _rewrite_url(original_url: str, cached_base_url: str) -> str:
-    """Replace the scheme + host of *original_url* with *cached_base_url*."""
+    """Replace the scheme + host of *original_url* with *cached_base_url*.
+
+    :param str original_url: The original request URL.
+    :param str cached_base_url: The cached base URL (scheme + host) to use.
+    :return: The rewritten URL.
+    :rtype: str
+    """
     original = urlparse(original_url)
     cached = urlparse(cached_base_url)
     return urlunparse(
