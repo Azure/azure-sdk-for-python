@@ -34,8 +34,8 @@ def setup_app_config_keys():
 
     credential = get_credential()
     client = AzureAppConfigurationClient(endpoint, credential)
-    keyvault_secret_url = os.environ.get("APPCONFIGURATION_KEYVAULT_SECRET_URL")
-    keyvault_secret_url2 = os.environ.get("APPCONFIGURATION_KEYVAULT_SECRET_URL2")
+    keyvault_secret_url = os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE")
+    keyvault_secret_url2 = os.environ.get("APPCONFIGURATION_KEY_VAULT_REFERENCE2")
     snap_name, ff_snap_name = setup_configs(client, keyvault_secret_url, keyvault_secret_url2)
 
     snapshot_names["snapshot"] = snap_name
@@ -49,25 +49,19 @@ def setup_app_config_keys():
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     add_general_regex_sanitizer(
-        value="https://Sanitized.azconfig.io",
-        regex=os.environ.get("APPCONFIGURATION_ENDPOINT_STRING", "https://Sanitized.azconfig.io"),
+        value="https://sanitized.azconfig.io",
+        regex=os.environ.get("APPCONFIGURATION_ENDPOINT_STRING", "https://sanitized.azconfig.io"),
     )
     add_general_regex_sanitizer(
-        value="Sanitized",
-        regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "https://Sanitized.azconfig.io"),
+        value="sanitized",
+        regex=os.environ.get("APPCONFIGURATION_CONNECTION_STRING", "https://sanitized.azconfig.io"),
     )
     add_uri_string_sanitizer()
     # Register the longer URL2 sanitizer FIRST to prevent URL1's sanitizer from partially matching within URL2
     add_general_string_sanitizer(
-        value="https://Sanitized.vault.azure.net/secrets/fake-secret2/",
+        value="https://sanitized.vault.azure.net/secrets/fake-secret/",
         target=os.environ.get(
-            "APPCONFIGURATION_KEYVAULT_SECRET_URL2", "https://Sanitized.vault.azure.net/secrets/fake-secret2/"
-        ),
-    )
-    add_general_string_sanitizer(
-        value="https://Sanitized.vault.azure.net/secrets/fake-secret/",
-        target=os.environ.get(
-            "APPCONFIGURATION_KEYVAULT_SECRET_URL", "https://Sanitized.vault.azure.net/secrets/fake-secret/"
+            "APPCONFIGURATION_KEYVAULT_SECRET_URL", "https://sanitized.vault.azure.net/secrets/fake-secret/"
         ),
     )
     add_remove_header_sanitizer(headers="Correlation-Context")
