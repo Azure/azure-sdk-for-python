@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 """Shared fixtures and factory functions for invocations tests."""
 import json
+import os
 from typing import Any
 
 import pytest
@@ -11,6 +12,55 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
+
+
+def pytest_configure(config):
+    config.addinivalue_line("markers", "tracing_e2e: end-to-end tracing tests against live Application Insights")
+
+
+# ---------------------------------------------------------------------------
+# E2E tracing fixtures
+# ---------------------------------------------------------------------------
+
+@pytest.fixture()
+def appinsights_connection_string():
+    """Return APPLICATIONINSIGHTS_CONNECTION_STRING or skip the test."""
+    cs = os.environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING")
+    if not cs:
+        pytest.skip("APPLICATIONINSIGHTS_CONNECTION_STRING not set")
+    return cs
+
+
+@pytest.fixture()
+def appinsights_resource_id():
+    """Return the App Insights resource ID provisioned by test-resources.bicep."""
+    rid = os.environ.get("APPLICATIONINSIGHTS_RESOURCE_ID")
+    if not rid:
+        pytest.skip("APPLICATIONINSIGHTS_RESOURCE_ID not set")
+    return rid
+
+
+@pytest.fixture()
+def logs_query_client():
+    """Create a ``LogsQueryClient`` for querying Application Insights.
+
+    In CI the pipeline runs inside ``AzurePowerShell@5`` — use
+    ``AzurePowerShellCredential`` directly to get a token from the correct
+    tenant.  Locally fall back to ``DefaultAzureCredential``.
+    """
+    from azure.monitor.query import LogsQueryClient
+
+    if os.environ.get("AZURESUBSCRIPTION_TENANT_ID"):
+        from azure.identity import AzurePowerShellCredential
+
+        credential = AzurePowerShellCredential(
+            tenant_id=os.environ["AZURESUBSCRIPTION_TENANT_ID"],
+        )
+    else:
+        from azure.identity import DefaultAzureCredential
+
+        credential = DefaultAzureCredential()
+    return LogsQueryClient(credential)
 
 
 # ---------------------------------------------------------------------------

@@ -7,6 +7,8 @@ description: Automatically fix mypy type checking issues in azure-ai-ml package 
 
 This skill automatically fixes mypy type checking errors in the azure-ai-ml package by analyzing existing code patterns and applying fixes with 100% confidence based on GitHub issues.
 
+> **Scope:** Fix **only mandatory/blocking issues** — type errors that will cause CI to fail. Leave optional/informational warnings as-is.
+
 ## Overview
 
 Intelligently fixes mypy issues by:
@@ -19,8 +21,7 @@ Intelligently fixes mypy issues by:
 7. Searching codebase for existing type annotation patterns
 8. Applying fixes only with 100% confidence
 9. Re-running mypy to verify fixes
-10. Creating a pull request that references the GitHub issue
-11. Providing a summary of what was fixed
+10. Providing a summary of what was fixed
 
 ## Running MyPy
 
@@ -152,6 +153,8 @@ Use the existing type annotation patterns to ensure consistency.
 
 ### Step 7: Apply Fixes (ONLY if 100% confident)
 
+> **Fix only mandatory/blocking issues.** Skip optional or informational warnings that do not cause CI failure.
+
 **ALLOWED ACTIONS:**
  Fix type errors with 100% confidence
  Use existing type annotation patterns as reference
@@ -169,14 +172,14 @@ Use the existing type annotation patterns to ensure consistency.
  Change code logic to avoid type errors
  Delete code without clear justification
 
-### Step 7: Verify Fixes
+### Step 8: Verify Fixes
 
 Re-run mypy to ensure:
 - The type error is resolved
 - No new errors were introduced
 - The code still functions correctly
 
-### Step 8: Summary
+### Step 9: Summary
 
 Provide a summary:
 - GitHub issue being addressed
@@ -184,68 +187,6 @@ Provide a summary:
 - Number of errors remaining
 - Types of fixes applied (e.g., added type hints, fixed return types)
 - Any errors that need manual review
-
-### Step 9: Create Pull Request
-
-After successfully fixing mypy issues, create a pull request:
-
-**Stage and commit the changes:**
-```powershell
-# Stage all modified files
-git add .
-
-# Create a descriptive commit message referencing the issue
-git commit -m "fix(azure-ai-ml): resolve mypy type checking errors (#<issue-number>)
-
-- Fixed <list specific types of errors>
-- Added type hints to <files/modules affected>
-- All mypy checks now pass
-
-Closes #<issue-number>"
-```
-
-**Create pull request using GitHub CLI or MCP server:**
-
-Option 1 - Using GitHub CLI (if available):
-```powershell
-# Create a new branch
-$branchName = "fix/azure-ai-ml-mypy-<issue-number>"
-git checkout -b $branchName
-
-# Push the branch
-git push origin $branchName
-
-# Create PR using gh CLI
-gh pr create `
-  --title "fix(azure-ai-ml): Resolve mypy type checking errors (#<issue-number>)" `
-  --body "## Description
-This PR fixes mypy type checking errors in the azure-ai-ml package as reported in #<issue-number>.
-
-## Changes
-- Fixed mypy type checking errors following Azure SDK Python guidelines
-- Ensured consistency with existing type annotation patterns
-- Targeted fixes for: <specific files/modules from issue>
-- All mypy checks now pass for the affected areas
-
-## Testing
-- [x] Ran mypy on affected files and verified all errors are resolved
-- [x] No new errors introduced
-- [x] Verified fixes follow existing patterns
-- [x] Used Python 3.9 compatible type hints
-
-## Related Issues
-Fixes #<issue-number>" `
-  --base main `
-  --repo Azure/azure-sdk-for-python
-```
-
-Option 2 - Manual PR creation (if GitHub CLI not available):
-1. Push branch: `git push origin <branch-name>`
-2. Navigate to: https://github.com/Azure/azure-sdk-for-python/compare/main...<branch-name>
-3. Create the pull request manually with the description above
-
-Option 3 - Using GitHub MCP server (if available):
-Use the GitHub MCP tools to create a pull request programmatically against the Azure/azure-sdk-for-python repository, main branch.
 
 ## Common MyPy Issues and Fixes
 
@@ -361,20 +302,6 @@ grep -r "from typing import" azure/ai/ml/ | findstr "operations"
 tox -e mypy --c ../../../eng/tox/tox.ini --root . -- $targetFile
 
 # 8. Report results
-
-# 9. Create PR referencing the issue
-$branchName = "fix/azure-ai-ml-mypy-12345"
-git checkout -b $branchName
-git add .
-git commit -m "fix(azure-ai-ml): resolve mypy type checking errors (#12345)
-
-Closes #12345"
-git push origin $branchName
-gh pr create `
-  --title "fix(azure-ai-ml): Resolve mypy type checking errors (#12345)" `
-  --body "Fixes #12345" `
-  --base main `
-  --repo Azure/azure-sdk-for-python
 ```
 
 ## Notes
@@ -385,5 +312,4 @@ gh pr create `
 - If unsure about a fix, mark it for manual review
 - Some errors may require architectural changes - don't force fixes
 - Test the code after fixing to ensure functionality is preserved
-- Always reference the GitHub issue in commits and PRs
 - Avoid using `# type: ignore` unless absolutely necessary and document why
