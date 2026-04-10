@@ -71,4 +71,4 @@ class BetaAgentsOperations(GeneratedBetaAgentsOperations):
         else:
             content = content_or_file_path
 
-        return await super().upload_session_file(agent_name, session_id, content, path=path, **kwargs)
+        return await super()._upload_session_file(agent_name, session_id, content, path=path, **kwargs)

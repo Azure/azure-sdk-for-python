@@ -3579,7 +3579,7 @@ class BetaAgentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def upload_session_file(
+    async def _upload_session_file(
         self, agent_name: str, session_id: str, content: bytes, *, path: str, **kwargs: Any
     ) -> _models.SessionFileWriteResponse:
         """Upload a file to the session sandbox via binary stream. Maximum file size is 50 MB. Uploads
