@@ -27,7 +27,6 @@ from starlette.routing import Route
 from starlette.testclient import TestClient
 
 from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider as SdkTracerProvider
 
 from azure.ai.agentserver.core import AgentServerHost
 
@@ -41,22 +40,16 @@ _APPINSIGHTS_POLL_INTERVAL = 15
 _RESPONSE_ID_ATTR = "gen_ai.response.id"
 
 
-# ---------------------------------------------------------------------------
-# Ensure an OTel provider is set so tracing is active
-# ---------------------------------------------------------------------------
-
-_existing = trace.get_tracer_provider()
-if not hasattr(_existing, "force_flush"):
-    _MODULE_PROVIDER = SdkTracerProvider()
-    trace.set_tracer_provider(_MODULE_PROVIDER)
-else:
-    _MODULE_PROVIDER = _existing
-
-
 def _flush_provider():
-    """Force-flush all span processors so live exporters send data to App Insights."""
-    if hasattr(_MODULE_PROVIDER, "force_flush"):
-        _MODULE_PROVIDER.force_flush()
+    """Force-flush all span processors so live exporters send data to App Insights.
+
+    ``AgentServerHost.__init__`` calls ``configure_tracing()`` which sets up
+    the global ``TracerProvider`` with the Azure Monitor exporter.  We just
+    flush whatever the current global provider is.
+    """
+    provider = trace.get_tracer_provider()
+    if hasattr(provider, "force_flush"):
+        provider.force_flush()
 
 
 def _poll_appinsights(logs_client, resource_id, query, *, timeout=_APPINSIGHTS_POLL_TIMEOUT):

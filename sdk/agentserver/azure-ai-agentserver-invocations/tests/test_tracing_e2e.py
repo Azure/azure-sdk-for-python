@@ -19,7 +19,6 @@ from starlette.requests import Request
 from starlette.responses import Response
 
 from opentelemetry import trace
-from opentelemetry.sdk.trace import TracerProvider as SdkTracerProvider
 
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
@@ -31,21 +30,12 @@ _APPINSIGHTS_POLL_INTERVAL = 15
 # Attribute key that InvocationAgentServerHost stamps on each span.
 _INVOCATION_ID_ATTR = "azure.ai.agentserver.invocations.invocation_id"
 
-# ---------------------------------------------------------------------------
-# Ensure an OTel provider is set so tracing is active
-# ---------------------------------------------------------------------------
-
-_existing = trace.get_tracer_provider()
-if not hasattr(_existing, "force_flush"):
-    _MODULE_PROVIDER = SdkTracerProvider()
-    trace.set_tracer_provider(_MODULE_PROVIDER)
-else:
-    _MODULE_PROVIDER = _existing
-
 
 def _flush_provider():
-    if hasattr(_MODULE_PROVIDER, "force_flush"):
-        _MODULE_PROVIDER.force_flush()
+    """Force-flush the global TracerProvider so exporters send data."""
+    provider = trace.get_tracer_provider()
+    if hasattr(provider, "force_flush"):
+        provider.force_flush()
 
 
 def _poll_appinsights(logs_client, resource_id, query, *, timeout=_APPINSIGHTS_POLL_TIMEOUT):
