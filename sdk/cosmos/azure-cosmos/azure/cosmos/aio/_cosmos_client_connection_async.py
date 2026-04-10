@@ -301,7 +301,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 raise exceptions.CosmosHttpResponseError(
                     message=f"Failed to initialize inference service: {e}",
                     response=None,
-                    status_code=400
+                    status_code=http_constants.StatusCodes.BAD_REQUEST
                 ) from e
         return self._inference_service
 
