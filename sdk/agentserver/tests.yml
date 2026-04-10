@@ -12,6 +12,8 @@ extends:
       ServiceDirectory: agentserver
       TestMarkArgument: tracing_e2e
       TestTimeoutInMinutes: 60
+      MatrixFilters:
+        - PythonVersion=^(?!pypy3).*
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'true'
         AZURE_TEST_RUN_LIVE: 'true'
