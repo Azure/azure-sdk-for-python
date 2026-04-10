@@ -5,11 +5,11 @@
 
 """Custom redirect policies that cache the redirect target URL for write operations.
 
-Write requests (POST / PUT / PATCH) that receive a 307 redirect from the load-
-balancer are followed, and the target URL's base (scheme + host) is cached so
-that subsequent writes skip the load-balancer entirely.
+Write requests (POST / PUT / PATCH / DELETE) that receive a 307 redirect from
+the load-balancer are followed, and the target URL's base (scheme + host) is
+cached so that subsequent writes skip the load-balancer entirely.
 
-Read requests (GET, HEAD, DELETE, …) **never** consult or populate the cache
+Read requests (GET, HEAD, OPTIONS, …) **never** consult or populate the cache
 and always go through the load-balancer.
 
 The cache is invalidated on 5xx responses or transport errors so that a

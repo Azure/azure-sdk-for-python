@@ -47,7 +47,7 @@ class ConfidentialLedgerClient(_ConfidentialLedgerClientOperationsMixin):
                 self._config.user_agent_policy,
                 self._config.proxy_policy,
                 policies.ContentDecodePolicy(**kwargs),
-                RedirectCachingPolicy(**kwargs),
+                kwargs.get("redirect_policy") or RedirectCachingPolicy(**kwargs),
                 self._config.retry_policy,
                 self._config.authentication_policy,
                 self._config.custom_hook_policy,
