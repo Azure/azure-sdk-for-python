@@ -151,7 +151,7 @@ def _build_session_config() -> Dict[str, Any]:
         if api_key:
             logger.info(f"BYOK mode (API key): {base_url}")
             return {
-                "model": model or "gpt-4.1",
+                "model": model,
                 "provider": ProviderConfig(
                     type="openai",
                     base_url=base_url,
@@ -163,7 +163,7 @@ def _build_session_config() -> Dict[str, Any]:
 
         logger.info(f"BYOK mode (Managed Identity): {base_url}")
         return {
-            "model": model or "gpt-4.1",
+            "model": model,
             "provider": ProviderConfig(
                 type="openai",
                 base_url=base_url,
@@ -326,8 +326,8 @@ class CopilotAdapter(FoundryCBAgent):
                 "Creating new Copilot session"
                 + (f" for conversation {conversation_id!r}" if conversation_id else "")
             )
-            # Filter out internal flags (starting with _) before passing to SDK
-            sdk_config = {k: v for k, v in config.items() if not k.startswith("_")}
+            # Filter out internal flags (starting with _) and None values before passing to SDK
+            sdk_config = {k: v for k, v in config.items() if not k.startswith("_") and v is not None}
             # Always enable streaming — the SDK only emits
             # ASSISTANT_MESSAGE_DELTA when streaming=True.
             session = await client.create_session(
@@ -778,61 +778,150 @@ class GitHubCopilotAdapter(CopilotAdapter):
         return cls(project_root=str(root), **kwargs)
 
     async def initialize(self):
-        """Discover and cache the best model at startup (if not already configured).
+        """Discover deployments and configure the model and wire API at startup.
 
-        Call after construction and before ``run()``.  If ``AZURE_AI_FOUNDRY_MODEL``
-        is set or a model is already in the session config, discovery is skipped.
+        Call after construction and before ``run()``.  Discovery always runs
+        to validate the configured model against available deployments and to
+        set ``wire_api`` (``responses`` or ``completions``) based on model
+        capabilities.  If ``AZURE_AI_FOUNDRY_MODEL`` is set, the configured
+        model is matched against discovered deployments; if not found, the
+        best available model is auto-selected.
         """
         resource_url = self._session_config.get("_foundry_resource_url")
         if not resource_url:
             return  # Not using Foundry models — nothing to discover
-        if self._session_config.get("model"):
-            logger.info(f"Model already configured: {self._session_config['model']}")
-            return
+
+        configured_model = self._session_config.get("model")
+        logger.info(
+            "Starting model discovery for %s (configured model: %s)",
+            resource_url, configured_model or "<none>",
+        )
 
         try:
-            from ._foundry_model_discovery import discover_foundry_deployments, get_default_model
+            from ._foundry_model_discovery import FoundryDeployment, discover_foundry_deployments, get_default_model
             from ._model_cache import ModelCache
 
             cache = ModelCache()
+            deployments = None
+
+            # Try cache first to avoid ARM traffic
             cached = cache.get_cache_info(resource_url)
-            if cached and cached.get("selected_model"):
-                self._session_config["model"] = cached["selected_model"]
-                logger.info(f"Using cached model: {cached['selected_model']} (age: {cached['age_hours']:.1f}h)")
+            if cached and cached.get("deployments"):
+                cached_deps = cached["deployments"]
+                deployments = [
+                    FoundryDeployment(
+                        name=d["name"],
+                        model_name=d.get("model_name", d["name"]),
+                        model_version=d.get("model_version", ""),
+                        model_format=d.get("model_format", "OpenAI"),
+                        token_rate_limit=d.get("token_rate_limit", 0),
+                        capabilities=d.get("capabilities"),
+                    )
+                    for d in cached_deps
+                ]
+                # If a wire_api was cached but capabilities weren't, restore it
+                for dep, raw in zip(deployments, cached_deps):
+                    if not dep.capabilities and "wire_api" in raw:
+                        dep._cached_wire_api = raw["wire_api"]
+                logger.info(
+                    "Using cached deployments (%d, age: %.1fh)",
+                    len(deployments), cached["age_hours"],
+                )
+            elif cached and cached.get("selected_model"):
+                # Older cache format: selected_model without deployments list
+                cached_model = cached["selected_model"]
+                if not configured_model:
+                    self._session_config["model"] = cached_model
+                logger.info(
+                    "Using cached model (no deployments): %s (age: %.1fh)",
+                    cached_model, cached["age_hours"],
+                )
                 return
 
-            # Need a token for discovery
-            if self._credential is not None:
-                token = self._credential.get_token("https://management.azure.com/.default").token
-                deployments = await discover_foundry_deployments(
-                    resource_url=resource_url,
-                    access_token=token,
-                    management_token=token,
-                )
-                if deployments:
-                    selected = get_default_model(deployments)
-                    if selected:
-                        self._session_config["model"] = selected
-                        cache.set_selected_model(
-                            resource_url=resource_url,
-                            model_name=selected,
-                            deployments=[{
-                                "name": d.name,
-                                "model_name": d.model_name,
-                                "model_version": d.model_version,
-                                "model_format": d.model_format,
-                                "token_rate_limit": d.token_rate_limit,
-                            } for d in deployments],
-                        )
-                        logger.info(f"Auto-selected model: {selected}")
-                    else:
-                        logger.warning("No suitable model found during discovery")
+            # Cache miss or expired — do full ARM discovery
+            if not deployments:
+                if self._credential is not None:
+                    management_token = self._credential.get_token("https://management.azure.com/.default").token
+                    cognitive_token = self._credential.get_token(_COGNITIVE_SERVICES_SCOPE).token
+                    deployments = await discover_foundry_deployments(
+                        resource_url=resource_url,
+                        access_token=cognitive_token,
+                        management_token=management_token,
+                    )
                 else:
-                    logger.warning("No deployments found during discovery")
-            else:
-                logger.info("No credential available for model discovery — set AZURE_AI_FOUNDRY_MODEL manually")
+                    logger.info("No credential available for model discovery — set AZURE_AI_FOUNDRY_MODEL manually")
+
+            if not deployments:
+                logger.warning("No deployments found during discovery")
+                if not configured_model:
+                    self._session_config["model"] = "gpt-4.1"
+                    logger.warning("No model discovered — falling back to gpt-4.1")
+                return
+
+            logger.info("Model discovery found %d deployment(s):", len(deployments))
+            for d in deployments:
+                caps = {k: v for k, v in d.capabilities.items() if not k.startswith("_")} if d.capabilities else {}
+                logger.info(
+                    "  - %s (model=%s, version=%s, format=%s, TPM=%s, wire_api=%s, capabilities=%s)",
+                    d.name, d.model_name, d.model_version,
+                    d.model_format, d.token_rate_limit, d.wire_api, caps,
+                )
+
+            # Match configured model against discovered deployments
+            matched_deployment = None
+            if configured_model:
+                for d in deployments:
+                    if d.name == configured_model:
+                        matched_deployment = d
+                        break
+                if matched_deployment:
+                    logger.info("Configured model '%s' found in deployments (wire_api=%s)",
+                                configured_model, matched_deployment.wire_api)
+                else:
+                    logger.warning("Configured model '%s' NOT found in deployments — "
+                                   "available: %s", configured_model,
+                                   ", ".join(d.name for d in deployments))
+
+            # Auto-select if no model configured or configured model not found
+            if not matched_deployment:
+                selected = get_default_model(deployments)
+                if selected:
+                    self._session_config["model"] = selected
+                    matched_deployment = next(d for d in deployments if d.name == selected)
+                    logger.info(f"Auto-selected model: {selected} (wire_api={matched_deployment.wire_api})")
+                else:
+                    logger.warning("No suitable model found during discovery")
+                    if not configured_model:
+                        self._session_config["model"] = "gpt-4.1"
+                        logger.warning("Falling back to gpt-4.1")
+                    return
+
+            # Set wire_api based on matched deployment capabilities
+            if matched_deployment and "provider" in self._session_config:
+                self._session_config["provider"]["wire_api"] = matched_deployment.wire_api
+                logger.info("Set wire_api=%s for model %s",
+                            matched_deployment.wire_api, matched_deployment.name)
+
+            # Update cache
+            cache.set_selected_model(
+                resource_url=resource_url,
+                model_name=self._session_config.get("model", configured_model),
+                deployments=[{
+                    "name": d.name,
+                    "model_name": d.model_name,
+                    "model_version": d.model_version,
+                    "model_format": d.model_format,
+                    "token_rate_limit": d.token_rate_limit,
+                    "wire_api": d.wire_api,
+                    "capabilities": d.capabilities,
+                } for d in deployments],
+            )
+
         except Exception:
             logger.warning("Model discovery failed — set AZURE_AI_FOUNDRY_MODEL manually", exc_info=True)
+            if not configured_model:
+                self._session_config["model"] = "gpt-4.1"
+                logger.warning("No model discovered — falling back to gpt-4.1")
 
     async def _load_conversation_history(self, conversation_id: str) -> Optional[str]:
         """Load prior conversation turns from Foundry for cold-start bootstrap.
@@ -915,7 +1004,7 @@ class GitHubCopilotAdapter(CopilotAdapter):
                     logger.warning(f"ACL denied tool request during history bootstrap: kind={kind}")
                     return _perm_result_boot(kind="denied-by-rules", rules=[])
 
-                sdk_config = {k: v for k, v in config.items() if not k.startswith("_")}
+                sdk_config = {k: v for k, v in config.items() if not k.startswith("_") and v is not None}
                 session = await client.create_session(
                     **sdk_config,
                     on_permission_request=_on_permission_boot,
