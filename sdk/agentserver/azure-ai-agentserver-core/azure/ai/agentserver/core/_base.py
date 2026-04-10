@@ -6,7 +6,6 @@ import contextlib
 import logging
 import os
 import signal
-import sys
 from collections.abc import AsyncGenerator, AsyncIterable, AsyncIterator, Awaitable, Callable  # pylint: disable=import-error
 from typing import Any, Optional, Union
 
@@ -231,7 +230,11 @@ class AgentServerHost(Starlette):
             self._server_version_segments.append(normalized)
 
     def _build_server_version(self) -> str:
-        """Join all registered segments into the header value."""
+        """Join all registered segments into the header value.
+
+        :return: The concatenated server version string.
+        :rtype: str
+        """
         return " ".join(self._server_version_segments)
 
     # ------------------------------------------------------------------

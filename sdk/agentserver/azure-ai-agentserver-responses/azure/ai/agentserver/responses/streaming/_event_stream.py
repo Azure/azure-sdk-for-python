@@ -64,12 +64,11 @@ def _resolve_conversation_param(raw: Any) -> str | None:
     return None
 
 
-def _as_dict(obj: _Model | dict[str, Any]) -> dict[str, Any]:
+def _as_dict(obj: _Model | dict[str, Any]) -> dict[str, Any]:  # pylint: disable=docstring-missing-param,docstring-missing-return,docstring-missing-rtype
     """Convert a model or dict-like object to a plain dictionary."""
     if isinstance(obj, _Model):
         return obj.as_dict()
-    else:
-        return obj
+    return obj
 
 
 
@@ -556,7 +555,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         item_id = IdGenerator.new_function_shell_call_item_id(self._response_id)
         return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
 
-    def add_output_item_function_shell_call_output(self) -> OutputItemBuilder:
+    def add_output_item_function_shell_call_output(self) -> OutputItemBuilder:  # pylint: disable=name-too-long
         """Add a function-shell-call-output item and return its generic builder.
 
         :returns: A builder for emitting added/done events.
