@@ -56,10 +56,8 @@ jobs:
 
       # Stage only api.md files so the PR contains exclusively api.md updates.
       - bash: |
-          set +e
-          git add -- "sdk/**/*.md"
-          git diff --cached --quiet
-          if [ $? -ne 0 ]; then
+          git add -- "sdk/**/api.md"
+          if ! git diff --cached --quiet; then
             echo "api.md changes detected; will open a draft PR."
             git -c user.name="azure-sdk" -c user.email="azuresdk@microsoft.com" \
               commit -m "[Auto] Regenerate api.md for all packages"

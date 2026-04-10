@@ -282,3 +282,43 @@ class TestRunOutputDirectory:
 
         assert len(captured_cmds) == 1
         assert "--skip-pylint" not in captured_cmds[0]
+
+
+# ── apiview subcommand ─────────────────────────────────────────────────────
+
+
+class TestApiviewSubcommand:
+    """Tests for the apiview subcommand which wraps apistub with --md enabled by default."""
+
+    def test_apiview_registered_in_cli(self):
+        """apiview must appear as a registered subcommand in the azpysdk CLI."""
+        from azpysdk.main import build_parser
+
+        parser = build_parser()
+        subparsers_action = parser._subparsers._group_actions[0]
+        assert "apiview" in subparsers_action.choices, "apiview subcommand must be registered"
+
+    def test_apiview_defaults_generate_md_true(self):
+        """Parsing 'apiview' without --md must still set generate_md=True."""
+        from azpysdk.main import build_parser
+
+        parser = build_parser()
+        args = parser.parse_args(["apiview"])
+        assert args.generate_md is True, "apiview must default to generate_md=True"
+
+    def test_apiview_no_md_disables_generation(self):
+        """Parsing 'apiview --no-md' must set generate_md=False."""
+        from azpysdk.main import build_parser
+
+        parser = build_parser()
+        args = parser.parse_args(["apiview", "--no-md"])
+        assert args.generate_md is False, "apiview --no-md must set generate_md=False"
+
+    def test_apiview_explicit_md_keeps_true(self):
+        """Parsing 'apiview --md' must set generate_md=True."""
+        from azpysdk.main import build_parser
+
+        parser = build_parser()
+        args = parser.parse_args(["apiview", "--md"])
+        assert args.generate_md is True, "apiview --md must set generate_md=True"
+

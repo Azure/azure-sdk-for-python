@@ -47,7 +47,7 @@ class apiview(apistub):
             "--md",
             dest="generate_md",
             default=True,
-            action="store_true",
-            help="Generate api.md from the token JSON file (enabled by default for apiview).",
+            action=argparse.BooleanOptionalAction,
+            help="Generate api.md from the token JSON file (enabled by default for apiview; use --no-md to skip).",
         )
         p.set_defaults(func=self.run)
