@@ -1,0 +1,34 @@
+# Pipeline to mass-regenerate api.md files across all Python SDK packages.
+#
+# Triggers:
+#   - CI: when eng/apiview_reqs.txt changes on main (i.e. when the
+#         apiview-stub-generator version is bumped)
+#   - Manual: can be triggered at any time via "Run pipeline" in Azure DevOps
+#
+# What it does:
+#   1. Runs `azpysdk apiview --md` for every Python SDK package (parallel
+#      dispatch via dispatch_checks.py).
+#   2. If any api.md files changed, opens a **draft PR** containing only
+#      those api.md updates for human review before merging.
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - eng/apiview_reqs.txt
+
+pr: none
+
+variables:
+  - template: /eng/pipelines/templates/variables/image.yml
+
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+      - stage: RegenerateApiMd
+        displayName: 'Regenerate api.md'
+        jobs:
+          - template: /eng/pipelines/templates/jobs/regenerate-apiview-md.yml

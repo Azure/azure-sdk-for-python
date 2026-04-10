@@ -26,6 +26,7 @@ from .next_pyright import next_pyright
 from .ruff import ruff
 from .verifytypes import verifytypes
 from .apistub import apistub
+from .apiview import apiview
 from .verify_sdist import verify_sdist
 from .whl import whl
 from .sdist import sdist
@@ -102,6 +103,7 @@ def build_parser() -> argparse.ArgumentParser:
     ruff().register(subparsers, [common])
     verifytypes().register(subparsers, [common])
     apistub().register(subparsers, [common])
+    apiview().register(subparsers, [common])
     verify_sdist().register(subparsers, [common])
     whl().register(subparsers, [common])
     sdist().register(subparsers, [common])

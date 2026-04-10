@@ -159,9 +159,13 @@ class apistub(Check):
                     token_json_path = os.path.join(out_token_path, f"{package_name}_python.json")
                     md_script = os.path.join(REPO_ROOT, "eng", "common", "scripts", "Export-APIViewMarkdown.ps1")
                     logger.info(f"Generating api.md for {package_name}")
+                    # When no --dest-dir is given, write api.md directly into the package
+                    # directory so it is tracked by git. When --dest-dir is provided, keep
+                    # the existing behaviour of writing into <dest_dir>/<package_name>/.
+                    md_output_path = package_dir if not dest_dir else out_token_path
                     try:
                         result = run(
-                            ["pwsh", md_script, "-TokenJsonPath", token_json_path, "-OutputPath", out_token_path],
+                            ["pwsh", md_script, "-TokenJsonPath", token_json_path, "-OutputPath", md_output_path],
                             check=True,
                             capture_output=True,
                             text=True,

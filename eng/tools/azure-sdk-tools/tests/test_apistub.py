@@ -145,8 +145,12 @@ class TestRunOutputDirectory:
     @patch("azpysdk.apistub.create_package_and_install")
     @patch("azpysdk.apistub.install_into_venv")
     @patch("azpysdk.apistub.set_envvar_defaults")
-    def test_no_dest_dir_uses_staging(self, _env, _install, _create, _get_whl, _get_mapping, tmp_path, monkeypatch):
-        """When --dest-dir is not given, output path should be the staging directory."""
+    def test_no_dest_dir_md_outputs_to_package_dir(
+        self, _env, _install, _create, _get_whl, _get_mapping, tmp_path, monkeypatch
+    ):
+        """When --dest-dir is not given but --md is set, api.md must be written
+        to the package directory (not the staging directory), so it can be
+        tracked by git."""
         monkeypatch.chdir(os.getcwd())
         stub = apistub()
         staging = str(tmp_path / "staging")
@@ -156,19 +160,23 @@ class TestRunOutputDirectory:
         fake_parsed.name = "azure-core"
 
         captured_cmds = []
+        captured_pwsh = []
 
         def fake_apistub_run(exe, cmds, **kwargs):
             captured_cmds.append(cmds)
-            # Simulate apistub generating the token JSON
+            # Simulate apistub generating the token JSON into staging
             out_idx = cmds.index("--out-path")
             out_dir = cmds[out_idx + 1]
+            os.makedirs(out_dir, exist_ok=True)
             open(os.path.join(out_dir, "azure-core_python.json"), "w").close()
 
         def fake_pwsh(cmd, **kwargs):
+            captured_pwsh.append(cmd)
             out_idx = cmd.index("-OutputPath")
             out_dir = cmd[out_idx + 1]
+            os.makedirs(out_dir, exist_ok=True)
             open(os.path.join(out_dir, "api.md"), "w").close()
-            return MagicMock(returncode=0)
+            return MagicMock(returncode=0, stdout=None)
 
         with patch.object(stub, "get_targeted_directories", return_value=[fake_parsed]), patch.object(
             stub, "get_executable", return_value=(sys.executable, staging)
@@ -180,13 +188,20 @@ class TestRunOutputDirectory:
 
             stub.run(self._make_args(dest_dir=None, generate_md=True))
 
-        # The --out-path passed to apistub should be the staging directory
+        # The --out-path for the token JSON should still be the staging directory
         assert len(captured_cmds) == 1
         cmds = captured_cmds[0]
         out_idx = cmds.index("--out-path")
         assert cmds[out_idx + 1] == os.path.abspath(staging)
-        assert os.path.exists(os.path.join(staging, "api.md"))
         assert os.path.exists(os.path.join(staging, "azure-core_python.json"))
+
+        # api.md must be written to the package directory, NOT to the staging dir
+        assert len(captured_pwsh) == 1
+        pwsh_cmd = captured_pwsh[0]
+        out_idx = pwsh_cmd.index("-OutputPath")
+        assert pwsh_cmd[out_idx + 1] == str(tmp_path)
+        assert os.path.exists(os.path.join(str(tmp_path), "api.md"))
+        assert not os.path.exists(os.path.join(staging, "api.md"))
 
     @patch(
         "azpysdk.apistub.REPO_ROOT", os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
