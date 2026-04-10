@@ -34,11 +34,11 @@ jobs:
       DocRepoOwner: MicrosoftDocs
       DocRepoName: azure-docs-sdk-python
     steps:
-      # py2docfx requires Python >= 3.11
+      # py2docfx requires Python >= 3.12.x, match docs pipeline version specification
       - task: UsePythonVersion@0
-        displayName: 'Use Python 3.11'
+        displayName: 'Use Python 3.12.x'
         inputs:
-          versionSpec: '3.11'
+          versionSpec: '3.12.x'
 
       # Docs CI upgrades pip, wheel, and setuptools
       - pwsh: python -m pip install --upgrade pip wheel setuptools
