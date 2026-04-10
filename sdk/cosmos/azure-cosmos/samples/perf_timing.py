@@ -26,7 +26,8 @@ def print_timing_summary():
     print("\n" + "=" * 90)
     print("  SDK PER-REQUEST TIMING BREAKDOWN")
     print("=" * 90)
-    print(f"{'Stage':<45} {'Total(ms)':>12} {'Count':>10} {'Avg(\u03bcs)':>12}")
+    mu = "\u03bcs"
+    print(f"{'Stage':<45} {'Total(ms)':>12} {'Count':>10} {mu:>12}")
     print("-" * 90)
 
     sorted_items = sorted(_timings.items(), key=lambda x: -x[1][0])
