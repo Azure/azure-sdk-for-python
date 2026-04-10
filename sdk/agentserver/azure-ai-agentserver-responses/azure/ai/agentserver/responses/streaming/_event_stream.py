@@ -12,6 +12,7 @@ from typing import Any, AsyncIterator, Iterator, Sequence
 from .._id_generator import IdGenerator
 from ..models import _generated as generated_models
 from ..models._generated import AgentReference
+from ..models._generated.sdk.models._utils.model_base import Model as _Model
 from . import _internals
 from ._builders import (
     OutputItemBuilder,
@@ -61,6 +62,15 @@ def _resolve_conversation_param(raw: Any) -> str | None:
         cid = raw.id
         return str(cid) if cid else None
     return None
+
+
+def _as_dict(obj: _Model | dict[str, Any]) -> dict[str, Any]:
+    """Convert a model or dict-like object to a plain dictionary."""
+    if isinstance(obj, _Model):
+        return obj.as_dict()
+    else:
+        return obj
+
 
 
 class ResponseEventStream:  # pylint: disable=too-many-public-methods
@@ -825,8 +835,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: Iterator[ResponseStreamEvent]
         """
         builder = self.add_output_item_computer_call()
-        action_dict = action.as_dict() if hasattr(action, "as_dict") else action
-        checks = [c.as_dict() if hasattr(c, "as_dict") else c for c in (pending_safety_checks or [])]
+        action_dict = _as_dict(action)
+        checks = [_as_dict(c) for c in (pending_safety_checks or [])]
         item = {
             "type": "computer_call",
             "id": builder.item_id,
@@ -856,8 +866,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: Iterator[ResponseStreamEvent]
         """
         builder = self.add_output_item_computer_call_output()
-        output_dict = output.as_dict() if hasattr(output, "as_dict") else output
-        checks = [c.as_dict() if hasattr(c, "as_dict") else c for c in (acknowledged_safety_checks or [])]
+        output_dict = _as_dict(output)
+        checks = [_as_dict(c) for c in (acknowledged_safety_checks or [])]
         item = {
             "type": "computer_call_output",
             "id": builder.item_id,
@@ -886,7 +896,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: Iterator[ResponseStreamEvent]
         """
         builder = self.add_output_item_local_shell_call()
-        action_dict = action.as_dict() if hasattr(action, "as_dict") else action
+        action_dict = _as_dict(action)
         item = {
             "type": "local_shell_call",
             "id": builder.item_id,
@@ -930,8 +940,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: Iterator[ResponseStreamEvent]
         """
         builder = self.add_output_item_function_shell_call()
-        action_dict = action.as_dict() if hasattr(action, "as_dict") else action
-        env_dict = environment.as_dict() if hasattr(environment, "as_dict") else environment
+        action_dict = _as_dict(action)
+        env_dict = _as_dict(environment)
         item = {
             "type": "shell_call",
             "id": builder.item_id,
@@ -964,7 +974,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: Iterator[ResponseStreamEvent]
         """
         builder = self.add_output_item_function_shell_call_output()
-        output_list = [o.as_dict() if hasattr(o, "as_dict") else o for o in output]
+        output_list = [_as_dict(o) for o in output]
         item = {
             "type": "shell_call_output",
             "id": builder.item_id,
@@ -994,7 +1004,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :rtype: Iterator[ResponseStreamEvent]
         """
         builder = self.add_output_item_apply_patch_call()
-        op_dict = operation.as_dict() if hasattr(operation, "as_dict") else operation
+        op_dict = _as_dict(operation)
         item = {
             "type": "apply_patch_call",
             "id": builder.item_id,
@@ -1050,7 +1060,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         builder = self.add_output_item_custom_tool_call_output()
         output_val: Any
         if isinstance(output, list):
-            output_val = [o.as_dict() if hasattr(o, "as_dict") else o for o in output]
+            output_val = [_as_dict(o) for o in output]
         else:
             output_val = output
         item = {
