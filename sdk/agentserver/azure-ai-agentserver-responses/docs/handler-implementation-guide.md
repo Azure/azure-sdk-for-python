@@ -84,11 +84,7 @@ app = ResponsesAgentServerHost()
 @app.create_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
     text = await context.get_input_text()
-    return TextResponse(
-        context,
-        request,
-        create_text=lambda: f"Echo: {text}",
-    )
+    return TextResponse(context, request, text=f"Echo: {text}")
 ```
 
 ### Running the Server
@@ -123,14 +119,10 @@ When you have the full text available at once:
 @app.create_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
     text = await context.get_input_text()
-    return TextResponse(
-        context,
-        request,
-        create_text=lambda: f"Echo: {text}",
-    )
+    return TextResponse(context, request, text=f"Echo: {text}")
 ```
 
-`create_text` can also be an async callable — useful when the answer requires I/O:
+`text` can also be a sync or async callable — useful when the answer requires I/O:
 
 ```python
 @app.create_handler
@@ -140,14 +132,13 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
         answer = await model.generate(text)
         return answer
 
-    return TextResponse(context, request, create_text=_build)
+    return TextResponse(context, request, text=_build)
 ```
 
 ### Streaming Text
 
-When an LLM produces tokens incrementally, pass `create_text_stream` — a callable
-that returns an `AsyncIterable[str]`. Each chunk becomes a separate
-`response.output_text.delta` SSE event:
+When an LLM produces tokens incrementally, pass an `AsyncIterable[str]` to
+`text`. Each chunk becomes a separate `response.output_text.delta` SSE event:
 
 ```python
 import asyncio
@@ -160,11 +151,7 @@ def handler(request: CreateResponse, context: ResponseContext, cancellation_sign
             await asyncio.sleep(0.05)
             yield token
 
-    return TextResponse(
-        context,
-        request,
-        create_text_stream=generate_tokens,
-    )
+    return TextResponse(context, request, text=generate_tokens())
 ```
 
 ### Setting Response Properties
@@ -177,7 +164,7 @@ return TextResponse(
     context,
     request,
     configure=lambda response: setattr(response, "temperature", 0.7),
-    create_text=lambda: "Hello!",
+    text="Hello!",
 )
 ```
 
@@ -206,7 +193,7 @@ app = ResponsesAgentServerHost()
 
 @app.create_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    return TextResponse(context, request, create_text=lambda: "Hello!")
+    return TextResponse(context, request, text="Hello!")
 
 app.run()
 ```
@@ -254,7 +241,7 @@ responses_app = ResponsesAgentServerHost()
 
 @responses_app.create_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    return TextResponse(context, request, create_text=lambda: "Hello!")
+    return TextResponse(context, request, text="Hello!")
 
 app = Starlette(routes=[
     Mount("/api", app=responses_app),
@@ -326,7 +313,7 @@ Use `return` — no generator yield needed:
 ```python
 @app.create_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    return TextResponse(context, request, create_text=lambda: "Hello!")
+    return TextResponse(context, request, text="Hello!")
 ```
 
 ### Generator handlers (ResponseEventStream)
@@ -376,9 +363,9 @@ yield message.emit_added()
 text = message.add_text_content()
 yield text.emit_added()
 yield text.emit_delta("Hello, world!")
-yield text.emit_done("Hello, world!")
+yield text.emit_text_done("Hello, world!")
 
-yield message.emit_content_done(text)
+yield text.emit_done()
 yield message.emit_done()
 
 # 3. Signal completion
@@ -598,8 +585,7 @@ approach.
 ```python
 @app.create_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    return TextResponse(context, request,
-        create_text=lambda: "Hello, world!")
+    return TextResponse(context, request, text="Hello, world!")
 ```
 
 #### Using convenience generators
@@ -640,9 +626,9 @@ yield text.emit_delta("First chunk of text. ")
 yield text.emit_delta("Second chunk. ")
 
 # Finalize the text content
-yield text.emit_done("First chunk of text. Second chunk. ")
+yield text.emit_text_done("First chunk of text. Second chunk. ")
 
-yield message.emit_content_done(text)
+yield text.emit_done()
 yield message.emit_done()
 ```
 
@@ -684,22 +670,24 @@ next turn.
 
 ```python
 @app.create_handler
-def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     stream = ResponseEventStream(response_id=context.response_id, model=request.model)
-    tool_output = _find_function_call_output(request)
+    tool_output = await _find_function_call_output(context)
 
     if tool_output is not None:
         # Turn 2+: Process the function result and respond
         yield stream.emit_created()
         yield stream.emit_in_progress()
-        yield from stream.output_item_message(f"The result is: {tool_output}")
+        async for event in stream.aoutput_item_message(f"The result is: {tool_output}"):
+            yield event
         yield stream.emit_completed()
     else:
         # Turn 1: Request a function call
         yield stream.emit_created()
         yield stream.emit_in_progress()
         args = json.dumps({"location": "Seattle"})
-        yield from stream.output_item_function_call("get_weather", "call_weather_1", args)
+        async for event in stream.aoutput_item_function_call("get_weather", "call_weather_1", args):
+            yield event
         yield stream.emit_completed()
 ```
 
@@ -870,8 +858,8 @@ The `cancellation_signal` (`asyncio.Event`) is set when:
 ### TextResponse Handlers
 
 `TextResponse` handlers use `return TextResponse(...)`. Cancellation is propagated
-automatically — if the signal fires during `create_text` or `create_text_stream`,
-remaining events are suppressed and the library handles the winddown.
+automatically — if the signal fires while producing text, remaining events are
+suppressed and the library handles the winddown.
 
 For streaming, check cancellation between chunks:
 
@@ -884,7 +872,7 @@ def handler(request: CreateResponse, context: ResponseContext, cancellation_sign
                 return
             yield token
 
-    return TextResponse(context, request, create_text_stream=stream_tokens)
+    return TextResponse(context, request, text=stream_tokens())
 ```
 
 ### ResponseEventStream Handlers — Sync
@@ -958,7 +946,8 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
             return
         raise
 
-    yield from stream.output_item_message(result)
+    async for event in stream.aoutput_item_message(result):
+        yield event
     yield stream.emit_completed()
 ```
 
@@ -1220,7 +1209,7 @@ yield from stream.output_item_message("Hello!")
 yield stream.emit_completed()
 
 # ✅ Use TextResponse — one line, same result
-return TextResponse(context, request, create_text=lambda: "Hello!")
+return TextResponse(context, request, text="Hello!")
 ```
 
 ### Emitting Events After a Terminal Event
@@ -1238,17 +1227,17 @@ yield stream.emit_completed()
 ### Not Closing Content Builders
 
 ```python
-# ❌ Missing emit_content_done
+# ❌ Missing emit_done on the content builder
 text = message.add_text_content()
 yield text.emit_added()
-yield text.emit_done("text")
+yield text.emit_text_done("text")
 yield message.emit_done()  # Content wasn't properly closed
 
-# ✅ Always call emit_content_done before closing the message
+# ✅ Always call text.emit_done() before closing the message
 text = message.add_text_content()
 yield text.emit_added()
-yield text.emit_done("text")
-yield message.emit_content_done(text)  # Close the content part
+yield text.emit_text_done("text")
+yield text.emit_done()  # Close the content part
 yield message.emit_done()
 ```
 

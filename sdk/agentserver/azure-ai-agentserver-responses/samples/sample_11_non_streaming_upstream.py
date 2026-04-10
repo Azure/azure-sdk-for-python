@@ -52,7 +52,6 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
     ResponseEventStream,
     ResponsesAgentServerHost,
-    get_input_expanded,
 )
 
 app = ResponsesAgentServerHost()
@@ -73,7 +72,7 @@ async def handler(
     # Build the upstream request — translate every input item.
     # Both model stacks share the same JSON wire contract, so
     # serializing our Item to dict round-trips to the OpenAI SDK.
-    input_items = [item.as_dict() for item in get_input_expanded(request)]
+    input_items = [item.as_dict() for item in await context.get_input_items()]
 
     # Call upstream without streaming and get the complete response.
     result = await upstream.responses.create(

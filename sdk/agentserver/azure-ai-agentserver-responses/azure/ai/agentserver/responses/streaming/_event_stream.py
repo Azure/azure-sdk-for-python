@@ -708,11 +708,11 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         tc = message.add_text_content()
         yield tc.emit_added()
         yield tc.emit_delta(text)
-        yield tc.emit_done(text)
+        yield tc.emit_text_done(text)
         if annotations:
             for ann in annotations:
                 yield tc.emit_annotation_added(ann)
-        yield message.emit_content_done(tc)
+        yield tc.emit_done()
         yield message.emit_done()
 
     def output_item_function_call(
@@ -1155,13 +1155,17 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             return
         message = self.add_output_item_message()
         yield message.emit_added()
-        async for streamed_event in message.atext_content(text):
-            yield streamed_event
+        tc = message.add_text_content()
+        yield tc.emit_added()
+        accumulated = ""
+        async for chunk in text:
+            yield tc.emit_delta(chunk)
+            accumulated += chunk
+        yield tc.emit_text_done(accumulated)
         if annotations:
-            tc = message._completed_contents[-1] if message._completed_contents else None  # type: ignore[attr-defined]
-            if tc is not None:
-                for ann in annotations:
-                    yield tc.emit_annotation_added(ann)
+            for ann in annotations:
+                yield tc.emit_annotation_added(ann)
+        yield tc.emit_done()
         yield message.emit_done()
 
     async def aoutput_item_function_call(

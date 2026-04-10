@@ -57,8 +57,8 @@ def _handler_with_output(request: Any, context: Any, cancellation_signal: Any):
         text = msg.add_text_content()
         yield text.emit_added()
         yield text.emit_delta("Hello")
+        yield text.emit_text_done()
         yield text.emit_done()
-        yield msg.emit_content_done(text)
         yield msg.emit_done()
 
         yield stream.emit_completed()

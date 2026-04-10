@@ -122,8 +122,8 @@ def _output_producing_handler(request: Any, context: Any, cancellation_signal: A
         text = message.add_text_content()
         yield text.emit_added()
         yield text.emit_delta("hello")
+        yield text.emit_text_done()
         yield text.emit_done()
-        yield message.emit_content_done(text)
         yield message.emit_done()
         yield stream.emit_completed()
 
@@ -226,8 +226,8 @@ def _make_two_item_gated_handler(
             text1 = msg1.add_text_content()
             yield text1.emit_added()
             yield text1.emit_delta("Hello")
+            yield text1.emit_text_done()
             yield text1.emit_done()
-            yield msg1.emit_content_done(text1)
             yield msg1.emit_done()
 
             item1_emitted.signal()
@@ -242,8 +242,8 @@ def _make_two_item_gated_handler(
             text2 = msg2.add_text_content()
             yield text2.emit_added()
             yield text2.emit_delta("World")
+            yield text2.emit_text_done()
             yield text2.emit_done()
-            yield msg2.emit_content_done(text2)
             yield msg2.emit_done()
 
             item2_emitted.signal()
@@ -647,8 +647,8 @@ class TestC2StreamStored:
                         break
                     yield tc.emit_delta(f"chunk{i} ")
                     await asyncio.sleep(0.02)
-                yield tc.emit_done("done")
-                yield msg.emit_content_done(tc)
+                yield tc.emit_text_done("done")
+                yield tc.emit_done()
                 yield msg.emit_done()
                 yield stream.emit_completed()
 

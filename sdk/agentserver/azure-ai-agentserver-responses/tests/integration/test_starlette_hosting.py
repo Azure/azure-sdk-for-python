@@ -5,8 +5,6 @@
 from __future__ import annotations
 
 import asyncio
-import threading
-import warnings
 from typing import Any
 
 import pytest
@@ -15,7 +13,6 @@ from starlette.testclient import TestClient
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
-from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 
@@ -153,8 +150,8 @@ def test_hosting__stream_mode_surfaces_handler_output_item_and_content_events() 
             text_content = message_item.add_text_content()
             yield text_content.emit_added()
             yield text_content.emit_delta("hello")
+            yield text_content.emit_text_done()
             yield text_content.emit_done()
-            yield message_item.emit_content_done(text_content)
             yield message_item.emit_done()
 
             yield stream.emit_completed()
@@ -203,8 +200,8 @@ def test_hosting__non_stream_mode_returns_completed_response_with_output_items()
             text_content = message_item.add_text_content()
             yield text_content.emit_added()
             yield text_content.emit_delta("hello")
+            yield text_content.emit_text_done()
             yield text_content.emit_done()
-            yield message_item.emit_content_done(text_content)
             yield message_item.emit_done()
 
             yield stream.emit_completed()
@@ -347,7 +344,7 @@ async def test_hosting__shutdown_signals_inflight_background_execution() -> None
                 },
             )
             assert create_resp.status_code == 200
-            response_id = create_resp.json()["id"]
+            _response_id = create_resp.json()["id"]  # noqa: F841
 
             # Wait for handler to start
             await asyncio.wait_for(handler_started.wait(), timeout=3.0)
@@ -396,4 +393,3 @@ def test_hosting__client_headers_keys_are_normalized_to_lowercase() -> None:
     assert "x-client-baz" in captured_headers
     assert captured_headers["x-client-foo"] == "bar"
     assert captured_headers["x-client-baz"] == "qux"
-

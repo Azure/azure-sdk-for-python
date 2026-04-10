@@ -212,7 +212,7 @@ def test_input_items_supports_order_and_cursor_pagination() -> None:
     asc_payload = asc_response.json()
     assert len(asc_payload.get("data", [])) == 2
     assert asc_payload.get("has_more") is True
-    first_id = asc_payload["data"][0].get("id")
+    _first_id = asc_payload["data"][0].get("id")  # noqa: F841
     second_id = asc_payload["data"][1].get("id")
 
     # Cursor-based: after second item should return items 3 & 4

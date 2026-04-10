@@ -105,8 +105,8 @@ def _emit_text_only_handler(text: str):
             tc = msg.add_text_content()
             yield tc.emit_added()
             yield tc.emit_delta(text)
-            yield tc.emit_done(text)
-            yield msg.emit_content_done(tc)
+            yield tc.emit_text_done(text)
+            yield tc.emit_done()
             yield msg.emit_done()
             yield stream.emit_completed()
 
@@ -150,8 +150,8 @@ def _emit_multi_output_handler(request: CreateResponse, context: ResponseContext
         yield tc.emit_added()
         yield tc.emit_delta("The answer")
         yield tc.emit_delta(" is 42.")
-        yield tc.emit_done("The answer is 42.")
-        yield msg.emit_content_done(tc)
+        yield tc.emit_text_done("The answer is 42.")
+        yield tc.emit_done()
         yield msg.emit_done()
 
         yield stream.emit_completed()
@@ -204,8 +204,8 @@ def _make_streaming_proxy_handler(upstream_client: openai.AsyncOpenAI):
                         yield tc.emit_delta(event.delta)
 
             result_text = "".join(full_text)
-            yield tc.emit_done(result_text)
-            yield msg.emit_content_done(tc)
+            yield tc.emit_text_done(result_text)
+            yield tc.emit_done()
             yield msg.emit_done()
             yield stream.emit_completed()
 
@@ -348,11 +348,11 @@ def _make_upstream_integration_handler(upstream_client: openai.AsyncOpenAI):
 
                     elif event_type == "response.output_text.done":
                         if text_builder is not None:
-                            yield text_builder.emit_done(event.text)
+                            yield text_builder.emit_text_done(event.text)
 
                     elif event_type == "response.content_part.done":
-                        if msg_builder is not None and text_builder is not None:
-                            yield msg_builder.emit_content_done(text_builder)
+                        if text_builder is not None:
+                            yield text_builder.emit_done()
 
             if upstream_failed:
                 yield stream.emit_failed(code="server_error", message="Upstream request failed")

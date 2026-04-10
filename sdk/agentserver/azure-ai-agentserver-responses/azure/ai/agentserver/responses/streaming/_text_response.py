@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import inspect
 from collections.abc import AsyncIterable
-from typing import TYPE_CHECKING, Any, AsyncIterator, Awaitable, Callable, Union
+from typing import TYPE_CHECKING, AsyncIterator, Awaitable, Callable, Union
 
 from ..models import _generated as generated_models
 from ._event_stream import ResponseEventStream
@@ -112,24 +112,24 @@ class TextResponse:
         if isinstance(source, str):
             # Plain string — single delta.
             yield text_content.emit_delta(source)
-            yield text_content.emit_done(source)
+            yield text_content.emit_text_done(source)
         elif isinstance(source, AsyncIterable):
             # Async iterable — stream token-by-token.
             accumulated: list[str] = []
             async for chunk in source:
                 accumulated.append(chunk)
                 yield text_content.emit_delta(chunk)
-            yield text_content.emit_done("".join(accumulated))
+            yield text_content.emit_text_done("".join(accumulated))
         elif callable(source):
             # Sync or async callable — call once.
             result = source()
             if inspect.isawaitable(result):
                 result = await result
             yield text_content.emit_delta(result)  # type: ignore[arg-type]
-            yield text_content.emit_done(result)  # type: ignore[arg-type]
+            yield text_content.emit_text_done(result)  # type: ignore[arg-type]
         else:
             raise TypeError(f"text must be str, callable, or AsyncIterable, got {type(source).__name__}")
 
-        yield message.emit_content_done(text_content)
+        yield text_content.emit_done()
         yield message.emit_done()
         yield stream.emit_completed()

@@ -248,8 +248,8 @@ async def test_non_bg_streaming_disconnect_results_in_cancelled() -> None:
                     break
                 yield tc.emit_delta(f"chunk{i} ")
                 await asyncio.sleep(0.02)
-            yield tc.emit_done("cancelled")
-            yield msg.emit_content_done(tc)
+            yield tc.emit_text_done("cancelled")
+            yield tc.emit_done()
             yield msg.emit_done()
             yield stream.emit_incomplete(reason="cancelled")
 

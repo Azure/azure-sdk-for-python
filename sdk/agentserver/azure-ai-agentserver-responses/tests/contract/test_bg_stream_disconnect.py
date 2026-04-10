@@ -210,8 +210,8 @@ def _make_multi_output_handler(total_outputs: int, signal_after: int):
                 text = msg.add_text_content()
                 yield text.emit_added()
                 yield text.emit_delta(f"Item-{i}")
+                yield text.emit_text_done()
                 yield text.emit_done()
-                yield msg.emit_content_done(text)
                 yield msg.emit_done()
 
                 if i == signal_after - 1:

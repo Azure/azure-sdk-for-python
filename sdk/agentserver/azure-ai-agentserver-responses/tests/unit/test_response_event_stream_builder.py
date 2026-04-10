@@ -45,8 +45,8 @@ def test_event_stream_builder__builds_output_item_events() -> None:
         message.emit_added(),
         text.emit_added(),
         text.emit_delta("hello"),
+        text.emit_text_done(),
         text.emit_done(),
-        message.emit_content_done(text),
         message.emit_done(),
         stream.emit_completed(),
     ]
@@ -99,8 +99,8 @@ def test_event_stream_builder__rejects_invalid_global_stream_order() -> None:
         message.emit_added()
         stream.emit_completed()
         text.emit_added()
+        text.emit_text_done()
         text.emit_done()
-        message.emit_content_done(text)
         message.emit_done()
 
 
@@ -113,8 +113,8 @@ def test_event_stream_builder__emit_completed_accepts_usage_and_sets_terminal_fi
     text = message.add_text_content()
     text.emit_added()
     text.emit_delta("hello")
+    text.emit_text_done()
     text.emit_done()
-    message.emit_content_done(text)
     message.emit_done()
 
     usage = {

@@ -48,7 +48,8 @@ async def convenience_handler(request: CreateResponse, context: ResponseContext)
     yield stream.emit_in_progress()
 
     # One call emits: added → in_progress → generating → completed → done(result)
-    yield from stream.output_item_image_gen_call(TINY_IMAGE_B64)
+    async for event in stream.aoutput_item_image_gen_call(TINY_IMAGE_B64):
+        yield event
 
     yield stream.emit_completed()
 

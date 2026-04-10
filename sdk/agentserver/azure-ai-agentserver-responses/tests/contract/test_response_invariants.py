@@ -533,8 +533,8 @@ def _output_item_handler(request: Any, context: Any, cancellation_signal: Any):
         text_content = message_item.add_text_content()
         yield text_content.emit_added()
         yield text_content.emit_delta("hi")
+        yield text_content.emit_text_done()
         yield text_content.emit_done()
-        yield message_item.emit_content_done(text_content)
         yield message_item.emit_done()
 
         yield stream.emit_completed()
@@ -594,8 +594,8 @@ def test_output_item__agent_reference_stamped_on_item() -> None:
             text_content = message_item.add_text_content()
             yield text_content.emit_added()
             yield text_content.emit_delta("hi")
+            yield text_content.emit_text_done()
             yield text_content.emit_done()
-            yield message_item.emit_content_done(text_content)
             yield message_item.emit_done()
 
             yield stream.emit_completed()

@@ -152,8 +152,8 @@ async def handler_builder(
     reply = f'Hello! You said: "{input_text}"'
     yield text_part.emit_delta(reply)
 
+    yield text_part.emit_text_done()
     yield text_part.emit_done()
-    yield message.emit_content_done(text_part)
     yield message.emit_done()
 
     yield stream.emit_completed()

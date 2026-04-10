@@ -4,14 +4,14 @@
 
 from __future__ import annotations
 
+from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.streaming import (
     OutputItemFunctionCallBuilder,
     OutputItemFunctionCallOutputBuilder,
     OutputItemMessageBuilder,
-    TextContentBuilder,
     ResponseEventStream,
+    TextContentBuilder,
 )
-from azure.ai.agentserver.responses._id_generator import IdGenerator
 
 
 def test_text_content_builder__emits_added_delta_done_events() -> None:
@@ -23,13 +23,15 @@ def test_text_content_builder__emits_added_delta_done_events() -> None:
 
     added = text.emit_added()
     delta = text.emit_delta("hello")
+    text_done = text.emit_text_done()
     done = text.emit_done()
 
     assert isinstance(text, TextContentBuilder)
     assert added["type"] == "response.content_part.added"
     assert delta["type"] == "response.output_text.delta"
-    assert done["type"] == "response.output_text.done"
-    assert done["text"] == "hello"
+    assert text_done["type"] == "response.output_text.done"
+    assert text_done["text"] == "hello"
+    assert done["type"] == "response.content_part.done"
 
 
 def test_text_content_builder__emit_done_merges_all_delta_fragments() -> None:
@@ -43,7 +45,7 @@ def test_text_content_builder__emit_done_merges_all_delta_fragments() -> None:
     text.emit_delta("hello")
     text.emit_delta(" ")
     text.emit_delta("world")
-    done = text.emit_done()
+    done = text.emit_text_done()
 
     assert done["type"] == "response.output_text.done"
     assert done["text"] == "hello world"
@@ -59,8 +61,8 @@ def test_output_item_message_builder__emits_added_content_done_and_done() -> Non
     added = message.emit_added()
     text.emit_added()
     text.emit_delta("alpha")
-    text.emit_done()
-    content_done = message.emit_content_done(text)
+    text.emit_text_done()
+    content_done = text.emit_done()
     done = message.emit_done()
 
     assert isinstance(message, OutputItemMessageBuilder)
@@ -183,8 +185,8 @@ def test_builder_events__include_required_payload_fields_per_event_type() -> Non
     message.emit_added()
     refusal = message.add_refusal_content()
     refusal.emit_added()
-    refusal.emit_done("cannot comply")
-    refusal_part_done = message.emit_content_done(refusal)
+    refusal.emit_refusal_done("cannot comply")
+    refusal_part_done = refusal.emit_done()
 
     reasoning = stream.add_output_item_reasoning_item()
     reasoning.emit_added()
@@ -286,8 +288,8 @@ def test_response_event_stream__tracks_completed_output_items_into_response_outp
     text = message.add_text_content()
     text.emit_added()
     text.emit_delta("hello")
+    text.emit_text_done()
     text.emit_done()
-    message.emit_content_done(text)
     done = message.emit_done()
 
     assert done["type"] == "response.output_item.done"

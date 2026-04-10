@@ -214,7 +214,10 @@ class OutputItemReasoningItemBuilder(BaseOutputItemBuilder):
         yield part.emit_done()
         self.emit_summary_part_done(part)
 
-    async def asummary_part(self, text: str | AsyncIterable[str]) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    async def asummary_part(
+        self,
+        text: str | AsyncIterable[str],
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`summary_part` with streaming support.
 
         When *text* is a string, behaves identically to :meth:`summary_part`.

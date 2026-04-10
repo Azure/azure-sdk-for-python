@@ -1012,7 +1012,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         conversation_id=ctx.conversation_id,
                     )
                     resolved_status = response_payload.get("status")
-                    status = cast(ResponseStatus, resolved_status) if isinstance(resolved_status, str) else "in_progress"
+                    status = (
+                        cast(ResponseStatus, resolved_status) if isinstance(resolved_status, str) else "in_progress"
+                    )
                     record.set_response_snapshot(generated_models.ResponseObject(response_payload))
                     record.transition_to(status)
 
@@ -1083,7 +1085,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             conversation_id=ctx.conversation_id,
         )
         resolved_status = response_payload.get("status")
-        final_status: ResponseStatus = cast(ResponseStatus, resolved_status) if isinstance(resolved_status, str) else "completed"
+        final_status: ResponseStatus = (
+            cast(ResponseStatus, resolved_status) if isinstance(resolved_status, str) else "completed"
+        )
 
         # Always register in runtime state so cancel/GET return correct status codes.
         replay_subject: _ResponseEventSubject | None = None

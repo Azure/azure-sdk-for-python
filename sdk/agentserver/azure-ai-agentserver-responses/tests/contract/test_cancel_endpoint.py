@@ -313,8 +313,8 @@ async def test_cancel__stream_disconnect_sets_handler_cancellation_signal() -> N
                     break
                 yield tc.emit_delta(f"chunk{i} ")
                 await asyncio.sleep(0.02)
-            yield tc.emit_done("cancelled")
-            yield msg.emit_content_done(tc)
+            yield tc.emit_text_done("cancelled")
+            yield tc.emit_done()
             yield msg.emit_done()
             yield stream.emit_incomplete(reason="cancelled")
             handler_completed.set()
@@ -382,8 +382,8 @@ async def test_cancel__background_stream_disconnect_does_not_cancel_handler() ->
             for i in range(10):
                 yield tc.emit_delta(f"chunk{i} ")
                 await asyncio.sleep(0.05)
-            yield tc.emit_done("done")
-            yield msg.emit_content_done(tc)
+            yield tc.emit_text_done("done")
+            yield tc.emit_done()
             yield msg.emit_done()
             yield stream.emit_completed()
             handler_completed.set()
@@ -407,9 +407,7 @@ async def test_cancel__background_stream_disconnect_does_not_cancel_handler() ->
         # Wait for the background handler to complete
         await asyncio.wait_for(handler_completed.wait(), timeout=5.0)
         assert handler_started.is_set(), "Handler should have started"
-        assert handler_completed.is_set(), (
-            "Background handler should complete normally despite client disconnect"
-        )
+        assert handler_completed.is_set(), "Background handler should complete normally despite client disconnect"
 
 
 def test_cancel__returns_400_for_incomplete_background_response() -> None:

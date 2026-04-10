@@ -51,7 +51,6 @@ from azure.ai.agentserver.responses import (
     CreateResponse,
     ResponseContext,
     ResponsesAgentServerHost,
-    get_input_expanded,
 )
 
 app = ResponsesAgentServerHost()
@@ -101,7 +100,7 @@ async def handler(
     # Build the upstream request — translate every input item.
     # Both model stacks share the same JSON wire contract, so
     # serializing our Item to dict round-trips to the OpenAI SDK.
-    input_items = [item.as_dict() for item in get_input_expanded(request)]
+    input_items = [item.as_dict() for item in await context.get_input_items()]
 
     # This handler owns the response lifecycle — construct the
     # response snapshot directly instead of forwarding the upstream's.
@@ -124,7 +123,9 @@ async def handler(
         input=input_items,  # type: ignore[arg-type]
         stream=True,
     ) as upstream_stream:
-        upstream_stream = cast(openai.AsyncStream[openai.types.responses.response_stream_event.ResponseStreamEvent], upstream_stream)
+        upstream_stream = cast(
+            openai.AsyncStream[openai.types.responses.response_stream_event.ResponseStreamEvent], upstream_stream
+        )
         async for event in upstream_stream:
             # Skip lifecycle events — we own the response envelope.
             if event.type in ("response.created", "response.in_progress"):

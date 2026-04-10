@@ -51,8 +51,8 @@ def _capture_handler(request: CreateResponse, context: ResponseContext, cancella
         yield msg.emit_added()
         text = msg.add_text_content()
         yield text.emit_added()
-        yield text.emit_done("ok")
-        yield msg.emit_content_done(text)
+        yield text.emit_text_done("ok")
+        yield text.emit_done()
         yield msg.emit_done()
 
         yield stream.emit_completed()

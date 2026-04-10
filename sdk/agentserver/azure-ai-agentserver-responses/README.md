@@ -45,17 +45,17 @@ def my_handler(
 The simplest way to return text. Handles the full SSE lifecycle automatically (`response.created` → `response.in_progress` → message/content events → `response.completed`):
 
 ```python
-return TextResponse(context, request, create_text=lambda: "Hello!")
+return TextResponse(context, request, text="Hello!")
 ```
 
-For streaming, provide `create_text_stream` instead:
+For streaming, pass an async iterable to `text`:
 
 ```python
 async def tokens():
     for t in ["Hello", ", ", "world!"]:
         yield t
 
-return TextResponse(context, request, create_text_stream=tokens)
+return TextResponse(context, request, text=tokens())
 ```
 
 ### ResponseEventStream
@@ -78,8 +78,8 @@ yield message.emit_added()
 text = message.add_text_content()
 yield text.emit_added()
 yield text.emit_delta("Hello!")
+yield text.emit_text_done()
 yield text.emit_done()
-yield message.emit_content_done(text)
 yield message.emit_done()
 ```
 
@@ -133,7 +133,7 @@ app = ResponsesAgentServerHost()
 @app.create_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     text = await context.get_input_text()
-    return TextResponse(context, request, create_text=lambda: f"Echo: {text}")
+    return TextResponse(context, request, text=f"Echo: {text}")
 
 
 app.run()
@@ -209,6 +209,11 @@ Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/
 | [Multi-Output](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_06_multi_output.py) | Reasoning + message in a single response |
 | [Streaming Upstream](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_10_streaming_upstream.py) | Forward to upstream streaming LLM via `openai` SDK |
 | [Non-Streaming Upstream](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_11_non_streaming_upstream.py) | Forward to upstream non-streaming LLM, emit items via builders |
+| [Image Generation](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_12_image_generation.py) | Image gen convenience, streaming partials, and full-control builder |
+| [Image Input](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_13_image_input.py) | Receive images via URL, base64 data URL, or file ID |
+| [File Inputs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_14_file_inputs.py) | Receive files via base64 data URL, URL, or file ID |
+| [Annotations](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_15_annotations.py) | Attach file_path, file_citation, and url_citation annotations |
+| [Structured Outputs](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-responses/samples/sample_16_structured_outputs.py) | Return structured JSON as a `structured_outputs` item |
 
 - [Handler implementation guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-responses/docs/handler-implementation-guide.md) — Detailed reference for building handlers
 

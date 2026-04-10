@@ -223,8 +223,8 @@ def test_create__non_stream_returns_completed_response_with_output_items() -> No
             text_content = message_item.add_text_content()
             yield text_content.emit_added()
             yield text_content.emit_delta("hello")
+            yield text_content.emit_text_done()
             yield text_content.emit_done()
-            yield message_item.emit_content_done(text_content)
             yield message_item.emit_done()
 
             yield stream.emit_completed()
@@ -272,8 +272,8 @@ def test_create__background_non_stream_get_eventually_returns_output_items() -> 
             text_content = message_item.add_text_content()
             yield text_content.emit_added()
             yield text_content.emit_delta("hello")
+            yield text_content.emit_text_done()
             yield text_content.emit_done()
-            yield message_item.emit_content_done(text_content)
             yield message_item.emit_done()
 
             yield stream.emit_completed()

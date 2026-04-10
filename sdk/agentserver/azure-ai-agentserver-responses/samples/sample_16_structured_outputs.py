@@ -48,7 +48,8 @@ async def convenience_handler(request: CreateResponse, context: ResponseContext)
         ],
     }
 
-    yield from stream.output_item_structured_outputs(result)
+    async for event in stream.aoutput_item_structured_outputs(result):
+        yield event
 
     yield stream.emit_completed()
 

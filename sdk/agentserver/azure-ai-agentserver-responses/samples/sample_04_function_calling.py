@@ -29,7 +29,8 @@ Usage::
     # Turn 2 — submit function output, receive text
     curl -X POST http://localhost:8088/responses \
         -H "Content-Type: application/json" \
-        -d '{"model": "test", "input": [{"type": "function_call_output", "call_id": "call_weather_1", "output": "72F and sunny"}]}'
+        -d '{"model": "test", "input": [{"type": "function_call_output",
+             "call_id": "call_weather_1", "output": "72F and sunny"}]}'
     # -> {"output": [{"type": "message", "content": [{"type": "output_text",
     #     "text": "The weather is: 72F and sunny"}]}]}
 """
@@ -44,16 +45,15 @@ from azure.ai.agentserver.responses import (
     ResponseContext,
     ResponseEventStream,
     ResponsesAgentServerHost,
-    get_input_expanded,
 )
 from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam
 
 app = ResponsesAgentServerHost()
 
 
-def _find_function_call_output(request: CreateResponse) -> str | None:
+async def _find_function_call_output(context: ResponseContext) -> str | None:
     """Return the output string from the first function_call_output item, or None."""
-    for item in get_input_expanded(request):
+    for item in await context.get_input_items():
         if isinstance(item, FunctionCallOutputItemParam):
             output = item.output
             if isinstance(output, str):
@@ -67,13 +67,13 @@ def _find_function_call_output(request: CreateResponse) -> str | None:
 
 
 @app.create_handler
-def handler(
+async def handler(
     request: CreateResponse,
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
 ):
     """Two-turn function-calling handler using convenience generators."""
-    tool_output = _find_function_call_output(request)
+    tool_output = await _find_function_call_output(context)
 
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
@@ -81,11 +81,13 @@ def handler(
 
     if tool_output is not None:
         # Turn 2: we have the tool result — produce a final text message.
-        yield from stream.output_item_message(f"The weather is: {tool_output}")
+        async for event in stream.aoutput_item_message(f"The weather is: {tool_output}"):
+            yield event
     else:
         # Turn 1: ask the client to call get_weather.
         arguments = json.dumps({"location": "Seattle", "unit": "fahrenheit"})
-        yield from stream.output_item_function_call("get_weather", "call_weather_1", arguments)
+        async for event in stream.aoutput_item_function_call("get_weather", "call_weather_1", arguments):
+            yield event
 
     yield stream.emit_completed()
 
@@ -96,13 +98,13 @@ def handler(
 # use the builder API.
 
 
-def handler_builder(
+async def handler_builder(
     request: CreateResponse,
     context: ResponseContext,
     cancellation_signal: asyncio.Event,
 ):
     """Two-turn function-calling handler using the builder API."""
-    tool_output = _find_function_call_output(request)
+    tool_output = await _find_function_call_output(context)
 
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
@@ -118,8 +120,8 @@ def handler_builder(
 
         reply = f"The weather is: {tool_output}"
         yield text_part.emit_delta(reply)
+        yield text_part.emit_text_done()
         yield text_part.emit_done()
-        yield message.emit_content_done(text_part)
         yield message.emit_done()
     else:
         # Turn 1: emit a function call for "get_weather".

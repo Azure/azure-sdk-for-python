@@ -131,8 +131,8 @@ async def handler_builder(
 
     answer = "The answer is 42. Here's how: 6 × 7 = 42. The multiplication of 6 and 7 gives 42."
     yield text_part.emit_delta(answer)
+    yield text_part.emit_text_done()
     yield text_part.emit_done()
-    yield message.emit_content_done(text_part)
     yield message.emit_done()
 
     yield stream.emit_completed()

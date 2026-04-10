@@ -18,7 +18,6 @@ from azure.ai.agentserver.responses import (
     ResponsesAgentServerHost,
     ResponsesServerOptions,
     TextResponse,
-    get_input_expanded,
 )
 from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam, ItemMessage
 
@@ -244,7 +243,7 @@ def test_sample3_greeting_includes_input() -> None:
 
 async def _sample4_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Function-calling handler: uses convenience generators for both turns."""
-    items = get_input_expanded(request)
+    items = await context.get_input_items()
     has_fn_output = any(isinstance(item, FunctionCallOutputItemParam) for item in items)
 
     stream = ResponseEventStream(response_id=context.response_id, request=request)
@@ -1025,13 +1024,14 @@ def test_item_reference_input_items_endpoint() -> None:
 TINY_IMAGE_B64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8BQDwAEgAF/pooBPQAAAABJRU5ErkJggg=="
 
 
-def _image_gen_convenience_handler(
+async def _image_gen_convenience_handler(
     request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
 ):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
-    yield from stream.output_item_image_gen_call(TINY_IMAGE_B64)
+    async for event in stream.aoutput_item_image_gen_call(TINY_IMAGE_B64):
+        yield event
     yield stream.emit_completed()
 
 
@@ -1280,7 +1280,7 @@ def test_sample14_file_input_file_id_handler() -> None:
 # ===========================================================================
 
 
-def _annotations_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+async def _annotations_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     from azure.ai.agentserver.responses.models import FileCitationBody, FilePath, UrlCitationBody
 
     stream = ResponseEventStream(response_id=context.response_id, request=request)
@@ -1291,7 +1291,8 @@ def _annotations_handler(request: CreateResponse, context: ResponseContext, canc
         FileCitationBody(file_id="/sources/paper.pdf", index=1, filename="paper.pdf"),
         UrlCitationBody(url="https://example.com/guide", start_index=0, end_index=10, title="Guide"),
     ]
-    yield from stream.output_item_message("Here are your sources.", annotations=annotations)
+    async for event in stream.aoutput_item_message("Here are your sources.", annotations=annotations):
+        yield event
     yield stream.emit_completed()
 
 
@@ -1325,13 +1326,14 @@ def test_sample15_non_streaming_annotations_in_output() -> None:
 # ===========================================================================
 
 
-def _structured_convenience_handler(
+async def _structured_convenience_handler(
     request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
 ):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
-    yield from stream.output_item_structured_outputs({"sentiment": "positive", "confidence": 0.95})
+    async for event in stream.aoutput_item_structured_outputs({"sentiment": "positive", "confidence": 0.95}):
+        yield event
     yield stream.emit_completed()
 
 

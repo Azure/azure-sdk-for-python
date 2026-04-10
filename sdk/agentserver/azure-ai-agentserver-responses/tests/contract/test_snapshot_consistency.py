@@ -168,8 +168,8 @@ def _make_multi_output_handler():
             text1 = msg1.add_text_content()
             yield text1.emit_added()
             yield text1.emit_delta("First")
+            yield text1.emit_text_done()
             yield text1.emit_done()
-            yield msg1.emit_content_done(text1)
             yield msg1.emit_done()
 
             msg2 = stream.add_output_item_message()
@@ -177,8 +177,8 @@ def _make_multi_output_handler():
             text2 = msg2.add_text_content()
             yield text2.emit_added()
             yield text2.emit_delta("Second")
+            yield text2.emit_text_done()
             yield text2.emit_done()
-            yield msg2.emit_content_done(text2)
             yield msg2.emit_done()
 
             yield stream.emit_completed()

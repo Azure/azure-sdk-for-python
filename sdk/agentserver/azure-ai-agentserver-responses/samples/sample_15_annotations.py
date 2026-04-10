@@ -50,10 +50,11 @@ async def annotations_handler(request: CreateResponse, context: ResponseContext)
         ),
     ]
 
-    yield from stream.output_item_message(
+    async for event in stream.aoutput_item_message(
         "Here are your files and sources.",
         annotations=annotations,
-    )
+    ):
+        yield event
 
     yield stream.emit_completed()
 

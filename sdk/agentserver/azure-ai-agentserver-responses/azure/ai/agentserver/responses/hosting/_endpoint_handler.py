@@ -14,7 +14,7 @@ import asyncio  # pylint: disable=do-not-import-asyncio
 import contextvars
 import logging
 import threading
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from opentelemetry import baggage as _otel_baggage
 from opentelemetry import context as _otel_context
@@ -358,14 +358,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         )
 
         # Derive the public ResponseContext from the execution context.
-        ctx.context = self._create_response_context(ctx, raw_body=payload, request=request)
+        ctx.context = self._create_response_context(ctx, request=request)
         return ctx
 
     def _create_response_context(
         self,
         ctx: _ExecutionContext,
         *,
-        raw_body: dict[str, Any],
         request: Request,
     ) -> ResponseContext:
         """Derive a :class:`ResponseContext` from an :class:`_ExecutionContext`.
@@ -387,7 +386,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         context = ResponseContext(
             response_id=ctx.response_id,
             mode_flags=mode_flags,
-            raw_body=raw_body,
             request=ctx.parsed,
             provider=self._provider,
             input_items=ctx.input_items,
@@ -978,7 +976,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return _not_found(response_id, {})
 
         ordered_items = items if order == "asc" else list(reversed(items))
-        ordered_dicts: list[dict[str, Any]] = [item.as_dict() for item in ordered_items]
+        ordered_dicts: list[dict[str, Any]] = [
+            item.as_dict() if hasattr(item, "as_dict") else cast("dict[str, Any]", item) for item in ordered_items
+        ]
         scoped_items = _apply_item_cursors(ordered_dicts, after=after, before=before)
 
         page = scoped_items[:limit]
