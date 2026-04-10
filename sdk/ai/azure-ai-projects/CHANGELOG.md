@@ -4,6 +4,36 @@
 
 ### Features Added
 
+* `get_openai_client()` on `AIProjectClient` now takes an optional input argument `agent_name`. If provided, the returned OpenAI
+client will use a base URL of Agent endpoint instead of Foundry Project endpoint. As Agent endpoints are a preview feature, you
+need to set `allow_preview=True` on the `AIProjectClient` constructor.
+* New `.beta.agents` sub-client added, with Session operations (those only work with Hosted Agents)
+  * `create_session()`
+  * `delete_session()`
+  * `delete_session_file()`
+  * `download_session_file()`
+  * `get_session()`
+  * `list_session_files()`
+  * `list_sessions()`
+  * `upload_session_file()`
+* Also on `.beta.agents` sub-client, a new method `patch_agent_object()`.
+* New `beta.skills` sub-client added, with Skills operations:
+  * `create()`
+  * `create_from_package()`
+  * `delete()`
+  * `download()`
+  * `get()`
+  * `list()`
+  * `update()`
+* New `beta.toolboxes` sub-client added, with Toolboxes operations:
+  * `create_version()`
+  * `delete()`
+  * `delete_version()`
+  * `get()`
+  * `get_version()`
+  * `list()`
+  * `list_versions()`
+  * `update()`
 * Type hinting support for OpenAI client operations `.evals.create()` and `.evals.runs.create()`, when you
 get the OpenAI client using `get_openai_client()` method of `AIProjectClient`. This includes new TypedDicts
 classes to help you author the input to these methods. See new TypedDict classes `ModelSamplingConfigParam`, 
@@ -38,9 +68,6 @@ classes to help you author the input to these methods. See new TypedDict classes
 `options=MemoryStoreDefaultOptions(user_profile_enabled=True, chat_summary_enabled=True)` when constructing `MemoryStoreDefaultDefinition`,
 since this is now redundant (it's the service default).
 
-### Other Changes
-
-* Placeholder
 
 ## 2.0.1 (2026-03-12)
 

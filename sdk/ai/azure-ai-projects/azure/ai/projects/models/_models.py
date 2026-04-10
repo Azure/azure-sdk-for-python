@@ -4860,36 +4860,6 @@ class EvaluationTaxonomy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class EvaluatorCredentialRequest(_Model):
-    """Request body for getting evaluator credentials.
-
-    :ivar blob_uri: The blob URI for the evaluator storage. Example:
-     ``https://account.blob.core.windows.net:443/container``. Required.
-    :vartype blob_uri: str
-    """
-
-    blob_uri: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The blob URI for the evaluator storage. Example:
-     ``https://account.blob.core.windows.net:443/container``. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        blob_uri: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class EvaluatorMetric(_Model):
     """Evaluator Metric.
 

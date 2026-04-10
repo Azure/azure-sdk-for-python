@@ -1,4 +1,4 @@
-# Azure AI AgentServerHost Invocations for Python
+# Azure AI Agent Server Invocations client library for Python
 
 The `azure-ai-agentserver-invocations` package provides the invocation protocol endpoints for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) host framework and adds the full invocation lifecycle: `POST /invocations`, `GET /invocations/{id}`, `POST /invocations/{id}/cancel`, and `GET /invocations/docs/openapi.json`.
 
@@ -76,7 +76,6 @@ When tracing is enabled on the `AgentServerHost`, invocation spans are automatic
 
 ```python
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
-from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
@@ -97,7 +96,6 @@ app.run()
 import asyncio
 import json
 
-from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
@@ -138,7 +136,6 @@ async def cancel_invocation(request: Request) -> Response:
 ```python
 import json
 
-from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 from starlette.requests import Request
 from starlette.responses import Response, StreamingResponse
