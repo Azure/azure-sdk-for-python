@@ -34,11 +34,7 @@ def client(agent: AgentServerHost) -> httpx.AsyncClient:
 
 @pytest.fixture()
 def appinsights_connection_string():
-    """Return the Application Insights connection string from the environment.
-
-    Tests marked ``tracing_e2e`` are skipped when the variable is absent
-    (e.g. local development without live resources).
-    """
+    """Return the Application Insights connection string from the environment."""
     conn_str = os.environ.get("APPLICATIONINSIGHTS_CONNECTION_STRING")
     if not conn_str:
         pytest.skip("APPLICATIONINSIGHTS_CONNECTION_STRING not set")
@@ -47,10 +43,7 @@ def appinsights_connection_string():
 
 @pytest.fixture()
 def appinsights_resource_id():
-    """Return the Application Insights ARM resource ID from the environment.
-
-    Needed by ``LogsQueryClient.query_resource()`` to verify spans in App Insights.
-    """
+    """Return the Application Insights ARM resource ID from the environment."""
     resource_id = os.environ.get("APPLICATIONINSIGHTS_RESOURCE_ID")
     if not resource_id:
         pytest.skip("APPLICATIONINSIGHTS_RESOURCE_ID not set")
@@ -59,24 +52,15 @@ def appinsights_resource_id():
 
 @pytest.fixture()
 def logs_query_client():
-    """Create a ``LogsQueryClient`` for querying Application Insights.
-
-    In CI the pipeline runs inside ``AzurePowerShell@5`` which authenticates
-    via the service connection.  We detect this by checking for
-    ``AZURESUBSCRIPTION_TENANT_ID`` and use ``AzurePowerShellCredential``
-    directly so the token is issued from the correct tenant.
-    Locally we fall back to ``DefaultAzureCredential``.
-    """
+    """Create a LogsQueryClient for querying Application Insights."""
     from azure.monitor.query import LogsQueryClient
 
     if os.environ.get("AZURESUBSCRIPTION_TENANT_ID"):
         from azure.identity import AzurePowerShellCredential
-
         credential = AzurePowerShellCredential(
             tenant_id=os.environ["AZURESUBSCRIPTION_TENANT_ID"],
         )
     else:
         from azure.identity import DefaultAzureCredential
-
         credential = DefaultAzureCredential()
     return LogsQueryClient(credential)
