@@ -25,7 +25,7 @@ class TestDataMigrationManagementDatabaseMigrationsSqlMiOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             target_db_name="str",
-            api_version="2025-06-30",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -167,6 +167,7 @@ class TestDataMigrationManagementDatabaseMigrationsSqlMiOperations(AzureMgmtReco
                         "trustServerCertificate": bool,
                         "userName": "str",
                     },
+                    "sqlServerInstanceId": "str",
                     "startedOn": "2020-02-20 00:00:00",
                     "targetDatabaseCollation": "str",
                 },
@@ -180,7 +181,7 @@ class TestDataMigrationManagementDatabaseMigrationsSqlMiOperations(AzureMgmtReco
                 },
                 "type": "str",
             },
-            api_version="2025-06-30",
+            api_version="2025-09-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -193,7 +194,7 @@ class TestDataMigrationManagementDatabaseMigrationsSqlMiOperations(AzureMgmtReco
             resource_group_name=resource_group.name,
             managed_instance_name="str",
             target_db_name="str",
-            api_version="2025-06-30",
+            api_version="2025-09-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -207,7 +208,7 @@ class TestDataMigrationManagementDatabaseMigrationsSqlMiOperations(AzureMgmtReco
             managed_instance_name="str",
             target_db_name="str",
             parameters={"migrationOperationId": "str"},
-            api_version="2025-06-30",
+            api_version="2025-09-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -221,7 +222,7 @@ class TestDataMigrationManagementDatabaseMigrationsSqlMiOperations(AzureMgmtReco
             managed_instance_name="str",
             target_db_name="str",
             parameters={"migrationOperationId": "str"},
-            api_version="2025-06-30",
+            api_version="2025-09-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

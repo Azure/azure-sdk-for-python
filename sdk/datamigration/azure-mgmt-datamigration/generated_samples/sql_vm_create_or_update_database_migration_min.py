@@ -58,12 +58,13 @@ def main():
                     "trustServerCertificate": True,
                     "userName": "bbb",
                 },
+                "sqlServerInstanceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg/providers/Microsoft.AzureArcData/SqlServerInstances/instanceName",
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/stable/2025-06-30/examples/SqlVmCreateOrUpdateDatabaseMigrationMIN.json
+# x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/DataMigration/preview/2025-09-01-preview/examples/SqlVmCreateOrUpdateDatabaseMigrationMIN.json
 if __name__ == "__main__":
     main()

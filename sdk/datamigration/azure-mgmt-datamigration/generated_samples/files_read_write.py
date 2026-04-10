@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/stable/2025-06-30/examples/Files_ReadWrite.json
+# x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/DataMigration/preview/2025-09-01-preview/examples/Files_ReadWrite.json
 if __name__ == "__main__":
     main()

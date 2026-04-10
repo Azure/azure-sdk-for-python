@@ -49,6 +49,7 @@ def main():
                     "trustServerCertificate": True,
                     "userName": "bbb",
                 },
+                "sqlServerInstanceId": "/subscriptions/00000000-1111-2222-3333-444444444444/resourceGroups/testrg/providers/Microsoft.AzureArcData/SqlServerInstances/instanceName",
                 "targetSqlConnection": {
                     "authentication": "SqlAuthentication",
                     "dataSource": "sqldbinstance",
@@ -63,6 +64,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/stable/2025-06-30/examples/SqlDbCreateOrUpdateDatabaseMigrationMIN.json
+# x-ms-original-file: specification/datamigration/resource-manager/Microsoft.DataMigration/DataMigration/preview/2025-09-01-preview/examples/SqlDbCreateOrUpdateDatabaseMigrationMIN.json
 if __name__ == "__main__":
     main()
