@@ -6,13 +6,16 @@ Handles the full SSE lifecycle automatically:
 ``response.created`` → ``response.in_progress`` → message/content events
 → ``response.completed``.
 
-Use ``text`` when the complete text is available (a plain string, a sync
-callable, or an async callable).  Use ``text_stream`` when text arrives
-incrementally (e.g., token-by-token from an LLM).
+Pass any text source to ``text=``:
+
+* **Plain string** — single delta, immediate completion.
+* **Sync/async callable** — called once, result emitted as one delta.
+* **Async iterable** — streamed token-by-token.
 """
 
 from __future__ import annotations
 
+import inspect
 from collections.abc import AsyncIterable
 from typing import TYPE_CHECKING, Any, AsyncIterator, Awaitable, Callable, Union
 
@@ -22,6 +25,9 @@ from ._event_stream import ResponseEventStream
 if TYPE_CHECKING:
     from .._response_context import ResponseContext
     from ..models._generated import CreateResponse, ResponseObject
+
+#: Union of all accepted text sources.
+TextSource = Union[str, Callable[[], Union[str, Awaitable[str]]], AsyncIterable[str]]
 
 
 class TextResponse:
@@ -50,31 +56,21 @@ class TextResponse:
         return TextResponse(context, request,
             text=lambda: "Hello!")
 
-    **Streaming mode** — provide ``text_stream``::
+    **Async iterable (token streaming)**::
 
         async def tokens():
             for t in ["Hello", ", ", "world!"]:
                 yield t
 
-        return TextResponse(context, request,
-            text_stream=tokens)
+        return TextResponse(context, request, text=tokens())
 
     :param context: The response context (provides the response ID).
-    :type context: ~azure.ai.agentserver.responses.ResponseContext
     :param request: The incoming create-response request.
-    :type request: ~azure.ai.agentserver.responses.models.CreateResponse
-    :param text: A plain string, or a sync/async callable that returns the
-        complete response text. Mutually exclusive with *text_stream*.
-    :type text: str | Callable[[], str | Awaitable[str]] | None
-    :param text_stream: A callable returning an async iterable of text
-        chunks. Mutually exclusive with *text*.
-    :type text_stream: Callable[[], AsyncIterable[str]] | None
+    :param text: The text source — a plain string, a sync/async callable
+        returning a string, or an async iterable of string chunks for
+        token-by-token streaming.
     :param configure: An optional callback to configure the
-        :class:`ResponseObject` (e.g. set Temperature, Instructions, Metadata)
-        before ``response.created`` is emitted.
-    :type configure: Callable[[ResponseObject], None] | None
-    :raises ValueError: If neither or both of *text* and
-        *text_stream* are provided.
+        :class:`ResponseObject` before ``response.created`` is emitted.
     """
 
     def __init__(
@@ -82,38 +78,12 @@ class TextResponse:
         context: "ResponseContext",
         request: "CreateResponse",
         *,
-        text: Union[str, Callable[[], Union[str, Awaitable[str]]], None] = None,
-        text_stream: Callable[[], AsyncIterable[str]] | None = None,
-        # Deprecated aliases — kept for backward compatibility
-        create_text: Union[str, Callable[[], Union[str, Awaitable[str]]], None] = None,
-        create_text_stream: Callable[[], AsyncIterable[str]] | None = None,
+        text: TextSource,
         configure: Callable[["ResponseObject"], None] | None = None,
     ) -> None:
-        # Merge deprecated aliases into the new parameters
-        if create_text is not None:
-            if text is not None:
-                raise ValueError("Use 'text' or 'create_text', not both.")
-            text = create_text
-        if create_text_stream is not None:
-            if text_stream is not None:
-                raise ValueError("Use 'text_stream' or 'create_text_stream', not both.")
-            text_stream = create_text_stream
-
-        if text is not None and text_stream is not None:
-            raise ValueError("Provide either text or text_stream, not both.")
-        if text is None and text_stream is None:
-            raise ValueError("Provide either text or text_stream.")
-
-        # Normalise: if text is a plain str, wrap it in a lambda so the
-        # rest of the pipeline always deals with a callable.
-        if isinstance(text, str):
-            _literal = text
-            text = lambda: _literal  # noqa: E731
-
         self._context = context
         self._request = request
-        self._create_text = text
-        self._create_text_stream = text_stream
+        self._text = text
         self._configure = configure
 
     def __aiter__(self) -> AsyncIterator[generated_models.ResponseStreamEvent]:
@@ -134,25 +104,32 @@ class TextResponse:
         message = stream.add_output_item_message()
         yield message.emit_added()
 
-        text = message.add_text_content()
-        yield text.emit_added()
+        text_content = message.add_text_content()
+        yield text_content.emit_added()
 
-        if self._create_text is not None:
-            # Complete-text mode: one delta with the full text.
-            result = self._create_text()
-            if hasattr(result, "__await__"):
-                result = await result  # type: ignore[misc]
-            yield text.emit_delta(result)  # type: ignore[arg-type]
-            yield text.emit_done(result)  # type: ignore[arg-type]
-        else:
-            # Streaming mode: N deltas, accumulate final text.
-            assert self._create_text_stream is not None
+        source = self._text
+
+        if isinstance(source, str):
+            # Plain string — single delta.
+            yield text_content.emit_delta(source)
+            yield text_content.emit_done(source)
+        elif isinstance(source, AsyncIterable):
+            # Async iterable — stream token-by-token.
             accumulated: list[str] = []
-            async for chunk in self._create_text_stream():
+            async for chunk in source:
                 accumulated.append(chunk)
-                yield text.emit_delta(chunk)
-            yield text.emit_done("".join(accumulated))
+                yield text_content.emit_delta(chunk)
+            yield text_content.emit_done("".join(accumulated))
+        elif callable(source):
+            # Sync or async callable — call once.
+            result = source()
+            if inspect.isawaitable(result):
+                result = await result
+            yield text_content.emit_delta(result)  # type: ignore[arg-type]
+            yield text_content.emit_done(result)  # type: ignore[arg-type]
+        else:
+            raise TypeError(f"text must be str, callable, or AsyncIterable, got {type(source).__name__}")
 
-        yield message.emit_content_done(text)
+        yield message.emit_content_done(text_content)
         yield message.emit_done()
         yield stream.emit_completed()

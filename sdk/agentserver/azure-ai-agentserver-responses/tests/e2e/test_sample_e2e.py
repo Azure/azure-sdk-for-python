@@ -98,7 +98,7 @@ def _sample1_handler(request: CreateResponse, context: ResponseContext, cancella
     return TextResponse(
         context,
         request,
-        create_text=_create_text,
+        text=_create_text,
     )
 
 
@@ -157,7 +157,7 @@ async def _sample2_handler(request: CreateResponse, context: ResponseContext, ca
         context,
         request,
         configure=lambda response: setattr(response, "temperature", 0.7),
-        create_text_stream=_stream,
+        text=_stream(),
     )
 
 
@@ -323,7 +323,7 @@ async def _sample5_handler(request: CreateResponse, context: ResponseContext, ca
     else:
         text = f"Welcome! I'm your study tutor. You asked: {user_text}"
 
-    return TextResponse(context, request, create_text=lambda: text)
+    return TextResponse(context, request, text=lambda: text)
 
 
 def test_sample5_first_turn_welcome() -> None:
@@ -422,7 +422,7 @@ def _sample7_handler(request: CreateResponse, context: ResponseContext, cancella
     return TextResponse(
         context,
         request,
-        create_text=lambda: f"[model={request.model}]",
+        text=lambda: f"[model={request.model}]",
     )
 
 
@@ -472,7 +472,7 @@ def _sample8_response_handler(request: CreateResponse, context: ResponseContext,
     return TextResponse(
         context,
         request,
-        create_text=_create_text,
+        text=_create_text,
     )
 
 
@@ -547,7 +547,7 @@ def test_sample9_self_hosted_responses_under_prefix() -> None:
         return TextResponse(
             context,
             request,
-            create_text=_create_text,
+            text=_create_text,
         )
 
     responses_app.create_handler(_handler)
@@ -797,7 +797,7 @@ async def _item_ref_echo_handler(request: CreateResponse, context: ResponseConte
         else:
             summaries.append({"type": getattr(item, "type", "unknown")})
 
-    return TextResponse(context, request, create_text=lambda: json.dumps(summaries))
+    return TextResponse(context, request, text=lambda: json.dumps(summaries))
 
 
 def test_item_reference_turn2_resolves_to_message() -> None:
@@ -847,7 +847,7 @@ def test_item_reference_get_input_text_includes_resolved() -> None:
     # Turn 2: handler uses get_input_text which should include resolved text
     async def _text_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
         text = await context.get_input_text()
-        return TextResponse(context, request, create_text=lambda: f"GOT: {text}")
+        return TextResponse(context, request, text=lambda: f"GOT: {text}")
 
     client2 = _make_app(_text_handler)
     # First create context for turn 1 in client2 too
@@ -952,7 +952,7 @@ def test_item_reference_resolve_references_false() -> None:
         for item in items:
             item_type = getattr(item, "type", "unknown")
             summaries.append({"type": item_type})
-        return TextResponse(context, request, create_text=lambda: json.dumps(summaries))
+        return TextResponse(context, request, text=lambda: json.dumps(summaries))
 
     client = _make_app(_unresolved_handler)
 

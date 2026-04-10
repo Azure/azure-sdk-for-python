@@ -3,7 +3,7 @@
 """Sample 02 — Token-by-Token Streaming.
 
 Demonstrates token-by-token streaming using ``TextResponse`` with
-``text_stream``.  Each chunk yielded by the async generator is
+``text``.  Each chunk yielded by the async generator is
 emitted as a separate ``output_text.delta`` SSE event, enabling
 real-time token-by-token streaming to the client.
 
@@ -63,7 +63,7 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
         context,
         request,
         configure=lambda response: setattr(response, "temperature", 0.7),
-        text_stream=generate_tokens,
+        text=generate_tokens(),
     )
 
 
