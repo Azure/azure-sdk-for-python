@@ -80,7 +80,7 @@ def add_sanitizers(test_proxy):
 @pytest.fixture(autouse=True)
 def no_startup_backoff(request, monkeypatch):
     """Skip startup backoff delays in all tests except those testing backoff directly."""
-    if request.fspath.basename == "test_startup_retry.py":
+    if request.fspath.basename == "test_startup_retry.py":  # cspell:ignore fspath
         return
     monkeypatch.setattr(
         "azure.appconfiguration.provider._azureappconfigurationprovider._get_startup_backoff",
