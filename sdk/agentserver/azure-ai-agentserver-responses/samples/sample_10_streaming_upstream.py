@@ -42,9 +42,10 @@ Usage::
 
 import asyncio
 import os
-from typing import Any
+from typing import Any, cast
 
 import openai
+import openai.types.responses.response_stream_event
 
 from azure.ai.agentserver.responses import (
     CreateResponse,
@@ -54,6 +55,11 @@ from azure.ai.agentserver.responses import (
 )
 
 app = ResponsesAgentServerHost()
+
+upstream = openai.AsyncOpenAI(
+    base_url=os.environ.get("UPSTREAM_ENDPOINT", "https://api.openai.com/v1"),
+    api_key=os.environ.get("OPENAI_API_KEY", "your-api-key"),
+)
 
 
 def _build_response_snapshot(request: CreateResponse, context: ResponseContext) -> dict[str, Any]:
@@ -80,6 +86,10 @@ def _build_response_snapshot(request: CreateResponse, context: ResponseContext) 
     return snapshot
 
 
+def my_function_tool(x: int) -> int:
+    return x * 2
+
+
 @app.create_handler
 async def handler(
     request: CreateResponse,
@@ -87,10 +97,6 @@ async def handler(
     cancellation_signal: asyncio.Event,
 ):
     """Forward to upstream with streaming, translate content events back."""
-    upstream = openai.AsyncOpenAI(
-        base_url=os.environ.get("UPSTREAM_ENDPOINT", "https://api.openai.com/v1"),
-        api_key=os.environ.get("OPENAI_API_KEY", "your-api-key"),
-    )
 
     # Build the upstream request — translate every input item.
     # Both model stacks share the same JSON wire contract, so
@@ -118,6 +124,7 @@ async def handler(
         input=input_items,  # type: ignore[arg-type]
         stream=True,
     ) as upstream_stream:
+        upstream_stream = cast(openai.AsyncStream[openai.types.responses.response_stream_event.ResponseStreamEvent], upstream_stream)
         async for event in upstream_stream:
             # Skip lifecycle events — we own the response envelope.
             if event.type in ("response.created", "response.in_progress"):
@@ -129,6 +136,12 @@ async def handler(
             if event.type == "response.failed":
                 upstream_failed = True
                 break
+
+            # Do any custom orchestration or manipulation of the event stream here.
+            # In this example, we filter out reasoning text events as being too
+            # noisy.
+            if event.type.startswith("response.reasoning_text"):
+                continue
 
             # Translate the upstream event to a dict via the openai SDK.
             evt = event.model_dump()
