@@ -64,11 +64,11 @@ class BetaAgentsOperations(GeneratedBetaAgentsOperations):
             if not file_path.exists():
                 raise ValueError(f"The provided file `{content_or_file_path}` does not exist.")
             if file_path.is_dir():
-                raise ValueError(f"Provide a valid file path, not a folder path  `{content_or_file_path}`.")
+                raise ValueError(f"Provide a valid file path, not a folder path `{content_or_file_path}`.")
 
             with open(content_or_file_path, "rb") as f:
                 content: bytes = f.read()
         else:
             content = content_or_file_path
 
-        return await super().upload_session_file(agent_name, session_id, content, path=path, **kwargs)
+        return await super()._upload_session_file(agent_name, session_id, content, path=path, **kwargs)
