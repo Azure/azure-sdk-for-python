@@ -320,9 +320,11 @@ class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
         """
         return self._emit_item_state_event(EVENT_TYPE.RESPONSE_IMAGE_GENERATION_CALL_COMPLETED.value)
 
-    def emit_done(self) -> generated_models.ResponseStreamEvent:
+    def emit_done(self, result: str) -> generated_models.ResponseStreamEvent:
         """Emit an ``output_item.done`` event for this image generation call.
 
+        :param result: The base64-encoded image result.
+        :type result: str
         :returns: The emitted event dict.
         :rtype: ResponseStreamEvent
         """
@@ -331,7 +333,7 @@ class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
                 "type": "image_generation_call",
                 "id": self._item_id,
                 "status": "completed",
-                "result": "",
+                "result": result,
             }
         )
 

@@ -17,7 +17,6 @@ from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from azure.ai.agentserver.responses.hosting._observability import InMemoryCreateSpanHook
 from azure.ai.agentserver.responses.store._memory import InMemoryResponseProvider
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
-from tests._helpers import EventGate
 
 
 def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any):
@@ -281,6 +280,7 @@ async def test_hosting__shutdown_signals_inflight_background_execution() -> None
     lifespan exit, which calls our handle_shutdown() handler.
     """
     import socket
+
     from hypercorn.asyncio import serve as _hc_serve
     from hypercorn.config import Config as _HcConfig
 

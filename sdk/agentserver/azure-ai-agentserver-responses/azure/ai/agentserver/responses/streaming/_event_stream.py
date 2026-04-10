@@ -7,7 +7,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterable
 from copy import deepcopy
 from datetime import datetime, timezone
-from typing import Any, AsyncIterator, Iterator
+from typing import Any, AsyncIterator, Iterator, Sequence
 
 from .._id_generator import IdGenerator
 from ..models import _generated as generated_models
@@ -480,6 +480,149 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             name=name,
         )
 
+    def add_output_item_structured_outputs(self) -> OutputItemBuilder:
+        """Add a structured-outputs output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_structured_output_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_computer_call(self) -> OutputItemBuilder:
+        """Add a computer-call output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_computer_call_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_computer_call_output(self) -> OutputItemBuilder:
+        """Add a computer-call-output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_computer_call_output_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_local_shell_call(self) -> OutputItemBuilder:
+        """Add a local-shell-call output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_local_shell_call_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_local_shell_call_output(self) -> OutputItemBuilder:
+        """Add a local-shell-call-output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_local_shell_call_output_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_function_shell_call(self) -> OutputItemBuilder:
+        """Add a function-shell-call output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_function_shell_call_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_function_shell_call_output(self) -> OutputItemBuilder:
+        """Add a function-shell-call-output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_function_shell_call_output_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_apply_patch_call(self) -> OutputItemBuilder:
+        """Add an apply-patch-call output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_apply_patch_call_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_apply_patch_call_output(self) -> OutputItemBuilder:
+        """Add an apply-patch-call-output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_apply_patch_call_output_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_custom_tool_call_output(self) -> OutputItemBuilder:
+        """Add a custom-tool-call-output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_custom_tool_call_output_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_mcp_approval_request(self) -> OutputItemBuilder:
+        """Add an MCP approval-request output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_mcp_approval_request_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_mcp_approval_response(self) -> OutputItemBuilder:
+        """Add an MCP approval-response output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_mcp_approval_response_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
+    def add_output_item_compaction(self) -> OutputItemBuilder:
+        """Add a compaction output item and return its generic builder.
+
+        :returns: A builder for emitting added/done events.
+        :rtype: OutputItemBuilder
+        """
+        output_index = self._output_index
+        self._output_index += 1
+        item_id = IdGenerator.new_compaction_item_id(self._response_id)
+        return OutputItemBuilder(self, output_index=output_index, item_id=item_id)
+
     def events(self) -> list[generated_models.ResponseStreamEvent]:
         """Return copies of all events emitted so far as typed model instances.
 
@@ -523,23 +666,58 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     # Output-item convenience generators that encapsulate the full lifecycle.
     # Names mirror the add_* factories with the add_ prefix removed.
 
-    def output_item_message(self, text: str) -> Iterator[generated_models.ResponseStreamEvent]:
+    # -- Helper for simple added→done items --
+
+    @staticmethod
+    def _emit_simple_item(
+        builder: OutputItemBuilder, item: dict[str, Any]
+    ) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Emit the added→done pair for a simple output item.
+
+        :param builder: The generic output item builder.
+        :type builder: OutputItemBuilder
+        :param item: The wire-format item dict.
+        :type item: dict[str, Any]
+        :returns: An iterator of two events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        yield builder.emit_added(item)
+        yield builder.emit_done(item)
+
+    def output_item_message(
+        self,
+        text: str,
+        *,
+        annotations: Sequence[generated_models.Annotation] | None = None,
+    ) -> Iterator[generated_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a text message output item.
 
         Emits output_item.added, content_part.added, output_text.delta,
-        output_text.done, content_part.done, and output_item.done.
+        output_text.done, optionally annotation.added events,
+        content_part.done, and output_item.done.
 
         :param text: The text content of the message.
         :type text: str
+        :keyword annotations: Optional annotations to attach to the text content.
+        :keyword type annotations: Sequence[Annotation] | None
         :returns: An iterator of events.
         :rtype: Iterator[ResponseStreamEvent]
         """
         message = self.add_output_item_message()
         yield message.emit_added()
-        yield from message.text_content(text)
+        tc = message.add_text_content()
+        yield tc.emit_added()
+        yield tc.emit_delta(text)
+        yield tc.emit_done(text)
+        if annotations:
+            for ann in annotations:
+                yield tc.emit_annotation_added(ann)
+        yield message.emit_content_done(tc)
         yield message.emit_done()
 
-    def output_item_function_call(self, name: str, call_id: str, arguments: str) -> Iterator[generated_models.ResponseStreamEvent]:
+    def output_item_function_call(
+        self, name: str, call_id: str, arguments: str
+    ) -> Iterator[generated_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a function call output item.
 
         Emits output_item.added, function_call_arguments.delta,
@@ -559,7 +737,9 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         yield from fc.arguments(arguments)
         yield fc.emit_done()
 
-    def output_item_function_call_output(self, call_id: str, output: str) -> Iterator[generated_models.ResponseStreamEvent]:
+    def output_item_function_call_output(
+        self, call_id: str, output: str
+    ) -> Iterator[generated_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a function call output item.
 
         Emits output_item.added and output_item.done.
@@ -592,10 +772,369 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         yield from item.summary_part(summary_text)
         yield item.emit_done()
 
+    def output_item_image_gen_call(self, result_base64: str) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for an image generation call.
+
+        Emits added → in_progress → generating → completed → done(result).
+
+        :param result_base64: The base64-encoded image result.
+        :type result_base64: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        ig = self.add_output_item_image_gen_call()
+        yield ig.emit_added()
+        yield ig.emit_in_progress()
+        yield ig.emit_generating()
+        yield ig.emit_completed()
+        yield ig.emit_done(result_base64)
+
+    def output_item_structured_outputs(self, output: Any) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a structured outputs item.
+
+        Emits output_item.added and output_item.done.
+
+        :param output: The structured output data (will be serialized as-is).
+        :type output: Any
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_structured_outputs()
+        item = {"type": "structured_outputs", "id": builder.item_id, "output": output}
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_computer_call(
+        self,
+        call_id: str,
+        action: generated_models.ComputerAction | dict[str, Any],
+        *,
+        pending_safety_checks: list[generated_models.ComputerCallSafetyCheckParam] | None = None,
+        status: str = "completed",
+    ) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a computer call output item.
+
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param action: The computer action to perform.
+        :type action: ComputerAction | dict
+        :keyword pending_safety_checks: Optional safety checks.
+        :keyword type pending_safety_checks: list[ComputerCallSafetyCheckParam] | None
+        :keyword status: Status of the call; defaults to ``"completed"``.
+        :keyword type status: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_computer_call()
+        action_dict = action.as_dict() if hasattr(action, "as_dict") else action
+        checks = [c.as_dict() if hasattr(c, "as_dict") else c for c in (pending_safety_checks or [])]
+        item = {
+            "type": "computer_call",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "action": action_dict,
+            "pending_safety_checks": checks,
+            "status": status,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_computer_call_output(
+        self,
+        call_id: str,
+        output: generated_models.ComputerScreenshotImage | dict[str, Any],
+        *,
+        acknowledged_safety_checks: list[generated_models.ComputerCallSafetyCheckParam] | None = None,
+    ) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a computer call output item.
+
+        :param call_id: The call ID this output belongs to.
+        :type call_id: str
+        :param output: The screenshot image output.
+        :type output: ComputerScreenshotImage | dict
+        :keyword acknowledged_safety_checks: Optional acknowledged safety checks.
+        :keyword type acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_computer_call_output()
+        output_dict = output.as_dict() if hasattr(output, "as_dict") else output
+        checks = [c.as_dict() if hasattr(c, "as_dict") else c for c in (acknowledged_safety_checks or [])]
+        item = {
+            "type": "computer_call_output",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "output": output_dict,
+            "acknowledged_safety_checks": checks,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_local_shell_call(
+        self,
+        call_id: str,
+        action: generated_models.LocalShellExecAction | dict[str, Any],
+        *,
+        status: str = "completed",
+    ) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a local shell call output item.
+
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param action: The shell exec action.
+        :type action: LocalShellExecAction | dict
+        :keyword status: Status of the call; defaults to ``"completed"``.
+        :keyword type status: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_local_shell_call()
+        action_dict = action.as_dict() if hasattr(action, "as_dict") else action
+        item = {
+            "type": "local_shell_call",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "action": action_dict,
+            "status": status,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_local_shell_call_output(self, output: str) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a local shell call output item.
+
+        :param output: The shell output string.
+        :type output: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_local_shell_call_output()
+        item = {"type": "local_shell_call_output", "id": builder.item_id, "output": output}
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_function_shell_call(
+        self,
+        call_id: str,
+        action: generated_models.FunctionShellAction | dict[str, Any],
+        environment: generated_models.FunctionShellCallEnvironment | dict[str, Any],
+        *,
+        status: str = "completed",
+    ) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a function shell call output item.
+
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param action: The function shell action.
+        :type action: FunctionShellAction | dict
+        :param environment: The execution environment.
+        :type environment: FunctionShellCallEnvironment | dict
+        :keyword status: Status of the call; defaults to ``"completed"``.
+        :keyword type status: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_function_shell_call()
+        action_dict = action.as_dict() if hasattr(action, "as_dict") else action
+        env_dict = environment.as_dict() if hasattr(environment, "as_dict") else environment
+        item = {
+            "type": "shell_call",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "action": action_dict,
+            "environment": env_dict,
+            "status": status,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_function_shell_call_output(
+        self,
+        call_id: str,
+        output: list[generated_models.FunctionShellCallOutputContent] | list[dict[str, Any]],
+        *,
+        status: str = "completed",
+        max_output_length: int | None = None,
+    ) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a function shell call output item.
+
+        :param call_id: The call ID this output belongs to.
+        :type call_id: str
+        :param output: The output content list.
+        :type output: list[FunctionShellCallOutputContent] | list[dict]
+        :keyword status: Status of the output; defaults to ``"completed"``.
+        :keyword type status: str
+        :keyword max_output_length: Maximum output length; defaults to ``0``.
+        :keyword type max_output_length: int | None
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_function_shell_call_output()
+        output_list = [o.as_dict() if hasattr(o, "as_dict") else o for o in output]
+        item = {
+            "type": "shell_call_output",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "output": output_list,
+            "status": status,
+            "max_output_length": max_output_length or 0,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_apply_patch_call(
+        self,
+        call_id: str,
+        operation: generated_models.ApplyPatchFileOperation | dict[str, Any],
+        *,
+        status: str = "completed",
+    ) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for an apply-patch call output item.
+
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param operation: The patch file operation.
+        :type operation: ApplyPatchFileOperation | dict
+        :keyword status: Status of the call; defaults to ``"completed"``.
+        :keyword type status: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_apply_patch_call()
+        op_dict = operation.as_dict() if hasattr(operation, "as_dict") else operation
+        item = {
+            "type": "apply_patch_call",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "operation": op_dict,
+            "status": status,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_apply_patch_call_output(
+        self,
+        call_id: str,
+        *,
+        status: str = "completed",
+        output: str | None = None,
+    ) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for an apply-patch call output item.
+
+        :param call_id: The call ID this output belongs to.
+        :type call_id: str
+        :keyword status: Status of the output; defaults to ``"completed"``.
+        :keyword type status: str
+        :keyword output: Optional output string.
+        :keyword type output: str | None
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_apply_patch_call_output()
+        item: dict[str, Any] = {
+            "type": "apply_patch_call_output",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "status": status,
+        }
+        if output is not None:
+            item["output"] = output
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_custom_tool_call_output(
+        self,
+        call_id: str,
+        output: str | list[Any],
+    ) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a custom tool call output item.
+
+        :param call_id: The call ID this output belongs to.
+        :type call_id: str
+        :param output: The output value (string or structured list).
+        :type output: str | list
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_custom_tool_call_output()
+        output_val: Any
+        if isinstance(output, list):
+            output_val = [o.as_dict() if hasattr(o, "as_dict") else o for o in output]
+        else:
+            output_val = output
+        item = {
+            "type": "custom_tool_call_output",
+            "id": builder.item_id,
+            "call_id": call_id,
+            "output": output_val,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_mcp_approval_request(
+        self, server_label: str, name: str, arguments: str
+    ) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for an MCP approval request item.
+
+        :param server_label: Label identifying the MCP server.
+        :type server_label: str
+        :param name: Tool name requiring approval.
+        :type name: str
+        :param arguments: JSON string of the tool arguments.
+        :type arguments: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_mcp_approval_request()
+        item = {
+            "type": "mcp_approval_request",
+            "id": builder.item_id,
+            "server_label": server_label,
+            "name": name,
+            "arguments": arguments,
+        }
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_mcp_approval_response(
+        self,
+        approval_request_id: str,
+        approve: bool,
+        *,
+        reason: str | None = None,
+    ) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for an MCP approval response item.
+
+        :param approval_request_id: The request ID being responded to.
+        :type approval_request_id: str
+        :param approve: Whether to approve the request.
+        :type approve: bool
+        :keyword reason: Optional reason for the decision.
+        :keyword type reason: str | None
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_mcp_approval_response()
+        item: dict[str, Any] = {
+            "type": "mcp_approval_response",
+            "id": builder.item_id,
+            "approval_request_id": approval_request_id,
+            "approve": approve,
+        }
+        if reason is not None:
+            item["reason"] = reason
+        yield from self._emit_simple_item(builder, item)
+
+    def output_item_compaction(self, encrypted_content: str) -> Iterator[generated_models.ResponseStreamEvent]:
+        """Yield the full lifecycle for a compaction output item.
+
+        :param encrypted_content: The encrypted compaction content.
+        :type encrypted_content: str
+        :returns: An iterator of events.
+        :rtype: Iterator[ResponseStreamEvent]
+        """
+        builder = self.add_output_item_compaction()
+        item = {"type": "compaction", "id": builder.item_id, "encrypted_content": encrypted_content}
+        yield from self._emit_simple_item(builder, item)
+
     # ---- Async generator convenience methods (S-058) ----
     # Async variants with AsyncIterable[str] support for real-time delta streaming.
 
-    async def aoutput_item_message(self, text: str | AsyncIterable[str]) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    async def aoutput_item_message(
+        self,
+        text: str | AsyncIterable[str],
+        *,
+        annotations: Sequence[generated_models.Annotation] | None = None,
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`output_item_message` with streaming support.
 
         When *text* is a string, emits the same events as the sync variant.
@@ -605,17 +1144,24 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
 
         :param text: Complete text or async iterable of text chunks.
         :type text: str | AsyncIterable[str]
+        :keyword annotations: Optional annotations to attach to the text content.
+        :keyword type annotations: Sequence[Annotation] | None
         :returns: An async iterator of events.
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if isinstance(text, str):
-            for event in self.output_item_message(text):
+            for event in self.output_item_message(text, annotations=annotations):
                 yield event
             return
         message = self.add_output_item_message()
         yield message.emit_added()
         async for streamed_event in message.atext_content(text):
             yield streamed_event
+        if annotations:
+            tc = message._completed_contents[-1] if message._completed_contents else None  # type: ignore[attr-defined]
+            if tc is not None:
+                for ann in annotations:
+                    yield tc.emit_annotation_added(ann)
         yield message.emit_done()
 
     async def aoutput_item_function_call(
@@ -646,7 +1192,9 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             yield event
         yield fc.emit_done()
 
-    async def aoutput_item_function_call_output(self, call_id: str, output: str) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+    async def aoutput_item_function_call_output(
+        self, call_id: str, output: str
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`output_item_function_call_output`.
 
         :param call_id: The call ID of the function call this output belongs to.
@@ -682,6 +1230,286 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         async for event in item.asummary_part(summary_text):
             yield event
         yield item.emit_done()
+
+    async def aoutput_item_image_gen_call(
+        self,
+        result_base64: str,
+        *,
+        partials: AsyncIterable[str] | None = None,
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Async variant of :meth:`output_item_image_gen_call` with optional partial streaming.
+
+        When *partials* is provided, emits ``partial_image`` events between
+        the generating and completed states.
+
+        :param result_base64: The final base64-encoded image result.
+        :type result_base64: str
+        :keyword partials: Optional async iterable of partial base64 image strings.
+        :keyword type partials: AsyncIterable[str] | None
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        ig = self.add_output_item_image_gen_call()
+        yield ig.emit_added()
+        yield ig.emit_in_progress()
+        yield ig.emit_generating()
+        if partials is not None:
+            async for partial in partials:
+                yield ig.emit_partial_image(partial)
+        yield ig.emit_completed()
+        yield ig.emit_done(result_base64)
+
+    async def aoutput_item_structured_outputs(self, output: Any) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Async variant of :meth:`output_item_structured_outputs`.
+
+        :param output: The structured output data.
+        :type output: Any
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        for event in self.output_item_structured_outputs(output):
+            yield event
+
+    async def aoutput_item_computer_call(
+        self,
+        call_id: str,
+        action: generated_models.ComputerAction | dict[str, Any],
+        *,
+        pending_safety_checks: list[generated_models.ComputerCallSafetyCheckParam] | None = None,
+        status: str = "completed",
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Async variant of :meth:`output_item_computer_call`.
+
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param action: The computer action.
+        :type action: ComputerAction | dict
+        :keyword pending_safety_checks: Optional safety checks.
+        :keyword type pending_safety_checks: list[ComputerCallSafetyCheckParam] | None
+        :keyword status: Status; defaults to ``"completed"``.
+        :keyword type status: str
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        for event in self.output_item_computer_call(
+            call_id, action, pending_safety_checks=pending_safety_checks, status=status
+        ):
+            yield event
+
+    async def aoutput_item_computer_call_output(
+        self,
+        call_id: str,
+        output: generated_models.ComputerScreenshotImage | dict[str, Any],
+        *,
+        acknowledged_safety_checks: list[generated_models.ComputerCallSafetyCheckParam] | None = None,
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Async variant of :meth:`output_item_computer_call_output`.
+
+        :param call_id: The call ID this output belongs to.
+        :type call_id: str
+        :param output: The screenshot image output.
+        :type output: ComputerScreenshotImage | dict
+        :keyword acknowledged_safety_checks: Optional acknowledged safety checks.
+        :keyword type acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        for event in self.output_item_computer_call_output(
+            call_id, output, acknowledged_safety_checks=acknowledged_safety_checks
+        ):
+            yield event
+
+    async def aoutput_item_local_shell_call(
+        self,
+        call_id: str,
+        action: generated_models.LocalShellExecAction | dict[str, Any],
+        *,
+        status: str = "completed",
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Async variant of :meth:`output_item_local_shell_call`.
+
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param action: The shell exec action.
+        :type action: LocalShellExecAction | dict
+        :keyword status: Status; defaults to ``"completed"``.
+        :keyword type status: str
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        for event in self.output_item_local_shell_call(call_id, action, status=status):
+            yield event
+
+    async def aoutput_item_local_shell_call_output(
+        self, output: str
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Async variant of :meth:`output_item_local_shell_call_output`.
+
+        :param output: The shell output string.
+        :type output: str
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        for event in self.output_item_local_shell_call_output(output):
+            yield event
+
+    async def aoutput_item_function_shell_call(
+        self,
+        call_id: str,
+        action: generated_models.FunctionShellAction | dict[str, Any],
+        environment: generated_models.FunctionShellCallEnvironment | dict[str, Any],
+        *,
+        status: str = "completed",
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Async variant of :meth:`output_item_function_shell_call`.
+
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param action: The function shell action.
+        :type action: FunctionShellAction | dict
+        :param environment: The execution environment.
+        :type environment: FunctionShellCallEnvironment | dict
+        :keyword status: Status; defaults to ``"completed"``.
+        :keyword type status: str
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        for event in self.output_item_function_shell_call(call_id, action, environment, status=status):
+            yield event
+
+    async def aoutput_item_function_shell_call_output(
+        self,
+        call_id: str,
+        output: list[generated_models.FunctionShellCallOutputContent] | list[dict[str, Any]],
+        *,
+        status: str = "completed",
+        max_output_length: int | None = None,
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Async variant of :meth:`output_item_function_shell_call_output`.
+
+        :param call_id: The call ID this output belongs to.
+        :type call_id: str
+        :param output: The output content list.
+        :type output: list[FunctionShellCallOutputContent] | list[dict]
+        :keyword status: Status; defaults to ``"completed"``.
+        :keyword type status: str
+        :keyword max_output_length: Maximum output length.
+        :keyword type max_output_length: int | None
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        for event in self.output_item_function_shell_call_output(
+            call_id, output, status=status, max_output_length=max_output_length
+        ):
+            yield event
+
+    async def aoutput_item_apply_patch_call(
+        self,
+        call_id: str,
+        operation: generated_models.ApplyPatchFileOperation | dict[str, Any],
+        *,
+        status: str = "completed",
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Async variant of :meth:`output_item_apply_patch_call`.
+
+        :param call_id: Unique identifier for this tool call.
+        :type call_id: str
+        :param operation: The patch file operation.
+        :type operation: ApplyPatchFileOperation | dict
+        :keyword status: Status; defaults to ``"completed"``.
+        :keyword type status: str
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        for event in self.output_item_apply_patch_call(call_id, operation, status=status):
+            yield event
+
+    async def aoutput_item_apply_patch_call_output(
+        self,
+        call_id: str,
+        *,
+        status: str = "completed",
+        output: str | None = None,
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Async variant of :meth:`output_item_apply_patch_call_output`.
+
+        :param call_id: The call ID this output belongs to.
+        :type call_id: str
+        :keyword status: Status; defaults to ``"completed"``.
+        :keyword type status: str
+        :keyword output: Optional output string.
+        :keyword type output: str | None
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        for event in self.output_item_apply_patch_call_output(call_id, status=status, output=output):
+            yield event
+
+    async def aoutput_item_custom_tool_call_output(
+        self, call_id: str, output: str | list[Any]
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Async variant of :meth:`output_item_custom_tool_call_output`.
+
+        :param call_id: The call ID this output belongs to.
+        :type call_id: str
+        :param output: The output value (string or structured list).
+        :type output: str | list
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        for event in self.output_item_custom_tool_call_output(call_id, output):
+            yield event
+
+    async def aoutput_item_mcp_approval_request(
+        self, server_label: str, name: str, arguments: str
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Async variant of :meth:`output_item_mcp_approval_request`.
+
+        :param server_label: Label identifying the MCP server.
+        :type server_label: str
+        :param name: Tool name requiring approval.
+        :type name: str
+        :param arguments: JSON string of the tool arguments.
+        :type arguments: str
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        for event in self.output_item_mcp_approval_request(server_label, name, arguments):
+            yield event
+
+    async def aoutput_item_mcp_approval_response(
+        self,
+        approval_request_id: str,
+        approve: bool,
+        *,
+        reason: str | None = None,
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Async variant of :meth:`output_item_mcp_approval_response`.
+
+        :param approval_request_id: The request ID being responded to.
+        :type approval_request_id: str
+        :param approve: Whether to approve.
+        :type approve: bool
+        :keyword reason: Optional reason for the decision.
+        :keyword type reason: str | None
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        for event in self.output_item_mcp_approval_response(approval_request_id, approve, reason=reason):
+            yield event
+
+    async def aoutput_item_compaction(
+        self, encrypted_content: str
+    ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
+        """Async variant of :meth:`output_item_compaction`.
+
+        :param encrypted_content: The encrypted compaction content.
+        :type encrypted_content: str
+        :returns: An async iterator of events.
+        :rtype: AsyncIterator[ResponseStreamEvent]
+        """
+        for event in self.output_item_compaction(encrypted_content):
+            yield event
 
     # ---- Private helpers ----
 

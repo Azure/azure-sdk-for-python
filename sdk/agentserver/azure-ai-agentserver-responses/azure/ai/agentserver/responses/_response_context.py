@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
-from typing import TYPE_CHECKING, Any, Sequence, cast
+from typing import TYPE_CHECKING, Any, Sequence
 
 from azure.ai.agentserver.responses.models._generated.sdk.models._types import InputParam
 

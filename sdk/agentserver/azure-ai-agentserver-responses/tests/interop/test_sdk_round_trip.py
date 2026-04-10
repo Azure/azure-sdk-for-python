@@ -29,7 +29,6 @@ from openai.types.responses import (  # noqa: E402
     ResponseCodeInterpreterToolCall,
     ResponseFileSearchToolCall,
     ResponseFunctionToolCall,
-    ResponseFunctionToolCallOutputItem,
     ResponseOutputMessage,
     ResponseOutputText,
     ResponseReasoningItem,
@@ -228,7 +227,7 @@ def _image_gen_handler():
             yield b.emit_added()
             yield b.emit_generating()
             yield b.emit_completed()
-            yield b.emit_done()
+            yield b.emit_done("")
             yield s.emit_completed()
 
         return events()

@@ -119,16 +119,25 @@ class TextContentBuilder:
             }
         )
 
-    def emit_annotation_added(self, annotation: dict[str, Any]) -> generated_models.ResponseStreamEvent:
+    def emit_annotation_added(
+        self, annotation: generated_models.Annotation | dict[str, Any]
+    ) -> generated_models.ResponseStreamEvent:
         """Emit a text annotation added event.
 
-        :param annotation: The annotation dict to attach.
-        :type annotation: dict[str, Any]
+        :param annotation: The annotation to attach—either a typed
+            :class:`~azure.ai.agentserver.responses.models.Annotation` subclass
+            or a raw dict.
+        :type annotation: Annotation | dict[str, Any]
         :returns: The emitted event dict.
         :rtype: ResponseStreamEvent
         """
         annotation_index = self._annotation_index
         self._annotation_index += 1
+        annotation_payload: dict[str, Any]
+        if isinstance(annotation, dict):
+            annotation_payload = deepcopy(annotation)
+        else:
+            annotation_payload = deepcopy(annotation.as_dict())
         return self._stream.emit_event(
             {
                 "type": EVENT_TYPE.RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED.value,
@@ -136,7 +145,7 @@ class TextContentBuilder:
                 "output_index": self._output_index,
                 "content_index": self._content_index,
                 "annotation_index": annotation_index,
-                "annotation": deepcopy(annotation),
+                "annotation": annotation_payload,
             }
         )
 

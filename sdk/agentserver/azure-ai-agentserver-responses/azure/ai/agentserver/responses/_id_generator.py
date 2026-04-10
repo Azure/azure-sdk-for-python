@@ -327,6 +327,17 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
         return IdGenerator.new_id("wfa", partition_key_hint)
 
     @staticmethod
+    def new_structured_output_item_id(partition_key_hint: str | None = "") -> str:
+        """Generate a new structured output item ID with the ``fco`` prefix.
+
+        :param partition_key_hint: An existing ID to extract the partition key from for co-location.
+        :type partition_key_hint: str | None
+        :returns: A new unique structured output item ID string.
+        :rtype: str
+        """
+        return IdGenerator.new_id("fco", partition_key_hint)
+
+    @staticmethod
     def new_output_message_item_id(partition_key_hint: str | None = "") -> str:
         """Generate a new output message item ID with the ``om`` prefix.
 
@@ -377,6 +388,7 @@ class IdGenerator:  # pylint: disable=too-many-public-methods
             (generated_models.MCPApprovalResponse, IdGenerator.new_mcp_approval_response_item_id),
             (generated_models.ItemReasoningItem, IdGenerator.new_reasoning_item_id),
             (generated_models.CompactionSummaryItemParam, IdGenerator.new_compaction_item_id),
+            (generated_models.StructuredOutputsOutputItem, IdGenerator.new_structured_output_item_id),
         )
 
         for model_type, generator in dispatch_map:

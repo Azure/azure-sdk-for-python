@@ -780,8 +780,59 @@ The library provides specialised builders for each tool call type:
 | `OutputItemImageGenCallBuilder` | `add_output_item_image_gen_call()` | — |
 | `OutputItemMcpCallBuilder` | `add_output_item_mcp_call(server_label, name)` | `arguments()` |
 | `OutputItemCustomToolCallBuilder` | `add_output_item_custom_tool_call(call_id, name)` | `input_data()` |
+| `OutputItemBuilder` | `add_output_item_structured_outputs()` | — |
+| `OutputItemBuilder` | `add_output_item_computer_call()` | — |
+| `OutputItemBuilder` | `add_output_item_computer_call_output()` | — |
+| `OutputItemBuilder` | `add_output_item_local_shell_call()` | — |
+| `OutputItemBuilder` | `add_output_item_local_shell_call_output()` | — |
+| `OutputItemBuilder` | `add_output_item_function_shell_call()` | — |
+| `OutputItemBuilder` | `add_output_item_function_shell_call_output()` | — |
+| `OutputItemBuilder` | `add_output_item_apply_patch_call()` | — |
+| `OutputItemBuilder` | `add_output_item_apply_patch_call_output()` | — |
+| `OutputItemBuilder` | `add_output_item_custom_tool_call_output()` | — |
+| `OutputItemBuilder` | `add_output_item_mcp_approval_request()` | — |
+| `OutputItemBuilder` | `add_output_item_mcp_approval_response()` | — |
+| `OutputItemBuilder` | `add_output_item_compaction()` | — |
 
 Each builder enforces its own lifecycle ordering.
+
+#### Convenience generators
+
+For simple output items that only need an added→done pair, convenience generators
+avoid the builder ceremony entirely:
+
+```python
+# Image generation — emits full lifecycle automatically
+yield from stream.output_item_image_gen_call(result_base64)
+
+# Structured outputs
+yield from stream.output_item_structured_outputs({"sentiment": "positive", "confidence": 0.95})
+
+# Message with annotations
+from azure.ai.agentserver.responses.models import FilePath, UrlCitationBody
+yield from stream.output_item_message(
+    "Here are your sources.",
+    annotations=[
+        FilePath(file_id="/reports/summary.pdf", index=0),
+        UrlCitationBody(url="https://example.com", start_index=0, end_index=5, title="Link"),
+    ],
+)
+```
+
+All convenience generators have async variants (prefixed with `a`):
+`aoutput_item_image_gen_call()`, `aoutput_item_structured_outputs()`, etc.
+
+#### `data_url` utility
+
+Parse RFC 2397 data URLs from image/file inputs:
+
+```python
+from azure.ai.agentserver.responses import data_url
+
+if data_url.is_data_url(value):
+    raw_bytes = data_url.decode_bytes(value)
+    media_type = data_url.get_media_type(value)  # e.g. "image/png"
+```
 
 ---
 

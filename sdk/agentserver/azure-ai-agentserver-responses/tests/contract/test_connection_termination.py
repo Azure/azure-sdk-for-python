@@ -218,7 +218,7 @@ async def test_non_bg_streaming_disconnect_results_in_cancelled() -> None:
     asyncio.CancelledError to the streaming generator.
     """
     import socket
-    import time
+
     from hypercorn.asyncio import serve as _hc_serve
     from hypercorn.config import Config as _HcConfig
 

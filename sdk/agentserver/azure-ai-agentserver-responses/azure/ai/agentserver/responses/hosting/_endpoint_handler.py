@@ -22,8 +22,7 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.core import end_span, flush_spans, trace_stream
-from azure.ai.agentserver.responses.models._generated import AgentReference
-from azure.ai.agentserver.responses.models._generated import CreateResponse
+from azure.ai.agentserver.responses.models._generated import AgentReference, CreateResponse
 
 from .._options import ResponsesServerOptions
 from .._response_context import IsolationContext, ResponseContext

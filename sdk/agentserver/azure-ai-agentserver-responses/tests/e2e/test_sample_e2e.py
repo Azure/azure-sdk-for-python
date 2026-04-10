@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT license.
-"""End-to-end tests for Samples 1-11."""
+"""End-to-end tests for Samples 1-16."""
 
 from __future__ import annotations
 
@@ -1015,3 +1015,366 @@ def test_item_reference_input_items_endpoint() -> None:
     # None of the items should be type "item_reference" — they should all be resolved
     for item in items:
         assert item.get("type") != "item_reference", f"Expected resolved item, got item_reference: {item}"
+
+
+# ===========================================================================
+# Sample 12 — Image Generation
+# ===========================================================================
+
+
+TINY_IMAGE_B64 = "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8BQDwAEgAF/pooBPQAAAABJRU5ErkJggg=="
+
+
+def _image_gen_convenience_handler(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+):
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
+    yield from stream.output_item_image_gen_call(TINY_IMAGE_B64)
+    yield stream.emit_completed()
+
+
+def _image_gen_streaming_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
+    ig = stream.add_output_item_image_gen_call()
+    yield ig.emit_added()
+    yield ig.emit_in_progress()
+    yield ig.emit_generating()
+    for i in range(2):
+        yield ig.emit_partial_image(f"partial_{i}")
+    yield ig.emit_completed()
+    yield ig.emit_done(TINY_IMAGE_B64)
+    yield stream.emit_completed()
+
+
+def test_sample12_image_gen_convenience_emits_lifecycle() -> None:
+    """Image gen convenience emits the full lifecycle with result in done."""
+    events = _post_stream(_make_app(_image_gen_convenience_handler), _base_payload())
+    types = [e["type"] for e in events]
+    assert "response.output_item.added" in types
+    assert "response.image_generation_call.in_progress" in types
+    assert "response.image_generation_call.generating" in types
+    assert "response.image_generation_call.completed" in types
+    assert "response.output_item.done" in types
+    assert "response.completed" in types
+    # The done event should carry the result
+    done_events = [e for e in events if e["type"] == "response.output_item.done"]
+    assert done_events
+    assert done_events[0]["data"]["item"]["result"] == TINY_IMAGE_B64
+
+
+def test_sample12_image_gen_streaming_partials() -> None:
+    """Image gen streaming handler emits partial_image events."""
+    events = _post_stream(_make_app(_image_gen_streaming_handler), _base_payload())
+    partial_events = [e for e in events if e["type"] == "response.image_generation_call.partial_image"]
+    assert len(partial_events) == 2
+    assert partial_events[0]["data"]["partial_image_b64"] == "partial_0"
+    assert partial_events[1]["data"]["partial_image_b64"] == "partial_1"
+
+
+def test_sample12_image_gen_non_streaming_returns_result() -> None:
+    """Non-streaming mode returns the image result in the output."""
+    resp = _post_json(_make_app(_image_gen_convenience_handler), _base_payload())
+    body = resp.json()
+    assert resp.status_code == 200
+    assert body["output"][0]["type"] == "image_generation_call"
+    assert body["output"][0]["result"] == TINY_IMAGE_B64
+
+
+# ===========================================================================
+# Sample 13 — Image Input
+# ===========================================================================
+
+
+async def _image_url_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    from azure.ai.agentserver.responses._data_url import is_data_url
+    from azure.ai.agentserver.responses.models import MessageContentInputImageContent
+
+    items = await context.get_input_items()
+    images = []
+    for item in items:
+        if not isinstance(item, ItemMessage):
+            continue
+        for content in item.content or []:
+            if isinstance(content, MessageContentInputImageContent):
+                images.append(content)
+    urls = [img.image_url for img in images if img.image_url and not is_data_url(img.image_url)]
+    return TextResponse(context, request, text=f"URLs: {', '.join(urls)}")
+
+
+async def _image_base64_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    from azure.ai.agentserver.responses._data_url import get_media_type, is_data_url, try_decode_bytes
+    from azure.ai.agentserver.responses.models import MessageContentInputImageContent
+
+    items = await context.get_input_items()
+    images = []
+    for item in items:
+        if not isinstance(item, ItemMessage):
+            continue
+        for content in item.content or []:
+            if isinstance(content, MessageContentInputImageContent):
+                images.append(content)
+    results = []
+    for img in images:
+        if img.image_url and is_data_url(img.image_url):
+            raw = try_decode_bytes(img.image_url)
+            media = get_media_type(img.image_url)
+            results.append(f"{media} ({len(raw)} bytes)")
+    return TextResponse(context, request, text=f"Decoded: {'; '.join(results)}")
+
+
+async def _image_file_id_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    from azure.ai.agentserver.responses.models import MessageContentInputImageContent
+
+    items = await context.get_input_items()
+    images = []
+    for item in items:
+        if not isinstance(item, ItemMessage):
+            continue
+        for content in item.content or []:
+            if isinstance(content, MessageContentInputImageContent):
+                images.append(content)
+    file_ids = [img.file_id for img in images if img.file_id]
+    return TextResponse(context, request, text=f"File IDs: {', '.join(file_ids)}")
+
+
+def _image_input_payload(content_list):
+    return _base_payload(
+        [{"role": "user", "content": content_list}],
+    )
+
+
+def test_sample13_image_input_url_handler() -> None:
+    """URL image input handler echoes back the URL."""
+    payload = _image_input_payload(
+        [{"type": "input_image", "image_url": "https://example.com/photo.png", "detail": "auto"}]
+    )
+    resp = _post_json(_make_app(_image_url_handler), payload)
+    body = resp.json()
+    text = body["output"][0]["content"][0]["text"]
+    assert "https://example.com/photo.png" in text
+
+
+def test_sample13_image_input_base64_handler() -> None:
+    """Base64 image input handler decodes and reports media type + size."""
+    import base64
+
+    raw_bytes = b"fake-image-data"
+    data_url = f"data:image/png;base64,{base64.b64encode(raw_bytes).decode()}"
+    payload = _image_input_payload([{"type": "input_image", "image_url": data_url, "detail": "auto"}])
+    resp = _post_json(_make_app(_image_base64_handler), payload)
+    body = resp.json()
+    text = body["output"][0]["content"][0]["text"]
+    assert "image/png" in text
+    assert f"{len(raw_bytes)} bytes" in text
+
+
+def test_sample13_image_input_file_id_handler() -> None:
+    """File ID image input handler echoes back the file_id."""
+    payload = _image_input_payload([{"type": "input_image", "file_id": "/images/photo.png", "detail": "auto"}])
+    resp = _post_json(_make_app(_image_file_id_handler), payload)
+    body = resp.json()
+    text = body["output"][0]["content"][0]["text"]
+    assert "/images/photo.png" in text
+
+
+# ===========================================================================
+# Sample 14 — File Inputs
+# ===========================================================================
+
+
+async def _file_base64_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    from azure.ai.agentserver.responses._data_url import get_media_type, is_data_url, try_decode_bytes
+    from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputFileContent
+
+    items = await context.get_input_items()
+    files = []
+    for item in items:
+        if not isinstance(item, ItemMessage):
+            continue
+        for content in item.content or []:
+            if isinstance(content, MessageContentInputFileContent):
+                files.append(content)
+    results = []
+    for f in files:
+        if f.file_data and is_data_url(f.file_data):
+            raw = try_decode_bytes(f.file_data)
+            media = get_media_type(f.file_data)
+            results.append(f"{media} ({len(raw)} bytes)")
+    return TextResponse(context, request, text=f"Decoded: {'; '.join(results)}")
+
+
+async def _file_url_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputFileContent
+
+    items = await context.get_input_items()
+    files = []
+    for item in items:
+        if not isinstance(item, ItemMessage):
+            continue
+        for content in item.content or []:
+            if isinstance(content, MessageContentInputFileContent):
+                files.append(content)
+    urls = [f.file_url for f in files if f.file_url]
+    return TextResponse(context, request, text=f"URLs: {', '.join(urls)}")
+
+
+async def _file_id_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    from azure.ai.agentserver.responses.models import ItemMessage, MessageContentInputFileContent
+
+    items = await context.get_input_items()
+    files = []
+    for item in items:
+        if not isinstance(item, ItemMessage):
+            continue
+        for content in item.content or []:
+            if isinstance(content, MessageContentInputFileContent):
+                files.append(content)
+    file_ids = [f.file_id for f in files if f.file_id]
+    return TextResponse(context, request, text=f"File IDs: {', '.join(file_ids)}")
+
+
+def _file_input_payload(content_list):
+    return _base_payload(
+        [{"role": "user", "content": content_list}],
+    )
+
+
+def test_sample14_file_input_base64_handler() -> None:
+    """Base64 file input handler decodes and reports media type + size."""
+    import base64
+
+    raw_bytes = b"%PDF-1.4 fake pdf content"
+    data_url = f"data:application/pdf;base64,{base64.b64encode(raw_bytes).decode()}"
+    payload = _file_input_payload([{"type": "input_file", "file_data": data_url}])
+    resp = _post_json(_make_app(_file_base64_handler), payload)
+    body = resp.json()
+    text = body["output"][0]["content"][0]["text"]
+    assert "application/pdf" in text
+    assert f"{len(raw_bytes)} bytes" in text
+
+
+def test_sample14_file_input_url_handler() -> None:
+    """File URL handler echoes back the URL."""
+    payload = _file_input_payload([{"type": "input_file", "file_url": "https://example.com/report.pdf"}])
+    resp = _post_json(_make_app(_file_url_handler), payload)
+    body = resp.json()
+    text = body["output"][0]["content"][0]["text"]
+    assert "https://example.com/report.pdf" in text
+
+
+def test_sample14_file_input_file_id_handler() -> None:
+    """File ID handler echoes back the file_id."""
+    payload = _file_input_payload([{"type": "input_file", "file_id": "/reports/summary.pdf"}])
+    resp = _post_json(_make_app(_file_id_handler), payload)
+    body = resp.json()
+    text = body["output"][0]["content"][0]["text"]
+    assert "/reports/summary.pdf" in text
+
+
+# ===========================================================================
+# Sample 15 — Annotations
+# ===========================================================================
+
+
+def _annotations_handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
+    from azure.ai.agentserver.responses.models import FileCitationBody, FilePath, UrlCitationBody
+
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
+    annotations = [
+        FilePath(file_id="/reports/summary.pdf", index=0),
+        FileCitationBody(file_id="/sources/paper.pdf", index=1, filename="paper.pdf"),
+        UrlCitationBody(url="https://example.com/guide", start_index=0, end_index=10, title="Guide"),
+    ]
+    yield from stream.output_item_message("Here are your sources.", annotations=annotations)
+    yield stream.emit_completed()
+
+
+def test_sample15_annotations_emitted() -> None:
+    """Streaming mode emits annotation.added events for each annotation."""
+    events = _post_stream(_make_app(_annotations_handler), _base_payload())
+    ann_events = [e for e in events if e["type"] == "response.output_text.annotation.added"]
+    assert len(ann_events) == 3
+    # Check annotation types
+    assert ann_events[0]["data"]["annotation"]["type"] == "file_path"
+    assert ann_events[1]["data"]["annotation"]["type"] == "file_citation"
+    assert ann_events[2]["data"]["annotation"]["type"] == "url_citation"
+    # Check annotation indices are sequential
+    assert ann_events[0]["data"]["annotation_index"] == 0
+    assert ann_events[1]["data"]["annotation_index"] == 1
+    assert ann_events[2]["data"]["annotation_index"] == 2
+
+
+def test_sample15_non_streaming_annotations_in_output() -> None:
+    """Non-streaming mode returns the text message with annotations tracked."""
+    resp = _post_json(_make_app(_annotations_handler), _base_payload())
+    body = resp.json()
+    assert resp.status_code == 200
+    assert body["output"][0]["type"] == "message"
+    text_content = body["output"][0]["content"][0]
+    assert text_content["text"] == "Here are your sources."
+
+
+# ===========================================================================
+# Sample 16 — Structured Outputs
+# ===========================================================================
+
+
+def _structured_convenience_handler(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+):
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
+    yield from stream.output_item_structured_outputs({"sentiment": "positive", "confidence": 0.95})
+    yield stream.emit_completed()
+
+
+def _structured_full_control_handler(
+    request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event
+):
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
+    yield stream.emit_created()
+    yield stream.emit_in_progress()
+    builder = stream.add_output_item_structured_outputs()
+    item = {"type": "structured_outputs", "id": builder.item_id, "output": {"status": "ok"}}
+    yield builder.emit_added(item)
+    yield builder.emit_done(item)
+    yield stream.emit_completed()
+
+
+def test_sample16_structured_outputs_convenience() -> None:
+    """Convenience method emits structured_outputs item with correct data."""
+    events = _post_stream(_make_app(_structured_convenience_handler), _base_payload())
+    types = [e["type"] for e in events]
+    assert "response.output_item.added" in types
+    assert "response.output_item.done" in types
+    done_events = [e for e in events if e["type"] == "response.output_item.done"]
+    item = done_events[0]["data"]["item"]
+    assert item["type"] == "structured_outputs"
+    assert item["output"]["sentiment"] == "positive"
+    assert item["output"]["confidence"] == 0.95
+
+
+def test_sample16_structured_outputs_non_streaming() -> None:
+    """Non-streaming mode returns the structured output in response body."""
+    resp = _post_json(_make_app(_structured_convenience_handler), _base_payload())
+    body = resp.json()
+    assert resp.status_code == 200
+    assert body["output"][0]["type"] == "structured_outputs"
+    assert body["output"][0]["output"]["sentiment"] == "positive"
+
+
+def test_sample16_structured_outputs_full_control() -> None:
+    """Full-control builder emits correct structured_outputs lifecycle."""
+    events = _post_stream(_make_app(_structured_full_control_handler), _base_payload())
+    done_events = [e for e in events if e["type"] == "response.output_item.done"]
+    assert done_events
+    item = done_events[0]["data"]["item"]
+    assert item["type"] == "structured_outputs"
+    assert item["output"]["status"] == "ok"
