@@ -4922,6 +4922,26 @@
         }
       }
     },
+    "ModelDeploymentTemplateDetails": {
+      "description": "Details of a default deployment template reference.",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "description": "The asset ID of the deployment template.",
+          "type": "string"
+        }
+      }
+    },
+    "ModelDeploymentTemplateReferenceDetails": {
+      "description": "Reference details for an allowed deployment template.",
+      "type": "object",
+      "properties": {
+        "assetId": {
+          "description": "The asset reference ID of the deployment template.",
+          "type": "string"
+        }
+      }
+    },
     "ModelDataCollection": {
       "description": "The Model data collection properties.",
       "type": "object",
@@ -5083,6 +5103,17 @@
         "resourceRequirements": {
           "description": "Resource requirements for the model",
           "$ref": "#/definitions/ContainerResourceRequirements"
+        },
+        "defaultDeploymentTemplate": {
+          "description": "Default deployment template for the model.",
+          "$ref": "#/definitions/ModelDeploymentTemplateDetails"
+        },
+        "allowedDeploymentTemplates": {
+          "description": "List of allowed deployment templates for the model.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ModelDeploymentTemplateReferenceDetails"
+          }
         }
       }
     },
