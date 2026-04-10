@@ -196,7 +196,7 @@ def Collection(typ: Any) -> str:
 def SimpleField(
     *,
     name: str,
-    type: Union[str, _SearchFieldDataType],
+    type: Union[str, SearchFieldDataType],
     key: bool = False,
     hidden: bool = False,
     filterable: bool = False,

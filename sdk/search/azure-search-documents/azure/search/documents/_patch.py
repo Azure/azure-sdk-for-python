@@ -61,11 +61,17 @@ class SearchClient(_SearchClient):
         "2025-11-01-preview". Note that overriding this default value may result in unsupported
         behavior.
     :paramtype api_version: str
+    :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
+        audience is not considered when using a shared key. If audience is not provided, the public
+        cloud audience will be assumed.
     """
 
     def __init__(
         self, endpoint: str, index_name: str, credential: Union[AzureKeyCredential, TokenCredential], **kwargs: Any
     ) -> None:
+        audience = kwargs.pop("audience", None)
+        if audience is not None:
+            kwargs["credential_scopes"] = [audience + "/.default"]
         super().__init__(endpoint=endpoint, credential=credential, index_name=index_name, **kwargs)
 
 

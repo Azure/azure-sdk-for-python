@@ -183,6 +183,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         alias: _models.SearchAlias,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
+        etag: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.SearchAlias:
         """Creates a new search alias or updates an alias if it already exists.
@@ -191,6 +192,9 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :type alias: ~azure.search.documents.indexes.models.SearchAlias
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword etag: The ETag of the alias. If provided, it will be used for the conditional
+            request. If not provided, the alias's e_tag will be used.
+        :paramtype etag: str or None
         :return: SearchAlias
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -199,7 +203,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             name=alias.name,
             alias=alias,
             prefer="return=representation",
-            etag=alias.e_tag,
+            etag=etag if etag is not None else alias.e_tag,
             match_condition=match_condition,
             **kwargs,
         )
@@ -210,6 +214,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         alias: Union[str, _models.SearchAlias],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
+        etag: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Deletes a search alias and its associated mapping to an index.
@@ -218,6 +223,9 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :type alias: str or ~azure.search.documents.indexes.models.SearchAlias
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword etag: The ETag of the alias. If provided, it will be used for the conditional
+            request. If not provided, the alias's e_tag will be used (if alias is an object).
+        :paramtype etag: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -227,13 +235,14 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             return self._delete_alias(
                 name=name,
                 match_condition=match_condition,
-                etag=alias.e_tag,  # type: ignore
+                etag=etag if etag is not None else alias.e_tag,  # type: ignore
                 **kwargs,
             )
         except AttributeError:
             name = alias  # type: ignore
             return self._delete_alias(
                 name=name,
+                etag=etag,
                 **kwargs,
             )
 
@@ -243,6 +252,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         knowledge_base: Union[str, _models.KnowledgeBase],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
+        etag: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Deletes a knowledge base.
@@ -251,6 +261,9 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :type knowledge_base: str or ~azure.search.documents.indexes.models.KnowledgeBase
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword etag: The ETag of the knowledge base. If provided, it will be used for the
+            conditional request. If not provided, the knowledge base's e_tag will be used (if object).
+        :paramtype etag: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -260,13 +273,14 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             return self._delete_knowledge_base(
                 name=name,
                 match_condition=match_condition,
-                etag=knowledge_base.e_tag,  # type: ignore
+                etag=etag if etag is not None else knowledge_base.e_tag,  # type: ignore
                 **kwargs,
             )
         except AttributeError:
             name = knowledge_base  # type: ignore
             return self._delete_knowledge_base(
                 name=name,
+                etag=etag,
                 **kwargs,
             )
 
@@ -276,6 +290,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         knowledge_base: _models.KnowledgeBase,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
+        etag: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.KnowledgeBase:
         """Creates a new knowledge base or updates a knowledge base if it already exists.
@@ -284,6 +299,9 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword etag: The ETag of the knowledge base. If provided, it will be used for the
+            conditional request. If not provided, the knowledge base's e_tag will be used.
+        :paramtype etag: str or None
         :return: KnowledgeBase
         :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -292,7 +310,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             name=knowledge_base.name,
             knowledge_base=knowledge_base,
             prefer="return=representation",
-            etag=knowledge_base.e_tag,
+            etag=etag if etag is not None else knowledge_base.e_tag,
             match_condition=match_condition,
             **kwargs,
         )
@@ -303,6 +321,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         knowledge_source: _models.KnowledgeSource,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
+        etag: Optional[str] = None,
         **kwargs: Any,
     ) -> _models.KnowledgeSource:
         """Creates a new knowledge source or updates a knowledge source if it already exists.
@@ -311,6 +330,9 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword etag: The ETag of the knowledge source. If provided, it will be used for the
+            conditional request. If not provided, the knowledge source's e_tag will be used.
+        :paramtype etag: str or None
         :return: KnowledgeSource
         :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -320,7 +342,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             knowledge_source=knowledge_source,
             prefer="return=representation",
             match_condition=match_condition,
-            etag=knowledge_source.e_tag,
+            etag=etag if etag is not None else knowledge_source.e_tag,
             **kwargs,
         )
 
@@ -330,6 +352,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         knowledge_source: Union[str, _models.KnowledgeSource],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
+        etag: Optional[str] = None,
         **kwargs: Any,
     ) -> None:
         """Deletes a knowledge source.
@@ -338,6 +361,9 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :type knowledge_source: str or ~azure.search.documents.indexes.models.KnowledgeSource
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
+        :keyword etag: The ETag of the knowledge source. If provided, it will be used for the
+            conditional request. If not provided, the knowledge source's e_tag will be used (if object).
+        :paramtype etag: str or None
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -347,13 +373,14 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
             return self._delete_knowledge_source(
                 name=name,
                 match_condition=match_condition,
-                etag=knowledge_source.e_tag,  # type: ignore
+                etag=etag if etag is not None else knowledge_source.e_tag,  # type: ignore
                 **kwargs,
             )
         except AttributeError:
             name = knowledge_source  # type: ignore
             return self._delete_knowledge_source(
                 name=name,
+                etag=etag,
                 **kwargs,
             )
 
@@ -752,7 +779,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
                 :start-after: [START list_indexers]
                 :end-before: [END list_indexers]
                 :language: python
-                :dedent: 4
+                :dedent:
                 :caption: List all the SearchIndexers
         """
         result = self.get_indexers(**kwargs)

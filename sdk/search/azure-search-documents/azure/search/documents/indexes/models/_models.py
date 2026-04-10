@@ -1354,13 +1354,6 @@ class VectorSearchCompression(_Model):
     :vartype compression_name: str
     :ivar rescoring_options: Contains the options for rescoring.
     :vartype rescoring_options: ~azure.search.documents.indexes.models.RescoringOptions
-    :ivar truncation_dimension: The number of dimensions to truncate the vectors to. Truncating the
-     vectors reduces the size of the vectors and the amount of data that needs to be transferred
-     during search. This can save storage cost and improve search performance at the expense of
-     recall. It should be only used for embeddings trained with Matryoshka Representation Learning
-     (MRL) such as OpenAI text-embedding-3-large (small). The default value is null, which means no
-     truncation.
-    :vartype truncation_dimension: int
     :ivar kind: Type of VectorSearchCompression. Required. Known values are: "scalarQuantization"
      and "binaryQuantization".
     :vartype kind: str or ~azure.search.documents.indexes.models.VectorSearchCompressionKind
@@ -1373,14 +1366,6 @@ class VectorSearchCompression(_Model):
         name="rescoringOptions", visibility=["read", "create", "update", "delete", "query"]
     )
     """Contains the options for rescoring."""
-    truncation_dimension: Optional[int] = rest_field(
-        name="truncationDimension", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The number of dimensions to truncate the vectors to. Truncating the vectors reduces the size of
-     the vectors and the amount of data that needs to be transferred during search. This can save
-     storage cost and improve search performance at the expense of recall. It should be only used
-     for embeddings trained with Matryoshka Representation Learning (MRL) such as OpenAI
-     text-embedding-3-large (small). The default value is null, which means no truncation."""
     kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
     """Type of VectorSearchCompression. Required. Known values are: \"scalarQuantization\" and
      \"binaryQuantization\"."""
@@ -1392,7 +1377,6 @@ class VectorSearchCompression(_Model):
         compression_name: str,
         kind: str,
         rescoring_options: Optional["_models.RescoringOptions"] = None,
-        truncation_dimension: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -1414,13 +1398,6 @@ class BinaryQuantizationCompression(VectorSearchCompression, discriminator="bina
     :vartype compression_name: str
     :ivar rescoring_options: Contains the options for rescoring.
     :vartype rescoring_options: ~azure.search.documents.indexes.models.RescoringOptions
-    :ivar truncation_dimension: The number of dimensions to truncate the vectors to. Truncating the
-     vectors reduces the size of the vectors and the amount of data that needs to be transferred
-     during search. This can save storage cost and improve search performance at the expense of
-     recall. It should be only used for embeddings trained with Matryoshka Representation Learning
-     (MRL) such as OpenAI text-embedding-3-large (small). The default value is null, which means no
-     truncation.
-    :vartype truncation_dimension: int
     :ivar kind: The name of the kind of compression method being configured for use with vector
      search. Required. Binary Quantization, a type of compression method. In binary quantization,
      the original vectors values are compressed to the narrower binary type by discretizing and
@@ -1442,7 +1419,6 @@ class BinaryQuantizationCompression(VectorSearchCompression, discriminator="bina
         *,
         compression_name: str,
         rescoring_options: Optional["_models.RescoringOptions"] = None,
-        truncation_dimension: Optional[int] = None,
     ) -> None: ...
 
     @overload
@@ -2209,7 +2185,7 @@ class CommonGramTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.
         name: str,
         common_words: list[str],
         ignore_case: Optional[bool] = None,
-        use_query_mode: Optional[bool] = None,
+        use_query_mode: bool = False,
     ) -> None: ...
 
     @overload
@@ -3145,7 +3121,7 @@ class DictionaryDecompounderTokenFilter(
         min_word_size: Optional[int] = None,
         min_subword_size: Optional[int] = None,
         max_subword_size: Optional[int] = None,
-        only_longest_match: Optional[bool] = None,
+        only_longest_match: bool = False,
     ) -> None: ...
 
     @overload
@@ -5863,7 +5839,7 @@ class LengthTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Leng
         *,
         name: str,
         min_length: Optional[int] = None,
-        max_length: Optional[int] = None,
+        max_length: int = 300,
     ) -> None: ...
 
     @overload
@@ -7521,13 +7497,6 @@ class ScalarQuantizationCompression(VectorSearchCompression, discriminator="scal
     :vartype compression_name: str
     :ivar rescoring_options: Contains the options for rescoring.
     :vartype rescoring_options: ~azure.search.documents.indexes.models.RescoringOptions
-    :ivar truncation_dimension: The number of dimensions to truncate the vectors to. Truncating the
-     vectors reduces the size of the vectors and the amount of data that needs to be transferred
-     during search. This can save storage cost and improve search performance at the expense of
-     recall. It should be only used for embeddings trained with Matryoshka Representation Learning
-     (MRL) such as OpenAI text-embedding-3-large (small). The default value is null, which means no
-     truncation.
-    :vartype truncation_dimension: int
     :ivar parameters: Contains the parameters specific to Scalar Quantization.
     :vartype parameters: ~azure.search.documents.indexes.models.ScalarQuantizationParameters
     :ivar kind: The name of the kind of compression method being configured for use with vector
@@ -7555,7 +7524,6 @@ class ScalarQuantizationCompression(VectorSearchCompression, discriminator="scal
         *,
         compression_name: str,
         rescoring_options: Optional["_models.RescoringOptions"] = None,
-        truncation_dimension: Optional[int] = None,
         parameters: Optional["_models.ScalarQuantizationParameters"] = None,
     ) -> None: ...
 
@@ -9867,7 +9835,7 @@ class SearchResourceEncryptionKey(_Model):
         for k, v in _flattened_input.items():
             setattr(self, k, v)
 
-    def __getattr__(self, name: str) -> Any:
+    def __getattr__(self, name: str) -> object:
         if name in self.__flattened_items:
             if self.access_credentials is None:
                 return None
@@ -11227,7 +11195,7 @@ class SynonymTokenFilter(TokenFilter, discriminator="#Microsoft.Azure.Search.Syn
         *,
         name: str,
         synonyms: list[str],
-        ignore_case: Optional[bool] = None,
+        ignore_case: bool = False,
         expand: Optional[bool] = None,
     ) -> None: ...
 
