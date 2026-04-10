@@ -442,11 +442,11 @@ stages:
               Get-ChildItem -Recurse $(Pipeline.Workspace)/${{parameters.ArtifactName}}/
             displayName: Show visible artifacts
 
-          # py2docfx requires Python >= 3.12.x, match docs pipeline version specification
+          # py2docfx requires Python >= 3.11
           - task: UsePythonVersion@0
-            displayName: 'Use Python 3.12.x'
+            displayName: 'Use Python 3.11'
             inputs:
-              versionSpec: '3.12.x'
+              versionSpec: '3.11'
 
           - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
             parameters:
