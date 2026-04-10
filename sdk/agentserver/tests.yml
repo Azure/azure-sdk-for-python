@@ -8,7 +8,7 @@ pr:
 extends:
     template: /eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      BuildTargetingString: azure-ai-*
+      BuildTargetingString: azure-ai-agentserver-core azure-ai-agentserver-invocations
       ServiceDirectory: agentserver
       TestMarkArgument: tracing_e2e
       TestTimeoutInMinutes: 60
