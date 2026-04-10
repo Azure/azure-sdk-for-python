@@ -17,6 +17,7 @@ import aiohttp
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.cosmos.aio import CosmosClient
 from azure.cosmos import PartitionKey
+from azure.cosmos.exceptions import CosmosHttpResponseError
 import perf_timing_instrument  # noqa: F401 - installs timing hooks
 from perf_timing import print_timing_summary
 
@@ -97,10 +98,11 @@ async def execute_search(
     query_vector: np.ndarray,
     top_k: int,
     search_list_multiplier: int | None = None,
-) -> tuple[list[int], float, float, int]:
+) -> tuple[list[int], float, float]:
     """Execute a single vector search query.
     
-    Returns (result_ids, total_ru, server_duration_ms, throttle_count).
+    Returns (result_ids, total_ru, server_duration_ms).
+    Throttle tracking is done at the worker level by catching 429 exceptions.
     """
     vec_list = query_vector.tolist()
 
@@ -136,14 +138,11 @@ async def execute_search(
 
     total_ru = 0.0
     server_duration_ms = 0.0
-    throttle_count = 0
     for h in pager.get_response_headers():
         total_ru += float(h.get("x-ms-request-charge", 0))
         server_duration_ms += float(h.get("x-ms-request-duration-ms", 0))
-        throttle_retry = int(h.get("x-ms-throttle-retry-count", 0))
-        throttle_count += throttle_retry
 
-    return result_ids, total_ru, server_duration_ms, throttle_count
+    return result_ids, total_ru, server_duration_ms
 
 
 async def run_at_concurrency(
@@ -179,7 +178,7 @@ async def run_at_concurrency(
 
             start = time.perf_counter()
             try:
-                result_ids, ru, server_dur, throttles = await execute_search(
+                result_ids, ru, server_dur = await execute_search(
                     container, query_vec, top_k, search_list_multiplier
                 )
                 elapsed_ms = (time.perf_counter() - start) * 1000.0
@@ -187,7 +186,6 @@ async def run_at_concurrency(
                 latencies.append(elapsed_ms)
                 ru_charges.append(ru)
                 server_durations.append(server_dur)
-                total_throttle_count += throttles
                 query_count += 1
 
                 if gt_sets is not None and query_idx < len(gt_sets):
@@ -197,6 +195,13 @@ async def run_at_concurrency(
 
             except asyncio.CancelledError:
                 break
+            except CosmosHttpResponseError as e:
+                if e.status_code == 429:
+                    total_throttle_count += 1
+                else:
+                    error_count += 1
+                    if error_count <= 3:
+                        print(f"\n  ❌ Error: {type(e).__name__} ({e.status_code}): {e}")
             except Exception as e:
                 error_count += 1
                 if error_count <= 3:
