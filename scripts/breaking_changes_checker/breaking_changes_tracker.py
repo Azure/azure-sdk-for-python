@@ -9,7 +9,6 @@ import jsondiff
 import re
 from enum import Enum
 from typing import Any, Dict, List, Union
-from copy import deepcopy
 from _models import ChangesChecker, Suppression, RegexSuppression, PostProcessingChecker
 
 
@@ -129,15 +128,31 @@ class BreakingChangesTracker:
         
     # Remove duplicate reporting of changes that apply to both sync and async package components
     def run_async_cleanup(self, changes_list: List) -> None:
-        # Create a list of all sync changes
-        non_aio_changes = [bc for bc in changes_list if "aio" not in bc[2]]
-        # Remove any aio change if there is a sync change that is the same
-        for change in non_aio_changes:
-            for c in changes_list:
-                if "aio" in c[2]:
-                    if change[1] == c[1] and change[3:] == c[3:]:
-                        changes_list.remove(c)
-                        break
+        def _make_hashable(item):
+            """Convert an item to a hashable type.
+
+            Lists become tuples, dicts become frozensets of items.
+            Other types are returned as-is (assumed hashable).
+            """
+            if isinstance(item, list):
+                return tuple(_make_hashable(i) for i in item)
+            if isinstance(item, dict):
+                return frozenset((_make_hashable(k), _make_hashable(v)) for k, v in item.items())
+            return item
+
+        def _make_key(bc):
+            return tuple(_make_hashable(x) for x in (bc[1],) + bc[3:])
+
+        # Build a set of keys from non-aio changes for O(1) lookup
+        non_aio_keys = set()
+        for bc in changes_list:
+            if "aio" not in bc[2]:
+                non_aio_keys.add(_make_key(bc))
+        # Keep only non-aio changes and aio changes that don't have a sync counterpart
+        changes_list[:] = [
+            bc for bc in changes_list
+            if "aio" not in bc[2] or _make_key(bc) not in non_aio_keys
+        ]
 
     def run_breaking_change_diff_checks(self) -> None:
         for module_name, module in self.diff.items():
@@ -652,28 +667,37 @@ class BreakingChangesTracker:
         ignored = []
         # Match all ignore rules that should apply to this package
         for ignored_package, ignore_rules in ignore_changes.items():
-            if re.findall(ignored_package, self.package_name):
+            if re.search(ignored_package, self.package_name):
                 ignored.extend(ignore_rules)
 
-        # Remove ignored changes from list of reportable changes
-        bc_copy = deepcopy(changes_list)
-        for bc in bc_copy:
+        if not ignored:
+            return
+
+        # Pre-create Suppression objects once instead of recreating per change
+        suppressions = [Suppression(*rule) for rule in ignored]
+
+        # Filter out ignored changes in a single pass instead of deepcopy + list.remove()
+        filtered = []
+        for bc in changes_list:
             _, bc_type, module_name, *args = bc
             class_name = args[0] if args else None
             function_name = args[1] if len(args) > 1 else None
             parameter_name = args[2] if len(args) > 2 else None
 
-            for rule in ignored:
-                suppression = Suppression(*rule)
-
+            should_keep = True
+            for suppression in suppressions:
                 if suppression.parameter_or_property_name is not None:
                     # If the ignore rule is for a property or parameter, we should check up to that level on the original change
                     if self.match((bc_type, module_name, class_name, function_name, parameter_name), suppression):
-                        changes_list.remove(bc)
+                        should_keep = False
                         break
                 elif self.match((bc_type, module_name, class_name, function_name), suppression):
-                    changes_list.remove(bc)
+                    should_keep = False
                     break
+            if should_keep:
+                filtered.append(bc)
+
+        changes_list[:] = filtered
 
     def report_changes(self) -> None:
         ignore_changes = self.ignore if self.ignore else {}

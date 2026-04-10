@@ -9,7 +9,7 @@ parameters:
   BeforeTestSteps: []
   AfterTestSteps: []
   CoverageArg: ''
-  ToxTestEnv: ""
+  CheckEnv: ""
   RunCoverage: ne(variables['CoverageArg'], '--disablecov')
   ToxEnvParallel: ''
   InjectedPackages: ''
@@ -27,6 +27,12 @@ steps:
       versionSpec: '${{ parameters.PythonVersion }}'
 
   - template: /eng/pipelines/templates/steps/use-venv.yml
+
+  # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
+  # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
+  - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+    parameters:
+      DevFeedName: ${{ parameters.DevFeedName }}
 
   - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
     parameters:
@@ -87,7 +93,7 @@ steps:
           ${{ parameters.CoverageArg }}
           --mark_arg="$markArg"
           --service="${{ parameters.ServiceDirectory }}"
-          --checks="${{ parameters.ToxTestEnv }}"
+          --checks="${{ parameters.CheckEnv }}"
           --injected-packages="${{ parameters.InjectedPackages }}";
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
@@ -109,7 +115,7 @@ steps:
           ${{ parameters.CoverageArg }} `
           --mark_arg="$markArg" `
           --service="${{ parameters.ServiceDirectory }}" `
-          --checks="${{ parameters.ToxTestEnv }}" `
+          --checks="${{ parameters.CheckEnv }}" `
           --injected-packages="${{ parameters.InjectedPackages }}";
         exit $LASTEXITCODE;
       env: ${{ parameters.EnvVars }}
