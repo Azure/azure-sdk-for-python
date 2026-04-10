@@ -91,7 +91,7 @@ class FoundryStorageProvider:
                 policies.UserAgentPolicy(
                     sdk_moniker="ai-agentserver-responses",
                 ),
-                policies.RetryPolicy(),
+                policies.AsyncRetryPolicy(),
                 policies.AsyncBearerTokenCredentialPolicy(
                     credential,
                     _FOUNDRY_TOKEN_SCOPE,
