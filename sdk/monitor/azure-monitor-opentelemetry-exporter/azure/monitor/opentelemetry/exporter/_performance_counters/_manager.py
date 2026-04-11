@@ -9,7 +9,7 @@ import psutil
 
 from opentelemetry import metrics
 from opentelemetry.metrics import CallbackOptions, Observation
-from opentelemetry.sdk._logs import ReadWriteLogRecord
+from azure.monitor.opentelemetry.exporter._log_imports import ReadWriteLogRecord
 from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.semconv.attributes.exception_attributes import (
     EXCEPTION_MESSAGE,
