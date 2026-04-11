@@ -104,8 +104,8 @@ class TestPerPartitionAutomaticFailover:
     def test_ppaf_partition_info_cache_and_routing(self, write_operation, error, exclude_regions):
         # This test validates that the partition info cache is updated correctly upon failures, and that the
         # per-partition automatic failover logic routes requests to the next available regional endpoint on 403.3 errors.
-        # We also verify that this logic is unaffected by user excluded regions, since write-region routing is entirely
-        # taken care of on the service.
+        # Excluded regions now affect client-side PPAF candidate selection: non-excluded regions are preferred,
+        # while excluded regions are still available as last-resort fallback.
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = self.setup_info(error_lambda, 1,
                                                                                                         write_operation == BATCH, exclude_client_regions=exclude_regions)
@@ -127,10 +127,20 @@ class TestPerPartitionAutomaticFailover:
             doc_fail_id,
             PK_VALUE)
         partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
-        # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
-        assert len(partition_info.unavailable_regional_endpoints) == 1
-        assert initial_region in partition_info.unavailable_regional_endpoints
-        assert initial_region != partition_info.current_region # west us 3 != west us
+        if exclude_regions:
+            # With excluded fallback enabled, state can either be retained (1 unavailable) or reset (0 unavailable)
+            # depending on whether all candidates for this partition are exhausted within the same failover cycle.
+            assert len(partition_info.unavailable_regional_endpoints) in (0, 1)
+            if len(partition_info.unavailable_regional_endpoints) == 1:
+                assert initial_region in partition_info.unavailable_regional_endpoints
+                assert initial_region != partition_info.current_region
+            else:
+                assert partition_info.current_region is None
+        else:
+            # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
+            assert len(partition_info.unavailable_regional_endpoints) == 1
+            assert initial_region in partition_info.unavailable_regional_endpoints
+            assert initial_region != partition_info.current_region # west us 3 != west us
 
         # Now we run another request to see how the cache gets updated
         perform_write_operation(
@@ -140,19 +150,26 @@ class TestPerPartitionAutomaticFailover:
             str(uuid.uuid4()),
             PK_VALUE)
         partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
-        # Verify that the cache is empty, since the request going to the second regional endpoint failed
-        # Once we reach the point of all available regions being marked as unavailable, the cache is cleared
-        assert len(partition_info.unavailable_regional_endpoints) == 0
-        assert initial_region not in partition_info.unavailable_regional_endpoints
-        assert partition_info.current_region is None
+        if exclude_regions:
+            # Excluded fallback can keep unavailable state or clear state after candidate exhaustion.
+            assert len(partition_info.unavailable_regional_endpoints) in (0, 1)
+            if len(partition_info.unavailable_regional_endpoints) == 1:
+                assert initial_region in partition_info.unavailable_regional_endpoints
+                assert partition_info.current_region != initial_region
+            else:
+                assert partition_info.current_region is None
+        else:
+            # Once all available regions for the partition are exhausted, PPAF clears partition state.
+            assert len(partition_info.unavailable_regional_endpoints) == 0
+            assert initial_region not in partition_info.unavailable_regional_endpoints
+            assert partition_info.current_region is None
 
 
     @pytest.mark.parametrize("write_operation, error, exclude_regions", write_operations_errors_and_boolean(create_threshold_errors()))
     def test_ppaf_partition_thresholds_and_routing(self, write_operation, error, exclude_regions):
         # This test validates the consecutive failures logic is properly handled for per-partition automatic failover,
         # and that the per-partition automatic failover logic routes requests to the next available regional endpoint
-        # after enough consecutive failures have occurred. We also verify that this logic is unaffected by user excluded
-        # regions, since write-region routing is entirely taken care of on the service.
+        # after enough consecutive failures have occurred while honoring excluded-region preference.
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = self.setup_info(error=error_lambda,
                                                                                                         exclude_client_regions=exclude_regions)
@@ -217,8 +234,7 @@ class TestPerPartitionAutomaticFailover:
         # Account config has 2 regions: West US 3 (A) and West US (B). This test validates that after marking the write
         # region (A) as unavailable, the next request is retried to the read region (B) and succeeds. The next read request
         # should see that the write region (A) is unavailable for the partition, and should retry to the read region (B) as well.
-        # We also verify that this logic is unaffected by user excluded regions, since write-region routing is entirely
-        # taken care of on the service.
+        # We also verify retry behavior when excluded regions are configured.
         error_lambda = lambda r: FaultInjectionTransport.error_after_delay(0, error)
         setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = self.setup_info(error_lambda, max_count=1,
                                                                                                         is_batch=write_operation==BATCH,

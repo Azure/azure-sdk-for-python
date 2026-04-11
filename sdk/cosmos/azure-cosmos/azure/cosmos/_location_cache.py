@@ -297,12 +297,30 @@ class LocationCache(object):  # pylint: disable=too-many-public-methods,too-many
         if not self.connection_policy.EnableEndpointDiscovery or not ordered_locations:
             return self.default_regional_routing_context.get_primary()
 
-        # For single-write-region accounts, failover between the first two available write regions.
+        # For single-write-style requests, prefer non-excluded locations and only use excluded regions as last resort.
         if is_write and not self.can_use_multiple_write_locations_for_request(request):
-            effective_index = min(location_index % 2, len(ordered_locations) - 1)
-            write_location = ordered_locations[effective_index]
-            if write_location in all_contexts_by_loc:
-                return all_contexts_by_loc[write_location].get_primary()
+            excluded_locations = self._get_configured_excluded_locations(request)
+            circuit_breaker_excluded_locations = request.excluded_locations_circuit_breaker or []
+
+            preferred_locations = []
+            circuit_breaker_locations = []
+            fallback_excluded_locations = []
+            for loc_name in ordered_locations:
+                if loc_name not in all_contexts_by_loc:
+                    continue
+                context = all_contexts_by_loc[loc_name]
+                if loc_name in excluded_locations:
+                    fallback_excluded_locations.append(context)
+                    continue
+                if loc_name in circuit_breaker_excluded_locations:
+                    circuit_breaker_locations.append(context)
+                else:
+                    preferred_locations.append(context)
+
+            applicable_contexts = preferred_locations or circuit_breaker_locations or fallback_excluded_locations
+            if applicable_contexts:
+                effective_index = min(location_index % 2, len(applicable_contexts) - 1)
+                return applicable_contexts[effective_index].get_primary()
             return self.default_regional_routing_context.get_primary()  # Fallback if location not found
 
         # For reads or multi-write, filter locations by user and circuit-breaker exclusions.

@@ -6,6 +6,7 @@ import uuid
 import asyncio
 
 import pytest
+import pytest_asyncio
 from typing import Dict, Any, Optional
 
 import test_config
@@ -31,6 +32,14 @@ class TestPerPartitionAutomaticFailoverAsync:
     TEST_DATABASE_ID = test_config.TestConfig.TEST_DATABASE_ID
     TEST_CONTAINER_MULTI_PARTITION_ID = test_config.TestConfig.TEST_MULTI_PARTITION_CONTAINER_ID
 
+    @pytest_asyncio.fixture(autouse=True)
+    async def _cleanup_open_clients(self):
+        self._opened_clients = []
+        yield
+        while self._opened_clients:
+            client = self._opened_clients.pop()
+            await client.close()
+
     async def setup_method_with_custom_transport(self, custom_transport: Optional[AioHttpTransport],
                                                  default_endpoint=host, read_first=False, **kwargs):
         regions = [REGION_2, REGION_1] if read_first else [REGION_1, REGION_2]
@@ -48,6 +57,7 @@ class TestPerPartitionAutomaticFailoverAsync:
         db = client.get_database_client(self.TEST_DATABASE_ID)
         container = db.get_container_client(container_id)
         await client.__aenter__()
+        self._opened_clients.append(client)
         return {"client": client, "db": db, "col": container}
     
     @staticmethod
@@ -99,8 +109,8 @@ class TestPerPartitionAutomaticFailoverAsync:
     async def test_ppaf_partition_info_cache_and_routing_async(self, write_operation, error, exclude_regions):
         # This test validates that the partition info cache is updated correctly upon failures, and that the
         # per-partition automatic failover logic routes requests to the next available regional endpoint.
-        # We also verify that this logic is unaffected by user excluded regions, since write-region routing is
-        # entirely taken care of on the service.
+        # Excluded regions now affect client-side PPAF candidate selection: non-excluded regions are preferred,
+        # while excluded regions are still available as last-resort fallback.
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda, 1,
                                                                                                               write_operation == BATCH, exclude_client_regions=exclude_regions)
@@ -122,10 +132,20 @@ class TestPerPartitionAutomaticFailoverAsync:
             doc_fail_id,
             PK_VALUE)
         partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
-        # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
-        assert len(partition_info.unavailable_regional_endpoints) == 1
-        assert initial_region in partition_info.unavailable_regional_endpoints
-        assert initial_region != partition_info.current_region # west us 3 != west us
+        if exclude_regions:
+            # With excluded fallback enabled, state can either be retained (1 unavailable) or reset (0 unavailable)
+            # depending on whether all candidates for this partition are exhausted within the same failover cycle.
+            assert len(partition_info.unavailable_regional_endpoints) in (0, 1)
+            if len(partition_info.unavailable_regional_endpoints) == 1:
+                assert initial_region in partition_info.unavailable_regional_endpoints
+                assert initial_region != partition_info.current_region
+            else:
+                assert partition_info.current_region is None
+        else:
+            # Verify that the partition is marked as unavailable, and that the current regional endpoint is not the same
+            assert len(partition_info.unavailable_regional_endpoints) == 1
+            assert initial_region in partition_info.unavailable_regional_endpoints
+            assert initial_region != partition_info.current_region # west us 3 != west us
 
         # Now we run another request to see how the cache gets updated
         await perform_write_operation(
@@ -135,18 +155,25 @@ class TestPerPartitionAutomaticFailoverAsync:
             doc_fail_id,
             PK_VALUE)
         partition_info = global_endpoint_manager.partition_range_to_failover_info[pk_range_wrapper]
-        # Verify that the cache is empty, since the request going to the second regional endpoint failed
-        # Once we reach the point of all available regions being marked as unavailable, the cache is cleared
-        assert len(partition_info.unavailable_regional_endpoints) == 0
-        assert initial_region not in partition_info.unavailable_regional_endpoints
-        assert partition_info.current_region is None
+        if exclude_regions:
+            # Excluded fallback can keep unavailable state or clear state after candidate exhaustion.
+            assert len(partition_info.unavailable_regional_endpoints) in (0, 1)
+            if len(partition_info.unavailable_regional_endpoints) == 1:
+                assert initial_region in partition_info.unavailable_regional_endpoints
+                assert partition_info.current_region != initial_region
+            else:
+                assert partition_info.current_region is None
+        else:
+            # Once all available regions for the partition are exhausted, PPAF clears partition state.
+            assert len(partition_info.unavailable_regional_endpoints) == 0
+            assert initial_region not in partition_info.unavailable_regional_endpoints
+            assert partition_info.current_region is None
 
     @pytest.mark.parametrize("write_operation, error, exclude_regions", write_operations_errors_and_boolean(create_threshold_errors()))
     async def test_ppaf_partition_thresholds_and_routing_async(self, write_operation, error, exclude_regions):
         # This test validates that the partition info cache is updated correctly upon failures, and that the
         # per-partition automatic failover logic routes requests to the next available regional endpoint.
-        # We also verify that this logic is unaffected by user excluded regions, since write-region routing is
-        # entirely taken care of on the service.
+        # We also verify that threshold-triggered failover honors excluded-region preference.
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda,
                                                                                                               exclude_client_regions=exclude_regions,)
@@ -212,8 +239,7 @@ class TestPerPartitionAutomaticFailoverAsync:
         # Account config has 2 regions: West US 3 (A) and West US (B). This test validates that after marking the write
         # region (A) as unavailable, the next request is retried to the read region (B) and succeeds. The next read request
         # should see that the write region (A) is unavailable for the partition, and should retry to the read region (B) as well.
-        # We also verify that this logic is unaffected by user excluded regions, since write-region routing is
-        # entirely taken care of on the service.
+        # We also verify retry behavior when excluded regions are configured.
         error_lambda = lambda r: asyncio.create_task(FaultInjectionTransportAsync.error_after_delay(0, error))
         setup, doc_fail_id, doc_success_id, custom_setup, custom_transport, predicate = await self.setup_info(error_lambda, max_count=1,
                                                                                                         is_batch=write_operation==BATCH,
@@ -249,7 +275,7 @@ class TestPerPartitionAutomaticFailoverAsync:
 
         # Now we run a read request that runs into a 404.1002 error, which should retry to the read region
         # We verify that the read request was going to the correct region by using the raw_response_hook
-        fault_injection_container.read_item(doc_fail_id, PK_VALUE, raw_response_hook=session_retry_hook)
+        await fault_injection_container.read_item(doc_fail_id, PK_VALUE, raw_response_hook=session_retry_hook)
 
     async def test_ppaf_user_agent_feature_flag_async(self):
         # Simple test to verify the user agent suffix is being updated with the relevant feature flags

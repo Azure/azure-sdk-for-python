@@ -8,6 +8,8 @@
 
 #### Bugs Fixed
 
+* Fixed write routing for single-write-style requests to consistently honor `excluded_locations` during endpoint selection, including the single-write write branch, PPAF failover candidate selection, and SessionRetryPolicy PPAF pinning. PPAF now prefers non-excluded regions and only falls back to excluded regions as last resort for availability.
+
 #### Other Changes
 
 ### 4.16.0b2 (2026-04-04)

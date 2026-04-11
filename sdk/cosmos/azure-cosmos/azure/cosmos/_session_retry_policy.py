@@ -111,11 +111,14 @@ class _SessionRetryPolicy(object):
                     # If the request endpoint is unavailable, we need to resolve the endpoint for the request using the
                     # partition-level failover info
                     if pk_failover_info.current_region is not None:
-                        location_endpoint = (self.global_endpoint_manager.location_cache.
-                                             account_read_regional_routing_contexts_by_location.
-                                             get(pk_failover_info.current_region).primary_endpoint)
-                        self.request.route_to_location(location_endpoint)
-                        return True
+                        excluded_locations = self.global_endpoint_manager.location_cache._get_configured_excluded_locations(
+                            self.request)
+                        if pk_failover_info.current_region not in excluded_locations:
+                            location_endpoint = (self.global_endpoint_manager.location_cache.
+                                                 account_read_regional_routing_contexts_by_location.
+                                                 get(pk_failover_info.current_region).primary_endpoint)
+                            self.request.route_to_location(location_endpoint)
+                            return True
 
         # Resolve the endpoint for the request and pin the resolution to the resolved endpoint
         # This enables marking the endpoint unavailability on endpoint failover/unreachability

@@ -390,6 +390,28 @@ class TestLocationCache:
         # Assert the correct behavior.
         assert resolved_endpoint == location2_endpoint
 
+    def test_single_write_resolve_endpoint_respects_excluded_regions(self):
+        lc = refresh_location_cache(preferred_locations=[], use_multiple_write_locations=False)
+        db_acc = create_database_account(enable_multiple_writable_locations=False)
+        lc.perform_on_database_account_read(db_acc)
+
+        write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        write_request.excluded_locations = [location1_name]
+
+        resolved_endpoint = lc.resolve_service_endpoint(write_request)
+        assert resolved_endpoint == location2_endpoint
+
+    def test_single_write_falls_back_to_excluded_region_when_no_other_region_available(self):
+        lc = refresh_location_cache(preferred_locations=[], use_multiple_write_locations=False)
+        db_acc = create_database_account(enable_multiple_writable_locations=False)
+        lc.perform_on_database_account_read(db_acc)
+
+        write_request = RequestObject(ResourceType.Document, _OperationType.Create, None)
+        write_request.excluded_locations = [location1_name, location2_name, location3_name]
+
+        resolved_endpoint = lc.resolve_service_endpoint(write_request)
+        assert resolved_endpoint == location1_endpoint
+
     def test_regional_fallback_when_primary_is_excluded(self):
         # This test simulates a scenario where the primary preferred region is excluded
         # by the user, and the secondary is excluded by the circuit breaker.
