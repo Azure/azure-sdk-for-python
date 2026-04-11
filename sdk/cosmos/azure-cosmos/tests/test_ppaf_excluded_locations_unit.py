@@ -4,6 +4,8 @@
 from types import SimpleNamespace
 import unittest.mock
 
+# cspell:ignore ppaf
+
 from azure.cosmos._global_partition_endpoint_manager_per_partition_automatic_failover import (
     PartitionLevelFailoverInfo,
 )

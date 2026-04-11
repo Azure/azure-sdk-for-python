@@ -3,6 +3,8 @@
 
 from typing import Iterable, Mapping, Optional, Any, Collection
 
+# cspell:ignore ppaf PPAF
+
 
 def select_next_ppaf_region(
         available_account_regional_endpoints: Mapping[str, Any],
@@ -12,10 +14,19 @@ def select_next_ppaf_region(
         excluded_locations: Optional[Iterable[str]] = None) -> Optional[str]:
     """Select the next region for PPAF using a deterministic preference order.
 
+    :param Mapping[str, Any] available_account_regional_endpoints: Available regional endpoints keyed by region name.
+    :param str endpoint_region: The endpoint region currently being used for the request.
+    :param Optional[str] current_region: The partition's current failover region, if any.
+    :param Collection[str] unavailable_regional_endpoints: Region names currently marked unavailable for the partition.
+    :param Optional[Iterable[str]] excluded_locations: Region names excluded by request/client policy.
+
     Preference order:
       1. Non-excluded available regions.
       2. Excluded available regions.
       3. Excluded current_region (if different from endpoint_region and still available).
+
+    :returns: The next region name to route to, or None when no candidate region exists.
+    :rtype: Optional[str]
     """
     excluded = set(excluded_locations or [])
 
@@ -49,4 +60,3 @@ def select_next_ppaf_region(
         return current_region_fallback
 
     return None
-

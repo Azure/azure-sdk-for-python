@@ -50,10 +50,11 @@ class PartitionLevelFailoverInfo:
         :param Dict[str, RegionalRoutingContext] available_account_regional_endpoints: The available regional endpoints
         :param str endpoint_region: The current regional endpoint
         :param RequestObject request: The request object containing the routing context.
+        :param Optional[list[str]] excluded_locations: The regions excluded by request/client policy.
         :return: True if the move was successful, False otherwise.
         :rtype: bool
         """
-        excluded_locations = set(excluded_locations or [])
+        excluded_location_set = set(excluded_locations or [])
         with self._lock:
             previous_current_region = self.current_region
             selected_region = select_next_ppaf_region(
@@ -61,12 +62,12 @@ class PartitionLevelFailoverInfo:
                 endpoint_region,
                 self.current_region,
                 self.unavailable_regional_endpoints,
-                excluded_locations)
+                excluded_location_set)
             if selected_region is None:
                 return False
 
             self.current_region = selected_region
-            if selected_region in excluded_locations:
+            if selected_region in excluded_location_set:
                 if previous_current_region is not None and selected_region == previous_current_region:
                     logger.warning("PPAF - Falling back to excluded current regional endpoint: %s", self.current_region)
                 else:
@@ -133,14 +134,16 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
         :param RequestObject request: The request object containing the routing context.
         :returns: None
         """
-        # If PPAF is enabled, we track consecutive failures for certain exceptions, and only fail over at a partition
+        # If PPAF is enabled, we track consecutive failures for certain exceptions,
+        # and only fail over at a partition
         # level after the threshold is reached
         if request and self.is_per_partition_automatic_failover_applicable(request):
             if (self.ppaf_thresholds_tracker.get_pk_failures(pk_range_wrapper)
                     >= int(os.environ.get(Constants.TIMEOUT_ERROR_THRESHOLD_PPAF,
                                           Constants.TIMEOUT_ERROR_THRESHOLD_PPAF_DEFAULT))):
                 # If the PPAF threshold is reached, we reset the count and mark the endpoint unavailable
-                # Once we mark the endpoint unavailable, the PPAF endpoint manager will try to move to the next
+                # Once we mark the endpoint unavailable, the PPAF endpoint manager
+                # will try to move to the next
                 # available region for the partition key range
                 with self._threshold_lock:
                     # Check for count again, since a previous request may have now reset the count
@@ -163,7 +166,8 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
             request: RequestObject,
             pk_range_wrapper: Optional[PartitionKeyRangeWrapper]
     ) -> str:
-        """Resolves the endpoint to be used for the request. In a PPAF-enabled account, this method checks whether
+        """Resolves the endpoint to be used for the request. In a PPAF-enabled account,
+        this method checks whether
         the partition key range has any unavailable regions, and if so, it tries to move to the next available region.
         If all regions are unavailable, it invalidates the cache and starts once again from the main write region in the
         account configurations.
@@ -191,11 +195,16 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
                                     partition_failover_info.current_region].primary_endpoint
                                 request.route_to_location(regional_endpoint)
                             else:
-                                partition_failover_info.try_move_to_next_location(
+                                moved = partition_failover_info.try_move_to_next_location(
                                     self.location_cache.account_read_regional_routing_contexts_by_location,
                                     endpoint_region,
                                     request,
                                     excluded_locations)
+                                if not moved:
+                                    logger.warning("PPAF - No alternate regional endpoint available for partition %s. "
+                                                   "Refreshing cache.", pk_range_wrapper)
+                                    self.partition_range_to_failover_info[pk_range_wrapper] = PartitionLevelFailoverInfo()
+                                    request.clear_route_to_location()
                         else:
                             if (len(self.location_cache.account_read_regional_routing_contexts_by_location) ==
                                     len(partition_failover_info.unavailable_regional_endpoints)):
@@ -207,11 +216,16 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
                                 request.clear_route_to_location()
                             else:
                                 # If the current region is unavailable, we try to move to the next available region
-                                partition_failover_info.try_move_to_next_location(
+                                moved = partition_failover_info.try_move_to_next_location(
                                     self.location_cache.account_read_regional_routing_contexts_by_location,
                                     endpoint_region,
                                     request,
                                     excluded_locations)
+                                if not moved:
+                                    logger.warning("PPAF - No alternate regional endpoint available for partition %s. "
+                                                   "Refreshing cache.", pk_range_wrapper)
+                                    self.partition_range_to_failover_info[pk_range_wrapper] = PartitionLevelFailoverInfo()
+                                    request.clear_route_to_location()
                     else:
                         # Update the current regional endpoint to whatever the request is routing to
                         partition_failover_info.current_region = endpoint_region

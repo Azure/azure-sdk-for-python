@@ -8,7 +8,7 @@
 
 #### Bugs Fixed
 
-* Fixed write routing for single-write-style requests to consistently honor `excluded_locations` during endpoint selection, including the single-write write branch, PPAF failover candidate selection, and SessionRetryPolicy PPAF pinning. PPAF now prefers non-excluded regions and only falls back to excluded regions as last resort for availability.
+* Fixed write routing for single-write-style requests to consistently honor `excluded_locations` during endpoint selection. See [PR 46265](https://github.com/Azure/azure-sdk-for-python/pull/46265)
 
 #### Other Changes
 
