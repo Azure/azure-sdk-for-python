@@ -1,14 +1,14 @@
 # The MIT License (MIT)
 # Copyright (c) 2025 Microsoft Corporation
 
-from typing import Iterable, Mapping, Optional, Any
+from typing import Iterable, Mapping, Optional, Any, Collection
 
 
 def select_next_ppaf_region(
         available_account_regional_endpoints: Mapping[str, Any],
         endpoint_region: str,
         current_region: Optional[str],
-        unavailable_regional_endpoints: Mapping[str, str],
+        unavailable_regional_endpoints: Collection[str],
         excluded_locations: Optional[Iterable[str]] = None) -> Optional[str]:
     """Select the next region for PPAF using a deterministic preference order.
 

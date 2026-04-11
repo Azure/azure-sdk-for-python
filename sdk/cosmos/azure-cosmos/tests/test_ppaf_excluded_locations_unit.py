@@ -98,7 +98,7 @@ def test_session_retry_policy_ppaf_path_does_not_pin_excluded_current_region():
 
     location_cache = unittest.mock.Mock()
     location_cache.get_location_from_endpoint.side_effect = lambda endpoint: {
-        "None": "West US 3",
+        "https://westus3.documents.azure.com": "West US 3",
         "https://eastus2.documents.azure.com": "East US 2",
     }.get(endpoint)
     location_cache._get_configured_excluded_locations.return_value = ["East US 2"]

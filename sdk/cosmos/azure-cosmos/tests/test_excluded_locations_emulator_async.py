@@ -19,6 +19,7 @@ from test_excluded_locations import (L1, L2, read_item_test_data,
                                      TestDataType, set_test_data_type)
 from test_excluded_locations_emulator import (L1_URL, L2_URL,
                                               get_location,
+                                              _expected_single_write_location,
                                               metadata_read_with_excluded_locations_test_data)
 from test_fault_injection_transport_async import TestFaultInjectionTransportAsync
 from azure.cosmos.exceptions import CosmosHttpResponseError
@@ -93,7 +94,11 @@ class TestExcludedLocationsEmulatorAsync:
             if multiple_write_locations:
                 assert actual_location == expected_location[0]
             else:
-                assert actual_location == L1
+                expected_single_write_location = _expected_single_write_location(
+                    preferred_locations,
+                    client_excluded_locations,
+                    request_excluded_locations)
+                assert actual_location == expected_single_write_location
 
     @pytest.mark.parametrize('test_data', metadata_read_with_excluded_locations_test_data())
     async def test_metadata_read_with_excluded_locations(self: "TestExcludedLocationsEmulatorAsync", test_data: List[List[str]]):

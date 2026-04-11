@@ -68,6 +68,18 @@ def get_location(
             break
     return location
 
+
+def _expected_single_write_location(preferred_locations: List[str],
+                                    client_excluded_locations: List[str],
+                                    request_excluded_locations: List[str]) -> str:
+    # Request-level excluded locations override client-level excluded locations.
+    effective_excluded_locations = client_excluded_locations if request_excluded_locations is None else request_excluded_locations
+    for location in preferred_locations:
+        if location not in effective_excluded_locations:
+            return location
+    # If all preferred locations are excluded, fall back to the primary write region.
+    return L1
+
 @pytest.mark.unittest
 @pytest.mark.cosmosEmulator
 class TestExcludedLocationsEmulator:
@@ -123,7 +135,11 @@ class TestExcludedLocationsEmulator:
             if multiple_write_locations:
                 assert actual_location == expected_location[0]
             else:
-                assert actual_location == L1
+                expected_single_write_location = _expected_single_write_location(
+                    preferred_locations,
+                    client_excluded_locations,
+                    request_excluded_locations)
+                assert actual_location == expected_single_write_location
 
     @pytest.mark.parametrize('test_data', metadata_read_with_excluded_locations_test_data())
     def test_metadata_read_with_excluded_locations(self: "TestExcludedLocationsEmulator", test_data: List[List[str]]):

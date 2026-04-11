@@ -35,7 +35,7 @@ class PartitionLevelFailoverInfo:
     Used to track the partition key range and the regions where it is available.
     """
     def __init__(self) -> None:
-        self.unavailable_regional_endpoints: dict[str, "RegionalRoutingContext"] = {}
+        self.unavailable_regional_endpoints: dict[str, str] = {}
         self._lock = threading.Lock()
         self.current_region: Optional[str] = None
 
@@ -153,10 +153,10 @@ class _GlobalPartitionEndpointManagerForPerPartitionAutomaticFailoverAsync(
                             str(request.location_endpoint_to_route))
                         logger.warning("PPAF - Failover threshold reached for partition key range: %s for region: %s", #pylint: disable=line-too-long
                                        pk_range_wrapper, location)
-                        regional_context = (self.location_cache.
-                                            account_read_regional_routing_contexts_by_location.
-                                            get(location).primary_endpoint)
-                        partition_level_info.unavailable_regional_endpoints[location] = regional_context
+                        regional_endpoint = (self.location_cache.
+                                             account_read_regional_routing_contexts_by_location.
+                                             get(location).primary_endpoint)
+                        partition_level_info.unavailable_regional_endpoints[location] = regional_endpoint
 
     def resolve_service_endpoint_for_partition(
             self,
