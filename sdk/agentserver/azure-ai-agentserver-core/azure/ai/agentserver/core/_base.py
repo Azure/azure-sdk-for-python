@@ -59,6 +59,10 @@ class _PlatformHeaderMiddleware:
         await self.app(scope, receive, _send_with_header)
 
 
+# Sentinel for default access_log (use module logger)
+_SENTINEL_ACCESS_LOG = object()
+
+
 class AgentServerHost(Starlette):
     """Agent server host framework for Azure AI Hosted Agent containers.
 
@@ -102,7 +106,18 @@ class AgentServerHost(Starlette):
     :param log_level: Library log level (e.g. ``"DEBUG"``, ``"INFO"``).  When
         *None* (default) the default is ``"INFO"``.
     :type log_level: Optional[str]
+    :param access_log: Logger for HTTP access logs, or *None* to disable.
+        Defaults to the library logger (``azure.ai.agentserver``).
+    :type access_log: Optional[logging.Logger]
+    :param access_log_format: Hypercorn access-log format string.
+        Supports ``%(h)s`` (remote addr), ``%(r)s`` (request line),
+        ``%(s)s`` (status), ``%(b)s`` (body size), ``%(D)s`` (duration μs),
+        ``%({header}i)s`` (request header), ``%({header}o)s`` (response header).
+        Defaults to ``%(h)s "%(r)s" %(s)s %(b)s %(D)sμs``.
+    :type access_log_format: Optional[str]
     """
+
+    _DEFAULT_ACCESS_LOG_FORMAT = '%(h)s "%(r)s" %(s)s %(b)s %(D)sμs'
 
     def __init__(
         self,
@@ -110,6 +125,8 @@ class AgentServerHost(Starlette):
         applicationinsights_connection_string: Optional[str] = None,
         graceful_shutdown_timeout: Optional[int] = None,
         log_level: Optional[str] = None,
+        access_log: Optional[logging.Logger] = _SENTINEL_ACCESS_LOG,  # type: ignore[assignment]
+        access_log_format: Optional[str] = None,
         configure_tracing: Optional[Callable[..., None]] = _tracing.configure_tracing,
         routes: Optional[list[Route]] = None,
         **kwargs: Any,
@@ -137,6 +154,12 @@ class AgentServerHost(Starlette):
         # Suppress noisy Azure SDK and OTel exporter logs
         logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
         logging.getLogger("azure.monitor.opentelemetry.exporter").setLevel(logging.WARNING)
+
+        # Access logging ---------------------------------------------------
+        self._access_log: Optional[logging.Logger] = (
+            logger if access_log is _SENTINEL_ACCESS_LOG else access_log
+        )
+        self._access_log_format: str = access_log_format or self._DEFAULT_ACCESS_LOG_FORMAT
 
         # Resolved configuration (accessible as self.config)
         self.config: _config.AgentConfig = _config.AgentConfig.from_env()
@@ -332,6 +355,10 @@ class AgentServerHost(Starlette):
         config.graceful_timeout = float(self._graceful_shutdown_timeout)
         # Spec requires HTTP/1.1 only — disable HTTP/2
         config.h2_max_concurrent_streams = 0
+        # Access logging
+        if self._access_log is not None:
+            config.accesslog = self._access_log  # type: ignore[assignment]
+            config.access_log_format = self._access_log_format
         return config
 
     def run(self, host: str = "0.0.0.0", port: Optional[int] = None) -> None:
