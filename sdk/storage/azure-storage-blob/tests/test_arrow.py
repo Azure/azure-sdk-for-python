@@ -4,16 +4,15 @@
 # license information.
 # --------------------------------------------------------------------------
 from azure.core.exceptions import ResourceExistsError
-from azure.storage.blob import BlobServiceClient, ContainerClient
+from azure.storage.blob import BlobProperties, BlobServiceClient, ContainerClient
 
 from devtools_testutils import FakeTokenCredential, recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
-SMALL_BLOB_SIZE = 1024
-TEST_CONTAINER_PREFIX = 'container'
-TEST_BLOB_PREFIX = 'blob'
+# TODO: Replace
+TEST_DATA = b""
 # ------------------------------------------------------------------------------
 
 class TestStorageApacheArrow(StorageRecordedTestCase):
@@ -22,30 +21,36 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             credential=storage_account_key.secret
         )
-        self.container_name = self.get_resource_name('utcontainer')
-        self.source_container_name = self.get_resource_name('utcontainersource')
+        # TODO: Replace
+        self.container_name = "utcontainerc93f2958"
         if self.is_live:
             try:
-                self.bsc.create_container(self.container_name, timeout=5)
+                self.bsc.create_container(self.container_name)
             except ResourceExistsError:
                 pass
-            try:
-                self.bsc.create_container(self.source_container_name, timeout=5)
-            except ResourceExistsError:
-                pass
-        self.byte_data = self.get_random_bytes(1024)
 
-    def _create_blob(self, tags=None, data=b"", **kwargs):
-        blob_name = self._get_blob_reference()
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(data, tags=tags, overwrite=True, **kwargs)
-        return blob
+    def create_blobs(self, blob_names: list[str]):
+        for blob_name in blob_names:
+            blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
+            blob_client.upload_blob(TEST_DATA, overwrite=True)
 
-    def _get_container_reference(self):
-        return self.get_resource_name(TEST_CONTAINER_PREFIX)
+    def verify_blobs(self, blobs_list: list[BlobProperties], blob_names: list[str]):
+        assert len(blobs_list) == len(blob_names)
+        all_names = {blob.name for blob in blobs_list}
+        for blob_name in blob_names:
+            assert blob_name in all_names
 
-    def _get_blob_reference(self):
-        return self.get_resource_name(TEST_BLOB_PREFIX)
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_arrow_list_no_blobs(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = list(container.list_blobs(use_arrow=True))
+
+        self.verify_blobs(blobs_list, [])
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -54,10 +59,40 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        self._create_blob()
+        blob_names = ["blobc93f2958"]
+        self.create_blobs(blob_names)
 
         container = self.bsc.get_container_client(self.container_name)
-        blobs = list(container.list_blobs(use_arrow=True))
-        assert blobs is not None
-        print(blobs)
-        print(len(blobs))
+        blobs_list = list(container.list_blobs(use_arrow=True))
+        self.verify_blobs(blobs_list, blob_names)
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_arrow_list_blobs_paging(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob_names = ["a", "b", "c", "d"]
+        self.create_blobs(blob_names)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blob_pages = container.list_blobs(use_arrow=True, results_per_page=2).by_page()
+        first_blobs_list = list(next(blob_pages))
+        self.verify_blobs(first_blobs_list, blob_names[:2])
+        second_blobs_list = list(next(blob_pages))
+        self.verify_blobs(second_blobs_list, blob_names[2:])
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_arrow_list_nested_blobs_paging(self, **kwargs):
+        # start_from, end_before
+        pass
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_arrow_xml_response(self, **kwargs):
+        # Many blobs, mock XML response
+        pass
+
+    # Do the same for walk_blobs

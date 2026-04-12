@@ -10,14 +10,14 @@ import warnings
 from datetime import datetime
 from types import SimpleNamespace
 from typing import (
-    Any, AnyStr, cast, Dict, List, IO, Iterable, Iterator, Optional, overload, Union,
+    Any, AnyStr, cast, Dict, List, IO, Iterable, Iterator, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 from urllib.parse import unquote, urlparse
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.paging import ItemPaged
+from azure.core.paging import ItemPaged, PageIterator
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from ._blob_client import BlobClient
@@ -55,6 +55,7 @@ from ._shared.response_handlers import (
     return_context_and_deserialized,
     return_response_headers
 )
+from ._shared.uploads import IterStreamer
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
@@ -841,20 +842,15 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                     "Install it with: pip install pyarrow"
                 ) from e
 
-            def _arrow_cls(pipeline_response, deserialized, response_headers):
-                content_type = response_headers.get("Content-Type", "")
-                if "application/xml" in content_type:
-                    # TODO FIX
-                    pass
-
+            def _parse_arrow_listing(deserialized, response_headers):
                 stream = b"".join(deserialized)
                 reader = pa.ipc.open_stream(stream)
                 schema = reader.schema
 
                 blob_items = []
                 for batch in reader:
+                    columns = {schema.field(i).name: batch.column(i) for i in range(batch.num_columns)}
                     for row_cursor in range(batch.num_rows):
-                        columns = {schema.field(i).name: batch.column(i) for i in range(batch.num_columns)}
 
                         def get(col_name, default=None):
                             col = columns.get(col_name)
@@ -869,20 +865,15 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                         )
                         blob_items.append(blob_props)
 
-                        # TODO FIX
-                        response = SimpleNamespace(
-                            service_endpoint=pipeline_response.http_response.url,
-                            prefix=None,
-                            marker=None,
-                            max_results=None,
-                            container_name=self.container_name,
-                            next_marker=response_headers.get("x-ms-next-marker") or None,
-                            segment=SimpleNamespace(blob_items=blob_items)
-                        )
-                        return return_context_and_deserialized(pipeline_response, response, response_headers)
+            def _arrow_cls(pipeline_response, deserialized, response_headers):
+                content_type = response_headers.get("Content-Type", "")
+                if "application/xml" in content_type:
+                    # TODO FIX with custom Deserializer from shared/generated code
+                    pass
+                return _parse_arrow_listing(deserialized, response_headers)
 
             # TODO FIX
-            class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
+            class ArrowBlobPropertiesPaged(PageIterator):
                 def _get_next_cb(self, continuation_token):
                     try:
                         return self._command(
@@ -894,6 +885,18 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
                         )
                     except HttpResponseError as error:
                         process_storage_error(error)
+
+                def _extract_data_cb(self, get_next_return):
+                    # TODO: Implement
+                    self.location_mode, self._response = cast(Tuple[Optional[str], Any], get_next_return)
+                    self.service_endpoint = self._response.service_endpoint
+                    self.prefix = self._response.prefix
+                    self.marker = self._response.marker
+                    self.results_per_page = self._response.max_results
+                    self.container = self._response.container_name
+                    self.current_page = [self._build_item(item) for item in self._response.segment.blob_items]
+
+                    return self._response.next_marker or None, self.current_page
 
             command = functools.partial(
                 self._client.container.list_blob_flat_segment_apache_arrow,
