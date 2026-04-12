@@ -5616,7 +5616,7 @@ class BetaAgentsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200, 204]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = _failsafe_deserialize(
                 _models.ApiErrorResponse,
@@ -5698,8 +5698,7 @@ class BetaAgentsOperations:
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            has_more = deserialized.get("has_more", False)
-            return (deserialized.get("last_id") if has_more else None), iter(list_of_elem)
+            return deserialized.get("last_id") or None, iter(list_of_elem)
 
         def get_next(_continuation_token=None):
             _request = prepare_request(_continuation_token)
@@ -5782,7 +5781,7 @@ class BetaAgentsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [201]:
+        if response.status_code not in [200]:
             if _stream:
                 try:
                     response.read()  # Load the body in memory and close the socket
