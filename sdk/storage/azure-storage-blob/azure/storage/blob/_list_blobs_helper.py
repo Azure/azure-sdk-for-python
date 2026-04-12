@@ -19,13 +19,146 @@ from ._deserialize import (
 )
 from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix, FilterBlobItem
 from ._generated._utils.serialization import Deserializer
-from ._models import BlobProperties, FilteredBlob
+from ._models import (
+    BlobProperties,
+    BlobType,
+    ContentSettings,
+    CopyProperties,
+    FilteredBlob,
+    ImmutabilityPolicy,
+    LeaseProperties,
+)
 from ._shared.models import DictMixin
 from ._shared.response_handlers import (
     process_storage_error,
     return_context_and_deserialized,
     return_raw_deserialized
 )
+
+_ARROW_CONTENT_TYPE = "application/vnd.apache.arrow.stream"
+
+
+def _parse_arrow_response(raw_bytes: bytes, container: Optional[str]) -> Tuple[Optional[str], List[BlobProperties]]:
+    """Parse an Apache Arrow IPC stream response into a list of BlobProperties.
+    :param bytes raw_bytes: The raw Arrow IPC bytes.
+    :param Optional[str] container: The container name to stamp on each item.
+    :returns: A tuple of next marker and a list of BlobProperties.
+    :rtype: Tuple[Optional[str], List[~azure.storage.blob.BlobProperties]]
+    """
+    from pyarrow import ipc  # pylint: disable=import-outside-toplevel
+    reader = ipc.open_stream(raw_bytes)
+    schema = reader.schema
+
+    # The continuation token is embedded in the Arrow schema metadata.
+    next_marker: Optional[str] = None
+    if schema.metadata:
+        raw_marker = schema.metadata.get(b"NextMarker") or schema.metadata.get(b"nextMarker")
+        if raw_marker:
+            next_marker = raw_marker.decode("utf-8") if isinstance(raw_marker, bytes) else raw_marker
+            next_marker = next_marker or None
+
+    # Declarative mapping: Arrow column name -> (BlobProperties attr, default value).
+    # Only scalar fields that map 1-to-1 are listed here; composite sub-objects are
+    # handled separately below.
+    _SCALAR_FIELDS: List[Tuple[str, str, Any]] = [
+        ("Name",                     "name",                      None),
+        ("Snapshot",                 "snapshot",                  None),
+        ("VersionId",                "version_id",                None),
+        ("IsCurrentVersion",         "is_current_version",        None),
+        ("Etag",                     "etag",                      None),
+        ("Deleted",                  "deleted",                   False),
+        ("LastModified",             "last_modified",             None),
+        ("CreationTime",             "creation_time",             None),
+        ("ContentLength",            "size",                      None),
+        ("ServerEncrypted",          "server_encrypted",          False),
+        ("EncryptionScope",          "encryption_scope",          None),
+        ("DeletedTime",              "deleted_time",              None),
+        ("RemainingRetentionDays",   "remaining_retention_days",  None),
+        ("AccessTier",               "blob_tier",                 None),
+        ("SmartAccessTier",          "smart_access_tier",         None),
+        ("RehydratePriority",        "rehydrate_priority",        None),
+        ("AccessTierChangeTime",     "blob_tier_change_time",     None),
+        ("AccessTierInferred",       "blob_tier_inferred",        None),
+        ("ArchiveStatus",            "archive_status",            None),
+        ("BlobSequenceNumber",       "page_blob_sequence_number", None),
+        ("IsSealed",                 "is_append_blob_sealed",     None),
+        ("LastAccessedOn",           "last_accessed_on",          None),
+        ("TagCount",                 "tag_count",                 None),
+        ("HasVersionsOnly",          "has_versions_only",         None),
+        ("LegalHold",                "has_legal_hold",            None),
+        ("CustomerProvidedKeySha256","encryption_key_sha256",     None),
+    ]
+
+    # Sub-object field mappings: Arrow column name -> constructor kwarg name.
+    _CONTENT_SETTINGS_FIELDS = {
+        "ContentType":        "content_type",
+        "ContentEncoding":    "content_encoding",
+        "ContentLanguage":    "content_language",
+        "ContentMD5":         "content_md5",
+        "ContentDisposition": "content_disposition",
+        "CacheControl":       "cache_control",
+    }
+    _LEASE_FIELDS = {
+        "LeaseStatus":   "x-ms-lease-status",
+        "LeaseState":    "x-ms-lease-state",
+        "LeaseDuration": "x-ms-lease-duration",
+    }
+    _COPY_FIELDS = {
+        "CopyId":                  "x-ms-copy-id",
+        "CopySource":              "x-ms-copy-source",
+        "CopyStatus":              "x-ms-copy-status",
+        "CopyProgress":            "x-ms-copy-progress",
+        "CopyCompletionTime":      "x-ms-copy-completion-time",
+        "CopyStatusDescription":   "x-ms-copy-status-description",
+        "IncrementalCopy":         "x-ms-incremental-copy",
+        "DestinationSnapshot":     "x-ms-copy-destination-snapshot",
+    }
+
+    blob_items: List[BlobProperties] = []
+    for batch in reader:
+        num_rows = batch.num_rows
+        if num_rows == 0:
+            continue
+        # Pre-resolve columns once per batch; missing columns stay as None.
+        cols = {schema.field(i).name: batch.column(i) for i in range(batch.num_columns)}
+
+        for row in range(num_rows):
+            def _get(col_name: str, default: Any = None, _r: int = row) -> Any:  # pylint: disable=cell-var-from-loop
+                col = cols.get(col_name)
+                if col is None:
+                    return default
+                val = col[_r].as_py()
+                return val if val is not None else default
+
+            blob = BlobProperties()
+            blob.container = container  # type: ignore[assignment]
+            blob.metadata = {}
+
+            # Apply all scalar 1-to-1 fields from the mapping table.
+            for arrow_col, blob_attr, default in _SCALAR_FIELDS:
+                setattr(blob, blob_attr, _get(arrow_col, default))
+
+            # BlobType needs an enum conversion.
+            blob_type_val = _get("BlobType")
+            blob.blob_type = BlobType(blob_type_val) if blob_type_val else None  # type: ignore[assignment]
+
+            # Composite sub-objects built from their own column sub-sets.
+            blob.content_settings = ContentSettings(
+                **{kwarg: _get(col) for col, kwarg in _CONTENT_SETTINGS_FIELDS.items()}
+            )
+            blob.lease = LeaseProperties(
+                **{kwarg: _get(col) for col, kwarg in _LEASE_FIELDS.items()}
+            )
+            blob.copy = CopyProperties(
+                **{kwarg: _get(col) for col, kwarg in _COPY_FIELDS.items()}
+            )
+            blob.immutability_policy = ImmutabilityPolicy(
+                expiry_time=_get("ImmutabilityPolicyUntilDate"),
+                policy_mode=_get("ImmutabilityPolicyMode"),
+            )
+            blob_items.append(blob)
+
+    return next_marker, blob_items
 
 
 class IgnoreListBlobsDeserializer(Deserializer):
@@ -326,3 +459,55 @@ class FilteredBlobPaged(PageIterator):
             blob = FilteredBlob(name=item.name, container_name=item.container_name, tags=tags)
             return blob
         return item
+
+
+class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
+    """A PageIterator that deserializes Apache Arrow IPC responses from list-blobs operations."""
+
+    def __init__(self, *args: Any, deserializer: Any = None, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self._deserializer = deserializer
+        self._arrow_response: Optional[Tuple[Optional[str], List[BlobProperties]]] = None
+
+    def _get_next_cb(self, continuation_token: Optional[str]) -> Any:
+        try:
+            return self._command(
+                prefix=self.prefix,
+                marker=continuation_token or None,
+                maxresults=self.results_per_page,
+                cls=self._arrow_cls,
+                use_location=self.location_mode,
+            )
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    def _arrow_cls(self, pipeline_response: Any, deserialized: Any, response_headers: Any) -> Any:
+        content_type = response_headers.get("Content-Type", "")
+        location_mode = getattr(pipeline_response.http_response, "location_mode", None)
+        if _ARROW_CONTENT_TYPE in content_type:
+            raw_bytes = b"".join(deserialized)
+            next_marker, blob_items = _parse_arrow_response(raw_bytes, self.container)
+            self._arrow_response = (next_marker, blob_items)
+            return location_mode, raw_bytes
+        pipeline_response.http_response.load_body()
+        xml_response = self._deserializer("ListBlobsFlatSegmentResponse", pipeline_response.http_response)
+        self._arrow_response = None
+        return location_mode, xml_response
+
+    def _extract_data_cb(self, get_next_return: Any) -> Tuple[Optional[str], List[BlobProperties]]:
+        if self._arrow_response is not None:
+            self.location_mode, _ = cast(Tuple[Optional[str], Any], get_next_return)
+            next_marker, self.current_page = self._arrow_response
+            self._arrow_response = None
+            return next_marker or None, self.current_page or []
+        return super()._extract_data_cb(get_next_return)
+
+
+class ArrowBlobPrefixPaged(ArrowBlobPropertiesPaged):
+    """Arrow-backed PageIterator for walk_blobs."""
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.name = self.prefix
+        self.delimiter: Optional[str] = kwargs.get("delimiter")
+

@@ -92,7 +92,7 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
     @BlobPreparer()
     @recorded_by_proxy
     def test_arrow_xml_response(self, **kwargs):
-        # Many blobs, mock XML response
+        # Many blobs, mock XML response, large, nested
         pass
 
     # Do the same for walk_blobs

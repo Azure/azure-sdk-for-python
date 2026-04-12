@@ -17,7 +17,7 @@ from urllib.parse import unquote, urlparse
 from typing_extensions import Self
 
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.paging import ItemPaged, PageIterator
+from azure.core.paging import ItemPaged
 from azure.core.pipeline import Pipeline
 from azure.core.tracing.decorator import distributed_trace
 from ._blob_client import BlobClient
@@ -34,11 +34,13 @@ from ._generated import AzureBlobStorage
 from ._generated.models import SignedIdentifier
 from ._lease import BlobLeaseClient
 from ._list_blobs_helper import (
+    ArrowBlobPropertiesPaged,
+    ArrowBlobPrefixPaged,
     BlobNamesPaged,
     BlobPrefix,
     BlobPropertiesPaged,
     FilteredBlobPaged,
-    IgnoreListBlobsDeserializer
+    IgnoreListBlobsDeserializer,
 )
 from ._models import (
     BlobProperties,
@@ -835,97 +837,28 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
         use_arrow = kwargs.pop('use_arrow', None)
         if use_arrow:
             try:
-                import pyarrow as pa
+                import pyarrow  # pylint: disable=import-outside-toplevel,unused-import
             except ImportError as e:
                 raise ImportError(
                     "The 'pyarrow' package is required to use Apache Arrow deserialization. "
                     "Install it with: pip install pyarrow"
                 ) from e
 
-            def _parse_arrow_listing(deserialized, response_headers):
-                stream = b"".join(deserialized)
-                reader = pa.ipc.open_stream(stream)
-                schema = reader.schema
-
-                blob_items = []
-                for batch in reader:
-                    columns = {schema.field(i).name: batch.column(i) for i in range(batch.num_columns)}
-                    for row_cursor in range(batch.num_rows):
-
-                        def get(col_name, default=None):
-                            col = columns.get(col_name)
-                            if col is None:
-                                return default
-                            val = col[row_cursor].as_py()
-                            return val if val is not None else default
-
-                        blob_props = BlobProperties(
-                            name=get("Name"),
-                            **{col_name: columns[col_name][row_cursor].as_py() for col_name in schema.names}
-                        )
-                        blob_items.append(blob_props)
-
-            def _arrow_cls(pipeline_response, deserialized, response_headers):
-                content_type = response_headers.get("Content-Type", "")
-                if "application/xml" in content_type:
-                    # TODO FIX with custom Deserializer from shared/generated code
-                    pass
-                return _parse_arrow_listing(deserialized, response_headers)
-
-            # TODO FIX
-            class ArrowBlobPropertiesPaged(PageIterator):
-                def _get_next_cb(self, continuation_token):
-                    try:
-                        return self._command(
-                            prefix=self.prefix,
-                            marker=continuation_token or None,
-                            maxresults=self.results_per_page,
-                            cls=_arrow_cls,
-                            use_location=self.location_mode
-                        )
-                    except HttpResponseError as error:
-                        process_storage_error(error)
-
-                def _extract_data_cb(self, get_next_return):
-                    # TODO: Implement
-                    self.location_mode, self._response = cast(Tuple[Optional[str], Any], get_next_return)
-                    self.service_endpoint = self._response.service_endpoint
-                    self.prefix = self._response.prefix
-                    self.marker = self._response.marker
-                    self.results_per_page = self._response.max_results
-                    self.container = self._response.container_name
-                    self.current_page = [self._build_item(item) for item in self._response.segment.blob_items]
-
-                    return self._response.next_marker or None, self.current_page
-
-            command = functools.partial(
-                self._client.container.list_blob_flat_segment_apache_arrow,
-                include=include,
-                timeout=timeout,
-                cls=_arrow_cls,
-                **kwargs
-            )
-            return ItemPaged(
-                command,
-                prefix=name_starts_with,
-                results_per_page=results_per_page,
-                container=self.container_name,
-                page_iterator_class=ArrowBlobPropertiesPaged
-            )
-        else:
-            command = functools.partial(
-                self._client.container.list_blob_flat_segment,
-                include=include,
-                timeout=timeout,
-                **kwargs
-            )
-            return ItemPaged(
-                command,
-                prefix=name_starts_with,
-                results_per_page=results_per_page,
-                container=self.container_name,
-                page_iterator_class=BlobPropertiesPaged
-            )
+        command = functools.partial(
+            self._client.container.list_blob_flat_segment_apache_arrow
+            if use_arrow else self._client.container.list_blob_flat_segment,
+            include=include,
+            timeout=timeout,
+            **kwargs
+        )
+        return ItemPaged(
+            command,
+            prefix=name_starts_with,
+            results_per_page=results_per_page,
+            container=self.container_name,
+            page_iterator_class=ArrowBlobPropertiesPaged if use_arrow else BlobPropertiesPaged,
+            **({"deserializer": self._client.container._deserialize} if use_arrow else {})  # pylint: disable=protected-access
+        )
 
     @distributed_trace
     def list_blob_names(self, **kwargs: Any) -> ItemPaged[str]:
@@ -1004,8 +937,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
             element in the response body that acts as a placeholder for all blobs whose
             names begin with the same substring up to the appearance of the delimiter
             character. The delimiter may be a single character or a string.
+        :keyword bool use_arrow:
+            Specifies the ability to return and parse the response in Apache Arrow format.
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
+        :keyword str end_before:
+            Specifies the relative path (exclusive) to end before list paths.
+            This may be used if use_arrow is set to True.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -1024,18 +962,45 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):    # py
 
         results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
+        use_arrow = kwargs.pop('use_arrow', False)
+        if use_arrow:
+            try:
+                import pyarrow  # pylint: disable=import-outside-toplevel,unused-import
+            except ImportError as e:
+                raise ImportError(
+                    "The 'pyarrow' package is required to use Apache Arrow deserialization. "
+                    "Install it with: pip install pyarrow"
+                ) from e
+            command = functools.partial(
+                self._client.container.list_blob_hierarchy_segment_apache_arrow,
+                delimiter=delimiter,
+                include=include,
+                timeout=timeout,
+                **kwargs
+            )
+            return ItemPaged(
+                command,
+                prefix=name_starts_with,
+                results_per_page=results_per_page,
+                container=self.container_name,
+                delimiter=delimiter,
+                deserializer=self._client.container._deserialize,  # pylint: disable=protected-access
+                page_iterator_class=ArrowBlobPrefixPaged
+            )
         command = functools.partial(
             self._client.container.list_blob_hierarchy_segment,
             delimiter=delimiter,
             include=include,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
         return BlobPrefix(
             command,
             prefix=name_starts_with,
             results_per_page=results_per_page,
             container=self.container_name,
-            delimiter=delimiter)
+            delimiter=delimiter
+        )
 
     @distributed_trace
     def find_blobs_by_tags(
