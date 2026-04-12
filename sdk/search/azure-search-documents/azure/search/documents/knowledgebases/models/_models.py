@@ -245,10 +245,10 @@ class IndexedOneLakeKnowledgeSourceParams(KnowledgeSourceParams, discriminator="
     :vartype reranker_threshold: float
     :ivar kind: The discriminator value. Required. A knowledge source that reads data from indexed
      OneLake.
-    :vartype kind: str or ~azure.search.documents.indexes.models.INDEXED_ONE_LAKE
+    :vartype kind: str or ~azure.search.documents.indexes.models.INDEXED_ONELAKE
     """
 
-    kind: Literal[KnowledgeSourceKind.INDEXED_ONE_LAKE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[KnowledgeSourceKind.INDEXED_ONELAKE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. A knowledge source that reads data from indexed OneLake."""
 
     @overload
@@ -270,7 +270,7 @@ class IndexedOneLakeKnowledgeSourceParams(KnowledgeSourceParams, discriminator="
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind = KnowledgeSourceKind.INDEXED_ONE_LAKE  # type: ignore
+        self.kind = KnowledgeSourceKind.INDEXED_ONELAKE  # type: ignore
 
 
 class KnowledgeBaseActivityRecord(_Model):
@@ -572,12 +572,12 @@ class KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator
     :ivar reranker_score: The reranker score for the document reference.
     :vartype reranker_score: float
     :ivar type: The discriminator value. Required. Indexed OneLake document reference.
-    :vartype type: str or ~azure.search.documents.knowledgebases.models.INDEXED_ONE_LAKE
+    :vartype type: str or ~azure.search.documents.knowledgebases.models.INDEXED_ONELAKE
     :ivar doc_url: The document URL for the reference.
     :vartype doc_url: str
     """
 
-    type: Literal[KnowledgeBaseReferenceType.INDEXED_ONE_LAKE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    type: Literal[KnowledgeBaseReferenceType.INDEXED_ONELAKE] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The discriminator value. Required. Indexed OneLake document reference."""
     doc_url: Optional[str] = rest_field(name="docUrl", visibility=["read", "create", "update", "delete", "query"])
     """The document URL for the reference."""
@@ -602,7 +602,7 @@ class KnowledgeBaseIndexedOneLakeReference(KnowledgeBaseReference, discriminator
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.type = KnowledgeBaseReferenceType.INDEXED_ONE_LAKE  # type: ignore
+        self.type = KnowledgeBaseReferenceType.INDEXED_ONELAKE  # type: ignore
 
 
 class KnowledgeBaseMessage(_Model):

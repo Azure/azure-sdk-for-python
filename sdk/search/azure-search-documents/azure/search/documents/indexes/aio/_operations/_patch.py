@@ -8,6 +8,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+from collections.abc import MutableMapping  # pylint: disable=import-error
 from typing import Any, cast, List, Sequence, Union, Optional, TYPE_CHECKING
 
 from azure.core import MatchConditions
@@ -21,6 +22,8 @@ from ._operations import (
     _SearchIndexClientOperationsMixin as _SearchIndexClientOperationsMixinGenerated,
     _SearchIndexerClientOperationsMixin as _SearchIndexerClientOperationsMixinGenerated,
 )
+
+JSON = MutableMapping[str, Any]
 
 if TYPE_CHECKING:
     import azure.search.documents.aio
@@ -65,7 +68,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     @distributed_trace_async
     async def create_or_update_synonym_map(
         self,
-        synonym_map: _models.SynonymMap,
+        synonym_map: Union[_models.SynonymMap, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -73,13 +76,15 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """Creates a new synonym map or updates a synonym map if it already exists.
 
         :param synonym_map: The SynonymMap object to create or update. Required.
-        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap
+        :type synonym_map: ~azure.search.documents.indexes.models.SynonymMap or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SynonymMap
         :rtype: ~azure.search.documents.indexes.models.SynonymMap
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if not isinstance(synonym_map, _models.SynonymMap):
+            synonym_map = _models.SynonymMap(synonym_map)
         return await self._create_or_update_synonym_map(
             name=synonym_map.name,
             synonym_map=synonym_map,
@@ -125,7 +130,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     @distributed_trace_async
     async def create_or_update_index(
         self,
-        index: _models.SearchIndex,
+        index: Union[_models.SearchIndex, JSON],
         allow_index_downtime: Optional[bool] = None,
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
@@ -134,7 +139,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """Creates a new search index or updates an index if it already exists.
 
         :param index: The SearchIndex object to create or update. Required.
-        :type index: ~azure.search.documents.indexes.models.SearchIndex
+        :type index: ~azure.search.documents.indexes.models.SearchIndex or JSON
         :param allow_index_downtime: Allows new analyzers, tokenizers, token filters, or char filters
          to be added to an index by taking the index offline for at least a few seconds. This
          temporarily causes indexing and query requests to fail. Performance and write availability of
@@ -147,6 +152,8 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         :rtype: ~azure.search.documents.indexes.models.SearchIndex
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if not isinstance(index, _models.SearchIndex):
+            index = _models.SearchIndex(index)
         return await self._create_or_update_index(
             name=index.name,
             index=index,
@@ -160,7 +167,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     @distributed_trace_async
     async def create_or_update_alias(
         self,
-        alias: _models.SearchAlias,
+        alias: Union[_models.SearchAlias, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -168,13 +175,15 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """Creates a new search alias or updates an alias if it already exists.
 
         :param alias: The SearchAlias object to create or update. Required.
-        :type alias: ~azure.search.documents.indexes.models.SearchAlias
+        :type alias: ~azure.search.documents.indexes.models.SearchAlias or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SearchAlias
         :rtype: ~azure.search.documents.indexes.models.SearchAlias
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if not isinstance(alias, _models.SearchAlias):
+            alias = _models.SearchAlias(alias)
         return await self._create_or_update_alias(
             name=alias.name,
             alias=alias,
@@ -253,7 +262,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     @distributed_trace_async
     async def create_or_update_knowledge_base(
         self,
-        knowledge_base: _models.KnowledgeBase,
+        knowledge_base: Union[_models.KnowledgeBase, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -261,13 +270,15 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """Creates a new knowledge base or updates a knowledge base if it already exists.
 
         :param knowledge_base: The KnowledgeBase object to create or update. Required.
-        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase
+        :type knowledge_base: ~azure.search.documents.indexes.models.KnowledgeBase or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: KnowledgeBase
         :rtype: ~azure.search.documents.indexes.models.KnowledgeBase
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if not isinstance(knowledge_base, _models.KnowledgeBase):
+            knowledge_base = _models.KnowledgeBase(knowledge_base)
         return await self._create_or_update_knowledge_base(
             name=knowledge_base.name,
             knowledge_base=knowledge_base,
@@ -280,7 +291,7 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
     @distributed_trace_async
     async def create_or_update_knowledge_source(
         self,
-        knowledge_source: _models.KnowledgeSource,
+        knowledge_source: Union[_models.KnowledgeSource, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -288,13 +299,15 @@ class _SearchIndexClientOperationsMixin(_SearchIndexClientOperationsMixinGenerat
         """Creates a new knowledge source or updates a knowledge source if it already exists.
 
         :param knowledge_source: The KnowledgeSource object to create or update. Required.
-        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource
+        :type knowledge_source: ~azure.search.documents.indexes.models.KnowledgeSource or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: KnowledgeSource
         :rtype: ~azure.search.documents.indexes.models.KnowledgeSource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if not isinstance(knowledge_source, _models.KnowledgeSource):
+            knowledge_source = _models.KnowledgeSource(knowledge_source)
         return await self._create_or_update_knowledge_source(
             name=knowledge_source.name,
             knowledge_source=knowledge_source,
@@ -511,7 +524,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     @distributed_trace_async
     async def create_or_update_data_source_connection(
         self,
-        data_source_connection: _models.SearchIndexerDataSourceConnection,
+        data_source_connection: Union[_models.SearchIndexerDataSourceConnection, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -519,13 +532,15 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """Creates a new data source connection or updates a data source connection if it already exists.
 
         :param data_source_connection: The SearchIndexerDataSourceConnection object to create or update. Required.
-        :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
+        :type data_source_connection: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SearchIndexerDataSourceConnection
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerDataSourceConnection
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if not isinstance(data_source_connection, _models.SearchIndexerDataSourceConnection):
+            data_source_connection = _models.SearchIndexerDataSourceConnection(data_source_connection)
         return await self._create_or_update_data_source_connection(
             name=data_source_connection.name,
             data_source=data_source_connection,
@@ -571,7 +586,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     @distributed_trace_async
     async def create_or_update_indexer(
         self,
-        indexer: _models.SearchIndexer,
+        indexer: Union[_models.SearchIndexer, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -579,13 +594,15 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """Creates a new indexer or updates an indexer if it already exists.
 
         :param indexer: The SearchIndexer object to create or update. Required.
-        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer
+        :type indexer: ~azure.search.documents.indexes.models.SearchIndexer or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SearchIndexer
         :rtype: ~azure.search.documents.indexes.models.SearchIndexer
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if not isinstance(indexer, _models.SearchIndexer):
+            indexer = _models.SearchIndexer(indexer)
         return await self._create_or_update_indexer(
             name=indexer.name,
             indexer=indexer,
@@ -631,7 +648,7 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
     @distributed_trace_async
     async def create_or_update_skillset(
         self,
-        skillset: _models.SearchIndexerSkillset,
+        skillset: Union[_models.SearchIndexerSkillset, JSON],
         *,
         match_condition: MatchConditions = MatchConditions.Unconditionally,
         **kwargs: Any,
@@ -639,13 +656,15 @@ class _SearchIndexerClientOperationsMixin(_SearchIndexerClientOperationsMixinGen
         """Creates a new skillset in a search service or updates the skillset if it already exists.
 
         :param skillset: The SearchIndexerSkillset object to create or update. Required.
-        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset
+        :type skillset: ~azure.search.documents.indexes.models.SearchIndexerSkillset or JSON
         :keyword match_condition: The match condition to use upon the etag. Default value is None.
         :paramtype match_condition: ~azure.core.MatchConditions
         :return: SearchIndexerSkillset
         :rtype: ~azure.search.documents.indexes.models.SearchIndexerSkillset
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        if not isinstance(skillset, _models.SearchIndexerSkillset):
+            skillset = _models.SearchIndexerSkillset(skillset)
         return await self._create_or_update_skillset(
             name=skillset.name,
             skillset=skillset,

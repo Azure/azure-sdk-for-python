@@ -31,8 +31,8 @@ class SearchClientConfiguration:  # pylint: disable=too-many-instance-attributes
      ~azure.core.credentials.TokenCredential
     :param index_name: The name of the index. Required.
     :type index_name: str
-    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
-     and None. Default value is "2026-04-01". Note that overriding this default value may result in
+    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01".
+     Default value is "2026-04-01". Note that overriding this default value may result in
      unsupported behavior.
     :paramtype api_version: str
     """

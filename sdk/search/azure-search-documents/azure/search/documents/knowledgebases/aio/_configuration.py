@@ -31,8 +31,8 @@ class KnowledgeBaseRetrievalClientConfiguration:  # pylint: disable=too-many-ins
      ~azure.core.credentials_async.AsyncTokenCredential
     :param knowledge_base_name: The name of the knowledge base. Required.
     :type knowledge_base_name: str
-    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
-     and None. Default value is "2026-04-01". Note that overriding this default value may result in
+    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01".
+     Default value is "2026-04-01". Note that overriding this default value may result in
      unsupported behavior.
     :paramtype api_version: str
     """

@@ -4186,13 +4186,13 @@ class IndexedOneLakeKnowledgeSource(KnowledgeSource, discriminator="indexedOneLa
      and is only available for paid services created on or after January 1, 2019.
     :vartype encryption_key: ~azure.search.documents.indexes.models.SearchResourceEncryptionKey
     :ivar kind: Required. A knowledge source that reads data from indexed OneLake.
-    :vartype kind: str or ~azure.search.documents.indexes.models.INDEXED_ONE_LAKE
+    :vartype kind: str or ~azure.search.documents.indexes.models.INDEXED_ONELAKE
     :ivar indexed_one_lake_parameters: The parameters for the knowledge source. Required.
     :vartype indexed_one_lake_parameters:
      ~azure.search.documents.indexes.models.IndexedOneLakeKnowledgeSourceParameters
     """
 
-    kind: Literal[KnowledgeSourceKind.INDEXED_ONE_LAKE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    kind: Literal[KnowledgeSourceKind.INDEXED_ONELAKE] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """Required. A knowledge source that reads data from indexed OneLake."""
     indexed_one_lake_parameters: "_models.IndexedOneLakeKnowledgeSourceParameters" = rest_field(
         name="indexedOneLakeParameters", visibility=["read", "create", "update", "delete", "query"]
@@ -4219,7 +4219,7 @@ class IndexedOneLakeKnowledgeSource(KnowledgeSource, discriminator="indexedOneLa
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.kind = KnowledgeSourceKind.INDEXED_ONE_LAKE  # type: ignore
+        self.kind = KnowledgeSourceKind.INDEXED_ONELAKE  # type: ignore
 
 
 class IndexedOneLakeKnowledgeSourceParameters(_Model):
