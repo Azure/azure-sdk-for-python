@@ -41,19 +41,19 @@ class TestLogLevelConstructor:
     """Log-level configuration via the AgentServerHost constructor."""
 
     def test_log_level_via_constructor(self) -> None:
-        AgentServerHost(log_level="DEBUG")  # side-effect: configures logger
-        lib_logger = logging.getLogger("azure.ai.agentserver")
-        assert lib_logger.level == logging.DEBUG
+        AgentServerHost(log_level="DEBUG")
+        root = logging.getLogger()
+        assert root.level == logging.DEBUG
 
     def test_log_level_warning_via_constructor(self) -> None:
-        AgentServerHost(log_level="WARNING")  # side-effect: configures logger
-        lib_logger = logging.getLogger("azure.ai.agentserver")
-        assert lib_logger.level == logging.WARNING
+        AgentServerHost(log_level="WARNING")
+        root = logging.getLogger()
+        assert root.level == logging.WARNING
 
     def test_log_level_case_insensitive(self) -> None:
-        AgentServerHost(log_level="error")  # side-effect: configures logger
-        lib_logger = logging.getLogger("azure.ai.agentserver")
-        assert lib_logger.level == logging.ERROR
+        AgentServerHost(log_level="error")
+        root = logging.getLogger()
+        assert root.level == logging.ERROR
 
 
 # ------------------------------------------------------------------ #
