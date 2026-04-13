@@ -61,6 +61,7 @@ class pylint(Check):
                     executable,
                     [
                         "azure-pylint-guidelines-checker==0.5.7",
+                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/",
                     ],
                     package_dir,
                 )
