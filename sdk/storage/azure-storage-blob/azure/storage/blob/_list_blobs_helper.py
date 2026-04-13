@@ -39,7 +39,9 @@ _ARROW_CONTENT_TYPE = "application/vnd.apache.arrow.stream"
 
 
 def _parse_arrow_response(raw_bytes: bytes, container: Optional[str]) -> Tuple[Optional[str], List[BlobProperties]]:
-    """Parse an Apache Arrow IPC stream response into a list of BlobProperties.
+    """
+    Parse an Apache Arrow IPC stream response into a list of BlobProperties.
+
     :param bytes raw_bytes: The raw Arrow IPC bytes.
     :param Optional[str] container: The container name to stamp on each item.
     :returns: A tuple of next marker and a list of BlobProperties.
