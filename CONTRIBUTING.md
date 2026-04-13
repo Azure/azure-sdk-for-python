@@ -120,7 +120,9 @@ azpysdk --pypi <command>
 ```
 
 #### Authentication for upstream pull-through
-When installing a package version not yet cached in the CFS feed, uv/pip needs to pull it through from PyPI upstream, which requires authentication. Below are options for authenticating:
+When installing a package version not yet cached in the CFS feed, it needs to be pulled through from PyPI upstream, which requires authentication. 
+
+Below are options for authenticating:
 
 **Authenticate in terminal (with uv):**
 
@@ -150,8 +152,8 @@ export UV_INDEX_AZURE_SDK_PASSWORD=$(az account get-access-token --resource 499b
 9. Copy the token and use it in your environment:
 
 ```bash
-export UV_INDEX_AZURE_SDK_USERNAME=your-azure-username
-export UV_INDEX_AZURE_SDK_PASSWORD=your-pat-token
+export UV_INDEX_AZURE_SDK_USERNAME=x
+export UV_INDEX_AZURE_SDK_PASSWORD=<your-pat-token>
 ```
 
 Or for pip:
