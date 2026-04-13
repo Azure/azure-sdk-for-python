@@ -103,14 +103,14 @@ class RedirectCachingPolicy(HTTPPolicy):
     :keyword bool permit_redirects: Whether redirects are followed at all.
         Defaults to ``True``.
     :keyword int redirect_max: Maximum number of redirects to follow per
-        request.  Defaults to ``30``.
+        request.  Defaults to ``5``.
     """
 
     def __init__(
         self,
         *,
         permit_redirects: bool = True,
-        redirect_max: int = 30,
+        redirect_max: int = 5,
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
         super().__init__()
@@ -193,7 +193,7 @@ class AsyncRedirectCachingPolicy(AsyncHTTPPolicy):
         self,
         *,
         permit_redirects: bool = True,
-        redirect_max: int = 30,
+        redirect_max: int = 5,
         **kwargs,  # pylint: disable=unused-argument
     ) -> None:
         super().__init__()
