@@ -73,11 +73,10 @@ This repo defaults to using Central Feed Services (CFS) as the package source in
 
 **How it works:**
 - A repo-root `uv.toml` configures uv to use the CFS feed automatically for all `uv pip install` / `uv sync` commands run within the repo.
-- `azpysdk` sets `PIP_INDEX_URL` and `UV_DEFAULT_INDEX` environment variables so pip and uv subprocesses also use the CFS feed.
-- In CI, the `PipAuthenticate` task provides credentials for upstream pull-through from PyPI.
+- `azpysdk` sets `PIP_INDEX_URL` and `UV_DEFAULT_INDEX` environment variables so pip and uv subprocesses also use the CFS feed. If you have already set these variables to a different feed, `azpysdk` will respect your configuration and won't override them.
 
 **Authentication for upstream pull-through:**
-When a package version is not yet cached in the CFS feed, uv/pip pulls it through from PyPI upstream, which requires authentication. TODO
+When a package version is not yet cached in the CFS feed, uv/pip pulls it through from PyPI upstream, which requires authentication. See [CONTRIBUTING.md](../CONTRIBUTING.md#authentication-for-upstream-pull-through) for details.
 
 **Bypassing CFS:**
 If you need to install directly from PyPI (e.g., for a package not yet in the feed and auth isn't set up), use:
