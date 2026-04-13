@@ -3,6 +3,8 @@
 AI-powered coding tools can help author applications that use the Azure SDK — generating code, explaining APIs, and troubleshooting issues.
 This page lists common options and integrations available today.
 
+This page can be linked by [aka.ms/azsdk/python/ai](aka.ms/azsdk/python/ai)
+
 ## AI coding tools
 
 Several tools support AI-assisted development with the Azure SDK:
