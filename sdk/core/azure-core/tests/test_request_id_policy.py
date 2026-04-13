@@ -3,16 +3,17 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """Tests for the request id policy."""
-from azure.core.pipeline.policies import RequestIdPolicy
-from azure.core.pipeline import PipelineRequest, PipelineContext
-
+from itertools import product
 try:
     from unittest import mock
 except ImportError:
     import mock
-from itertools import product
+
 import pytest
 from utils import HTTP_REQUESTS
+
+from azure.core.pipeline.policies import RequestIdPolicy
+from azure.core.pipeline import PipelineRequest, PipelineContext
 
 auto_request_id_values = (True, False, None)
 request_id_init_values = ("foo", None, "_unset")

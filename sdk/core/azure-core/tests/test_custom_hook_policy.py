@@ -7,11 +7,13 @@ try:
     from unittest import mock
 except ImportError:
     import mock
+
+import pytest
+from utils import HTTP_REQUESTS
+
 from azure.core import PipelineClient
 from azure.core.pipeline.policies import CustomHookPolicy, UserAgentPolicy
 from azure.core.pipeline.transport import HttpTransport
-import pytest
-from utils import HTTP_REQUESTS
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

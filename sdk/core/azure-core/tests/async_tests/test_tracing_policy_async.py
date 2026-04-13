@@ -4,6 +4,8 @@
 # ------------------------------------
 """Tests for the distributed tracing policy in an async pipeline."""
 import pytest
+from tracing_common import FakeSpan
+from utils import HTTP_REQUESTS
 
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import AsyncRetryPolicy, DistributedTracingPolicy
@@ -11,9 +13,6 @@ from azure.core.pipeline.transport import (
     HttpResponse,
     AsyncHttpTransport,
 )
-
-from tracing_common import FakeSpan
-from utils import HTTP_REQUESTS
 
 
 class MockTransport(AsyncHttpTransport):

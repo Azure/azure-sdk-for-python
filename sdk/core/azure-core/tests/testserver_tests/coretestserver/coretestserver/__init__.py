@@ -5,8 +5,10 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from flask import Flask, Response
 import os
+
+from flask import Flask, Response
+
 from .test_routes import (
     basic_api,
     encoding_api,

@@ -4,8 +4,9 @@
 # ------------------------------------
 """Fake implementation of AbstractSpan for tests."""
 from contextlib import contextmanager
-from azure.core.tracing import HttpSpanMixin, SpanKind
 from typing import Union, Sequence, Optional, Dict
+
+from azure.core.tracing import HttpSpanMixin, SpanKind
 
 AttributeValue = Union[
     str,
@@ -95,7 +96,6 @@ class FakeSpan(HttpSpanMixin, object):
     def start(self):
         # type: () -> None
         """Set the start time for a span."""
-        pass
 
     def finish(self):
         # type: () -> None
