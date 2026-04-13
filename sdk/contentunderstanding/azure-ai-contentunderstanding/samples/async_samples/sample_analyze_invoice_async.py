@@ -219,9 +219,9 @@ async def main() -> None:
         usage = poller.usage
         if usage:
             print("\nUsage Details:")
-            if usage.document_pages_standard:
+            if usage.document_pages_standard is not None:
                 print(f"  Document pages (standard): {usage.document_pages_standard}")
-            if usage.contextualization_tokens:
+            if usage.contextualization_tokens is not None:
                 print(f"  Contextualization tokens: {usage.contextualization_tokens}")
             if usage.tokens:
                 print("  Model tokens:")

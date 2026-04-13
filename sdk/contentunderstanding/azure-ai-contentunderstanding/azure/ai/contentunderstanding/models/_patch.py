@@ -175,7 +175,7 @@ class AnalyzeLROPoller(LROPoller[PollingReturnType_co]):
             if usage_data is None:
                 return None
             return _deserialize(_models.UsageDetails, usage_data)
-        except AttributeError:
+        except (AttributeError, TypeError, ValueError):
             return None
 
     @classmethod

@@ -265,11 +265,11 @@ class TestAnalyzeLROPollerUsage:
             "Operation-Location": "https://endpoint/contentunderstanding/analyzerResults/test-op-id?api-version=2025-11-01"
         }
         mock_initial_response.http_response = mock_http_response
-        mock_polling_method.return_value = mock_polling_method
         mock_polling_method._initial_response = mock_initial_response
 
-        # _pipeline_response is not set yet (operation still in progress)
-        del mock_polling_method._pipeline_response
+        # Set _pipeline_response to None to simulate an operation still in progress
+        # (before result() completes). Accessing None.http_response raises AttributeError.
+        mock_polling_method._pipeline_response = None
 
         poller = AnalyzeLROPoller(
             client=Mock(),
