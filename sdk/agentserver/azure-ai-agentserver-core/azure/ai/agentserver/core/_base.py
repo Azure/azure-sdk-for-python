@@ -7,7 +7,7 @@ import logging
 import os
 import signal
 from collections.abc import AsyncGenerator, AsyncIterable, AsyncIterator, Awaitable, Callable  # pylint: disable=import-error
-from typing import Any, Optional, Union
+from typing import Any, MutableMapping, Optional, Union
 
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
@@ -24,49 +24,6 @@ logger = logging.getLogger("azure.ai.agentserver")
 
 # Pre-built health-check response to avoid per-request allocation.
 _HEALTHY_BODY = b'{"status":"healthy"}'
-
-# Sentinel attribute name set on the console handler to prevent adding duplicates
-# across multiple AgentServerHost instantiations.
-_CONSOLE_HANDLER_ATTR = "_agentserver_console"
-
-
-def _default_configure_observability(
-    *,
-    connection_string: Optional[str] = None,
-    log_level: Optional[str] = None,
-) -> None:
-    """Default observability setup: console logging + tracing/OTel export.
-
-    Attaches a formatted ``StreamHandler`` to the **root** logger so that
-    both SDK and user ``logging.info()`` calls are visible on the console.
-    Then configures OpenTelemetry tracing and log export (Azure Monitor
-    and/or OTLP) when a connection string or OTLP endpoint is available.
-
-    Pass this function (or a custom replacement) as the
-    ``configure_observability`` parameter of :class:`AgentServerHost`.
-    Pass ``None`` to disable all SDK-managed observability setup.
-
-    :keyword connection_string: Application Insights connection string.
-    :paramtype connection_string: str or None
-    :keyword log_level: Log level name (e.g. ``"INFO"``, ``"DEBUG"``).
-    :paramtype log_level: str or None
-    """
-    # Console logging on the root logger so user logs are also visible.
-    resolved_level = _config.resolve_log_level(log_level)
-    root = logging.getLogger()
-    root.setLevel(resolved_level)
-    if not any(getattr(h, _CONSOLE_HANDLER_ATTR, False) for h in root.handlers):
-        _console = logging.StreamHandler()
-        _console.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
-        setattr(_console, _CONSOLE_HANDLER_ATTR, True)
-        root.addHandler(_console)
-
-    # Suppress noisy Azure SDK and OTel exporter logs
-    logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
-    logging.getLogger("azure.monitor.opentelemetry.exporter").setLevel(logging.WARNING)
-
-    # Tracing and OTel export
-    _tracing.configure_tracing(connection_string=connection_string)
 
 
 class _PlatformHeaderMiddleware:
@@ -86,7 +43,7 @@ class _PlatformHeaderMiddleware:
             await self.app(scope, receive, send)
             return
 
-        async def _send_with_header(message: dict[str, Any]) -> None:
+        async def _send_with_header(message: MutableMapping[str, Any]) -> None:
             if message["type"] == "http.response.start":
                 headers = list(message.get("headers", []))
                 headers.append(
@@ -156,7 +113,7 @@ class AgentServerHost(Starlette):
     :type access_log_format: Optional[str]
     :param configure_observability: Callable that sets up console logging,
         tracing, and OTel export.  Defaults to
-        :func:`_default_configure_observability` which attaches a console
+        :func:`~._tracing.configure_observability` which attaches a console
         handler to the root logger and configures Azure Monitor / OTLP
         export.  Pass a custom callable to override the setup, or ``None``
         to skip all SDK-managed observability configuration.
@@ -173,7 +130,7 @@ class AgentServerHost(Starlette):
         log_level: Optional[str] = None,
         access_log: Optional[logging.Logger] = _SENTINEL_ACCESS_LOG,  # type: ignore[assignment]
         access_log_format: Optional[str] = None,
-        configure_observability: Optional[Callable[..., None]] = _default_configure_observability,
+        configure_observability: Optional[Callable[..., None]] = _tracing.configure_observability,
         routes: Optional[list[Route]] = None,
         **kwargs: Any,
     ) -> None:

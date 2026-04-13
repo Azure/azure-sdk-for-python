@@ -122,7 +122,7 @@ class TestAppInsightsConnectionString:
 
 
 class TestSetupAzureMonitor:
-    """Verify configure_tracing calls the right exporter setup functions."""
+    """Verify _configure_tracing calls the right exporter setup functions."""
 
     def test_setup_azure_monitor_called_when_conn_str_provided(self) -> None:
         with mock.patch("azure.ai.agentserver.core._tracing._setup_trace_export") as mock_trace:
@@ -130,7 +130,7 @@ class TestSetupAzureMonitor:
                 with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_trace_export"):
                     with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_log_export"):
                         from azure.ai.agentserver.core import _tracing
-                        _tracing.configure_tracing(connection_string="InstrumentationKey=test")
+                        _tracing._configure_tracing(connection_string="InstrumentationKey=test")
                         mock_trace.assert_called_once()
                         args = mock_trace.call_args[0]
                         assert args[1] == "InstrumentationKey=test"
@@ -141,7 +141,7 @@ class TestSetupAzureMonitor:
                 with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_trace_export"):
                     with mock.patch("azure.ai.agentserver.core._tracing._setup_otlp_log_export"):
                         from azure.ai.agentserver.core import _tracing
-                        _tracing.configure_tracing(connection_string=None)
+                        _tracing._configure_tracing(connection_string=None)
                         mock_trace.assert_not_called()
 
 
