@@ -417,7 +417,7 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
     if options.get("populateQuotaInfo"):
         headers[http_constants.HttpHeaders.PopulateQuotaInfo] = options["populateQuotaInfo"]
 
-    if options.get("maxIntegratedCacheStaleness"):
+    if "maxIntegratedCacheStaleness" in options:
         headers[http_constants.HttpHeaders.DedicatedGatewayCacheStaleness] = options["maxIntegratedCacheStaleness"]
 
     if "bypassIntegratedCache" in options:
@@ -912,6 +912,8 @@ def validate_cache_staleness_value(max_integrated_cache_staleness: Any) -> None:
 
 def validate_shard_key_value(shard_key: str) -> None:
     """Validate that shard key contains only alphanumeric characters and hyphens."""
+    if not isinstance(shard_key, str):
+        raise TypeError("Parameter 'dedicated_gateway_shard_key' must be a string")
     if not shard_key:
         raise ValueError("Parameter 'dedicated_gateway_shard_key' cannot be empty")
     if not all(c.isalnum() or c == '-' for c in shard_key):

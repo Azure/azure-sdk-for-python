@@ -427,5 +427,25 @@ class TestHeaders(unittest.TestCase):
             cosmos_client_connection._CosmosClientConnection__Post = original_connection_post
 
 
+    def side_effect_read_all_items_bypass_and_shard_key(self, *args, **kwargs):
+        # Extract request headers from args - for ReadItems it's args[2]
+        assert args[2]["x-ms-dedicatedgateway-bypass-cache"] == "true"
+        assert args[2]["x-ms-dedicatedgateway-shard-key"] == "readall-shard-789"
+        raise StopIteration
+
+    def test_read_all_items_with_bypass_and_shard_key(self):
+        cosmos_client_connection = self.container.client_connection
+        original_connection_get = cosmos_client_connection._CosmosClientConnection__Get
+        cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
+            side_effect=self.side_effect_read_all_items_bypass_and_shard_key)
+        try:
+            list(self.container.read_all_items(bypass_integrated_cache=True,
+                                                dedicated_gateway_shard_key="readall-shard-789"))
+        except StopIteration:
+            pass
+        finally:
+            cosmos_client_connection._CosmosClientConnection__Get = original_connection_get
+
+
 if __name__ == "__main__":
     unittest.main()

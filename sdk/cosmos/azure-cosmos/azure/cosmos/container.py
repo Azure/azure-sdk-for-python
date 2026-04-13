@@ -962,6 +962,13 @@ class ContainerProxy:  # pylint: disable=too-many-public-methods
         :keyword int max_integrated_cache_staleness_in_ms: The max cache staleness for the integrated cache in
             milliseconds. For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
+        :keyword bool bypass_integrated_cache: If set to True, the read will be served by the backend and won't be
+            cached in the dedicated gateway. If set to False or not provided, the integrated cache will be used if
+            configured. This option only applies to accounts configured with dedicated gateway.
+        :keyword str dedicated_gateway_shard_key: The shard key to use for the dedicated gateway request. Specifying
+            the shard key will help route the request to an instance that has cached data for this shard or bypass
+            the SQLx cache if the correlated instance is down. If not specified, the request will fall back to
+            randomly selecting an instance. This option only applies to accounts configured with dedicated gateway.
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
