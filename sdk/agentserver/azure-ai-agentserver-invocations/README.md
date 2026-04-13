@@ -66,7 +66,7 @@ Inside handler functions, the SDK sets these attributes on `request.state`:
 When tracing is enabled on the `AgentServerHost`, invocation spans are automatically created with GenAI semantic conventions:
 
 - **Span name**: `invoke_agent {FOUNDRY_AGENT_NAME}:{FOUNDRY_AGENT_VERSION}`
-- **Span attributes**: `gen_ai.system`, `gen_ai.operation.name`, `gen_ai.response.id`, `gen_ai.conversation.id`, `gen_ai.agent.id`, `gen_ai.agent.name`, `gen_ai.agent.version`
+- **Span attributes**: `gen_ai.system`, `gen_ai.operation.name`, `gen_ai.response.id`, `gen_ai.agent.id`, `gen_ai.agent.name`, `gen_ai.agent.version`, `microsoft.session.id`
 - **Error tags**: `azure.ai.agentserver.invocations.error.code`, `.error.message`
 - **Baggage keys**: `azure.ai.agentserver.invocation_id`, `.session_id`
 
