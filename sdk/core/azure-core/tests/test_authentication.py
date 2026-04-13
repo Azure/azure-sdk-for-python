@@ -7,7 +7,11 @@ from collections import namedtuple
 import base64
 import time
 from itertools import product
+from unittest.mock import Mock, patch
+
 from requests import Response
+import pytest
+
 import azure.core
 from azure.core.credentials import (
     AccessToken,
@@ -34,10 +38,6 @@ from azure.core.pipeline.policies._authentication import (
     _should_refresh_token,
 )
 from utils import HTTP_REQUESTS
-
-import pytest
-
-from unittest.mock import Mock, patch
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -310,7 +310,7 @@ def test_bearer_policy_calls_on_challenge(http_request):
     class TestPolicy(BearerTokenCredentialPolicy):
         called = False
 
-        def on_challenge(self, request, challenge):
+        def on_challenge(self, request, challenge):  # pylint: disable=arguments-renamed
             self.__class__.called = True
             return False
 
@@ -356,8 +356,8 @@ def test_bearer_policy_calls_sansio_methods(http_request):
             self.on_response = Mock()
 
         def send(self, request):
-            self.request = request
-            self.response = super(TestPolicy, self).send(request)
+            self.request = request  # pylint: disable=attribute-defined-outside-init
+            self.response = super(TestPolicy, self).send(request)  # pylint: disable=attribute-defined-outside-init
             return self.response
 
     credential = Mock(spec_set=["get_token"], get_token=Mock(return_value=AccessToken("***", int(time.time()) + 3600)))
@@ -653,10 +653,10 @@ def test_azure_key_credential_policy_raises():
 
     credential = AzureKeyCredential(str(api_key))
     with pytest.raises(TypeError):
-        credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
+        _credential_policy = AzureKeyCredentialPolicy(credential=credential, name=key_header)
 
     with pytest.raises(TypeError):
-        credential_policy = AzureKeyCredentialPolicy(credential=str(api_key), name=key_header)
+        _credential_policy = AzureKeyCredentialPolicy(credential=str(api_key), name=key_header)
 
 
 def test_azure_key_credential_updates():
