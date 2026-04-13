@@ -221,14 +221,6 @@ async def main() -> None:
             print("\nUsage Details:")
             if usage.document_pages_standard:
                 print(f"  Document pages (standard): {usage.document_pages_standard}")
-            if usage.document_pages_basic:
-                print(f"  Document pages (basic): {usage.document_pages_basic}")
-            if usage.document_pages_minimal:
-                print(f"  Document pages (minimal): {usage.document_pages_minimal}")
-            if usage.audio_hours:
-                print(f"  Audio hours: {usage.audio_hours}")
-            if usage.video_hours:
-                print(f"  Video hours: {usage.video_hours}")
             if usage.contextualization_tokens:
                 print(f"  Contextualization tokens: {usage.contextualization_tokens}")
             if usage.tokens:
