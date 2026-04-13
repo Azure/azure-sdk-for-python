@@ -11,7 +11,6 @@ import logging
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema.assets.environment import AnonymousEnvironmentSchema, EnvironmentSchema
-from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
     NestedField,
@@ -21,6 +20,7 @@ from azure.ai.ml._schema.core.fields import (
     VersionField,
 )
 from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.constants._common import AzureMLResourceType
 
 from .probe_settings_schema import ProbeSettingsSchema
 from .request_settings_schema import RequestSettingsSchema
@@ -44,7 +44,7 @@ class DeploymentTemplateSchema(PathAwareSchema):
     readiness_probe = NestedField(ProbeSettingsSchema)
     instance_count = fields.Int()
     model_mount_path = fields.Str()
-    allowed_instance_types = fields.Str()
+    allowed_instance_types = fields.List(fields.Str())
     default_instance_type = fields.Str()
     environment = UnionField(
         [

@@ -8,13 +8,13 @@
 
 from typing import Any, Dict, Iterable, Optional, cast
 
-from azure.ai.ml._scope_dependent_operations import OperationScope, OperationConfig, _ScopeDependentOperations
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
 from azure.ai.ml._telemetry import ActivityType, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities import DeploymentTemplate
-from azure.core.tracing.decorator import distributed_trace
 from azure.core.exceptions import ResourceNotFoundError
+from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -51,10 +51,10 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
         """
         try:
             # Import here to avoid circular dependencies
-            from azure.ai.ml.operations import RegistryOperations
             from azure.ai.ml._restclient.v2022_10_01_preview import (
                 AzureMachineLearningWorkspaces as ServiceClient102022,
             )
+            from azure.ai.ml.operations import RegistryOperations
 
             # Try to get credential from service client or operation config
             credential = None
@@ -140,9 +140,6 @@ class DeploymentTemplateOperations(_ScopeDependentOperations):
 
         # Handle field name variations for constructor parameters
         allowed_instance_types = get_field_value(data, "allowed_instance_types", "allowedInstanceTypes")
-        if isinstance(allowed_instance_types, str):
-            # Convert space-separated string to list
-            allowed_instance_types = allowed_instance_types.split()
 
         default_instance_type = get_field_value(data, "default_instance_type", "defaultInstanceType")
         deployment_template_type = get_field_value(data, "deployment_template_type", "deploymentTemplateType")

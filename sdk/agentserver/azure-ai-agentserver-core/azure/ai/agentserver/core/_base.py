@@ -6,18 +6,18 @@ import contextlib
 import logging
 import os
 import signal
-import sys
 from collections.abc import AsyncGenerator, AsyncIterable, AsyncIterator, Awaitable, Callable  # pylint: disable=import-error
 from typing import Any, Optional, Union
 
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
-from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
 from starlette.routing import Route
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 from . import _config, _tracing
+from ._server_version import build_server_version
 from ._version import VERSION as _CORE_VERSION
 
 logger = logging.getLogger("azure.ai.agentserver")
@@ -25,24 +25,42 @@ logger = logging.getLogger("azure.ai.agentserver")
 # Pre-built health-check response to avoid per-request allocation.
 _HEALTHY_BODY = b'{"status":"healthy"}'
 
-# Server identity header per spec: {sdk}/{version} (python/{runtime})
-_PLATFORM_SERVER_VALUE = (
-    f"azure-ai-agentserver-core/{_CORE_VERSION} "
-    f"(python/{sys.version_info.major}.{sys.version_info.minor})"
-)
-
 # Sentinel attribute name set on the console handler to prevent adding duplicates
 # across multiple AgentServerHost instantiations.
 _CONSOLE_HANDLER_ATTR = "_agentserver_console"
 
 
-class _PlatformHeaderMiddleware(BaseHTTPMiddleware):
-    """Middleware that adds x-platform-server identity header to all responses."""
+class _PlatformHeaderMiddleware:
+    """Pure-ASGI middleware that adds ``x-platform-server`` header to responses.
 
-    async def dispatch(self, request: Request, call_next):  # type: ignore[no-untyped-def, override]
-        response = await call_next(request)
-        response.headers["x-platform-server"] = _PLATFORM_SERVER_VALUE
-        return response
+    Unlike ``BaseHTTPMiddleware``, this passes the ``receive`` callable
+    through to the inner application untouched, which preserves
+    ``request.is_disconnected()`` behaviour required for client disconnect detection.
+    """
+
+    def __init__(self, app: ASGIApp, *, get_server_version: Callable[[], str]) -> None:
+        self.app = app
+        self._get_server_version = get_server_version
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http":
+            await self.app(scope, receive, send)
+            return
+
+        async def _send_with_header(message: dict[str, Any]) -> None:
+            if message["type"] == "http.response.start":
+                headers = list(message.get("headers", []))
+                headers.append(
+                    (b"x-platform-server", self._get_server_version().encode())
+                )
+                message = {**message, "headers": headers}
+            await send(message)
+
+        await self.app(scope, receive, _send_with_header)
+
+
+# Sentinel for default access_log (use module logger)
+_SENTINEL_ACCESS_LOG = object()
 
 
 class AgentServerHost(Starlette):
@@ -88,7 +106,18 @@ class AgentServerHost(Starlette):
     :param log_level: Library log level (e.g. ``"DEBUG"``, ``"INFO"``).  When
         *None* (default) the default is ``"INFO"``.
     :type log_level: Optional[str]
+    :param access_log: Logger for HTTP access logs, or *None* to disable.
+        Defaults to the library logger (``azure.ai.agentserver``).
+    :type access_log: Optional[logging.Logger]
+    :param access_log_format: Hypercorn access-log format string.
+        Supports ``%(h)s`` (remote addr), ``%(r)s`` (request line),
+        ``%(s)s`` (status), ``%(b)s`` (body size), ``%(D)s`` (duration μs),
+        ``%({header}i)s`` (request header), ``%({header}o)s`` (response header).
+        Defaults to ``%(h)s "%(r)s" %(s)s %(b)s %(D)sμs``.
+    :type access_log_format: Optional[str]
     """
+
+    _DEFAULT_ACCESS_LOG_FORMAT = '%(h)s "%(r)s" %(s)s %(b)s %(D)sμs'
 
     def __init__(
         self,
@@ -96,12 +125,22 @@ class AgentServerHost(Starlette):
         applicationinsights_connection_string: Optional[str] = None,
         graceful_shutdown_timeout: Optional[int] = None,
         log_level: Optional[str] = None,
+        access_log: Optional[logging.Logger] = _SENTINEL_ACCESS_LOG,  # type: ignore[assignment]
+        access_log_format: Optional[str] = None,
         configure_tracing: Optional[Callable[..., None]] = _tracing.configure_tracing,
         routes: Optional[list[Route]] = None,
         **kwargs: Any,
     ) -> None:
         # Shutdown handler slot (server-level lifecycle) -------------------
         self._shutdown_fn: Optional[Callable[[], Awaitable[None]]] = None
+
+        # Server version segments for the x-platform-server header.
+        # Protocol packages call register_server_version() to add their
+        # own portion; the middleware joins them at response time.
+        self._server_version_segments: list[str] = []
+        self.register_server_version(
+            build_server_version("azure-ai-agentserver-core", _CORE_VERSION)
+        )
 
         # Logging ----------------------------------------------------------
         resolved_level = _config.resolve_log_level(log_level)
@@ -115,6 +154,12 @@ class AgentServerHost(Starlette):
         # Suppress noisy Azure SDK and OTel exporter logs
         logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
         logging.getLogger("azure.monitor.opentelemetry.exporter").setLevel(logging.WARNING)
+
+        # Access logging ---------------------------------------------------
+        self._access_log: Optional[logging.Logger] = (
+            logger if access_log is _SENTINEL_ACCESS_LOG else access_log
+        )
+        self._access_log_format: str = access_log_format or self._DEFAULT_ACCESS_LOG_FORMAT
 
         # Resolved configuration (accessible as self.config)
         self.config: _config.AgentConfig = _config.AgentConfig.from_env()
@@ -171,9 +216,49 @@ class AgentServerHost(Starlette):
         super().__init__(
             routes=all_routes,
             lifespan=_lifespan,
-            middleware=[Middleware(_PlatformHeaderMiddleware)],
+            middleware=[
+                Middleware(_PlatformHeaderMiddleware, get_server_version=self._build_server_version),
+            ],
             **kwargs,
         )
+
+    # ------------------------------------------------------------------
+    # Server version (x-platform-server header)
+    # ------------------------------------------------------------------
+
+    def register_server_version(self, version_segment: str) -> None:
+        """Register a version segment for the ``x-platform-server`` header.
+
+        Protocol packages (e.g. responses, invocations) call this in their
+        ``__init__`` to add their own portion.  Handler developers can also
+        call it to append a custom version string.  Duplicates are ignored.
+
+        Use :func:`~azure.ai.agentserver.core.build_server_version` to
+        build a standard segment::
+
+            from azure.ai.agentserver.core import build_server_version
+
+            app.register_server_version(
+                build_server_version("my-library", "2.0.0")
+            )
+
+        :param version_segment: The version string to register.
+        :type version_segment: str
+        :raises ValueError: If *version_segment* is empty or whitespace-only.
+        """
+        if not version_segment or not version_segment.strip():
+            raise ValueError("Version segment must not be empty.")
+        normalized = version_segment.strip()
+        if normalized not in self._server_version_segments:
+            self._server_version_segments.append(normalized)
+
+    def _build_server_version(self) -> str:
+        """Join all registered segments into the header value.
+
+        :return: The concatenated server version string.
+        :rtype: str
+        """
+        return " ".join(self._server_version_segments)
 
     # ------------------------------------------------------------------
     # Tracing (for protocol subclasses)
@@ -270,6 +355,10 @@ class AgentServerHost(Starlette):
         config.graceful_timeout = float(self._graceful_shutdown_timeout)
         # Spec requires HTTP/1.1 only — disable HTTP/2
         config.h2_max_concurrent_streams = 0
+        # Access logging
+        if self._access_log is not None:
+            config.accesslog = self._access_log  # type: ignore[assignment]
+            config.access_log_format = self._access_log_format
         return config
 
     def run(self, host: str = "0.0.0.0", port: Optional[int] = None) -> None:
