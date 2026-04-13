@@ -45,11 +45,14 @@ from azure.core import PipelineClient
 from azure.core.pipeline import PipelineResponse, Pipeline, PipelineContext
 from azure.core.pipeline.transport import HttpTransport
 
+from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, HTTP_REQUESTS
+from rest_client import MockRestClient
+
 from azure.core.polling.base_polling import LROBasePolling, OperationResourcePolling
 from azure.core.pipeline.policies._utils import _FixedOffset
-from utils import request_and_responses_product, REQUESTS_TRANSPORT_RESPONSES, create_transport_response, HTTP_REQUESTS
 from azure.core.pipeline._tools import is_rest
-from rest_client import MockRestClient
+
+# pylint: disable=redefined-outer-name
 
 
 class SimpleResource:
@@ -90,7 +93,7 @@ CLIENT.http_request_type = None
 CLIENT.http_response_type = None
 
 
-def mock_run(client_self, request, **kwargs):
+def mock_run(client_self, request, **_kwargs):
     return TestBasePolling.mock_update(
         client_self.http_request_type, client_self.http_response_type, request.url, request.headers
     )
@@ -141,7 +144,9 @@ def deserialization_cb():
 
 @pytest.fixture
 def polling_response():
-    def _callback(http_response, headers={}):
+    def _callback(http_response, headers=None):
+        if headers is None:
+            headers = {}
         polling = LROBasePolling()
 
         response = Response()
@@ -280,19 +285,19 @@ def test_post(pipeline_client_builder, deserialization_cb, http_request, http_re
         "",
     )
 
-    def send(request, **kwargs):
+    def send(request, **_kwargs):  # pylint: disable=unused-argument
         assert request.method == "GET"
 
         if request.url == "http://example.org/location":
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"location_result": True}
             ).http_response
-        elif request.url == "http://example.org/async_monitor":
+        if request.url == "http://example.org/async_monitor":
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"status": "Succeeded"}
             ).http_response
-        else:
-            pytest.fail("No other query allowed")
+        pytest.fail("No other query allowed")
+        return None  # pylint: disable=unreachable
 
     client = pipeline_client_builder(send)
 
@@ -303,18 +308,18 @@ def test_post(pipeline_client_builder, deserialization_cb, http_request, http_re
 
     # Location has no body
 
-    def send(request, **kwargs):
+    def send(request, **_kwargs):  # pylint: disable=unused-argument,function-redefined
         assert request.method == "GET"
 
         if request.url == "http://example.org/location":
             response = TestBasePolling.mock_send(http_request, http_response, "GET", 200, body=None).http_response
             return response
-        elif request.url == "http://example.org/async_monitor":
+        if request.url == "http://example.org/async_monitor":
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"status": "Succeeded"}
             ).http_response
-        else:
-            pytest.fail("No other query allowed")
+        pytest.fail("No other query allowed")
+        return None  # pylint: disable=unreachable
 
     client = pipeline_client_builder(send)
 
@@ -340,7 +345,7 @@ def test_post_resource_location(pipeline_client_builder, deserialization_cb, htt
         "",
     )
 
-    def send(request, **kwargs):
+    def send(request, **_kwargs):  # pylint: disable=unused-argument
         assert request.method == "GET"
 
         if request.url == "http://example.org/resource_location":
@@ -382,7 +387,7 @@ def test_post_direct_success(pipeline_client_builder, deserialization_cb, http_r
         {"status": "succeeded"},
     )
 
-    def send(request, **kwargs):
+    def send(_request, **_kwargs):  # pylint: disable=unused-argument
         pytest.fail("No requests allowed")
 
     client = pipeline_client_builder(send)
@@ -406,7 +411,7 @@ def test_post_fail(pipeline_client_builder, deserialization_cb, http_request, ht
         {"status": "failed"},
     )
 
-    def send(request, **kwargs):
+    def send(_request, **_kwargs):  # pylint: disable=unused-argument
         pytest.fail("No requests allowed")
 
     client = pipeline_client_builder(send)
@@ -531,7 +536,6 @@ class TestBasePolling(object):
             resource = SimpleResource(**body)
         else:
             raise DecodeError("Impossible to deserialize")
-            resource = SimpleResource(**body)
         return resource
 
     @staticmethod
@@ -838,7 +842,7 @@ class TestBasePolling(object):
 
         # Test 3, "do the right thing" and use Location by default
         poll = LROPoller(client, initial_response, deserialization_cb, LROBasePolling(0))
-        result = poll.result()
+        _result = poll.result()
         assert result["location_result"] == True
 
         # Test 4, location has no body
@@ -884,12 +888,11 @@ def test_final_get_via_location(port, http_request, deserialization_cb):
 
 
 # THIS TEST WILL BE REMOVED SOON
-"""Weird test, but we are temporarily adding back the POST check in OperationResourcePolling
-get_final_get_url. With the test added back, we should not exit on final state via checks and
-continue through the rest of the code. Since the rest of the code requires inspection of pipeline_response
-and since I don't want to bother with adding a pipeline response object, just check that we get
-past the final state via checks
-"""
+# Weird test, but we are temporarily adding back the POST check in OperationResourcePolling
+# get_final_get_url. With the test added back, we should not exit on final state via checks and
+# continue through the rest of the code. Since the rest of the code requires inspection of pipeline_response
+# and since I don't want to bother with adding a pipeline response object, just check that we get
+# past the final state via checks
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -903,11 +906,8 @@ def test_post_check_patch(http_request):
 
 def test_continuation_token_with_non_json_serializable_data(port, deserialization_cb):
     """Test that continuation token gracefully handles non-JSON-serializable data like XML."""
-    import base64
-    import json
     import xml.etree.ElementTree as ET
 
-    from azure.core.polling.base_polling import LROBasePolling
     from azure.core.rest import HttpRequest
 
     client = MockRestClient(port)
@@ -946,10 +946,7 @@ def test_continuation_token_with_non_json_serializable_data(port, deserializatio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_continuation_token_excludes_request_headers(port, http_request, deserialization_cb):
     """Test that continuation token does not include sensitive request headers for security."""
-    import base64
-    import json
-
-    from azure.core.polling.base_polling import LROBasePolling
+    pass  # imports already at module level
 
     client = MockRestClient(port)
     request = http_request(
