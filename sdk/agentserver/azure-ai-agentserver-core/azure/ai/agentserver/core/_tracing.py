@@ -257,6 +257,39 @@ def record_error(span: Any, exc: BaseException) -> None:
         span.record_exception(exc)
 
 
+def set_current_span(span: Any) -> Any:
+    """Set a span as the current span in the OTel context.
+
+    This makes *span* the active parent for any child spans created
+    by downstream code (e.g. framework handlers).  Without this,
+    spans created inside the handler would become siblings rather
+    than children of *span*.
+
+    Returns a context token that **must** be passed to
+    :func:`detach_context` when the scope ends.  No-op when *span*
+    is ``None``.
+
+    :param span: The OTel span to make current, or *None*.
+    :type span: Any
+    :return: A context token, or *None*.
+    :rtype: Any
+    """
+    if span is None:
+        return None
+    ctx = trace.set_span_in_context(span)
+    return _otel_context.attach(ctx)
+
+
+def detach_context(token: Any) -> None:
+    """Detach a context previously attached by :func:`set_current_span`.
+
+    :param token: The token returned by :func:`set_current_span`.
+    :type token: Any
+    """
+    if token is not None:
+        _otel_context.detach(token)
+
+
 async def trace_stream(
     iterator: AsyncIterable[_Content], span: Any
 ) -> AsyncIterator[_Content]:
