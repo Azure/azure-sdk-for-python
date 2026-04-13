@@ -43,7 +43,7 @@ from tracing_common import FakeSpan
 
 
 def is_port_available(port_num):
-    req = urllib.request.Request("http://localhost:{}/health".format(port_num))
+    req = urllib.request.Request("http://127.0.0.1:{}/health".format(port_num))
     try:
         return urllib.request.urlopen(req).code != 200
     except Exception as e:
@@ -56,7 +56,6 @@ def get_port():
 
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(("", 0))
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         return s.getsockname()[1]
 
 
@@ -82,6 +81,8 @@ def start_testserver():
         child_process = subprocess.Popen(cmd, shell=True, preexec_fn=os.setsid, env=dict(os.environ))
     # Wait up to ~20s with backoff for Flask to start serving
     for delay in [0.5, 1, 1, 2, 2, 2, 4, 4, 4]:
+        if child_process.poll() is not None:
+            raise ValueError("Flask process exited with code {}".format(child_process.returncode))
         if not is_port_available(port):
             return child_process
         time.sleep(delay)
