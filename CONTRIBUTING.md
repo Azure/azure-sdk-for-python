@@ -124,8 +124,15 @@ When installing a package version not yet cached in the CFS feed, uv/pip needs t
 
 **Authenticate in terminal (with uv):**
 
+This requires the Azure CLI. First run: 
+
 ```bash
 az login
+```
+
+Then:
+
+```bash
 export UV_INDEX_AZURE_SDK_USERNAME=x
 export UV_INDEX_AZURE_SDK_PASSWORD=$(az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv)
 ```
