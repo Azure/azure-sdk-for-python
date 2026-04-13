@@ -79,6 +79,7 @@ class BadEndpointError(Exception):
 
 TEST_NAME = "foo"
 RESPONSE_BODY = {"properties": {"provisioningState": "InProgress"}}
+_DEFAULT_BODY = object()
 ASYNC_BODY = json.dumps({"status": "Succeeded"})
 ASYNC_URL = "http://dummyurlFromAzureAsyncOPHeader_Return200"
 LOCATION_BODY = json.dumps({"name": TEST_NAME})
@@ -116,7 +117,7 @@ def pipeline_client_builder():
     """
 
     def create_client(send_cb):
-        class TestHttpTransport(HttpTransport):
+        class TestHttpTransport(HttpTransport):  # pylint: disable=abstract-method,invalid-overridden-method
             def open(self):
                 pass
 
@@ -261,7 +262,7 @@ def test_delay_extraction_httpdate(polling_response, http_response):
     now_mock_datetime = datetime.datetime(1995, 11, 20, 18, 12, 8, tzinfo=_FixedOffset(-5 * 60))
     with mock.patch("datetime.datetime") as mock_datetime:
         mock_datetime.now.return_value = now_mock_datetime
-        mock_datetime.side_effect = lambda *args, **kw: basedatetime(*args, **kw)
+        mock_datetime.side_effect = basedatetime
 
         assert polling._extract_delay() == 60 * 60  # one hour in seconds
         assert str(mock_datetime.now.call_args[0][0]) == "<FixedOffset -5.0>"
@@ -352,7 +353,7 @@ def test_post_resource_location(pipeline_client_builder, deserialization_cb, htt
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"location_result": True}
             ).http_response
-        elif request.url == "http://example.org/async_monitor":
+        if request.url == "http://example.org/async_monitor":
             return TestBasePolling.mock_send(
                 http_request,
                 http_response,
@@ -360,8 +361,8 @@ def test_post_resource_location(pipeline_client_builder, deserialization_cb, htt
                 200,
                 body={"status": "Succeeded", "resourceLocation": "http://example.org/resource_location"},
             ).http_response
-        else:
-            pytest.fail("No other query allowed")
+        pytest.fail("No other query allowed")
+        return None  # pylint: disable=unreachable
 
     client = pipeline_client_builder(send)
 
@@ -418,7 +419,7 @@ def test_post_fail(pipeline_client_builder, deserialization_cb, http_request, ht
 
     with pytest.raises(HttpResponseError):
         poll = LROPoller(client, initial_response, deserialization_cb, LROBasePolling(0))
-        result = poll.result()
+        _result = poll.result()
 
 
 class TestBasePolling(object):
@@ -426,7 +427,9 @@ class TestBasePolling(object):
     convert = re.compile("([a-z0-9])([A-Z])")
 
     @staticmethod
-    def mock_send(http_request, http_response, method, status, headers=None, body=RESPONSE_BODY):
+    def mock_send(http_request, http_response, method, status, headers=None, body=_DEFAULT_BODY):
+        if body is _DEFAULT_BODY:
+            body = RESPONSE_BODY
         if headers is None:
             headers = {}
         response = Response()
@@ -502,7 +505,7 @@ class TestBasePolling(object):
             response._content = RESOURCE_BODY.encode("ascii")
 
         else:
-            raise Exception("URL does not match")
+            raise Exception("URL does not match")  # pylint: disable=broad-exception-raised
         request = http_request(
             response.request.method,
             response.request.url,
@@ -522,8 +525,8 @@ class TestBasePolling(object):
         response = pipeline_response.http_response
         try:
             body = json.loads(response.text())
-        except ValueError:
-            raise DecodeError("Impossible to deserialize")
+        except ValueError as exc:
+            raise DecodeError("Impossible to deserialize") from exc
 
         body = {TestBasePolling.convert.sub(r"\1_\2", k).lower(): v for k, v in body.items()}
         properties = body.setdefault("properties", {})
@@ -558,7 +561,7 @@ class TestBasePolling(object):
         response_body = {"properties": {"provisioningState": "Succeeded"}, "name": TEST_NAME}
         response = TestBasePolling.mock_send(http_request, http_response, "PUT", 201, {}, response_body)
 
-        def no_update_allowed(url, headers=None):
+        def _no_update_allowed(url, headers=None):
             raise ValueError("Should not try to update")
 
         poll = LROPoller(CLIENT, response, TestBasePolling.mock_outputs, LROBasePolling(0))
@@ -755,8 +758,8 @@ class TestBasePolling(object):
 
     @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(REQUESTS_TRANSPORT_RESPONSES))
     def test_long_running_negative(self, http_request, http_response):
-        global LOCATION_BODY
-        global POLLING_STATUS
+        global LOCATION_BODY  # pylint: disable=global-statement
+        global POLLING_STATUS  # pylint: disable=global-statement
         CLIENT.http_request_type = http_request
         CLIENT.http_response_type = http_response
         # Test LRO PUT throws for invalid json
@@ -814,12 +817,12 @@ class TestBasePolling(object):
                 return TestBasePolling.mock_send(
                     http_request, http_response, "GET", 200, body={"location_result": True}
                 ).http_response
-            elif request.url == "http://example.org/async_monitor":
+            if request.url == "http://example.org/async_monitor":
                 return TestBasePolling.mock_send(
                     http_request, http_response, "GET", 200, body={"status": "Succeeded"}
                 ).http_response
-            else:
-                pytest.fail("No other query allowed")
+            pytest.fail("No other query allowed")
+            return None  # pylint: disable=unreachable
 
         client = pipeline_client_builder(send)
 
@@ -847,17 +850,17 @@ class TestBasePolling(object):
 
         # Test 4, location has no body
 
-        def send(request, **kwargs):
+        def send(request, **kwargs):  # pylint: disable=function-redefined
             assert request.method == "GET"
 
             if request.url == "http://example.org/location":
                 return TestBasePolling.mock_send(http_request, http_response, "GET", 200, body=None).http_response
-            elif request.url == "http://example.org/async_monitor":
+            if request.url == "http://example.org/async_monitor":
                 return TestBasePolling.mock_send(
                     http_request, http_response, "GET", 200, body={"status": "Succeeded"}
                 ).http_response
-            else:
-                pytest.fail("No other query allowed")
+            pytest.fail("No other query allowed")
+            return None  # pylint: disable=unreachable
 
         client = pipeline_client_builder(send)
 
@@ -946,7 +949,6 @@ def test_continuation_token_with_non_json_serializable_data(port, deserializatio
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_continuation_token_excludes_request_headers(port, http_request, deserialization_cb):
     """Test that continuation token does not include sensitive request headers for security."""
-    pass  # imports already at module level
 
     client = MockRestClient(port)
     request = http_request(
