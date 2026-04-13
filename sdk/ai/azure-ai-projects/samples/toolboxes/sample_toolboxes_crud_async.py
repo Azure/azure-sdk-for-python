@@ -9,6 +9,10 @@ DESCRIPTION:
     This sample demonstrates how to perform CRUD operations on Toolboxes
     using the asynchronous AIProjectClient.
 
+    It creates two toolbox versions with MCP tools configured with different
+    `require_approval` values, switches the default version, and prints the
+    MCP `require_approval` setting from the fetched default version.
+
     Toolboxes are currently a preview feature. In the Python SDK, you access
     these operations via `project_client.beta.toolboxes`.
 
@@ -40,6 +44,12 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 
 
+def print_mcp_require_approval(tools: list[Tool]) -> None:
+    for tool in tools:
+        if isinstance(tool, MCPTool):
+            print(f"  - MCP `{tool.server_label}` require_approval: {tool.require_approval}")
+
+
 async def main() -> None:
 
     async with (
@@ -47,7 +57,7 @@ async def main() -> None:
         AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
     ):
 
-        toolbox_name = "mcp"
+        toolbox_name = "toolbox_with_mcp_tool"
 
         try:
             await project_client.beta.toolboxes.delete(toolbox_name)
@@ -55,7 +65,7 @@ async def main() -> None:
         except ResourceNotFoundError:
             pass
 
-        tools: list[Tool] = [
+        tools_with_mcp_approval_never: list[Tool] = [
             MCPTool(
                 server_label="api_specs",
                 server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
@@ -63,32 +73,64 @@ async def main() -> None:
             )
         ]
 
+        tools_with_mcp_approval_always: list[Tool] = [
+            MCPTool(
+                server_label="api_specs",
+                server_url="https://gitmcp.io/Azure/azure-rest-api-specs",
+                require_approval="always",
+            )
+        ]
+
         created = await project_client.beta.toolboxes.create_version(
             toolbox_name=toolbox_name,
-            description="Example toolbox created by the azure-ai-projects sample.",
-            metadata={"status": "created"},
-            tools=tools,
+            description="Toolbox version with MCP require_approval set to 'never'.",
+            tools=tools_with_mcp_approval_never,
         )
-        status = created.metadata.get("status", "unknown status") if created.metadata else "unknown status"
-        print(f"Toolbox: {created.name} (tools: {len(created.tools)}) (status: {status})")
+        print(f"Created toolbox: {created.name} with MCP tools requiring approval 'never' in version {created.version}")
+
+        created = await project_client.beta.toolboxes.create_version(
+            toolbox_name=toolbox_name,
+            description="Toolbox version with MCP require_approval set to 'always'.",
+            tools=tools_with_mcp_approval_always,
+        )
+        print(
+            f"Created toolbox: {created.name} with MCP tools requiring approval 'always' in version {created.version}"
+        )
+
+        updated = await project_client.beta.toolboxes.update(
+            toolbox_name,
+            default_version="2",
+        )
+        print(f"Updated toolbox: {updated.name} default version is now {updated.default_version}")
 
         fetched = await project_client.beta.toolboxes.get(toolbox_name=toolbox_name)
-        print(f"Retrieved toolbox: {fetched.name} ({fetched.id})")
+        print(f"Retrieved toolbox with default version: {fetched.default_version}")
+        fetched_version = await project_client.beta.toolboxes.get_version(
+            toolbox_name=toolbox_name,
+            version=fetched.default_version,
+        )
+        print_mcp_require_approval(fetched_version.tools)
 
-        # TODO: Restore this
-        # updated = await project_client.beta.toolboxes.update(
-        #     toolbox_name=toolbox_name,
-        #     description="Updated description for the sample toolbox.",
-        #     metadata={"status": "updated"},
-        #     tools=tools,
-        # )
-        # status = updated.metadata.get("status", "unknown status") if updated.metadata else "unknown status"
-        # print(f"Toolbox: {updated.name} (tools: {len(updated.tools)}) (status: {status})")
+        updated = await project_client.beta.toolboxes.update(
+            toolbox_name,
+            default_version="1",
+        )
+        print(f"Updated toolbox: {updated.name} default version is now {updated.default_version}")
 
-        toolboxes: list[str] = []
-        async for item in project_client.beta.toolboxes.list(limit=10):
-            toolboxes.append(item.name)
+        fetched = await project_client.beta.toolboxes.get(toolbox_name=toolbox_name)
+        print(f"Retrieved toolbox with default version: {fetched.default_version}")
+        fetched_version = await project_client.beta.toolboxes.get_version(
+            toolbox_name=toolbox_name,
+            version=fetched.default_version,
+        )
+        print_mcp_require_approval(fetched_version.tools)
+
+        toolboxes = []
+        async for item in project_client.beta.toolboxes.list():
+            toolboxes.append(item)
         print(f"Found {len(toolboxes)} toolboxes")
+        for item in toolboxes:
+            print(f"  - {item.name} ({item.id})")
 
         await project_client.beta.toolboxes.delete(toolbox_name=toolbox_name)
         print("Toolbox deleted")
