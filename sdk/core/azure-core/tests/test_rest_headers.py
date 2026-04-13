@@ -4,9 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 import sys
-from requests import Response
+
 import pytest
-from azure.core.rest._requests_basic import RestRequestsTransportResponse
 
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
@@ -36,7 +35,7 @@ RESPONSE_HEADERS_TO_IGNORE = [
 def get_response_headers(client):
     def _get_response_headers(request):
         response = client.send_request(request)
-        response.raise_for_status
+        response.raise_for_status()
         for header in RESPONSE_HEADERS_TO_IGNORE:
             response.headers.pop(header, None)
         return response.headers
@@ -62,7 +61,7 @@ def test_headers_response(get_response_headers):
     assert h.get("a") == "123, 456"
     assert h.get("A") == "123, 456"
     assert h.get("nope") is None
-    assert h.get("nope", default="default") is "default"
+    assert h.get("nope", default="default") == "default"
     assert h.get("nope", default=None) is None
     assert h.get("nope", default=[]) == []
     assert list(h) == ["a", "b"]
@@ -137,7 +136,7 @@ def test_headers_response_items_mutability(get_response_headers):
 
 def test_header_mutations(get_request_headers, get_response_headers):
     def _headers_check(h):
-        assert dict(h) == {}
+        assert not dict(h)
         h["a"] = "1"
         assert dict(h) == {"a": "1"}
         h["a"] = "2"

@@ -4,13 +4,13 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import sys
 from rest_client import MockRestClient
 import pytest
+
 from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
 from azure.core.rest import HttpRequest as RestHttpRequest
 from azure.core.pipeline import Pipeline
-from azure.core.pipeline.transport import RequestsTransport
+from azure.core.pipeline.transport import RequestsTransport  # pylint: disable=no-name-in-module
 
 
 @pytest.fixture
@@ -48,7 +48,7 @@ def test_response_set_attrs(old_response, new_response):
             # if we can set it on the old request, we want to
             # be able to set it on the new
             setattr(old_response, attr, "foo")
-        except:
+        except Exception:  # pylint: disable=broad-except
             pass
         else:
             setattr(new_response, attr, "foo")
@@ -130,10 +130,10 @@ def test_response_content_type(old_response, new_response):
 
 def _create_multiapart_request(http_request_class):
     class ResponsePolicy(object):
-        def on_request(self, *args):
+        def on_request(self, *_args):
             return
 
-        def on_response(self, request, response):
+        def on_response(self, _request, response):
             response.http_response.headers["x-ms-fun"] = "true"
 
     req0 = http_request_class("DELETE", "/container0/blob0")

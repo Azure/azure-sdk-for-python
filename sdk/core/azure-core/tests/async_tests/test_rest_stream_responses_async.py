@@ -3,10 +3,10 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.core.exceptions import HttpResponseError, ServiceRequestError
 import pytest
+
+from azure.core.exceptions import HttpResponseError, ServiceRequestError, StreamClosedError, StreamConsumedError, ResponseNotReadError
 from azure.core.rest import HttpRequest
-from azure.core.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
 
 
 @pytest.mark.asyncio
@@ -37,14 +37,14 @@ async def test_iter_with_error(client):
     async with client.send_request(request, stream=True) as response:
         try:
             response.raise_for_status()
-        except HttpResponseError as e:
+        except HttpResponseError:
             pass
     assert response.is_closed
 
     try:
         async with client.send_request(request, stream=True) as response:
             response.raise_for_status()
-    except HttpResponseError as e:
+    except HttpResponseError:
         pass
 
     assert response.is_closed
@@ -77,9 +77,10 @@ async def test_iter_text(client):
     request = HttpRequest("GET", "/basic/string")
 
     async with client.send_request(request, stream=True) as response:
-        content = ""
+        parts = []
         async for part in response.iter_text():
-            content += part
+            parts.append(part)
+        content = "".join(parts)
         assert content == "Hello, world!"
 
 
@@ -142,7 +143,7 @@ async def test_decompress_plain_no_header(client):
     async with client:
         response = await client.send_request(request, stream=True)
         with pytest.raises(ResponseNotReadError):
-            response.content
+            _ = response.content
         await response.read()
         assert response.content == b"test"
 
@@ -202,7 +203,7 @@ async def test_error_reading(client):
     async with client.send_request(request, stream=True) as response:
         await response.read()
         assert response.content == b""
-    response.content
+    _ = response.content
 
     response = await client.send_request(request, stream=True)
     with pytest.raises(HttpResponseError):

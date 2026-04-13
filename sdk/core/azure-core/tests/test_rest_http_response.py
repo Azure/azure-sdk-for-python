@@ -9,13 +9,14 @@
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
 import io
-import sys
+import xml.etree.ElementTree as ET
+
 import pytest
+from utils import readonly_checks
+
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.core.rest._requests_basic import RestRequestsTransportResponse
 from azure.core.exceptions import HttpResponseError
-import xml.etree.ElementTree as ET
-from utils import readonly_checks
 
 
 @pytest.fixture
@@ -228,7 +229,7 @@ def test_multipart_encode_non_seekable_filelike(send_request):
         def __init__(self, iterator):
             self._iterator = iterator
 
-        def read(self, *args):
+        def read(self, *_args):
             return b"".join(self._iterator)
 
     def data():
@@ -328,7 +329,7 @@ def test_passing_encoding_to_text(send_request):
 
 def test_initialize_response_abc():
     with pytest.raises(TypeError) as ex:
-        HttpResponse()
+        HttpResponse()  # pylint: disable=abstract-class-instantiated
     assert "Can't instantiate abstract class" in str(ex)
 
 
@@ -337,6 +338,6 @@ def test_readonly(send_request):
     response = send_request(HttpRequest("GET", "/health"))
 
     assert isinstance(response, RestRequestsTransportResponse)
-    from azure.core.pipeline.transport import RequestsTransportResponse
+    from azure.core.pipeline.transport import RequestsTransportResponse  # pylint: disable=no-name-in-module
 
     readonly_checks(response, old_response_class=RequestsTransportResponse)

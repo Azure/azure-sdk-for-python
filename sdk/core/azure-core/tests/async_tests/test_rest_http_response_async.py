@@ -7,12 +7,13 @@
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
 import io
+
 import pytest
-import zlib
+from utils import readonly_checks
+
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 from azure.core.rest._aiohttp import RestAioHttpTransportResponse
 from azure.core.exceptions import HttpResponseError
-from utils import readonly_checks
 
 
 @pytest.fixture
@@ -282,7 +283,7 @@ async def test_multipart_encode_non_seekable_filelike(send_request):
         def __init__(self, iterator):
             self._iterator = iterator
 
-        def read(self, *args):
+        def read(self, *_args):
             return b"".join(self._iterator)
 
     def data():
@@ -301,7 +302,7 @@ async def test_multipart_encode_non_seekable_filelike(send_request):
 
 def test_initialize_response_abc():
     with pytest.raises(TypeError) as ex:
-        AsyncHttpResponse()
+        AsyncHttpResponse()  # pylint: disable=abstract-class-instantiated
     assert "Can't instantiate abstract class" in str(ex)
 
 
@@ -311,6 +312,6 @@ async def test_readonly(send_request):
     response = await send_request(HttpRequest("GET", "/health"))
 
     assert isinstance(response, RestAioHttpTransportResponse)
-    from azure.core.pipeline.transport import AioHttpTransportResponse
+    from azure.core.pipeline.transport import AioHttpTransportResponse  # pylint: disable=no-name-in-module
 
     readonly_checks(response, old_response_class=AioHttpTransportResponse)

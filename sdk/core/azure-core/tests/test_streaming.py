@@ -24,11 +24,11 @@
 #
 # --------------------------------------------------------------------------
 import pytest
-from azure.core.pipeline.transport import RequestsTransport
+from utils import HTTP_REQUESTS
+
 from azure.core import PipelineClient
 from azure.core.exceptions import DecodeError
-from azure.core.pipeline.transport import RequestsTransport
-from utils import HTTP_REQUESTS
+from azure.core.pipeline.transport import RequestsTransport  # pylint: disable=no-name-in-module
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -56,7 +56,7 @@ def test_compress_compressed_no_header_offline(port, http_request):
     data = response.stream_download(client._pipeline, decompress=False)
     content = b"".join(list(data))
     with pytest.raises(UnicodeDecodeError):
-        decoded = content.decode("utf-8")
+        content.decode("utf-8")
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

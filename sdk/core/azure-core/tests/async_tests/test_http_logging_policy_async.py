@@ -5,19 +5,21 @@
 """Tests for the HttpLoggingPolicy."""
 
 import logging
-import types
-import pytest
 import sys
+import types
 from unittest.mock import Mock
+
+import pytest
+from utils import HTTP_RESPONSES, request_and_responses_product, create_http_response
+
 from azure.core.pipeline import PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline.policies import (
     HttpLoggingPolicy,
 )
-from utils import HTTP_RESPONSES, request_and_responses_product, create_http_response
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
-def test_http_logger(http_request, http_response):
+def test_http_logger(http_request, http_response):  # pylint: disable=too-many-statements
     class MockHandler(logging.Handler):
         def __init__(self):
             super(MockHandler, self).__init__()
@@ -131,7 +133,7 @@ def test_http_logger(http_request, http_response):
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
-def test_http_logger_operation_level(http_request, http_response):
+def test_http_logger_operation_level(http_request, http_response):  # pylint: disable=too-many-statements
     class MockHandler(logging.Handler):
         def __init__(self):
             super(MockHandler, self).__init__()

@@ -26,10 +26,10 @@
 
 from typing import AsyncIterator, TypeVar, List
 
+import pytest
+
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import HttpResponseError
-
-import pytest
 
 
 T = TypeVar("T")
@@ -54,8 +54,7 @@ class TestPaging:
             """Simplify my life and return JSON and not response, but should be response."""
             if not continuation_token:
                 return {"nextLink": "page2", "value": ["value1.0", "value1.1"]}
-            else:
-                return {"nextLink": None, "value": ["value2.0", "value2.1"]}
+            return {"nextLink": None, "value": ["value2.0", "value2.1"]}
 
         async def extract_data(response):
             return response["nextLink"], AsyncList(response["value"])
@@ -71,8 +70,7 @@ class TestPaging:
             """Simplify my life and return JSON and not response, but should be response."""
             if not continuation_token:
                 return {"nextLink": "page2", "value": ["value1.0", "value1.1"]}
-            else:
-                return {"nextLink": None, "value": ["value2.0", "value2.1"]}
+            return {"nextLink": None, "value": ["value2.0", "value2.1"]}
 
         async def extract_data(response):
             return response["nextLink"], AsyncList(response["value"])
@@ -90,7 +88,7 @@ class TestPaging:
 
     @pytest.mark.asyncio
     async def test_none_value(self):
-        async def get_next(continuation_token=None):
+        async def get_next(_continuation_token=None):
             return {"nextLink": None, "value": None}
 
         async def extract_data(response):
@@ -106,8 +104,7 @@ class TestPaging:
         async def get_next(continuation_token=None):
             if not continuation_token:
                 return {"nextLink": "foo", "value": ["bar"]}
-            else:
-                raise HttpResponseError()
+            raise HttpResponseError()
 
         async def extract_data(response):
             return response["nextLink"], iter(response["value"] or [])

@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import asyncio
-import time
 
 try:
     from unittest import mock
@@ -34,7 +33,7 @@ except ImportError:
 import pytest
 
 from azure.core import AsyncPipelineClient
-from azure.core.polling import *
+from azure.core.polling import AsyncNoPolling, NoPolling, AsyncPollingMethod, AsyncLROPoller
 from azure.core.exceptions import ServiceResponseError
 
 # from msrest.serialization import Model
@@ -82,6 +81,7 @@ class PollingTwoSteps(AsyncPollingMethod):
         self._initial_response = None
         self._deserialization_callback = None
         self._sleep = sleep
+        self._finished = False
 
     def initialize(self, _, initial_response, deserialization_callback):
         self._initial_response = initial_response
