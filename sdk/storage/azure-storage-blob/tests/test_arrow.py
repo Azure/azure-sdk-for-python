@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import pyarrow as pa
+
 from datetime import datetime, timezone
 from unittest.mock import MagicMock, patch
 
@@ -22,8 +24,7 @@ from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
-# TODO: Replace
-TEST_DATA = b""
+TEST_DATA = b"abc123"
 # ------------------------------------------------------------------------------
 
 class TestStorageApacheArrow(StorageRecordedTestCase):
@@ -32,8 +33,7 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             credential=storage_account_key.secret
         )
-        # TODO: Replace
-        self.container_name = "utcontainerc93f2958"
+        self.container_name = self.get_resource_name("utcontainerarrow")
         if self.is_live:
             try:
                 self.bsc.create_container(self.container_name)
@@ -65,12 +65,12 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy
-    def test_arrow_list_one_blob(self, **kwargs):
+    def test_arrow_list_multiple_blobs(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        blob_names = ["blobc93f2958"]  # TODO: Replace
+        blob_names = ["blob1", "blob2"]
         self.create_blobs(blob_names)
 
         container = self.bsc.get_container_client(self.container_name)
@@ -84,7 +84,7 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        blob_names = ["a", "b", "c", "d"]
+        blob_names = ["blob1", "blob2", "blob3", "blob4"]
         self.create_blobs(blob_names)
 
         container = self.bsc.get_container_client(self.container_name)
@@ -123,7 +123,10 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
         third_blobs_list = list(next(blob_pages))
         self.verify_blobs(third_blobs_list, blob_names[6:])
 
-    def test_arrow_xml_response(self):
+    # --------------------------------
+    #           Mocked Tests
+    # --------------------------------
+    def test_arrow_mock_xml_response(self):
         blob_names = [
             "a/b/blob1",
             "a/b/blob2",
@@ -187,5 +190,65 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
             blobs_list = [blob for page in page_iterator for blob in page]
 
         self.verify_blobs(blobs_list, blob_names)
+
+    def test_arrow_mock_expected_response(self):
+        def _make_arrow_page(names: list[str], next_marker: str | None = None) -> bytes:
+            schema_meta = {b"NextMarker": (next_marker or "").encode()} if next_marker else {}
+            schema = pa.schema([pa.field("Name", pa.string())], metadata=schema_meta)
+            batch = pa.record_batch([pa.array(names, type=pa.string())], schema=schema)
+            sink = pa.BufferOutputStream()
+            with pa.ipc.new_stream(sink, schema) as writer:
+                writer.write_batch(batch)
+            return sink.getvalue().to_pybytes()
+
+        blob_names = [
+            "a/b/blob1",
+            "a/b/blob2",
+            "a/c/blob3",
+            "d/blob4",
+            "d/e/f/blob5",
+            "flat_blob1",
+            "flat_blob2",
+            "flat_blob3",
+            "flat_blob4",
+        ]
+        # Three pages of 3 blobs each, using the marker to chain pages.
+        pages = [
+            _make_arrow_page(blob_names[0:3], next_marker="marker1"),
+            _make_arrow_page(blob_names[3:6], next_marker="marker2"),
+            _make_arrow_page(blob_names[6:9], next_marker=None),
+        ]
+        page_index = 0
+
+        container_client = ContainerClient(
+            account_url="https://account.blob.core.windows.net",
+            container_name="mycontainer",
+            credential=AzureNamedKeyCredential("account", "A" * 64),
+        )
+
+        mock_http_response = MagicMock()
+        mock_http_response.location_mode = None
+        mock_pipeline_response = MagicMock()
+        mock_pipeline_response.http_response = mock_http_response
+
+        def fake_list_blob_flat_segment_apache_arrow(**kwargs):
+            nonlocal page_index
+            cls = kwargs.get("cls")
+            raw = iter([pages[page_index]])
+            page_index += 1
+            return cls(mock_pipeline_response, raw, {"Content-Type": "application/vnd.apache.arrow.stream"})
+
+        with patch.object(
+            container_client._client.container,  # pylint: disable=protected-access
+            "list_blob_flat_segment_apache_arrow",
+            side_effect=fake_list_blob_flat_segment_apache_arrow,
+        ):
+            blob_pages = container_client.list_blobs(use_arrow=True, results_per_page=3).by_page()
+            first_blobs_list = list(next(blob_pages))
+            self.verify_blobs(first_blobs_list, blob_names[0:3])
+            second_blobs_list = list(next(blob_pages))
+            self.verify_blobs(second_blobs_list, blob_names[3:6])
+            third_blobs_list = list(next(blob_pages))
+            self.verify_blobs(third_blobs_list, blob_names[6:9])
 
     # Do the same for walk_blobs
