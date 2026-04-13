@@ -9,6 +9,7 @@ Several tools support AI-assisted development with the Azure SDK:
 
 | Tool | Description |
 |---|---|
+| [VS Code](https://code.visualstudio.com/) | Code editor with built-in AI features and Copilot integration |
 | [GitHub Copilot](https://github.com/features/copilot) | AI code completion and chat inside VS Code, Visual Studio, JetBrains IDEs, and GitHub.com |
 | [Copilot CLI](https://docs.github.com/en/copilot/github-copilot-in-the-cli/about-github-copilot-in-the-cli) | AI assistance for shell commands and Azure CLI usage |
 | [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | Terminal-based AI coding agent from Anthropic |
