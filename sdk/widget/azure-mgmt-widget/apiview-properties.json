@@ -1,0 +1,33 @@
+{
+    "CrossLanguagePackageId": "Microsoft.Widget",
+    "CrossLanguageDefinitionId": {
+        "azure.mgmt.widget.models.Resource": "Azure.ResourceManager.CommonTypes.Resource",
+        "azure.mgmt.widget.models.TrackedResource": "Azure.ResourceManager.CommonTypes.TrackedResource",
+        "azure.mgmt.widget.models.Employee": "Microsoft.Widget.Employee",
+        "azure.mgmt.widget.models.EmployeeProperties": "Microsoft.Widget.EmployeeProperties",
+        "azure.mgmt.widget.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
+        "azure.mgmt.widget.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
+        "azure.mgmt.widget.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
+        "azure.mgmt.widget.models.Operation": "Azure.ResourceManager.CommonTypes.Operation",
+        "azure.mgmt.widget.models.OperationDisplay": "Azure.ResourceManager.CommonTypes.OperationDisplay",
+        "azure.mgmt.widget.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.mgmt.widget.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
+        "azure.mgmt.widget.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
+        "azure.mgmt.widget.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
+        "azure.mgmt.widget.models.ProvisioningState": "Microsoft.Widget.ProvisioningState",
+        "azure.mgmt.widget.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.widget.aio.operations.Operations.list": "Azure.ResourceManager.Operations.list",
+        "azure.mgmt.widget.operations.EmployeesOperations.get": "Microsoft.Widget.Employees.get",
+        "azure.mgmt.widget.aio.operations.EmployeesOperations.get": "Microsoft.Widget.Employees.get",
+        "azure.mgmt.widget.operations.EmployeesOperations.begin_create_or_update": "Microsoft.Widget.Employees.createOrUpdate",
+        "azure.mgmt.widget.aio.operations.EmployeesOperations.begin_create_or_update": "Microsoft.Widget.Employees.createOrUpdate",
+        "azure.mgmt.widget.operations.EmployeesOperations.update": "Microsoft.Widget.Employees.update",
+        "azure.mgmt.widget.aio.operations.EmployeesOperations.update": "Microsoft.Widget.Employees.update",
+        "azure.mgmt.widget.operations.EmployeesOperations.begin_delete": "Microsoft.Widget.Employees.delete",
+        "azure.mgmt.widget.aio.operations.EmployeesOperations.begin_delete": "Microsoft.Widget.Employees.delete",
+        "azure.mgmt.widget.operations.EmployeesOperations.list_by_resource_group": "Microsoft.Widget.Employees.listByResourceGroup",
+        "azure.mgmt.widget.aio.operations.EmployeesOperations.list_by_resource_group": "Microsoft.Widget.Employees.listByResourceGroup",
+        "azure.mgmt.widget.operations.EmployeesOperations.list_by_subscription": "Microsoft.Widget.Employees.listBySubscription",
+        "azure.mgmt.widget.aio.operations.EmployeesOperations.list_by_subscription": "Microsoft.Widget.Employees.listBySubscription"
+    }
+}

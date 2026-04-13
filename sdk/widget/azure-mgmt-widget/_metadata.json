@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2024-10-01-preview",
+  "apiVersions": {
+    "Microsoft.Widget": "2024-10-01-preview"
+  },
+  "commit": "a08977adddb4586095e2bed9ca60612d9e1bed84",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/widget/resource-manager/Microsoft.Widget/Widget",
+  "emitterVersion": "0.61.3"
+}
