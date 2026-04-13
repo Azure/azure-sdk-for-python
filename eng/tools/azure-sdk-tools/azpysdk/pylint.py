@@ -13,7 +13,7 @@ from ci_tools.environment_exclusions import is_check_enabled
 from ci_tools.logging import logger, run_logged
 
 REPO_ROOT = discover_repo_root()
-PYLINT_VERSION = "3.2.7"
+PYLINT_VERSION = "4.0.4"
 
 
 class pylint(Check):
@@ -141,16 +141,28 @@ class pylint(Check):
                 results.append(e.returncode)
                 package_failed = True
 
-            # Run pylint on tests and samples with appropriate pylintrc if they exist and next pylint is being used
-            if args.next:
-                tests_dir = os.path.join(package_dir, "tests")
-                samples_dir = os.path.join(package_dir, "samples")
+            # Run pylint on tests and samples with appropriate pylintrc if they exist
+            tests_dir = os.path.join(package_dir, "tests")
+            samples_dir = os.path.join(package_dir, "samples")
 
-                # Run tests with test_pylintrc
-                if os.path.exists(tests_dir):
-                    try:
-                        test_rcfile = os.path.join(REPO_ROOT, "eng/test_pylintrc")
-                        logger.info(
+            # Run tests with test_pylintrc
+            if os.path.exists(tests_dir):
+                try:
+                    test_rcfile = (
+                        os.path.join(REPO_ROOT, "eng/test_pylintrc") if args.next else os.path.join(REPO_ROOT, "test_pylintrc")
+                    )
+                    logger.info(
+                        [
+                            executable,
+                            "-m",
+                            "pylint",
+                            "--rcfile={}".format(test_rcfile),
+                            "--output-format=parseable",
+                            tests_dir,
+                        ]
+                    )
+                    results.append(
+                        check_call(
                             [
                                 executable,
                                 "-m",
@@ -160,32 +172,34 @@ class pylint(Check):
                                 tests_dir,
                             ]
                         )
-                        results.append(
-                            check_call(
-                                [
-                                    executable,
-                                    "-m",
-                                    "pylint",
-                                    "--rcfile={}".format(test_rcfile),
-                                    "--output-format=parseable",
-                                    tests_dir,
-                                ]
-                            )
+                    )
+                except CalledProcessError as e:
+                    logger.error(
+                        "{} tests exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
+                            package_name, e.returncode
                         )
-                    except CalledProcessError as e:
-                        logger.error(
-                            "{} tests exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
-                                package_name, e.returncode
-                            )
-                        )
-                        results.append(e.returncode)
-                        package_failed = True
+                    )
+                    results.append(e.returncode)
+                    package_failed = True
 
-                # Run samples with samples_pylintrc
-                if os.path.exists(samples_dir):
-                    try:
-                        samples_rcfile = os.path.join(REPO_ROOT, "eng/samples_pylintrc")
-                        logger.info(
+            # Run samples with samples_pylintrc
+            if os.path.exists(samples_dir):
+                try:
+                    samples_rcfile = (
+                        os.path.join(REPO_ROOT, "eng/samples_pylintrc") if args.next else os.path.join(REPO_ROOT, "samples_pylintrc")
+                    )
+                    logger.info(
+                        [
+                            executable,
+                            "-m",
+                            "pylint",
+                            "--rcfile={}".format(samples_rcfile),
+                            "--output-format=parseable",
+                            samples_dir,
+                        ]
+                    )
+                    results.append(
+                        check_call(
                             [
                                 executable,
                                 "-m",
@@ -195,26 +209,15 @@ class pylint(Check):
                                 samples_dir,
                             ]
                         )
-                        results.append(
-                            check_call(
-                                [
-                                    executable,
-                                    "-m",
-                                    "pylint",
-                                    "--rcfile={}".format(samples_rcfile),
-                                    "--output-format=parseable",
-                                    samples_dir,
-                                ]
-                            )
+                    )
+                except CalledProcessError as e:
+                    logger.error(
+                        "{} samples exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
+                            package_name, e.returncode
                         )
-                    except CalledProcessError as e:
-                        logger.error(
-                            "{} samples exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(
-                                package_name, e.returncode
-                            )
-                        )
-                        results.append(e.returncode)
-                        package_failed = True
+                    )
+                    results.append(e.returncode)
+                    package_failed = True
 
             if args.next and in_ci():
                 if package_failed:

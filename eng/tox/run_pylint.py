@@ -78,60 +78,56 @@ if __name__ == "__main__":
         )
         exit_code = max(exit_code, e.returncode)
         
-    # Run pylint on tests and samples with appropriate pylintrc if they exist and next pylint is being used
-    if args.next:
-        logging.info("Running with --next flag, checking for tests and samples directories")
-        tests_dir = os.path.join(args.target_package, "tests")
-        samples_dir = os.path.join(args.target_package, "samples")
-        
-        logging.info(f"Checking tests directory: {tests_dir}")
-        logging.info(f"Tests directory exists: {os.path.exists(tests_dir)}")
-        
-        # Run tests with test_pylintrc
-        if os.path.exists(tests_dir):
-            try:
-                test_rcfile = os.path.join(root_dir, "eng/test_pylintrc")
-                logging.info(f"Running pylint on tests with config: {test_rcfile}")
-                check_call(
-                    [
-                        sys.executable,
-                        "-m",
-                        "pylint",
-                        "--rcfile={}".format(test_rcfile),
-                        "--output-format=parseable",
-                        tests_dir
-                    ]
-                )
-            except CalledProcessError as e:
-                logging.error(
-                    "{} tests exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(pkg_details.name, e.returncode)
-                )
-                exit_code = max(exit_code, e.returncode)
-            
-        # Run samples with samples_pylintrc
-        logging.info(f"Checking samples directory: {samples_dir}")
-        logging.info(f"Samples directory exists: {os.path.exists(samples_dir)}")
-        if os.path.exists(samples_dir):
-            try:
-                samples_rcfile = os.path.join(root_dir, "eng/samples_pylintrc")
-                logging.info(f"Running pylint on samples with config: {samples_rcfile}")
-                check_call(
-                    [
-                        sys.executable,
-                        "-m",
-                        "pylint",
-                        "--rcfile={}".format(samples_rcfile),
-                        "--output-format=parseable",
-                        samples_dir
-                    ]
-                )
-            except CalledProcessError as e:
-                logging.error(
-                    "{} samples exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(pkg_details.name, e.returncode)
-                )
-                exit_code = max(exit_code, e.returncode)
-    else:
-        logging.info("Not running with --next flag, skipping tests and samples")
+    # Run pylint on tests and samples with appropriate pylintrc if they exist
+    tests_dir = os.path.join(args.target_package, "tests")
+    samples_dir = os.path.join(args.target_package, "samples")
+
+    logging.info(f"Checking tests directory: {tests_dir}")
+    logging.info(f"Tests directory exists: {os.path.exists(tests_dir)}")
+
+    # Run tests with test_pylintrc
+    if os.path.exists(tests_dir):
+        try:
+            test_rcfile = os.path.join(root_dir, "eng/test_pylintrc") if args.next else os.path.join(root_dir, "test_pylintrc")
+            logging.info(f"Running pylint on tests with config: {test_rcfile}")
+            check_call(
+                [
+                    sys.executable,
+                    "-m",
+                    "pylint",
+                    "--rcfile={}".format(test_rcfile),
+                    "--output-format=parseable",
+                    tests_dir
+                ]
+            )
+        except CalledProcessError as e:
+            logging.error(
+                "{} tests exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(pkg_details.name, e.returncode)
+            )
+            exit_code = max(exit_code, e.returncode)
+
+    # Run samples with samples_pylintrc
+    logging.info(f"Checking samples directory: {samples_dir}")
+    logging.info(f"Samples directory exists: {os.path.exists(samples_dir)}")
+    if os.path.exists(samples_dir):
+        try:
+            samples_rcfile = os.path.join(root_dir, "eng/samples_pylintrc") if args.next else os.path.join(root_dir, "samples_pylintrc")
+            logging.info(f"Running pylint on samples with config: {samples_rcfile}")
+            check_call(
+                [
+                    sys.executable,
+                    "-m",
+                    "pylint",
+                    "--rcfile={}".format(samples_rcfile),
+                    "--output-format=parseable",
+                    samples_dir
+                ]
+            )
+        except CalledProcessError as e:
+            logging.error(
+                "{} samples exited with linting error {}. Please see this link for more information https://aka.ms/azsdk/python/pylint-guide".format(pkg_details.name, e.returncode)
+            )
+            exit_code = max(exit_code, e.returncode)
 
     if exit_code > 0:
         if args.next and in_ci():
