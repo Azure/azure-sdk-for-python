@@ -2706,7 +2706,10 @@ def _update_metric_value(
         metric_dict["label"] = metric_value
         result_name = "label"
         if criteria_type == "azure_ai_evaluator":
-            passed = str(metric_value).lower() in ["pass", "true"]
+            if metric_value is None:
+                passed = None
+            else:
+                passed = str(metric_value).lower() in ["pass", "true"]
             metric_dict["passed"] = passed
             derived_passed = passed
     elif (metric_key.endswith("_reason") and not metric_key.endswith("_finish_reason")) or metric_key == "reason":
@@ -2768,6 +2771,13 @@ def _update_metric_value(
         result_name = "sample"
         result_name_child_level = "usage"
         result_name_nested_child_level = "completion_tokens"
+    elif metric_key.endswith("_status") or metric_key == "status":
+        metric_dict["status"] = metric_value
+        result_name = "status"
+    elif metric_key.endswith("_properties") or metric_key == "properties":
+        if isinstance(metric_value, dict):
+            metric_dict["properties"] = metric_value
+            result_name = "properties"
     elif not any(
         metric_key.endswith(suffix)
         for suffix in [
@@ -2783,6 +2793,8 @@ def _update_metric_value(
             "_total_tokens",
             "_prompt_tokens",
             "_completion_tokens",
+            "_status",
+            "_properties",
         ]
     ):
         # If no score found yet and this doesn't match other patterns, use as score
@@ -2902,12 +2914,13 @@ def _create_result_object(
     """
     # Extract values
     score = metric_values.get("score")
-    label = metric_values.get("label")
     reason = metric_values.get("reason")
     threshold = metric_values.get("threshold")
     passed = metric_values.get("passed")
+    label = metric_values.get("label", passed)
     sample = metric_values.get("sample")
     properties = metric_values.get("properties")
+    status = metric_values.get("status", "completed" if passed is not None else "error")
 
     # Handle decrease boolean metrics
     if is_inverse:
@@ -2923,6 +2936,7 @@ def _create_result_object(
         "reason": reason,
         "threshold": threshold,
         "passed": passed,
+        "status": status,
     }
 
     if sample is not None:
@@ -3319,7 +3333,7 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     elif metric_key == "xpia_information_gathering":
         metric = "xpia_information_gathering"
         return metric
-    elif metric_key == "f1_result" or metric_key == "f1_threshold" or metric_key == "f1_score":
+    elif metric_key == "f1_result" or metric_key == "f1_threshold" or metric_key == "f1_score" or metric_key == "f1_status":
         metric = "f1_score"
         return metric
     for expected_metric in metric_list:
@@ -3376,13 +3390,13 @@ def _calculate_aoai_evaluation_summary(
 
     Return structure:
     {
-        "result_counts": {"total": int, "passed": int, "failed": int, "errored": int},
+        "result_counts": {"total": int, "passed": int, "failed": int, "errored": int, "skipped": int},
         "per_model_usage": [{"model_name": str, "invocation_count": int, "total_tokens": int, ...}],
-        "per_testing_criteria_results": [{"testing_criteria": str, "passed": int, "failed": int}]
+        "per_testing_criteria_results": [{"testing_criteria": str, "passed": int, "failed": int, "skipped": int, "errored": int}]
     }
     """
     # Calculate result counts based on aoaiResults
-    result_counts = {"total": 0, "errored": 0, "failed": 0, "passed": 0}
+    result_counts = {"total": 0, "errored": 0, "failed": 0, "passed": 0, "skipped": 0}
 
     # Count results by status and calculate per model usage
     model_usage_stats = {}  # Dictionary to aggregate usage by model
@@ -3396,6 +3410,7 @@ def _calculate_aoai_evaluation_summary(
         passed_count = 0
         failed_count = 0
         error_count = 0
+        skipped_count = 0
         if isinstance(aoai_result, dict) and "results" in aoai_result:
             logger.info(
                 f"Processing aoai_result with id: {getattr(aoai_result, 'id', 'unknown')}, results count: {len(aoai_result['results'])}"
@@ -3424,43 +3439,50 @@ def _calculate_aoai_evaluation_summary(
                             f"Skip counts for non-primary metric for testing_criteria: {testing_criteria}, metric: {result_item.get('metric', '')}"
                         )
                         continue
-                    # Check if the result has a 'passed' field
-                    if "passed" in result_item and result_item["passed"] is not None:
-                        if testing_criteria not in result_counts_stats:
-                            result_counts_stats[testing_criteria] = {
-                                "testing_criteria": testing_criteria,
-                                "failed": 0,
-                                "passed": 0,
-                            }
-                        if result_item["passed"] is True:
-                            passed_count += 1
-                            result_counts_stats[testing_criteria]["passed"] += 1
-
-                        elif result_item["passed"] is False:
-                            failed_count += 1
-                            result_counts_stats[testing_criteria]["failed"] += 1
+                    # Initialize per-criteria tracking if needed
+                    if testing_criteria not in result_counts_stats:
+                        result_counts_stats[testing_criteria] = {
+                            "testing_criteria": testing_criteria,
+                            "passed": 0,
+                            "failed": 0,
+                            "skipped": 0,
+                            "errored": 0,
+                        }
+                    # Check if the result indicates a skipped status
+                    if result_item.get("status") == "skipped":
+                        skipped_count += 1
+                        result_counts_stats[testing_criteria]["skipped"] += 1
                     # Check if the result indicates an error status
-                    elif ("status" in result_item and result_item["status"] in ["error", "errored"]) or (
+                    elif result_item.get("status") in ("error", "errored") or (
                         "sample" in result_item
                         and isinstance(result_item["sample"], dict)
                         and result_item["sample"].get("error", None) is not None
                     ):
                         error_count += 1
+                        result_counts_stats[testing_criteria]["errored"] += 1
+                    # Check if the result has a 'passed' field
+                    elif result_item.get("passed") is not None:
+                        if result_item["passed"] is True:
+                            passed_count += 1
+                            result_counts_stats[testing_criteria]["passed"] += 1
+                        elif result_item["passed"] is False:
+                            failed_count += 1
+                            result_counts_stats[testing_criteria]["failed"] += 1
         elif hasattr(aoai_result, "status") and aoai_result.status == "error":
             error_count += 1
         elif isinstance(aoai_result, dict) and aoai_result.get("status") == "error":
             error_count += 1
 
-        # Update overall result counts, error counts will not be considered for passed/failed
-        if error_count > 0:
-            result_counts["errored"] += 1
-
-        if failed_count > 0:
-            result_counts["failed"] += 1
-        elif (
-            failed_count == 0 and passed_count > 0 and passed_count == len(aoai_result.get("results", [])) - error_count
-        ):
+        # Update overall result counts — mutually exclusive row-level classification
+        # Priority: passed (all executed tests passed) > failed (any fail) > errored (no execution, only errors/skips) > skipped (all skipped)
+        if passed_count > 0 and failed_count == 0:
             result_counts["passed"] += 1
+        elif failed_count > 0:
+            result_counts["failed"] += 1
+        elif error_count > 0:
+            result_counts["errored"] += 1
+        elif skipped_count > 0:
+            result_counts["skipped"] += 1
 
         # Extract usage statistics from aoai_result.sample
         sample_data_list = []
@@ -3542,11 +3564,19 @@ def _calculate_aoai_evaluation_summary(
             cur_failed_count = stats_val.get("failed", 0)
             if _is_none_or_nan(cur_failed_count):
                 cur_failed_count = 0
+            cur_skipped = stats_val.get("skipped", 0)
+            if _is_none_or_nan(cur_skipped):
+                cur_skipped = 0
+            cur_errored = stats_val.get("errored", 0)
+            if _is_none_or_nan(cur_errored):
+                cur_errored = 0
             result_counts_stats_val.append(
                 {
                     "testing_criteria": criteria_name if not _is_none_or_nan(criteria_name) else "unknown",
                     "passed": cur_passed,
                     "failed": cur_failed_count,
+                    "skipped": cur_skipped,
+                    "errored": cur_errored,
                 }
             )
     return {
