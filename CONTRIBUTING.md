@@ -151,7 +151,7 @@ pip install <package-name> --extra-index-url https://pkgs.dev.azure.com/azure-sd
 #### To Install a specific dev build version of a package
 For e.g.
 ```
-pip install azure-appconfiguration==1.0.0b6.dev20191205001
+pip install azure-appconfiguration==1.0.0b6.dev20191205001 --extra-index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple
 ```
 
 To test a package being developed against latest dev build version of dependent packages:
