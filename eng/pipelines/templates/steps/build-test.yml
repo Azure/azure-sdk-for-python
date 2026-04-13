@@ -9,7 +9,7 @@ parameters:
   BeforeTestSteps: []
   AfterTestSteps: []
   CoverageArg: ''
-  ToxTestEnv: ""
+  CheckEnv: ""
   RunCoverage: ne(variables['CoverageArg'], '--disablecov')
   ToxEnvParallel: ''
   InjectedPackages: ''
@@ -93,7 +93,7 @@ steps:
           ${{ parameters.CoverageArg }}
           --mark_arg="$markArg"
           --service="${{ parameters.ServiceDirectory }}"
-          --checks="${{ parameters.ToxTestEnv }}"
+          --checks="${{ parameters.CheckEnv }}"
           --injected-packages="${{ parameters.InjectedPackages }}";
           Write-Host "Last exit code: $LASTEXITCODE";
           exit $LASTEXITCODE;
@@ -115,7 +115,7 @@ steps:
           ${{ parameters.CoverageArg }} `
           --mark_arg="$markArg" `
           --service="${{ parameters.ServiceDirectory }}" `
-          --checks="${{ parameters.ToxTestEnv }}" `
+          --checks="${{ parameters.CheckEnv }}" `
           --injected-packages="${{ parameters.InjectedPackages }}";
         exit $LASTEXITCODE;
       env: ${{ parameters.EnvVars }}
