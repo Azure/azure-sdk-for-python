@@ -127,11 +127,8 @@ def get_input_expanded(request: CreateResponse) -> list[Item]:
     return items
 
 
-def _get_input_text(request: CreateResponse) -> str:
+def get_input_text(request: CreateResponse) -> str:
     """Extract all text content from ``CreateResponse.input`` as a single string.
-
-    Internal helper — callers should use :meth:`ResponseContext.get_input_text`
-    instead, which handles item-reference resolution.
 
     :param request: The create-response request.
     :type request: CreateResponse
