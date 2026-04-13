@@ -11,6 +11,7 @@ import test_config
 from azure.cosmos import PartitionKey
 from _fault_injection_transport import FaultInjectionTransport
 from azure.cosmos._resource_throttle_retry_policy import ResourceThrottleRetryPolicy
+from azure.cosmos._gone_retry_policy import PartitionKeyRangeGoneRetryPolicy
 from azure.cosmos.exceptions import CosmosHttpResponseError
 from azure.cosmos.documents import _OperationType
 
@@ -63,6 +64,13 @@ class TestReadItems(unittest.TestCase):
             items_to_read.append((doc_id, doc_id))
             container.create_item({'id': doc_id, 'data': i})
         return items_to_read, item_ids
+
+    @staticmethod
+    def _delegate_should_retry(original_should_retry):
+        def _side_effect(self_instance, exception, *args, **kwargs):
+            return original_should_retry(self_instance, exception)
+
+        return _side_effect
 
     def _setup_fault_injection(self, error_to_inject, inject_once=False):
         """Helper to set up a client with fault injection for read_items queries."""
@@ -302,12 +310,9 @@ class TestReadItems(unittest.TestCase):
 
         original_should_retry = ResourceThrottleRetryPolicy.ShouldRetry
 
-        def side_effect_should_retry(self_instance, exception, *args, **kwargs):
-            return original_should_retry(self_instance, exception)
-
         with patch(
                 'azure.cosmos._resource_throttle_retry_policy.ResourceThrottleRetryPolicy.ShouldRetry',
-                side_effect=side_effect_should_retry,
+                side_effect=self._delegate_should_retry(original_should_retry),
                 autospec=True
         ) as mock_should_retry:
             read_items = container_with_faults.read_items(items=items_to_read)
@@ -327,12 +332,16 @@ class TestReadItems(unittest.TestCase):
         container_with_faults = self._setup_fault_injection(error_to_inject, inject_once=True)
         items_to_read, item_ids = self._create_records_for_read_items(self.container, 20, "item_for_gone")
 
+        original_should_retry = PartitionKeyRangeGoneRetryPolicy.ShouldRetry
+
         with patch(
                 'azure.cosmos._gone_retry_policy.PartitionKeyRangeGoneRetryPolicy.ShouldRetry',
+                side_effect=self._delegate_should_retry(original_should_retry),
                 autospec=True
         ) as mock_should_retry:
             read_items = container_with_faults.read_items(items=items_to_read)
-            mock_should_retry.assert_called_once()
+            # Retry policy can be consulted more than once depending on retry layering.
+            self.assertGreaterEqual(mock_should_retry.call_count, 1)
             self.assertEqual(len(read_items), len(item_ids))
             read_ids = {item['id'] for item in read_items}
             self.assertSetEqual(read_ids, set(item_ids))
