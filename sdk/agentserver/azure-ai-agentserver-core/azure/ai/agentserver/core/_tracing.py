@@ -283,11 +283,20 @@ def set_current_span(span: Any) -> Any:
 def detach_context(token: Any) -> None:
     """Detach a context previously attached by :func:`set_current_span`.
 
+    Best-effort no-op when *token* is ``None`` or when the token is no
+    longer the current OpenTelemetry context.
+
     :param token: The token returned by :func:`set_current_span`.
     :type token: Any
     """
     if token is not None:
-        _otel_context.detach(token)
+        try:
+            _otel_context.detach(token)
+        except ValueError:
+            logging.getLogger(__name__).debug(
+                "Ignoring OpenTelemetry context detach for a non-current token.",
+                exc_info=True,
+            )
 
 
 async def trace_stream(
