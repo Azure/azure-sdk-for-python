@@ -7,8 +7,19 @@ try:
     from io import BytesIO
 except ImportError:
     from cStringIO import StringIO as BytesIO
-import pytest
+import os
+import tempfile
+import time
 from itertools import product
+
+try:
+    from unittest.mock import Mock
+except ImportError:
+    from mock import Mock
+
+import pytest
+from utils import HTTP_REQUESTS, request_and_responses_product, HTTP_RESPONSES, create_http_response
+
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     AzureError,
@@ -17,23 +28,14 @@ from azure.core.exceptions import (
     ServiceResponseError,
     ServiceResponseTimeoutError,
 )
+from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.policies import (
     RetryPolicy,
     RetryMode,
 )
-from azure.core.pipeline import Pipeline, PipelineResponse
 from azure.core.pipeline.transport import (
     HttpTransport,
 )
-import tempfile
-import os
-import time
-
-try:
-    from unittest.mock import Mock
-except ImportError:
-    from mock import Mock
-from utils import HTTP_REQUESTS, request_and_responses_product, HTTP_RESPONSES, create_http_response
 
 
 def test_retry_code_class_variables():
@@ -229,10 +231,10 @@ def test_retry_seekable_file(http_request, http_response):
                     response = create_http_response(http_response, request, None)
                     response.status_code = 400
                     return response
+            return None
 
-    file = tempfile.NamedTemporaryFile(delete=False)
-    file.write(b"Lots of dataaaa")
-    file.close()
+    with tempfile.NamedTemporaryFile(delete=False) as file:
+        file.write(b"Lots of dataaaa")
     http_request = http_request("GET", "http://localhost/")
     headers = {"Content-Type": "multipart/form-data"}
     http_request.headers = headers
@@ -252,7 +254,7 @@ def test_retry_seekable_file(http_request, http_response):
 def test_retry_timeout(http_request):
     timeout = 1
 
-    def send(request, **kwargs):
+    def send(_request, **kwargs):
         assert kwargs["connection_timeout"] <= timeout, "policy should set connection_timeout not to exceed timeout"
         raise ServiceResponseError("oops")
 
@@ -265,7 +267,7 @@ def test_retry_timeout(http_request):
     pipeline = Pipeline(transport, [RetryPolicy(timeout=timeout)])
 
     with pytest.raises(ServiceResponseTimeoutError):
-        response = pipeline.run(http_request("GET", "http://localhost/"))
+        _response = pipeline.run(http_request("GET", "http://localhost/"))
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
@@ -341,7 +343,7 @@ def test_configure_retries_uses_constructor_values():
     assert retry_settings["max_backoff"] == 60
     assert retry_settings["timeout"] == 300
     assert retry_settings["methods"] == frozenset(["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE"])
-    assert retry_settings["history"] == []
+    assert not retry_settings["history"]
 
 
 def test_configure_retries_options_override_constructor():
@@ -379,9 +381,9 @@ def test_configure_retries_options_override_constructor():
     assert retry_settings["max_backoff"] == 180
     assert retry_settings["timeout"] == 600
     assert retry_settings["methods"] == frozenset(["GET", "POST"])
-    assert retry_settings["history"] == []
+    assert not retry_settings["history"]
 
-    # Verify options dict was modified (values were popped)
+    # Verify options dict was modified(values were popped)
     assert "retry_total" not in options
     assert "retry_connect" not in options
     assert "retry_read" not in options
@@ -409,4 +411,4 @@ def test_configure_retries_default_values():
     assert retry_settings["max_backoff"] == 120  # default retry_backoff_max (BACKOFF_MAX)
     assert retry_settings["timeout"] == 604800  # default timeout
     assert retry_settings["methods"] == frozenset(["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE"])
-    assert retry_settings["history"] == []
+    assert not retry_settings["history"]

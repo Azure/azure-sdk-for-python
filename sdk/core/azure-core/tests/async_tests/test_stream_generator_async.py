@@ -2,17 +2,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from unittest import mock
+
+import pytest
 import requests
-from azure.core.pipeline.transport import (
+from utils import request_and_responses_product, ASYNC_HTTP_RESPONSES, create_http_response
+
+from azure.core.pipeline import AsyncPipeline, PipelineResponse
+from azure.core.pipeline.transport import (  # pylint: disable=no-name-in-module
     AsyncHttpTransport,
     AsyncioRequestsTransportResponse,
     AioHttpTransport,
 )
-from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
-from unittest import mock
-import pytest
-from utils import request_and_responses_product, ASYNC_HTTP_RESPONSES, create_http_response
 
 
 @pytest.mark.asyncio
@@ -50,7 +52,7 @@ async def test_connection_error_response(http_request, http_response):
         def __init__(self):
             self._first = True
 
-        async def read(self, block_size):
+        async def read(self, _block_size):
             if self._first:
                 self._first = False
                 raise ConnectionError
@@ -65,7 +67,7 @@ async def test_connection_error_response(http_request, http_response):
             pass
 
     class AsyncMock(mock.MagicMock):
-        async def __call__(self, *args, **kwargs):
+        async def __call__(self, *args, **kwargs):  # pylint: disable=invalid-overridden-method
             return super(AsyncMock, self).__call__(*args, **kwargs)
 
     http_request = http_request("GET", "http://localhost/")
@@ -80,7 +82,7 @@ async def test_connection_error_response(http_request, http_response):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize("http_response", ASYNC_HTTP_RESPONSES)
-async def test_response_streaming_error_behavior(http_response):
+async def test_response_streaming_error_behavior(http_response):  # pylint: disable=unused-argument
     # Test to reproduce https://github.com/Azure/azure-sdk-for-python/issues/16723
     block_size = 103
     total_response_size = 500
@@ -92,7 +94,7 @@ async def test_response_streaming_error_behavior(http_response):
         def __init__(self):
             self.total_response_size = 500
 
-        def stream(self, chunk_size, decode_content=False):
+        def stream(self, chunk_size, _decode_content=False):
             assert chunk_size == block_size
             left = total_response_size
             while left > 0:
@@ -102,7 +104,7 @@ async def test_response_streaming_error_behavior(http_response):
                 left -= len(data)
                 yield data
 
-        def read(self, chunk_size, decode_content=False):
+        def read(self, chunk_size, _decode_content=False):
             assert chunk_size == block_size
             if self.total_response_size > 0:
                 if self.total_response_size <= block_size:
@@ -110,6 +112,7 @@ async def test_response_streaming_error_behavior(http_response):
                 data = b"X" * min(chunk_size, self.total_response_size)
                 self.total_response_size -= len(data)
                 return data
+            return None
 
         def close(self):
             pass
@@ -122,7 +125,7 @@ async def test_response_streaming_error_behavior(http_response):
         block_size,
     )
 
-    async def mock_run(self, *args, **kwargs):
+    async def mock_run(_self, *_args, **_kwargs):
         return PipelineResponse(
             None,
             requests.Response(),

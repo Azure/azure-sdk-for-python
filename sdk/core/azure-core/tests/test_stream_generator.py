@@ -2,20 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import requests
-from azure.core.pipeline.transport import (
-    HttpTransport,
-    RequestsTransport,
-)
-from azure.core.pipeline import Pipeline, PipelineResponse
-from azure.core.pipeline.transport._requests_basic import StreamDownloadGenerator
-from azure.core.exceptions import ServiceResponseError
-
 try:
     from unittest import mock
 except ImportError:
     import mock
+
 import pytest
+import requests
 from utils import (
     HTTP_RESPONSES,
     REQUESTS_TRANSPORT_RESPONSES,
@@ -23,6 +16,14 @@ from utils import (
     create_transport_response,
     request_and_responses_product,
 )
+
+from azure.core.exceptions import ServiceResponseError
+from azure.core.pipeline import Pipeline, PipelineResponse
+from azure.core.pipeline.transport import (  # pylint: disable=no-name-in-module
+    HttpTransport,
+    RequestsTransport,
+)
+from azure.core.pipeline.transport._requests_basic import StreamDownloadGenerator
 
 
 @pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_RESPONSES))
@@ -54,7 +55,7 @@ def test_connection_error_response(http_request, http_response):
                 self._count += 1
                 raise requests.exceptions.ConnectionError
 
-        def stream(self, chunk_size, decode_content=False):
+        def stream(self, _chunk_size, _decode_content=False):
             if self._count == 0:
                 self._count += 1
                 raise requests.exceptions.ConnectionError
@@ -91,7 +92,7 @@ def test_response_streaming_error_behavior(http_response):
         def __init__(self):
             self.total_response_size = 500
 
-        def stream(self, chunk_size, decode_content=False):
+        def stream(self, chunk_size, _decode_content=False):
             assert chunk_size == block_size
             left = total_response_size
             while left > 0:
@@ -101,7 +102,7 @@ def test_response_streaming_error_behavior(http_response):
                 left -= len(data)
                 yield data
 
-        def read(self, chunk_size, decode_content=False):
+        def read(self, chunk_size, _decode_content=False):
             assert chunk_size == block_size
             if self.total_response_size > 0:
                 if self.total_response_size <= block_size:
@@ -109,11 +110,12 @@ def test_response_streaming_error_behavior(http_response):
                 data = b"X" * min(chunk_size, self.total_response_size)
                 self.total_response_size -= len(data)
                 return data
+            return None
 
         def close(self):
             pass
 
-    s = FakeStreamWithConnectionError()
+    _s = FakeStreamWithConnectionError()
     req_response.raw = FakeStreamWithConnectionError()
 
     response = create_transport_response(
@@ -123,7 +125,7 @@ def test_response_streaming_error_behavior(http_response):
         block_size,
     )
 
-    def mock_run(self, *args, **kwargs):
+    def mock_run(_self, *_args, **_kwargs):
         return PipelineResponse(
             None,
             requests.Response(),
@@ -135,4 +137,4 @@ def test_response_streaming_error_behavior(http_response):
     pipeline.run = mock_run
     downloader = response.stream_download(pipeline, decompress=False)
     with pytest.raises(ServiceResponseError):
-        full_response = b"".join(downloader)
+        _full_response = b"".join(downloader)

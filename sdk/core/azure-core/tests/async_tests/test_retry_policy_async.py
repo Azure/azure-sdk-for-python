@@ -7,9 +7,15 @@ try:
     from io import BytesIO
 except ImportError:
     from cStringIO import StringIO as BytesIO
-import sys
+import asyncio
+import os
+import tempfile
+from itertools import product
 from unittest.mock import Mock
+
 import pytest
+from utils import HTTP_REQUESTS
+
 from azure.core.configuration import ConnectionConfiguration
 from azure.core.exceptions import (
     AzureError,
@@ -18,21 +24,15 @@ from azure.core.exceptions import (
     ServiceResponseError,
     ServiceResponseTimeoutError,
 )
+from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.policies import (
     AsyncRetryPolicy,
     RetryMode,
 )
-from azure.core.pipeline import AsyncPipeline, PipelineResponse
 from azure.core.pipeline.transport import (
     HttpResponse,
     AsyncHttpTransport,
 )
-import tempfile
-import os
-import time
-import asyncio
-from itertools import product
-from utils import HTTP_REQUESTS
 
 
 def test_retry_code_class_variables():
@@ -227,9 +227,8 @@ async def test_retry_seekable_file(http_request):
                     response.status_code = 400
                     return response
 
-    file = tempfile.NamedTemporaryFile(delete=False)
-    file.write(b"Lots of dataaaa")
-    file.close()
+    with tempfile.NamedTemporaryFile(delete=False) as file:
+        file.write(b"Lots of dataaaa")
     http_request = http_request("GET", "http://localhost/")
     headers = {"Content-Type": "multipart/form-data"}
     http_request.headers = headers
@@ -250,7 +249,7 @@ async def test_retry_seekable_file(http_request):
 async def test_retry_timeout(http_request):
     timeout = 1
 
-    def send(request, **kwargs):
+    def send(_request, **kwargs):
         assert kwargs["connection_timeout"] <= timeout, "policy should set connection_timeout not to exceed timeout"
         raise ServiceResponseError("oops")
 
@@ -341,7 +340,7 @@ def test_configure_retries_uses_constructor_values():
     assert retry_settings["max_backoff"] == 60
     assert retry_settings["timeout"] == 300
     assert retry_settings["methods"] == frozenset(["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE"])
-    assert retry_settings["history"] == []
+    assert not retry_settings["history"]
 
 
 def test_configure_retries_options_override_constructor():
@@ -379,9 +378,9 @@ def test_configure_retries_options_override_constructor():
     assert retry_settings["max_backoff"] == 180
     assert retry_settings["timeout"] == 600
     assert retry_settings["methods"] == frozenset(["GET", "POST"])
-    assert retry_settings["history"] == []
+    assert not retry_settings["history"]
 
-    # Verify options dict was modified (values were popped)
+    # Verify options dict was modified(values were popped)
     assert "retry_total" not in options
     assert "retry_connect" not in options
     assert "retry_read" not in options
@@ -409,4 +408,4 @@ def test_configure_retries_default_values():
     assert retry_settings["max_backoff"] == 120  # default retry_backoff_max (BACKOFF_MAX)
     assert retry_settings["timeout"] == 604800  # default timeout
     assert retry_settings["methods"] == frozenset(["HEAD", "GET", "PUT", "DELETE", "OPTIONS", "TRACE"])
-    assert retry_settings["history"] == []
+    assert not retry_settings["history"]

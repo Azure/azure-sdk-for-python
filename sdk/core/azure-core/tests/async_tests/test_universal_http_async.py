@@ -23,19 +23,18 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from azure.core.pipeline.transport import (
-    AioHttpTransport,
-    AioHttpTransportResponse,
-    AsyncioRequestsTransport,
-    TrioRequestsTransport,
-)
-
 import aiohttp
 import trio
 
 import pytest
 from utils import HTTP_REQUESTS, AIOHTTP_TRANSPORT_RESPONSES, create_transport_response
+
 from azure.core.pipeline._tools import is_rest
+from azure.core.pipeline.transport import (  # pylint: disable=no-name-in-module
+    AioHttpTransport,
+    AsyncioRequestsTransport,
+    TrioRequestsTransport,
+)
 
 
 @pytest.mark.asyncio
@@ -92,7 +91,6 @@ def test_conf_async_trio_requests(port, http_request):
         request = http_request("GET", "http://localhost:{}/basic/string".format(port))
         async with TrioRequestsTransport() as sender:
             return await sender.send(request)
-            assert response.body() is not None
 
     response = trio.run(do)
     assert isinstance(response.status_code, int)
@@ -100,7 +98,7 @@ def test_conf_async_trio_requests(port, http_request):
 
 def _create_aiohttp_response(http_response, body_bytes, headers=None):
     class MockAiohttpClientResponse(aiohttp.ClientResponse):
-        def __init__(self, body_bytes, headers=None):
+        def __init__(self, body_bytes, headers=None):  # pylint: disable=super-init-not-called
             self._body = body_bytes
             self._headers = headers
             self._cache = {}
@@ -146,7 +144,7 @@ async def test_aiohttp_response_decompression(http_response):
         {"Content-Type": "text/plain", "Content-Encoding": "gzip"},
     )
     # cSpell:enable
-    body = res.body()
+    _body = res.body()
     expect = (
         b'{"id":"e7877039-1376-4dcd-9b0a-192897cff780","createdDateTimeUtc":'
         b'"2021-05-07T17:35:36.3121065Z","lastActionDateTimeUtc":'
@@ -177,7 +175,7 @@ async def test_aiohttp_response_decompression_negative(http_response):
     )
     # cSpell:enable
     with pytest.raises(zlib.error):
-        body = res.body()
+        _body = res.body()
 
 
 @pytest.mark.parametrize("http_response", AIOHTTP_TRANSPORT_RESPONSES)
