@@ -177,7 +177,12 @@ def cosmos_span_attributes(
                 return result
             except Exception as error:
                 # Add error attributes if we have a span
-                _add_cosmos_error_telemetry(error)
+                _add_cosmos_error_telemetry(
+                    error,
+                    resolved_operation_name,
+                    args,
+                    _build_telemetry_kwargs(func_kwargs),
+                )
                 raise
 
         return cast(F, wrapper)
@@ -185,12 +190,23 @@ def cosmos_span_attributes(
     return decorator if __func is None else decorator(__func)
 
 
-def _add_cosmos_error_telemetry(error: Exception) -> None:
+def _add_cosmos_error_telemetry(
+    error: Exception,
+    operation_name: Optional[str] = None,
+    args: Optional[tuple] = None,
+    kwargs: Optional[dict] = None,
+) -> None:
     """
     Add Cosmos DB-specific error telemetry to the current span.
 
     :param error: The exception that occurred
     :type error: Exception
+    :param operation_name: The semantic db.operation.name value.
+    :type operation_name: Optional[str]
+    :param args: Positional arguments passed to the wrapped method.
+    :type args: Optional[tuple]
+    :param kwargs: Keyword arguments passed to the wrapped method.
+    :type kwargs: Optional[dict]
     """
     try:
         # Get the tracing implementation
@@ -216,10 +232,15 @@ def _add_cosmos_error_telemetry(error: Exception) -> None:
 
         span = _wrap_span(span_impl_type, raw_span)
 
-        span.add_attribute(
-            _Constants.OpenTelemetryAttributes.DB_SYSTEM_NAME,
-            _Constants.OpenTelemetryValues.DB_SYSTEM_NAME_VALUE,
-        )
+        # Add all standard Cosmos attributes (operation name, instance, connection info)
+        # so error spans are as rich as success spans.
+        if args is not None:
+            _add_cosmos_attributes(span, operation_name, args, kwargs or {})
+        else:
+            span.add_attribute(
+                _Constants.OpenTelemetryAttributes.DB_SYSTEM_NAME,
+                _Constants.OpenTelemetryValues.DB_SYSTEM_NAME_VALUE,
+            )
 
         if hasattr(error, "status_code"):
             status_code = str(getattr(error, "status_code"))

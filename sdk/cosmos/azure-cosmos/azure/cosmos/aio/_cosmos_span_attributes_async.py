@@ -64,12 +64,23 @@ def _add_success_telemetry(
     )
 
 
-def _add_error_telemetry(error: Exception) -> None:
+def _add_error_telemetry(
+    error: Exception,
+    operation_name: Optional[str] = None,
+    args: Optional[tuple] = None,
+    kwargs: Optional[dict] = None,
+) -> None:
     """Add error telemetry for the decorated aio method.
 
     :param Exception error: The raised exception.
+    :param operation_name: The semantic db.operation.name value.
+    :type operation_name: Optional[str]
+    :param args: Positional arguments passed to the decorated method.
+    :type args: Optional[tuple]
+    :param kwargs: Keyword arguments passed to the decorated method.
+    :type kwargs: Optional[dict]
     """
-    _add_cosmos_error_telemetry(error)
+    _add_cosmos_error_telemetry(error, operation_name, args, kwargs)
 
 
 def cosmos_span_attributes_async(
@@ -132,7 +143,12 @@ def cosmos_span_attributes_async(
                     _add_success_telemetry(resolved_operation_name, args, kwargs, result)
                     return result
                 except Exception as error:
-                    _add_error_telemetry(error)
+                    _add_error_telemetry(
+                        error,
+                        resolved_operation_name,
+                        args,
+                        _build_telemetry_kwargs(kwargs),
+                    )
                     raise
 
             return async_wrapper
@@ -144,7 +160,12 @@ def cosmos_span_attributes_async(
                 _add_success_telemetry(resolved_operation_name, args, kwargs, result)
                 return result
             except Exception as error:
-                _add_error_telemetry(error)
+                _add_error_telemetry(
+                    error,
+                    resolved_operation_name,
+                    args,
+                    _build_telemetry_kwargs(kwargs),
+                )
                 raise
 
         return sync_wrapper
