@@ -45,8 +45,18 @@ class TestIoTOperationsMgmtDataflowProfileOperationsAsync(AzureMgmtRecordedTestC
                     "name": "str",
                     "properties": {
                         "diagnostics": {"logs": {"level": "str"}, "metrics": {"prometheusPort": 0}},
+                        "healthState": "str",
                         "instanceCount": 0,
                         "provisioningState": "str",
+                        "status": {
+                            "healthState": {
+                                "lastTransitionTime": "str",
+                                "lastUpdateTime": "str",
+                                "message": "str",
+                                "reasonCode": "str",
+                                "status": "str",
+                            }
+                        },
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",

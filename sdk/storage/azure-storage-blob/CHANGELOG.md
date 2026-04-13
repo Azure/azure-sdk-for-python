@@ -1,8 +1,25 @@
 # Release History
 
-## 12.30.0b1 (Unreleased)
+## 12.31.0b1 (Unreleased)
 
 ### Features Added
+
+## 12.30.0b1 (2026-04-01)
+
+### Features Added
+- Added support for service version 2026-06-06.
+- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes 
+for `BlobServiceClient`, `ContainerClient`, and `BlobClient`.
+- Added support for `create` permission in `BlobSasPermissions` for `stage_block`, 
+`stage_block_from_url`, and `commit_block_list`.
+- Added support for a new `Smart` access tier to `StandardBlobTier` used in `BlobClient.set_standard_blob_tier`, 
+which is optimized to automatically determine the most cost-effective access with no performance impact. 
+When set, `BlobProperties.smart_access_tier` will reveal the service's current access
+tier choice between `Hot`, `Cool`, and `Archive`.
+- Added support for `is_directory` keyword in `generate_blob_sas` that generates directory-level SAS for blobs.
+
+### Other Changes
+- Consolidated the behavior of `max_concurrency=None` by defaulting to the shared `DEFAULT_MAX_CONCURRENCY` constant.
 
 ## 12.29.0b1 (2026-01-27)
 

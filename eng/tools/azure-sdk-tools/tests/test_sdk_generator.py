@@ -143,6 +143,7 @@ class TestTagIsStableForTypeSpec:
             output_path,
             input_data,
             package_names=[("sdk/test", "azure-mgmt-test")],
+            judge_return=True,  # preview package → tagIsStable = False
         )
         pkg = result["packages"][0]
         assert pkg["tagIsStable"] is False
