@@ -41,7 +41,6 @@ from .samples import samples
 from .devtest import devtest
 from .optional import optional
 from .update_snippet import update_snippet
-
 from ci_tools.logging import configure_logging, logger
 
 __all__ = ["main", "build_parser"]
@@ -162,11 +161,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         os.environ.pop("UV_DEFAULT_INDEX", None)
         logger.info("Installing from PyPI (--pypi flag set)")
     else:
+        using_cfs = False
+        # Fall back to unauthenticated CFS URL
         if not os.environ.get("PIP_INDEX_URL"):
-            os.environ.setdefault("PIP_INDEX_URL", CFS_INDEX_URL)
+            os.environ["PIP_INDEX_URL"] = CFS_INDEX_URL
+            using_cfs = True
         if not os.environ.get("UV_DEFAULT_INDEX"):
-            os.environ.setdefault("UV_DEFAULT_INDEX", CFS_INDEX_URL)
-        logger.info("Installing from CFS feed: %s", CFS_INDEX_URL)
+            os.environ["UV_DEFAULT_INDEX"] = CFS_INDEX_URL
+            using_cfs = True
+
+        if using_cfs:
+            logger.info("Installing from CFS feed: %s", CFS_INDEX_URL)
 
     try:
         result = args.func(args)
