@@ -1,0 +1,4 @@
+directory: specification/recoveryservicessiterecovery/resource-manager/Microsoft.RecoveryServices/SiteRecovery
+commit: 8742677ebba334087cba3fe495a6512215f9190c
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 
