@@ -11,6 +11,8 @@ import typing
 from typing import Any, Dict, List, Optional, Union, Type
 from io import BytesIO
 
+import pytest
+
 from azure.core.serialization import (
     AzureJSONEncoder,
     NULL,
@@ -20,7 +22,6 @@ from azure.core.serialization import (
     attribute_list,
 )
 from azure.core.exceptions import DeserializationError
-import pytest
 from modeltypes._utils.model_base import (
     Model as HybridModel,
     SdkJSONEncoder,
@@ -30,6 +31,8 @@ from modeltypes._utils.model_base import (
 )
 from modeltypes._utils.serialization import Model as MsrestModel
 from modeltypes import models
+
+# pylint: disable=redefined-outer-name
 
 
 def _expand_value(obj):
@@ -52,7 +55,7 @@ def _expand_value(obj):
 
 
 def _expand_dict(d):
-    return dict((key, _expand_value(value)) for key, value in d.items())
+    return {key: _expand_value(value) for key, value in d.items()}
 
 
 class DatetimeSubclass(datetime):
@@ -73,13 +76,13 @@ class NegativeUtcOffset(tzinfo):
     _dst = timedelta(0)
     _name = "-1200"
 
-    def utcoffset(self, dt):
+    def utcoffset(self, _dt):
         return self.__class__._offset
 
-    def dst(self, dt):
+    def dst(self, _dt):
         return self.__class__._dst
 
-    def tzname(self, dt):
+    def tzname(self, _dt):
         return self.__class__._name
 
 
@@ -90,13 +93,13 @@ class PositiveUtcOffset(tzinfo):
     _dst = timedelta(0)
     _name = "+1200"
 
-    def utcoffset(self, dt):
+    def utcoffset(self, _dt):
         return self.__class__._offset
 
-    def dst(self, dt):
+    def dst(self, _dt):
         return self.__class__._dst
 
-    def tzname(self, dt):
+    def tzname(self, _dt):
         return self.__class__._name
 
 
@@ -654,7 +657,7 @@ def test_cache_after_reassignment():
 
     # Reassign via attr
     m.my_dict = {"x": 10}
-    ref2 = m.my_dict
+    _ref2 = m.my_dict
 
     # Old reference should be stale (different object)
     ref1["c"] = 3  # This mutates old object, not m._data
@@ -823,7 +826,7 @@ def test_dict_access_modification_clears_cache():
     # With format="csv", the serialized form would be comma-delimited
     # But since we don't have that format implemented, let's test the principle:
     # Access via attribute creates cache
-    cached_colors = m4.colors
+    _cached_colors = m4.colors
 
     # Modify through dict access with serialized form
     m4["colors"] = ["orange", "pink"]
@@ -1238,7 +1241,7 @@ def test_readonly():
     model = models.ReadonlyModel({"id": 1})
     assert model.id == 1
     assert model.as_dict() == {"id": 1}
-    assert model.as_dict(exclude_readonly=True) == {}
+    assert not model.as_dict(exclude_readonly=True)
 
 
 def test_as_attribute_dict_scratch():
@@ -1704,92 +1707,92 @@ class TestTypeHandlerRegistry:
 
     class FooModel:
 
-        foo: str
-        bar: int
-        baz: float
+        label: str
+        count: int
+        amount: float
 
-        def __init__(self, foo: str, bar: int, baz: float):
-            self.foo = foo
-            self.bar = bar
-            self.baz = baz
+        def __init__(self, label: str, count: int, amount: float):
+            self.label = label
+            self.count = count
+            self.amount = amount
 
     def test_serialization_fails_no_registry(self):
 
-        model = TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14)
+        model = TestTypeHandlerRegistry.FooModel(label="test_label", count=42, amount=3.14)
         with pytest.raises(TypeError):
             json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
 
     def test_deserialize_no_registry(self):
 
-        json_dict = {"foo": "foo", "bar": 42, "baz": 3.14}
+        json_dict = {"label": "test_label", "count": 42, "amount": 3.14}
         deserialized = _deserialize(TestTypeHandlerRegistry.FooModel, json_dict)
         # If no deserializer is registered, the input should be returned as-is
         assert deserialized == json_dict
-        assert type(deserialized) is dict
+        assert isinstance(deserialized, dict)
 
     def test_serialize_external_model(self):
 
         @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
-        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
-            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+        def custom_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"label": obj.label, "count": obj.count, "amount": obj.amount}
 
-        model = TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14)
+        model = TestTypeHandlerRegistry.FooModel(label="test_label", count=42, amount=3.14)
 
         serializer = TYPE_HANDLER_REGISTRY.get_serializer(model)
-        assert serializer is foo_serializer
+        assert serializer is custom_serializer
 
         json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
-        assert json.loads(json_str) == {"foo": "foo", "bar": 42, "baz": 3.14}
+        assert json.loads(json_str) == {"label": "test_label", "count": 42, "amount": 3.14}
 
     def test_serialize_external_model_manual_decorator(self):
 
-        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
-            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+        def custom_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"label": obj.label, "count": obj.count, "amount": obj.amount}
 
-        TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)(foo_serializer)
+        TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)(custom_serializer)
 
-        model = TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14)
+        model = TestTypeHandlerRegistry.FooModel(label="test_label", count=42, amount=3.14)
         json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
-        assert json.loads(json_str) == {"foo": "foo", "bar": 42, "baz": 3.14}
+        assert json.loads(json_str) == {"label": "test_label", "count": 42, "amount": 3.14}
 
     def test_deserialize_external_model(self):
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
-        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
-            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+        def foo_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(label=data["label"], count=data["count"], amount=data["amount"])
 
         deserializer = TYPE_HANDLER_REGISTRY.get_deserializer(TestTypeHandlerRegistry.FooModel)
 
-        assert type(deserializer).__name__ == "partial"
+        assert type(deserializer).__name__ == "partial"  # pylint: disable=unidiomatic-typecheck
         assert getattr(deserializer, "func", None) is foo_deserializer
         assert getattr(deserializer, "args", ()) == (TestTypeHandlerRegistry.FooModel,)
 
-        json_dict = {"foo": "foo", "bar": 42, "baz": 3.14}
+        json_dict = {"label": "test_label", "count": 42, "amount": 3.14}
         deserialized = _deserialize(TestTypeHandlerRegistry.FooModel, json_dict)
         assert isinstance(deserialized, TestTypeHandlerRegistry.FooModel)
-        assert deserialized.foo == "foo"
-        assert deserialized.bar == 42
-        assert deserialized.baz == 3.14
+        assert deserialized.label == "test_label"
+        assert deserialized.count == 42
+        assert deserialized.amount == 3.14
 
     def test_deserialize_external_model_manual_decorator(self):
 
-        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
-            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+        def foo_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(label=data["label"], count=data["count"], amount=data["amount"])
 
         TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)(foo_deserializer)
 
-        json_dict = {"foo": "foo", "bar": 42, "baz": 3.14}
+        json_dict = {"label": "test_label", "count": 42, "amount": 3.14}
         deserialized = _deserialize(TestTypeHandlerRegistry.FooModel, json_dict)
         assert isinstance(deserialized, TestTypeHandlerRegistry.FooModel)
-        assert deserialized.foo == "foo"
-        assert deserialized.bar == 42
-        assert deserialized.baz == 3.14
+        assert deserialized.label == "test_label"
+        assert deserialized.count == 42
+        assert deserialized.amount == 3.14
 
     def test_serialize_external_model_in_nested_model(self):
 
         @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
-        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
-            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+        def custom_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"label": obj.label, "count": obj.count, "amount": obj.amount}
 
         class GeneratedModel(HybridModel):
             dog: models.HybridDog = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1799,7 +1802,7 @@ class TestTypeHandlerRegistry:
 
         model = GeneratedModel(
             dog=models.HybridDog(name="doggy", species="dog", breed="samoyed", is_best_boy=True),
-            external=TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14),
+            external=TestTypeHandlerRegistry.FooModel(label="test_label", count=42, amount=3.14),
         )
 
         expected_dict = {
@@ -1824,8 +1827,8 @@ class TestTypeHandlerRegistry:
     def test_deserialize_external_model_in_nested_model(self):
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
-        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
-            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+        def foo_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(label=data["label"], count=data["count"], amount=data["amount"])
 
         class GeneratedModel(HybridModel):
             dog: models.HybridDog = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1856,19 +1859,19 @@ class TestTypeHandlerRegistry:
         assert deserialized.dog.species == "dog"
         assert deserialized.dog.breed == "samoyed"
         assert deserialized.dog.is_best_boy is True
-        assert deserialized.external.foo == "foo"
-        assert deserialized.external.bar == 42
-        assert deserialized.external.baz == 3.14
+        assert deserialized.external.label == "test_label"
+        assert deserialized.external.count == 42
+        assert deserialized.external.amount == 3.14
 
     def test_serialize_deserialize_list_of_external_models(self):
 
         @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
-        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
-            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+        def custom_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"label": obj.label, "count": obj.count, "amount": obj.amount}
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
-        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
-            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+        def foo_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(label=data["label"], count=data["count"], amount=data["amount"])
 
         class GeneratedModel(HybridModel):
             externals: List[TestTypeHandlerRegistry.FooModel] = rest_field(
@@ -1877,15 +1880,15 @@ class TestTypeHandlerRegistry:
 
         model = GeneratedModel(
             externals=[
-                TestTypeHandlerRegistry.FooModel(foo="foo1", bar=1, baz=1.1),
-                TestTypeHandlerRegistry.FooModel(foo="foo2", bar=2, baz=2.2),
+                TestTypeHandlerRegistry.FooModel(label="label1", count=1, amount=1.1),
+                TestTypeHandlerRegistry.FooModel(label="label2", count=2, amount=2.2),
             ]
         )
 
         expected_dict = {
             "externals": [
-                {"foo": "foo1", "bar": 1, "baz": 1.1},
-                {"foo": "foo2", "bar": 2, "baz": 2.2},
+                {"label": "label1", "count": 1, "amount": 1.1},
+                {"label": "label2", "count": 2, "amount": 2.2},
             ]
         }
 
@@ -1900,22 +1903,22 @@ class TestTypeHandlerRegistry:
         assert isinstance(deserialized.externals, list)
         assert len(deserialized.externals) == 2
         assert all(isinstance(item, TestTypeHandlerRegistry.FooModel) for item in deserialized.externals)
-        assert deserialized.externals[0].foo == "foo1"
-        assert deserialized.externals[0].bar == 1
-        assert deserialized.externals[0].baz == 1.1
-        assert deserialized.externals[1].foo == "foo2"
-        assert deserialized.externals[1].bar == 2
-        assert deserialized.externals[1].baz == 2.2
+        assert deserialized.externals[0].label == "label1"
+        assert deserialized.externals[0].count == 1
+        assert deserialized.externals[0].amount == 1.1
+        assert deserialized.externals[1].label == "label2"
+        assert deserialized.externals[1].count == 2
+        assert deserialized.externals[1].amount == 2.2
 
     def test_serialize_deserialize_dict_of_external_models(self):
 
         @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
-        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
-            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+        def custom_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"label": obj.label, "count": obj.count, "amount": obj.amount}
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
-        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
-            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+        def foo_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(label=data["label"], count=data["count"], amount=data["amount"])
 
         class GeneratedModel(HybridModel):
             externals: Dict[str, TestTypeHandlerRegistry.FooModel] = rest_field(
@@ -1924,15 +1927,15 @@ class TestTypeHandlerRegistry:
 
         model = GeneratedModel(
             externals={
-                "first": TestTypeHandlerRegistry.FooModel(foo="foo1", bar=1, baz=1.1),
-                "second": TestTypeHandlerRegistry.FooModel(foo="foo2", bar=2, baz=2.2),
+                "first": TestTypeHandlerRegistry.FooModel(label="label1", count=1, amount=1.1),
+                "second": TestTypeHandlerRegistry.FooModel(label="label2", count=2, amount=2.2),
             }
         )
 
         expected_dict = {
             "externals": {
-                "first": {"foo": "foo1", "bar": 1, "baz": 1.1},
-                "second": {"foo": "foo2", "bar": 2, "baz": 2.2},
+                "first": {"label": "label1", "count": 1, "amount": 1.1},
+                "second": {"label": "label2", "count": 2, "amount": 2.2},
             }
         }
 
@@ -1947,22 +1950,22 @@ class TestTypeHandlerRegistry:
         assert isinstance(deserialized.externals, dict)
         assert len(deserialized.externals) == 2
         assert all(isinstance(item, TestTypeHandlerRegistry.FooModel) for item in deserialized.externals.values())
-        assert deserialized.externals["first"].foo == "foo1"
-        assert deserialized.externals["first"].bar == 1
-        assert deserialized.externals["first"].baz == 1.1
-        assert deserialized.externals["second"].foo == "foo2"
-        assert deserialized.externals["second"].bar == 2
-        assert deserialized.externals["second"].baz == 2.2
+        assert deserialized.externals["first"].label == "label1"
+        assert deserialized.externals["first"].count == 1
+        assert deserialized.externals["first"].amount == 1.1
+        assert deserialized.externals["second"].label == "label2"
+        assert deserialized.externals["second"].count == 2
+        assert deserialized.externals["second"].amount == 2.2
 
     def test_serialize_deserialize_optional_external_model(self):
 
         @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
-        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
-            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+        def custom_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"label": obj.label, "count": obj.count, "amount": obj.amount}
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
-        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
-            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+        def foo_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(label=data["label"], count=data["count"], amount=data["amount"])
 
         class GeneratedModel(HybridModel):
             external: Optional[TestTypeHandlerRegistry.FooModel] = rest_field(
@@ -1970,9 +1973,9 @@ class TestTypeHandlerRegistry:
             )
 
         # Test with the optional model present
-        model = GeneratedModel(external=TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14))
+        model = GeneratedModel(external=TestTypeHandlerRegistry.FooModel(label="test_label", count=42, amount=3.14))
 
-        expected_dict = {"external": {"foo": "foo", "bar": 42, "baz": 3.14}}
+        expected_dict = {"external": {"label": "test_label", "count": 42, "amount": 3.14}}
 
         assert model.as_dict() == expected_dict
         json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
@@ -1982,9 +1985,9 @@ class TestTypeHandlerRegistry:
         deserialized = _deserialize(GeneratedModel, expected_dict)
         assert isinstance(deserialized, GeneratedModel)
         assert isinstance(deserialized.external, TestTypeHandlerRegistry.FooModel)
-        assert deserialized.external.foo == "foo"
-        assert deserialized.external.bar == 42
-        assert deserialized.external.baz == 3.14
+        assert deserialized.external.label == "test_label"
+        assert deserialized.external.count == 42
+        assert deserialized.external.amount == 3.14
 
         # Test with the optional model as None
         model = GeneratedModel(external=None)
@@ -2001,12 +2004,12 @@ class TestTypeHandlerRegistry:
     def test_serialize_deserialize_union_external_model(self):
 
         @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
-        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
-            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+        def custom_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"label": obj.label, "count": obj.count, "amount": obj.amount}
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
-        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
-            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+        def foo_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(label=data["label"], count=data["count"], amount=data["amount"])
 
         class GeneratedModel(HybridModel):
             external: Union[str, TestTypeHandlerRegistry.FooModel] = rest_field(
@@ -2014,9 +2017,9 @@ class TestTypeHandlerRegistry:
             )
 
         # Test with the union as the external model
-        model = GeneratedModel(external=TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14))
+        model = GeneratedModel(external=TestTypeHandlerRegistry.FooModel(label="test_label", count=42, amount=3.14))
 
-        expected_dict = {"external": {"foo": "foo", "bar": 42, "baz": 3.14}}
+        expected_dict = {"external": {"label": "test_label", "count": 42, "amount": 3.14}}
 
         assert model.as_dict() == expected_dict
         json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
@@ -2026,9 +2029,9 @@ class TestTypeHandlerRegistry:
         deserialized = _deserialize(GeneratedModel, expected_dict)
         assert isinstance(deserialized, GeneratedModel)
         assert isinstance(deserialized.external, TestTypeHandlerRegistry.FooModel)
-        assert deserialized.external.foo == "foo"
-        assert deserialized.external.bar == 42
-        assert deserialized.external.baz == 3.14
+        assert deserialized.external.label == "test_label"
+        assert deserialized.external.count == 42
+        assert deserialized.external.amount == 3.14
 
         # Test with the union as a string
         model = GeneratedModel(external="just a string")
@@ -2054,18 +2057,18 @@ class TestTypeHandlerRegistry:
             )
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
-        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
-            if "foo" not in data:
-                raise ValueError("Missing 'foo' key for FooModel deserialization")
-            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+        def foo_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            if "label" not in data:
+                raise ValueError("Missing 'label' key for FooModel deserialization")
+            return TestTypeHandlerRegistry.FooModel(label=data["label"], count=data["count"], amount=data["amount"])
 
-        input_dict = {"item": {"foo": "foo", "bar": 42, "baz": 3.14}}
+        input_dict = {"item": {"label": "test_label", "count": 42, "amount": 3.14}}
         deserialized = _deserialize(ContainerModel, input_dict)
         assert isinstance(deserialized, ContainerModel)
         assert isinstance(deserialized.item, TestTypeHandlerRegistry.FooModel)
-        assert deserialized.item.foo == "foo"
-        assert deserialized.item.bar == 42
-        assert deserialized.item.baz == 3.14
+        assert deserialized.item.label == "test_label"
+        assert deserialized.item.count == 42
+        assert deserialized.item.amount == 3.14
 
         input_dict = {"item": {"name": "generated", "value": 100}}
         deserialized = _deserialize(ContainerModel, input_dict)
@@ -2080,56 +2083,56 @@ class TestTypeHandlerRegistry:
         # will inspect the input data to determine which type to instantiate.
 
         class ExternalModelA:
-            def __init__(self, foo: str, bar: Optional[int] = None):
-                self.foo = foo
-                self.bar = bar
+            def __init__(self, label: str, count: Optional[int] = None):
+                self.label = label
+                self.count = count
 
         class ExternalModelB:
-            def __init__(self, biz: int, baz: Optional[str] = None):
+            def __init__(self, biz: int, amount: Optional[str] = None):
                 self.biz = biz
-                self.baz = baz
+                self.amount = amount
 
         class ContainerModel(HybridModel):
             item: Union[ExternalModelA, ExternalModelB] = rest_field(
                 visibility=["read", "create", "update", "delete", "query"]
             )
 
-        def ext_deserializer(cls: Type, data: Dict[str, Any]) -> Union[ExternalModelA, ExternalModelB]:
-            if "foo" in data:
-                return ExternalModelA(foo=data["foo"], bar=data.get("bar"))
+        def ext_deserializer(_cls: Type, data: Dict[str, Any]) -> Union[ExternalModelA, ExternalModelB]:
+            if "label" in data:
+                return ExternalModelA(label=data["label"], count=data.get("count"))
             elif "biz" in data:
-                return ExternalModelB(biz=data["biz"], baz=data.get("baz"))
+                return ExternalModelB(biz=data["biz"], amount=data.get("amount"))
             else:
                 raise ValueError("Invalid data for deserialization")
 
         TYPE_HANDLER_REGISTRY.register_deserializer(lambda t: t in (ExternalModelA, ExternalModelB))(ext_deserializer)
 
-        input_dict = {"item": {"foo": "foo_value", "bar": 123}}
+        input_dict = {"item": {"label": "label_value", "count": 123}}
         deserialized = _deserialize(ContainerModel, input_dict)
         assert isinstance(deserialized, ContainerModel)
         assert isinstance(deserialized.item, ExternalModelA)
-        assert deserialized.item.foo == "foo_value"
-        assert deserialized.item.bar == 123
+        assert deserialized.item.label == "label_value"
+        assert deserialized.item.count == 123
 
-        input_dict = {"item": {"biz": 456, "baz": "baz_value"}}
+        input_dict = {"item": {"biz": 456, "amount": "amount_value"}}
         deserialized = _deserialize(ContainerModel, input_dict)
         assert isinstance(deserialized, ContainerModel)
         assert isinstance(deserialized.item, ExternalModelB)
         assert deserialized.item.biz == 456
-        assert deserialized.item.baz == "baz_value"
+        assert deserialized.item.amount == "amount_value"
 
     def test_multiple_external_type_deserialization_polymorphic_scenario(self):
         # Similar to the previous test, but here we have one external type inheriting from another.
         # The deserializer function will need to handle this inheritance relationship and instantiation priority.
         class ExternalModelA:
-            def __init__(self, foo: str, bar: Optional[int] = None):
-                self.foo = foo
-                self.bar = bar
+            def __init__(self, label: str, count: Optional[int] = None):
+                self.label = label
+                self.count = count
 
         class ExternalModelB(ExternalModelA):
-            def __init__(self, foo: str, bar: Optional[int] = None, baz: Optional[float] = None):
-                super().__init__(foo, bar)
-                self.baz = baz
+            def __init__(self, label: str, count: Optional[int] = None, amount: Optional[float] = None):
+                super().__init__(label, count)
+                self.amount = amount
 
         class ContainerModel(HybridModel):
             item: Union[ExternalModelA, ExternalModelB] = rest_field(
@@ -2160,20 +2163,20 @@ class TestTypeHandlerRegistry:
         assert isinstance(deserialized.item, ExternalModelB)
         assert deserialized.item.foo == "foo_value"
         assert deserialized.item.bar == 123
-        assert deserialized.item.baz == 3.14
+        assert deserialized.item.amount == 3.14
 
     def test_serialize_deserialize_deep_nested_external_model_in_generated_model(self):
 
         @TYPE_HANDLER_REGISTRY.register_serializer(TestTypeHandlerRegistry.FooModel)
-        def foo_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
-            return {"foo": obj.foo, "bar": obj.bar, "baz": obj.baz}
+        def custom_serializer(obj: TestTypeHandlerRegistry.FooModel) -> Dict[str, Any]:
+            return {"label": obj.label, "count": obj.count, "amount": obj.amount}
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.FooModel)
-        def foo_deserializer(cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
-            return TestTypeHandlerRegistry.FooModel(foo=data["foo"], bar=data["bar"], baz=data["baz"])
+        def foo_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.FooModel:
+            return TestTypeHandlerRegistry.FooModel(label=data["label"], count=data["count"], amount=data["amount"])
 
         class NestedModel(HybridModel):
-            foo: TestTypeHandlerRegistry.FooModel = rest_field(
+            custom_model: TestTypeHandlerRegistry.FooModel = rest_field(
                 visibility=["read", "create", "update", "delete", "query"]
             )
 
@@ -2184,10 +2187,10 @@ class TestTypeHandlerRegistry:
             child: ChildModel = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
         model = BaseModel(
-            child=ChildModel(nested=NestedModel(foo=TestTypeHandlerRegistry.FooModel(foo="foo", bar=42, baz=3.14)))
+            child=ChildModel(nested=NestedModel(custom_model=TestTypeHandlerRegistry.FooModel(label="test_label", count=42, amount=3.14)))
         )
 
-        expected_dict = {"child": {"nested": {"foo": {"foo": "foo", "bar": 42, "baz": 3.14}}}}
+        expected_dict = {"child": {"nested": {"foo": {"label": "test_label", "count": 42, "amount": 3.14}}}}
 
         assert model.as_dict() == expected_dict
         json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
@@ -2198,9 +2201,9 @@ class TestTypeHandlerRegistry:
         assert isinstance(deserialized, BaseModel)
         assert isinstance(deserialized.child, ChildModel)
         assert isinstance(deserialized.child.nested, NestedModel)
-        assert deserialized.child.nested.foo.foo == "foo"
-        assert deserialized.child.nested.foo.bar == 42
-        assert deserialized.child.nested.foo.baz == 3.14
+        assert deserialized.child.nested.custom_model.label == "test_label"
+        assert deserialized.child.nested.custom_model.count == 42
+        assert deserialized.child.nested.custom_model.amount == 3.14
 
     def test_serialize_deserialize_external_model_with_predicates(self):
 
@@ -2208,38 +2211,38 @@ class TestTypeHandlerRegistry:
 
         @dataclasses.dataclass
         class SampleModel:
-            foo: str
-            bar: int
+            label: str
+            count: int
 
         @dataclasses.dataclass
         class SampleModel2:
             biz: str
-            baz: int
+            amount: int
 
         class GeneratedModel(HybridModel):
-            foo: SampleModel = rest_field(visibility=["read", "create", "update", "delete", "query"])
-            bar: SampleModel2 = rest_field(visibility=["read", "create", "update", "delete", "query"])
+            sample: SampleModel = rest_field(visibility=["read", "create", "update", "delete", "query"])
+            sample2: SampleModel2 = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
-        @TYPE_HANDLER_REGISTRY.register_serializer(lambda obj: dataclasses.is_dataclass(obj))
-        def foo_serializer(obj) -> Dict[str, Any]:
+        @TYPE_HANDLER_REGISTRY.register_serializer(dataclasses.is_dataclass)
+        def sample_serializer(obj) -> Dict[str, Any]:
             return dataclasses.asdict(obj)
 
-        @TYPE_HANDLER_REGISTRY.register_deserializer(lambda t: dataclasses.is_dataclass(t))
+        @TYPE_HANDLER_REGISTRY.register_deserializer(dataclasses.is_dataclass)
         def foo_deserializer(cls: Type, data: Dict[str, Any]) -> Any:
             return cls(**data)
 
-        model = SampleModel(foo="foo", bar=42)
+        model = SampleModel(label="test_label", count=42)
         json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
-        assert json.loads(json_str) == {"foo": "foo", "bar": 42}
+        assert json.loads(json_str) == {"label": "test_label", "count": 42}
 
         model = GeneratedModel(
-            foo=SampleModel(foo="foo", bar=42),
-            bar=SampleModel2(biz="biz", baz=3),
+            sample=SampleModel(label="test_label", count=42),
+            sample2=SampleModel2(biz="biz", amount=3),
         )
 
         expected_dict = {
-            "foo": {"foo": "foo", "bar": 42},
-            "bar": {"biz": "biz", "baz": 3},
+            "sample": {"label": "test_label", "count": 42},
+            "sample2": {"biz": "biz", "amount": 3},
         }
         assert model.as_dict() == expected_dict
         json_str = json.dumps(model, cls=SdkJSONEncoder, exclude_readonly=True)
@@ -2248,12 +2251,12 @@ class TestTypeHandlerRegistry:
         # Deserialization
         deserialized = _deserialize(GeneratedModel, expected_dict)
         assert isinstance(deserialized, GeneratedModel)
-        assert isinstance(deserialized.foo, SampleModel)
-        assert isinstance(deserialized.bar, SampleModel2)
-        assert deserialized.foo.foo == "foo"
-        assert deserialized.foo.bar == 42
-        assert deserialized.bar.biz == "biz"
-        assert deserialized.bar.baz == 3
+        assert isinstance(deserialized.sample, SampleModel)
+        assert isinstance(deserialized.sample2, SampleModel2)
+        assert deserialized.sample.label == "test_label"
+        assert deserialized.sample.count == 42
+        assert deserialized.sample2.biz == "biz"
+        assert deserialized.sample2.amount == 3
 
     def test_serialize_types_caching(self):
 
@@ -2331,7 +2334,7 @@ class TestTypeHandlerRegistry:
         TYPE_HANDLER_REGISTRY.register_deserializer(ModelB)(deserializer_b)
 
         json_dict_a = {"type": "A"}
-        json_dict_b = {"type": "B"}
+        _json_dict_b = {"type": "B"}
 
         # First retrieval should populate the cache
         deserializer = TYPE_HANDLER_REGISTRY.get_deserializer(ModelA)
@@ -2421,7 +2424,7 @@ class TestBackcompatPropertyMatrix:
         # Should use attr_name, but excluded when exclude_readonly=True
         assert attribute_list(model) == ["field_name"]
         assert as_attribute_dict(model) == {"field_name": "value"}
-        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert not as_attribute_dict(model, exclude_readonly=True)
         assert getattr(model, "field_name") == "value"
         assert get_backcompat_attr_name(model, "field_name") == "field_name"
 
@@ -2586,13 +2589,13 @@ class TestBackcompatPropertyMatrix:
                     return getattr(self.update_property, name)
                 raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
-            def __setattr__(self, key: str, value: Any) -> None:
-                if key in self.__flattened_items:
+            def __setattr__(self, name: str, value: Any) -> None:
+                if name in self.__flattened_items:
                     if self.update_property is None:
                         self.update_property = self._attr_to_rest_field["update_property"]._class_type()
-                    setattr(self.update_property, key, value)
+                    setattr(self.update_property, name, value)
                 else:
-                    super().__setattr__(key, value)
+                    super().__setattr__(name, value)
 
         model = FlattenedContainerModel(id="test_id", name="flattened_name", description="flattened_desc")
 
@@ -2637,13 +2640,13 @@ class TestBackcompatPropertyMatrix:
                     return getattr(self.properties, name)
                 raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
-            def __setattr__(self, key: str, value: Any) -> None:
-                if key in self.__flattened_items:
+            def __setattr__(self, name: str, value: Any) -> None:
+                if name in self.__flattened_items:
                     if self.properties is None:
                         self.properties = self._attr_to_rest_field["properties"]._class_type()
-                    setattr(self.properties, key, value)
+                    setattr(self.properties, name, value)
                 else:
-                    super().__setattr__(key, value)
+                    super().__setattr__(name, value)
 
         model = FlattenedPropsBackcompatModel(
             name="test_name", values_property="test_values", get_property="test_class"
@@ -2685,13 +2688,13 @@ class TestBackcompatPropertyMatrix:
                     return getattr(self.properties, name)
                 raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
 
-            def __setattr__(self, key: str, value: Any) -> None:
-                if key in self.__flattened_items:
+            def __setattr__(self, name: str, value: Any) -> None:
+                if name in self.__flattened_items:
                     if self.properties is None:
                         self.properties = self._attr_to_rest_field["properties"]._class_type()
-                    setattr(self.properties, key, value)
+                    setattr(self.properties, name, value)
                 else:
-                    super().__setattr__(key, value)
+                    super().__setattr__(name, value)
 
         model = FlattenedReadonlyModel(
             get_property="test_get", setdefault_property="setdefault", popitem_property="readwrite_value"
