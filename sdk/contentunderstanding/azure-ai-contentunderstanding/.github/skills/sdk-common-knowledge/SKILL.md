@@ -613,7 +613,7 @@ class AudioVisualContent(MediaContent):
 - [Python SDK README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/README.md)
 - [Python SDK Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples)
 - [Product Documentation](https://learn.microsoft.com/azure/ai-services/content-understanding/)
-- [REST API Reference](https://learn.microsoft.com/rest/api/contentunderstanding/)
+- [REST API Reference](https://learn.microsoft.com/rest/api/contentunderstanding/operation-groups)
 - [Prebuilt Analyzers](https://learn.microsoft.com/azure/ai-services/content-understanding/concepts/prebuilt-analyzers)
 - [Create Custom Analyzer Tutorial](https://learn.microsoft.com/azure/ai-services/content-understanding/tutorial/create-custom-analyzer)
 - [Region Support](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support)
