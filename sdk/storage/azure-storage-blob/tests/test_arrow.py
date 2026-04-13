@@ -101,17 +101,27 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        blob_names = ["a/blob1", "b/blob2", "c/blob3", "d/blob4", "e", "f"]
+        blob_names = [
+            "a/b/blob1",
+            "a/b/blob2",
+            "a/c/blob3",
+            "d/blob4",
+            "d/e/f/blob5",
+            "flat_blob1",
+            "flat_blob2",
+            "flat_blob3",
+            "flat_blob4",
+        ]
         self.create_blobs(blob_names)
 
         container = self.bsc.get_container_client(self.container_name)
-        blob_pages = container.list_blobs(use_arrow=True, results_per_page=2).by_page()
+        blob_pages = container.list_blobs(use_arrow=True, results_per_page=3).by_page()
         first_blobs_list = list(next(blob_pages))
-        self.verify_blobs(first_blobs_list, blob_names[:2])
+        self.verify_blobs(first_blobs_list, blob_names[:3])
         second_blobs_list = list(next(blob_pages))
-        self.verify_blobs(second_blobs_list, blob_names[2:4])
+        self.verify_blobs(second_blobs_list, blob_names[3:6])
         third_blobs_list = list(next(blob_pages))
-        self.verify_blobs(third_blobs_list, blob_names[4:])
+        self.verify_blobs(third_blobs_list, blob_names[6:])
 
     def test_arrow_xml_response(self):
         blob_names = [
@@ -123,7 +133,10 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
             "flat_blob1",
             "flat_blob2",
             "flat_blob3",
+            "flat_blob4",
         ]
+        account_url = f"https://account.blob.core.windows.net/"
+        container_name = "mycontainer"
 
         # Build a real ListBlobsFlatSegmentResponse model (no XML parsing needed).
         blob_items = [
@@ -140,16 +153,16 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
             for name in blob_names
         ]
         xml_response = ListBlobsFlatSegmentResponse(
-            service_endpoint="https://account.blob.core.windows.net/",
-            container_name="mycontainer",
+            service_endpoint=account_url,
+            container_name=container_name,
             segment=BlobFlatListSegment(blob_items=blob_items),
             next_marker=None,
         )
 
         # Set up a minimal ContainerClient (no real HTTP calls needed).
         container_client = ContainerClient(
-            account_url="https://account.blob.core.windows.net",
-            container_name="mycontainer",
+            account_url=account_url,
+            container_name=container_name,
             credential=AzureNamedKeyCredential("account", "A" * 64),
         )
 
