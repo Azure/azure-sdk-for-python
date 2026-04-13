@@ -5,7 +5,7 @@
 
 This module provides functions (not classes) for tracing:
 
-- :func:`configure_tracing` — one-time exporter setup (called by ``AgentServerHost.__init__``)
+- :func:`configure_tracing` — one-time exporter setup (called by ``_default_configure_observability``)
 - :func:`request_span` — create a request-scoped span with GenAI attributes
 - :func:`end_span` / :func:`record_error` — span lifecycle helpers
 - :func:`trace_stream` — wrap streaming responses with span lifecycle
@@ -71,9 +71,10 @@ _propagator = composite.CompositePropagator([
 def configure_tracing(connection_string: Optional[str] = None) -> None:
     """Configure OpenTelemetry exporters for Azure Monitor and OTLP.
 
-    Called once at startup by ``AgentServerHost.__init__``.  Users may
-    pass a custom function (or ``None``) via the ``configure_tracing``
-    constructor parameter to override or disable this default setup.
+    Called once at startup by :func:`_default_configure_observability`.
+    Users may pass a custom function (or ``None``) via the
+    ``configure_observability`` constructor parameter to override or
+    disable this default setup.
 
     :param connection_string: Application Insights connection string.
         When provided, traces and logs are exported to Azure Monitor.

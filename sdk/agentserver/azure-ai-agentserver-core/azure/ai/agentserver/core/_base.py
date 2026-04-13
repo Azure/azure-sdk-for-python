@@ -30,6 +30,45 @@ _HEALTHY_BODY = b'{"status":"healthy"}'
 _CONSOLE_HANDLER_ATTR = "_agentserver_console"
 
 
+def _default_configure_observability(
+    *,
+    connection_string: Optional[str] = None,
+    log_level: Optional[str] = None,
+) -> None:
+    """Default observability setup: console logging + tracing/OTel export.
+
+    Attaches a formatted ``StreamHandler`` to the **root** logger so that
+    both SDK and user ``logging.info()`` calls are visible on the console.
+    Then configures OpenTelemetry tracing and log export (Azure Monitor
+    and/or OTLP) when a connection string or OTLP endpoint is available.
+
+    Pass this function (or a custom replacement) as the
+    ``configure_observability`` parameter of :class:`AgentServerHost`.
+    Pass ``None`` to disable all SDK-managed observability setup.
+
+    :keyword connection_string: Application Insights connection string.
+    :paramtype connection_string: str or None
+    :keyword log_level: Log level name (e.g. ``"INFO"``, ``"DEBUG"``).
+    :paramtype log_level: str or None
+    """
+    # Console logging on the root logger so user logs are also visible.
+    resolved_level = _config.resolve_log_level(log_level)
+    root = logging.getLogger()
+    root.setLevel(resolved_level)
+    if not any(getattr(h, _CONSOLE_HANDLER_ATTR, False) for h in root.handlers):
+        _console = logging.StreamHandler()
+        _console.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
+        setattr(_console, _CONSOLE_HANDLER_ATTR, True)
+        root.addHandler(_console)
+
+    # Suppress noisy Azure SDK and OTel exporter logs
+    logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
+    logging.getLogger("azure.monitor.opentelemetry.exporter").setLevel(logging.WARNING)
+
+    # Tracing and OTel export
+    _tracing.configure_tracing(connection_string=connection_string)
+
+
 class _PlatformHeaderMiddleware:
     """Pure-ASGI middleware that adds ``x-platform-server`` header to responses.
 
@@ -115,6 +154,13 @@ class AgentServerHost(Starlette):
         ``%({header}i)s`` (request header), ``%({header}o)s`` (response header).
         Defaults to ``%(h)s "%(r)s" %(s)s %(b)s %(D)sμs``.
     :type access_log_format: Optional[str]
+    :param configure_observability: Callable that sets up console logging,
+        tracing, and OTel export.  Defaults to
+        :func:`_default_configure_observability` which attaches a console
+        handler to the root logger and configures Azure Monitor / OTLP
+        export.  Pass a custom callable to override the setup, or ``None``
+        to skip all SDK-managed observability configuration.
+    :type configure_observability: Optional[Callable[..., None]]
     """
 
     _DEFAULT_ACCESS_LOG_FORMAT = '%(h)s "%(r)s" %(s)s %(b)s %(D)sμs'
@@ -127,7 +173,7 @@ class AgentServerHost(Starlette):
         log_level: Optional[str] = None,
         access_log: Optional[logging.Logger] = _SENTINEL_ACCESS_LOG,  # type: ignore[assignment]
         access_log_format: Optional[str] = None,
-        configure_tracing: Optional[Callable[..., None]] = _tracing.configure_tracing,
+        configure_observability: Optional[Callable[..., None]] = _default_configure_observability,
         routes: Optional[list[Route]] = None,
         **kwargs: Any,
     ) -> None:
@@ -142,37 +188,27 @@ class AgentServerHost(Starlette):
             build_server_version("azure-ai-agentserver-core", _CORE_VERSION)
         )
 
-        # Logging ----------------------------------------------------------
-        resolved_level = _config.resolve_log_level(log_level)
-        logger.setLevel(resolved_level)
-        if not any(getattr(h, _CONSOLE_HANDLER_ATTR, False) for h in logger.handlers):
-            _console = logging.StreamHandler()
-            _console.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
-            setattr(_console, _CONSOLE_HANDLER_ATTR, True)
-            logger.addHandler(_console)
+        # Resolved configuration (accessible as self.config)
+        self.config: _config.AgentConfig = _config.AgentConfig.from_env()
 
-        # Suppress noisy Azure SDK and OTel exporter logs
-        logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
-        logging.getLogger("azure.monitor.opentelemetry.exporter").setLevel(logging.WARNING)
+        # Observability (logging + tracing) --------------------------------
+        _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
+        if configure_observability is not None:
+            try:
+                configure_observability(
+                    connection_string=_conn_str,
+                    log_level=log_level,
+                )
+            except ValueError:
+                raise  # invalid log_level etc. — user should fix their config
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning("Failed to initialize observability; continuing without it.", exc_info=True)
 
         # Access logging ---------------------------------------------------
         self._access_log: Optional[logging.Logger] = (
             logger if access_log is _SENTINEL_ACCESS_LOG else access_log
         )
         self._access_log_format: str = access_log_format or self._DEFAULT_ACCESS_LOG_FORMAT
-
-        # Resolved configuration (accessible as self.config)
-        self.config: _config.AgentConfig = _config.AgentConfig.from_env()
-
-        # Tracing — overridable setup function
-        _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
-        if configure_tracing is not None:
-            _tracing_on = bool(_conn_str or self.config.otlp_endpoint)
-            if _tracing_on:
-                try:
-                    configure_tracing(connection_string=_conn_str)
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning("Failed to initialize tracing; continuing without tracing.", exc_info=True)
 
         # Timeouts ---------------------------------------------------------
         self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(
