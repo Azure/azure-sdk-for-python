@@ -137,11 +137,29 @@ export UV_INDEX_AZURE_SDK_USERNAME=x
 export UV_INDEX_AZURE_SDK_PASSWORD=$(az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv)
 ```
 
-**Create a PAT in Azure DevOps.**
+**Create a PAT in Azure DevOps:**
 
-TODO
+1. Go to [https://dev.azure.com/azure-sdk](https://dev.azure.com/azure-sdk)
+2. Click the user settings button in the top right corner next to your profile picture
+3. Select "Personal access tokens"
+4. Click "New Token"
+5. Give it a name (e.g., "Azure SDK Python Feed Access")
+6. Set expiration as needed
+7. Under "Scopes" -> "Packaging", select "Read, write, & manage"
+8. Click "Create"
+9. Copy the token and use it in your environment:
 
-**To override the index and use PyPI with uv:**
+```bash
+export UV_INDEX_AZURE_SDK_USERNAME=your-azure-username
+export UV_INDEX_AZURE_SDK_PASSWORD=your-pat-token
+```
+
+Or for pip:
+```bash
+export PIP_INDEX_URL="https://your-azure-username:your-pat-token@pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+```
+
+**To override the CFS index and use PyPI with uv:**
 ```bash
 uv pip install <package> --index-url https://pypi.org/simple/
 ```
