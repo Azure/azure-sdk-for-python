@@ -35,7 +35,7 @@ import pytest
 
 from azure.core import PipelineClient
 from azure.core.exceptions import ServiceResponseError
-from azure.core.polling import *
+from azure.core.polling import *  # pylint: disable=wildcard-import,unused-wildcard-import
 from azure.core.polling.base_polling import LROBasePolling, LocationPolling
 
 # from msrest.serialization import Model
