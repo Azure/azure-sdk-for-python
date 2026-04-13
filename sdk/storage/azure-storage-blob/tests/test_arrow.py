@@ -123,9 +123,6 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
         third_blobs_list = list(next(blob_pages))
         self.verify_blobs(third_blobs_list, blob_names[6:])
 
-    # --------------------------------
-    #           Mocked Tests
-    # --------------------------------
     def test_arrow_mock_xml_response(self):
         blob_names = [
             "a/b/blob1",
@@ -251,4 +248,197 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
             third_blobs_list = list(next(blob_pages))
             self.verify_blobs(third_blobs_list, blob_names[6:9])
 
-    # Do the same for walk_blobs
+    # --------------------------------
+    #       walk_blobs Tests
+    # --------------------------------
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_arrow_walk_no_blobs(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = list(container.walk_blobs(use_arrow=True))
+
+        self.verify_blobs(blobs_list, [])
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_arrow_walk_multiple_blobs(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob_names = ["blob1", "blob2"]
+        self.create_blobs(blob_names)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blobs_list = list(container.walk_blobs(use_arrow=True))
+        self.verify_blobs(blobs_list, blob_names)
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_arrow_walk_blobs_paging(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob_names = ["blob1", "blob2", "blob3", "blob4"]
+        self.create_blobs(blob_names)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blob_pages = container.walk_blobs(use_arrow=True, results_per_page=2).by_page()
+        first_blobs_list = list(next(blob_pages))
+        self.verify_blobs(first_blobs_list, blob_names[:2])
+        second_blobs_list = list(next(blob_pages))
+        self.verify_blobs(second_blobs_list, blob_names[2:])
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_arrow_walk_nested_blobs_paging(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        blob_names = [
+            "a/b/blob1",
+            "a/b/blob2",
+            "a/c/blob3",
+            "d/blob4",
+            "d/e/f/blob5",
+            "flat_blob1",
+            "flat_blob2",
+            "flat_blob3",
+            "flat_blob4",
+        ]
+        self.create_blobs(blob_names)
+
+        container = self.bsc.get_container_client(self.container_name)
+        blob_pages = container.walk_blobs(use_arrow=True, results_per_page=3).by_page()
+        first_blobs_list = list(next(blob_pages))
+        self.verify_blobs(first_blobs_list, blob_names[:3])
+        second_blobs_list = list(next(blob_pages))
+        self.verify_blobs(second_blobs_list, blob_names[3:6])
+        third_blobs_list = list(next(blob_pages))
+        self.verify_blobs(third_blobs_list, blob_names[6:])
+
+    def test_arrow_mock_walk_xml_response(self):
+        blob_names = [
+            "a/b/blob1",
+            "a/b/blob2",
+            "a/c/blob3",
+            "d/blob4",
+            "d/e/f/blob5",
+            "flat_blob1",
+            "flat_blob2",
+            "flat_blob3",
+            "flat_blob4",
+        ]
+        account_url = "https://account.blob.core.windows.net/"
+        container_name = "mycontainer"
+
+        blob_items = [
+            BlobItemInternal(
+                name=BlobName(content=name, encoded=False),
+                snapshot="",
+                properties=BlobPropertiesInternal(
+                    etag="",
+                    last_modified=datetime(2024, 1, 1, tzinfo=timezone.utc),
+                    blob_type="BlockBlob",
+                ),
+                deleted=False,
+            )
+            for name in blob_names
+        ]
+        xml_response = ListBlobsFlatSegmentResponse(
+            service_endpoint=account_url,
+            container_name=container_name,
+            segment=BlobFlatListSegment(blob_items=blob_items),
+            next_marker=None,
+        )
+
+        container_client = ContainerClient(
+            account_url=account_url,
+            container_name=container_name,
+            credential=AzureNamedKeyCredential("account", "A" * 64),
+        )
+
+        mock_http_response = MagicMock()
+        mock_http_response.location_mode = None
+        mock_pipeline_response = MagicMock()
+        mock_pipeline_response.http_response = mock_http_response
+
+        def fake_list_blob_hierarchy_segment_apache_arrow(**kwargs):
+            cls = kwargs.get("cls")
+            return cls(mock_pipeline_response, None, {"Content-Type": "application/xml"})
+
+        with patch.object(
+            container_client._client.container,  # pylint: disable=protected-access
+            "list_blob_hierarchy_segment_apache_arrow",
+            side_effect=fake_list_blob_hierarchy_segment_apache_arrow,
+        ):
+            page_iterator = container_client.walk_blobs(use_arrow=True).by_page()
+            page_iterator._deserializer = MagicMock(return_value=xml_response)
+            blobs_list = [blob for page in page_iterator for blob in page]
+
+        self.verify_blobs(blobs_list, blob_names)
+
+    def test_arrow_mock_walk_expected_response(self):
+        def _make_arrow_page(names: list[str], next_marker: str | None = None) -> bytes:
+            schema_meta = {b"NextMarker": (next_marker or "").encode()} if next_marker else {}
+            schema = pa.schema([pa.field("Name", pa.string())], metadata=schema_meta)
+            batch = pa.record_batch([pa.array(names, type=pa.string())], schema=schema)
+            sink = pa.BufferOutputStream()
+            with pa.ipc.new_stream(sink, schema) as writer:
+                writer.write_batch(batch)
+            return sink.getvalue().to_pybytes()
+
+        blob_names = [
+            "a/b/blob1",
+            "a/b/blob2",
+            "a/c/blob3",
+            "d/blob4",
+            "d/e/f/blob5",
+            "flat_blob1",
+            "flat_blob2",
+            "flat_blob3",
+            "flat_blob4",
+        ]
+        pages = [
+            _make_arrow_page(blob_names[0:3], next_marker="marker1"),
+            _make_arrow_page(blob_names[3:6], next_marker="marker2"),
+            _make_arrow_page(blob_names[6:9], next_marker=None),
+        ]
+        page_index = 0
+
+        container_client = ContainerClient(
+            account_url="https://account.blob.core.windows.net",
+            container_name="mycontainer",
+            credential=AzureNamedKeyCredential("account", "A" * 64),
+        )
+
+        mock_http_response = MagicMock()
+        mock_http_response.location_mode = None
+        mock_pipeline_response = MagicMock()
+        mock_pipeline_response.http_response = mock_http_response
+
+        def fake_list_blob_hierarchy_segment_apache_arrow(**kwargs):
+            nonlocal page_index
+            cls = kwargs.get("cls")
+            raw = iter([pages[page_index]])
+            page_index += 1
+            return cls(mock_pipeline_response, raw, {"Content-Type": "application/vnd.apache.arrow.stream"})
+
+        with patch.object(
+            container_client._client.container,  # pylint: disable=protected-access
+            "list_blob_hierarchy_segment_apache_arrow",
+            side_effect=fake_list_blob_hierarchy_segment_apache_arrow,
+        ):
+            blob_pages = container_client.walk_blobs(use_arrow=True, results_per_page=3).by_page()
+            first_blobs_list = list(next(blob_pages))
+            self.verify_blobs(first_blobs_list, blob_names[0:3])
+            second_blobs_list = list(next(blob_pages))
+            self.verify_blobs(second_blobs_list, blob_names[3:6])
+            third_blobs_list = list(next(blob_pages))
+            self.verify_blobs(third_blobs_list, blob_names[6:9])
