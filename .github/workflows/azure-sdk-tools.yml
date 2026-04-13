@@ -63,6 +63,17 @@ jobs:
         with:
           python-version: 3.13
 
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Setup Azure DevOps authentication for package feeds
+        run: |
+          echo "UV_INDEX_AZURE_SDK_USERNAME=x" >> "$GITHUB_ENV"
+          echo "UV_INDEX_AZURE_SDK_PASSWORD=$(az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv)" >> "$GITHUB_ENV"
+        shell: bash
+
       - name: Install uv
         run: |
           curl -LsSf https://astral.sh/uv/install.sh | sh
