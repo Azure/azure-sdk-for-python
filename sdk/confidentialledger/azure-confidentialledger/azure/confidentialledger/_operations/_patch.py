@@ -11,7 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import time
 from typing import Any, Callable, IO, List, Optional, Union, cast
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.polling import PollingMethod, LROPoller, NoPolling
 
 from azure.confidentialledger._operations._operations import (
@@ -55,7 +55,6 @@ class BaseStatePollingMethod:
         self._latest_response: JSON = {}
 
         self._retry_not_found = retry_not_found
-        self._not_found_count = 0
 
     def initialize(self, client, initial_response, deserialization_callback):  # pylint: disable=unused-argument
         self._evaluate_response(initial_response)
@@ -102,15 +101,18 @@ class StatePollingMethod(BaseStatePollingMethod, PollingMethod):
                 try:
                     response = self._operation()
                     self._evaluate_response(response)
-                except ResourceNotFoundError as not_found_exception:
-                    # We'll allow some instances of resource not found to account for replication
-                    # delay if session stickiness is lost.
-
-                    self._not_found_count += 1
-
-                    not_retryable = not self._retry_not_found or self._give_up_not_found_error(not_found_exception)
-
-                    if not_retryable or self._not_found_count >= 3:
+                except HttpResponseError as http_exception:
+                    # 404: node doesn't know about the transaction yet (replication lag)
+                    # 406: node knows the transaction but it hasn't committed yet
+                    # Both are transient during transaction-status polling — treat as
+                    # pending so the poller retries.
+                    if http_exception.status_code in (404, 406) and self._retry_not_found:
+                        if (
+                            isinstance(http_exception, ResourceNotFoundError)
+                            and self._give_up_not_found_error(http_exception)
+                        ):
+                            raise
+                    else:
                         raise
                 if not self.finished():
                     time.sleep(self._polling_interval_s)
