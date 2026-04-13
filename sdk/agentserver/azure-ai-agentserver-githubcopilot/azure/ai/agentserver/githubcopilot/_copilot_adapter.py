@@ -33,8 +33,14 @@ from azure.ai.agentserver.core import AgentServerHost  # noqa: F401 (re-exported
 from azure.ai.agentserver.responses import (
     ResponseEventStream,
     ResponsesServerOptions,
-    get_input_text,
 )
+
+# get_input_text was made public in responses 1.0.0b1 (this repo).
+# Fall back to the private helper when running against an older dev-feed build.
+try:
+    from azure.ai.agentserver.responses import get_input_text
+except ImportError:
+    from azure.ai.agentserver.responses.models._helpers import _get_input_text as get_input_text  # type: ignore
 from azure.ai.agentserver.responses.hosting import ResponsesAgentServerHost
 
 from ._tool_acl import ToolAcl
