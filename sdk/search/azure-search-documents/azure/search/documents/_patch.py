@@ -41,9 +41,10 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2024_07_01 = "2024-07-01"
     V2025_09_01 = "2025-09-01"
     V2025_11_01_PREVIEW = "2025-11-01-preview"
+    V2026_05_01_PREVIEW = "2026-05-01-preview"
 
 
-DEFAULT_VERSION = ApiVersion.V2025_11_01_PREVIEW
+DEFAULT_VERSION = ApiVersion.V2026_05_01_PREVIEW
 
 
 class SearchClient(_SearchClient):
@@ -58,7 +59,7 @@ class SearchClient(_SearchClient):
     :param index_name: The name of the index. Required.
     :type index_name: str
     :keyword api_version: The API version to use for this operation. Default value is
-        "2025-11-01-preview". Note that overriding this default value may result in unsupported
+        "2026-05-01-preview". Note that overriding this default value may result in unsupported
         behavior.
     :paramtype api_version: str
     """

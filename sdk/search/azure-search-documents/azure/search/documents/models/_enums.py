@@ -312,6 +312,17 @@ class QueryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     on the Web corpus."""
 
 
+class RelevanceScoreMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Determines the relevance score calculation mode for search results."""
+
+    CLASSIC = "classic"
+    """Classic BM25 scoring. This is the default."""
+    ENHANCED = "enhanced"
+    """Enhanced scoring that incorporates freshness and proximity signals."""
+    LEARNED = "learned"
+    """Experimental scoring using a learned model for improved relevance."""
+
+
 class ScoringStatistics(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A value that specifies whether we want to calculate scoring statistics (such as document
     frequency) globally for more consistent scoring, or locally, for lower latency. The default is
@@ -347,6 +358,9 @@ class SemanticErrorMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAIL = "fail"
     """If there is an exception during the semantic processing step, the query will fail and return
     the appropriate HTTP code depending on the error."""
+    BEST_EFFORT = "bestEffort"
+    """Provides a best-effort semantic processing result, falling back to BM25 ranking if semantic
+    ranking is unavailable."""
 
 
 class SemanticErrorReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):

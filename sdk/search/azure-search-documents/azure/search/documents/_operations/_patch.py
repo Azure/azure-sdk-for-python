@@ -126,6 +126,8 @@ def _build_search_request(
     query_rewrites_count: Optional[int] = None,
     debug: Optional[Union[str, _models.QueryDebugMode]] = None,
     hybrid_search: Optional[_models.HybridSearch] = None,
+    relevance_score_mode: Optional[Union[str, _models.RelevanceScoreMode]] = None,
+    query_insights_enabled: Optional[bool] = None,
 ) -> _models.SearchRequest:
     # pylint:disable=too-many-locals
     """Build a SearchRequest from search parameters.
@@ -176,6 +178,8 @@ def _build_search_request(
     :keyword int query_rewrites_count: The maximum number of query rewrites to apply.
     :keyword debug: The debug mode for the search query.
     :keyword hybrid_search: The hybrid search configuration for the search query.
+    :keyword relevance_score_mode: The relevance scoring mode to use when ranking results.
+    :keyword bool query_insights_enabled: A value indicating whether to include query performance insights.
     :return: SearchRequest
     :rtype: ~azure.search.documents.models.SearchRequest
     """
@@ -240,6 +244,8 @@ def _build_search_request(
         query_rewrites=rewrites,
         debug=debug,
         hybrid_search=hybrid_search,
+        relevance_score_mode=relevance_score_mode,
+        query_insights_enabled=query_insights_enabled,
     )
 
 
@@ -256,7 +262,7 @@ class SearchPageIterator(PageIterator):
         self._initial_request = initial_request
         self._kwargs = kwargs
         self._facets: Optional[Dict[str, List[Dict[str, Any]]]] = None
-        self._api_version = kwargs.get("api_version", "2025-11-01-preview")
+        self._api_version = kwargs.get("api_version", "2026-05-01-preview")
 
     def _get_next_cb(self, continuation_token):
         if continuation_token is None:
@@ -305,6 +311,12 @@ class SearchPageIterator(PageIterator):
         self.continuation_token = None
         response = cast(_models.SearchDocumentsResult, self._response)
         return response.debug_info
+
+    @_ensure_response
+    def get_query_insights(self) -> Optional[_models.QueryInsights]:
+        self.continuation_token = None
+        response = cast(_models.SearchDocumentsResult, self._response)
+        return response.query_insights
 
 
 class SearchItemPaged(ItemPaged[ReturnType]):
@@ -367,6 +379,14 @@ class SearchItemPaged(ItemPaged[ReturnType]):
         :rtype: ~azure.search.documents.models.DebugInfo
         """
         return cast(_models.DebugInfo, self._first_iterator_instance().get_debug_info())
+
+    def get_query_insights(self) -> Optional[_models.QueryInsights]:
+        """Return query performance insights. Only populated when query_insights_enabled is True.
+
+        :return: query insights
+        :rtype: ~azure.search.documents.models.QueryInsights or None
+        """
+        return cast(Optional[_models.QueryInsights], self._first_iterator_instance().get_query_insights())
 
 
 class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
@@ -567,6 +587,8 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         hybrid_search: Optional[_models.HybridSearch] = None,
         query_source_authorization: Optional[str] = None,
         enable_elevated_read: Optional[bool] = None,
+        relevance_score_mode: Optional[Union[str, _models.RelevanceScoreMode]] = None,
+        query_insights_enabled: Optional[bool] = None,
         **kwargs: Any,
     ) -> SearchItemPaged[Dict]:
         # pylint:disable=too-many-locals
@@ -706,6 +728,11 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :keyword enable_elevated_read: A value that enables elevated read that bypass document level
          permission checks for the query operation. Default value is None.
         :paramtype enable_elevated_read: bool
+        :keyword relevance_score_mode: Specifies the relevance scoring mode to use when ranking results.
+            Known values are: "classic", "enhanced", and "learned".
+        :paramtype relevance_score_mode: str or ~azure.search.documents.models.RelevanceScoreMode
+        :keyword bool query_insights_enabled: A value indicating whether to include query performance
+            insights in the response.
         :return: List of search results.
         :rtype: SearchItemPaged[dict]
 
@@ -775,6 +802,8 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             query_rewrites_count=query_rewrites_count,
             debug=debug,
             hybrid_search=hybrid_search,
+            relevance_score_mode=relevance_score_mode,
+            query_insights_enabled=query_insights_enabled,
         )
 
         # Create kwargs for the search_post call
@@ -792,7 +821,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         search_text: str,
         suggester_name: str,
         *,
-        mode: Optional[Union[str, _models.AutocompleteMode]] = None,
+        mode: Optional[Union[str, _models._enums.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,

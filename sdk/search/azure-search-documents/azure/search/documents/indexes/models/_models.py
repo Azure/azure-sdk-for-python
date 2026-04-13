@@ -3870,9 +3870,12 @@ class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Ski
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :ivar categories: A list of entity categories that should be extracted.
-    :vartype categories: list[str]
+    :vartype categories: list[str or ~azure.search.documents.indexes.models.EntityCategory]
     :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
-    :vartype default_language_code: str
+     Known values are: "ar", "cs", "zh-Hans", "zh-Hant", "da", "nl", "en", "fi", "fr", "de", "el",
+     "hu", "it", "ja", "ko", "no", "pl", "pt-PT", "pt-BR", "ru", "es", "sv", and "tr".
+    :vartype default_language_code: str or
+     ~azure.search.documents.indexes.models.EntityRecognitionSkillLanguage
     :ivar minimum_precision: A value between 0 and 1 that be used to only include entities whose
      confidence score is greater than the value specified. If not set (default), or if explicitly
      set to null, all entities will be included.
@@ -3886,12 +3889,17 @@ class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Ski
     :vartype odata_type: str
     """
 
-    categories: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    categories: Optional[list[Union[str, "_models.EntityCategory"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
     """A list of entity categories that should be extracted."""
-    default_language_code: Optional[str] = rest_field(
+    default_language_code: Optional[Union[str, "_models.EntityRecognitionSkillLanguage"]] = rest_field(
         name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """A value indicating which language code to use. Default is ``en``."""
+    """A value indicating which language code to use. Default is ``en``. Known values are: \"ar\",
+     \"cs\", \"zh-Hans\", \"zh-Hant\", \"da\", \"nl\", \"en\", \"fi\", \"fr\", \"de\", \"el\",
+     \"hu\", \"it\", \"ja\", \"ko\", \"no\", \"pl\", \"pt-PT\", \"pt-BR\", \"ru\", \"es\", \"sv\",
+     and \"tr\"."""
     minimum_precision: Optional[float] = rest_field(
         name="minimumPrecision", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3917,8 +3925,8 @@ class EntityRecognitionSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Ski
         name: Optional[str] = None,
         description: Optional[str] = None,
         context: Optional[str] = None,
-        categories: Optional[list[str]] = None,
-        default_language_code: Optional[str] = None,
+        categories: Optional[list[Union[str, "_models.EntityCategory"]]] = None,
+        default_language_code: Optional[Union[str, "_models.EntityRecognitionSkillLanguage"]] = None,
         minimum_precision: Optional[float] = None,
         model_version: Optional[str] = None,
     ) -> None: ...
@@ -4019,7 +4027,7 @@ class ExhaustiveKnnParameters(_Model):
     """Contains the parameters specific to exhaustive KNN algorithm.
 
     :ivar metric: The similarity metric to use for vector comparisons. Known values are: "cosine",
-     "euclidean", "dotProduct", and "hamming".
+     "euclidean", "dotProduct", "hamming", and "manhattan".
     :vartype metric: str or ~azure.search.documents.indexes.models.VectorSearchAlgorithmMetric
     """
 
@@ -4027,7 +4035,7 @@ class ExhaustiveKnnParameters(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The similarity metric to use for vector comparisons. Known values are: \"cosine\",
-     \"euclidean\", \"dotProduct\", and \"hamming\"."""
+     \"euclidean\", \"dotProduct\", \"hamming\", and \"manhattan\"."""
 
     @overload
     def __init__(
@@ -4331,7 +4339,7 @@ class HnswParameters(_Model):
      slower search. At a certain point, increasing this parameter leads to diminishing returns.
     :vartype ef_search: int
     :ivar metric: The similarity metric to use for vector comparisons. Known values are: "cosine",
-     "euclidean", "dotProduct", and "hamming".
+     "euclidean", "dotProduct", "hamming", and "manhattan".
     :vartype metric: str or ~azure.search.documents.indexes.models.VectorSearchAlgorithmMetric
     """
 
@@ -4354,7 +4362,7 @@ class HnswParameters(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The similarity metric to use for vector comparisons. Known values are: \"cosine\",
-     \"euclidean\", \"dotProduct\", and \"hamming\"."""
+     \"euclidean\", \"dotProduct\", \"hamming\", and \"manhattan\"."""
 
     @overload
     def __init__(
@@ -4458,6 +4466,69 @@ class ImageAnalysisSkill(SearchIndexerSkill, discriminator="#Microsoft.Skills.Vi
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.odata_type = "#Microsoft.Skills.Vision.ImageAnalysisSkill"  # type: ignore
+
+
+class IndexAnalyticsConfiguration(_Model):
+    """Configuration for index-level analytics and query performance monitoring.
+
+    :ivar mode: The analytics collection mode for the index. Default is 'disabled'. Known values
+     are: "disabled", "basic", and "detailed".
+    :vartype mode: str or ~azure.search.documents.indexes.models.IndexAnalyticsMode
+    :ivar retention_period: The retention period for analytics data in ISO 8601 duration format.
+     Default is P30D (30 days).
+    :vartype retention_period: ~datetime.timedelta
+    :ivar include_vector_metrics: A value indicating whether to include vector search metrics in
+     analytics.
+    :vartype include_vector_metrics: bool
+    :ivar slow_query_threshold_count: The maximum number of slow queries to retain for analysis.
+    :vartype slow_query_threshold_count: int
+    :ivar slow_query_latency_threshold_ms: The latency threshold in milliseconds above which a
+     query is considered slow.
+    :vartype slow_query_latency_threshold_ms: int
+    """
+
+    mode: Optional[Union[str, "_models.IndexAnalyticsMode"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The analytics collection mode for the index. Default is 'disabled'. Known values are:
+     \"disabled\", \"basic\", and \"detailed\"."""
+    retention_period: Optional[datetime.timedelta] = rest_field(
+        name="retentionPeriod", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The retention period for analytics data in ISO 8601 duration format. Default is P30D (30 days)."""
+    include_vector_metrics: Optional[bool] = rest_field(
+        name="includeVectorMetrics", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """A value indicating whether to include vector search metrics in analytics."""
+    slow_query_threshold_count: Optional[int] = rest_field(
+        name="slowQueryThresholdCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The maximum number of slow queries to retain for analysis."""
+    slow_query_latency_threshold_ms: Optional[int] = rest_field(
+        name="slowQueryLatencyThresholdMs", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The latency threshold in milliseconds above which a query is considered slow."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.IndexAnalyticsMode"]] = None,
+        retention_period: Optional[datetime.timedelta] = None,
+        include_vector_metrics: Optional[bool] = None,
+        slow_query_threshold_count: Optional[int] = None,
+        slow_query_latency_threshold_ms: Optional[int] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class IndexedOneLakeKnowledgeSource(KnowledgeSource, discriminator="indexedOneLake"):
@@ -5251,6 +5322,31 @@ class IndexStatisticsSummary(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class IndexUsageMetrics(_Model):
+    """Per-index usage metrics.
+
+    :ivar index_name: The name of the index. Required.
+    :vartype index_name: str
+    :ivar query_count: The number of queries targeting this index. Required.
+    :vartype query_count: int
+    :ivar average_latency_ms: The average latency in milliseconds for queries targeting this index.
+     Required.
+    :vartype average_latency_ms: float
+    :ivar documents_processed: The number of documents indexed in the current billing period.
+     Required.
+    :vartype documents_processed: int
+    """
+
+    index_name: str = rest_field(name="indexName", visibility=["read"])
+    """The name of the index. Required."""
+    query_count: int = rest_field(name="queryCount", visibility=["read"])
+    """The number of queries targeting this index. Required."""
+    average_latency_ms: float = rest_field(name="averageLatencyMs", visibility=["read"])
+    """The average latency in milliseconds for queries targeting this index. Required."""
+    documents_processed: int = rest_field(name="documentsProcessed", visibility=["read"])
+    """The number of documents indexed in the current billing period. Required."""
 
 
 class InputFieldMappingEntry(_Model):
@@ -7612,10 +7708,10 @@ class ScoringProfile(_Model):
     :vartype text_weights: ~azure.search.documents.indexes.models.TextWeights
     :ivar functions: The collection of functions that influence the scoring of documents.
     :vartype functions: list[~azure.search.documents.indexes.models.ScoringFunction]
-    :ivar function_aggregation: A value indicating how the results of individual scoring functions
-     should be combined. Defaults to "Sum". Ignored if there are no scoring functions. Known values
-     are: "sum", "average", "minimum", "maximum", "firstMatching", and "product".
-    :vartype function_aggregation: str or
+    :ivar score_function_aggregation: A value indicating how the results of individual scoring
+     functions should be combined. Defaults to "Sum". Ignored if there are no scoring functions.
+     Known values are: "sum", "average", "minimum", "maximum", "firstMatching", and "product".
+    :vartype score_function_aggregation: str or
      ~azure.search.documents.indexes.models.ScoringFunctionAggregation
     """
 
@@ -7629,8 +7725,8 @@ class ScoringProfile(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The collection of functions that influence the scoring of documents."""
-    function_aggregation: Optional[Union[str, "_models.ScoringFunctionAggregation"]] = rest_field(
-        name="functionAggregation", visibility=["read", "create", "update", "delete", "query"]
+    score_function_aggregation: Optional[Union[str, "_models.ScoringFunctionAggregation"]] = rest_field(
+        name="scoreFunctionAggregation", visibility=["read", "create", "update", "delete", "query"]
     )
     """A value indicating how the results of individual scoring functions should be combined. Defaults
      to \"Sum\". Ignored if there are no scoring functions. Known values are: \"sum\", \"average\",
@@ -7643,7 +7739,7 @@ class ScoringProfile(_Model):
         name: str,
         text_weights: Optional["_models.TextWeights"] = None,
         functions: Optional[list["_models.ScoringFunction"]] = None,
-        function_aggregation: Optional[Union[str, "_models.ScoringFunctionAggregation"]] = None,
+        score_function_aggregation: Optional[Union[str, "_models.ScoringFunctionAggregation"]] = None,
     ) -> None: ...
 
     @overload
@@ -7706,7 +7802,8 @@ class SearchField(_Model):
     :vartype name: str
     :ivar type: The data type of the field. Required. Known values are: "Edm.String", "Edm.Int32",
      "Edm.Int64", "Edm.Double", "Edm.Boolean", "Edm.DateTimeOffset", "Edm.GeographyPoint",
-     "Edm.ComplexType", "Edm.Single", "Edm.Half", "Edm.Int16", "Edm.SByte", and "Edm.Byte".
+     "Edm.ComplexType", "Edm.Single", "Edm.Half", "Edm.Int16", "Edm.SByte", "Edm.Byte", and
+     "Edm.Decimal".
     :vartype type: str or ~azure.search.documents.indexes.models.SearchFieldDataType
     :ivar key: A value indicating whether the field uniquely identifies documents in the index.
      Exactly one top-level field in each index must be chosen as the key field and it must be of
@@ -7871,8 +7968,8 @@ class SearchField(_Model):
     )
     """The data type of the field. Required. Known values are: \"Edm.String\", \"Edm.Int32\",
      \"Edm.Int64\", \"Edm.Double\", \"Edm.Boolean\", \"Edm.DateTimeOffset\", \"Edm.GeographyPoint\",
-     \"Edm.ComplexType\", \"Edm.Single\", \"Edm.Half\", \"Edm.Int16\", \"Edm.SByte\", and
-     \"Edm.Byte\"."""
+     \"Edm.ComplexType\", \"Edm.Single\", \"Edm.Half\", \"Edm.Int16\", \"Edm.SByte\", \"Edm.Byte\",
+     and \"Edm.Decimal\"."""
     key: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """A value indicating whether the field uniquely identifies documents in the index. Exactly one
      top-level field in each index must be chosen as the key field and it must be of type
@@ -8143,6 +8240,10 @@ class SearchIndex(_Model):
      ~azure.search.documents.indexes.models.SearchIndexPermissionFilterOption
     :ivar purview_enabled: A value indicating whether Purview is enabled for the index.
     :vartype purview_enabled: bool
+    :ivar analytics_configuration: Configuration for index-level analytics and query performance
+     monitoring.
+    :vartype analytics_configuration:
+     ~azure.search.documents.indexes.models.IndexAnalyticsConfiguration
     :ivar e_tag: The ETag of the index.
     :vartype e_tag: str
     """
@@ -8224,6 +8325,10 @@ class SearchIndex(_Model):
         name="purviewEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
     """A value indicating whether Purview is enabled for the index."""
+    analytics_configuration: Optional["_models.IndexAnalyticsConfiguration"] = rest_field(
+        name="analyticsConfiguration", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for index-level analytics and query performance monitoring."""
     e_tag: Optional[str] = rest_field(name="@odata.etag", visibility=["read", "create", "update", "delete", "query"])
     """The ETag of the index."""
 
@@ -8249,6 +8354,7 @@ class SearchIndex(_Model):
         vector_search: Optional["_models.VectorSearch"] = None,
         permission_filter_option: Optional[Union[str, "_models.SearchIndexPermissionFilterOption"]] = None,
         purview_enabled: Optional[bool] = None,
+        analytics_configuration: Optional["_models.IndexAnalyticsConfiguration"] = None,
         e_tag: Optional[str] = None,
     ) -> None: ...
 
@@ -8561,7 +8667,8 @@ class SearchIndexerDataSourceConnection(_Model):
     :ivar description: The description of the datasource.
     :vartype description: str
     :ivar type: The type of the datasource. Required. Known values are: "azuresql", "cosmosdb",
-     "azureblob", "azuretable", "mysql", "adlsgen2", "onelake", and "sharepoint".
+     "azureblob", "azuretable", "mysql", "adlsgen2", "onelake", "sharepoint", and
+     "cosmosdb-mongodb".
     :vartype type: str or ~azure.search.documents.indexes.models.SearchIndexerDataSourceType
     :ivar sub_type: A specific type of the data source, in case the resource is capable of
      different modalities. For example, 'MongoDb' for certain 'cosmosDb' accounts.
@@ -8605,7 +8712,8 @@ class SearchIndexerDataSourceConnection(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The type of the datasource. Required. Known values are: \"azuresql\", \"cosmosdb\",
-     \"azureblob\", \"azuretable\", \"mysql\", \"adlsgen2\", \"onelake\", and \"sharepoint\"."""
+     \"azureblob\", \"azuretable\", \"mysql\", \"adlsgen2\", \"onelake\", \"sharepoint\", and
+     \"cosmosdb-mongodb\"."""
     sub_type: Optional[str] = rest_field(name="subType", visibility=["read"])
     """A specific type of the data source, in case the resource is capable of different modalities.
      For example, 'MongoDb' for certain 'cosmosDb' accounts."""
@@ -9905,6 +10013,8 @@ class SearchServiceCounters(_Model):
     :ivar vector_index_size_counter: Total memory consumption of all vector indexes within the
      service, in bytes. Required.
     :vartype vector_index_size_counter: ~azure.search.documents.indexes.models.ResourceCounter
+    :ivar knowledge_sources_count: Total number of knowledge sources.
+    :vartype knowledge_sources_count: ~azure.search.documents.indexes.models.ResourceCounter
     """
 
     alias_counter: "_models.ResourceCounter" = rest_field(
@@ -9943,6 +10053,10 @@ class SearchServiceCounters(_Model):
         name="vectorIndexSize", visibility=["read", "create", "update", "delete", "query"]
     )
     """Total memory consumption of all vector indexes within the service, in bytes. Required."""
+    knowledge_sources_count: Optional["_models.ResourceCounter"] = rest_field(
+        name="knowledgeSourcesCount", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Total number of knowledge sources."""
 
     @overload
     def __init__(
@@ -9957,6 +10071,7 @@ class SearchServiceCounters(_Model):
         synonym_map_counter: "_models.ResourceCounter",
         skillset_counter: "_models.ResourceCounter",
         vector_index_size_counter: "_models.ResourceCounter",
+        knowledge_sources_count: Optional["_models.ResourceCounter"] = None,
     ) -> None: ...
 
     @overload
@@ -10079,6 +10194,40 @@ class SearchServiceStatistics(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
+
+
+class SearchServiceUsageMetrics(_Model):
+    """Response from a usage metrics request for the search service.
+
+    :ivar total_queries: The total number of queries processed in the current billing period.
+     Required.
+    :vartype total_queries: int
+    :ivar throttled_queries: The total number of throttled queries in the current billing period.
+     Required.
+    :vartype throttled_queries: int
+    :ivar average_latency_ms: The average query latency in milliseconds over the current billing
+     period. Required.
+    :vartype average_latency_ms: float
+    :ivar p95_latency_ms: The 95th percentile query latency in milliseconds. Required.
+    :vartype p95_latency_ms: float
+    :ivar last_updated: The timestamp of the most recent metrics aggregation. Required.
+    :vartype last_updated: ~datetime.datetime
+    :ivar index_metrics: Per-index usage breakdown.
+    :vartype index_metrics: list[~azure.search.documents.indexes.models.IndexUsageMetrics]
+    """
+
+    total_queries: int = rest_field(name="totalQueries", visibility=["read"])
+    """The total number of queries processed in the current billing period. Required."""
+    throttled_queries: int = rest_field(name="throttledQueries", visibility=["read"])
+    """The total number of throttled queries in the current billing period. Required."""
+    average_latency_ms: float = rest_field(name="averageLatencyMs", visibility=["read"])
+    """The average query latency in milliseconds over the current billing period. Required."""
+    p95_latency_ms: float = rest_field(name="p95LatencyMs", visibility=["read"])
+    """The 95th percentile query latency in milliseconds. Required."""
+    last_updated: datetime.datetime = rest_field(name="lastUpdated", visibility=["read"], format="rfc3339")
+    """The timestamp of the most recent metrics aggregation. Required."""
+    index_metrics: Optional[list["_models.IndexUsageMetrics"]] = rest_field(name="indexMetrics", visibility=["read"])
+    """Per-index usage breakdown."""
 
 
 class SearchSuggester(_Model):
@@ -10331,7 +10480,10 @@ class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text
      be consumed as an input by another skill. Required.
     :vartype outputs: list[~azure.search.documents.indexes.models.OutputFieldMappingEntry]
     :ivar default_language_code: A value indicating which language code to use. Default is ``en``.
-    :vartype default_language_code: str
+     Known values are: "da", "nl", "en", "fi", "fr", "de", "el", "it", "no", "pl", "pt-PT", "ru",
+     "es", "sv", and "tr".
+    :vartype default_language_code: str or
+     ~azure.search.documents.indexes.models.SentimentSkillLanguage
     :ivar include_opinion_mining: If set to true, the skill output will include information from
      Text Analytics for opinion mining, namely targets (nouns or verbs) and their associated
      assessment (adjective) in the text. Default is false.
@@ -10345,10 +10497,12 @@ class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text
     :vartype odata_type: str
     """
 
-    default_language_code: Optional[str] = rest_field(
+    default_language_code: Optional[Union[str, "_models.SentimentSkillLanguage"]] = rest_field(
         name="defaultLanguageCode", visibility=["read", "create", "update", "delete", "query"]
     )
-    """A value indicating which language code to use. Default is ``en``."""
+    """A value indicating which language code to use. Default is ``en``. Known values are: \"da\",
+     \"nl\", \"en\", \"fi\", \"fr\", \"de\", \"el\", \"it\", \"no\", \"pl\", \"pt-PT\", \"ru\",
+     \"es\", \"sv\", and \"tr\"."""
     include_opinion_mining: Optional[bool] = rest_field(
         name="includeOpinionMining", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10374,7 +10528,7 @@ class SentimentSkillV3(SearchIndexerSkill, discriminator="#Microsoft.Skills.Text
         name: Optional[str] = None,
         description: Optional[str] = None,
         context: Optional[str] = None,
-        default_language_code: Optional[str] = None,
+        default_language_code: Optional[Union[str, "_models.SentimentSkillLanguage"]] = None,
         include_opinion_mining: Optional[bool] = None,
         model_version: Optional[str] = None,
     ) -> None: ...

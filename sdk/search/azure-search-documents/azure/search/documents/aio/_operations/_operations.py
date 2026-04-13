@@ -85,6 +85,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -109,7 +110,7 @@ class _SearchClientOperationsMixin(
         response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(int, response.text())
 
@@ -249,8 +250,8 @@ class _SearchClientOperationsMixin(
          should be used for semantic ranking, captions, highlights, and answers. Default value is None.
         :paramtype semantic_configuration: str
         :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
-         completely, or to return partial results (default). Known values are: "partial" and "fail".
-         Default value is None.
+         completely, or to return partial results (default). Known values are: "partial", "fail", and
+         "bestEffort". Default value is None.
         :paramtype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorMode
         :keyword semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount
          of time it takes for semantic enrichment to finish processing before the request fails. Default
@@ -369,6 +370,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -390,7 +392,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchDocumentsResult, response.json())
 
@@ -439,6 +441,8 @@ class _SearchClientOperationsMixin(
         vector_queries: Optional[list[_models2.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models2.VectorFilterMode]] = None,
         hybrid_search: Optional[_models2.HybridSearch] = None,
+        relevance_score_mode: Optional[Union[str, _models2.RelevanceScoreMode]] = None,
+        query_insights_enabled: Optional[bool] = None,
         **kwargs: Any
     ) -> _models2.SearchDocumentsResult: ...
     @overload
@@ -502,6 +506,8 @@ class _SearchClientOperationsMixin(
         vector_queries: Optional[list[_models2.VectorQuery]] = None,
         vector_filter_mode: Optional[Union[str, _models2.VectorFilterMode]] = None,
         hybrid_search: Optional[_models2.HybridSearch] = None,
+        relevance_score_mode: Optional[Union[str, _models2.RelevanceScoreMode]] = None,
+        query_insights_enabled: Optional[bool] = None,
         **kwargs: Any
     ) -> _models2.SearchDocumentsResult:
         """Searches for documents in the index.
@@ -619,7 +625,7 @@ class _SearchClientOperationsMixin(
         :paramtype semantic_configuration_name: str
         :keyword semantic_error_handling: Allows the user to choose whether a semantic call should fail
          completely (default / current behavior), or to return partial results. Known values are:
-         "partial" and "fail". Default value is None.
+         "partial", "fail", and "bestEffort". Default value is None.
         :paramtype semantic_error_handling: str or ~azure.search.documents.models.SemanticErrorMode
         :keyword semantic_max_wait_in_milliseconds: Allows the user to set an upper bound on the amount
          of time it takes for semantic enrichment to finish processing before the request fails. Default
@@ -652,6 +658,12 @@ class _SearchClientOperationsMixin(
         :keyword hybrid_search: The query parameters to configure hybrid search behaviors. Default
          value is None.
         :paramtype hybrid_search: ~azure.search.documents.models.HybridSearch
+        :keyword relevance_score_mode: Specifies the relevance scoring mode to use when ranking
+         results. Known values are: "classic", "enhanced", and "learned". Default value is None.
+        :paramtype relevance_score_mode: str or ~azure.search.documents.models.RelevanceScoreMode
+        :keyword query_insights_enabled: A value indicating whether to include query performance
+         insights in the response. Default value is None.
+        :paramtype query_insights_enabled: bool
         :return: SearchDocumentsResult. The SearchDocumentsResult is compatible with MutableMapping
         :rtype: ~azure.search.documents.models.SearchDocumentsResult
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -684,9 +696,11 @@ class _SearchClientOperationsMixin(
                 "hybridSearch": hybrid_search,
                 "minimumCoverage": minimum_coverage,
                 "orderby": order_by,
+                "queryInsightsEnabled": query_insights_enabled,
                 "queryLanguage": query_language,
                 "queryRewrites": query_rewrites,
                 "queryType": query_type,
+                "relevanceScoreMode": relevance_score_mode,
                 "scoringParameters": scoring_parameters,
                 "scoringProfile": scoring_profile,
                 "scoringStatistics": scoring_statistics,
@@ -729,6 +743,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -750,7 +765,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.SearchDocumentsResult, response.json())
 
@@ -815,6 +830,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -836,7 +852,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models2.LookupDocument, response.json())
 
@@ -947,6 +963,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -968,7 +985,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models2._models.SuggestDocumentsResult, response.json()  # pylint: disable=protected-access
@@ -984,7 +1001,6 @@ class _SearchClientOperationsMixin(
         self,
         *,
         search_text: str,
-        suggester_name: str,
         content_type: str = "application/json",
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
@@ -994,6 +1010,7 @@ class _SearchClientOperationsMixin(
         order_by: Optional[list[str]] = None,
         search_fields: Optional[list[str]] = None,
         select: Optional[list[str]] = None,
+        suggester_name: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models2._models.SuggestDocumentsResult: ...
@@ -1012,7 +1029,6 @@ class _SearchClientOperationsMixin(
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         search_text: str = _Unset,
-        suggester_name: str = _Unset,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
@@ -1021,6 +1037,7 @@ class _SearchClientOperationsMixin(
         order_by: Optional[list[str]] = None,
         search_fields: Optional[list[str]] = None,
         select: Optional[list[str]] = None,
+        suggester_name: Optional[str] = None,
         top: Optional[int] = None,
         **kwargs: Any
     ) -> _models2._models.SuggestDocumentsResult:
@@ -1031,9 +1048,6 @@ class _SearchClientOperationsMixin(
         :keyword search_text: The search text to use to suggest documents. Must be at least 1
          character, and no more than 100 characters. Required.
         :paramtype search_text: str
-        :keyword suggester_name: The name of the suggester as specified in the suggesters collection
-         that's part of the index definition. Required.
-        :paramtype suggester_name: str
         :keyword filter: An OData expression that filters the documents considered for suggestions.
          Default value is None.
         :paramtype filter: str
@@ -1069,6 +1083,9 @@ class _SearchClientOperationsMixin(
         :keyword select: The comma-separated list of fields to retrieve. If unspecified, only the key
          field will be included in the results. Default value is None.
         :paramtype select: list[str]
+        :keyword suggester_name: The name of the suggester as specified in the suggesters collection
+         that's part of the index definition. Default value is None.
+        :paramtype suggester_name: str
         :keyword top: The number of suggestions to retrieve. This must be a value between 1 and 100.
          The default is 5. Default value is None.
         :paramtype top: int
@@ -1093,8 +1110,6 @@ class _SearchClientOperationsMixin(
         if body is _Unset:
             if search_text is _Unset:
                 raise TypeError("missing required argument: search_text")
-            if suggester_name is _Unset:
-                raise TypeError("missing required argument: suggester_name")
             body = {
                 "filter": filter,
                 "fuzzy": use_fuzzy_matching,
@@ -1129,6 +1144,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1150,7 +1166,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models2._models.SuggestDocumentsResult, response.json()  # pylint: disable=protected-access
@@ -1221,6 +1237,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1242,7 +1259,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models2._models.IndexDocumentsResult, response.json()  # pylint: disable=protected-access
@@ -1259,7 +1276,7 @@ class _SearchClientOperationsMixin(
         *,
         search_text: str,
         suggester_name: str,
-        autocomplete_mode: Optional[Union[str, _models2.AutocompleteMode]] = None,
+        autocomplete_mode: Optional[Union[str, _models2._enums.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
@@ -1345,6 +1362,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1366,7 +1384,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models2._models.AutocompleteResult, response.json()  # pylint: disable=protected-access
@@ -1384,7 +1402,7 @@ class _SearchClientOperationsMixin(
         search_text: str,
         suggester_name: str,
         content_type: str = "application/json",
-        autocomplete_mode: Optional[Union[str, _models2.AutocompleteMode]] = None,
+        autocomplete_mode: Optional[Union[str, _models2._enums.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
@@ -1410,7 +1428,7 @@ class _SearchClientOperationsMixin(
         *,
         search_text: str = _Unset,
         suggester_name: str = _Unset,
-        autocomplete_mode: Optional[Union[str, _models2.AutocompleteMode]] = None,
+        autocomplete_mode: Optional[Union[str, _models2._enums.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
@@ -1517,6 +1535,7 @@ class _SearchClientOperationsMixin(
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -1538,7 +1557,7 @@ class _SearchClientOperationsMixin(
             raise HttpResponseError(response=response, model=error)
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(
                 _models2._models.AutocompleteResult, response.json()  # pylint: disable=protected-access

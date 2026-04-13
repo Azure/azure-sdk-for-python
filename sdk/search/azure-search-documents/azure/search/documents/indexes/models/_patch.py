@@ -172,6 +172,7 @@ SearchFieldDataType.Boolean = SearchFieldDataType.BOOLEAN  # type: ignore[attr-d
 SearchFieldDataType.DateTimeOffset = SearchFieldDataType.DATE_TIME_OFFSET  # type: ignore[attr-defined]
 SearchFieldDataType.GeographyPoint = SearchFieldDataType.GEOGRAPHY_POINT  # type: ignore[attr-defined]
 SearchFieldDataType.ComplexType = SearchFieldDataType.COMPLEX  # type: ignore[attr-defined]
+SearchFieldDataType.Decimal = SearchFieldDataType.DECIMAL  # type: ignore[attr-defined]
 
 # Backward-compatible alias: IS was renamed to IS_ENUM to avoid conflict with Python keyword
 OcrSkillLanguage.IS = OcrSkillLanguage.IS_ENUM  # type: ignore[attr-defined]

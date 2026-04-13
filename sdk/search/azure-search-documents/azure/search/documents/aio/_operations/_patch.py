@@ -54,7 +54,7 @@ class AsyncSearchPageIterator(AsyncPageIterator):
         self._initial_request = initial_request
         self._kwargs = kwargs
         self._facets: Optional[Dict[str, List[Dict[str, Any]]]] = None
-        self._api_version = kwargs.get("api_version", "2025-11-01-preview")
+        self._api_version = kwargs.get("api_version", "2026-05-01-preview")
 
     async def _get_next_cb(self, continuation_token):
         if continuation_token is None:
@@ -105,6 +105,12 @@ class AsyncSearchPageIterator(AsyncPageIterator):
         self.continuation_token = None
         response = cast(_models.SearchDocumentsResult, self._response)
         return response.debug_info
+
+    @_ensure_response
+    async def get_query_insights(self) -> Optional[_models.QueryInsights]:
+        self.continuation_token = None
+        response = cast(_models.SearchDocumentsResult, self._response)
+        return response.query_insights
 
 
 class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
@@ -175,6 +181,14 @@ class AsyncSearchItemPaged(AsyncItemPaged[ReturnType]):
         :rtype: ~azure.search.documents.models.DebugInfo
         """
         return cast(_models.DebugInfo, await self._first_iterator_instance().get_debug_info())
+
+    async def get_query_insights(self) -> Optional[_models.QueryInsights]:
+        """Return query performance insights. Only populated when query_insights_enabled is True.
+
+        :return: query insights
+        :rtype: ~azure.search.documents.models.QueryInsights or None
+        """
+        return cast(Optional[_models.QueryInsights], await self._first_iterator_instance().get_query_insights())
 
 
 class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
@@ -374,6 +388,8 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         hybrid_search: Optional[_models.HybridSearch] = None,
         query_source_authorization: Optional[str] = None,
         enable_elevated_read: Optional[bool] = None,
+        relevance_score_mode: Optional[Union[str, _models.RelevanceScoreMode]] = None,
+        query_insights_enabled: Optional[bool] = None,
         **kwargs: Any,
     ) -> AsyncSearchItemPaged[Dict]:
         # pylint:disable=too-many-locals
@@ -513,6 +529,11 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         :keyword enable_elevated_read: A value that enables elevated read that bypass document level
          permission checks for the query operation. Default value is None.
         :paramtype enable_elevated_read: bool
+        :keyword relevance_score_mode: Specifies the relevance scoring mode to use when ranking results.
+            Known values are: "classic", "enhanced", and "learned".
+        :paramtype relevance_score_mode: str or ~azure.search.documents.models.RelevanceScoreMode
+        :keyword bool query_insights_enabled: A value indicating whether to include query performance
+            insights in the response.
         :return: A list of documents (dicts) matching the specified search criteria.
         :return: List of search results.
         :rtype: AsyncSearchItemPaged[dict]
@@ -583,6 +604,8 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
             query_rewrites_count=query_rewrites_count,
             debug=debug,
             hybrid_search=hybrid_search,
+            relevance_score_mode=relevance_score_mode,
+            query_insights_enabled=query_insights_enabled,
         )
 
         # Create kwargs for the search_post call
@@ -600,7 +623,7 @@ class _SearchClientOperationsMixin(_SearchClientOperationsMixinGenerated):
         search_text: str,
         suggester_name: str,
         *,
-        mode: Optional[Union[str, _models.AutocompleteMode]] = None,
+        mode: Optional[Union[str, _models._enums.AutocompleteMode]] = None,
         filter: Optional[str] = None,
         use_fuzzy_matching: Optional[bool] = None,
         highlight_post_tag: Optional[str] = None,
