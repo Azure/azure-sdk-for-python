@@ -138,6 +138,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         Exit code to return to the OS.
     """
     original_cwd = os.getcwd()
+    # Save original env vars so we can restore them when azpysdk finishes
+    original_pip_index = os.environ.get("PIP_INDEX_URL")
+    original_uv_index = os.environ.get("UV_DEFAULT_INDEX")
 
     parser = build_parser()
     args = parser.parse_args(argv)
@@ -156,9 +159,9 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     # default to CFS feed unless --pypi is specified, but allow explicit env var override (e.g. for CI)
     if args.pypi:
-        # Clear any CFS env vars so pip/uv fall back to PyPI
-        os.environ.pop("PIP_INDEX_URL", None)
-        os.environ.pop("UV_DEFAULT_INDEX", None)
+        # Explicitly set PyPI URLs to override uv.toml CFS default
+        os.environ["PIP_INDEX_URL"] = "https://pypi.org/simple/"
+        os.environ["UV_DEFAULT_INDEX"] = "https://pypi.org/simple/"
         logger.info("Installing from PyPI (--pypi flag set)")
     else:
         using_cfs = False
@@ -185,6 +188,15 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         return 2
     finally:
         os.chdir(original_cwd)
+        # Restore original env vars (or remove them if they weren't set before)
+        if original_pip_index is None:
+            os.environ.pop("PIP_INDEX_URL", None)
+        else:
+            os.environ["PIP_INDEX_URL"] = original_pip_index
+        if original_uv_index is None:
+            os.environ.pop("UV_DEFAULT_INDEX", None)
+        else:
+            os.environ["UV_DEFAULT_INDEX"] = original_uv_index
 
 
 if __name__ == "__main__":
