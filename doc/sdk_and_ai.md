@@ -22,10 +22,10 @@ This is not an exhaustive list — most AI coding tools that support chat or cod
 
 ## Azure MCP Server
 
-The [Azure MCP Server](https://learn.microsoft.com/en-us/azure/developer/azure-mcp-server/get-started) exposes Azure resource operations to AI tools through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/).
+The [Azure MCP Server](https://learn.microsoft.com/azure/developer/azure-mcp-server/get-started) exposes Azure resource operations to AI tools through the [Model Context Protocol (MCP)](https://modelcontextprotocol.io/).
 This lets an AI coding agent query, create, and manage Azure resources directly during a conversation.
 
-See the [getting started guide](https://learn.microsoft.com/en-us/azure/developer/azure-mcp-server/get-started) for setup instructions.
+See the [getting started guide](https://learn.microsoft.com/azure/developer/azure-mcp-server/get-started) for setup instructions.
 
 ## Azure SDK skills
 
@@ -49,10 +49,18 @@ Verify installation:
 /plugin list
 ```
 
+Update the plugin:
+
+```
+/plugin update azure-sdk-python@skills
+```
+
 Skills provide domain-specific context that helps AI tools generate more accurate SDK code.
+
+For operational Azure tasks (managing resources, querying services), see the [Azure skills](https://github.com/microsoft/azure-skills) repository.
 
 ## Further reading
 
-- [Azure SDK for Python documentation](https://learn.microsoft.com/en-us/azure/developer/python/sdk/azure-sdk-overview)
+- [Azure SDK for Python documentation](https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-overview)
 - [Azure SDK design guidelines](https://azure.github.io/azure-sdk/python_design.html)
 - [Azure MCP Server](https://learn.microsoft.com/en-us/azure/developer/azure-mcp-server/get-started)
