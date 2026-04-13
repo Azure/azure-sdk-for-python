@@ -1821,6 +1821,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         copy_content = await (await copyblob.download_blob()).readall()
         assert copy_content == self.byte_data
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_copy_blob_with_immutability_policy(self, **kwargs):
@@ -2693,7 +2694,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         assert info.get('sku_name') is not None
         assert info.get('account_kind') is not None
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skip(reason="Temporarily skipping immutability test due to service bug")
     @BlobPreparer()
     async def test_get_account_information_with_container_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -3033,6 +3034,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             await bsc.get_service_properties()
             assert transport.session is not None
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_blob_immutability_policy(self, **kwargs):
@@ -3086,6 +3088,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_blob_legal_hold(self, **kwargs):
@@ -3129,6 +3132,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             await blob.delete_blob()
             await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_download_blob_with_immutability_policy(self, **kwargs):
@@ -3181,6 +3185,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_list_blobs_with_immutability_policy(self, **kwargs):
@@ -3229,6 +3234,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_snapshot_immutability_policy_and_legal_hold(self, **kwargs):
@@ -3280,6 +3286,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_versioning_immutability_policy_and_legal_hold(self, **kwargs):

@@ -67,15 +67,15 @@ async def test_post_invocations_with_query_param():
 @pytest.mark.asyncio
 async def test_post_invocations_uses_env_var():
     """POST /invocations uses FOUNDRY_AGENT_SESSION_ID env var when no query param."""
-    app = InvocationAgentServerHost()
+    with patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": "env-session"}):
+        app = InvocationAgentServerHost()
 
-    @app.invoke_handler
-    async def handle(request: Request) -> Response:
-        return Response(content=b"ok")
+        @app.invoke_handler
+        async def handle(request: Request) -> Response:
+            return Response(content=b"ok")
 
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://testserver") as client:
-        with patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": "env-session"}):
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://testserver") as client:
             resp = await client.post("/invocations", content=b"test")
     assert resp.headers["x-agent-session-id"] == "env-session"
 

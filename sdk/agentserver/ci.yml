@@ -3,27 +3,27 @@
 trigger:
   branches:
     include:
-    - main
-    - hotfix/*
-    - release/*
-    - restapi*
+      - main
+      - hotfix/*
+      - release/*
+      - restapi*
   paths:
     include:
-    - sdk/agentserver/
-    - sdk/core/
+      - sdk/agentserver/
+      - sdk/core/
 
 pr:
   branches:
     include:
-    - main
-    - feature/*
-    - hotfix/*
-    - release/*
-    - restapi*
+      - main
+      - feature/*
+      - hotfix/*
+      - release/*
+      - restapi*
   paths:
     include:
-    - sdk/agentserver/
-    - sdk/core/
+      - sdk/agentserver/
+      - sdk/core/
 
 extends:
   template: /eng/pipelines/templates/stages/archetype-sdk-client.yml
@@ -32,7 +32,7 @@ extends:
     TestProxy: true
     BuildDocs: true
     TestTimeoutInMinutes: 60
-    PythonVersionForAnalyze: '3.11'
+    PythonVersionForAnalyze: "3.11"
     # The job "Test ubuntu2404_pypy311" in the "python - agentserver" pipeline hangs and eventually times out.
     # Disable it until the issue is understood.
     MatrixConfigs:
@@ -41,9 +41,11 @@ extends:
         Selection: sparse
         GenerateVMJobs: true
     Artifacts:
-    - name: azure-ai-agentserver-invocations
-      safeName: azureaiagentserverinvocations
-    - name: azure-ai-agentserver-core
-      safeName: azureaiagentservercore
-    - name: azure-ai-agentserver-githubcopilot
-      safeName: azureaiagentservergithubcopilot
+      - name: azure-ai-agentserver-core
+        safeName: azureaiagentservercore
+      - name: azure-ai-agentserver-invocations
+        safeName: azureaiagentserverinvocations
+      - name: azure-ai-agentserver-responses
+        safeName: azureaiagentserverresponses
+      - name: azure-ai-agentserver-githubcopilot
+        safeName: azureaiagentservergithubcopilot
