@@ -5742,6 +5742,19 @@
               "x-nullable": true
             }
           }
+        },
+        "allowedDeploymentTemplates": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "assetId": {
+                "type": "string",
+                "x-nullable": true
+              }
+            }
+          },
+          "x-nullable": true
         }
       },
       "x-ms-client-name": "ModelVersionDetails",
