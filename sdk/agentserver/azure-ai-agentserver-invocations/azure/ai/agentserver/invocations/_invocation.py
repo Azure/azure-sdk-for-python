@@ -23,8 +23,10 @@ from starlette.routing import Route
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
     create_error_response,
+    detach_context,
     end_span,
     record_error,
+    set_current_span,
     trace_stream,
 )
 
@@ -280,10 +282,17 @@ class InvocationAgentServerHost(AgentServerHost):
         response: StreamingResponse,
         otel_span: Any,
     ) -> StreamingResponse:
-        """Wrap a streaming response's body iterator with span lifecycle.
+        """Wrap a streaming response's body iterator with span lifecycle and context.
 
-        ``trace_stream`` wraps the body iterator so the OTel span covers
-        the full streaming duration and is ended when iteration completes.
+        Two layers of wrapping are applied:
+
+        1. **Inner (tracing):** ``trace_stream`` wraps the body iterator so
+           the OTel span covers the full streaming duration and is ended
+           when iteration completes.
+        2. **Outer (context):** A second async generator re-attaches the span
+           as the current context for the duration of streaming, so that
+           child spans created by user handler code (e.g. Agent Framework)
+           are correctly parented under this span.
 
         :param response: The ``StreamingResponse`` returned by the user handler.
         :type response: ~starlette.responses.StreamingResponse
@@ -294,7 +303,21 @@ class InvocationAgentServerHost(AgentServerHost):
         """
         if otel_span is None:
             return response
-        response.body_iterator = trace_stream(response.body_iterator, otel_span)
+
+        # Inner wrap: trace_stream ends the span when iteration completes.
+        traced = trace_stream(response.body_iterator, otel_span)
+
+        # Outer wrap: re-attach span as current context during streaming
+        # so child spans are correctly parented.
+        async def _iter_with_context():  # type: ignore[return-value]
+            token = set_current_span(otel_span)
+            try:
+                async for chunk in traced:
+                    yield chunk
+            finally:
+                detach_context(token)
+
+        response.body_iterator = _iter_with_context()
         return response
 
     # ------------------------------------------------------------------
