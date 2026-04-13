@@ -266,9 +266,6 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
             third_blobs_list = list(next(blob_pages))
             self.verify_blobs(third_blobs_list, blob_names[6:9])
 
-    # --------------------------------
-    #       walk_blobs Tests
-    # --------------------------------
     @BlobPreparer()
     @recorded_by_proxy
     def test_arrow_walk_no_blobs(self, **kwargs):
