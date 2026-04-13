@@ -925,6 +925,50 @@ class TestScenarioOrchestrator:
         results = orchestrator.get_attack_results()
         assert results == []
 
+    def test_get_attack_results_by_strategy_before_execution_returns_empty(self, mock_logger):
+        """Test that get_attack_results_by_strategy returns empty dict before execute()."""
+        mock_target = MagicMock()
+        mock_scorer = MagicMock()
+
+        orchestrator = ScenarioOrchestrator(
+            risk_category="violence",
+            objective_target=mock_target,
+            rai_scorer=mock_scorer,
+            logger=mock_logger,
+        )
+
+        results = orchestrator.get_attack_results_by_strategy()
+        assert results == {}
+
+    def test_get_attack_results_by_strategy_returns_shallow_copy(self, mock_logger):
+        """Test that get_attack_results_by_strategy returns a copy, not a reference."""
+        from pyrit.models import AttackResult, AttackOutcome
+
+        mock_target = MagicMock()
+        mock_scorer = MagicMock()
+
+        orchestrator = ScenarioOrchestrator(
+            risk_category="violence",
+            objective_target=mock_target,
+            rai_scorer=mock_scorer,
+            logger=mock_logger,
+        )
+
+        mock_result = MagicMock(spec=AttackResult)
+        mock_result.outcome = AttackOutcome.SUCCESS
+
+        mock_scenario_result = MagicMock()
+        mock_scenario_result.attack_results = {"baseline": [mock_result], "crescendo": []}
+        orchestrator._scenario_result = mock_scenario_result
+
+        results = orchestrator.get_attack_results_by_strategy()
+        assert "baseline" in results
+        assert len(results["baseline"]) == 1
+
+        # Mutating the returned dict should NOT affect the internal state
+        results["new_key"] = []
+        assert "new_key" not in orchestrator.get_attack_results_by_strategy()
+
     @patch("pyrit.memory.CentralMemory")
     def test_get_memory_returns_memory_instance(self, mock_central_memory, mock_logger):
         """Test that get_memory returns memory instance."""
@@ -1625,7 +1669,10 @@ class TestFoundryExecutionManager:
         results = manager._group_results_by_strategy(
             orchestrator=mock_orchestrator,
             risk_value="violence",
-            output_path="/test/output.jsonl",
+            strategy_files={
+                "base64": "/test/violence_base64_results.jsonl",
+                "rot13": "/test/violence_rot13_results.jsonl",
+            },
             attack_strategies=[AttackStrategy.Base64, AttackStrategy.ROT13],
             include_baseline=False,
         )
@@ -1634,9 +1681,11 @@ class TestFoundryExecutionManager:
         assert "base64" in results
         assert results["base64"]["asr"] == 0.75
         assert results["base64"]["status"] == "completed"
+        assert results["base64"]["data_file"] == "/test/violence_base64_results.jsonl"
 
         assert "rot13" in results
         assert results["rot13"]["asr"] == 0.75
+        assert results["rot13"]["data_file"] == "/test/violence_rot13_results.jsonl"
 
     def test_group_results_by_strategy_with_baseline(self, mock_credential, mock_azure_ai_project, mock_logger):
         """Test grouping results includes baseline when requested."""
@@ -1653,15 +1702,20 @@ class TestFoundryExecutionManager:
         results = manager._group_results_by_strategy(
             orchestrator=mock_orchestrator,
             risk_value="violence",
-            output_path="/test/output.jsonl",
+            strategy_files={
+                "base64": "/test/violence_base64_results.jsonl",
+                "baseline": "/test/violence_baseline_results.jsonl",
+            },
             attack_strategies=[AttackStrategy.Base64, AttackStrategy.Baseline],
             include_baseline=True,
         )
 
-        # Should have base64 + baseline entries
+        # Should have base64 + baseline entries with separate files
         assert "base64" in results
         assert "baseline" in results
         assert results["baseline"]["asr"] == 0.6
+        assert results["base64"]["data_file"] == "/test/violence_base64_results.jsonl"
+        assert results["baseline"]["data_file"] == "/test/violence_baseline_results.jsonl"
 
     def test_group_results_by_strategy_keys_match_complexity_map(
         self, mock_credential, mock_azure_ai_project, mock_logger
@@ -1682,10 +1736,15 @@ class TestFoundryExecutionManager:
         mock_orchestrator.calculate_asr.return_value = 0.5
 
         strategies = [AttackStrategy.Base64, AttackStrategy.ROT13, AttackStrategy.Morse]
+        strategy_files = {
+            "base64": "/test/violence_base64_results.jsonl",
+            "rot13": "/test/violence_rot13_results.jsonl",
+            "morse": "/test/violence_morse_results.jsonl",
+        }
         results = manager._group_results_by_strategy(
             orchestrator=mock_orchestrator,
             risk_value="violence",
-            output_path="/test/output.jsonl",
+            strategy_files=strategy_files,
             attack_strategies=strategies,
             include_baseline=False,
         )
@@ -1711,7 +1770,7 @@ class TestFoundryExecutionManager:
         results = manager._group_results_by_strategy(
             orchestrator=mock_orchestrator,
             risk_value="violence",
-            output_path="/test/output.jsonl",
+            strategy_files={},
             attack_strategies=[],
             include_baseline=False,
         )
@@ -1737,7 +1796,7 @@ class TestFoundryExecutionManager:
         results = manager._group_results_by_strategy(
             orchestrator=mock_orchestrator,
             risk_value="violence",
-            output_path="/test/output.jsonl",
+            strategy_files={"indirect_jailbreak": "/test/violence_indirect_jailbreak_results.jsonl"},
             attack_strategies=[AttackStrategy.IndirectJailbreak],
             include_baseline=False,
         )
@@ -1746,6 +1805,114 @@ class TestFoundryExecutionManager:
         assert "indirect_jailbreak" in results
         assert results["indirect_jailbreak"]["asr"] == 0.3
         assert "Foundry" not in results  # Should NOT fall back
+
+    def test_to_jsonl_per_strategy_baseline_and_crescendo(
+        self, mock_credential, mock_azure_ai_project, mock_logger, tmp_path
+    ):
+        """Test that to_jsonl_per_strategy produces separate files per strategy.
+
+        Reproduces the root cause of multi-turn results showing single-turn content:
+        baseline and multi-turn conversations were in the same JSONL, and both strategies
+        read ALL entries. After the fix, each strategy gets its own file.
+        """
+        from pyrit.models import AttackResult, AttackOutcome
+
+        # Create mock scenario with results grouped by strategy
+        mock_orchestrator = MagicMock()
+
+        baseline_result = MagicMock(spec=AttackResult)
+        baseline_result.conversation_id = "conv-baseline-1"
+        baseline_result.outcome = AttackOutcome.FAILURE
+        baseline_result.attack_identifier = {"__type__": "PromptSendingAttack"}
+        baseline_result.last_score = None
+
+        crescendo_result = MagicMock(spec=AttackResult)
+        crescendo_result.conversation_id = "conv-crescendo-1"
+        crescendo_result.outcome = AttackOutcome.SUCCESS
+        crescendo_result.attack_identifier = {"__type__": "CrescendoAttack"}
+        crescendo_result.last_score = None
+
+        mock_orchestrator.get_attack_results_by_strategy.return_value = {
+            "baseline": [baseline_result],
+            "crescendo": [crescendo_result],
+        }
+        mock_orchestrator.get_attack_results.return_value = [baseline_result, crescendo_result]
+
+        # Mock memory to return conversation pieces
+        mock_memory = MagicMock()
+        mock_piece_baseline = MagicMock()
+        mock_piece_baseline.api_role = "user"
+        mock_piece_baseline.original_value = "baseline prompt"
+        mock_piece_baseline.converted_value = "baseline prompt"
+        mock_piece_baseline.sequence = 0
+        mock_piece_baseline.labels = {}
+        mock_piece_baseline.prompt_metadata = {}
+
+        mock_piece_baseline_resp = MagicMock()
+        mock_piece_baseline_resp.api_role = "assistant"
+        mock_piece_baseline_resp.original_value = "baseline response"
+        mock_piece_baseline_resp.converted_value = "baseline response"
+        mock_piece_baseline_resp.sequence = 1
+        mock_piece_baseline_resp.labels = {}
+        mock_piece_baseline_resp.prompt_metadata = {}
+
+        mock_piece_mt1 = MagicMock()
+        mock_piece_mt1.api_role = "user"
+        mock_piece_mt1.original_value = "turn 1"
+        mock_piece_mt1.converted_value = "turn 1"
+        mock_piece_mt1.sequence = 0
+        mock_piece_mt1.labels = {}
+        mock_piece_mt1.prompt_metadata = {}
+
+        mock_piece_mt2 = MagicMock()
+        mock_piece_mt2.api_role = "assistant"
+        mock_piece_mt2.original_value = "response 1"
+        mock_piece_mt2.converted_value = "response 1"
+        mock_piece_mt2.sequence = 1
+        mock_piece_mt2.labels = {}
+        mock_piece_mt2.prompt_metadata = {}
+
+        def get_pieces(conversation_id):
+            if conversation_id == "conv-baseline-1":
+                return [mock_piece_baseline, mock_piece_baseline_resp]
+            else:
+                return [mock_piece_mt1, mock_piece_mt2]
+
+        mock_memory.get_message_pieces = get_pieces
+        mock_orchestrator.get_memory.return_value = mock_memory
+
+        mock_dataset = MagicMock()
+        mock_dataset.get_all_seed_groups.return_value = []
+
+        processor = FoundryResultProcessor(
+            scenario=mock_orchestrator,
+            dataset_config=mock_dataset,
+            risk_category="violence",
+        )
+
+        strategy_files = processor.to_jsonl_per_strategy(
+            output_dir=str(tmp_path),
+            risk_value="violence",
+        )
+
+        # Should produce separate files keyed by strategy name
+        assert "baseline" in strategy_files
+        assert "crescendo" in strategy_files
+        assert strategy_files["baseline"] != strategy_files["crescendo"]
+
+        # Baseline file should contain ONLY baseline conversations
+        with open(strategy_files["baseline"], "r") as f:
+            baseline_lines = [l for l in f.read().strip().split("\n") if l]
+        assert len(baseline_lines) == 1
+        baseline_data = json.loads(baseline_lines[0])
+        assert baseline_data["conversation"]["messages"][0]["content"] == "baseline prompt"
+
+        # Crescendo file should contain ONLY multi-turn conversations
+        with open(strategy_files["crescendo"], "r") as f:
+            crescendo_lines = [l for l in f.read().strip().split("\n") if l]
+        assert len(crescendo_lines) == 1
+        crescendo_data = json.loads(crescendo_lines[0])
+        assert crescendo_data["conversation"]["messages"][0]["content"] == "turn 1"
 
     @pytest.mark.asyncio
     async def test_execute_attacks_empty_objectives(self, mock_credential, mock_azure_ai_project, mock_logger):
@@ -3556,7 +3723,7 @@ class TestReviewFixRegressions:
         ), patch.object(RAIServiceScorer, "__init__", return_value=None), patch.object(
             FoundryResultProcessor, "__init__", return_value=None
         ), patch.object(
-            FoundryResultProcessor, "to_jsonl", return_value=None
+            FoundryResultProcessor, "to_jsonl_per_strategy", return_value={"baseline": str(tmp_path / "out.jsonl")}
         ), patch.object(
             FoundryResultProcessor,
             "get_summary_stats",

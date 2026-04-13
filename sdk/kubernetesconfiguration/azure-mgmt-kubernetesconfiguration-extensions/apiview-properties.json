@@ -1,6 +1,8 @@
 {
     "CrossLanguagePackageId": "Microsoft.KubernetesConfiguration",
     "CrossLanguageDefinitionId": {
+        "azure.mgmt.kubernetesconfiguration.extensions.models.AccessDetail": "Microsoft.KubernetesConfiguration.AccessDetail",
+        "azure.mgmt.kubernetesconfiguration.extensions.models.AdditionalDetails": "Microsoft.KubernetesConfiguration.AdditionalDetails",
         "azure.mgmt.kubernetesconfiguration.extensions.models.ErrorAdditionalInfo": "Azure.ResourceManager.CommonTypes.ErrorAdditionalInfo",
         "azure.mgmt.kubernetesconfiguration.extensions.models.ErrorDetail": "Azure.ResourceManager.CommonTypes.ErrorDetail",
         "azure.mgmt.kubernetesconfiguration.extensions.models.ErrorResponse": "Azure.ResourceManager.CommonTypes.ErrorResponse",
@@ -11,6 +13,7 @@
         "azure.mgmt.kubernetesconfiguration.extensions.models.ExtensionPropertiesAksAssignedIdentity": "Microsoft.KubernetesConfiguration.ExtensionPropertiesAksAssignedIdentity",
         "azure.mgmt.kubernetesconfiguration.extensions.models.ExtensionStatus": "Microsoft.KubernetesConfiguration.ExtensionStatus",
         "azure.mgmt.kubernetesconfiguration.extensions.models.Identity": "Azure.ResourceManager.CommonTypes.Identity",
+        "azure.mgmt.kubernetesconfiguration.extensions.models.ManagementDetails": "Microsoft.KubernetesConfiguration.ManagementDetails",
         "azure.mgmt.kubernetesconfiguration.extensions.models.OperationStatusResult": "Microsoft.KubernetesConfiguration.OperationStatusResult",
         "azure.mgmt.kubernetesconfiguration.extensions.models.PatchExtension": "Microsoft.KubernetesConfiguration.PatchExtension",
         "azure.mgmt.kubernetesconfiguration.extensions.models.PatchExtensionProperties": "Microsoft.KubernetesConfiguration.PatchExtensionProperties",
@@ -23,6 +26,7 @@
         "azure.mgmt.kubernetesconfiguration.extensions.models.ProvisioningState": "Microsoft.KubernetesConfiguration.ProvisioningState",
         "azure.mgmt.kubernetesconfiguration.extensions.models.LevelType": "Microsoft.KubernetesConfiguration.LevelType",
         "azure.mgmt.kubernetesconfiguration.extensions.models.AKSIdentityType": "Microsoft.KubernetesConfiguration.AKSIdentityType",
+        "azure.mgmt.kubernetesconfiguration.extensions.models.AutoUpgradeMode": "Microsoft.KubernetesConfiguration.AutoUpgradeMode",
         "azure.mgmt.kubernetesconfiguration.extensions.models.ResourceIdentityType": "Azure.ResourceManager.CommonTypes.ResourceIdentityType",
         "azure.mgmt.kubernetesconfiguration.extensions.operations.ExtensionsOperations.get": "Microsoft.KubernetesConfiguration.Extensions.get",
         "azure.mgmt.kubernetesconfiguration.extensions.aio.operations.ExtensionsOperations.get": "Microsoft.KubernetesConfiguration.Extensions.get",
