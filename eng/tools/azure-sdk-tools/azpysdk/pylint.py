@@ -149,7 +149,9 @@ class pylint(Check):
             if os.path.exists(tests_dir):
                 try:
                     test_rcfile = (
-                        os.path.join(REPO_ROOT, "eng/test_pylintrc") if args.next else os.path.join(REPO_ROOT, "test_pylintrc")
+                        os.path.join(REPO_ROOT, "eng/test_pylintrc")
+                        if args.next
+                        else os.path.join(REPO_ROOT, "test_pylintrc")
                     )
                     logger.info(
                         [
@@ -186,7 +188,9 @@ class pylint(Check):
             if os.path.exists(samples_dir):
                 try:
                     samples_rcfile = (
-                        os.path.join(REPO_ROOT, "eng/samples_pylintrc") if args.next else os.path.join(REPO_ROOT, "samples_pylintrc")
+                        os.path.join(REPO_ROOT, "eng/samples_pylintrc")
+                        if args.next
+                        else os.path.join(REPO_ROOT, "samples_pylintrc")
                     )
                     logger.info(
                         [
