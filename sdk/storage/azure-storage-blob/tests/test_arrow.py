@@ -135,58 +135,76 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
             "flat_blob3",
             "flat_blob4",
         ]
-        account_url = f"https://account.blob.core.windows.net/"
+        account_url = "https://account.blob.core.windows.net/"
         container_name = "mycontainer"
 
-        # Build a real ListBlobsFlatSegmentResponse model (no XML parsing needed).
-        blob_items = [
-            BlobItemInternal(
-                name=BlobName(content=name, encoded=False),
-                snapshot="",
-                properties=BlobPropertiesInternal(
-                    etag="",
-                    last_modified=datetime(2024, 1, 1, tzinfo=timezone.utc),
-                    blob_type="BlockBlob"
-                ),
-                deleted=False,
+        def _make_xml_response(names: list[str], next_marker: str | None = None) -> ListBlobsFlatSegmentResponse:
+            items = [
+                BlobItemInternal(
+                    name=BlobName(content=name, encoded=False),
+                    snapshot="",
+                    properties=BlobPropertiesInternal(
+                        etag="",
+                        last_modified=datetime(2024, 1, 1, tzinfo=timezone.utc),
+                        blob_type="BlockBlob",
+                    ),
+                    deleted=False,
+                )
+                for name in names
+            ]
+            return ListBlobsFlatSegmentResponse(
+                service_endpoint=account_url,
+                container_name=container_name,
+                segment=BlobFlatListSegment(blob_items=items),
+                next_marker=next_marker,
             )
-            for name in blob_names
-        ]
-        xml_response = ListBlobsFlatSegmentResponse(
-            service_endpoint=account_url,
-            container_name=container_name,
-            segment=BlobFlatListSegment(blob_items=blob_items),
-            next_marker=None,
-        )
 
-        # Set up a minimal ContainerClient (no real HTTP calls needed).
+        # Three pages of 3 blobs each, chained via next_marker.
+        xml_pages = [
+            _make_xml_response(blob_names[0:3], next_marker="marker1"),
+            _make_xml_response(blob_names[3:6], next_marker="marker2"),
+            _make_xml_response(blob_names[6:9], next_marker=None),
+        ]
+        page_index = 0
+
         container_client = ContainerClient(
             account_url=account_url,
             container_name=container_name,
             credential=AzureNamedKeyCredential("account", "A" * 64),
         )
 
-        # Mock pipeline_response: Content-Type is application/xml so _arrow_cls takes the XML path.
         mock_http_response = MagicMock()
         mock_http_response.location_mode = None
         mock_pipeline_response = MagicMock()
         mock_pipeline_response.http_response = mock_http_response
 
-        # Intercept the generated operation: call cls with our fake pipeline_response.
         def fake_list_blob_flat_segment_apache_arrow(**kwargs):
             cls = kwargs.get("cls")
             return cls(mock_pipeline_response, None, {"Content-Type": "application/xml"})
 
+        def deserializer_side_effect(target, _http_response):
+            nonlocal page_index
+            response = xml_pages[page_index]
+            page_index += 1
+            return response
+
         with patch.object(
-            container_client._client.container,
+            container_client._client.container,  # pylint: disable=protected-access
             "list_blob_flat_segment_apache_arrow",
             side_effect=fake_list_blob_flat_segment_apache_arrow,
         ):
-            page_iterator = container_client.list_blobs(use_arrow=True).by_page()
-            page_iterator._deserializer = MagicMock(return_value=xml_response)
-            blobs_list = [blob for page in page_iterator for blob in page]
+            blob_pages = container_client.list_blobs(use_arrow=True, results_per_page=3).by_page()
+            mock_deserializer = MagicMock(side_effect=deserializer_side_effect)
+            blob_pages._deserializer = mock_deserializer
+            first_blobs_list = list(next(blob_pages))
+            self.verify_blobs(first_blobs_list, blob_names[0:3])
+            second_blobs_list = list(next(blob_pages))
+            self.verify_blobs(second_blobs_list, blob_names[3:6])
+            third_blobs_list = list(next(blob_pages))
+            self.verify_blobs(third_blobs_list, blob_names[6:9])
 
-        self.verify_blobs(blobs_list, blob_names)
+        # Confirm the XML deserializer was called once per page.
+        assert mock_deserializer.call_count == 3
 
     def test_arrow_mock_expected_response(self):
         def _make_arrow_page(names: list[str], next_marker: str | None = None) -> bytes:
@@ -338,25 +356,34 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
         account_url = "https://account.blob.core.windows.net/"
         container_name = "mycontainer"
 
-        blob_items = [
-            BlobItemInternal(
-                name=BlobName(content=name, encoded=False),
-                snapshot="",
-                properties=BlobPropertiesInternal(
-                    etag="",
-                    last_modified=datetime(2024, 1, 1, tzinfo=timezone.utc),
-                    blob_type="BlockBlob",
-                ),
-                deleted=False,
+        def _make_xml_response(names: list[str], next_marker: str | None = None) -> ListBlobsFlatSegmentResponse:
+            items = [
+                BlobItemInternal(
+                    name=BlobName(content=name, encoded=False),
+                    snapshot="",
+                    properties=BlobPropertiesInternal(
+                        etag="",
+                        last_modified=datetime(2024, 1, 1, tzinfo=timezone.utc),
+                        blob_type="BlockBlob",
+                    ),
+                    deleted=False,
+                )
+                for name in names
+            ]
+            return ListBlobsFlatSegmentResponse(
+                service_endpoint=account_url,
+                container_name=container_name,
+                segment=BlobFlatListSegment(blob_items=items),
+                next_marker=next_marker,
             )
-            for name in blob_names
+
+        # Three pages of 3 blobs each, chained via next_marker.
+        xml_pages = [
+            _make_xml_response(blob_names[0:3], next_marker="marker1"),
+            _make_xml_response(blob_names[3:6], next_marker="marker2"),
+            _make_xml_response(blob_names[6:9], next_marker=None),
         ]
-        xml_response = ListBlobsFlatSegmentResponse(
-            service_endpoint=account_url,
-            container_name=container_name,
-            segment=BlobFlatListSegment(blob_items=blob_items),
-            next_marker=None,
-        )
+        page_index = 0
 
         container_client = ContainerClient(
             account_url=account_url,
@@ -373,16 +400,29 @@ class TestStorageApacheArrow(StorageRecordedTestCase):
             cls = kwargs.get("cls")
             return cls(mock_pipeline_response, None, {"Content-Type": "application/xml"})
 
+        def deserializer_side_effect(target, _http_response):
+            nonlocal page_index
+            response = xml_pages[page_index]
+            page_index += 1
+            return response
+
         with patch.object(
             container_client._client.container,  # pylint: disable=protected-access
             "list_blob_hierarchy_segment_apache_arrow",
             side_effect=fake_list_blob_hierarchy_segment_apache_arrow,
         ):
-            page_iterator = container_client.walk_blobs(use_arrow=True).by_page()
-            page_iterator._deserializer = MagicMock(return_value=xml_response)
-            blobs_list = [blob for page in page_iterator for blob in page]
+            blob_pages = container_client.walk_blobs(use_arrow=True, results_per_page=3).by_page()
+            mock_deserializer = MagicMock(side_effect=deserializer_side_effect)
+            blob_pages._deserializer = mock_deserializer
+            first_blobs_list = list(next(blob_pages))
+            self.verify_blobs(first_blobs_list, blob_names[0:3])
+            second_blobs_list = list(next(blob_pages))
+            self.verify_blobs(second_blobs_list, blob_names[3:6])
+            third_blobs_list = list(next(blob_pages))
+            self.verify_blobs(third_blobs_list, blob_names[6:9])
 
-        self.verify_blobs(blobs_list, blob_names)
+        # Confirm the XML deserializer was called once per page.
+        assert mock_deserializer.call_count == 3
 
     def test_arrow_mock_walk_expected_response(self):
         def _make_arrow_page(names: list[str], next_marker: str | None = None) -> bytes:
