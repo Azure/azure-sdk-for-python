@@ -1,9 +1,9 @@
 -e ../../../eng/tools/azure-sdk-tools
+-e ../../monitor/azure-monitor-opentelemetry-exporter
+-e ../../monitor/azure-monitor-query
+-e ../../identity/azure-identity
 pytest
 httpx
 pytest-asyncio
 opentelemetry-api>=1.40.0
 opentelemetry-sdk>=1.40.0
-azure-monitor-opentelemetry-exporter>=1.0.0b49
-azure-monitor-query>=1.2.0
-azure-identity
