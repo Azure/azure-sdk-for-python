@@ -22,6 +22,7 @@
       - [Opt-in to formatting validation](#opt-in-to-formatting-validation)
       - [Running locally](#running-locally)
     - [Change log verification](#change-log-verification)
+    - [CSpell](#cspell)
   - [PR Validation Checks](#pr-validation-checks)
     - [PR validation checks](#pr-validation-checks-1)
       - [whl](#whl)
@@ -117,6 +118,8 @@ This is the most useful skip, but the following skip variables are also supporte
   - Omit checking that a package's keywords are correctly formulated before releasing.
 - `Skip.Black`
   - Omit checking `black` in the `analyze` job.
+- `Skip.SpellCheck`
+  - Omit spell checking in the `analyze` job.
 
 ## The pyproject.toml
 
@@ -295,6 +298,22 @@ to opt into the black invocation.
 ### Change log verification
 
 Change log verification is added to ensure package has valid change log for current version. Guidelines to properly maintain the change log is documented [here.](https://azure.github.io/azure-sdk/policies_releases.html#change-logs/)
+
+### CSpell
+
+[`CSpell`](https://cspell.org/) is a spell checker that runs against package source code to catch common spelling errors. It checks Python source files, documentation, and other text content in the package. For more details, see the [Spelling Check Scripts README](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/spelling/README.md).
+
+Spell check configuration can be customized at two levels. Repository-wide terms can be added to [`.vscode/cspell.json`](https://github.com/Azure/azure-sdk-for-python/blob/main/.vscode/cspell.json), while service-specific terms can be added to a `cspell.json` or `cspell.yaml` file in the service directory. In either case, words that are domain-specific or intentionally spelled differently can be added to the `words` list.
+
+If you encounter a CSpell failure in CI, you can resolve it by:
+
+1. Fixing the spelling error in your code or documentation.
+2. Adding the word to your service-level `cspell.json` or `cspell.yaml` file if the word is intentional (e.g., a domain-specific term). If this file does not exist, you can create it.
+3. Adding the word to [`.vscode/cspell.json`](https://github.com/Azure/azure-sdk-for-python/blob/main/.vscode/cspell.json) if it is a common term that applies across the repository.
+4. Adding an inline `cspell:ignore` comment for one-off exceptions:
+   ```python
+   # cspell:ignore specialword
+   ```
 
 ## PR Validation Checks
 
