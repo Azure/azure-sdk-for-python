@@ -157,7 +157,7 @@ stages:
                             targetFolder: "$(Pipeline.Workspace)/esrp-release/${{parameters.ArtifactName}}/${{artifact.name}}"
 
                       - ${{ if ne(parameters.PublicFeed, 'PyPi') }}:
-                        - task: TwineAuthenticate@0
+                        - task: TwineAuthenticate@1
                           displayName: 'Authenticate to feed: ${{parameters.PublicFeed}}'
                           inputs:
                             artifactFeeds: ${{parameters.PublicFeed}}
@@ -170,7 +170,7 @@ stages:
                             echo "Uploaded sdist to devops feed"
                           displayName: 'Publish package to feed: ${{parameters.PublicFeed}}'
 
-                      - task: TwineAuthenticate@0
+                      - task: TwineAuthenticate@1
                         displayName: 'Authenticate to feed: ${{parameters.DevFeedName}}'
                         inputs:
                           artifactFeeds: ${{parameters.DevFeedName}}

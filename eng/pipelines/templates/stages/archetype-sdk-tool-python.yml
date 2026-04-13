@@ -100,7 +100,7 @@ extends:
                 python -m pip install twine
               displayName: Install Twine
 
-            - task: TwineAuthenticate@0
+            - task: TwineAuthenticate@1
               displayName: 'Twine Authenticate to feed'
               inputs:
                 artifactFeeds: ${{ parameters.FeedName }}

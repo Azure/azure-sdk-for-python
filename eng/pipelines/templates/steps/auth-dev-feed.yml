@@ -18,7 +18,7 @@ steps:
     displayName: Setup DevOpsFeedName
 
   - ${{ if eq(parameters.EnableTwineAuth, true) }}:
-    - task: TwineAuthenticate@0
+    - task: TwineAuthenticate@1
       displayName: 'Twine Authenticate to feed'
       inputs:
         artifactFeeds: $(DevFeedName)
