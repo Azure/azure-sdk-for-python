@@ -97,15 +97,51 @@ SDK performance testing is supported via the custom `perfstress` framework. For 
 
 We maintain an [additional document](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md) that has a ton of detail as to what is actually _happening_ in these executions.
 
-### Dev Feed
-Daily dev build version of Azure sdk packages for python are available and are uploaded to Azure devops feed daily. Below is the link to Azure devops feed.
-[`https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python`](https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python)
+### Package Index Configuration
 
-This repo uses Central Feed Services (CFS) as the default package source for both CI and local development. A repo-root `uv.toml` configures uv to use the CFS feed automatically, and `azpysdk` sets `PIP_INDEX_URL` / `UV_DEFAULT_INDEX` for pip/uv subprocesses. If you need to bypass CFS and install directly from PyPI, use the `--pypi` flag:
+This repo uses Central Feed Services (CFS) as the default package source for CI, and prefers it for local development over PyPI.
+
+ A repo-root `uv.toml` configures uv to use the CFS feed automatically. 
+ 
+ To use the feed with standard `pip`, use the `--index-url` flag. For example:
+
+ ```bash
+ pip install <pkg> --index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+ ```
+
+ #### `azpysdk` Configuration
+ 
+  The `azpysdk` tool automatically configures pip and uv subprocesses to use the CFS feed by setting the `PIP_INDEX_URL` and `UV_DEFAULT_INDEX` environment variables. If you have already set these variables to a different feed, `azpysdk` will respect your configuration and won't override them.
+  
+If you wish to bypass CFS and install directly from PyPI,use the `--pypi` flag to pull from PyPI:
 
 ```
 azpysdk --pypi <command>
 ```
+
+#### Authentication for upstream pull-through
+When installing a package version not yet cached in the CFS feed, uv/pip needs to pull it through from PyPI upstream, which requires authentication. Below are options for authenticating:
+
+**Authenticate in terminal (with uv):**
+
+```bash
+az login
+export UV_INDEX_AZURE_SDK_USERNAME=x
+export UV_INDEX_AZURE_SDK_PASSWORD=$(az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv)
+```
+
+**Create a PAT in Azure DevOps.**
+
+TODO
+
+**To override the index and use PyPI with uv:**
+```bash
+uv pip install <package> --index-url https://pypi.org/simple/
+```
+
+### Dev Feed
+Daily dev build version of Azure sdk packages for python are available and are uploaded to Azure devops feed daily. Below is the link to Azure devops feed.
+[`https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python`](https://dev.azure.com/azure-sdk/public/_packaging?_a=feed&feed=azure-sdk-for-python)
 
 ##### To install latest dev build version of a package
 ```
@@ -116,17 +152,6 @@ pip install <package-name> --extra-index-url https://pkgs.dev.azure.com/azure-sd
 For e.g.
 ```
 pip install azure-appconfiguration==1.0.0b6.dev20191205001
-```
-
-#### Authentication for upstream pull-through
-When installing a package version not yet cached in the CFS feed, uv/pip needs to pull it through from PyPI upstream, which requires authentication. 
-
-TODO!!!
-
-To override the index:
-```bash
-uv pip install <package> --index-url https://pypi.org/simple/
-pip install <package> --index-url https://pypi.org/simple/
 ```
 
 To test a package being developed against latest dev build version of dependent packages:
