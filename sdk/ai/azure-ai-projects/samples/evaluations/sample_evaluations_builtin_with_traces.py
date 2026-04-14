@@ -58,7 +58,7 @@ load_dotenv()
 
 endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
 model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
-default_lookback_hours = int(os.environ.get("TRACE_LOOKBACK_HOURS", "168"))
+default_lookback_hours = int(os.environ.get("TRACE_LOOKBACK_HOURS", "1"))
 
 
 def _build_evaluator_config(name: str, evaluator_name: str) -> Dict[str, Any]:
