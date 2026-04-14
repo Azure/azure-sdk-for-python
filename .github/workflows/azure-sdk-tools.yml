@@ -63,17 +63,9 @@ jobs:
         with:
           python-version: 3.13
 
-      - name: Azure Login
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Setup Azure DevOps authentication for package feeds
+      - name: Configure UV to use PyPI
         run: |
-          echo "UV_INDEX_AZURE_SDK_USERNAME=x" >> "$GITHUB_ENV"
-          echo "UV_INDEX_AZURE_SDK_PASSWORD=$(az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 --query accessToken -o tsv)" >> "$GITHUB_ENV"
+          echo "UV_DEFAULT_INDEX=https://pypi.org/simple/" >> "$GITHUB_ENV"
         shell: bash
 
       - name: Install uv
