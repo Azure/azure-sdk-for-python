@@ -185,7 +185,7 @@ Only enable this feature after reviewing your requirements and understanding tha
 
 You can add an Application Insights Azure resource to your Microsoft Foundry project. See the Tracing tab in your Microsoft Foundry project. If one was enabled, you can get the Application Insights connection string, configure your AI Projects client, and observe traces in Azure Monitor. Typically, you might want to start tracing before you create a client or Agent.
 
-For tracing concepts in Microsoft Foundry, see [Trace an agent](https://learn.microsoft.com/en-us/azure/foundry/observability/concepts/trace-agent-concept).
+For tracing concepts in Microsoft Foundry, see [Trace an agent](https://learn.microsoft.com/azure/foundry/observability/concepts/trace-agent-concept).
 
 ### Installation
 
