@@ -160,7 +160,7 @@ stages:
                         - task: TwineAuthenticate@1
                           displayName: 'Authenticate to feed: ${{parameters.PublicFeed}}'
                           inputs:
-                            artifactFeeds: ${{parameters.PublicFeed}}
+                            artifactFeed: ${{parameters.PublicFeed}}
 
                         - script: |
                             set -e
@@ -173,7 +173,7 @@ stages:
                       - task: TwineAuthenticate@1
                         displayName: 'Authenticate to feed: ${{parameters.DevFeedName}}'
                         inputs:
-                          artifactFeeds: ${{parameters.DevFeedName}}
+                          artifactFeed: ${{parameters.DevFeedName}}
 
                       - script: |
                           set -e

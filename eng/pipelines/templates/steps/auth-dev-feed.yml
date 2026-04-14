@@ -21,7 +21,7 @@ steps:
     - task: TwineAuthenticate@1
       displayName: 'Twine Authenticate to feed'
       inputs:
-        artifactFeeds: $(DevFeedName)
+        artifactFeed: $(DevFeedName)
 
   - ${{ if eq(parameters.EnablePipAuth, true) }}:
     - task: PipAuthenticate@1

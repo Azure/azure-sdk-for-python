@@ -103,7 +103,7 @@ extends:
             - task: TwineAuthenticate@1
               displayName: 'Twine Authenticate to feed'
               inputs:
-                artifactFeeds: ${{ parameters.FeedName }}
+                artifactFeed: ${{ parameters.FeedName }}
 
             - task: PipAuthenticate@1
               displayName: 'Pip Authenticate to feed'
