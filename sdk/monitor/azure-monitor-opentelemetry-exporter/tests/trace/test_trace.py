@@ -1219,6 +1219,7 @@ class TestAzureTraceExporter(unittest.TestCase):
             "net.peer.ip": "peer_ip",
         }
         envelope = exporter._span_to_envelope(span)
+        self.assertIsInstance(envelope.data.base_data.success, bool)
         self.assertFalse(envelope.data.base_data.success)
         self.assertEqual(envelope.data.base_data.response_code, "0")
 
@@ -1228,6 +1229,16 @@ class TestAzureTraceExporter(unittest.TestCase):
             "http.status_code": "",
         }
         envelope = exporter._span_to_envelope(span)
+        self.assertIsInstance(envelope.data.base_data.success, bool)
+        self.assertFalse(envelope.data.base_data.success)
+        self.assertEqual(envelope.data.base_data.response_code, "0")
+
+        # Stable semconv - no status code
+        span._attributes = {
+            "http.request.method": "GET",
+        }
+        envelope = exporter._span_to_envelope(span)
+        self.assertIsInstance(envelope.data.base_data.success, bool)
         self.assertFalse(envelope.data.base_data.success)
         self.assertEqual(envelope.data.base_data.response_code, "0")
 
