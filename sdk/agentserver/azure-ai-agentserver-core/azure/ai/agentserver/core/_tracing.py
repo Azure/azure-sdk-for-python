@@ -1,14 +1,32 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""OpenTelemetry tracing for AgentServerHost.
+"""Observability setup (logging + tracing) for AgentServerHost.
 
-This module provides functions (not classes) for tracing:
+This module is the single source of truth for all logging handlers,
+tracing exporters, and span operations:
 
-- :func:`configure_tracing` — one-time exporter setup (called by ``AgentServerHost.__init__``)
+**Logging & tracing setup:**
+
+- :func:`configure_observability` — default one-time setup called by
+  ``AgentServerHost.__init__``.  Configures:
+
+  - Console ``StreamHandler`` on the **root** logger (so both SDK and
+    user ``logging.info()`` calls are visible).
+  - Suppression of noisy Azure SDK / OTel exporter loggers.
+  - Azure Monitor trace + log export (when connection string available).
+  - OTLP trace + log export (when ``OTEL_EXPORTER_OTLP_ENDPOINT`` set).
+
+  Users may pass a custom callable (or ``None``) via the
+  ``configure_observability`` constructor parameter to override or
+  disable this default setup.
+
+**Span operations:**
+
 - :func:`request_span` — create a request-scoped span with GenAI attributes
 - :func:`end_span` / :func:`record_error` — span lifecycle helpers
 - :func:`trace_stream` — wrap streaming responses with span lifecycle
+- :func:`set_current_span` / :func:`detach_context` — explicit context management
 
 OpenTelemetry is a required dependency — these functions always create
 real spans.  Azure Monitor export is optional (lazy-imported).
@@ -64,16 +82,57 @@ _propagator = composite.CompositePropagator([
 
 
 # ======================================================================
-# Public API: exporter setup
+# Public API: observability setup
 # ======================================================================
 
+# Sentinel attribute name set on the console handler to prevent adding
+# duplicates across multiple AgentServerHost instantiations.
+_CONSOLE_HANDLER_ATTR = "_agentserver_console"
 
-def configure_tracing(connection_string: Optional[str] = None) -> None:
+
+def configure_observability(
+    *,
+    connection_string: Optional[str] = None,
+    log_level: Optional[str] = None,
+) -> None:
+    """Default observability setup: console logging + tracing/OTel export.
+
+    Attaches a formatted ``StreamHandler`` to the **root** logger so that
+    both SDK and user ``logging.info()`` calls are visible on the console.
+    Then configures OpenTelemetry tracing and log export (Azure Monitor
+    and/or OTLP) when a connection string or OTLP endpoint is available.
+
+    Pass this function (or a custom replacement) as the
+    ``configure_observability`` parameter of :class:`AgentServerHost`.
+    Pass ``None`` to disable all SDK-managed observability setup.
+
+    :keyword connection_string: Application Insights connection string.
+    :paramtype connection_string: str or None
+    :keyword log_level: Log level name (e.g. ``"INFO"``, ``"DEBUG"``).
+    :paramtype log_level: str or None
+    """
+    # Console logging on the root logger so user logs are also visible.
+    resolved_level = _config.resolve_log_level(log_level)
+    root = logging.getLogger()
+    root.setLevel(resolved_level)
+    if not any(getattr(h, _CONSOLE_HANDLER_ATTR, False) for h in root.handlers):
+        _console = logging.StreamHandler()
+        _console.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
+        setattr(_console, _CONSOLE_HANDLER_ATTR, True)
+        root.addHandler(_console)
+
+    # Suppress noisy Azure SDK and OTel exporter logs
+    logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
+    logging.getLogger("azure.monitor.opentelemetry.exporter").setLevel(logging.WARNING)
+
+    # Tracing and OTel export
+    _configure_tracing(connection_string=connection_string)
+
+
+def _configure_tracing(connection_string: Optional[str] = None) -> None:
     """Configure OpenTelemetry exporters for Azure Monitor and OTLP.
 
-    Called once at startup by ``AgentServerHost.__init__``.  Users may
-    pass a custom function (or ``None``) via the ``configure_tracing``
-    constructor parameter to override or disable this default setup.
+    Internal helper called by :func:`configure_observability`.
 
     :param connection_string: Application Insights connection string.
         When provided, traces and logs are exported to Azure Monitor.
@@ -255,6 +314,48 @@ def record_error(span: Any, exc: BaseException) -> None:
         span.set_status(trace.StatusCode.ERROR, str(exc))
         span.set_attribute("error.type", type(exc).__name__)
         span.record_exception(exc)
+
+
+def set_current_span(span: Any) -> Any:
+    """Set a span as the current span in the OTel context.
+
+    This makes *span* the active parent for any child spans created
+    by downstream code (e.g. framework handlers).  Without this,
+    spans created inside the handler would become siblings rather
+    than children of *span*.
+
+    Returns a context token that **must** be passed to
+    :func:`detach_context` when the scope ends.  No-op when *span*
+    is ``None``.
+
+    :param span: The OTel span to make current, or *None*.
+    :type span: Any
+    :return: A context token, or *None*.
+    :rtype: Any
+    """
+    if span is None:
+        return None
+    ctx = trace.set_span_in_context(span)
+    return _otel_context.attach(ctx)
+
+
+def detach_context(token: Any) -> None:
+    """Detach a context previously attached by :func:`set_current_span`.
+
+    Best-effort no-op when *token* is ``None`` or when the token is no
+    longer the current OpenTelemetry context.
+
+    :param token: The token returned by :func:`set_current_span`.
+    :type token: Any
+    """
+    if token is not None:
+        try:
+            _otel_context.detach(token)
+        except ValueError:
+            logging.getLogger(__name__).debug(
+                "Ignoring OpenTelemetry context detach for a non-current token.",
+                exc_info=True,
+            )
 
 
 async def trace_stream(
