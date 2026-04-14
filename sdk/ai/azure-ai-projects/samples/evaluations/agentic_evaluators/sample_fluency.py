@@ -69,7 +69,7 @@ def main() -> None:
                 "type": "azure_ai_evaluator",
                 "name": "fluency",
                 "evaluator_name": "builtin.fluency",
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+                "initialization_parameters": {"model": f"{model_deployment_name}"},
                 "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
             }
         ]

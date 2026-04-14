@@ -77,7 +77,7 @@ def main() -> None:
                 "type": "azure_ai_evaluator",
                 "name": "tool_call_success",
                 "evaluator_name": "builtin.tool_call_success",
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+                "initialization_parameters": {"model": f"{model_deployment_name}"},
                 "data_mapping": {"tool_definitions": "{{item.tool_definitions}}", "response": "{{item.response}}"},
             }
         ]

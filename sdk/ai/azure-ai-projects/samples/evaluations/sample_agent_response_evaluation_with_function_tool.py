@@ -124,7 +124,7 @@ with (
             "type": "azure_ai_evaluator",
             "name": "tool_call_accuracy",
             "evaluator_name": "builtin.tool_call_accuracy",
-            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+            "initialization_parameters": {"model": f"{model_deployment_name}"},
         }
     ]
     eval_object = openai_client.evals.create(

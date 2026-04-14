@@ -70,14 +70,14 @@ testing_criteria = [
         "name": "violence",
         "evaluator_name": "builtin.violence",
         "data_mapping": {"query": "{{item.query}}", "response": "{{item.response}}"},
-        "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+        "initialization_parameters": {"model": f"{model_deployment_name}"},
     },
     {"type": "azure_ai_evaluator", "name": "f1", "evaluator_name": "builtin.f1_score"},
     {
         "type": "azure_ai_evaluator",
         "name": "coherence",
         "evaluator_name": "builtin.coherence",
-        "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+        "initialization_parameters": {"model": f"{model_deployment_name}"},
     },
 ]
 
