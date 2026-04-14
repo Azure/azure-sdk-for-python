@@ -42,7 +42,7 @@ cd <package-path>
 azpysdk --isolate black .
 ```
 
-> **Note:** `azpysdk black` runs at the package level only. The Azure SDK uses `eng/black-pyproject.toml` for repo-wide configuration.
+> **Note:** `azpysdk black` runs at the package level only.
 
 ## Step 3: Review Changes
 

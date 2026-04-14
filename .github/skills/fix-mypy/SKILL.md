@@ -30,7 +30,14 @@ cd <package-path>
 azpysdk --isolate mypy .
 ```
 
-> **Note:** `azpysdk mypy` runs at the package level only. To focus on specific files, run the full check and filter the output by file path.
+> **Note:** `azpysdk mypy` runs with a pinned version of mypy at the package level only. To focus on specific files, run the full check and filter the output by file path.
+
+**Using Latest MyPy:**
+```powershell
+azpysdk --isolate next-mypy .
+```
+
+> Use `azpysdk next-mypy` to run with the latest version of mypy. This is useful for catching issues that may be flagged by newer mypy versions.
 
 ## Reference Documentation
 
