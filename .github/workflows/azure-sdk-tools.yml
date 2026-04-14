@@ -63,9 +63,10 @@ jobs:
         with:
           python-version: 3.13
 
-      - name: Configure UV to use PyPI
+      - name: Configure UV indexes
         run: |
           echo "UV_DEFAULT_INDEX=https://pypi.org/simple/" >> "$GITHUB_ENV"
+          echo "UV_EXTRA_INDEX_URL=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" >> "$GITHUB_ENV"
         shell: bash
 
       - name: Install uv
