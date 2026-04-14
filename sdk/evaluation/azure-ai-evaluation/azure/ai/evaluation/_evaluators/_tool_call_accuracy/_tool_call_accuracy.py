@@ -86,7 +86,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     _TOOL_DEFINITIONS_MISSING_MESSAGE = "Tool definitions for all tool calls must be provided."
     _INVALID_SCORE_MESSAGE = "Tool call accuracy score must be between 1 and 5."
 
-    _LLM_SCORE_KEY = "tool_calls_success_level"
+    _LLM_SCORE_KEY = "score"
 
     _validator: ValidatorInterface
 
@@ -256,6 +256,12 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
         if isinstance(llm_output, dict):
+                        # Handle skipped status from LLM
+            llm_status = llm_output.get("status", "completed")
+            if llm_status == "skipped":
+                reason = llm_output.get("reasoning", "")
+                return self._return_not_applicable_result(reason, self.threshold)
+
             score = llm_output.get(self._LLM_SCORE_KEY, None)
             if not score or not check_score_is_valid(
                 score,
@@ -271,23 +277,27 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 )
 
             # Format the output
-            reason = llm_output.get("chain_of_thought", "")
+            reason = llm_output.get("reasoning", "")
             score = float(score)
             score_result = "pass" if score >= self.threshold else "fail"
+            llm_properties = llm_output.get("properties", {})
+            llm_properties.update({
+                "prompt_tokens": prompty_output_dict.get("input_token_count", 0),
+                "completion_tokens": prompty_output_dict.get("output_token_count", 0),
+                "total_tokens": prompty_output_dict.get("total_token_count", 0),
+                "finish_reason": prompty_output_dict.get("finish_reason", ""),
+                "model": prompty_output_dict.get("model_id", ""),
+                "sample_input": prompty_output_dict.get("sample_input", ""),
+                "sample_output": prompty_output_dict.get("sample_output", ""),
+            })
             response_dict = {
-                self._result_key: score,
-                f"gpt_{self._result_key}": score,
+                f"{self._result_key}_score": score,
                 f"{self._result_key}_result": score_result,
+                f"{self._result_key}_passed": score_result == "pass",
+                f"{self._result_key}_reasoning": reason,
+                f"{self._result_key}_status": "completed",
                 f"{self._result_key}_threshold": self._threshold,
-                f"{self._result_key}_reason": reason,
-                f"{self._result_key}_details": llm_output.get("details", {}),
-                f"{self._result_key}_prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                f"{self._result_key}_completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                f"{self._result_key}_total_tokens": prompty_output_dict.get("total_token_count", 0),
-                f"{self._result_key}_finish_reason": prompty_output_dict.get("finish_reason", ""),
-                f"{self._result_key}_model": prompty_output_dict.get("model_id", ""),
-                f"{self._result_key}_sample_input": prompty_output_dict.get("sample_input", ""),
-                f"{self._result_key}_sample_output": prompty_output_dict.get("sample_output", ""),
+                f"{self._result_key}_properties": llm_properties,
             }
             return response_dict
 
