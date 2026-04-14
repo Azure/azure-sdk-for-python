@@ -196,9 +196,9 @@ After successfully fixing mypy issues, create a pull request:
 git add .
 
 # Create a descriptive commit message referencing the issue
-git commit -m "fix(<package-name>): resolve mypy type checking errors (#<issue-number>)
-
-- Fixed <list specific types of errors>
+git commit `
+  -m "fix(<package-name>): resolve mypy type checking errors (#<issue-number>)" `
+  -m "- Fixed <list specific types of errors>
 - Added type hints to <files/modules affected>
 - All mypy checks now pass
 
