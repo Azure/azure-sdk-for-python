@@ -76,17 +76,17 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         self._raw_response_hook = raw_response_hook
 
         # Parallelization settings
-        self._max_degree_of_parallelism = options.get("maxDegreeOfParallelism", 0)
+        self._max_concurrency = options.get("maxConcurrency", 0)
 
 
     async def _run_hybrid_search(self):  # pylint: disable=too-many-branches, too-many-statements, too-many-locals
-        effective_concurrency = _resolve_max_degree(self._max_degree_of_parallelism, 1)
+        effective_concurrency = _resolve_max_degree(self._max_concurrency, 1)
 
         # Check if we need to run global statistics queries, and if so do for every partition in the container
         if self._hybrid_search_query_info['requiresGlobalStatistics']:
             target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=True)
             effective_concurrency = _resolve_max_degree(
-                self._max_degree_of_parallelism, len(target_partition_key_ranges)
+                self._max_concurrency, len(target_partition_key_ranges)
             )
             global_statistics_doc_producers = []
             global_statistics_query = self._attach_parameters(self._hybrid_search_query_info['globalStatisticsQuery'])
@@ -148,7 +148,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
         # for each of the query infos, run the component queries for the target partitions
         target_partition_key_ranges = await self._get_target_partition_key_range(target_all_ranges=False)
         effective_concurrency = _resolve_max_degree(
-            self._max_degree_of_parallelism, len(target_partition_key_ranges) * len(rewritten_query_infos)
+            self._max_concurrency, len(target_partition_key_ranges) * len(rewritten_query_infos)
         )
         for rewritten_query in rewritten_query_infos:
             for pk_range in target_partition_key_ranges:

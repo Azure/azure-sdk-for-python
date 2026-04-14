@@ -4,7 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
-"""Sample showing how to use max_degree_of_parallelism
+"""Sample showing how to use max_concurrency
 to speed up cross-partition queries with the async Cosmos DB client.
 
 Prerequisites:
@@ -39,10 +39,10 @@ async def query_items_parallel(container):
     """Query items with parallel execution across partitions."""
     print('\n1.2 Cross-partition query - parallel (degree=4)\n')
 
-    # Use max_degree_of_parallelism to fetch from multiple partitions concurrently
+    # Use max_concurrency to fetch from multiple partitions concurrently
     items = container.query_items(
         query="SELECT * FROM c",
-        max_degree_of_parallelism=4,
+        max_concurrency=4,
     )
     item_list = [item async for item in items]
     print('Got {} items with degree=4'.format(len(item_list)))

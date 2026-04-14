@@ -44,7 +44,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):  # pyli
         self._raw_response_hook = raw_response_hook
 
         # Parallelization settings
-        self._max_degree_of_parallelism = options.get("maxDegreeOfParallelism", 0)
+        self._max_concurrency = options.get("maxConcurrency", 0)
 
 
 
@@ -134,7 +134,7 @@ class _NonStreamingOrderByContextAggregator(_QueryExecutionContextBase):  # pyli
             )
 
         effective_concurrency = _resolve_max_degree(
-            self._max_degree_of_parallelism, len(targetPartitionQueryExecutionContextList)
+            self._max_concurrency, len(targetPartitionQueryExecutionContextList)
         )
 
         if effective_concurrency > 0 and len(targetPartitionQueryExecutionContextList) > 1:

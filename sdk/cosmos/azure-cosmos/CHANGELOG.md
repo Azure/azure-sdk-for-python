@@ -3,7 +3,7 @@
 ### 4.15.1 (Unreleased)
 
 #### Features Added
-* Added `max_degree_of_parallelism` kwarg to async `query_items` to enable concurrent cross-partition query execution, including parallel fan-out for prefix partition key and feed range queries. See [PR 45488](https://github.com/Azure/azure-sdk-for-python/pull/45488)
+* Added `max_concurrency` kwarg to async `query_items` to enable concurrent cross-partition query execution, including parallel fan-out for prefix partition key and feed range queries. See [PR 45488](https://github.com/Azure/azure-sdk-for-python/pull/45488)
 * Added support for Query Advisor feature - See [PR 45331](https://github.com/Azure/azure-sdk-for-python/pull/45331)
 * Added `get_response_headers()` and `get_last_response_headers()` methods to the `CosmosItemPaged` and `CosmosAsyncItemPaged` objects returned by `query_items()`, allowing access to response headers from query operations. See [PR 44593](https://github.com/Azure/azure-sdk-for-python/pull/44593)
 * Added InferenceRequestTimeout property for HttpTimeout Policy to Reranking API. See [45469](https://github.com/Azure/azure-sdk-for-python/pull/45469)

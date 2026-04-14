@@ -603,7 +603,7 @@ parallel execution across partitions. This also applies to hierarchical partitio
 queries and feed range queries that fan out to multiple physical partitions. This trades higher
 instantaneous RU/s consumption for lower wall-clock time.
 
-Use `max_degree_of_parallelism` to control how many partition requests run concurrently:
+Use `max_concurrency` to control how many partition requests run concurrently:
 
 ```python
 from azure.cosmos.aio import CosmosClient
@@ -620,19 +620,19 @@ async def parallel_query_example():
         # Serial execution (default) - lowest RU/s, highest latency
         results = container.query_items(
             query='SELECT * FROM c ORDER BY c.timestamp',
-            max_degree_of_parallelism=0  # default
+            max_concurrency=0  # default
         )
 
         # Parallel execution - higher RU/s, lower latency
         results = container.query_items(
             query='SELECT * FROM c ORDER BY c.timestamp',
-            max_degree_of_parallelism=4  # up to 4 concurrent partition requests
+            max_concurrency=4  # up to 4 concurrent partition requests
         )
 
         # Auto mode - system decides based on partition count and CPU
         results = container.query_items(
             query='SELECT * FROM c ORDER BY c.timestamp',
-            max_degree_of_parallelism=-1
+            max_concurrency=-1
         )
 
         async for item in results:

@@ -88,7 +88,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):  # pylint: d
         self._orderByPQ = _MultiExecutionContextAggregator.PriorityQueue()
 
         # Parallelization settings
-        self._max_degree_of_parallelism = options.get("maxDegreeOfParallelism", 0)
+        self._max_concurrency = options.get("maxConcurrency", 0)
 
 
     async def __anext__(self):
@@ -189,7 +189,7 @@ class _MultiExecutionContextAggregator(_QueryExecutionContextBase):  # pylint: d
             )
 
         effective_concurrency = _resolve_max_degree(
-            self._max_degree_of_parallelism, len(targetPartitionQueryExecutionContextList)
+            self._max_concurrency, len(targetPartitionQueryExecutionContextList)
         )
 
         if effective_concurrency > 0 and len(targetPartitionQueryExecutionContextList) > 1:

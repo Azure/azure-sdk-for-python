@@ -31,10 +31,10 @@ import os
 # pylint: disable=protected-access
 
 
-def _resolve_max_degree(max_degree_of_parallelism, num_partitions):
+def _resolve_max_degree(max_concurrency, num_partitions):
     """Resolve the effective concurrency limit from the user-supplied value.
 
-    :param int max_degree_of_parallelism: The user-configured value.
+    :param int max_concurrency: The user-configured value.
         * 0  -> serial (no concurrency)
         * >0 -> use that value
         * -1 -> auto (min of num_partitions, cpu_count * 2, capped at 32)
@@ -42,14 +42,14 @@ def _resolve_max_degree(max_degree_of_parallelism, num_partitions):
     :returns: The effective concurrency limit, or 0 for serial execution.
     :rtype: int
     """
-    if max_degree_of_parallelism is None or max_degree_of_parallelism == 0:
+    if max_concurrency is None or max_concurrency == 0:
         return 0  # serial
-    if max_degree_of_parallelism > 0:
-        return max_degree_of_parallelism
-    if max_degree_of_parallelism != -1:
+    if max_concurrency > 0:
+        return max_concurrency
+    if max_concurrency != -1:
         raise ValueError(
-            f"max_degree_of_parallelism must be -1 (auto), 0 (serial), or a positive "
-            f"integer, got {max_degree_of_parallelism}."
+            f"max_concurrency must be -1 (auto), 0 (serial), or a positive "
+            f"integer, got {max_concurrency}."
         )
     # -1: auto
     cpu = os.cpu_count() or 4

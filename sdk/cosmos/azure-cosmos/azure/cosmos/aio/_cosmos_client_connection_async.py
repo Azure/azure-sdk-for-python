@@ -3135,9 +3135,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             # 4) Will equal the feed range EPK since it is a sub range of a single physical partition
 
             # Resolve concurrency for prefix partition key / feed range fan-out.
-            # max_degree_of_parallelism from options controls whether fan-out runs in parallel.
+            # max_concurrency from options controls whether fan-out runs in parallel.
             from .._execution_context.aio._concurrent_helpers import _resolve_max_degree  # pylint: disable=import-outside-toplevel
-            max_degree = options.get("maxDegreeOfParallelism")
+            max_degree = options.get("maxConcurrency")
             num_ranges = len(over_lapping_ranges)
             if max_degree is not None and max_degree != 0 and num_ranges > 1:
                 effective_concurrency = _resolve_max_degree(max_degree, num_ranges)

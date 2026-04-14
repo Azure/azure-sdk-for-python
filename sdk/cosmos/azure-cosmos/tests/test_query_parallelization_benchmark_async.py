@@ -3,7 +3,7 @@
 
 """Benchmark test fixtures for async query parallelization.
 
-These tests measure the performance impact of max_degree_of_parallelism
+These tests measure the performance impact of max_concurrency
 on cross-partition queries. They require a live Cosmos DB account and are
 skipped when ACCOUNT_HOST/ACCOUNT_KEY are not set.
 
@@ -15,6 +15,7 @@ Set environment variables:
 """
 
 
+import math
 import os
 import time
 import uuid
@@ -57,7 +58,7 @@ async def cosmos_container():
         container = await database.create_container(
             id=CONTAINER,
             partition_key=PartitionKey(path="/partitionKey"),
-            offer_throughput=50000,  # High throughput to force multiple physical partitions
+            offer_throughput=100000,  # High throughput to force multiple physical partitions
             indexing_policy=indexing_policy,
         )
 
@@ -68,11 +69,11 @@ async def cosmos_container():
                 [Range("", "FF", True, False)])
         num_physical_partitions = len(pk_ranges)
         logger.info(f"Container created with {num_physical_partitions} physical partitions "
-                     f"(50000 RU/s)")
+                     f"(100000 RU/s)")
 
-        # Populate with test data — 5000 items across 200 logical partitions
-        num_items = 5000
-        num_logical_partitions = 200
+        # Populate with test data — 10000 items across 400 logical partitions
+        num_items = 10000
+        num_logical_partitions = 400
         logger.info(f"Populating container with {num_items} items across "
                      f"{num_logical_partitions} logical partitions...")
         for i in range(num_items):
@@ -126,7 +127,7 @@ class TestParallelQueryBenchmarks:
     @pytest.mark.asyncio(loop_scope="module")
     @pytest.mark.parametrize("max_degree", [0, 1, 2, 4, 8])
     async def test_cross_partition_scan_benchmark(self, cosmos_container, max_degree):
-        """Benchmark: cross-partition SELECT * with varying parallelism."""
+        """Benchmark: cross-partition ORDER BY with varying parallelism."""
         total_ru = 0.0
         item_count = 0
 
@@ -136,8 +137,8 @@ class TestParallelQueryBenchmarks:
 
         start = time.perf_counter()
         items = cosmos_container.query_items(
-            query="SELECT * FROM c",
-            max_degree_of_parallelism=max_degree,
+            query="SELECT * FROM c ORDER BY c.numValue",
+            max_concurrency=max_degree,
             response_hook=hook,
         )
         async for _ in items:
@@ -164,7 +165,7 @@ class TestParallelQueryBenchmarks:
         start = time.perf_counter()
         items = cosmos_container.query_items(
             query="SELECT * FROM c ORDER BY c.numValue",
-            max_degree_of_parallelism=max_degree,
+            max_concurrency=max_degree,
             response_hook=hook,
         )
         async for _ in items:
@@ -180,7 +181,7 @@ class TestParallelQueryBenchmarks:
     @pytest.mark.asyncio(loop_scope="module")
     @pytest.mark.parametrize("max_degree", [0, 1, 2, 4, 8])
     async def test_cross_partition_filter_benchmark(self, cosmos_container, max_degree):
-        """Benchmark: cross-partition query with filter and varying parallelism."""
+        """Benchmark: cross-partition filter+ORDER BY with varying parallelism."""
         total_ru = 0.0
         item_count = 0
 
@@ -190,8 +191,8 @@ class TestParallelQueryBenchmarks:
 
         start = time.perf_counter()
         items = cosmos_container.query_items(
-            query="SELECT * FROM c WHERE c.category = 'cat_5'",
-            max_degree_of_parallelism=max_degree,
+            query="SELECT * FROM c WHERE c.category = 'cat_5' ORDER BY c.numValue",
+            max_concurrency=max_degree,
             response_hook=hook,
         )
         async for _ in items:
@@ -205,6 +206,206 @@ class TestParallelQueryBenchmarks:
         )
 
     @pytest.mark.asyncio(loop_scope="module")
+    async def test_cross_partition_page_diagnostics(self, cosmos_container):
+        """Diagnostic: measure doc size, pages per partition, per-page HTTP round-trip time.
+
+        For each physical partition, issues ORDER BY queries page-by-page and
+        captures three timing layers per page:
+          - server_ms:  x-ms-request-duration-ms header (server processing only)
+          - client_ms:  wall-clock time to fetch the page (network + server + deserialization)
+          - RU:         x-ms-request-charge per page
+
+        Then aggregates across all partitions and computes expected e2e latency
+        using the formula:  avg_client_ms * partitions * pages_per_partition / concurrency
+        """
+        import json
+        from azure.cosmos._routing.routing_range import Range
+
+        # ── Step 1: Sample document sizes ──
+        sample_query = cosmos_container.query_items(
+            query="SELECT * FROM c OFFSET 0 LIMIT 10",
+            max_concurrency=0,
+        )
+        sample_docs = []
+        async for doc in sample_query:
+            sample_docs.append(doc)
+        doc_sizes = [len(json.dumps(doc).encode("utf-8")) for doc in sample_docs]
+        avg_doc_bytes = sum(doc_sizes) / len(doc_sizes) if doc_sizes else 0
+        logger.info(
+            f"doc_sizes: sample={len(doc_sizes)}, "
+            f"avg={avg_doc_bytes:.0f}B, min={min(doc_sizes)}B, max={max(doc_sizes)}B"
+        )
+
+        # ── Step 2: Get physical partition ranges ──
+        pk_ranges = await cosmos_container.client_connection._routing_map_provider \
+            .get_overlapping_ranges(
+                cosmos_container.container_link,
+                [Range("", "FF", True, False)])
+        num_partitions = len(pk_ranges)
+
+        # Accumulators
+        all_client_latencies: list[float] = []   # wall-clock per page (ms)
+        all_server_latencies: list[float] = []   # x-ms-request-duration-ms per page
+        total_pages = 0
+        total_items = 0
+        total_ru = 0.0
+
+        # ── Step 3: Per-partition page-by-page query ──
+        for pkr in pk_ranges:
+            range_id = pkr["id"]
+            part_pages = 0
+            part_items = 0
+            part_ru = 0.0
+            part_client_ms: list[float] = []
+            part_server_ms: list[float] = []
+
+            # Hook captures per-page RU and server-side duration
+            page_ru = 0.0
+            page_server_ms = 0.0
+
+            def page_hook(headers, _body):
+                nonlocal page_ru, page_server_ms
+                page_ru = float(headers.get("x-ms-request-charge", "0"))
+                page_server_ms = float(headers.get("x-ms-request-duration-ms", "0"))
+
+            query_iter = cosmos_container.query_items(
+                query="SELECT * FROM c ORDER BY c.numValue",
+                partition_key_range_id=range_id,
+                max_item_count=1000,
+                response_hook=page_hook,
+            )
+
+            # Manually advance the page iterator so we can time each HTTP fetch
+            page_iter = query_iter.by_page().__aiter__()
+            while True:
+                page_ru = 0.0
+                page_server_ms = 0.0
+
+                fetch_start = time.perf_counter()
+                try:
+                    page = await page_iter.__anext__()
+                except StopAsyncIteration:
+                    break
+                # Count items (already in memory, no additional HTTP calls)
+                items_in_page = 0
+                async for _item in page:
+                    items_in_page += 1
+                fetch_elapsed_ms = (time.perf_counter() - fetch_start) * 1000
+
+                part_pages += 1
+                part_items += items_in_page
+                part_ru += page_ru
+                part_client_ms.append(fetch_elapsed_ms)
+                part_server_ms.append(page_server_ms)
+                all_client_latencies.append(fetch_elapsed_ms)
+                all_server_latencies.append(page_server_ms)
+
+            total_pages += part_pages
+            total_items += part_items
+            total_ru += part_ru
+
+            avg_client = sum(part_client_ms) / len(part_client_ms) if part_client_ms else 0
+            avg_server = sum(part_server_ms) / len(part_server_ms) if part_server_ms else 0
+            logger.info(
+                f"  partition {range_id}: pages={part_pages}, items={part_items}, "
+                f"ru={part_ru:.1f}, avg_client={avg_client:.1f}ms, avg_server={avg_server:.1f}ms"
+            )
+
+        # ── Step 4: Aggregate latency stats ──
+        n = len(all_client_latencies)
+        pages_per_partition = total_pages / num_partitions if num_partitions else 0
+
+        def percentile(sorted_vals, pct):
+            idx = max(0, math.ceil(len(sorted_vals) * pct) - 1)
+            return sorted_vals[idx]
+
+        all_client_latencies.sort()
+        all_server_latencies.sort()
+        avg_client_ms = sum(all_client_latencies) / n if n else 0
+        avg_server_ms = sum(all_server_latencies) / n if n else 0
+
+        logger.info(
+            f"PAGE SUMMARY: partitions={num_partitions}, total_pages={total_pages}, "
+            f"pages/partition={pages_per_partition:.1f}, total_items={total_items}, "
+            f"total_ru={total_ru:.1f}"
+        )
+        logger.info(
+            f"CLIENT LATENCY (HTTP round-trip): "
+            f"avg={avg_client_ms:.1f}ms, "
+            f"p50={percentile(all_client_latencies, 0.50):.1f}ms, "
+            f"p90={percentile(all_client_latencies, 0.90):.1f}ms, "
+            f"p99={percentile(all_client_latencies, 0.99):.1f}ms"
+        )
+        logger.info(
+            f"SERVER LATENCY (x-ms-request-duration-ms): "
+            f"avg={avg_server_ms:.1f}ms, "
+            f"p50={percentile(all_server_latencies, 0.50):.1f}ms, "
+            f"p90={percentile(all_server_latencies, 0.90):.1f}ms, "
+            f"p99={percentile(all_server_latencies, 0.99):.1f}ms"
+        )
+        logger.info(
+            f"NETWORK OVERHEAD: avg={avg_client_ms - avg_server_ms:.1f}ms "
+            f"(client_avg - server_avg)"
+        )
+
+        # ── Step 5: Expected e2e using formula ──
+        #   e2e ≈ avg_client_ms * partitions * pages_per_partition / concurrency
+        logger.info(
+            f"EXPECTED E2E: {avg_client_ms:.1f}ms * {num_partitions} partitions * "
+            f"{pages_per_partition:.1f} pages/partition"
+        )
+        for degree in [1, 2, 4, 8]:
+            expected = avg_client_ms * num_partitions * pages_per_partition / degree
+            logger.info(f"  degree={degree}: ~{expected:.1f}ms")
+
+    @pytest.mark.asyncio(loop_scope="module")
+    @pytest.mark.parametrize("max_degree", [0, 1, 2, 4, 8])
+    async def test_cross_partition_scan_p99_latency(self, cosmos_container, max_degree):
+        """P99 e2e latency: run cross-partition ORDER BY for 10 min, record every query latency."""
+        duration_sec = 600  # 10 minutes
+        latencies: list[float] = []
+        total_ru = 0.0
+        total_items = 0
+
+        def hook(headers, _body):
+            nonlocal total_ru
+            total_ru += float(headers.get("x-ms-request-charge", "0"))
+
+        deadline = time.perf_counter() + duration_sec
+        while time.perf_counter() < deadline:
+            start = time.perf_counter()
+            items = cosmos_container.query_items(
+                query="SELECT * FROM c ORDER BY c.numValue",
+                max_concurrency=max_degree,
+                response_hook=hook,
+            )
+            count = 0
+            async for _ in items:
+                count += 1
+            elapsed = time.perf_counter() - start
+
+            latencies.append(elapsed)
+            total_items += count
+
+        total_ops = len(latencies)
+        latencies.sort()
+        p50_idx = max(0, math.ceil(total_ops * 0.50) - 1)
+        p90_idx = max(0, math.ceil(total_ops * 0.90) - 1)
+        p99_idx = max(0, math.ceil(total_ops * 0.99) - 1)
+        p50 = latencies[p50_idx]
+        p90 = latencies[p90_idx]
+        p99 = latencies[p99_idx]
+        avg = sum(latencies) / total_ops if total_ops else 0
+        total_time = sum(latencies)
+
+        logger.info(
+            f"p99 degree={max_degree}: ops={total_ops}, "
+            f"avg={avg:.3f}s, p50={p50:.3f}s, p90={p90:.3f}s, p99={p99:.3f}s, "
+            f"total_ru={total_ru:.1f}, total_items={total_items}, "
+            f"wall={total_time:.1f}s"
+        )
+
+    @pytest.mark.asyncio(loop_scope="module")
     @pytest.mark.parametrize("max_degree", [0, 2, 4])
     async def test_result_consistency_across_degrees(self, cosmos_container, max_degree):
         """Verify that parallel queries return the same results as serial queries."""
@@ -212,7 +413,7 @@ class TestParallelQueryBenchmarks:
         serial_items = []
         items = cosmos_container.query_items(
             query="SELECT c.id FROM c ORDER BY c.numValue",
-            max_degree_of_parallelism=0,
+            max_concurrency=0,
         )
         async for item in items:
             serial_items.append(item["id"])
@@ -221,7 +422,7 @@ class TestParallelQueryBenchmarks:
         parallel_items = []
         items = cosmos_container.query_items(
             query="SELECT c.id FROM c ORDER BY c.numValue",
-            max_degree_of_parallelism=max_degree,
+            max_concurrency=max_degree,
         )
         async for item in items:
             parallel_items.append(item["id"])

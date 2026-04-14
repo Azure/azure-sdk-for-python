@@ -95,7 +95,7 @@ class TestResolveMaxDegree:
 
     @pytest.mark.parametrize("bad_value", [-2, -5, -100])
     def test_invalid_negative_raises(self, bad_value):
-        with pytest.raises(ValueError, match="max_degree_of_parallelism"):
+        with pytest.raises(ValueError, match="max_concurrency"):
             _resolve_max_degree(bad_value, 10)
 
 
@@ -245,7 +245,7 @@ class TestMultiExecutionAggregatorParallel:
 
     @pytest.mark.asyncio
     async def test_serial_mode_with_zero_parallelism(self):
-        """With max_degree_of_parallelism=0, producers should be peeked sequentially."""
+        """With max_concurrency=0, producers should be peeked sequentially."""
         _MultiExecutionContextAggregator = _import_multi_aggregator()
 
         # Create mock client and query info
@@ -262,7 +262,7 @@ class TestMultiExecutionAggregatorParallel:
         query_ex_info.get_query_ranges.return_value = [{"min": "", "max": "FF", "isMinInclusive": True,
                                                          "isMaxInclusive": False}]
 
-        options = {"maxDegreeOfParallelism": 0}
+        options = {"maxConcurrency": 0}
 
         aggregator = _MultiExecutionContextAggregator(
             client, "/dbs/db/colls/coll", "SELECT * FROM c", options,
@@ -291,7 +291,7 @@ class TestMultiExecutionAggregatorParallel:
 
     @pytest.mark.asyncio
     async def test_parallel_mode_with_positive_parallelism(self):
-        """With max_degree_of_parallelism>0, concurrent_peek_producers should be used."""
+        """With max_concurrency>0, concurrent_peek_producers should be used."""
         _MultiExecutionContextAggregator = _import_multi_aggregator()
 
         client = MagicMock()
@@ -308,7 +308,7 @@ class TestMultiExecutionAggregatorParallel:
         query_ex_info.get_query_ranges.return_value = [{"min": "", "max": "FF", "isMinInclusive": True,
                                                          "isMaxInclusive": False}]
 
-        options = {"maxDegreeOfParallelism": 2}
+        options = {"maxConcurrency": 2}
 
         aggregator = _MultiExecutionContextAggregator(
             client, "/dbs/db/colls/coll", "SELECT * FROM c", options,
@@ -348,7 +348,7 @@ class TestNonStreamingOrderByParallel:
 
     @pytest.mark.asyncio
     async def test_serial_drain_with_zero_parallelism(self):
-        """With max_degree_of_parallelism=0, drain should be sequential."""
+        """With max_concurrency=0, drain should be sequential."""
         _NonStreamingOrderByContextAggregator = _import_non_streaming_aggregator()
 
         client = MagicMock()
@@ -366,7 +366,7 @@ class TestNonStreamingOrderByParallel:
         query_ex_info.get_limit.return_value = 0
         query_ex_info.get_offset.return_value = 0
 
-        options = {"maxDegreeOfParallelism": 0}
+        options = {"maxConcurrency": 0}
 
         aggregator = _NonStreamingOrderByContextAggregator(
             client, "/dbs/db/colls/coll", "SELECT * FROM c", options,
@@ -444,7 +444,7 @@ class TestNonStreamingOrderByParallel:
         query_ex_info.get_limit.return_value = 0
         query_ex_info.get_offset.return_value = 0
 
-        options = {"maxDegreeOfParallelism": 2}  # triggers parallel path
+        options = {"maxConcurrency": 2}  # triggers parallel path
 
         aggregator = _NonStreamingOrderByContextAggregator(
             client, "/dbs/db/colls/coll", "SELECT * FROM c ORDER BY c.val",
@@ -541,7 +541,7 @@ class TestNonStreamingOrderByParallel:
         query_ex_info.get_limit.return_value = 0
         query_ex_info.get_offset.return_value = 0
 
-        options = {"maxDegreeOfParallelism": 2}
+        options = {"maxConcurrency": 2}
 
         aggregator = _NonStreamingOrderByContextAggregator(
             client, "/dbs/db/colls/coll", "SELECT TOP 3 * FROM c ORDER BY c.val",
@@ -631,7 +631,7 @@ class TestNonStreamingOrderByParallel:
         query_ex_info.get_limit.return_value = 0
         query_ex_info.get_offset.return_value = 0
 
-        options = {"maxDegreeOfParallelism": 2}
+        options = {"maxConcurrency": 2}
 
         aggregator = _NonStreamingOrderByContextAggregator(
             client, "/dbs/db/colls/coll", "SELECT * FROM c ORDER BY c.val",
@@ -713,7 +713,7 @@ class TestNonStreamingOrderByParallel:
         query_ex_info.get_limit.return_value = 0
         query_ex_info.get_offset.return_value = 0
 
-        options = {"maxDegreeOfParallelism": 3}
+        options = {"maxConcurrency": 3}
 
         aggregator = _NonStreamingOrderByContextAggregator(
             client, "/dbs/db/colls/coll", "SELECT * FROM c ORDER BY c.val",
@@ -788,16 +788,16 @@ class TestOptionsThreading:
     """Test that new kwargs properly flow through the options pipeline."""
 
     def test_base_build_options_includes_new_keys(self):
-        """Verify build_options extracts max_degree_of_parallelism."""
+        """Verify build_options extracts max_concurrency."""
         from azure.cosmos._base import build_options
 
         kwargs = {
-            "max_degree_of_parallelism": 4,
+            "max_concurrency": 4,
         }
         options = build_options(kwargs)
-        assert options["maxDegreeOfParallelism"] == 4
+        assert options["maxConcurrency"] == 4
         # kwargs should have been consumed
-        assert "max_degree_of_parallelism" not in kwargs
+        assert "max_concurrency" not in kwargs
 
     def test_base_build_options_without_new_keys(self):
         """Verify build_options works fine without the new kwargs."""
@@ -805,7 +805,7 @@ class TestOptionsThreading:
 
         kwargs = {"max_item_count": 10}
         options = build_options(kwargs)
-        assert "maxDegreeOfParallelism" not in options
+        assert "maxConcurrency" not in options
         assert options["maxItemCount"] == 10
 
 
