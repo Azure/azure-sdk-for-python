@@ -3334,7 +3334,12 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     elif metric_key == "xpia_information_gathering":
         metric = "xpia_information_gathering"
         return metric
-    elif metric_key == "f1_result" or metric_key == "f1_threshold" or metric_key == "f1_score" or metric_key == "f1_status":
+    elif (
+        metric_key == "f1_result"
+        or metric_key == "f1_threshold"
+        or metric_key == "f1_score"
+        or metric_key == "f1_status"
+    ):
         metric = "f1_score"
         return metric
     for expected_metric in metric_list:

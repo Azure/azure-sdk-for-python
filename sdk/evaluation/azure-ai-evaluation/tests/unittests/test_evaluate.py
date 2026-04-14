@@ -2271,20 +2271,34 @@ class TestCalculateAoaiEvaluationSummary:
         assert summary["result_counts"]["errored"] == 0
 
     def test_errored_row(self):
-        rows = [self._make_row([self._make_result(
-            passed=None, status="error", score=None,
-            sample={"error": {"code": "PARSE", "message": "bad"}}
-        )])]
+        rows = [
+            self._make_row(
+                [
+                    self._make_result(
+                        passed=None, status="error", score=None, sample={"error": {"code": "PARSE", "message": "bad"}}
+                    )
+                ]
+            )
+        ]
         summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
         assert summary["result_counts"]["errored"] == 1
 
     def test_mutually_exclusive_classification(self):
         """A row should only be counted in ONE bucket (no double-counting)."""
-        rows = [self._make_row([
-            self._make_result(name="fluency", passed=False),
-            self._make_result(name="coherence", passed=None, status="error",
-                              score=None, sample={"error": {"code": "E", "message": "m"}}),
-        ])]
+        rows = [
+            self._make_row(
+                [
+                    self._make_result(name="fluency", passed=False),
+                    self._make_result(
+                        name="coherence",
+                        passed=None,
+                        status="error",
+                        score=None,
+                        sample={"error": {"code": "E", "message": "m"}},
+                    ),
+                ]
+            )
+        ]
         summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
         counts = summary["result_counts"]
         assert counts["total"] == 1
@@ -2312,8 +2326,14 @@ class TestCalculateAoaiEvaluationSummary:
             self._make_row([self._make_result(passed=True)], "1"),
             self._make_row([self._make_result(passed=False)], "2"),
             self._make_row([self._make_result(passed=None, status="skipped", score=None)], "3"),
-            self._make_row([self._make_result(passed=None, status="error", score=None,
-                                              sample={"error": {"code": "E", "message": "m"}})], "4"),
+            self._make_row(
+                [
+                    self._make_result(
+                        passed=None, status="error", score=None, sample={"error": {"code": "E", "message": "m"}}
+                    )
+                ],
+                "4",
+            ),
         ]
         summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
         c = summary["result_counts"]
