@@ -4,7 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 """
-Unit tests for verifying the base_url of the AsyncOpenAI client returned by AIProjectClient.get_openai_client(). 
+Unit tests for verifying the base_url of the AsyncOpenAI client returned by AIProjectClient.get_openai_client().
 No network calls are made.
 """
 
@@ -66,5 +66,5 @@ class TestGetOpenaiClientAsync:
         )
         openai_client = project_client.get_openai_client(agent_name=AGENT_NAME)
 
-        expected_base_url = FAKE_ENDPOINT.rstrip("/") + f"/agents/{AGENT_NAME}/endpoint/openai/v1"
+        expected_base_url = FAKE_ENDPOINT.rstrip("/") + f"/agents/{AGENT_NAME}/endpoint/protocols/openai"
         assert str(openai_client.base_url).rstrip("/") == expected_base_url

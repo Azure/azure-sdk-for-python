@@ -70,6 +70,7 @@ servicePreparer = functools.partial(
     bing_custom_user_input="Tell me more about foundry agent service",
     memory_store_chat_model_deployment_name="sanitized-model-deployment-name",
     memory_store_embedding_model_deployment_name="text-embedding-ada-002",
+    foundry_agent_container_image="sanitizedregistry.azurecr.io/sanitized/sessions-agent:latest",
 )
 
 fineTuningServicePreparer = functools.partial(

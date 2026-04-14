@@ -18,8 +18,7 @@ from __future__ import annotations
 
 from typing import Final
 
-agent_tools_instructions: Final[str] = (
-    """
+agent_tools_instructions: Final[str] = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for a tool-driven assistant workflow.
 
@@ -44,11 +43,9 @@ even if it also asks follow-up questions.
 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()
-)
 
 
-memories_instructions: Final[str] = (
-    """
+memories_instructions: Final[str] = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for a memories workflow.
 
@@ -73,11 +70,9 @@ memory behavior, even if no memory matches are found.
 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()
-)
 
 
-agents_instructions: Final[str] = (
-    """
+agents_instructions: Final[str] = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct.
 
@@ -108,11 +103,9 @@ agent behavior, including reasonable correspondence between input prompt(s) and 
 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()
-)
 
 
-chat_completions_instructions: Final[str] = (
-    """
+chat_completions_instructions: Final[str] = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for Chat Completions scenarios.
 
@@ -131,11 +124,9 @@ responds to the printed prompt, even if the exact wording varies.
 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()
-)
 
 
-resource_management_instructions: Final[str] = (
-    """
+resource_management_instructions: Final[str] = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for resource-management samples (for example
 connections, files, and deployments).
@@ -161,11 +152,9 @@ resource-management behavior.
 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()
-)
 
 
-fine_tuning_instructions: Final[str] = (
-    """
+fine_tuning_instructions: Final[str] = """
 We just ran Python code and captured print/log output in an attached log file (TXT).
 Validate whether sample execution/output is correct for a fine-tuning workflow.
 
@@ -189,11 +178,9 @@ the intended fine-tuning workflow.
 
 Always include `reason` with a concise explanation tied to the observed print output.
 """.strip()
-)
 
 
-evaluations_instructions: Final[str] = (
-    """
+evaluations_instructions: Final[str] = """
 We just ran Python code for an evaluation sample and captured print/log output in an attached log file (TXT).
 Your job: determine if the sample code executed to completion WITHOUT throwing an unhandled exception.
 
@@ -215,7 +202,30 @@ Respond FALSE (correct=false) ONLY if:
 
 Always respond with `reason` indicating the reason for the response.
 """.strip()
-)
+
+
+hosted_agents_instructions: Final[str] = """
+We just ran Python code for a hosted-agent sample and captured print/log output in an attached log file (TXT).
+Validate whether the sample executed correctly.
+
+Successful output typically shows one or more of:
+- Agent version/session/endpoint operations completing as expected.
+- Skills/toolboxes/session-files operations succeeding.
+- Responses output that is coherent and on-topic.
+
+Mark `correct = false` for:
+- Exceptions, stack traces, explicit error/failure messages.
+- Timeout/auth/connection/service errors that prevent normal completion.
+- Operation failures where the sample cannot proceed as designed.
+
+Important distinction:
+- Empty list outputs by themselves can be valid and should not automatically fail.
+- Intermediate progress logs are valid if execution still completes.
+
+Mark `correct = true` when execution succeeds and output is consistent with the sample's intended hosted-agent workflow.
+
+Always include `reason` with a concise explanation tied to the observed print output.
+""".strip()
 
 
 # Folder (under samples/) -> instructions.
@@ -224,6 +234,7 @@ Always respond with `reason` indicating the reason for the response.
 INSTRUCTIONS_BY_FOLDER: Final[dict[str, str]] = {
     "agents/tools": agent_tools_instructions,
     "agents": agents_instructions,
+    "hosted_agents": hosted_agents_instructions,
     "memories": memories_instructions,
     "connections": resource_management_instructions,
     "files": resource_management_instructions,
