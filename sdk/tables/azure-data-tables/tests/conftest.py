@@ -82,6 +82,26 @@ def add_sanitizers(test_proxy):
         tid = os.environ.get(env_var, "")
         if tid and tid != "00000000-0000-0000-0000-000000000000":
             add_general_regex_sanitizer(value="00000000-0000-0000-0000-000000000000", regex=tid)
+    # sanitizes user OIDs from user delegation key responses
+    user_oid = os.environ.get("AZURE_CLIENT_ID", "")
+    if not user_oid:
+        # Fall back: try to read the OID from the Azure context (for user auth scenarios)
+        try:
+            import subprocess, json as _json
+
+            result = subprocess.run(
+                ["pwsh", "-Command", "(Get-AzADUser -UserPrincipalName (Get-AzContext).Account.Id).Id"],
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+            user_oid = result.stdout.strip()
+        except Exception:
+            pass
+    if user_oid and user_oid != "00000000-0000-0000-0000-000000000000":
+        add_general_regex_sanitizer(
+            value="00000000-0000-0000-0000-000000000001", regex=user_oid
+        )
     # sanitizes access tokens in response bodies
     add_body_key_sanitizer(json_path="$..access_token", value="access_token")
     add_oauth_response_sanitizer()

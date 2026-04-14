@@ -199,6 +199,61 @@ class GeoReplication(_Model):
         super().__init__(*args, **kwargs)
 
 
+class KeyInfo(_Model):
+    """The key info request body for getting a user delegation key.
+
+    :ivar start: The start time for the user delegation SAS, in ISO date format. Must be within
+     seven days of the current date. Required.
+    :vartype start: str
+    :ivar expiry: The expiration time of the user delegation SAS, in ISO date format. Must be
+     within seven days of the current date. Required.
+    :vartype expiry: str
+    :ivar delegated_user_tid: A GUID that represents the Microsoft Entra tenant that the delegated
+     user is from.
+    :vartype delegated_user_tid: str
+    """
+
+    start: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Start", "text": False, "unwrapped": False},
+    )
+    """The start time for the user delegation SAS, in ISO date format. Must be within seven days of
+     the current date. Required."""
+    expiry: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Expiry", "text": False, "unwrapped": False},
+    )
+    """The expiration time of the user delegation SAS, in ISO date format. Must be within seven days
+     of the current date. Required."""
+    delegated_user_tid: Optional[str] = rest_field(
+        name="delegatedUserTid",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "DelegatedUserTid", "text": False, "unwrapped": False},
+    )
+    """A GUID that represents the Microsoft Entra tenant that the delegated user is from."""
+
+    _xml = {"attribute": False, "name": "KeyInfo", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        start: str,
+        expiry: str,
+        delegated_user_tid: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Logging(_Model):
     """Azure Analytics Logging settings.
 
@@ -722,6 +777,107 @@ class TableServiceStats(_Model):
         self,
         *,
         geo_replication: Optional["_models.GeoReplication"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class UserDelegationKey(_Model):
+    """A user delegation key.
+
+    :ivar signed_oid: The immutable identifier for an object in the Microsoft identity system.
+     Required.
+    :vartype signed_oid: str
+    :ivar signed_tid: A GUID representing the Microsoft Entra tenant the user is from. Required.
+    :vartype signed_tid: str
+    :ivar signed_start: The start time of the user delegation key, in ISO date format. Required.
+    :vartype signed_start: str
+    :ivar signed_expiry: The expiration time of the user delegation key, in ISO date format.
+     Required.
+    :vartype signed_expiry: str
+    :ivar signed_service: The service the key can be used for. 't' indicates Table Storage.
+     Required.
+    :vartype signed_service: str
+    :ivar signed_version: The REST API version used to get the user delegation key. Required.
+    :vartype signed_version: str
+    :ivar signed_delegated_user_tid: A GUID of the delegated user's tenant. Only returned when
+     DelegatedUserTid is specified in the request.
+    :vartype signed_delegated_user_tid: str
+    :ivar value: The user delegation key. Required.
+    :vartype value: str
+    """
+
+    signed_oid: str = rest_field(
+        name="signedOid",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SignedOid", "text": False, "unwrapped": False},
+    )
+    """The immutable identifier for an object in the Microsoft identity system. Required."""
+    signed_tid: str = rest_field(
+        name="signedTid",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SignedTid", "text": False, "unwrapped": False},
+    )
+    """A GUID representing the Microsoft Entra tenant the user is from. Required."""
+    signed_start: str = rest_field(
+        name="signedStart",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SignedStart", "text": False, "unwrapped": False},
+    )
+    """The start time of the user delegation key, in ISO date format. Required."""
+    signed_expiry: str = rest_field(
+        name="signedExpiry",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SignedExpiry", "text": False, "unwrapped": False},
+    )
+    """The expiration time of the user delegation key, in ISO date format. Required."""
+    signed_service: str = rest_field(
+        name="signedService",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SignedService", "text": False, "unwrapped": False},
+    )
+    """The service the key can be used for. 't' indicates Table Storage. Required."""
+    signed_version: str = rest_field(
+        name="signedVersion",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SignedVersion", "text": False, "unwrapped": False},
+    )
+    """The REST API version used to get the user delegation key. Required."""
+    signed_delegated_user_tid: Optional[str] = rest_field(
+        name="signedDelegatedUserTid",
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "SignedDelegatedUserTid", "text": False, "unwrapped": False},
+    )
+    """A GUID of the delegated user's tenant. Only returned when DelegatedUserTid is specified in the
+     request."""
+    value: str = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "name": "Value", "text": False, "unwrapped": False},
+    )
+    """The user delegation key. Required."""
+
+    _xml = {"attribute": False, "name": "UserDelegationKey", "text": False, "unwrapped": False}
+
+    @overload
+    def __init__(
+        self,
+        *,
+        signed_oid: str,
+        signed_tid: str,
+        signed_start: str,
+        signed_expiry: str,
+        signed_service: str,
+        signed_version: str,
+        value: str,
+        signed_delegated_user_tid: Optional[str] = None,
     ) -> None: ...
 
     @overload

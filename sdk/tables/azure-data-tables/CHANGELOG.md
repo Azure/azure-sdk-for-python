@@ -7,6 +7,9 @@
 * Added to support customized encoding and decoding in entity CRUD operations.
 * Added to support Entity property in Tuple and Enum types.
 * Added to support flatten Entity metadata in entity deserialization by passing kwarg `flatten_result_entity` when creating clients.
+* Added `get_user_delegation_key()` method to `TableServiceClient` (sync and async) for obtaining user delegation keys with Microsoft Entra ID authentication.
+* Added user delegation SAS support to `generate_table_sas()` via the `user_delegation_key` and `account_name` keyword arguments.
+* Added `UserDelegationKey` model.
 
 ### Bugs Fixed
 

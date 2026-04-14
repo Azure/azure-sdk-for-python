@@ -23,6 +23,14 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2018-09-01-prev
   }
 }
 
+resource tableDelegatorRoleAssignment 'Microsoft.Authorization/roleAssignments@2018-09-01-preview' = {
+  name: guid('tableDelegatorRoleId', resourceGroup().id)
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', '965033a5-c8eb-4f35-b82f-fef460a3606d')
+    principalId: testApplicationOid
+  }
+}
+
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: primaryAccountName
   location: location

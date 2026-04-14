@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime
-from typing import Optional, Union
+from typing import Optional, Union, TYPE_CHECKING
 from azure.core.credentials import AzureNamedKeyCredential
 
 from ._models import AccountSasPermissions, TableSasPermissions, ResourceTypes, SASProtocol
@@ -16,6 +16,9 @@ from ._shared_access_signature import (
     SharedAccessSignature,
     QueryStringConstants,
 )
+
+if TYPE_CHECKING:
+    from ._generated.models import UserDelegationKey
 
 
 def generate_account_sas(
@@ -89,9 +92,11 @@ def generate_account_sas(
 
 
 def generate_table_sas(
-    credential: AzureNamedKeyCredential,
-    table_name: str,
+    credential: Optional[AzureNamedKeyCredential] = None,
+    table_name: Optional[str] = None,
     *,
+    user_delegation_key: Optional["UserDelegationKey"] = None,
+    account_name: Optional[str] = None,
     permission: Optional[Union[TableSasPermissions, str]] = None,
     expiry: Optional[Union[datetime, str]] = None,
     start: Optional[Union[datetime, str]] = None,
@@ -108,10 +113,22 @@ def generate_table_sas(
     Use the returned signature with the sas_token parameter of TableService.
 
 
-    :param credential: Credential used for creating Shared Access Signature
-    :type credential: ~azure.core.credentials.AzureNamedKeyCredential
+    :param credential: Credential used for creating Shared Access Signature.
+        Required unless user_delegation_key is provided.
+    :type credential: ~azure.core.credentials.AzureNamedKeyCredential or None
     :param table_name: Table name
-    :type table_name: str
+    :type table_name: str or None
+    :keyword user_delegation_key:
+        Instead of an account shared key, the user could pass in a user delegation key.
+        A user delegation key can be obtained from the service by authenticating with an
+        AAD identity; this can be accomplished by calling
+        :func:`~azure.data.tables.TableServiceClient.get_user_delegation_key`.
+        When present, the SAS is signed with the user delegation key instead.
+    :paramtype user_delegation_key: ~azure.data.tables.UserDelegationKey or None
+    :keyword account_name:
+        The storage account name used to generate the shared access signature.
+        Required when using user_delegation_key.
+    :paramtype account_name: str or None
     :keyword permission:
         The permissions associated with the shared access signature. The
         user is restricted to operations allowed by the permissions.
@@ -157,7 +174,24 @@ def generate_table_sas(
     :return: A Shared Access Signature (sas) token.
     :rtype: str
     """
+    if user_delegation_key is not None:
+        _validate_not_none("table_name", table_name)
+        _validate_not_none("account_name", account_name)
+        assert table_name is not None  # validated above
+        assert account_name is not None  # validated above
+        ud_sas = _TableUserDelegationSharedAccessHelper()
+        # Use the version from the user delegation key for user delegation SAS
+        sas_version = user_delegation_key.signed_version or X_MS_VERSION
+        ud_sas.add_base(permission, expiry, start, ip_address_or_range, protocol, sas_version)
+        ud_sas.add_table_access_ranges(table_name, start_pk, start_rk, end_pk, end_rk)
+        resource_path = table_name.lower()
+        ud_sas.add_user_delegation_key_signature(
+            account_name, user_delegation_key, "table", resource_path
+        )
+        return ud_sas.get_token()
 
+    _validate_not_none("credential", credential)
+    assert credential is not None  # validated above
     sas = TableSharedAccessSignature(credential)
     return sas.generate_table(
         table_name=table_name,
@@ -337,4 +371,75 @@ class _TableSharedAccessHelper(_SharedAccessHelper):
         self._add_query(
             QueryStringConstants.SIGNED_SIGNATURE,
             _sign_string(account_key, string_to_sign),
+        )
+
+
+class _UserDelegationQueryStringConstants:
+    SIGNED_OID = "skoid"
+    SIGNED_TID = "sktid"
+    SIGNED_KEY_START = "skt"
+    SIGNED_KEY_EXPIRY = "ske"
+    SIGNED_KEY_SERVICE = "sks"
+    SIGNED_KEY_VERSION = "skv"
+    SIGNED_KEY_DELEGATED_USER_TID = "skdutid"
+    SIGNED_DELEGATED_USER_OID = "sduoid"
+
+
+class _TableUserDelegationSharedAccessHelper(_TableSharedAccessHelper):
+    def add_user_delegation_key_signature(self, account_name, user_delegation_key, service, path):
+        def get_value_to_append(query):
+            return_value = self.query_dict.get(query) or ""
+            return return_value + "\n"
+
+        if path[0] != "/":
+            path = "/" + path
+
+        canonicalized_resource = "/" + service + "/" + account_name + path + "\n"
+
+        # Add user delegation key properties to query dict
+        self._add_query(_UserDelegationQueryStringConstants.SIGNED_OID, user_delegation_key.signed_oid)
+        self._add_query(_UserDelegationQueryStringConstants.SIGNED_TID, user_delegation_key.signed_tid)
+        self._add_query(_UserDelegationQueryStringConstants.SIGNED_KEY_START, user_delegation_key.signed_start)
+        self._add_query(_UserDelegationQueryStringConstants.SIGNED_KEY_EXPIRY, user_delegation_key.signed_expiry)
+        self._add_query(_UserDelegationQueryStringConstants.SIGNED_KEY_SERVICE, user_delegation_key.signed_service)
+        self._add_query(_UserDelegationQueryStringConstants.SIGNED_KEY_VERSION, user_delegation_key.signed_version)
+        self._add_query(
+            _UserDelegationQueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID,
+            getattr(user_delegation_key, "signed_delegated_user_tid", None),
+        )
+
+        # String-to-sign for user delegation SAS for Tables (v2025-07-05)
+        # Reference: https://learn.microsoft.com/en-us/rest/api/storageservices/create-user-delegation-sas
+        string_to_sign = (
+            get_value_to_append(QueryStringConstants.SIGNED_PERMISSION)
+            + get_value_to_append(QueryStringConstants.SIGNED_START)
+            + get_value_to_append(QueryStringConstants.SIGNED_EXPIRY)
+            + canonicalized_resource
+            + get_value_to_append(_UserDelegationQueryStringConstants.SIGNED_OID)
+            + get_value_to_append(_UserDelegationQueryStringConstants.SIGNED_TID)
+            + get_value_to_append(_UserDelegationQueryStringConstants.SIGNED_KEY_START)
+            + get_value_to_append(_UserDelegationQueryStringConstants.SIGNED_KEY_EXPIRY)
+            + get_value_to_append(_UserDelegationQueryStringConstants.SIGNED_KEY_SERVICE)
+            + get_value_to_append(_UserDelegationQueryStringConstants.SIGNED_KEY_VERSION)
+            + get_value_to_append(_UserDelegationQueryStringConstants.SIGNED_KEY_DELEGATED_USER_TID)
+            + get_value_to_append(_UserDelegationQueryStringConstants.SIGNED_DELEGATED_USER_OID)
+            + get_value_to_append(QueryStringConstants.SIGNED_IP)
+            + get_value_to_append(QueryStringConstants.SIGNED_PROTOCOL)
+            + get_value_to_append(QueryStringConstants.SIGNED_VERSION)
+        )
+
+        string_to_sign += (
+            get_value_to_append(QueryStringConstants.START_PK)
+            + get_value_to_append(QueryStringConstants.START_RK)
+            + get_value_to_append(QueryStringConstants.END_PK)
+            + get_value_to_append(QueryStringConstants.END_RK)
+        )
+
+        # remove the trailing newline
+        if string_to_sign[-1] == "\n":
+            string_to_sign = string_to_sign[:-1]
+
+        self._add_query(
+            QueryStringConstants.SIGNED_SIGNATURE,
+            _sign_string(user_delegation_key.value, string_to_sign),
         )

@@ -4,13 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import Optional, Any, Dict, List
+from datetime import datetime
+from typing import Optional, Any, Dict, List, Union
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 
-from ._generated.models import TableServiceProperties
+from ._generated.models import TableServiceProperties, KeyInfo, UserDelegationKey
 from ._models import (
     TableItem,
     TablePropertiesPaged,
@@ -24,7 +25,7 @@ from ._models import (
 from ._base_client import parse_connection_str, TablesBaseClient, TransportWrapper
 from ._error import _process_table_error, _reprocess_error
 from ._table_client import TableClient
-from ._serialize import _parameter_filter_substitution
+from ._serialize import _parameter_filter_substitution, serialize_iso
 
 
 class TableServiceClient(TablesBaseClient):
@@ -306,6 +307,38 @@ class TableServiceClient(TablesBaseClient):
         paged._page_iterator_class = TablePropertiesPaged  # pylint: disable=protected-access
         paged._kwargs.update({"results_per_page": results_per_page})  # pylint: disable=protected-access
         return paged  # type: ignore[return-value]
+
+    @distributed_trace
+    def get_user_delegation_key(
+        self,
+        key_start_time: Union[datetime, str],
+        key_expiry_time: Union[datetime, str],
+        **kwargs,
+    ) -> UserDelegationKey:
+        """Obtain a user delegation key for the purpose of signing SAS tokens.
+        A token credential must be present on the service object for this request to succeed.
+
+        :param key_start_time: A DateTime value. Indicates the start time for the user delegation
+            SAS. The value must be within 7 days of the current time.
+        :type key_start_time: ~datetime.datetime or str
+        :param key_expiry_time: A DateTime value. Indicates the expiry time for the user delegation
+            SAS. The value must be within 7 days of the current time.
+        :type key_expiry_time: ~datetime.datetime or str
+        :return: The user delegation key.
+        :rtype: ~azure.data.tables.UserDelegationKey
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+        start_str = key_start_time if isinstance(key_start_time, str) else (serialize_iso(key_start_time) or "")
+        expiry_str = key_expiry_time if isinstance(key_expiry_time, str) else (serialize_iso(key_expiry_time) or "")
+        key_info = KeyInfo(start=start_str, expiry=expiry_str)
+        timeout = kwargs.pop("timeout", None)
+        try:
+            return self._client.service.get_user_delegation_key(
+                key_info=key_info, timeout=timeout, **kwargs
+            )
+        except HttpResponseError as error:
+            _process_table_error(error)
+            raise
 
     def get_table_client(self, table_name: str, **kwargs: Any) -> TableClient:
         """Get a client to interact with the specified table.

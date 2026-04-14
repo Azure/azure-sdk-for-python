@@ -173,6 +173,46 @@ table_service_client = TableServiceClient(
 )
 ```
 
+##### Creating a user delegation SAS token
+
+For Storage accounts, you can create a [user delegation SAS](https://learn.microsoft.com/rest/api/storageservices/create-user-delegation-sas) using Microsoft Entra credentials instead of an account key. This is more secure as it does not require sharing or storing account keys.
+
+```python
+from datetime import datetime, timedelta, timezone
+from azure.data.tables import TableServiceClient, generate_table_sas, TableSasPermissions, TableClient
+from azure.identity import DefaultAzureCredential
+from azure.core.credentials import AzureSasCredential
+
+credential = DefaultAzureCredential()
+account_name = "<my_account_name>"
+table_name = "myTable"
+
+with TableServiceClient(
+    endpoint=f"https://{account_name}.table.core.windows.net", credential=credential
+) as table_service_client:
+    # Get a user delegation key
+    udk = table_service_client.get_user_delegation_key(
+        key_start_time=datetime.now(timezone.utc),
+        key_expiry_time=datetime.now(timezone.utc) + timedelta(hours=1),
+    )
+
+    # Generate a user delegation SAS token for a table
+    sas_token = generate_table_sas(
+        table_name=table_name,
+        user_delegation_key=udk,
+        account_name=account_name,
+        permission=TableSasPermissions(read=True, query=True),
+        expiry=datetime.now(timezone.utc) + timedelta(hours=1),
+    )
+
+# Use the SAS token to access the table
+table_client = TableClient(
+    endpoint=f"https://{account_name}.table.core.windows.net",
+    table_name=table_name,
+    credential=AzureSasCredential(sas_token),
+)
+```
+
 
 ## Key concepts
 Common uses of the Table service included:
@@ -197,6 +237,7 @@ Two different clients are provided to interact with the various components of th
     * Get and set account setting
     * Query, create, and delete tables within the account.
     * Get a `TableClient` to access a specific table using the `get_table_client` method.
+    * Obtain a user delegation key for creating user delegation SAS tokens (Storage accounts only).
 2. **`TableClient`** -
     * Interacts with a specific table (which need not exist yet).
     * Create, delete, query, and upsert entities within the specified table.

@@ -41,9 +41,11 @@ from ..._utils.model_base import (
     _get_element,
 )
 from ..._utils.serialization import Deserializer, Serializer
+from ..._validation import api_version_validation
 from ...operations._operations import (
     build_service_get_properties_request,
     build_service_get_statistics_request,
+    build_service_get_user_delegation_key_request,
     build_service_set_properties_request,
     build_table_create_request,
     build_table_delete_entity_request,
@@ -1767,6 +1769,95 @@ class ServiceOperations:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.TableServiceStats, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    @api_version_validation(
+        method_added_on="2025-07-05",
+        params_added_on={"2025-07-05": ["api_version", "client_request_id", "timeout", "content_type", "accept"]},
+        api_versions_list=["2025-07-05"],
+    )
+    async def get_user_delegation_key(
+        self, key_info: _models.KeyInfo, *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> _models.UserDelegationKey:
+        """Gets a key that can be used to sign a user delegation SAS (shared access signature). A user
+        delegation SAS grants access to Table service resources by using Microsoft Entra credentials.
+
+        :param key_info: The key info containing the start and expiry times for the user delegation
+         key. Required.
+        :type key_info: ~azure.data.tables._generated.models.KeyInfo
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :return: UserDelegationKey. The UserDelegationKey is compatible with MutableMapping
+        :rtype: ~azure.data.tables._generated.models.UserDelegationKey
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[_models.UserDelegationKey] = kwargs.pop("cls", None)
+
+        _content = _get_element(key_info)
+
+        _request = build_service_get_user_delegation_key_request(
+            timeout=timeout,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.TableServiceError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize_xml(_models.UserDelegationKey, response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore

@@ -42,6 +42,7 @@ from .._utils.model_base import (
 )
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prep_if_match, prep_if_none_match
+from .._validation import api_version_validation
 
 JSON = MutableMapping[str, Any]
 T = TypeVar("T")
@@ -64,7 +65,7 @@ def build_table_query_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
     # Construct URL
@@ -101,7 +102,7 @@ def build_table_create_request(
 
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
     # Construct URL
@@ -126,7 +127,7 @@ def build_table_create_request(
 def build_table_delete_request(table: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -160,7 +161,7 @@ def build_table_query_entities_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
     # Construct URL
@@ -210,7 +211,7 @@ def build_table_query_entity_with_partition_and_row_key_request(  # pylint: disa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
     # Construct URL
@@ -256,7 +257,7 @@ def build_table_update_entity_request(
 
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -304,7 +305,7 @@ def build_table_merge_entity_request(
 
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -351,7 +352,7 @@ def build_table_delete_entity_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -395,7 +396,7 @@ def build_table_insert_entity_request(
 
     data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
     # Construct URL
@@ -428,7 +429,7 @@ def build_table_get_access_policy_request(table: str, *, timeout: Optional[int] 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -455,7 +456,7 @@ def build_table_set_access_policy_request(table: str, *, timeout: Optional[int] 
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -483,11 +484,11 @@ def build_service_set_properties_request(*, timeout: Optional[int] = None, **kwa
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type: str = kwargs.pop("content_type")
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=service&comp=properties"
+    _url = "?restype=service&comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -505,11 +506,11 @@ def build_service_get_properties_request(*, timeout: Optional[int] = None, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=service&comp=properties"
+    _url = "?restype=service&comp=properties"
 
     # Construct parameters
     if timeout is not None:
@@ -526,11 +527,11 @@ def build_service_get_statistics_request(*, timeout: Optional[int] = None, **kwa
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2019-02-02"))
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
-    _url = "/?restype=service&comp=stats"
+    _url = "?restype=service&comp=stats"
 
     # Construct parameters
     if timeout is not None:
@@ -541,6 +542,31 @@ def build_service_get_statistics_request(*, timeout: Optional[int] = None, **kwa
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_service_get_user_delegation_key_request(  # pylint: disable=name-too-long
+    *, timeout: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type: str = kwargs.pop("content_type")
+    api_version: str = kwargs.pop("api_version", _headers.pop("x-ms-version", "2025-07-05"))
+    accept = _headers.pop("Accept", "application/xml")
+
+    # Construct URL
+    _url = "?restype=service&comp=userdelegationkey"
+
+    # Construct parameters
+    if timeout is not None:
+        _params["timeout"] = _SERIALIZER.query("timeout", timeout, "int")
+
+    # Construct headers
+    _headers["x-ms-version"] = _SERIALIZER.header("api_version", api_version, "str")
+    _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class TableOperations:
@@ -2245,6 +2271,95 @@ class ServiceOperations:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize_xml(_models.TableServiceStats, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    @api_version_validation(
+        method_added_on="2025-07-05",
+        params_added_on={"2025-07-05": ["api_version", "client_request_id", "timeout", "content_type", "accept"]},
+        api_versions_list=["2025-07-05"],
+    )
+    def get_user_delegation_key(
+        self, key_info: _models.KeyInfo, *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> _models.UserDelegationKey:
+        """Gets a key that can be used to sign a user delegation SAS (shared access signature). A user
+        delegation SAS grants access to Table service resources by using Microsoft Entra credentials.
+
+        :param key_info: The key info containing the start and expiry times for the user delegation
+         key. Required.
+        :type key_info: ~azure.data.tables._generated.models.KeyInfo
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :return: UserDelegationKey. The UserDelegationKey is compatible with MutableMapping
+        :rtype: ~azure.data.tables._generated.models.UserDelegationKey
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[_models.UserDelegationKey] = kwargs.pop("cls", None)
+
+        _content = _get_element(key_info)
+
+        _request = build_service_get_user_delegation_key_request(
+            timeout=timeout,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.TableServiceError,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize_xml(_models.UserDelegationKey, response.text())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
