@@ -24,7 +24,6 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-import logging
 import pickle
 
 try:
@@ -32,19 +31,9 @@ try:
 except ImportError:
     import mock
 
-import requests
 import pytest
+import requests
 
-from azure.core.exceptions import DecodeError, AzureError
-from azure.core.pipeline import Pipeline, PipelineResponse, PipelineRequest, PipelineContext
-
-from azure.core.pipeline.policies import (
-    NetworkTraceLoggingPolicy,
-    ContentDecodePolicy,
-    RequestHistory,
-    RetryPolicy,
-    HTTPPolicy,
-)
 from utils import (
     HTTP_REQUESTS,
     create_http_request,
@@ -54,7 +43,17 @@ from utils import (
     create_transport_response,
     request_and_responses_product,
 )
+
+from azure.core.exceptions import DecodeError, AzureError
+from azure.core.pipeline import Pipeline, PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline._tools import is_rest
+from azure.core.pipeline.policies import (
+    NetworkTraceLoggingPolicy,
+    ContentDecodePolicy,
+    RequestHistory,
+    RetryPolicy,
+    HTTPPolicy,
+)
 
 
 def test_pipeline_context():
@@ -88,7 +87,7 @@ def test_pipeline_context():
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_request_history(http_request):
     class Non_deep_copyable(object):
-        def __deepcopy__(self, memodict={}):
+        def __deepcopy__(self, memodict={}):  # pylint: disable=dangerous-default-value
             raise ValueError()
 
     body = Non_deep_copyable()
@@ -103,7 +102,7 @@ def test_request_history(http_request):
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_request_history_type_error(http_request):
     class Non_deep_copyable(object):
-        def __deepcopy__(self, memodict={}):
+        def __deepcopy__(self, memodict={}):  # pylint: disable=dangerous-default-value
             raise TypeError()
 
     body = Non_deep_copyable()
@@ -186,7 +185,7 @@ def test_no_log(mock_http_logger, http_request, http_response):
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_retry_without_http_response(http_request):
     class NaughtyPolicy(HTTPPolicy):
-        def send(*args):
+        def send(*args):  # pylint: disable=no-self-argument
             raise AzureError("boo")
 
     policies = [RetryPolicy(), NaughtyPolicy()]
@@ -199,7 +198,7 @@ def test_retry_without_http_response(http_request):
     "http_request,http_response,requests_transport_response",
     request_and_responses_product(HTTP_RESPONSES, REQUESTS_TRANSPORT_RESPONSES),
 )
-def test_raw_deserializer(http_request, http_response, requests_transport_response):
+def test_raw_deserializer(http_request, http_response, requests_transport_response):  # pylint: disable=too-many-statements
     raw_deserializer = ContentDecodePolicy()
     context = PipelineContext(None, stream=False)
     universal_request = http_request("GET", "http://localhost/")

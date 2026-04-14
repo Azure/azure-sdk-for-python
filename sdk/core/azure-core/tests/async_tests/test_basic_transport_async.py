@@ -12,6 +12,8 @@ import aiohttp
 from packaging.version import Version
 import pytest
 
+from utils import HTTP_REQUESTS, request_and_responses_product
+
 from azure.core.exceptions import (
     HttpResponseError,
     ServiceResponseError,
@@ -30,8 +32,6 @@ from azure.core.pipeline.transport import (
 )
 from azure.core.pipeline.transport._aiohttp import AioHttpStreamDownloadGenerator
 from azure.core.rest._http_response_impl_async import AsyncHttpResponseImpl as RestAsyncHttpResponse
-
-from utils import HTTP_REQUESTS, request_and_responses_product
 
 
 # transport = mock.MagicMock(spec=AsyncHttpTransport)
@@ -892,8 +892,10 @@ async def test_multipart_receive_with_bom(http_request, mock_response):
         b"Content-Type: application/xml\r\n"
         b"Server: Windows-Azure-Blob/1.0\r\n"
         b"\r\n"
-        b'\xef\xbb\xbf<?xml version="1.0" encoding="utf-8"?>\n<Error><Code>InvalidInput</Code><Message>One'
-        b"of the request inputs is not valid.\nRequestId:5f3f9f2f-e01e-00cc-6eb1-6d00b5000000\nTime:2019-09-17T23:44:07.4671860Z</Message></Error>\n"
+        b'\xef\xbb\xbf<?xml version="1.0" encoding="utf-8"?>\n<Error><Code>InvalidInput</Code>'
+        b"<Message>One"
+        b"of the request inputs is not valid.\nRequestId:5f3f9f2f-e01e-00cc-6eb1-6d00b5000000\n"
+        b"Time:2019-09-17T23:44:07.4671860Z</Message></Error>\n"
         b"--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--"
     )
 

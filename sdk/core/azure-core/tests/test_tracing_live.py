@@ -2,13 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import pytest
 import os
 
-from azure.storage.blob import BlobServiceClient
-from opentelemetry.trace import SpanKind, StatusCode
-from opentelemetry.sdk.trace import ReadableSpan
+import pytest
 from devtools_testutils import get_credential
+from opentelemetry.sdk.trace import ReadableSpan
+from opentelemetry.trace import SpanKind, StatusCode
+
+from azure.storage.blob import BlobServiceClient
 
 
 class TestTracing:
@@ -27,7 +28,7 @@ class TestTracing:
 
         client = BlobServiceClient(account_url=account_url, credential=get_credential())
 
-        with tracing_helper.tracer.start_as_current_span(name="root") as parent:
+        with tracing_helper.tracer.start_as_current_span(name="root") as _parent:
             client.get_service_properties()
 
         spans = tracing_helper.exporter.get_finished_spans()
@@ -69,10 +70,10 @@ class TestTracing:
         client = BlobServiceClient(account_url=invalid_url, credential=get_credential())
 
         # Expecting this operation to fail
-        with tracing_helper.tracer.start_as_current_span(name="root") as parent:
+        with tracing_helper.tracer.start_as_current_span(name="root") as _parent:
             try:
                 client.get_service_properties()
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
                 # We expect an exception but want to verify the spans
                 pass
 

@@ -8,7 +8,11 @@ import base64
 import sys
 import time
 from unittest.mock import Mock, patch, AsyncMock, create_autospec
+
+import pytest
+import trio
 from requests import Response
+from utils import HTTP_REQUESTS
 
 from azure.core.credentials import AccessToken, AccessTokenInfo
 from azure.core.credentials_async import AsyncTokenCredential, AsyncSupportsTokenInfo
@@ -23,10 +27,6 @@ from azure.core.pipeline.policies import (
 )
 from azure.core.pipeline.policies._authentication import MAX_REFRESH_JITTER_SECONDS
 from azure.core.pipeline.transport import AsyncHttpTransport, HttpRequest
-import pytest
-import trio
-
-from utils import HTTP_REQUESTS
 
 
 @pytest.mark.asyncio
@@ -100,7 +100,7 @@ async def test_bearer_policy_adds_header_access_token_info(http_request):
             get_token_calls += 1
             return access_token
 
-        async def get_token_info(*_, **__):
+        async def get_token_info(*_, **__):  # pylint: disable=no-self-argument
             nonlocal get_token_info_calls
             get_token_info_calls += 1
             return expected_token
@@ -593,7 +593,7 @@ async def test_async_token_credential_trio_lock():
 
 def test_async_token_credential_sync():
     """Verify that AsyncBearerTokenCredentialPolicy can be constructed in a synchronous context."""
-    auth_policy = AsyncBearerTokenCredentialPolicy(Mock(), "scope")
+    _auth_policy = AsyncBearerTokenCredentialPolicy(Mock(), "scope")
     with patch.dict("sys.modules"):
         # Ensure trio isn't in sys.modules (i.e. imported).
         sys.modules.pop("trio", None)

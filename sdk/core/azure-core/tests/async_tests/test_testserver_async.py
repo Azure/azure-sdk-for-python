@@ -28,7 +28,7 @@ from utils import HTTP_REQUESTS
 
 from azure.core.pipeline.transport import AioHttpTransport
 
-"""This file does a simple call to the testserver to make sure we can use the testserver"""
+"""This file does a simple call to the testserver to make sure we can use the testserver"""  # pylint: disable=pointless-string-statement
 
 
 @pytest.mark.asyncio

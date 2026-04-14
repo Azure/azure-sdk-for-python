@@ -14,6 +14,13 @@ from urllib3.connection import HTTPConnection as UrllibConnection
 from urllib3.response import HTTPResponse as UrllibResponse
 from urllib3.util import connection as urllib_connection
 
+from utils import (
+    HTTP_REQUESTS,
+    request_and_responses_product,
+    HTTP_CLIENT_TRANSPORT_RESPONSES,
+    create_transport_response,
+)
+
 from azure.core.exceptions import (
     HttpResponseError,
     ServiceResponseError,
@@ -26,13 +33,6 @@ from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse, RequestsTransport
 from azure.core.pipeline.transport._base import HttpTransport, _deserialize_response, _urljoin
 from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponseImpl
-
-from utils import (
-    HTTP_REQUESTS,
-    request_and_responses_product,
-    HTTP_CLIENT_TRANSPORT_RESPONSES,
-    create_transport_response,
-)
 
 
 class PipelineTransportMockResponse(PipelineTransportHttpResponse):
@@ -88,7 +88,8 @@ def test_http_request_serialization(http_request):
         headers=OrderedDict(
             {
                 "x-ms-date": "Thu, 14 Jun 2018 16:46:54 GMT",
-                "Authorization": "SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=",  # fake key suppressed in credscan
+                # fake key suppressed in credscan
+                "Authorization": "SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=",
                 "Content-Length": "0",
             }
         ),
@@ -98,7 +99,8 @@ def test_http_request_serialization(http_request):
     expected = (
         b"DELETE /container0/blob0 HTTP/1.1\r\n"
         b"x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n"
-        b"Authorization: SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=\r\n"  # fake key suppressed in credscan
+        # fake key suppressed in credscan
+        b"Authorization: SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=\r\n"
         b"Content-Length: 0\r\n"
         b"\r\n"
     )
@@ -223,8 +225,10 @@ def test_response_deserialization_utf8_bom(http_request):
         b"Content-Type: application/xml\r\n"
         b"Server: Windows-Azure-Blob/1.0\r\n"
         b"\r\n"
-        b'\xef\xbb\xbf<?xml version="1.0" encoding="utf-8"?>\n<Error><Code>InvalidInput</Code><Message>One'
-        b"of the request inputs is not valid.\nRequestId:5f3f9f2f-e01e-00cc-6eb1-6d00b5000000\nTime:2019-09-17T23:44:07.4671860Z</Message></Error>"
+        b'\xef\xbb\xbf<?xml version="1.0" encoding="utf-8"?>\n<Error><Code>InvalidInput</Code>'
+        b"<Message>One"
+        b"of the request inputs is not valid.\nRequestId:5f3f9f2f-e01e-00cc-6eb1-6d00b5000000\n"
+        b"Time:2019-09-17T23:44:07.4671860Z</Message></Error>"
     )
     response = _deserialize_response(body, request)
     assert response.body().startswith(b"\xef\xbb\xbf")
@@ -715,7 +719,13 @@ def test_multipart_receive_with_empty_requests(http_request, mock_response):
         b"DataServiceVersion: 1.0;\r\n"
         b"Content-Type: application/xml;charset=utf-8\r\n"
         b"\r\n"
-        b'<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>InvalidInput</code><message xml:lang="en-US">An error occurred while processing this request.\nRequestId:1a930d9b-8002-0020-575c-d1b166000000\nTime:2023-08-17T22:44:06.8465534Z</message></error>\r\n'
+        b'<?xml version="1.0" encoding="utf-8"?>'
+        b'<error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">'
+        b"<code>InvalidInput</code>"
+        b'<message xml:lang="en-US">'
+        b"An error occurred while processing this request.\n"
+        b"RequestId:1a930d9b-8002-0020-575c-d1b166000000\n"
+        b"Time:2023-08-17T22:44:06.8465534Z</message></error>\r\n"
         b"--batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f--\r\n"
     )
 
@@ -823,7 +833,13 @@ def test_multipart_receive_with_empty_changeset(http_request, mock_response):  #
         b"DataServiceVersion: 1.0;\r\n"
         b"Content-Type: application/xml;charset=utf-8\r\n"
         b"\r\n"
-        b'<?xml version="1.0" encoding="utf-8"?><error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><code>InvalidInput</code><message xml:lang="en-US">An error occurred while processing this request.\nRequestId:1a930d9b-8002-0020-575c-d1b166000000\nTime:2023-08-17T22:44:06.8465534Z</message></error>\r\n'
+        b'<?xml version="1.0" encoding="utf-8"?>'
+        b'<error xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">'
+        b"<code>InvalidInput</code>"
+        b'<message xml:lang="en-US">'
+        b"An error occurred while processing this request.\n"
+        b"RequestId:1a930d9b-8002-0020-575c-d1b166000000\n"
+        b"Time:2023-08-17T22:44:06.8465534Z</message></error>\r\n"
         b"--changesetresponse_390b0b55-6892-4fce-8427-001ca15662f5--\r\n"
         b"--batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f--\r\n"
     )
@@ -1185,8 +1201,10 @@ def test_multipart_receive_with_bom(http_request, mock_response):
         b"Content-Type: application/xml\r\n"
         b"Server: Windows-Azure-Blob/1.0\r\n"
         b"\r\n"
-        b'\xef\xbb\xbf<?xml version="1.0" encoding="utf-8"?>\n<Error><Code>InvalidInput</Code><Message>One'
-        b"of the request inputs is not valid.\nRequestId:5f3f9f2f-e01e-00cc-6eb1-6d00b5000000\nTime:2019-09-17T23:44:07.4671860Z</Message></Error>\n"
+        b'\xef\xbb\xbf<?xml version="1.0" encoding="utf-8"?>\n<Error><Code>InvalidInput</Code>'
+        b"<Message>One"
+        b"of the request inputs is not valid.\nRequestId:5f3f9f2f-e01e-00cc-6eb1-6d00b5000000\n"
+        b"Time:2019-09-17T23:44:07.4671860Z</Message></Error>\n"
         b"--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--"
     )
 

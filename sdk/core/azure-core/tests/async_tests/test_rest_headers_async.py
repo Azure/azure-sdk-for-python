@@ -43,7 +43,7 @@ async def test_headers_response(get_response_headers):
     assert h.get("a") == "123, 456"
     assert h.get("A") == "123, 456"
     assert h.get("nope") is None
-    assert h.get("nope", default="default") is "default"
+    assert h.get("nope", default="default") is "default"  # pylint: disable=literal-comparison
     assert h.get("nope", default=None) is None
     assert h.get("nope", default=[]) == []
     assert list(h) == ["a", "b"]
@@ -127,7 +127,7 @@ async def test_headers_response_items_mutability(get_response_headers):
 @pytest.mark.asyncio
 async def test_header_mutations(get_response_headers):
     h = await get_response_headers(HttpRequest("GET", "/headers/empty"))
-    assert dict(h) == {}
+    assert not dict(h)
     h["a"] = "1"
     assert dict(h) == {"a": "1"}
     h["a"] = "2"

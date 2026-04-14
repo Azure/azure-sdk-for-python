@@ -209,7 +209,7 @@ class TestAsyncDecorator(object):
             client = MockClient(http_request)
             try:
                 await client.raising_exception()
-            except:
+            except Exception:  # pylint: disable=broad-exception-caught
                 pass
             await client.get_foo()
 

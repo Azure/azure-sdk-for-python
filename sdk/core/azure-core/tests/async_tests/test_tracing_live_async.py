@@ -78,7 +78,7 @@ class TestTracingAsync:
         with tracing_helper.tracer.start_as_current_span(name="root") as _parent:
             try:
                 await client.get_service_properties()
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
                 # We expect an exception but want to verify the spans
                 pass
 

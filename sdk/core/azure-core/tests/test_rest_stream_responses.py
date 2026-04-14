@@ -148,7 +148,7 @@ def test_decompress_plain_no_header(client):
     request = HttpRequest("GET", "/streams/string")
     response = client.send_request(request, stream=True)
     with pytest.raises(ResponseNotReadError):
-        response.content
+        response.content  # pylint: disable=pointless-statement
     response.read()
     assert response.content == b"test"
 

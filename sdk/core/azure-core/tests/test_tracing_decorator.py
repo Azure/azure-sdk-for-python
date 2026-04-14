@@ -208,7 +208,7 @@ class TestDecorator(object):
             client = MockClient(http_request)
             try:
                 client.raising_exception()
-            except:
+            except Exception:  # pylint: disable=broad-exception-caught
                 pass
             client.get_foo()
 

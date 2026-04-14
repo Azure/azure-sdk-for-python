@@ -31,8 +31,8 @@ async def test_async_gen_data(client, port):
         async def __anext__(self):
             try:
                 return next(self._range)
-            except StopIteration:
-                raise StopAsyncIteration
+            except StopIteration as err:
+                raise StopAsyncIteration from err
 
     request = HttpRequest("GET", "http://localhost:{}/basic/anything".format(port), content=AsyncGen())
     response = await client.send_request(request)

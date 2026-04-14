@@ -25,10 +25,10 @@
 # --------------------------------------------------------------------------
 import logging
 import os
-import sys
-import pytest
 from typing import NamedTuple
 from unittest.mock import patch, MagicMock
+
+import pytest
 
 # module under test
 import azure.core.settings as m
@@ -126,15 +126,15 @@ class TestPrioritizedSetting(object):
 
     def test_descriptors(self):
         class FakeSettings(object):
-            foo = m.PrioritizedSetting("foo", env_var="AZURE_FOO")
-            bar = m.PrioritizedSetting("bar", env_var="AZURE_BAR", default=10)
+            setting_one = m.PrioritizedSetting("foo", env_var="AZURE_FOO")
+            setting_two = m.PrioritizedSetting("bar", env_var="AZURE_BAR", default=10)
 
         s = FakeSettings()
-        assert s.foo is FakeSettings.foo
+        assert s.setting_one is FakeSettings.setting_one
 
-        assert s.bar() == 10
-        s.bar = 20
-        assert s.bar() == 20
+        assert s.setting_two() == 10
+        s.setting_two = 20
+        assert s.setting_two() == 20
 
 
 class TestConverters(object):
