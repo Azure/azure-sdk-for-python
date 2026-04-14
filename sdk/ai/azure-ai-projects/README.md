@@ -118,7 +118,7 @@ For comprehensive examples covering Agents, tool usage, evaluation, fine-tuning,
 
 * **[Microsoft Foundry Agents overview](https://learn.microsoft.com/azure/foundry/agents/overview)** — concepts, setup, and quickstarts.
 * **[Runtime components](https://learn.microsoft.com/azure/foundry/agents/concepts/runtime-components?tabs=python)** — deep-dive into agent architecture.
-* **[Agents how-to guides](https://learn.microsoft.com/azure/foundry/agents/how-to/)** — step-by-step guides for all tools and capabilities.
+* **[Tool catalog](https://learn.microsoft.com/azure/foundry/agents/concepts/tool-catalog)** — all available tools and agent capabilities.
 * **[SDK samples folder][samples]** — fully runnable Python code for synchronous and asynchronous clients covering all operations below.
 
 The sections below cover SDK-specific behaviours (authentication variants, exception handling, logging, tracing) that are not documented in the above Learn pages.
