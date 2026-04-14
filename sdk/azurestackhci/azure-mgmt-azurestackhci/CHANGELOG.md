@@ -136,19 +136,19 @@
   - Added model `ValidateOwnershipVouchersResponse`
   - Added enum `VolumeType`
   - Added model `WebProxyConfiguration`
-  - Model `ClustersOperations` added method `begin_change_ring`
-  - Model `UpdatesOperations` added method `begin_prepare`
-  - Added model `ClusterJobsOperations`
-  - Added model `DevicePoolsOperations`
-  - Added model `EdgeMachineJobsOperations`
-  - Added model `EdgeMachinesOperations`
-  - Added model `KubernetesVersionsOperations`
-  - Added model `OsImagesOperations`
-  - Added model `OwnershipVouchersOperations`
-  - Added model `PlatformUpdatesOperations`
-  - Added model `PublishersOperations`
-  - Added model `UpdateContentsOperations`
-  - Added model `UpdateSummariesOperationGroupOperations`
+  - Operation group `ClustersOperations` added method `begin_change_ring`
+  - Operation group `UpdatesOperations` added method `begin_prepare`
+  - Added operation group `ClusterJobsOperations`
+  - Added operation group `DevicePoolsOperations`
+  - Added operation group `EdgeMachineJobsOperations`
+  - Added operation group `EdgeMachinesOperations`
+  - Added operation group `KubernetesVersionsOperations`
+  - Added operation group `OsImagesOperations`
+  - Added operation group `OwnershipVouchersOperations`
+  - Added operation group `PlatformUpdatesOperations`
+  - Added operation group `PublishersOperations`
+  - Added operation group `UpdateContentsOperations`
+  - Added operation group `UpdateSummariesOperationGroupOperations`
 
 ## 8.0.0 (2026-03-31)
 
