@@ -259,17 +259,6 @@ class TestAnalyzeLROPollerUsage:
     def test_usage_returns_none_before_completion(self):
         """Test usage property returns None when the polling has not yet completed."""
         mock_polling_method = Mock()
-        mock_initial_response = Mock()
-        mock_http_response = Mock()
-        mock_http_response.headers = {
-            "Operation-Location": "https://endpoint/contentunderstanding/analyzerResults/test-op-id?api-version=2025-11-01"
-        }
-        mock_initial_response.http_response = mock_http_response
-        mock_polling_method._initial_response = mock_initial_response
-
-        # Set _pipeline_response to None to simulate an operation still in progress
-        # (before result() completes). Accessing None.http_response raises AttributeError.
-        mock_polling_method._pipeline_response = None
 
         poller = AnalyzeLROPoller(
             client=Mock(),
@@ -278,5 +267,12 @@ class TestAnalyzeLROPollerUsage:
             polling_method=mock_polling_method,
         )
 
+        # Simulate an in-progress operation: LROPoller.done() returns True when
+        # _thread is None, so set _thread to a mock with is_alive() returning True.
+        mock_thread = Mock()
+        mock_thread.is_alive.return_value = True
+        poller._thread = mock_thread
+
+        assert not poller.done()
         usage = poller.usage
         assert usage is None
