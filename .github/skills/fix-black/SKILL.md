@@ -11,7 +11,7 @@ This skill automatically fixes black code formatting issues in any Azure SDK for
 
 1. Get the GitHub issue URL and package path from the user
 2. Install `eng/tools/azure-sdk-tools[build]`
-3. Run `python -m azpysdk black --isolate --pkg-path <package-path>`
+3. Run `azpysdk --isolate black .`
 4. Create a pull request with the changes
 
 ## Step 0: Get GitHub Issue and Package Details
@@ -38,8 +38,11 @@ pip install -e eng/tools/azure-sdk-tools[build]
 ## Step 2: Run Black
 
 ```powershell
-python -m azpysdk black --isolate --pkg-path <package-path>
+cd <package-path>
+azpysdk --isolate black .
 ```
+
+> **Note:** `azpysdk black` runs at the package level only. The Azure SDK uses `eng/black-pyproject.toml` for repo-wide configuration.
 
 ## Step 3: Review Changes
 
@@ -82,7 +85,6 @@ Use the GitHub MCP tools to create a pull request programmatically against the A
 
 ## Notes
 
-- `--isolate` handles environment isolation automatically; no manual venv setup needed
 - Black is an opinionated auto-formatter — it never changes code semantics
 - The Azure SDK uses `eng/black-pyproject.toml` for repo-wide configuration (line length 120, Python 3.8+)
 - Always reference the GitHub issue in commits and PRs

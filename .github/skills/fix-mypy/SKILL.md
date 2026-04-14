@@ -24,15 +24,13 @@ Intelligently fixes mypy issues by:
 
 ## Running MyPy
 
-**Command for entire package:**
+**Command:**
 ```powershell
-python -m azpysdk --isolate mypy --pkg-path <package-path>
+cd <package-path>
+azpysdk --isolate mypy .
 ```
 
-**Command for specific file/module:**
-```powershell
-python -m azpysdk --isolate mypy --pkg-path <package-path> -- path/to/file.py
-```
+> **Note:** `azpysdk mypy` runs at the package level only. To focus on specific files, run the full check and filter the output by file path.
 
 ## Reference Documentation
 
@@ -95,19 +93,17 @@ pip install -e .
 
 Based on the GitHub issue details, determine which files to check:
 
-**Option A - Issue specifies files:**
+**Option A - Run mypy on the package and filter output:**
 ```powershell
-# Run mypy on specific files mentioned in the issue (within activated venv)
-python -m azpysdk --isolate mypy --pkg-path <package-path> -- path/to/specific_file.py
+# Ensure you're in the package directory (within activated venv)
+cd <package-path>
+
+# Run mypy on the full package, then filter output for files from the issue
+azpysdk --isolate mypy .
+# Review output for errors in the specific files/modules mentioned in the issue
 ```
 
-**Option B - Issue mentions module/directory:**
-```powershell
-# Run mypy on entire package (within activated venv)
-python -m azpysdk --isolate mypy --pkg-path <package-path> -- azure/specific/module/
-```
-
-**Option C - Check modified files (if no specific target):**
+**Option B - Check modified files (if no specific target):**
 ```powershell
 git diff --name-only HEAD | Select-String "<package-path>"
 git diff --cached --name-only | Select-String "<package-path>"
@@ -118,8 +114,12 @@ git diff --cached --name-only | Select-String "<package-path>"
 **⚠️ Ensure virtual environment is still activated before running:**
 
 ```powershell
-# Run mypy targeting the specific area from the issue (within activated venv)
-python -m azpysdk --isolate mypy --pkg-path <package-path> -- <target-from-issue>
+# Navigate to the package directory
+cd <package-path>
+
+# Run mypy on the package (within activated venv)
+azpysdk --isolate mypy .
+# Filter output for the specific files/modules from the issue
 ```
 
 ### Step 5: Analyze Type Errors
@@ -341,8 +341,9 @@ pip install -e .
 # 2. Identify target from issue
 $targetFile = "azure/storage/blob/_blob_client.py"
 
-# 3. Run mypy on specific file
-python -m azpysdk --isolate mypy --pkg-path sdk/storage/azure-storage-blob -- $targetFile
+# 3. Run mypy on the package and check output for target file
+azpysdk --isolate mypy .
+# Filter output for errors in $targetFile
 
 # 4. Analyze output and identify fixable issues
 # Cross-reference with GitHub issue #67890
@@ -353,7 +354,7 @@ grep -r "from typing import" azure/storage/blob/ | findstr "_blob_client"
 # 6. Apply fixes to identified files
 
 # 7. Re-run mypy to verify
-python -m azpysdk --isolate mypy --pkg-path sdk/storage/azure-storage-blob -- $targetFile
+azpysdk --isolate mypy .
 
 # 8. Report results
 

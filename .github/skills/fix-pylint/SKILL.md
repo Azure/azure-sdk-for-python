@@ -24,15 +24,20 @@ Intelligently fixes pylint issues by:
 
 ## Running Pylint
 
-**Command for entire package:**
+**Command:**
 ```powershell
-python -m azpysdk --isolate pylint --pkg-path <package-path>
+cd <package-path>
+azpysdk --isolate pylint .
 ```
 
-**Command for specific file/module:**
+> **Note:** `azpysdk pylint` runs with a pinned version of pylint at the package level only. To focus on specific files, run the full check and filter the output by file path.
+
+**Using Latest Pylint:**
 ```powershell
-python -m azpysdk --isolate pylint --pkg-path <package-path> -- path/to/file.py
+azpysdk --isolate next-pylint .
 ```
+
+> Use `azpysdk next-pylint` to run with the latest version of pylint. This is useful for catching issues that may be flagged by newer pylint versions.
 
 ## Reference Documentation
 
@@ -93,19 +98,17 @@ pip install -e .
 
 Based on the GitHub issue details, determine which files to check:
 
-**Option A - Issue specifies files:**
+**Option A - Run pylint on the package and filter output:**
 ```powershell
-# Run pylint on specific files mentioned in the issue (within activated venv)
-python -m azpysdk --isolate pylint --pkg-path <package-path> -- path/to/specific_file.py
+# Ensure you're in the package directory (within activated venv)
+cd <package-path>
+
+# Run pylint on the full package, then filter output for files from the issue
+azpysdk --isolate pylint .
+# Review output for warnings in the specific files/modules mentioned in the issue
 ```
 
-**Option B - Issue mentions module/directory:**
-```powershell
-# Run pylint on entire package (within activated venv)
-python -m azpysdk --isolate pylint --pkg-path <package-path> -- azure/specific/module/
-```
-
-**Option C - Check modified files (if no specific target):**
+**Option B - Check modified files (if no specific target):**
 ```powershell
 git diff --name-only HEAD | Select-String "<package-path>"
 git diff --cached --name-only | Select-String "<package-path>"
@@ -116,8 +119,12 @@ git diff --cached --name-only | Select-String "<package-path>"
 **⚠️ Ensure virtual environment is still activated before running:**
 
 ```powershell
-# Run pylint targeting the specific area from the issue (within activated venv)
-python -m azpysdk --isolate pylint --pkg-path <package-path> -- <target-from-issue>
+# Navigate to the package directory
+cd <package-path>
+
+# Run pylint on the package (within activated venv)
+azpysdk --isolate pylint .
+# Filter output for the specific files/modules from the issue
 ```
 
 ### Step 5: Analyze Warnings
@@ -290,8 +297,9 @@ pip install -e .
 # 2. Identify target from issue
 $targetFile = "azure/storage/blob/_blob_client.py"
 
-# 3. Run pylint on specific file
-python -m azpysdk --isolate pylint --pkg-path sdk/storage/azure-storage-blob -- $targetFile
+# 3. Run pylint on the package and check output for target file
+azpysdk --isolate pylint .
+# Filter output for warnings in $targetFile
 
 # 4. Analyze output and identify fixable issues
 # Cross-reference with GitHub issue #12345
@@ -302,7 +310,7 @@ grep -r "similar_pattern" azure/storage/blob/
 # 6. Apply fixes to identified files
 
 # 7. Re-run pylint to verify
-python -m azpysdk --isolate pylint --pkg-path sdk/storage/azure-storage-blob -- $targetFile
+azpysdk --isolate pylint .
 
 # 8. Report results
 
