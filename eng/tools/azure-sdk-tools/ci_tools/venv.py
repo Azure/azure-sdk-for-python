@@ -8,7 +8,6 @@ via the ``TOX_PIP_IMPL`` environment variable:
 * anything else (default ``"pip"``) → uses ``python -m venv`` / ``python -m pip``
 """
 
-import logging
 import os
 import re
 import subprocess
@@ -73,8 +72,7 @@ def install_into_venv(venv_path_or_executable: str, requirements: List[str], wor
     """Install the requirements into an existing venv (venv_path) without activating it.
 
     - Uses get_pip_command(get_venv_python) per request.
-    - If get_pip_command returns the 'uv' wrapper, we fall back to get_venv_python -m pip
-      so installation goes into the target venv reliably.
+    - If get_pip_command returns the 'uv' wrapper, we pass --python to target the venv reliably.
     """
     py = get_venv_python(venv_path_or_executable)
     pip_cmd = get_pip_command(py)
@@ -134,7 +132,7 @@ def pip_install(
     return True
 
 
-def pip_uninstall(requirements: List[str], python_executable: str) -> bool:
+def pip_uninstall(requirements: List[str], python_executable: Optional[str] = None) -> bool:
     """Attempts to invoke an uninstall operation using the invoking python's pip. Empty requirements are auto-success."""
     # use uninstall_from_venv() for uv venvs
     exe = python_executable or sys.executable
@@ -169,16 +167,16 @@ def run_pip_freeze(python_executable: Optional[str] = None) -> List[str]:
         stderr=subprocess.STDOUT,
     )
 
-    stdout, stderr = out.communicate()
+    stdout, _ = out.communicate()
+    output_text = stdout.decode("utf-8") if stdout else ""
+
+    if out.returncode != 0:
+        raise Exception("pip freeze failed with return code {}: {}".format(out.returncode, output_text))
 
     collected_output = []
-
-    if stdout and (stderr is None):
-        for line in stdout.decode("utf-8").splitlines():
-            if line:
-                collected_output.append(line)
-    else:
-        raise Exception(stderr)
+    for line in output_text.splitlines():
+        if line:
+            collected_output.append(line)
 
     return collected_output
 

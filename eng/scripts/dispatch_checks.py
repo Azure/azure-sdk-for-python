@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import glob
 import os
 import sys
 import time
@@ -161,7 +162,7 @@ async def run_check(
     async with semaphore:
         start = time.time()
         cmd = base_args + [check, "--isolate", package]
-        if python_version and check not in INSTALL_AND_TEST_CHECKS:
+        if python_version:
             cmd += ["--python", python_version]
         if service:
             cmd += ["--service", service]
@@ -218,8 +219,10 @@ async def run_check(
         # finally, we need to clean up any temp dirs created by --isolate
         if in_ci():
             package_name = os.path.basename(os.path.normpath(package))
-            isolate_dir = os.path.join(root_dir, ".venv", package_name, f".venv_{check}")
-            ISOLATE_DIRS_TO_CLEAN.append(isolate_dir)
+            venv_pkg_root = os.path.join(root_dir, ".venv", package_name)
+            # match both .venv_{check} and version-qualified .venv_{check}_py311 etc.
+            for d in glob.glob(os.path.join(venv_pkg_root, f".venv_{check}*")):
+                ISOLATE_DIRS_TO_CLEAN.append(d)
         return CheckResult(package, check, exit_code, duration, stdout, stderr)
 
 
