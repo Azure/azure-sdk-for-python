@@ -12,7 +12,8 @@ from unittest.mock import Mock, patch
 from requests import Response
 import pytest
 
-import azure.core
+from utils import HTTP_REQUESTS
+
 from azure.core.credentials import (
     AccessToken,
     AzureKeyCredential,
@@ -37,7 +38,6 @@ from azure.core.pipeline.policies._authentication import (
     MAX_REFRESH_JITTER_SECONDS,
     _should_refresh_token,
 )
-from utils import HTTP_REQUESTS
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -731,7 +731,7 @@ def test_azure_sas_credential_policy_raises():
     """Tests AzureSasCredential and AzureSasCredentialPolicy raises with non-string input parameters."""
     sas = 1234
     with pytest.raises(TypeError):
-        credential = AzureSasCredential(sas)
+        _credential = AzureSasCredential(sas)
 
 
 def test_azure_named_key_credential():

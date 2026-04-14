@@ -5,7 +5,13 @@
 # -------------------------------------------------------------------------
 import pytest
 
-from azure.core.exceptions import HttpResponseError, ServiceRequestError, StreamClosedError, StreamConsumedError, ResponseNotReadError
+from azure.core.exceptions import (
+    HttpResponseError,
+    ServiceRequestError,
+    StreamClosedError,
+    StreamConsumedError,
+    ResponseNotReadError,
+)
 from azure.core.rest import HttpRequest
 
 

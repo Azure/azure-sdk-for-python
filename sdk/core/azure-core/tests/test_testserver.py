@@ -23,9 +23,10 @@
 # THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from azure.core.pipeline.transport import RequestsTransport
-from utils import HTTP_REQUESTS
 import pytest
+from utils import HTTP_REQUESTS
+
+from azure.core.pipeline.transport import RequestsTransport
 
 """This file does a simple call to the testserver to make sure we can use the testserver"""
 

@@ -117,7 +117,7 @@ def test_delete_operation_location(lro_poller):
 
 
 def test_request_id(lro_poller):
-    result = lro_poller(HttpRequest("POST", "/polling/request-id"), request_id="123456789").result()
+    _result = lro_poller(HttpRequest("POST", "/polling/request-id"), request_id="123456789").result()
 
 
 def test_continuation_token(client, lro_poller, deserialization_callback):

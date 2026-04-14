@@ -18,3 +18,4 @@ class CaseInsensitiveDict(dict):
         # We allow fall-through here, so values default to None
         if key in self:
             return list(self.items())[self._lower_keys().index(key.lower())][1]
+        return None

@@ -24,7 +24,11 @@ class UpdateEntityJSONTest(_TableTest):
         self.base_entity = self.get_base_entity(
             UpdateEntityJSONTest.partition_key, UpdateEntityJSONTest.row_key, self.args.size
         )
-        self.url = f"{self.account_endpoint}{self.table_name}(PartitionKey='{UpdateEntityJSONTest.partition_key}',RowKey='{UpdateEntityJSONTest.row_key}')"
+        self.url = (
+            f"{self.account_endpoint}{self.table_name}"
+            f"(PartitionKey='{UpdateEntityJSONTest.partition_key}',"
+            f"RowKey='{UpdateEntityJSONTest.row_key}')"
+        )
 
     async def global_setup(self):
         await super().global_setup()

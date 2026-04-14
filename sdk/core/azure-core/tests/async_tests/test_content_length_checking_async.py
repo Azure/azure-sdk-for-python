@@ -4,13 +4,11 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from azure.core.pipeline import AsyncPipeline
-from azure.core.pipeline.transport import (
-    HttpRequest,
-)
+import pytest
+
+from azure.core.pipeline.transport import HttpRequest
 from azure.core import AsyncPipelineClient
 from azure.core.exceptions import IncompleteReadError
-import pytest
 
 
 @pytest.mark.asyncio
