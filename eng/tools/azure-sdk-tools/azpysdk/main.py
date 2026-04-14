@@ -58,12 +58,12 @@ def build_parser() -> argparse.ArgumentParser:
         "--isolate", action="store_true", default=False, help="If set, run in an isolated virtual environment."
     )
     parser.add_argument(
-<<<<<<< HEAD
         "--pypi",
         action="store_true",
         default=False,
         help="Use PyPI directly instead of the CFS (Central Feed Services) feed.",
-=======
+    )
+    parser.add_argument(
         "--python",
         default=None,
         dest="python_version",
@@ -72,7 +72,6 @@ def build_parser() -> argparse.ArgumentParser:
             "Python version to use when creating the isolated venv (e.g. 3.13). "
             "Passed through to 'uv venv --python'. Requires --isolate and uv."
         ),
->>>>>>> main
     )
 
     # mutually exclusive logging options
