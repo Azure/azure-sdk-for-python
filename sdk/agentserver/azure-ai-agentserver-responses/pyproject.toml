@@ -73,3 +73,7 @@ pythonpath = ["."]
 azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
 azure-core = { path = "../../core/azure-core" }
 azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
+
+[tool.azure-sdk-build]
+verifytypes = false
+latestdependency = false
