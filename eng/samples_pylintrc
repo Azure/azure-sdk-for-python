@@ -20,8 +20,17 @@ load-plugins=pylint_guidelines_checker
 # too-many-arguments: Due to the nature of the CLI many commands have large arguments set which reflect in large arguments set in corresponding methods.
 # Let's black deal with bad-continuation
 
-# Added disables from super-with-arguments and do-not-import-asyncio for samples  
-disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,consider-using-f-string,super-with-arguments,redefined-builtin,import-outside-toplevel,client-suffix-needed,unnecessary-dunder-call,unnecessary-ellipsis,client-paging-methods-use-list,consider-using-max-builtin,too-many-lines,possibly-used-before-assignment,do-not-hardcode-dedent,arguments-differ,signature-differs,deprecated-class,too-many-positional-arguments,do-not-import-asyncio
+# Added disables from super-with-arguments and do-not-import-asyncio for samples
+# useless-suppression: inline disables become stale when global disable list expands; suppress the cascade
+# import-error: local sample utility files (e.g. from computer_use_util import ...) aren't installed packages
+# too-many-locals/too-many-statements/too-many-nested-blocks: sample main() functions are intentionally
+#   comprehensive walkthroughs that naturally accumulate locals, statements and nested API calls
+# networking-import-outside-azure-core-transport: samples may legitimately import httpx/requests directly
+# consider-using-sys-exit: samples commonly use exit(1) for clarity; sys.exit is unnecessarily verbose
+# pointless-string-statement: docstring-like strings in non-standard positions are common in samples
+# NOTE: wrong-import-position, ungrouped-imports, broad-exception-caught, broad-exception-raised are
+#   intentionally left ENABLED for samples so authors fix real issues in those areas.
+disable=useless-object-inheritance,missing-docstring,locally-disabled,fixme,cyclic-import,too-many-arguments,invalid-name,duplicate-code,too-few-public-methods,consider-using-f-string,super-with-arguments,redefined-builtin,import-outside-toplevel,client-suffix-needed,unnecessary-dunder-call,unnecessary-ellipsis,client-paging-methods-use-list,consider-using-max-builtin,too-many-lines,possibly-used-before-assignment,do-not-hardcode-dedent,arguments-differ,signature-differs,deprecated-class,too-many-positional-arguments,do-not-import-asyncio,useless-suppression,import-error,too-many-locals,too-many-statements,too-many-nested-blocks,networking-import-outside-azure-core-transport,consider-using-sys-exit,pointless-string-statement
 
 
 [FORMAT]
