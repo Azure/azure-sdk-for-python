@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -50,6 +51,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/extendedlocation/resource-manager/Microsoft.ExtendedLocation/stable/2021-08-15/examples/CustomLocationsCreate_Update.json
+# x-ms-original-file: specification/extendedlocation/resource-manager/Microsoft.ExtendedLocation/CustomLocations/preview/2021-08-31-preview/examples/CustomLocationsCreate_Update.json
 if __name__ == "__main__":
     main()

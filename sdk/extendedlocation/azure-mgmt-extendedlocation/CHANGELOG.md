@@ -1,5 +1,9 @@
 # Release History
 
+## 2.1.0b1 (2026-04-14)
+
+skip changelog generation
+
 ## 2.0.0 (2024-10-30)
 
 ### Breaking Changes

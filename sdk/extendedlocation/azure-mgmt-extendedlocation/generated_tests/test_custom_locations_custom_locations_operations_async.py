@@ -21,9 +21,9 @@ class TestCustomLocationsCustomLocationsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_operations(self, resource_group):
+    async def test_custom_locations_list_operations(self, resource_group):
         response = self.client.custom_locations.list_operations(
-            api_version="2021-08-15",
+            api_version="2021-08-31-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -31,9 +31,9 @@ class TestCustomLocationsCustomLocationsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription(self, resource_group):
+    async def test_custom_locations_list_by_subscription(self, resource_group):
         response = self.client.custom_locations.list_by_subscription(
-            api_version="2021-08-15",
+            api_version="2021-08-31-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -41,10 +41,10 @@ class TestCustomLocationsCustomLocationsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_resource_group(self, resource_group):
+    async def test_custom_locations_list_by_resource_group(self, resource_group):
         response = self.client.custom_locations.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2021-08-15",
+            api_version="2021-08-31-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -52,11 +52,11 @@ class TestCustomLocationsCustomLocationsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get(self, resource_group):
+    async def test_custom_locations_get(self, resource_group):
         response = await self.client.custom_locations.get(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2021-08-15",
+            api_version="2021-08-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -64,7 +64,7 @@ class TestCustomLocationsCustomLocationsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_create_or_update(self, resource_group):
+    async def test_custom_locations_begin_create_or_update(self, resource_group):
         response = await (
             await self.client.custom_locations.begin_create_or_update(
                 resource_group_name=resource_group.name,
@@ -92,7 +92,7 @@ class TestCustomLocationsCustomLocationsOperationsAsync(AzureMgmtRecordedTestCas
                     "tags": {"str": "str"},
                     "type": "str",
                 },
-                api_version="2021-08-15",
+                api_version="2021-08-31-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -101,12 +101,12 @@ class TestCustomLocationsCustomLocationsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_begin_delete(self, resource_group):
+    async def test_custom_locations_begin_delete(self, resource_group):
         response = await (
             await self.client.custom_locations.begin_delete(
                 resource_group_name=resource_group.name,
                 resource_name="str",
-                api_version="2021-08-15",
+                api_version="2021-08-31-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -115,11 +115,11 @@ class TestCustomLocationsCustomLocationsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_update(self, resource_group):
+    async def test_custom_locations_update(self, resource_group):
         response = await self.client.custom_locations.update(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2021-08-15",
+            api_version="2021-08-31-preview",
         )
 
         # please add some check logic here by yourself
@@ -127,12 +127,25 @@ class TestCustomLocationsCustomLocationsOperationsAsync(AzureMgmtRecordedTestCas
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_enabled_resource_types(self, resource_group):
+    async def test_custom_locations_list_enabled_resource_types(self, resource_group):
         response = self.client.custom_locations.list_enabled_resource_types(
             resource_group_name=resource_group.name,
             resource_name="str",
-            api_version="2021-08-15",
+            api_version="2021-08-31-preview",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_custom_locations_find_target_resource_group(self, resource_group):
+        response = await self.client.custom_locations.find_target_resource_group(
+            resource_group_name=resource_group.name,
+            resource_name="str",
+            parameters={"labels": {"str": "str"}},
+            api_version="2021-08-31-preview",
+        )
+
         # please add some check logic here by yourself
         # ...

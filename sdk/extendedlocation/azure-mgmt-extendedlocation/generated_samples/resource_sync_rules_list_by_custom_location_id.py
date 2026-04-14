@@ -16,7 +16,7 @@ from azure.mgmt.extendedlocation import CustomLocations
     pip install azure-identity
     pip install azure-mgmt-extendedlocation
 # USAGE
-    python custom_locations_list_enabled_resource_types.py
+    python resource_sync_rules_list_by_custom_location_id.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,7 +31,7 @@ def main():
         subscription_id="11111111-2222-3333-4444-555555555555",
     )
 
-    response = client.custom_locations.list_enabled_resource_types(
+    response = client.resource_sync_rules.list_by_custom_location_id(
         resource_group_name="testresourcegroup",
         resource_name="customLocation01",
     )
@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/extendedlocation/resource-manager/Microsoft.ExtendedLocation/CustomLocations/preview/2021-08-31-preview/examples/CustomLocationsListEnabledResourceTypes.json
+# x-ms-original-file: specification/extendedlocation/resource-manager/Microsoft.ExtendedLocation/CustomLocations/preview/2021-08-31-preview/examples/ResourceSyncRulesListByCustomLocationID.json
 if __name__ == "__main__":
     main()
