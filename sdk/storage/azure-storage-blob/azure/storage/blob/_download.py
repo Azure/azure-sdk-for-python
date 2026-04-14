@@ -888,7 +888,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         warnings.warn("content_as_bytes is deprecated, use readall instead", DeprecationWarning)
         if self._text_mode:
             raise ValueError(
-                "Stream has been partially read in text mode. " "content_as_bytes is not supported in text mode."
+                "Stream has been partially read in text mode. content_as_bytes is not supported in text mode."
             )
 
         self._max_concurrency = max_concurrency if max_concurrency is not None else DEFAULT_MAX_CONCURRENCY
@@ -911,7 +911,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         warnings.warn("content_as_text is deprecated, use readall instead", DeprecationWarning)
         if self._text_mode:
             raise ValueError(
-                "Stream has been partially read in text mode. " "content_as_text is not supported in text mode."
+                "Stream has been partially read in text mode. content_as_text is not supported in text mode."
             )
 
         self._max_concurrency = max_concurrency if max_concurrency is not None else DEFAULT_MAX_CONCURRENCY
@@ -935,7 +935,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         warnings.warn("download_to_stream is deprecated, use readinto instead", DeprecationWarning)
         if self._text_mode:
             raise ValueError(
-                "Stream has been partially read in text mode. " "download_to_stream is not supported in text mode."
+                "Stream has been partially read in text mode. download_to_stream is not supported in text mode."
             )
 
         self._max_concurrency = max_concurrency if max_concurrency is not None else DEFAULT_MAX_CONCURRENCY
