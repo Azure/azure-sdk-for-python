@@ -200,7 +200,7 @@ class TestInferenceServiceTimeout(unittest.TestCase):
         policy.InferenceRequestTimeout = 30
         self.assertEqual(policy.InferenceRequestTimeout, 30)
 
-    def test_sync_lazy_init_no_error_without_env_var(self):
+    def test_sync_lazy_init_raises_error_without_env_var(self):
         """Test that _InferenceService raises ValueError when env var is missing.
         With lazy init, this error is deferred from client construction to first use."""
         from azure.cosmos._inference_service import _InferenceService
@@ -215,7 +215,7 @@ class TestInferenceServiceTimeout(unittest.TestCase):
             if saved is not None:
                 os.environ["AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT"] = saved
 
-    def test_async_lazy_init_no_error_without_env_var(self):
+    def test_async_lazy_init_raises_error_without_env_var(self):
         """Test that async _InferenceService raises ValueError when env var is missing.
         With lazy init, this error is deferred from client construction to first use."""
         from azure.cosmos.aio._inference_service_async import _InferenceService
