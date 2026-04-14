@@ -54,6 +54,8 @@ class AgentConfig:
     :param agent_name: Agent name from ``FOUNDRY_AGENT_NAME``.
     :param agent_version: Agent version from ``FOUNDRY_AGENT_VERSION``.
     :param agent_id: Combined identifier (``"name:version"`` or ``"name"`` or ``""``).
+    :param is_hosted: Whether the agent is running in a Foundry-hosted container environment,
+        derived from ``FOUNDRY_HOSTING_ENVIRONMENT``.
     :param project_endpoint: Foundry project endpoint from ``FOUNDRY_PROJECT_ENDPOINT``.
     :param project_id: Foundry project ARM resource ID from ``FOUNDRY_PROJECT_ARM_ID``.
     :param session_id: Default session ID from ``FOUNDRY_AGENT_SESSION_ID``.
@@ -69,6 +71,7 @@ class AgentConfig:
         agent_name: str,
         agent_version: str,
         agent_id: str,
+        is_hosted: bool,
         project_endpoint: str,
         project_id: str,
         session_id: str,
@@ -80,6 +83,7 @@ class AgentConfig:
         self.agent_name = agent_name
         self.agent_version = agent_version
         self.agent_id = agent_id
+        self.is_hosted = is_hosted
         self.project_endpoint = project_endpoint
         self.project_id = project_id
         self.session_id = session_id
@@ -87,18 +91,6 @@ class AgentConfig:
         self.appinsights_connection_string = appinsights_connection_string
         self.otlp_endpoint = otlp_endpoint
         self.sse_keepalive_interval = sse_keepalive_interval
-
-    @property
-    def is_hosted(self) -> bool:
-        """Whether the agent is running in a Foundry-hosted container environment.
-
-        Returns ``True`` when the platform-injected ``FOUNDRY_HOSTING_ENVIRONMENT``
-        environment variable exists and is non-empty. This variable is set
-        exclusively by the Foundry platform at container startup.
-
-        :rtype: bool
-        """
-        return bool(os.environ.get(_ENV_FOUNDRY_HOSTING_ENVIRONMENT))
 
     @classmethod
     def from_env(cls) -> Self:
@@ -121,6 +113,7 @@ class AgentConfig:
             agent_name=agent_name,
             agent_version=agent_version,
             agent_id=agent_id,
+            is_hosted=bool(os.environ.get(_ENV_FOUNDRY_HOSTING_ENVIRONMENT)),
             project_endpoint=os.environ.get(_ENV_FOUNDRY_PROJECT_ENDPOINT, ""),
             project_id=os.environ.get(_ENV_FOUNDRY_PROJECT_ARM_ID, ""),
             session_id=os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_ID, ""),
