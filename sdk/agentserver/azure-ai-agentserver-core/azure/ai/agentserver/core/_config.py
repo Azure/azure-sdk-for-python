@@ -113,7 +113,7 @@ class AgentConfig:
             agent_name=agent_name,
             agent_version=agent_version,
             agent_id=agent_id,
-            is_hosted=bool(os.environ.get(_ENV_FOUNDRY_HOSTING_ENVIRONMENT)),
+            is_hosted=bool(os.environ.get(_ENV_FOUNDRY_HOSTING_ENVIRONMENT, "")),
             project_endpoint=os.environ.get(_ENV_FOUNDRY_PROJECT_ENDPOINT, ""),
             project_id=os.environ.get(_ENV_FOUNDRY_PROJECT_ARM_ID, ""),
             session_id=os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_ID, ""),
