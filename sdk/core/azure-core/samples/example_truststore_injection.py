@@ -21,18 +21,13 @@ USAGE:
 """
 
 import asyncio
+
 import truststore
 
-# Inject truststore BEFORE importing Azure SDK libraries
-truststore.inject_into_ssl()
-
-# Synchronous imports
-from azure.identity import DefaultAzureCredential  # pylint: disable=wrong-import-position
-from azure.storage.blob import BlobServiceClient  # pylint: disable=wrong-import-position
-
-# Asynchronous imports
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential  # pylint: disable=wrong-import-position
-from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient  # pylint: disable=wrong-import-position
+from azure.identity import DefaultAzureCredential
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
+from azure.storage.blob import BlobServiceClient
+from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
 
 
 # =============================================================================
@@ -85,6 +80,10 @@ async def main():
 
 
 if __name__ == "__main__":
+    # Inject truststore before making any connections to use OS certificate stores
+    truststore.inject_into_ssl()
+
     sync_blob_storage_example()
     asyncio.run(main())
+
     truststore.extract_from_ssl()
