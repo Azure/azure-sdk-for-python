@@ -173,9 +173,10 @@ class QualityGraderEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Check stage 1 conditions
         failure_reasons = []
-        abstention = stage1_parsed.get("abstention")
-        relevance = stage1_parsed.get("relevance")
-        answer_completeness = stage1_parsed.get("answerCompleteness")
+        stage1_props = stage1_parsed.get("properties", {})
+        abstention = stage1_props.get("abstention")
+        relevance = stage1_props.get("relevance")
+        answer_completeness = stage1_props.get("answerCompleteness")
 
         if abstention is True:
             failure_reasons.append("abstention is true (expected false)")
@@ -215,8 +216,9 @@ class QualityGraderEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             total_completion_tokens += stage2_output.get("output_token_count", 0) if stage2_output else 0
             total_tokens += stage2_output.get("total_token_count", 0) if stage2_output else 0
 
-            groundedness = stage2_parsed.get("groundedness")
-            context_coverage = stage2_parsed.get("contextCoverage")
+            stage2_props = stage2_parsed.get("properties", {})
+            groundedness = stage2_props.get("groundedness")
+            context_coverage = stage2_props.get("contextCoverage")
 
             if isinstance(groundedness, (int, float)) and groundedness <= _GROUNDEDNESS_THRESHOLD:
                 failure_reasons.append(
@@ -306,21 +308,29 @@ class QualityGraderEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         details = {}
         if stage1_parsed:
-            details["abstention"] = stage1_parsed.get("abstention")
-            details["relevance"] = stage1_parsed.get("relevance")
-            details["answerCompleteness"] = stage1_parsed.get("answerCompleteness")
-            details["queryType"] = stage1_parsed.get("queryType")
-            details["conversationIncomplete"] = stage1_parsed.get("conversationIncomplete")
-            details["judgeConfidence"] = stage1_parsed.get("judgeConfidence")
-            details["stage1_explanation"] = stage1_parsed.get("explanation", {})
+            stage1_props = stage1_parsed.get("properties", {})
+            details["abstention"] = stage1_props.get("abstention")
+            details["relevance"] = stage1_props.get("relevance")
+            details["answerCompleteness"] = stage1_props.get("answerCompleteness")
+            details["queryType"] = stage1_props.get("queryType")
+            details["conversationIncomplete"] = stage1_props.get("conversationIncomplete")
+            details["judgeConfidence"] = stage1_props.get("judgeConfidence")
+            details["stage1_explanation"] = stage1_props.get("explanation", {})
+            details["stage1_reasoning"] = stage1_parsed.get("reasoning", "")
+            details["stage1_score"] = stage1_parsed.get("score")
+            details["stage1_status"] = stage1_parsed.get("status", "")
 
         if stage2_parsed:
-            details["groundedness"] = stage2_parsed.get("groundedness")
-            details["contextCoverage"] = stage2_parsed.get("contextCoverage")
-            details["documentUtility"] = stage2_parsed.get("documentUtility")
-            details["missingContextParts"] = stage2_parsed.get("missingContextParts", [])
-            details["unsupportedClaims"] = stage2_parsed.get("unsupportedClaims", [])
-            details["stage2_explanation"] = stage2_parsed.get("explanation", {})
+            stage2_props = stage2_parsed.get("properties", {})
+            details["groundedness"] = stage2_props.get("groundedness")
+            details["contextCoverage"] = stage2_props.get("contextCoverage")
+            details["documentUtility"] = stage2_props.get("documentUtility")
+            details["missingContextParts"] = stage2_props.get("missingContextParts", [])
+            details["unsupportedClaims"] = stage2_props.get("unsupportedClaims", [])
+            details["stage2_explanation"] = stage2_props.get("explanation", {})
+            details["stage2_reasoning"] = stage2_parsed.get("reasoning", "")
+            details["stage2_score"] = stage2_parsed.get("score")
+            details["stage2_status"] = stage2_parsed.get("status", "")
 
         return {
             self._result_key: score,

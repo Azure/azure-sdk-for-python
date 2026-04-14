@@ -204,20 +204,29 @@ You MUST:
 Provide the evaluation in JSON format:
 
 {
-    "explanation": {
-    "groundedness": "<Explanation for groundedness. Concise. No more than 2-3 sentences.>",
-    "documentUtility": "<Explanation for documentUtility. Concise. No more than 2-3 sentences.>"
+    "properties": {
+        "explanation": {
+            "groundedness": "<Explanation for groundedness. Concise. No more than 2-3 sentences.>",
+            "documentUtility": "<Explanation for documentUtility. Concise. No more than 2-3 sentences.>"
+        },
+        "index": <assistant_message_index>,
+        "groundedness": <1 to 5 or null>,
+        "contextCoverage": <0/1/2/3>,
+        "missingContextParts": [
+            { "part": "<context part, details that should have been added to the answer but did not>", "importance": "critical | supporting" }
+        ],
+        "unsupportedClaims": ["Concise Claims that are not found in the documents"],
+        "documentUtility": "<A/B/C>",
+        "judgeConfidence": "<low | medium | high>"
     },
-    "index": <assistant_message_index>,
-    "groundedness": <1 to 5 or null>,
-    "contextCoverage": <0/1/2/3>,
-    "missingContextParts": [
-    { "part": "<context part, details that should have been added to the answer but did not>", "importance": "critical | supporting" }
-    ],
-    "unsupportedClaims": ["Concise Claims that are not found in the documents"],
-    "documentUtility": "<A/B/C>",
-    "judgeConfidence": "<low | medium | high>"
+    "reasoning": "<Brief 1-2 sentence overall summary of the evaluation>",
+    "score": <true/false>,
+    "status": "completed"
 }
+
+**score rules:**
+- true: groundedness >= 3 AND contextCoverage >= 2
+- false: any of the above conditions not met
 
 **IMPORTANT JSON RULES:**
 - NEVER include comments (// or /* */) in the JSON output - this will break JSON parsing

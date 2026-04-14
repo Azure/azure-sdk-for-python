@@ -275,19 +275,33 @@ All explanation should be clear concise and simple. 2-3 sentences max. 8th-grade
 Provide the evaluation in JSON format:
 
 {
-  "explanation": {
-    "relevance": "<Explanation for relevance. Concise. No more than 2-3 sentences.>",
-    "abstention": "<Explanation for abstention. Concise. No more than 2-3 sentences.>",
-    "queryType": "<Explanation for queryType. Concise. No more than 2-3 sentences.>",
-    "answerCompleteness": "<Explanation for answerCompleteness. Concise. No more than 2-3 sentences.>"
+  "properties": {
+    "explanation": {
+      "relevance": "<Explanation for relevance. Concise. No more than 2-3 sentences.>",
+      "abstention": "<Explanation for abstention. Concise. No more than 2-3 sentences.>",
+      "queryType": "<Explanation for queryType. Concise. No more than 2-3 sentences.>",
+      "answerCompleteness": "<Explanation for answerCompleteness. Concise. No more than 2-3 sentences.>"
+    },
+    "relevance": <1/2/3/4/5>,
+    "abstention": <true/false/null>,
+    "queryType": "<Yes/No | Single-Detail | Multiple-Detail | How-To | Comparison | Opinion/Advice | Summary | Explanation | Analysis | Clarifications | Aggregation | None>",
+    "answerCompleteness": <0/1/2/3 or null>,
+    "conversationIncomplete": <true/false/null>,
+    "judgeConfidence": "<low | medium | high>"
   },
-  "relevance": <1/2/3/4/5>,
-  "abstention": <true/false/null>,
-  "queryType": "<Yes/No | Single-Detail | Multiple-Detail | How-To | Comparison | Opinion/Advice | Summary | Explanation | Analysis | Clarifications | Aggregation | None>",
-  "answerCompleteness": <0/1/2/3 or null>,
-  "conversationIncomplete": <true/false/null>,
-  "judgeConfidence": "<low | medium | high>"
+  "reasoning": "<Brief 1-2 sentence overall summary of the evaluation>",
+  "score": <true/false/null>,
+  "status": "<completed | skipped>"
 }
+
+**score rules:**
+- true: relevance >= 3 AND answerCompleteness >= 2 AND abstention == false
+- false: any of the above conditions not met
+- null: when status is "skipped"
+
+**status rules:**
+- "skipped": when conversationIncomplete == true
+- "completed": otherwise
 
 **IMPORTANT JSON RULES:**
 - NEVER include comments (// or /* */) in the JSON output - this will break JSON parsing
