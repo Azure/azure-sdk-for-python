@@ -833,7 +833,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     )
 
         return JSONResponse(
-            {"id": response_id, "object": "response.deleted", "deleted": True},
+            {"id": response_id, "object": "response", "deleted": True},
             status_code=200,
         )
 
