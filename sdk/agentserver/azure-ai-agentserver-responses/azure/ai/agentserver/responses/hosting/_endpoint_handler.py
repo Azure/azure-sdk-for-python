@@ -21,7 +21,7 @@ from opentelemetry import context as _otel_context
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.core import end_span, flush_spans, trace_stream
+from azure.ai.agentserver.core import detach_context, end_span, flush_spans, set_current_span, trace_stream
 from azure.ai.agentserver.responses.models._generated import AgentReference, CreateResponse
 
 from .._options import ResponsesServerOptions
@@ -264,10 +264,17 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         response: StreamingResponse,
         otel_span: Any,
     ) -> StreamingResponse:
-        """Wrap a streaming response's body iterator with span lifecycle.
+        """Wrap a streaming response's body iterator with span lifecycle and context.
 
-        ``trace_stream`` wraps the body iterator so the OTel span covers
-        the full streaming duration and is ended when iteration completes.
+        Two layers of wrapping are applied:
+
+        1. **Inner (tracing):** ``trace_stream`` wraps the body iterator so
+           the OTel span covers the full streaming duration and is ended
+           when iteration completes.
+        2. **Outer (context):** A second async generator re-attaches the span
+           as the current context for the duration of streaming, so that
+           child spans created by user handler code (e.g. Agent Framework)
+           are correctly parented under this span.
 
         :param response: The ``StreamingResponse`` to wrap.
         :type response: StreamingResponse
@@ -278,7 +285,21 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         """
         if otel_span is None:
             return response
-        response.body_iterator = trace_stream(response.body_iterator, otel_span)
+
+        # Inner wrap: trace_stream ends the span when iteration completes.
+        traced = trace_stream(response.body_iterator, otel_span)
+
+        # Outer wrap: re-attach span as current context during streaming
+        # so child spans are correctly parented.
+        async def _iter_with_context():  # type: ignore[return]
+            token = set_current_span(otel_span)
+            try:
+                async for chunk in traced:
+                    yield chunk
+            finally:
+                detach_context(token)
+
+        response.body_iterator = _iter_with_context()
         return response
 
     # ------------------------------------------------------------------

@@ -7,7 +7,7 @@ import logging
 import os
 import signal
 from collections.abc import AsyncGenerator, AsyncIterable, AsyncIterator, Awaitable, Callable  # pylint: disable=import-error
-from typing import Any, Optional, Union
+from typing import Any, MutableMapping, Optional, Union
 
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
@@ -24,10 +24,6 @@ logger = logging.getLogger("azure.ai.agentserver")
 
 # Pre-built health-check response to avoid per-request allocation.
 _HEALTHY_BODY = b'{"status":"healthy"}'
-
-# Sentinel attribute name set on the console handler to prevent adding duplicates
-# across multiple AgentServerHost instantiations.
-_CONSOLE_HANDLER_ATTR = "_agentserver_console"
 
 
 class _PlatformHeaderMiddleware:
@@ -47,7 +43,7 @@ class _PlatformHeaderMiddleware:
             await self.app(scope, receive, send)
             return
 
-        async def _send_with_header(message: dict[str, Any]) -> None:
+        async def _send_with_header(message: MutableMapping[str, Any]) -> None:
             if message["type"] == "http.response.start":
                 headers = list(message.get("headers", []))
                 headers.append(
@@ -115,6 +111,13 @@ class AgentServerHost(Starlette):
         ``%({header}i)s`` (request header), ``%({header}o)s`` (response header).
         Defaults to ``%(h)s "%(r)s" %(s)s %(b)s %(D)sμs``.
     :type access_log_format: Optional[str]
+    :param configure_observability: Callable that sets up console logging,
+        tracing, and OTel export.  Defaults to
+        :func:`~._tracing.configure_observability` which attaches a console
+        handler to the root logger and configures Azure Monitor / OTLP
+        export.  Pass a custom callable to override the setup, or ``None``
+        to skip all SDK-managed observability configuration.
+    :type configure_observability: Optional[Callable[..., None]]
     """
 
     _DEFAULT_ACCESS_LOG_FORMAT = '%(h)s "%(r)s" %(s)s %(b)s %(D)sμs'
@@ -127,7 +130,7 @@ class AgentServerHost(Starlette):
         log_level: Optional[str] = None,
         access_log: Optional[logging.Logger] = _SENTINEL_ACCESS_LOG,  # type: ignore[assignment]
         access_log_format: Optional[str] = None,
-        configure_tracing: Optional[Callable[..., None]] = _tracing.configure_tracing,
+        configure_observability: Optional[Callable[..., None]] = _tracing.configure_observability,
         routes: Optional[list[Route]] = None,
         **kwargs: Any,
     ) -> None:
@@ -142,37 +145,27 @@ class AgentServerHost(Starlette):
             build_server_version("azure-ai-agentserver-core", _CORE_VERSION)
         )
 
-        # Logging ----------------------------------------------------------
-        resolved_level = _config.resolve_log_level(log_level)
-        logger.setLevel(resolved_level)
-        if not any(getattr(h, _CONSOLE_HANDLER_ATTR, False) for h in logger.handlers):
-            _console = logging.StreamHandler()
-            _console.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
-            setattr(_console, _CONSOLE_HANDLER_ATTR, True)
-            logger.addHandler(_console)
+        # Resolved configuration (accessible as self.config)
+        self.config: _config.AgentConfig = _config.AgentConfig.from_env()
 
-        # Suppress noisy Azure SDK and OTel exporter logs
-        logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.WARNING)
-        logging.getLogger("azure.monitor.opentelemetry.exporter").setLevel(logging.WARNING)
+        # Observability (logging + tracing) --------------------------------
+        _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
+        if configure_observability is not None:
+            try:
+                configure_observability(
+                    connection_string=_conn_str,
+                    log_level=log_level,
+                )
+            except ValueError:
+                raise  # invalid log_level etc. — user should fix their config
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning("Failed to initialize observability; continuing without it.", exc_info=True)
 
         # Access logging ---------------------------------------------------
         self._access_log: Optional[logging.Logger] = (
             logger if access_log is _SENTINEL_ACCESS_LOG else access_log
         )
         self._access_log_format: str = access_log_format or self._DEFAULT_ACCESS_LOG_FORMAT
-
-        # Resolved configuration (accessible as self.config)
-        self.config: _config.AgentConfig = _config.AgentConfig.from_env()
-
-        # Tracing — overridable setup function
-        _conn_str = applicationinsights_connection_string or self.config.appinsights_connection_string
-        if configure_tracing is not None:
-            _tracing_on = bool(_conn_str or self.config.otlp_endpoint)
-            if _tracing_on:
-                try:
-                    configure_tracing(connection_string=_conn_str)
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning("Failed to initialize tracing; continuing without tracing.", exc_info=True)
 
         # Timeouts ---------------------------------------------------------
         self._graceful_shutdown_timeout = _config.resolve_graceful_shutdown_timeout(

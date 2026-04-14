@@ -11,10 +11,13 @@ Public API::
     from azure.ai.agentserver.core import (
         AgentConfig,
         AgentServerHost,
+        configure_observability,
         create_error_response,
+        detach_context,
         end_span,
         flush_spans,
         record_error,
+        set_current_span,
         trace_stream,
     )
 """
@@ -24,17 +27,28 @@ from ._base import AgentServerHost
 from ._config import AgentConfig
 from ._errors import create_error_response
 from ._server_version import build_server_version
-from ._tracing import end_span, flush_spans, record_error, trace_stream
+from ._tracing import (
+    configure_observability,
+    detach_context,
+    end_span,
+    flush_spans,
+    record_error,
+    set_current_span,
+    trace_stream,
+)
 from ._version import VERSION
 
 __all__ = [
     "AgentConfig",
     "AgentServerHost",
     "build_server_version",
+    "configure_observability",
     "create_error_response",
+    "detach_context",
     "end_span",
     "flush_spans",
     "record_error",
+    "set_current_span",
     "trace_stream",
 ]
 __version__ = VERSION
