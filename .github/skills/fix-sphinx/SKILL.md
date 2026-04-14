@@ -352,9 +352,9 @@ azpysdk --isolate sphinx .
 # 4. Analyze output and identify fixable issues
 # Cross-reference with GitHub issue #12345
 
-# 5. Search for existing documentation patterns in codebase
-grep -r ":param" azure/storage/blob/
-grep -r ":return:" azure/storage/blob/
+# 5. Search for existing documentation patterns
+grep -r ":param" azure/storage/blob/ -A 2
+grep -r ":return:" azure/storage/blob/ -A 2
 
 # 6. Apply fixes to identified files
 

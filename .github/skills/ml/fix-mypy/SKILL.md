@@ -286,7 +286,7 @@ azpysdk mypy .
 # Cross-reference with GitHub issue #12345
 
 # 5. Search for existing type annotation patterns
-grep -r "from typing import" azure/ai/ml/ | findstr "operations"
+grep -r "from typing import" azure/ai/ml/
 
 # 6. Apply fixes to identified files
 

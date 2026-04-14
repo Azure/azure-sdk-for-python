@@ -356,7 +356,7 @@ azpysdk --isolate mypy .
 # Cross-reference with GitHub issue #67890
 
 # 5. Search for existing type annotation patterns
-grep -r "from typing import" azure/storage/blob/ | findstr "_blob_client"
+grep -r "from typing import" azure/storage/blob/
 
 # 6. Apply fixes to identified files
 
