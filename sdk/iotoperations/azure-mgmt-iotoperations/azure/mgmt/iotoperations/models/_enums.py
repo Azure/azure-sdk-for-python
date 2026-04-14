@@ -19,6 +19,76 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Actions are for internal-only APIs."""
 
 
+class AkriConnectorsImagePullPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Image pull policy."""
+
+    ALWAYS = "Always"
+    """Always pull the image."""
+    IF_NOT_PRESENT = "IfNotPresent"
+    """IfNotPresent pull the image."""
+    NEVER = "Never"
+    """Never pull the image."""
+
+
+class AkriConnectorsMqttAuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AkriConnectorsMqttAuthenticationMethod properties."""
+
+    SERVICE_ACCOUNT_TOKEN = "ServiceAccountToken"
+    """Service Account Token authentication."""
+
+
+class AkriConnectorsMqttProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Mqtt protocol types."""
+
+    MQTT = "Mqtt"
+    """Mqtt protocol."""
+
+
+class AkriConnectorsRegistrySettingsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AkriConnectorsRegistrySettings properties."""
+
+    REGISTRY_ENDPOINT_REF = "RegistryEndpointRef"
+    """A Registry Endpoint reference."""
+    CONTAINER_REGISTRY = "ContainerRegistry"
+    """A Container Registry reference."""
+
+
+class AkriConnectorsTagDigestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AkriConnectorsTagDigestType values."""
+
+    TAG = "Tag"
+    """Indicates that a tag should be specified."""
+    DIGEST = "Digest"
+    """Indicates that a digest should be specified."""
+
+
+class AkriConnectorTemplateAllocationPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AkriConnectorTemplateAllocationPolicy properties."""
+
+    BUCKETIZED = "Bucketized"
+    """Bucketized allocation policy."""
+
+
+class AkriConnectorTemplateManagedConfigurationType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Managed configuration types."""
+
+    IMAGE_CONFIGURATION = "ImageConfiguration"
+    """Image Configuration Type."""
+    STATEFUL_SET_CONFIGURATION = "StatefulSetConfiguration"
+    """StatefulSet Configuration Type."""
+
+
+class AkriConnectorTemplateRuntimeConfigurationType(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Runtime configuration types."""
+
+    MANAGED_CONFIGURATION = "ManagedConfiguration"
+    """Managed Configuration Type."""
+
+
 class BrokerAuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Broker Authentication Mode."""
 
@@ -28,6 +98,15 @@ class BrokerAuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ServiceAccountToken authentication configuration."""
     X509 = "X509"
     """X.509 authentication configuration."""
+
+
+class BrokerAuthenticatorValidationMethods(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """X509 authentication validation methods."""
+
+    NONE = "None"
+    """No additional validation is performed."""
+    AZURE_DEVICE_REGISTRY = "AzureDeviceRegistry"
+    """Additional validation is performed using the Azure Device Registry."""
 
 
 class BrokerMemoryProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -43,24 +122,47 @@ class BrokerMemoryProfile(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """High memory profile."""
 
 
+class BrokerPersistencePolicyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Broker Persistence Policy Mode values."""
+
+    ALL = "All"
+    """Policy mode for All."""
+    NONE = "None"
+    """Policy mode for None."""
+    CUSTOM = "Custom"
+    """Indicates that the policy is a custom policy."""
+
+
 class BrokerProtocolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Broker Protocol types."""
 
     MQTT = "Mqtt"
-    """protocol broker"""
+    """protocol broker."""
     WEB_SOCKETS = "WebSockets"
-    """protocol websocket"""
+    """protocol websocket."""
 
 
 class BrokerResourceDefinitionMethods(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """BrokerResourceDefinitionMethods methods allowed."""
 
     CONNECT = "Connect"
-    """Allowed Connecting to Broker"""
+    """Allowed Connecting to Broker."""
     PUBLISH = "Publish"
-    """Allowed Publishing to Broker"""
+    """Allowed Publishing to Broker."""
     SUBSCRIBE = "Subscribe"
-    """Allowed Subscribing to Broker"""
+    """Allowed Subscribing to Broker."""
+
+
+class BrokerStateStoreKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Broker State Store Key Type properties."""
+
+    PATTERN = "Pattern"
+    """Used for glob-style pattern matching."""
+    STRING = "String"
+    """Used to do exact match, for example, when a key contains characters that might be otherwise
+    matched as a pattern (*, ?, [0-9])."""
+    BINARY = "Binary"
+    """Used to match a binary key."""
 
 
 class CertManagerIssuerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -76,9 +178,9 @@ class CloudEventAttributeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """How to map events to the cloud."""
 
     PROPAGATE = "Propagate"
-    """Propagate type"""
+    """Propagate type."""
     CREATE_OR_REMAP = "CreateOrRemap"
-    """CreateOrRemap type"""
+    """CreateOrRemap type."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -98,53 +200,70 @@ class DataExplorerAuthMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DataflowEndpoint Data Explorer Authentication Method properties."""
 
     SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
-    """SystemAssignedManagedIdentity type"""
+    """SystemAssignedManagedIdentity type."""
     USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
-    """UserAssignedManagedIdentity type"""
+    """UserAssignedManagedIdentity type."""
 
 
 class DataflowEndpointAuthenticationSaslType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DataflowEndpoint Authentication Sasl Type properties."""
 
     PLAIN = "Plain"
-    """PLAIN Type"""
+    """PLAIN Type."""
     SCRAM_SHA256 = "ScramSha256"
-    """SCRAM_SHA_256 Type"""
+    """SCRAM_SHA_256 Type."""
     SCRAM_SHA512 = "ScramSha512"
-    """SCRAM_SHA_512 Type"""
+    """SCRAM_SHA_512 Type."""
 
 
 class DataflowEndpointFabricPathType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DataflowEndpoint Fabric Path Type properties."""
 
     FILES = "Files"
-    """FILES Type"""
+    """FILES Type."""
     TABLES = "Tables"
-    """TABLES Type"""
+    """TABLES Type."""
+
+
+class DataflowEndpointHostType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DataflowEndpoint Host Type properties."""
+
+    FABRIC_RT = "FabricRT"
+    """Fabric Real-Time Type."""
+    EVENT_GRID = "EventGrid"
+    """EventGrid Type."""
+    LOCAL_BROKER = "LocalBroker"
+    """Local MQTT Type."""
+    EVENTHUB = "Eventhub"
+    """EventHub Type."""
+    CUSTOM_MQTT = "CustomMqtt"
+    """Custom MQTT Type."""
+    CUSTOM_KAFKA = "CustomKafka"
+    """Custom Kafka Type."""
 
 
 class DataflowEndpointKafkaAcks(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DataflowEndpoint Kafka Acks properties."""
 
     ZERO = "Zero"
-    """ZERO Option"""
+    """ZERO Option."""
     ONE = "One"
-    """ONE Option"""
+    """ONE Option."""
     ALL = "All"
-    """ALL Option"""
+    """ALL Option."""
 
 
 class DataflowEndpointKafkaCompression(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Kafka endpoint Compression properties."""
 
     NONE = "None"
-    """NONE Option"""
+    """NONE Option."""
     GZIP = "Gzip"
-    """Gzip Option"""
+    """Gzip Option."""
     SNAPPY = "Snappy"
-    """SNAPPY Option"""
+    """SNAPPY Option."""
     LZ4 = "Lz4"
-    """LZ4 Option"""
+    """LZ4 Option."""
 
 
 class DataflowEndpointKafkaPartitionStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -156,90 +275,164 @@ class DataflowEndpointKafkaPartitionStrategy(str, Enum, metaclass=CaseInsensitiv
     """Static: Assigns messages to a fixed partition number that's derived from the instance ID of the
     dataflow."""
     TOPIC = "Topic"
-    """TOPIC Option"""
+    """TOPIC Option."""
     PROPERTY = "Property"
-    """PROPERTY Option"""
+    """PROPERTY Option."""
+
+
+class DataflowGraphConnectionSchemaSerializationFormat(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Serialization format for dataflow graph connection."""
+
+    DELTA = "Delta"
+    """Delta Format."""
+    JSON = "Json"
+    """JSON Format."""
+    PARQUET = "Parquet"
+    """Parquet Format."""
+    AVRO = "Avro"
+    """Avro serialization format."""
+
+
+class DataflowGraphDestinationHeaderActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DataflowGraph Destination Header Action Types."""
+
+    ADD_IF_NOT_PRESENT = "AddIfNotPresent"
+    """Add if not present type."""
+    REMOVE = "Remove"
+    """Remove type."""
+    ADD_OR_REPLACE = "AddOrReplace"
+    """Add or Replace type."""
+
+
+class DataflowGraphNodeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DataflowGraph node types."""
+
+    SOURCE = "Source"
+    """Dataflow source node."""
+    GRAPH = "Graph"
+    """Dataflow graph node."""
+    DESTINATION = "Destination"
+    """Dataflow destination node."""
+
+
+class DataflowHeaderActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Dataflow Destination Header Action Types."""
+
+    ADD_IF_NOT_PRESENT = "AddIfNotPresent"
+    """Add if not present type."""
+    REMOVE = "Remove"
+    """Remove type."""
+    ADD_OR_REPLACE = "AddOrReplace"
+    """Add or Replace type."""
 
 
 class DataflowMappingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Dataflow type mapping properties."""
 
     NEW_PROPERTIES = "NewProperties"
-    """New Properties type"""
+    """New Properties type."""
     RENAME = "Rename"
-    """Rename type"""
+    """Rename type."""
     COMPUTE = "Compute"
-    """Compute type"""
+    """Compute type."""
     PASS_THROUGH = "PassThrough"
-    """Pass-through type"""
+    """Pass-through type."""
     BUILT_IN_FUNCTION = "BuiltInFunction"
-    """Built in function type"""
+    """Built in function type."""
+
+
+class DataflowOpenTelemetryAuthenticationMethod(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
+    """Dataflow OpenTelemetry authentication method values."""
+
+    SERVICE_ACCOUNT_TOKEN = "ServiceAccountToken"
+    """Uses serviceaccount token."""
+    X509_CERTIFICATE = "X509Certificate"
+    """Uses x509 certificate."""
+    ANONYMOUS = "Anonymous"
+    """Connects anonymously."""
 
 
 class DataLakeStorageAuthMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DataflowEndpoint Data Lake Storage Authentication Method properties."""
 
     SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
-    """SystemAssignedManagedIdentity type"""
+    """SystemAssignedManagedIdentity type."""
     USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
-    """UserAssignedManagedIdentity type"""
+    """UserAssignedManagedIdentity type."""
     ACCESS_TOKEN = "AccessToken"
-    """AccessToken Option"""
+    """AccessToken Option."""
 
 
 class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DataflowEndpoint Type properties."""
 
     DATA_EXPLORER = "DataExplorer"
-    """Azure Data Explorer Type"""
+    """Azure Data Explorer Type."""
     DATA_LAKE_STORAGE = "DataLakeStorage"
-    """Azure Data Lake Type"""
+    """Azure Data Lake Type."""
     FABRIC_ONE_LAKE = "FabricOneLake"
-    """Microsoft Fabric Type"""
+    """Microsoft Fabric Type."""
     KAFKA = "Kafka"
-    """Kafka Type"""
+    """Kafka Type."""
     LOCAL_STORAGE = "LocalStorage"
-    """Local Storage Type"""
+    """Local Storage Type."""
     MQTT = "Mqtt"
-    """Broker Type"""
+    """Broker Type."""
+    OPEN_TELEMETRY = "OpenTelemetry"
+    """OpenTelemetry Type."""
 
 
 class ExtendedLocationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The enum defining type of ExtendedLocation accepted."""
 
     CUSTOM_LOCATION = "CustomLocation"
-    """CustomLocation type"""
+    """CustomLocation type."""
 
 
 class FabricOneLakeAuthMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DataflowEndpoint Fabric One Lake Authentication Method properties."""
 
     SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
-    """SystemAssignedManagedIdentity type"""
+    """SystemAssignedManagedIdentity type."""
     USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
-    """UserAssignedManagedIdentity type"""
+    """UserAssignedManagedIdentity type."""
 
 
 class FilterType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Filter Type properties."""
 
     FILTER = "Filter"
-    """Filter type"""
+    """Filter type."""
+
+
+class InstanceFeatureMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The enum defining mode of a feature."""
+
+    STABLE = "Stable"
+    """Opt in to enable a stable feature."""
+    PREVIEW = "Preview"
+    """Opt in to enable a preview feature."""
+    DISABLED = "Disabled"
+    """Opt out of a feature."""
 
 
 class KafkaAuthMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DataflowEndpoint Kafka Authentication Method properties."""
 
     SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
-    """SystemAssignedManagedIdentity type"""
+    """SystemAssignedManagedIdentity type."""
     USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
-    """UserAssignedManagedIdentity type"""
+    """UserAssignedManagedIdentity type."""
     SASL = "Sasl"
-    """Sasl Option"""
+    """Sasl Option."""
     X509_CERTIFICATE = "X509Certificate"
-    """x509Certificate Option"""
+    """x509Certificate Option."""
     ANONYMOUS = "Anonymous"
-    """Anonymous Option"""
+    """Anonymous Option."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -261,15 +454,15 @@ class MqttAuthMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DataflowEndpoint Mqtt Authentication Method properties."""
 
     SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
-    """SystemAssignedManagedIdentity type"""
+    """SystemAssignedManagedIdentity type."""
     USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
-    """UserAssignedManagedIdentity type"""
+    """UserAssignedManagedIdentity type."""
     SERVICE_ACCOUNT_TOKEN = "ServiceAccountToken"
-    """ServiceAccountToken Option"""
+    """ServiceAccountToken Option."""
     X509_CERTIFICATE = "X509Certificate"
-    """x509Certificate Option"""
+    """x509Certificate Option."""
     ANONYMOUS = "Anonymous"
-    """Anonymous Option"""
+    """Anonymous Option."""
 
 
 class MqttRetainType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -285,7 +478,7 @@ class OperationalMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Mode properties."""
 
     ENABLED = "Enabled"
-    """Enabled is equivalent to True"""
+    """Enabled is equivalent to True."""
     DISABLED = "Disabled"
     """Disabled is equivalent to False."""
 
@@ -294,11 +487,11 @@ class OperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Dataflow Operation Type properties."""
 
     SOURCE = "Source"
-    """Dataflow Source Operation"""
+    """Dataflow Source Operation."""
     DESTINATION = "Destination"
-    """Dataflow Destination Operation"""
+    """Dataflow Destination Operation."""
     BUILT_IN_TRANSFORMATION = "BuiltInTransformation"
-    """Dataflow BuiltIn Transformation Operation"""
+    """Dataflow BuiltIn Transformation Operation."""
 
 
 class OperatorValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -374,6 +567,41 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Resource has been Accepted."""
 
 
+class RegistryEndpointAuthenticationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication method."""
+
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    """SystemAssignedManagedIdentity type."""
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+    """UserAssignedManagedIdentity type."""
+    ANONYMOUS = "Anonymous"
+    """Anonymous Option."""
+    ARTIFACT_PULL_SECRET = "ArtifactPullSecret"
+    """Artifact Pull Secret authentication."""
+
+
+class RegistryEndpointTrustedSigningKeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RegistryEndpointTrustedSigningKeyType values."""
+
+    SECRET = "Secret"
+    """Trust settings stored in a Kubernetes Secret."""
+    CONFIG_MAP = "ConfigMap"
+    """Trust settings stored in a Kubernetes ConfigMap."""
+
+
+class ResourceHealthState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The health state of the resource."""
+
+    AVAILABLE = "Available"
+    """Resource is Available and functioning as expected."""
+    DEGRADED = "Degraded"
+    """Resource health is degraded."""
+    UNAVAILABLE = "Unavailable"
+    """Resource is not functioning as expected."""
+    UNKNOWN = "Unknown"
+    """Resource state is unknown."""
+
+
 class ServiceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Kubernetes Service Types supported by Listener."""
 
@@ -389,29 +617,29 @@ class SourceSerializationFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Serialization Format properties."""
 
     JSON = "Json"
-    """JSON Format"""
+    """JSON Format."""
 
 
 class StateStoreResourceDefinitionMethods(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """StateStoreResourceDefinitionMethods methods allowed."""
 
     READ = "Read"
-    """Get/KeyNotify from Store"""
+    """Get/KeyNotify from Store."""
     WRITE = "Write"
-    """Set/Delete in Store"""
+    """Set/Delete in Store."""
     READ_WRITE = "ReadWrite"
-    """Allowed all operations on Store - Get/KeyNotify/Set/Delete"""
+    """Allowed all operations on Store - Get/KeyNotify/Set/Delete."""
 
 
 class StateStoreResourceKeyTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """StateStoreResourceKeyTypes properties."""
 
     PATTERN = "Pattern"
-    """Key type - pattern"""
+    """Key type - pattern."""
     STRING = "String"
-    """Key type - string"""
+    """Key type - string."""
     BINARY = "Binary"
-    """Key type - binary"""
+    """Key type - binary."""
 
 
 class SubscriberMessageDropStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -436,8 +664,8 @@ class TransformationSerializationFormat(str, Enum, metaclass=CaseInsensitiveEnum
     """Transformation Format properties."""
 
     DELTA = "Delta"
-    """Delta Format"""
+    """Delta Format."""
     JSON = "Json"
-    """JSON Format"""
+    """JSON Format."""
     PARQUET = "Parquet"
-    """Parquet Format"""
+    """Parquet Format."""
