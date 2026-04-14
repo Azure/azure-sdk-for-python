@@ -63,4 +63,8 @@ For operational Azure tasks (managing resources, querying services), see the [Az
 
 - [Azure SDK for Python documentation](https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-overview)
 - [Azure SDK design guidelines](https://azure.github.io/azure-sdk/python_design.html)
-- [Azure MCP Server](https://learn.microsoft.com/en-us/azure/developer/azure-mcp-server/get-started)
+- [Azure MCP Server](https://learn.microsoft.com/azure/developer/azure-mcp-server/get-started)
+
+## Feedback
+
+If you have feedback on your AI experience with the Azure SDK for Python, [open an issue](https://github.com/Azure/azure-sdk-for-python/issues/new/choose) on the repository.
