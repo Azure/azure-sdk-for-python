@@ -356,7 +356,17 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
                         continue
                     elif tool_name:
                         # This is a regular function tool from converter
-                        tool_definition_exists = any(tool.get("name") == tool_name for tool in needed_tool_definitions)
+                        # Check top-level definitions and also inside OpenAPI tool "functions" lists
+                        tool_definition_exists = any(
+                            tool.get("name") == tool_name
+                            or (
+                                tool.get("type") == "openapi"
+                                and any(
+                                    func.get("name") == tool_name for func in tool.get("functions", [])
+                                )
+                            )
+                            for tool in needed_tool_definitions
+                        )
                         if not tool_definition_exists:
                             raise EvaluationException(
                                 message=f"Tool definition for {tool_name} not found",
