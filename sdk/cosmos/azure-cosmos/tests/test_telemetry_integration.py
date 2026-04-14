@@ -54,7 +54,7 @@ class TestTelemetryIntegration(unittest.TestCase):
         """Clean up test resources."""
         try:
             cls.client.delete_database(cls.test_db_name)
-        except:
+        except Exception:
             pass
         if cls._previous_query_text_opt_in is None:
             os.environ.pop(_Constants.OTEL_ENABLE_QUERY_TEXT, None)
