@@ -3470,8 +3470,8 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             _pipeline = AsyncPipeline(
                 transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
                 policies=cast(
-                    Iterable["AsyncHTTPPolicy"], self._pipeline._impl_policies
-                ),  # pylint: disable = protected-access
+                    Iterable["AsyncHTTPPolicy"], self._pipeline._impl_policies  # pylint: disable=protected-access
+                ),
             )
         else:
             _pipeline = self._pipeline

@@ -159,16 +159,16 @@ def service_properties_deserialize(generated: "StorageServiceProperties") -> Dic
     if generated.cors is not None:
         cors_list = [CorsRule._from_generated(cors) for cors in generated.cors]  # pylint: disable=protected-access
     return {
-        "analytics_logging": BlobAnalyticsLogging._from_generated(
+        "analytics_logging": BlobAnalyticsLogging._from_generated(  # pylint: disable=protected-access
             generated.logging
-        ),  # pylint: disable=protected-access
+        ),
         "hour_metrics": Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
         "minute_metrics": Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
         "cors": cors_list,
         "target_version": generated.default_service_version,
-        "delete_retention_policy": RetentionPolicy._from_generated(
+        "delete_retention_policy": RetentionPolicy._from_generated(  # pylint: disable=protected-access
             generated.delete_retention_policy
-        ),  # pylint: disable=protected-access
+        ),
         "static_website": StaticWebsite._from_generated(generated.static_website),  # pylint: disable=protected-access
     }
 

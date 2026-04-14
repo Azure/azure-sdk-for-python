@@ -367,9 +367,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
                 key_encryption_key=self.key_encryption_key,
                 key_resolver_function=self.key_resolver_function,
             )
-            renamed_container._client.container.rename(
+            renamed_container._client.container.rename(  # pylint: disable=protected-access
                 source_container_name=self.container_name, **kwargs
-            )  # pylint: disable = protected-access
+            )
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)

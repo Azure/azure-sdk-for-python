@@ -777,8 +777,8 @@ def _get_block_list_result(blocks: BlockList) -> Tuple[List[BlobBlock], List[Blo
         committed = [BlobBlock._from_generated(b) for b in blocks.committed_blocks]  # pylint: disable=protected-access
     if blocks.uncommitted_blocks:
         uncommitted = [
-            BlobBlock._from_generated(b) for b in blocks.uncommitted_blocks
-        ]  # pylint: disable=protected-access
+            BlobBlock._from_generated(b) for b in blocks.uncommitted_blocks  # pylint: disable=protected-access
+        ]
     return committed, uncommitted
 
 

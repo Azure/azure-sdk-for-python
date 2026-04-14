@@ -249,9 +249,9 @@ class BlobAnalyticsLogging(GeneratedLogging):
             delete=generated.delete,
             read=generated.read,
             write=generated.write,
-            retention_policy=RetentionPolicy._from_generated(
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
-            ),  # pylint: disable=protected-access
+            ),
         )
 
 
@@ -294,9 +294,9 @@ class Metrics(GeneratedMetrics):
             version=generated.version,
             enabled=generated.enabled,
             include_apis=generated.include_apis,
-            retention_policy=RetentionPolicy._from_generated(
+            retention_policy=RetentionPolicy._from_generated(  # pylint: disable=protected-access
                 generated.retention_policy
-            ),  # pylint: disable=protected-access
+            ),
         )
 
 
@@ -485,9 +485,9 @@ class ContainerProperties(DictMixin):
         props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
-        props.immutable_storage_with_versioning_enabled = (
+        props.immutable_storage_with_versioning_enabled = (  # pylint: disable=name-too-long
             generated.properties.is_immutable_storage_with_versioning_enabled
-        )  # pylint: disable=line-too-long, name-too-long
+        )
         props.deleted = generated.deleted
         props.version = generated.version
         props.has_legal_hold = generated.properties.has_legal_hold

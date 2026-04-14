@@ -695,9 +695,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         except AttributeError:
             kwargs["source_lease_id"] = lease
         try:
-            renamed_container._client.container.rename(
+            renamed_container._client.container.rename(  # pylint: disable=protected-access
                 source_container_name=name, **kwargs
-            )  # pylint: disable = protected-access
+            )
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)
@@ -732,8 +732,8 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             warnings.warn("`new_name` is no longer supported.", DeprecationWarning)
         container = self.get_container_client(new_name or deleted_container_name)
         try:
-            container._client.container.restore(
-                deleted_container_name=deleted_container_name,  # pylint: disable = protected-access
+            container._client.container.restore(  # pylint: disable=protected-access
+                deleted_container_name=deleted_container_name,
                 deleted_container_version=deleted_container_version,
                 timeout=kwargs.pop("timeout", None),
                 **kwargs,

@@ -700,9 +700,9 @@ class BlobServiceClient(  # type: ignore [misc]
         except AttributeError:
             kwargs["source_lease_id"] = lease
         try:
-            await renamed_container._client.container.rename(
+            await renamed_container._client.container.rename(  # pylint: disable=protected-access
                 source_container_name=name, **kwargs
-            )  # pylint: disable = protected-access
+            )
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)
@@ -737,8 +737,8 @@ class BlobServiceClient(  # type: ignore [misc]
             warnings.warn("`new_name` is no longer supported.", DeprecationWarning)
         container = self.get_container_client(new_name or deleted_container_name)
         try:
-            await container._client.container.restore(
-                deleted_container_name=deleted_container_name,  # pylint: disable = protected-access
+            await container._client.container.restore(  # pylint: disable=protected-access
+                deleted_container_name=deleted_container_name,
                 deleted_container_version=deleted_container_version,
                 timeout=kwargs.pop("timeout", None),
                 **kwargs,
@@ -844,8 +844,8 @@ class BlobServiceClient(  # type: ignore [misc]
         _pipeline = AsyncPipeline(
             transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
             policies=cast(
-                Iterable["AsyncHTTPPolicy"], self._pipeline._impl_policies
-            ),  # pylint: disable = protected-access
+                Iterable["AsyncHTTPPolicy"], self._pipeline._impl_policies  # pylint: disable=protected-access
+            ),
         )
         return BlobClient(
             self.url,
