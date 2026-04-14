@@ -29,7 +29,7 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
 
-    This sample uploads `samples/assets/canvas-design.zip`.
+    This sample uploads `samples/hosted_agents/assets/canvas-design.zip`.
 """
 
 import os
@@ -49,7 +49,7 @@ load_dotenv()
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 download_folder = Path(tempfile.gettempdir()).resolve()
 skill_name = "canvas-design"
-skill_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/canvas-design.zip"))
+skill_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "assets/canvas-design.zip"))
 with (
     DefaultAzureCredential() as credential,
     AIProjectClient(endpoint=endpoint, credential=credential, allow_preview=True) as project_client,
