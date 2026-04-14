@@ -75,8 +75,8 @@ USAGE:
     Example resource ID format:
     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{name}
 
-    Important: Cross-resource copying requires credential-based authentication (such as DefaultAzureCredential).
-    API keys cannot be used for cross-resource operations.
+    Note: If API keys are not provided, DefaultAzureCredential will be used.
+    Cross-resource copying with DefaultAzureCredential requires 'Cognitive Services User' role on both source and target resources.
 """
 
 import asyncio
