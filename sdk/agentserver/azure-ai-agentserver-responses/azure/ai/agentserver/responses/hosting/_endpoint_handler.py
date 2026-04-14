@@ -342,7 +342,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         stream = bool(getattr(parsed, "stream", False))
         store = True if getattr(parsed, "store", None) is None else bool(parsed.store)
         background = bool(getattr(parsed, "background", False))
-        model = getattr(parsed, "model", None)
+        model = getattr(parsed, "model", None) or ""
         _expanded = get_input_expanded(parsed)
         input_items = [out for item in _expanded if (out := to_output_item(item, response_id)) is not None]
         previous_response_id: str | None = (
