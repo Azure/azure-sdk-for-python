@@ -162,6 +162,6 @@ class TestPyodideTransportClass:
         Adding the transport fixture will mock the Pyodide modules in `sys.modules`.
         """
         # Use patch so we don't clutter up the `sys.modules` namespace.
-        import azure.core.experimental.transport as transport
+        from azure.core.experimental import transport
 
         assert transport.PyodideTransport

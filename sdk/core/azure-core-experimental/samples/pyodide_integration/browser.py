@@ -26,14 +26,14 @@
 
 from uuid import uuid4
 
+# pylint: disable=import-error
+from async_testing import AsyncTestSuite
+
 from azure.ai.textanalytics.aio import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.experimental.transport import PyodideTransport
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
-
-# pylint: disable=import-error
-from async_testing import AsyncTestSuite
 
 
 class PyodideTransportIntegrationTestSuite(AsyncTestSuite):
@@ -123,5 +123,5 @@ class PyodideTransportIntegrationTestSuite(AsyncTestSuite):
         except Exception:
             await container_client.delete_container()
             raise
-        else:
-            await container_client.delete_container()
+
+        await container_client.delete_container()

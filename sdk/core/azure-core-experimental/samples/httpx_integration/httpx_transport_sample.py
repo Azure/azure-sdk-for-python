@@ -30,6 +30,7 @@ with text_analytics_client:
     for result in abstract_summary_results:
         if result.kind == "AbstractiveSummarization":
             print("Summaries abstracted:")
-            [print(f"{summary.text}\n") for summary in result.summaries]
+            for summary in result.summaries:
+                print(f"{summary.text}\n")
         elif result.is_error is True:
             print("...Is an error with code '{}' and message '{}'".format(result.error.code, result.error.message))

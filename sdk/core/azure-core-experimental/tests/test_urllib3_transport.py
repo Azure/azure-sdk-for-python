@@ -19,7 +19,7 @@ class TestUrllib3Transport:
 
     def test_send_success(self) -> None:
         class MockPoolManager(urllib3.PoolManager):
-            def urlopen(*args, **kwargs):
+            def urlopen(self, *args, **kwargs):
                 return mock_successful_post()
 
         transport = Urllib3Transport(pool=MockPoolManager())
@@ -36,7 +36,7 @@ class TestUrllib3Transport:
 
     def test_exception(self) -> None:
         class MockPoolManager(urllib3.PoolManager):
-            def urlopen(*args, **kwargs):
+            def urlopen(self, *args, **kwargs):
                 raise urllib3.exceptions.ConnectTimeoutError("connection timed out")
 
         transport = Urllib3Transport(pool=MockPoolManager())
