@@ -33,17 +33,17 @@ class BlobClient:  # pylint: disable=client-accepts-api-version-keyword
     """BlobClient.
 
     :ivar service: ServiceOperations operations
-    :vartype service: azure.storage.blob._generated.operations.ServiceOperations
+    :vartype service: azure.storage.blob.operations.ServiceOperations
     :ivar container: ContainerOperations operations
-    :vartype container: azure.storage.blob._generated.operations.ContainerOperations
+    :vartype container: azure.storage.blob.operations.ContainerOperations
     :ivar blob: BlobOperations operations
-    :vartype blob: azure.storage.blob._generated.operations.BlobOperations
+    :vartype blob: azure.storage.blob.operations.BlobOperations
     :ivar append_blob: AppendBlobOperations operations
-    :vartype append_blob: azure.storage.blob._generated.operations.AppendBlobOperations
+    :vartype append_blob: azure.storage.blob.operations.AppendBlobOperations
     :ivar block_blob: BlockBlobOperations operations
-    :vartype block_blob: azure.storage.blob._generated.operations.BlockBlobOperations
+    :vartype block_blob: azure.storage.blob.operations.BlockBlobOperations
     :ivar page_blob: PageBlobOperations operations
-    :vartype page_blob: azure.storage.blob._generated.operations.PageBlobOperations
+    :vartype page_blob: azure.storage.blob.operations.PageBlobOperations
     :param url: The host name of the blob storage account, e.g. accountName.blob.core.windows.net.
      Required.
     :type url: str

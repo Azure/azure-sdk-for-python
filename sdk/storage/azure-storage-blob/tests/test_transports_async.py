@@ -19,7 +19,7 @@ from test_helpers_async import AsyncStream, MockLegacyTransport
 class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
     async def _setup(self, storage_account_name, key):
         self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
-        self.container_name = self.get_resource_name('utcontainer')
+        self.container_name = self.get_resource_name("utcontainer")
         self.byte_data = self.get_random_bytes(1024)
         if self.is_live:
             try:
@@ -36,11 +36,11 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         transport = MockLegacyTransport()
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
-            container_name='container',
-            blob_name='blob',
+            container_name="container",
+            blob_name="blob",
             credential=storage_account_key.secret,
             transport=transport,
-            retry_total=0
+            retry_total=0,
         )
 
         data = b"Hello Async World!"
@@ -63,11 +63,11 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         transport = MockLegacyTransport()
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
-            container_name='container',
-            blob_name='blob',
+            container_name="container",
+            blob_name="blob",
             credential=storage_account_key.secret,
             transport=transport,
-            retry_total=0
+            retry_total=0,
         )
 
         data = b"Hello Async World!"
@@ -94,9 +94,9 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
-            blob_name=self.get_resource_name('blob'),
+            blob_name=self.get_resource_name("blob"),
             credential=storage_account_key.secret,
-            transport=transport
+            transport=transport,
         )
 
         data = b"Hello Async World!"
@@ -123,9 +123,9 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
-            blob_name=self.get_resource_name('blob'),
+            blob_name=self.get_resource_name("blob"),
             credential=storage_account_key.secret,
-            transport=transport
+            transport=transport,
         )
 
         data = b"Hello Async World!"
@@ -152,9 +152,9 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
-            blob_name=self.get_resource_name('blob'),
+            blob_name=self.get_resource_name("blob"),
             credential=storage_account_key.secret,
-            transport=transport
+            transport=transport,
         )
 
         data = b"Hello Async World!"
@@ -181,9 +181,9 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
         blob_client = BlobClient(
             self.account_url(storage_account_name, "blob"),
             container_name=self.container_name,
-            blob_name=self.get_resource_name('blob'),
+            blob_name=self.get_resource_name("blob"),
             credential=storage_account_key.secret,
-            transport=transport
+            transport=transport,
         )
 
         data = b"Hello Async World!"

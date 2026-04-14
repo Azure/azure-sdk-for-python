@@ -478,19 +478,19 @@ class BlobProperties(_Model):
     :ivar blob_sequence_number: The sequence number of the blob.
     :vartype blob_sequence_number: int
     :ivar blob_type: The blob type. Known values are: "BlockBlob", "PageBlob", and "AppendBlob".
-    :vartype blob_type: str or ~azure.storage.blob._generated.models.BlobType
+    :vartype blob_type: str or ~azure.storage.blob.models.BlobType
     :ivar lease_status: The lease status of the blob. Known values are: "unlocked" and "locked".
-    :vartype lease_status: str or ~azure.storage.blob._generated.models.LeaseStatus
+    :vartype lease_status: str or ~azure.storage.blob.models.LeaseStatus
     :ivar lease_state: The lease state of the blob. Known values are: "available", "leased",
      "expired", "breaking", and "broken".
-    :vartype lease_state: str or ~azure.storage.blob._generated.models.LeaseState
+    :vartype lease_state: str or ~azure.storage.blob.models.LeaseState
     :ivar lease_duration: The lease duration of the blob. Known values are: "infinite" and "fixed".
-    :vartype lease_duration: str or ~azure.storage.blob._generated.models.LeaseDuration
+    :vartype lease_duration: str or ~azure.storage.blob.models.LeaseDuration
     :ivar copy_id: The copy ID of the blob.
     :vartype copy_id: str
     :ivar copy_status: The copy status of the blob. Known values are: "pending", "success",
      "failed", and "aborted".
-    :vartype copy_status: str or ~azure.storage.blob._generated.models.CopyStatus
+    :vartype copy_status: str or ~azure.storage.blob.models.CopyStatus
     :ivar copy_source: The copy source of the blob.
     :vartype copy_source: str
     :ivar copy_progress: The copy progress of the blob.
@@ -512,17 +512,17 @@ class BlobProperties(_Model):
     :ivar access_tier: The access tier of the blob. Known values are: "P4", "P6", "P10", "P15",
      "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
      and "Smart".
-    :vartype access_tier: str or ~azure.storage.blob._generated.models.AccessTier
+    :vartype access_tier: str or ~azure.storage.blob.models.AccessTier
     :ivar access_tier_inferred: Whether the access tier is inferred.
     :vartype access_tier_inferred: bool
     :ivar archive_status: The archive status of the blob. Known values are:
      "rehydrate-pending-to-hot", "rehydrate-pending-to-cool", "rehydrate-pending-to-cold", and
      "rehydrate-pending-to-smart".
-    :vartype archive_status: str or ~azure.storage.blob._generated.models.ArchiveStatus
+    :vartype archive_status: str or ~azure.storage.blob.models.ArchiveStatus
     :ivar smart_access_tier: The smart access tier of the blob. Known values are: "P4", "P6",
      "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive",
      "Premium", "Cold", and "Smart".
-    :vartype smart_access_tier: str or ~azure.storage.blob._generated.models.AccessTier
+    :vartype smart_access_tier: str or ~azure.storage.blob.models.AccessTier
     :ivar customer_provided_key_sha256: Customer provided key sha256.
     :vartype customer_provided_key_sha256: str
     :ivar encryption_scope: The encryption scope of the blob.
@@ -537,15 +537,14 @@ class BlobProperties(_Model):
     :vartype is_sealed: bool
     :ivar rehydrate_priority: The rehydrate priority of the blob. Known values are: "High" and
      "Standard".
-    :vartype rehydrate_priority: str or ~azure.storage.blob._generated.models.RehydratePriority
+    :vartype rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
     :ivar last_accessed_on: The last access time of the blob.
     :vartype last_accessed_on: ~datetime.datetime
     :ivar immutability_policy_expires_on: The immutability policy until time of the blob.
     :vartype immutability_policy_expires_on: ~datetime.datetime
     :ivar immutability_policy_mode: The immutability policy mode of the blob. Known values are:
      "mutable", "locked", and "unlocked".
-    :vartype immutability_policy_mode: str or
-     ~azure.storage.blob._generated.models.ImmutabilityPolicyMode
+    :vartype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
     :ivar legal_hold: Whether the blob is under legal hold.
     :vartype legal_hold: bool
     """
@@ -1200,16 +1199,16 @@ class ContainerProperties(_Model):
     :vartype etag: str
     :ivar lease_status: The lease status of the container. Known values are: "unlocked" and
      "locked".
-    :vartype lease_status: str or ~azure.storage.blob._generated.models.LeaseStatus
+    :vartype lease_status: str or ~azure.storage.blob.models.LeaseStatus
     :ivar lease_state: The lease state of the container. Known values are: "available", "leased",
      "expired", "breaking", and "broken".
-    :vartype lease_state: str or ~azure.storage.blob._generated.models.LeaseState
+    :vartype lease_state: str or ~azure.storage.blob.models.LeaseState
     :ivar lease_duration: The lease duration of the container. Known values are: "infinite" and
      "fixed".
-    :vartype lease_duration: str or ~azure.storage.blob._generated.models.LeaseDuration
+    :vartype lease_duration: str or ~azure.storage.blob.models.LeaseDuration
     :ivar public_access: The public access type of the container. Known values are: "blob" and
      "container".
-    :vartype public_access: str or ~azure.storage.blob._generated.models.PublicAccessType
+    :vartype public_access: str or ~azure.storage.blob.models.PublicAccessType
     :ivar has_immutability_policy: Whether it has an immutability policy.
     :vartype has_immutability_policy: bool
     :ivar has_legal_hold: The has legal hold status of the container.
@@ -1526,7 +1525,7 @@ class Error(_Model):
      "BlobNotArchived", "AuthorizationSourceIPMismatch", "AuthorizationProtocolMismatch",
      "AuthorizationPermissionMismatch", "AuthorizationServiceMismatch",
      "AuthorizationResourceTypeMismatch", and "BlobAccessTierNotSupportedForAccountType".
-    :vartype code: str or ~azure.storage.blob._generated.models.StorageErrorCode
+    :vartype code: str or ~azure.storage.blob.models.StorageErrorCode
     :ivar message: The error message.
     :vartype message: str
     :ivar copy_source_status_code: Copy source status code.
@@ -1763,7 +1762,7 @@ class GeoReplication(_Model):
 
     :ivar status: The status of the secondary location. Required. Known values are: "live",
      "bootstrap", and "unavailable".
-    :vartype status: str or ~azure.storage.blob._generated.models.GeoReplicationStatusType
+    :vartype status: str or ~azure.storage.blob.models.GeoReplicationStatusType
     :ivar last_sync_time: A GMT date/time value, to the second. All primary writes preceding this
      value are guaranteed to be available for read operations at the secondary. Primary writes after
      this point in time may or may not be available for reads. Required.
@@ -2381,7 +2380,7 @@ class QueryFormat(_Model):
 
     :ivar type: The query type. Required. Known values are: "delimited", "json", "arrow", and
      "parquet".
-    :vartype type: str or ~azure.storage.blob._generated.models.QueryFormatType
+    :vartype type: str or ~azure.storage.blob.models.QueryFormatType
     :ivar delimited_text_configuration: The delimited text configuration.
     :vartype delimited_text_configuration:
      ~azure.storage.blob._generated.models.DelimitedTextConfiguration
@@ -2452,7 +2451,7 @@ class QueryRequest(_Model):
     """Groups the set of query request settings.
 
     :ivar query_type: Required. The type of the provided query expression. Required. "SQL"
-    :vartype query_type: str or ~azure.storage.blob._generated.models.QueryRequestType
+    :vartype query_type: str or ~azure.storage.blob.models.QueryRequestType
     :ivar expression: The query expression in SQL. The maximum size of the query expression is
      256KiB. Required.
     :vartype expression: str
@@ -2859,7 +2858,7 @@ class SubmitBatchRequest(_Model):
     """SubmitBatchRequest.
 
     :ivar body: Required.
-    :vartype body: ~azure.storage.blob._generated._utils.utils.FileType
+    :vartype body: ~azure.storage.blob._utils.utils.FileType
     """
 
     body: FileType = rest_field(

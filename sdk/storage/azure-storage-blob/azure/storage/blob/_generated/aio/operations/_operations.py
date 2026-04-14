@@ -121,7 +121,7 @@ class ServiceOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.blob._generated.aio.BlobClient`'s
+        :class:`~azure.storage.blob.aio.BlobClient`'s
         :attr:`service` attribute.
     """
 
@@ -399,8 +399,7 @@ class ServiceOperations:
         :paramtype timeout: int
         :keyword include: Include this parameter to specify that the container's metadata be returned
          as part of the response body. Default value is None.
-        :paramtype include: list[str or
-         ~azure.storage.blob._generated.models.ListContainersIncludeType]
+        :paramtype include: list[str or ~azure.storage.blob.models.ListContainersIncludeType]
         :return: ListContainersSegmentResponse. The ListContainersSegmentResponse is compatible with
          MutableMapping
         :rtype: ~azure.storage.blob._generated.models.ListContainersSegmentResponse
@@ -749,7 +748,7 @@ class ServiceOperations:
         :paramtype maxresults: int
         :keyword include: Include this parameter to specify one or more datasets to include in the
          response. Default value is None.
-        :paramtype include: list[str or ~azure.storage.blob._generated.models.FilterBlobsIncludeItem]
+        :paramtype include: list[str or ~azure.storage.blob.models.FilterBlobsIncludeItem]
         :return: FilterBlobSegment. The FilterBlobSegment is compatible with MutableMapping
         :rtype: ~azure.storage.blob._generated.models.FilterBlobSegment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -829,7 +828,7 @@ class ContainerOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.blob._generated.aio.BlobClient`'s
+        :class:`~azure.storage.blob.aio.BlobClient`'s
         :attr:`container` attribute.
     """
 
@@ -862,7 +861,7 @@ class ContainerOperations:
         :paramtype metadata: dict[str, str]
         :keyword access: The public access setting for the container. Known values are: "blob" and
          "container". Default value is None.
-        :paramtype access: str or ~azure.storage.blob._generated.models.PublicAccessType
+        :paramtype access: str or ~azure.storage.blob.models.PublicAccessType
         :keyword default_encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the
          default encryption scope to set on the container and use for all future writes. Default value
          is None.
@@ -1302,7 +1301,7 @@ class ContainerOperations:
         :paramtype lease_id: str
         :keyword access: The public access setting for the container. Known values are: "blob" and
          "container". Default value is None.
-        :paramtype access: str or ~azure.storage.blob._generated.models.PublicAccessType
+        :paramtype access: str or ~azure.storage.blob.models.PublicAccessType
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
@@ -1653,7 +1652,7 @@ class ContainerOperations:
         :paramtype maxresults: int
         :keyword include: Include this parameter to specify one or more datasets to include in the
          response. Default value is None.
-        :paramtype include: list[str or ~azure.storage.blob._generated.models.FilterBlobsIncludeItem]
+        :paramtype include: list[str or ~azure.storage.blob.models.FilterBlobsIncludeItem]
         :return: FilterBlobSegment. The FilterBlobSegment is compatible with MutableMapping
         :rtype: ~azure.storage.blob._generated.models.FilterBlobSegment
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2212,7 +2211,7 @@ class ContainerOperations:
         :paramtype maxresults: int
         :keyword include: Include this parameter to specify one or more datasets to include in the
          response. Default value is None.
-        :paramtype include: list[str or ~azure.storage.blob._generated.models.ListBlobsIncludeItem]
+        :paramtype include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -2335,7 +2334,7 @@ class ContainerOperations:
         :paramtype maxresults: int
         :keyword include: Include this parameter to specify one or more datasets to include in the
          response. Default value is None.
-        :paramtype include: list[str or ~azure.storage.blob._generated.models.ListBlobsIncludeItem]
+        :paramtype include: list[str or ~azure.storage.blob.models.ListBlobsIncludeItem]
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -2491,7 +2490,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.blob._generated.aio.BlobClient`'s
+        :class:`~azure.storage.blob.aio.BlobClient`'s
         :attr:`blob` attribute.
     """
 
@@ -2572,8 +2571,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword if_tags: Specify a SQL where clause on blob tags to operate only on blobs with a
          matching value. Default value is None.
         :paramtype if_tags: str
@@ -2890,8 +2888,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
@@ -3117,8 +3114,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
          following two options: include: Delete the base blob and all of its snapshots. only: Delete
          only the blob's snapshots and not the blob itself. Known values are: "only" and "include".
          Default value is None.
-        :paramtype delete_snapshots: str or
-         ~azure.storage.blob._generated.models.DeleteSnapshotsOptionType
+        :paramtype delete_snapshots: str or ~azure.storage.blob.models.DeleteSnapshotsOptionType
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
@@ -3130,7 +3126,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :paramtype if_tags: str
         :keyword blob_delete_type: Optional.  Only possible value is 'permanent', which specifies to
          permanently delete a blob if blob soft delete is enabled. "Permanent" Default value is None.
-        :paramtype blob_delete_type: str or ~azure.storage.blob._generated.models.BlobDeleteType
+        :paramtype blob_delete_type: str or ~azure.storage.blob.models.BlobDeleteType
         :keyword access_tier_if_modified_since: Specify this header value to operate only on a blob if
          the access-tier has been modified since the specified date/time. Default value is None.
         :paramtype access_tier_if_modified_since: ~datetime.datetime
@@ -3289,7 +3285,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
 
         :keyword expiry_options: Required. Indicates mode of the expiry time. Known values are:
          "NeverExpire", "RelativeToCreation", "RelativeToNow", and "Absolute". Required.
-        :paramtype expiry_options: str or ~azure.storage.blob._generated.models.BlobExpiryOptions
+        :paramtype expiry_options: str or ~azure.storage.blob.models.BlobExpiryOptions
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -3518,8 +3514,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :paramtype if_unmodified_since: ~datetime.datetime
         :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
          Known values are: "mutable", "locked", and "unlocked". Default value is None.
-        :paramtype immutability_policy_mode: str or
-         ~azure.storage.blob._generated.models.ImmutabilityPolicyMode
+        :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
         :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see <a
@@ -3805,8 +3800,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -4499,8 +4493,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -4643,11 +4636,11 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
          "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
          and "Smart". Default value is None.
-        :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
+        :paramtype tier: str or ~azure.storage.blob.models.AccessTier
         :keyword rehydrate_priority: If an object is in rehydrate pending state then this header is
          returned with priority of rehydrate. Valid values are High and Standard. Known values are:
          "High" and "Standard". Default value is None.
-        :paramtype rehydrate_priority: str or ~azure.storage.blob._generated.models.RehydratePriority
+        :paramtype rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
         :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
          has been modified since the specified date/time. Default value is None.
         :paramtype source_if_modified_since: ~datetime.datetime
@@ -4686,8 +4679,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :paramtype immutability_policy_expiry: ~datetime.datetime
         :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
          Known values are: "mutable", "locked", and "unlocked". Default value is None.
-        :paramtype immutability_policy_mode: str or
-         ~azure.storage.blob._generated.models.ImmutabilityPolicyMode
+        :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
         :keyword legal_hold: Specified if a legal hold should be set on the blob. Default value is
          None.
         :paramtype legal_hold: bool
@@ -4827,7 +4819,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
          "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
          and "Smart". Default value is None.
-        :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
+        :paramtype tier: str or ~azure.storage.blob.models.AccessTier
         :keyword source_if_modified_since: Specify this header value to operate only on a blob if it
          has been modified since the specified date/time. Default value is None.
         :paramtype source_if_modified_since: ~datetime.datetime
@@ -4863,8 +4855,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :paramtype immutability_policy_expiry: ~datetime.datetime
         :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
          Known values are: "mutable", "locked", and "unlocked". Default value is None.
-        :paramtype immutability_policy_mode: str or
-         ~azure.storage.blob._generated.models.ImmutabilityPolicyMode
+        :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
         :keyword legal_hold: Specified if a legal hold should be set on the blob. Default value is
          None.
         :paramtype legal_hold: bool
@@ -4878,10 +4869,9 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword copy_source_tags: Optional, default 'replace'.  Indicates if source tags should be
          copied or replaced with the tags specified by x-ms-tags. Known values are: "REPLACE" and
          "COPY". Default value is None.
-        :paramtype copy_source_tags: str or ~azure.storage.blob._generated.models.BlobCopySourceTags
+        :paramtype copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
         :keyword file_request_intent: Valid value is backup. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.blob._generated.models.FileShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -5080,7 +5070,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword tier: Indicates the tier to be set on the blob. Known values are: "P4", "P6", "P10",
          "P15", "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium",
          "Cold", and "Smart". Required.
-        :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
+        :paramtype tier: str or ~azure.storage.blob.models.AccessTier
         :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see <a
@@ -5098,7 +5088,7 @@ class BlobOperations:  # pylint: disable=too-many-public-methods
         :keyword rehydrate_priority: If an object is in rehydrate pending state then this header is
          returned with priority of rehydrate. Valid values are High and Standard. Known values are:
          "High" and "Standard". Default value is None.
-        :paramtype rehydrate_priority: str or ~azure.storage.blob._generated.models.RehydratePriority
+        :paramtype rehydrate_priority: str or ~azure.storage.blob.models.RehydratePriority
         :keyword lease_id: If specified, the operation only succeeds if the resource's lease is active
          and matches this ID. Default value is None.
         :paramtype lease_id: str
@@ -5492,7 +5482,7 @@ class AppendBlobOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.blob._generated.aio.BlobClient`'s
+        :class:`~azure.storage.blob.aio.BlobClient`'s
         :attr:`append_blob` attribute.
     """
 
@@ -5574,8 +5564,7 @@ class AppendBlobOperations:
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -5597,8 +5586,7 @@ class AppendBlobOperations:
         :paramtype immutability_policy_expiry: ~datetime.datetime
         :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
          Known values are: "mutable", "locked", and "unlocked". Default value is None.
-        :paramtype immutability_policy_mode: str or
-         ~azure.storage.blob._generated.models.ImmutabilityPolicyMode
+        :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
         :keyword legal_hold: Specified if a legal hold should be set on the blob. Default value is
          None.
         :paramtype legal_hold: bool
@@ -5775,8 +5763,7 @@ class AppendBlobOperations:
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -5984,8 +5971,7 @@ class AppendBlobOperations:
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -6030,8 +6016,7 @@ class AppendBlobOperations:
          valid OAuth access token to copy source. Default value is None.
         :paramtype copy_source_authorization: str
         :keyword file_request_intent: Valid value is backup. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.blob._generated.models.FileShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :keyword source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
          the source data provided in the request. Default value is None.
         :paramtype source_encryption_key: str
@@ -6042,7 +6027,7 @@ class AppendBlobOperations:
          hash. Currently, the only accepted value is "AES256". Must be provided if the
          x-ms-source-encryption-key is provided. "AES256" Default value is None.
         :paramtype source_encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+         ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -6272,7 +6257,7 @@ class BlockBlobOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.blob._generated.aio.BlobClient`'s
+        :class:`~azure.storage.blob.aio.BlobClient`'s
         :attr:`block_blob` attribute.
     """
 
@@ -6373,8 +6358,7 @@ class BlockBlobOperations:
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -6382,7 +6366,7 @@ class BlockBlobOperations:
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
          "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
          and "Smart". Default value is None.
-        :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
+        :paramtype tier: str or ~azure.storage.blob.models.AccessTier
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
@@ -6400,8 +6384,7 @@ class BlockBlobOperations:
         :paramtype immutability_policy_expiry: ~datetime.datetime
         :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
          Known values are: "mutable", "locked", and "unlocked". Default value is None.
-        :paramtype immutability_policy_mode: str or
-         ~azure.storage.blob._generated.models.ImmutabilityPolicyMode
+        :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
         :keyword legal_hold: Specified if a legal hold should be set on the blob. Default value is
          None.
         :paramtype legal_hold: bool
@@ -6636,8 +6619,7 @@ class BlockBlobOperations:
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -6645,7 +6627,7 @@ class BlockBlobOperations:
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
          "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
          and "Smart". Default value is None.
-        :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
+        :paramtype tier: str or ~azure.storage.blob.models.AccessTier
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
@@ -6685,10 +6667,9 @@ class BlockBlobOperations:
         :keyword copy_source_tags: Optional, default 'replace'.  Indicates if source tags should be
          copied or replaced with the tags specified by x-ms-tags. Known values are: "REPLACE" and
          "COPY". Default value is None.
-        :paramtype copy_source_tags: str or ~azure.storage.blob._generated.models.BlobCopySourceTags
+        :paramtype copy_source_tags: str or ~azure.storage.blob.models.BlobCopySourceTags
         :keyword file_request_intent: Valid value is backup. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.blob._generated.models.FileShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :keyword source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
          the source data provided in the request. Default value is None.
         :paramtype source_encryption_key: str
@@ -6699,7 +6680,7 @@ class BlockBlobOperations:
          hash. Currently, the only accepted value is "AES256". Must be provided if the
          x-ms-source-encryption-key is provided. "AES256" Default value is None.
         :paramtype source_encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+         ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -6872,8 +6853,7 @@ class BlockBlobOperations:
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -7040,8 +7020,7 @@ class BlockBlobOperations:
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -7065,8 +7044,7 @@ class BlockBlobOperations:
          valid OAuth access token to copy source. Default value is None.
         :paramtype copy_source_authorization: str
         :keyword file_request_intent: Valid value is backup. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.blob._generated.models.FileShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :keyword source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
          the source data provided in the request. Default value is None.
         :paramtype source_encryption_key: str
@@ -7077,7 +7055,7 @@ class BlockBlobOperations:
          hash. Currently, the only accepted value is "AES256". Must be provided if the
          x-ms-source-encryption-key is provided. "AES256" Default value is None.
         :paramtype source_encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+         ~azure.storage.blob.models.EncryptionAlgorithmType
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7255,8 +7233,7 @@ class BlockBlobOperations:
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -7264,7 +7241,7 @@ class BlockBlobOperations:
         :keyword tier: The tier to be set on the blob. Known values are: "P4", "P6", "P10", "P15",
          "P20", "P30", "P40", "P50", "P60", "P70", "P80", "Hot", "Cool", "Archive", "Premium", "Cold",
          and "Smart". Default value is None.
-        :paramtype tier: str or ~azure.storage.blob._generated.models.AccessTier
+        :paramtype tier: str or ~azure.storage.blob.models.AccessTier
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
@@ -7282,8 +7259,7 @@ class BlockBlobOperations:
         :paramtype immutability_policy_expiry: ~datetime.datetime
         :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
          Known values are: "mutable", "locked", and "unlocked". Default value is None.
-        :paramtype immutability_policy_mode: str or
-         ~azure.storage.blob._generated.models.ImmutabilityPolicyMode
+        :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
         :keyword legal_hold: Specified if a legal hold should be set on the blob. Default value is
          None.
         :paramtype legal_hold: bool
@@ -7414,7 +7390,7 @@ class BlockBlobOperations:
         :keyword list_type: Specifies whether to return the list of committed blocks, the list of
          uncommitted blocks, or both lists together. Known values are: "committed", "uncommitted", and
          "all". Required.
-        :paramtype list_type: str or ~azure.storage.blob._generated.models.BlockListType
+        :paramtype list_type: str or ~azure.storage.blob.models.BlockListType
         :keyword snapshot: The snapshot parameter is an opaque DateTime value that, when present,
          specifies the blob snapshot to retrieve. For more information on working with blob snapshots,
          see <a
@@ -7557,8 +7533,7 @@ class BlockBlobOperations:
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword if_modified_since: A date-time value. A request is made under the condition that the
          resource has been modified since the specified date-time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
@@ -7712,7 +7687,7 @@ class PageBlobOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.blob._generated.aio.BlobClient`'s
+        :class:`~azure.storage.blob.aio.BlobClient`'s
         :attr:`page_blob` attribute.
     """
 
@@ -7767,7 +7742,7 @@ class PageBlobOperations:
         :paramtype timeout: int
         :keyword tier: Optional. Indicates the tier to be set on the page blob. Known values are: "P4",
          "P6", "P10", "P15", "P20", "P30", "P40", "P50", "P60", "P70", and "P80". Default value is None.
-        :paramtype tier: str or ~azure.storage.blob._generated.models.PremiumPageBlobAccessTier
+        :paramtype tier: str or ~azure.storage.blob.models.PremiumPageBlobAccessTier
         :keyword blob_content_type: Optional. Sets the blob's content type. If specified, this property
          is stored with the blob and returned with a read request. Default value is None.
         :paramtype blob_content_type: str
@@ -7803,8 +7778,7 @@ class PageBlobOperations:
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -7830,8 +7804,7 @@ class PageBlobOperations:
         :paramtype immutability_policy_expiry: ~datetime.datetime
         :keyword immutability_policy_mode: Specifies the immutability policy mode to set on the blob.
          Known values are: "mutable", "locked", and "unlocked". Default value is None.
-        :paramtype immutability_policy_mode: str or
-         ~azure.storage.blob._generated.models.ImmutabilityPolicyMode
+        :paramtype immutability_policy_mode: str or ~azure.storage.blob.models.ImmutabilityPolicyMode
         :keyword legal_hold: Specified if a legal hold should be set on the blob. Default value is
          None.
         :paramtype legal_hold: bool
@@ -8003,8 +7976,7 @@ class PageBlobOperations:
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -8191,8 +8163,7 @@ class PageBlobOperations:
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -8384,8 +8355,7 @@ class PageBlobOperations:
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -8427,8 +8397,7 @@ class PageBlobOperations:
          valid OAuth access token to copy source. Default value is None.
         :paramtype copy_source_authorization: str
         :keyword file_request_intent: Valid value is backup. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.blob._generated.models.FileShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.blob.models.FileShareTokenIntent
         :keyword source_encryption_key: Optional. Specifies the source encryption key to use to encrypt
          the source data provided in the request. Default value is None.
         :paramtype source_encryption_key: str
@@ -8439,7 +8408,7 @@ class PageBlobOperations:
          hash. Currently, the only accepted value is "AES256". Must be provided if the
          x-ms-source-encryption-key is provided. "AES256" Default value is None.
         :paramtype source_encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+         ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword etag: check if resource is changed. Set None to skip checking etag. Default value is
          None.
         :paramtype etag: str
@@ -8912,8 +8881,7 @@ class PageBlobOperations:
         :keyword encryption_algorithm: Optional.  Version 2019-07-07 and later.  Specifies the
          algorithm to use for encryption. If not specified, the default is AES256. "AES256" Default
          value is None.
-        :paramtype encryption_algorithm: str or
-         ~azure.storage.blob._generated.models.EncryptionAlgorithmType
+        :paramtype encryption_algorithm: str or ~azure.storage.blob.models.EncryptionAlgorithmType
         :keyword encryption_scope: Optional.  Version 2019-07-07 and later.  Specifies the encryption
          scope to use to encrypt the data provided in the request. If not specified, the request will be
          encrypted with the root account key. Default value is None.
@@ -9030,8 +8998,7 @@ class PageBlobOperations:
          the request. This property applies to page blobs only. This property indicates how the service
          should modify the blob's sequence number. Known values are: "increment", "max", and "update".
          Required.
-        :paramtype sequence_number_action: str or
-         ~azure.storage.blob._generated.models.SequenceNumberActionType
+        :paramtype sequence_number_action: str or ~azure.storage.blob.models.SequenceNumberActionType
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.

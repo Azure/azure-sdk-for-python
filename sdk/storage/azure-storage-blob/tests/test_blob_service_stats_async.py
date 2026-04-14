@@ -17,17 +17,18 @@ class TestServiceStatsAsync(AsyncStorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
         assert stats is not None
-        assert stats['geo_replication'] is not None
+        assert stats["geo_replication"] is not None
 
-        assert stats['geo_replication']['status'] == 'live'
-        assert stats['geo_replication']['last_sync_time'] is not None
+        assert stats["geo_replication"]["status"] == "live"
+        assert stats["geo_replication"]["last_sync_time"] is not None
 
     def _assert_stats_unavailable(self, stats):
         assert stats is not None
-        assert stats['geo_replication'] is not None
+        assert stats["geo_replication"] is not None
 
-        assert stats['geo_replication']['status'] == 'unavailable'
-        assert stats['geo_replication']['last_sync_time'] is None
+        assert stats["geo_replication"]["status"] == "unavailable"
+        assert stats["geo_replication"]["last_sync_time"] is None
+
     # --------------------------------------------------------------------------
 
     @pytest.mark.playback_test_only
@@ -64,5 +65,6 @@ class TestServiceStatsAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         self._assert_stats_unavailable(stats)
+
 
 # ------------------------------------------------------------------------------
