@@ -4,11 +4,8 @@
 # license information.
 # -------------------------------------------------------------------------
 from itertools import product
-import pytest
 
-from azure.core.pipeline import Pipeline
-from azure.core.pipeline.policies import UserAgentPolicy
-from azure.core.exceptions import AzureError
+import pytest
 
 from utils import (
     SYNC_TRANSPORTS,
@@ -17,6 +14,10 @@ from utils import (
     create_transport_from_connection,
     assert_transport_connection,
 )
+
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline.policies import UserAgentPolicy
+from azure.core.exceptions import AzureError
 
 
 @pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
@@ -28,7 +29,7 @@ def test_transport_socket_timeout(transport, requesttype):
     # by the retry policy.
     with pytest.raises(AzureError):
         with Pipeline(transport(), policies=policies) as pipeline:
-            response = pipeline.run(request, connection_timeout=0.000001, read_timeout=0.000001)
+            pipeline.run(request, connection_timeout=0.000001, read_timeout=0.000001)
 
 
 @pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))

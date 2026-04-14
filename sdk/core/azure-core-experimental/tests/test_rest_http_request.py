@@ -6,13 +6,14 @@
 
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
-import pytest
 from itertools import product
 
-from azure.core.rest import HttpRequest as RestHttpRequest
+import pytest
 
 from rest_client import MockRestClient
 from utils import SYNC_TRANSPORTS, HTTP_REQUESTS, NamedIo, create_http_request
+
+from azure.core.rest import HttpRequest as RestHttpRequest
 
 
 @pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))

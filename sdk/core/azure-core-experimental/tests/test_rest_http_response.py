@@ -7,15 +7,16 @@
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
 import io
-import pytest
+import xml.etree.ElementTree as ET
 from itertools import product
 
-from azure.core.exceptions import HttpResponseError
-from azure.core.rest import HttpRequest as RestHttpRequest
-import xml.etree.ElementTree as ET
+import pytest
 
 from rest_client import MockRestClient
 from utils import SYNC_TRANSPORTS, HTTP_REQUESTS, create_http_request
+
+from azure.core.exceptions import HttpResponseError
+from azure.core.rest import HttpRequest as RestHttpRequest
 
 
 @pytest.fixture

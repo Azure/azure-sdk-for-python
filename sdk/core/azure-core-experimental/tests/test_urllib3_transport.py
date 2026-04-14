@@ -1,6 +1,7 @@
-import urllib3
-import pytest
 import io
+
+import pytest
+import urllib3
 
 from azure.core.exceptions import ServiceRequestError
 from azure.core.experimental.transport import Urllib3Transport

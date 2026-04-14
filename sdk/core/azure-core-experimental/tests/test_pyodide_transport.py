@@ -26,7 +26,6 @@
 """Tests that mock the browser layer."""
 import asyncio
 import sys
-from typing import NamedTuple
 from unittest import mock
 
 import pytest

@@ -3,14 +3,12 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import sys
-import pytest
 from itertools import product
+
+import pytest
 
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
-from azure.core.rest import HttpRequest
-
 from rest_client import MockRestClient
 from utils import SYNC_TRANSPORTS, HTTP_REQUESTS, create_http_request
 
@@ -29,7 +27,7 @@ def get_response_headers(port):
     def _get_response_headers(request, transport):
         client = MockRestClient(port, transport=transport)
         response = client.send_request(request)
-        response.raise_for_status
+        response.raise_for_status()
         for header in RESPONSE_HEADERS_TO_IGNORE:
             response.headers.pop(header, None)
         return response.headers

@@ -3,33 +3,25 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import pytest
-import types
 import io
 import xml.etree.ElementTree as ET
 
-import urllib3
 import httpx
+import urllib3
 
 ############################## LISTS USED TO PARAMETERIZE TESTS ##############################
 from azure.core.rest import HttpRequest as RestHttpRequest
 from azure.core.pipeline.transport import HttpRequest as PipelineTransportHttpRequest
-from azure.core.pipeline._tools import is_rest
+
+from azure.core.experimental.transport import Urllib3Transport
+from azure.core.experimental.transport import HttpXTransport
 
 HTTP_REQUESTS = [PipelineTransportHttpRequest, RestHttpRequest]
 
 SYNC_TRANSPORTS = []
 ASYNC_TRANSPORTS = []
 
-from azure.core.experimental.transport import Urllib3Transport
-
 SYNC_TRANSPORTS.append(Urllib3Transport)
-
-
-from azure.core.experimental.transport import (
-    HttpXTransport,
-    AsyncHttpXTransport,
-)
 
 # SYNC_TRANSPORTS.append(HttpXTransport)
 # ASYNC_TRANSPORTS.append(AsyncHttpXTransport)
@@ -83,7 +75,7 @@ def create_http_request(http_request, *args, **kwargs):
 def create_transport_from_connection(transport):
     if transport == Urllib3Transport:
         return Urllib3Transport(pool=urllib3.PoolManager(), pool_owner=False)
-    elif transport == HttpXTransport:
+    if transport == HttpXTransport:
         return HttpXTransport(client=httpx.Client(), client_owner=False)
     raise ValueError(f"Unexpected transport type: {transport}")
 

@@ -3,13 +3,14 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import pytest
 from itertools import product
 
-from azure.core.exceptions import HttpResponseError
+import pytest
 
 from rest_client import MockRestClient
 from utils import SYNC_TRANSPORTS, HTTP_REQUESTS, create_http_request
+
+from azure.core.exceptions import HttpResponseError
 
 
 @pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
@@ -33,7 +34,8 @@ def test_malformed_json(port, transport, requesttype):
         response.raise_for_status()
     assert (
         str(ex.value)
-        == 'Operation returned an invalid status \'BAD REQUEST\'\nContent: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]'
+        == "Operation returned an invalid status 'BAD REQUEST'\n"
+        'Content: {"code": 400, "error": {"global": ["MY-ERROR-MESSAGE-THAT-IS-COMING-FROM-THE-API"]'
     )
 
 

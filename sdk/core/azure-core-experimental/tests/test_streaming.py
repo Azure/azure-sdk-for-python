@@ -17,13 +17,14 @@ plain_no_header - text file with {Content-Type: text/plain}
 compressed_no_header - tar.gz file with {Content-Type: application/gzip}
 compressed_header - tar.gz file with {Content-Type: application/gzip} and {Content-Encoding: gzip}
 """
-import pytest
 from itertools import product
+
+import pytest
+
+from utils import SYNC_TRANSPORTS, HTTP_REQUESTS, create_http_request
 
 from azure.core import PipelineClient
 from azure.core.exceptions import DecodeError
-
-from utils import SYNC_TRANSPORTS, HTTP_REQUESTS, create_http_request
 
 
 @pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))

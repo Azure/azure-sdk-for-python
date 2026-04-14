@@ -3,13 +3,14 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import pytest
 from itertools import product
 
-from azure.core.exceptions import ResponseNotReadError
+import pytest
 
-from utils import SYNC_TRANSPORTS, HTTP_REQUESTS, create_http_request
 from rest_client import MockRestClient
+from utils import SYNC_TRANSPORTS, HTTP_REQUESTS, create_http_request
+
+from azure.core.exceptions import ResponseNotReadError
 
 
 @pytest.mark.parametrize("transport,requesttype", product(SYNC_TRANSPORTS, HTTP_REQUESTS))
