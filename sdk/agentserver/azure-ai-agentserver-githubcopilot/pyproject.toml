@@ -59,6 +59,7 @@ known-first-party = ["azure.ai.agentserver.githubcopilot"]
 combine-as-imports = true
 
 [tool.azure-sdk-build]
+analyze_python_version = "3.11"
 breaking = false
 pyright = false
 verifytypes = false

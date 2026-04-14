@@ -58,10 +58,21 @@ def build_parser() -> argparse.ArgumentParser:
         "--isolate", action="store_true", default=False, help="If set, run in an isolated virtual environment."
     )
     parser.add_argument(
+<<<<<<< HEAD
         "--pypi",
         action="store_true",
         default=False,
         help="Use PyPI directly instead of the CFS (Central Feed Services) feed.",
+=======
+        "--python",
+        default=None,
+        dest="python_version",
+        metavar="VERSION",
+        help=(
+            "Python version to use when creating the isolated venv (e.g. 3.13). "
+            "Passed through to 'uv venv --python'. Requires --isolate and uv."
+        ),
+>>>>>>> main
     )
 
     # mutually exclusive logging options
@@ -84,8 +95,22 @@ def build_parser() -> argparse.ArgumentParser:
         help="Glob pattern for packages. Defaults to '**', but will match patterns below CWD if a value is provided.",
     )
     # allow --isolate to be specified after the subcommand as well
+    # use SUPPRESS so the subparser default doesn't overwrite a value set by the global parser
     common.add_argument(
-        "--isolate", action="store_true", default=False, help="If set, run in an isolated virtual environment."
+        "--isolate",
+        action="store_true",
+        default=argparse.SUPPRESS,
+        help="If set, run in an isolated virtual environment.",
+    )
+    common.add_argument(
+        "--python",
+        default=argparse.SUPPRESS,
+        dest="python_version",
+        metavar="VERSION",
+        help=(
+            "Python version to use when creating the isolated venv (e.g. 3.13). "
+            "Passed through to 'uv venv --python'. Requires --isolate and uv."
+        ),
     )
     common.add_argument(
         "--service",
@@ -176,6 +201,18 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
         if using_cfs:
             logger.info("Installing from CFS feed: %s", CFS_INDEX_URL)
+    # --python requires both --isolate and uv
+    python_version = getattr(args, "python_version", None)
+    if python_version:
+        isolate = getattr(args, "isolate", False)
+        if not isolate:
+            parser.error(
+                "--python requires --isolate to create a virtual environment with the specified Python version."
+            )
+
+        pip_impl = os.environ.get("TOX_PIP_IMPL", "pip").lower()
+        if pip_impl != "uv":
+            parser.error("--python requires uv as the backend. Install uv or set TOX_PIP_IMPL=uv.")
 
     try:
         result = args.func(args)
