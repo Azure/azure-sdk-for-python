@@ -19,7 +19,7 @@ from modeltypes._utils.model_base import (
     TYPE_HANDLER_REGISTRY,
     _deserialize,
 )
-from modeltypes._utils.serialization import Model as MsrestModel
+from modeltypes._utils.serialization import Model as MsrestModel  # pylint: disable=unused-import
 from modeltypes import models
 
 from azure.core.serialization import (
@@ -30,7 +30,7 @@ from azure.core.serialization import (
     is_generated_model,
     attribute_list,
 )
-from azure.core.exceptions import DeserializationError
+from azure.core.exceptions import DeserializationError  # pylint: disable=unused-import
 
 # pylint: disable=redefined-outer-name
 
@@ -105,7 +105,7 @@ class PositiveUtcOffset(tzinfo):
 def test_NULL_is_falsy():
     assert NULL is not False
     assert bool(NULL) is False
-    assert NULL is NULL
+    assert NULL is NULL  # pylint: disable=comparison-with-itself
 
 
 @pytest.fixture
@@ -345,7 +345,7 @@ def test_set_collection():
     assert 50 in m.my_set
 
 
-def test_empty_collection_caching():
+def test_empty_collection_caching():  # pylint: disable=too-many-statements
     """Test edge cases with empty collections to ensure caching works correctly."""
 
     # Test 1: Empty dictionary
@@ -698,7 +698,7 @@ def test_cache_model_equality():
 
 def test_dictionary_set_datetime():
     """Test that dictionary with datetime values properly serializes/deserializes."""
-    from datetime import datetime, timezone
+    from datetime import timezone
 
     class MyModel(HybridModel):
         my_dict: Dict[str, datetime] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1758,7 +1758,9 @@ class TestTypeHandlerRegistry:
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.ExternalTestModel)
         def custom_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.ExternalTestModel:
-            return TestTypeHandlerRegistry.ExternalTestModel(label=data["label"], count=data["count"], amount=data["amount"])
+            return TestTypeHandlerRegistry.ExternalTestModel(
+                label=data["label"], count=data["count"], amount=data["amount"]
+            )
 
         deserializer = TYPE_HANDLER_REGISTRY.get_deserializer(TestTypeHandlerRegistry.ExternalTestModel)
 
@@ -1776,7 +1778,9 @@ class TestTypeHandlerRegistry:
     def test_deserialize_external_model_manual_decorator(self):
 
         def custom_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.ExternalTestModel:
-            return TestTypeHandlerRegistry.ExternalTestModel(label=data["label"], count=data["count"], amount=data["amount"])
+            return TestTypeHandlerRegistry.ExternalTestModel(
+                label=data["label"], count=data["count"], amount=data["amount"]
+            )
 
         TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.ExternalTestModel)(custom_deserializer)
 
@@ -1827,7 +1831,9 @@ class TestTypeHandlerRegistry:
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.ExternalTestModel)
         def custom_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.ExternalTestModel:
-            return TestTypeHandlerRegistry.ExternalTestModel(label=data["label"], count=data["count"], amount=data["amount"])
+            return TestTypeHandlerRegistry.ExternalTestModel(
+                label=data["label"], count=data["count"], amount=data["amount"]
+            )
 
         class GeneratedModel(HybridModel):
             dog: models.HybridDog = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1870,7 +1876,9 @@ class TestTypeHandlerRegistry:
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.ExternalTestModel)
         def custom_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.ExternalTestModel:
-            return TestTypeHandlerRegistry.ExternalTestModel(label=data["label"], count=data["count"], amount=data["amount"])
+            return TestTypeHandlerRegistry.ExternalTestModel(
+                label=data["label"], count=data["count"], amount=data["amount"]
+            )
 
         class GeneratedModel(HybridModel):
             externals: List[TestTypeHandlerRegistry.ExternalTestModel] = rest_field(
@@ -1917,7 +1925,9 @@ class TestTypeHandlerRegistry:
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.ExternalTestModel)
         def custom_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.ExternalTestModel:
-            return TestTypeHandlerRegistry.ExternalTestModel(label=data["label"], count=data["count"], amount=data["amount"])
+            return TestTypeHandlerRegistry.ExternalTestModel(
+                label=data["label"], count=data["count"], amount=data["amount"]
+            )
 
         class GeneratedModel(HybridModel):
             externals: Dict[str, TestTypeHandlerRegistry.ExternalTestModel] = rest_field(
@@ -1948,7 +1958,10 @@ class TestTypeHandlerRegistry:
         assert isinstance(deserialized, GeneratedModel)
         assert isinstance(deserialized.externals, dict)
         assert len(deserialized.externals) == 2
-        assert all(isinstance(item, TestTypeHandlerRegistry.ExternalTestModel) for item in deserialized.externals.values())
+        assert all(
+            isinstance(item, TestTypeHandlerRegistry.ExternalTestModel)
+            for item in deserialized.externals.values()
+        )
         assert deserialized.externals["first"].label == "label1"
         assert deserialized.externals["first"].count == 1
         assert deserialized.externals["first"].amount == 1.1
@@ -1964,7 +1977,9 @@ class TestTypeHandlerRegistry:
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.ExternalTestModel)
         def custom_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.ExternalTestModel:
-            return TestTypeHandlerRegistry.ExternalTestModel(label=data["label"], count=data["count"], amount=data["amount"])
+            return TestTypeHandlerRegistry.ExternalTestModel(
+                label=data["label"], count=data["count"], amount=data["amount"]
+            )
 
         class GeneratedModel(HybridModel):
             external: Optional[TestTypeHandlerRegistry.ExternalTestModel] = rest_field(
@@ -1972,7 +1987,11 @@ class TestTypeHandlerRegistry:
             )
 
         # Test with the optional model present
-        model = GeneratedModel(external=TestTypeHandlerRegistry.ExternalTestModel(label="test_label", count=42, amount=3.14))
+        model = GeneratedModel(
+            external=TestTypeHandlerRegistry.ExternalTestModel(
+                label="test_label", count=42, amount=3.14
+            )
+        )
 
         expected_dict = {"external": {"label": "test_label", "count": 42, "amount": 3.14}}
 
@@ -2008,7 +2027,9 @@ class TestTypeHandlerRegistry:
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.ExternalTestModel)
         def custom_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.ExternalTestModel:
-            return TestTypeHandlerRegistry.ExternalTestModel(label=data["label"], count=data["count"], amount=data["amount"])
+            return TestTypeHandlerRegistry.ExternalTestModel(
+                label=data["label"], count=data["count"], amount=data["amount"]
+            )
 
         class GeneratedModel(HybridModel):
             external: Union[str, TestTypeHandlerRegistry.ExternalTestModel] = rest_field(
@@ -2016,7 +2037,11 @@ class TestTypeHandlerRegistry:
             )
 
         # Test with the union as the external model
-        model = GeneratedModel(external=TestTypeHandlerRegistry.ExternalTestModel(label="test_label", count=42, amount=3.14))
+        model = GeneratedModel(
+            external=TestTypeHandlerRegistry.ExternalTestModel(
+                label="test_label", count=42, amount=3.14
+            )
+        )
 
         expected_dict = {"external": {"label": "test_label", "count": 42, "amount": 3.14}}
 
@@ -2059,7 +2084,9 @@ class TestTypeHandlerRegistry:
         def custom_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.ExternalTestModel:
             if "label" not in data:
                 raise ValueError("Missing 'label' key for ExternalTestModel deserialization")
-            return TestTypeHandlerRegistry.ExternalTestModel(label=data["label"], count=data["count"], amount=data["amount"])
+            return TestTypeHandlerRegistry.ExternalTestModel(
+                label=data["label"], count=data["count"], amount=data["amount"]
+            )
 
         input_dict = {"item": {"label": "test_label", "count": 42, "amount": 3.14}}
         deserialized = _deserialize(ContainerModel, input_dict)
@@ -2170,7 +2197,9 @@ class TestTypeHandlerRegistry:
 
         @TYPE_HANDLER_REGISTRY.register_deserializer(TestTypeHandlerRegistry.ExternalTestModel)
         def custom_deserializer(_cls, data: Dict[str, Any]) -> TestTypeHandlerRegistry.ExternalTestModel:
-            return TestTypeHandlerRegistry.ExternalTestModel(label=data["label"], count=data["count"], amount=data["amount"])
+            return TestTypeHandlerRegistry.ExternalTestModel(
+                label=data["label"], count=data["count"], amount=data["amount"]
+            )
 
         class NestedModel(HybridModel):
             custom_model: TestTypeHandlerRegistry.ExternalTestModel = rest_field(
@@ -2184,7 +2213,13 @@ class TestTypeHandlerRegistry:
             child: ChildModel = rest_field(visibility=["read", "create", "update", "delete", "query"])
 
         model = BaseModel(
-            child=ChildModel(nested=NestedModel(custom_model=TestTypeHandlerRegistry.ExternalTestModel(label="test_label", count=42, amount=3.14)))
+            child=ChildModel(
+                nested=NestedModel(
+                    custom_model=TestTypeHandlerRegistry.ExternalTestModel(
+                        label="test_label", count=42, amount=3.14
+                    )
+                )
+            )
         )
 
         expected_dict = {"child": {"nested": {"foo": {"label": "test_label", "count": 42, "amount": 3.14}}}}
@@ -2452,7 +2487,7 @@ class TestBackcompatPropertyMatrix:
         # Should use attr_name, excluded when exclude_readonly=True
         assert attribute_list(model) == ["client_field"]
         assert as_attribute_dict(model) == {"client_field": "value"}
-        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert not as_attribute_dict(model, exclude_readonly=True)
         assert getattr(model, "client_field") == "value"
         assert get_backcompat_attr_name(model, "client_field") == "client_field"
 
@@ -2481,7 +2516,7 @@ class TestBackcompatPropertyMatrix:
 
         assert attribute_list(model) == ["keys_property"]
         assert as_attribute_dict(model) == {"keys_property": "value"}
-        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert not as_attribute_dict(model, exclude_readonly=True)
         assert get_backcompat_attr_name(model, "keys_property") == "keys"
         assert getattr(model, "keys_property") == "value"
         assert set(model.keys()) == {"keys_property"}
@@ -2511,7 +2546,7 @@ class TestBackcompatPropertyMatrix:
 
         assert attribute_list(model) == ["pop_property"]
         assert as_attribute_dict(model) == {"pop_property": "value"}
-        assert as_attribute_dict(model, exclude_readonly=True) == {}
+        assert not as_attribute_dict(model, exclude_readonly=True)
         assert getattr(model, "pop_property") == "value"
         assert set(model.keys()) == {"popWire"}
 

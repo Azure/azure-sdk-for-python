@@ -8,8 +8,6 @@
 # NOTE: These tests are heavily inspired from the httpx test suite: https://github.com/encode/httpx/tree/master/tests
 # Thank you httpx for your wonderful tests!
 import io
-import pytest
-import sys
 import os
 
 try:
@@ -17,19 +15,21 @@ try:
 except ImportError:
     import collections  # type: ignore
 
-from azure.core.configuration import Configuration
-from azure.core.rest import HttpRequest
-from azure.core.pipeline.policies import CustomHookPolicy, UserAgentPolicy, SansIOHTTPPolicy, RetryPolicy
-from azure.core.pipeline._tools import is_rest
+import pytest
 from rest_client import MockRestClient
-from azure.core import PipelineClient
 from utils import NamedIo
+
+from azure.core import PipelineClient
+from azure.core.configuration import Configuration
+from azure.core.pipeline._tools import is_rest
+from azure.core.pipeline.policies import CustomHookPolicy, UserAgentPolicy, SansIOHTTPPolicy, RetryPolicy
+from azure.core.rest import HttpRequest
 
 
 @pytest.fixture
 def assert_iterator_body():
     def _comparer(request, final_value):
-        content = b"".join([p for p in request.content])
+        content = b"".join(request.content)
         assert content == final_value
 
     return _comparer
@@ -56,7 +56,7 @@ def test_iterable_content(assert_iterator_body):
             yield b"test 123"  # pragma: nocover
 
     request = HttpRequest("POST", "http://example.org", content=Content())
-    assert request.headers == {}
+    assert not request.headers
     assert_iterator_body(request, b"test 123")
 
 
@@ -65,7 +65,7 @@ def test_generator_with_transfer_encoding_header(assert_iterator_body):
         yield b"test 123"  # pragma: nocover
 
     request = HttpRequest("POST", "http://example.org", content=content())
-    assert request.headers == {}
+    assert not request.headers
     assert_iterator_body(request, b"test 123")
 
 
@@ -128,7 +128,7 @@ def test_override_accept_encoding_header():
     assert request.headers["Accept-Encoding"] == "identity"
 
 
-"""Test request body"""
+"""Test request body"""  # pylint: disable=pointless-string-statement
 
 
 def test_empty_content():
@@ -184,21 +184,21 @@ def test_iterator_content(assert_iterator_body):
     assert isinstance(request.content, collections.Iterable)
 
     assert_iterator_body(request, b"Hello, world!")
-    assert request.headers == {}
+    assert not request.headers
 
     # Support 'data' for compat with requests.
     request = HttpRequest("POST", url="http://example.org", data=hello_world())
     assert isinstance(request.content, collections.Iterable)
 
     assert_iterator_body(request, b"Hello, world!")
-    assert request.headers == {}
+    assert not request.headers
 
     # transfer encoding should still be set for GET requests
     request = HttpRequest("GET", url="http://example.org", data=hello_world())
     assert isinstance(request.content, collections.Iterable)
 
     assert_iterator_body(request, b"Hello, world!")
-    assert request.headers == {}
+    assert not request.headers
 
 
 def test_json_content():
@@ -293,7 +293,7 @@ def test_multipart_invalid_value(value):
 def test_empty_request():
     request = HttpRequest("POST", url="http://example.org", data={}, files={})
 
-    assert request.headers == {}
+    assert not request.headers
     assert not request.content  # in core, we don't convert urlencoded dict to bytes representation in content
 
 
@@ -373,7 +373,9 @@ def test_request_policies_chain(port):
             # modify header to know we entered this callback
             request.http_request.headers = {
                 "x-ms-date": "Thu, 14 Jun 2018 16:46:54 GMT",
-                "Authorization": "SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=",  # fake key suppressed in credscan
+                "Authorization": (
+                    "SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE="
+                ),  # fake key suppressed in credscan
                 "Content-Length": "0",
             }
 
@@ -385,7 +387,8 @@ def test_request_policies_chain(port):
             expected = (
                 b"DELETE http://localhost:5000/container0/blob0 HTTP/1.1\r\n"
                 b"x-ms-date: Thu, 14 Jun 2018 16:46:54 GMT\r\n"
-                b"Authorization: SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=\r\n"  # fake key suppressed in credscan
+                b"Authorization: SharedKey account:G4jjBXA7LI/RnWKIOQ8i9xH4p76pAQ+4Fs4R1VxasaE=\r\n"
+                # fake key suppressed in credscan
                 b"Content-Length: 0\r\n"
                 b"\r\n"
             )
@@ -415,7 +418,7 @@ def test_per_call_policies_old_then_new(port):
     class OldPolicy(SansIOHTTPPolicy):
         """A policy that deals with a rest request thinking that it's an old request"""
 
-        def on_request(self, pipeline_request):
+        def on_request(self, pipeline_request):  # pylint: disable=arguments-renamed
             request = pipeline_request.http_request
             assert is_rest(request)
             assert request.body == '{"hello": "world"}'  # old request has property body
@@ -423,7 +426,7 @@ def test_per_call_policies_old_then_new(port):
             return pipeline_request
 
     class NewPolicy(SansIOHTTPPolicy):
-        def on_request(self, pipeline_request):
+        def on_request(self, pipeline_request):  # pylint: disable=arguments-renamed
             request = pipeline_request.http_request
             assert is_rest(request)
             assert request.content == "change to me!"  # new request has property content

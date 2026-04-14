@@ -31,7 +31,7 @@ from azure.core.pipeline.policies import (
     BearerTokenCredentialPolicy,
     AsyncBearerTokenCredentialPolicy,
 )
-import azure.core.pipeline.policies as policies
+from azure.core.pipeline import policies
 from azure.core.credentials import AzureNamedKeyCredential
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -74,16 +74,20 @@ class _ServiceTest(PerfStressTest):
             if self.args.sync:
                 try:
                     self.sync_transport = sync_transport_types[self.args.transport]
-                except KeyError:
-                    raise ValueError(f"Invalid sync transport:{self.args.transport}\n Valid options are:\n- requests\n")
+                except KeyError as exc:
+                    raise ValueError(
+                        f"Invalid sync transport:{self.args.transport}\n"
+                        " Valid options are:\n- requests\n"
+                    ) from exc
             # if async, override async default
             else:
                 try:
                     self.async_transport = async_transport_types[self.args.transport]
-                except KeyError:
+                except KeyError as exc:
                     raise ValueError(
-                        f"Invalid async transport:{self.args.transport}\n Valid options are:\n- aiohttp\n- requests\n"
-                    )
+                        f"Invalid async transport:{self.args.transport}\n"
+                        " Valid options are:\n- aiohttp\n- requests\n"
+                    ) from exc
 
         self.error_map = {
             401: ClientAuthenticationError,
@@ -119,7 +123,8 @@ class _ServiceTest(PerfStressTest):
                     policy = getattr(policies, p)
                 except AttributeError as exc:
                     raise ValueError(
-                        f"Azure Core has no policy named {exc.name}. Please use policies from the following list: {policies.__all__}"
+                        f"Azure Core has no policy named {exc.name}."
+                        f" Please use policies from the following list: {policies.__all__}"
                     ) from exc
                 sync_policies.append(policy(sdk_moniker=self.sdk_moniker))
             sync_pipeline = Pipeline(transport=self.sync_transport(), policies=sync_policies)
@@ -152,7 +157,8 @@ class _ServiceTest(PerfStressTest):
                     policy = getattr(policies, p)
                 except AttributeError as exc:
                     raise ValueError(
-                        f"Azure Core has no policy named {exc.name}. Please use policies from the following list: {policies.__all__}"
+                        f"Azure Core has no policy named {exc.name}."
+                        f" Please use policies from the following list: {policies.__all__}"
                     ) from exc
                 async_policies.append(policy(sdk_moniker=self.sdk_moniker))
             async_pipeline = AsyncPipeline(transport=self.async_transport(), policies=async_policies)
@@ -182,8 +188,11 @@ class _ServiceTest(PerfStressTest):
             "--transport",
             nargs="?",
             type=str,
-            help="""Underlying HttpTransport type. Defaults to `aiohttp` if async, `requests` if sync. Other possible values for async:\n"""
-            """ - `requests`\n""",
+            help=(
+                "Underlying HttpTransport type. Defaults to `aiohttp` if async,"
+                " `requests` if sync. Other possible values for async:\n"
+                " - `requests`\n"
+            ),
             default=None,
         )
         parser.add_argument(

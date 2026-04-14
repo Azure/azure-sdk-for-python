@@ -26,7 +26,15 @@
 import sys
 from unittest.mock import Mock
 
+import aiohttp
+import pytest
+import trio
+from utils import HTTP_REQUESTS
+
+from azure.core import AsyncPipelineClient
+from azure.core.configuration import Configuration
 from azure.core.credentials import AccessToken
+from azure.core.exceptions import AzureError
 from azure.core.pipeline import AsyncPipeline
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
@@ -36,7 +44,6 @@ from azure.core.pipeline.policies import (
     AsyncRetryPolicy,
     AsyncRedirectPolicy,
     AsyncHTTPPolicy,
-    AsyncRetryPolicy,
     HttpLoggingPolicy,
     SensitiveHeaderCleanupPolicy,
 )
@@ -47,19 +54,8 @@ from azure.core.pipeline.transport import (
     AioHttpTransport,
     HttpRequest,
 )
-
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.polling.base_polling import LocationPolling
-
-from azure.core.configuration import Configuration
-from azure.core import AsyncPipelineClient
-from azure.core.exceptions import AzureError
-
-import aiohttp
-import trio
-
-import pytest
-from utils import HTTP_REQUESTS
 
 
 try:
@@ -92,8 +88,8 @@ async def test_sans_io_exception(http_request):
         await pipeline.run(req)
 
     class SwapExec(SansIOHTTPPolicy):
-        def on_exception(self, requests, **kwargs):
-            exc_type, exc_value, exc_traceback = sys.exc_info()
+        def on_exception(self, requests, **kwargs):  # pylint: disable=arguments-renamed
+            _exc_type, exc_value, _exc_traceback = sys.exc_info()
             raise NotImplementedError(exc_value)
 
     pipeline = AsyncPipeline(BrokenSender(), [SwapExec()])
@@ -172,7 +168,7 @@ def test_async_trio_transport_sleep():
         async with TrioRequestsTransport() as transport:
             await transport.sleep(1)
 
-    response = trio.run(do)
+    _response = trio.run(do)
 
 
 def test_default_http_logging_policy():
@@ -250,7 +246,7 @@ async def test_conf_async_trio_auth_policy_concurrent(port, http_request):
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 async def test_retry_without_http_response(http_request):
     class NaughtyPolicy(AsyncHTTPPolicy):
-        def send(*args):
+        def send(*args):  # pylint: disable=no-self-argument,invalid-overridden-method
             raise AzureError("boo")
 
     policies = [AsyncRetryPolicy(), NaughtyPolicy()]
@@ -260,13 +256,13 @@ async def test_retry_without_http_response(http_request):
 
 
 @pytest.mark.asyncio
-async def test_add_custom_policy():
+async def test_add_custom_policy():  # pylint: disable=too-many-statements
     class BooPolicy(AsyncHTTPPolicy):
-        def send(*args):
+        def send(*args):  # pylint: disable=no-self-argument,invalid-overridden-method
             raise AzureError("boo")
 
     class FooPolicy(AsyncHTTPPolicy):
-        def send(*args):
+        def send(*args):  # pylint: disable=no-self-argument,invalid-overridden-method
             raise AzureError("boo")
 
     config = Configuration()

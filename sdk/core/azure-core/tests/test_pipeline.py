@@ -25,21 +25,23 @@
 # --------------------------------------------------------------------------
 
 import json
-import requests
+import sys
+import xml.etree.ElementTree as ET
 
 try:
     from io import BytesIO
 except ImportError:
     from cStringIO import StringIO as BytesIO
-import xml.etree.ElementTree as ET
-import sys
 
 import pytest
+import requests
+from utils import HTTP_REQUESTS, is_rest
 
-from azure.core.configuration import Configuration
-from azure.core.pipeline import Pipeline
-from azure.core.rest import HttpRequest
 from azure.core import PipelineClient
+from azure.core.configuration import Configuration
+from azure.core.exceptions import AzureError
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline._base import cleanup_kwargs_for_transport
 from azure.core.pipeline.policies import (
     SansIOHTTPPolicy,
     UserAgentPolicy,
@@ -48,7 +50,6 @@ from azure.core.pipeline.policies import (
     RetryPolicy,
     HttpLoggingPolicy,
     HTTPPolicy,
-    SansIOHTTPPolicy,
     SensitiveHeaderCleanupPolicy,
 )
 from azure.core.pipeline.transport._base import PipelineClientBase, _format_url_section
@@ -56,10 +57,7 @@ from azure.core.pipeline.transport import (
     HttpTransport,
     RequestsTransport,
 )
-from utils import HTTP_REQUESTS, is_rest
-
-from azure.core.exceptions import AzureError
-from azure.core.pipeline._base import cleanup_kwargs_for_transport
+from azure.core.rest import HttpRequest
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
@@ -119,8 +117,8 @@ def test_sans_io_exception(http_request):
         pipeline.run(req)
 
     class SwapExec(SansIOHTTPPolicy):
-        def on_exception(self, requests, **kwargs):
-            exc_type, exc_value, exc_traceback = sys.exc_info()
+        def on_exception(self, requests, **kwargs):  # pylint: disable=arguments-renamed
+            _exc_type, exc_value, _exc_traceback = sys.exc_info()
             raise NotImplementedError(exc_value)
 
     pipeline = Pipeline(BrokenSender(), [SwapExec()])
@@ -130,7 +128,7 @@ def test_sans_io_exception(http_request):
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_requests_socket_timeout(http_request):
-    conf = Configuration()
+    _conf = Configuration()
     request = http_request("GET", "https://bing.com")
     policies = [UserAgentPolicy("myusergant"), RedirectPolicy()]
     # Sometimes this will raise a read timeout, sometimes a socket timeout depending on timing.
@@ -138,7 +136,7 @@ def test_requests_socket_timeout(http_request):
     # by the retry policy.
     with pytest.raises(AzureError):
         with Pipeline(RequestsTransport(), policies=policies) as pipeline:
-            response = pipeline.run(request, connection_timeout=0.000001, read_timeout=0.000001)
+            _response = pipeline.run(request, connection_timeout=0.000001, read_timeout=0.000001)
 
 
 def test_format_url_basic():
@@ -251,13 +249,13 @@ def test_format_url_from_http_request():
 def test_format_url_braces_with_dot():
     base_url = "https://bing.com/{aaa.bbb}"
     with pytest.raises(ValueError):
-        url = _format_url_section(base_url)
+        _url = _format_url_section(base_url)
 
 
 def test_format_url_single_brace():
     base_url = "https://bing.com/{aaa.bbb"
     with pytest.raises(ValueError):
-        url = _format_url_section(base_url)
+        _url = _format_url_section(base_url)
 
 
 def test_format_incorrect_endpoint():
@@ -301,8 +299,7 @@ def test_request_stream(http_request):
     assert request.data == data
 
     def data_gen():
-        for i in range(10):
-            yield i
+        yield from range(10)
 
     data = data_gen()
     request.set_streamed_data_body(data)
@@ -366,13 +363,13 @@ def test_repr(http_request):
     assert repr(request) == "<HttpRequest [GET], url: 'hello.com'>"
 
 
-def test_add_custom_policy():
+def test_add_custom_policy():  # pylint: disable=too-many-statements
     class BooPolicy(HTTPPolicy):
-        def send(*args):
+        def send(*args):  # pylint: disable=no-self-argument
             raise AzureError("boo")
 
     class FooPolicy(HTTPPolicy):
-        def send(*args):
+        def send(*args):  # pylint: disable=no-self-argument
             raise AzureError("boo")
 
     config = Configuration()
@@ -477,7 +474,7 @@ def test_no_cleanup_policy_when_redirect_policy_is_empty():
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_basic_requests(port, http_request):
 
-    conf = Configuration()
+    _conf = Configuration()
     request = http_request("GET", "http://localhost:{}/basic/string".format(port))
     policies = [UserAgentPolicy("myusergant"), RedirectPolicy()]
     with Pipeline(RequestsTransport(), policies=policies) as pipeline:

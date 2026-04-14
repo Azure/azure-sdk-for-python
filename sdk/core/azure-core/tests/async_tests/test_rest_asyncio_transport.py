@@ -3,14 +3,14 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
+import pytest
+import pytest_asyncio
+from rest_client_async import AsyncMockRestClient
+from utils import readonly_checks
+
 from azure.core.pipeline.transport import AsyncioRequestsTransport
 from azure.core.rest import HttpRequest
 from azure.core.rest._requests_asyncio import RestAsyncioRequestsTransportResponse
-from rest_client_async import AsyncMockRestClient
-
-import pytest
-import pytest_asyncio
-from utils import readonly_checks
 
 
 @pytest_asyncio.fixture
@@ -32,8 +32,8 @@ async def test_async_gen_data(port, client):
         async def __anext__(self):
             try:
                 return next(self._range)
-            except StopIteration:
-                raise StopAsyncIteration
+            except StopIteration as exc:
+                raise StopAsyncIteration from exc
 
     request = HttpRequest("GET", "http://localhost:{}/basic/anything".format(port), content=AsyncGen())
     response = await client.send_request(request)

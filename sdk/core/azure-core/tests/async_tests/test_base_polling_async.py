@@ -26,27 +26,27 @@
 import base64
 import json
 import re
-from utils import HTTP_REQUESTS
-from azure.core.pipeline._tools import is_rest
 import types
 from unittest import mock
 
 import pytest
-
 from requests import Request, Response
+from utils import (
+    HTTP_REQUESTS, ASYNCIO_REQUESTS_TRANSPORT_RESPONSES,
+    request_and_responses_product, create_transport_response,
+)
+from rest_client_async import AsyncMockRestClient
 
-from azure.core.polling import async_poller, AsyncLROPoller
-from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import AsyncPipelineClient
+from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core.pipeline import PipelineResponse, AsyncPipeline, PipelineContext
+from azure.core.pipeline._tools import is_rest
 from azure.core.pipeline.transport import AsyncioRequestsTransportResponse, AsyncHttpTransport
-
-from azure.core.polling.base_polling import LROBasePolling
+from azure.core.polling import async_poller, AsyncLROPoller
 from azure.core.polling.async_base_polling import (
     AsyncLROBasePolling,
 )
-from utils import ASYNCIO_REQUESTS_TRANSPORT_RESPONSES, request_and_responses_product, create_transport_response
-from rest_client_async import AsyncMockRestClient
+from azure.core.polling.base_polling import LROBasePolling
 
 
 class SimpleResource:
@@ -198,12 +198,11 @@ async def test_post(async_pipeline_client_builder, deserialization_cb, http_requ
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"location_result": True}
             ).http_response
-        elif request.url == "http://example.org/async_monitor":
+        if request.url == "http://example.org/async_monitor":
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"status": "Succeeded"}
             ).http_response
-        else:
-            pytest.fail("No other query allowed")
+        pytest.fail("No other query allowed")
 
     client = async_pipeline_client_builder(send)
 
@@ -219,12 +218,11 @@ async def test_post(async_pipeline_client_builder, deserialization_cb, http_requ
 
         if request.url == "http://example.org/location":
             return TestBasePolling.mock_send(http_request, http_response, "GET", 200, body=None).http_response
-        elif request.url == "http://example.org/async_monitor":
+        if request.url == "http://example.org/async_monitor":
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"status": "Succeeded"}
             ).http_response
-        else:
-            pytest.fail("No other query allowed")
+        pytest.fail("No other query allowed")
 
     client = async_pipeline_client_builder(send)
 
@@ -260,7 +258,7 @@ async def test_post_resource_location(async_pipeline_client_builder, deserializa
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"location_result": True}
             ).http_response
-        elif request.url == "http://example.org/async_monitor":
+        if request.url == "http://example.org/async_monitor":
             return TestBasePolling.mock_send(
                 http_request,
                 http_response,
@@ -268,8 +266,7 @@ async def test_post_resource_location(async_pipeline_client_builder, deserializa
                 200,
                 body={"status": "Succeeded", "resourceLocation": "http://example.org/resource_location"},
             ).http_response
-        else:
-            pytest.fail("No other query allowed")
+        pytest.fail("No other query allowed")
 
     client = async_pipeline_client_builder(send)
 
@@ -332,7 +329,7 @@ async def test_post_fail(async_pipeline_client_builder, deserialization_cb, http
 
     with pytest.raises(HttpResponseError):
         poll = async_poller(client, initial_response, deserialization_cb, AsyncLROBasePolling(0))
-        result = await poll
+        _result = await poll
 
 
 class TestBasePolling(object):
@@ -340,7 +337,7 @@ class TestBasePolling(object):
     convert = re.compile("([a-z0-9])([A-Z])")
 
     @staticmethod
-    def mock_send(http_request, http_response, method, status, headers=None, body=RESPONSE_BODY):
+    def mock_send(http_request, http_response, method, status, headers=None, body=RESPONSE_BODY):  # pylint: disable=dangerous-default-value
         if headers is None:
             headers = {}
         response = Response()
@@ -412,7 +409,7 @@ class TestBasePolling(object):
             response._content = RESOURCE_BODY.encode("ascii")
 
         else:
-            raise Exception("URL does not match")
+            raise Exception("URL does not match")  # pylint: disable=broad-exception-raised
 
         request = http_request(
             response.request.method,
@@ -429,8 +426,8 @@ class TestBasePolling(object):
         response = pipeline_response.http_response
         try:
             body = json.loads(response.text())
-        except ValueError:
-            raise DecodeError("Impossible to deserialize")
+        except ValueError as err:
+            raise DecodeError("Impossible to deserialize") from err
 
         body = {TestBasePolling.convert.sub(r"\1_\2", k).lower(): v for k, v in body.items()}
         properties = body.setdefault("properties", {})
@@ -443,7 +440,7 @@ class TestBasePolling(object):
             resource = SimpleResource(**body)
         else:
             raise DecodeError("Impossible to deserialize")
-            resource = SimpleResource(**body)
+            resource = SimpleResource(**body)  # pylint: disable=unreachable
         return resource
 
     @staticmethod
@@ -469,7 +466,7 @@ async def test_long_running_put(http_request, http_response):
     response_body = {"properties": {"provisioningState": "Succeeded"}, "name": TEST_NAME}
     response = TestBasePolling.mock_send(http_request, http_response, "PUT", 201, {}, response_body)
 
-    def no_update_allowed(url, headers=None):
+    def no_update_allowed(url, headers=None):  # pylint: disable=unused-variable
         raise ValueError("Should not try to update")
 
     polling_method = AsyncLROBasePolling(0)
@@ -666,8 +663,8 @@ async def test_long_running_post(http_request, http_response):
     "http_request,http_response", request_and_responses_product(ASYNCIO_REQUESTS_TRANSPORT_RESPONSES)
 )
 async def test_long_running_negative(http_request, http_response):
-    global LOCATION_BODY
-    global POLLING_STATUS
+    global LOCATION_BODY  # pylint: disable=global-statement
+    global POLLING_STATUS  # pylint: disable=global-statement
     CLIENT.http_request_type = http_request
     CLIENT.http_response_type = http_response
     # Test LRO PUT throws for invalid json
@@ -729,12 +726,11 @@ async def test_post_final_state_via(async_pipeline_client_builder, deserializati
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"location_result": True}
             ).http_response
-        elif request.url == "http://example.org/async_monitor":
+        if request.url == "http://example.org/async_monitor":
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"status": "Succeeded"}
             ).http_response
-        else:
-            pytest.fail("No other query allowed")
+        pytest.fail("No other query allowed")
 
     client = async_pipeline_client_builder(send)
 
@@ -770,12 +766,11 @@ async def test_post_final_state_via(async_pipeline_client_builder, deserializati
 
         if request.url == "http://example.org/location":
             return TestBasePolling.mock_send(http_request, http_response, "GET", 200, body=None).http_response
-        elif request.url == "http://example.org/async_monitor":
+        if request.url == "http://example.org/async_monitor":
             return TestBasePolling.mock_send(
                 http_request, http_response, "GET", 200, body={"status": "Succeeded"}
             ).http_response
-        else:
-            pytest.fail("No other query allowed")
+        pytest.fail("No other query allowed")
 
     client = async_pipeline_client_builder(send)
 
@@ -809,7 +804,7 @@ async def test_final_get_via_location(port, http_request, deserialization_cb):
     assert result == {"returnedFrom": "locationHeaderUrl"}
 
 
-"""Reproduce the bad design of azure-mgmt-core 1.0.0-1.4.0"""
+"""Reproduce the bad design of azure-mgmt-core 1.0.0-1.4.0"""  # pylint: disable=pointless-string-statement
 
 
 class ARMPolling(LROBasePolling):
@@ -831,12 +826,11 @@ async def test_async_polling_inheritance(async_pipeline_client_builder, deserial
             return TestBasePolling.mock_send(
                 rest_http[0], rest_http[1], "GET", 200, body={"success": True}
             ).http_response
-        elif request.url == "http://example.org/async_monitor":
+        if request.url == "http://example.org/async_monitor":
             return TestBasePolling.mock_send(
                 rest_http[0], rest_http[1], "GET", 200, body={"status": "Succeeded"}
             ).http_response
-        else:
-            pytest.fail("No other query allowed")
+        pytest.fail("No other query allowed")
 
     client = async_pipeline_client_builder(send)
 

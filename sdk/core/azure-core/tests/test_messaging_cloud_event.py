@@ -2,9 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import pytest
-import uuid
 import datetime
+import uuid
+
+import pytest
 
 from azure.core.messaging import CloudEvent
 from azure.core.utils._utils import _convert_to_isoformat
@@ -74,7 +75,12 @@ class MockBody(object):
 
     def __next__(self):
         if not self.data:
-            return """{"id":"f208feff-099b-4bda-a341-4afd0fa02fef","source":"https://egsample.dev/sampleevent","data":"ServiceBus","type":"Azure.Sdk.Sample","time":"2021-07-22T22:27:38.960209Z","specversion":"1.0"}"""
+            return (
+                """{"id":"f208feff-099b-4bda-a341-4afd0fa02fef","""
+                """"source":"https://egsample.dev/sampleevent","""
+                """"data":"ServiceBus","type":"Azure.Sdk.Sample","""
+                """"time":"2021-07-22T22:27:38.960209Z","specversion":"1.0"}"""
+            )
         return self.data
 
     next = __next__
@@ -89,7 +95,12 @@ class MockEhBody(object):
 
     def __next__(self):
         if not self.data:
-            return b'[{"id":"f208feff-099b-4bda-a341-4afd0fa02fef","source":"https://egsample.dev/sampleevent","data":"Eventhub","type":"Azure.Sdk.Sample","time":"2021-07-22T22:27:38.960209Z","specversion":"1.0"}]'
+            return (
+                b'[{"id":"f208feff-099b-4bda-a341-4afd0fa02fef",'
+                b'"source":"https://egsample.dev/sampleevent",'
+                b'"data":"Eventhub","type":"Azure.Sdk.Sample",'
+                b'"time":"2021-07-22T22:27:38.960209Z","specversion":"1.0"}]'
+            )
         return self.data
 
     next = __next__
@@ -108,7 +119,7 @@ def test_cloud_event_constructor():
 
 def test_cloud_event_constructor_unexpected_keyword():
     with pytest.raises(ValueError) as e:
-        event = CloudEvent(
+        _event = CloudEvent(
             source="Azure.Core.Sample",
             type="SampleType",
             data="cloudevent",
@@ -157,7 +168,10 @@ def test_cloud_event_constructor_missing_data():
 def test_cloud_storage_dict():
     cloud_storage_dict = {
         "id": "a0517898-9fa4-4e70-b4a3-afda1dd68672",
-        "source": "/subscriptions/{subscription-id}/resourceGroups/{resource-group}/providers/Microsoft.Storage/storageAccounts/{storage-account}",
+        "source": (
+            "/subscriptions/{subscription-id}/resourceGroups/{resource-group}"
+            "/providers/Microsoft.Storage/storageAccounts/{storage-account}"
+        ),
         "data": {
             "api": "PutBlockList",
             "client_request_id": "6d79dbfb-0e37-4fc4-981f-442c9ca65760",
@@ -166,7 +180,10 @@ def test_cloud_storage_dict():
             "content_type": "application/octet-stream",
             "content_length": 524288,
             "blob_type": "BlockBlob",
-            "url": "https://oc2d2817345i60006.blob.core.windows.net/oc2d2817345i200097container/oc2d2817345i20002296blob",
+            "url": (
+                "https://oc2d2817345i60006.blob.core.windows.net"
+                "/oc2d2817345i200097container/oc2d2817345i20002296blob"
+            ),
             "sequencer": "00000000000004420000000000028963",
             "storage_diagnostics": {"batchId": "b68529f3-68cd-4744-baa4-3c0498ec19f0"},
         },
@@ -398,7 +415,7 @@ def test_cloud_custom_dict_both_data_and_base64():
         "specversion": "1.0",
     }
     with pytest.raises(ValueError):
-        event = CloudEvent.from_dict(cloud_custom_dict_with_data_and_base64)
+        _event = CloudEvent.from_dict(cloud_custom_dict_with_data_and_base64)
 
 
 def test_cloud_custom_dict_base64():
@@ -433,7 +450,7 @@ def test_cloud_event_repr():
 
 def test_extensions_upper_case_value_error():
     with pytest.raises(ValueError):
-        event = CloudEvent(
+        _event = CloudEvent(
             source="sample",
             type="type",
             data="data",
@@ -443,7 +460,7 @@ def test_extensions_upper_case_value_error():
 
 def test_extensions_not_alphanumeric_value_error():
     with pytest.raises(ValueError):
-        event = CloudEvent(
+        _event = CloudEvent(
             source="sample",
             type="type",
             data="data",
@@ -463,7 +480,7 @@ def test_cloud_from_dict_with_invalid_extensions():
         "BADext2": "example2",
     }
     with pytest.raises(ValueError):
-        event = CloudEvent.from_dict(cloud_custom_dict_with_extensions)
+        _event = CloudEvent.from_dict(cloud_custom_dict_with_extensions)
 
 
 def test_cloud_custom_dict_ms_precision_is_gt_six():
@@ -537,7 +554,11 @@ def test_eventgrid_event_schema_raises():
     }
     with pytest.raises(
         ValueError,
-        match="The event you are trying to parse follows the Eventgrid Schema. You can parse EventGrid events using EventGridEvent.from_dict method in the azure-eventgrid library.",
+        match=(
+            "The event you are trying to parse follows the Eventgrid Schema."
+            " You can parse EventGrid events using EventGridEvent.from_dict"
+            " method in the azure-eventgrid library."
+        ),
     ):
         CloudEvent.from_dict(cloud_custom_dict)
 
@@ -552,7 +573,11 @@ def test_wrong_schema_raises_no_source():
     }
     with pytest.raises(
         ValueError,
-        match="The event does not conform to the cloud event spec https://github.com/cloudevents/spec. The `source` and `type` params are required.",
+        match=(
+            "The event does not conform to the cloud event spec"
+            " https://github.com/cloudevents/spec."
+            " The `source` and `type` params are required."
+        ),
     ):
         CloudEvent.from_dict(cloud_custom_dict)
 
@@ -567,7 +592,11 @@ def test_wrong_schema_raises_no_type():
     }
     with pytest.raises(
         ValueError,
-        match="The event does not conform to the cloud event spec https://github.com/cloudevents/spec. The `source` and `type` params are required.",
+        match=(
+            "The event does not conform to the cloud event spec"
+            " https://github.com/cloudevents/spec."
+            " The `source` and `type` params are required."
+        ),
     ):
         CloudEvent.from_dict(cloud_custom_dict)
 
@@ -656,20 +685,27 @@ def test_get_bytes_servicebus_wrong_content():
 
 def test_get_bytes_eventhubs():
     obj = MockEventhubData(body=MockEhBody())
-    dict = _get_json_content(obj)
-    assert dict.get("data") == "Eventhub"
-    assert dict.get("specversion") == "1.0"
+    result = _get_json_content(obj)
+    assert result.get("data") == "Eventhub"
+    assert result.get("specversion") == "1.0"
 
 
 def test_get_bytes_eventhubs_wrong_content():
     obj = MockEventhubData(body=MockEhBody(data="random string"))
 
     with pytest.raises(ValueError, match="Failed to load JSON content from the object."):
-        dict = _get_json_content(obj)
+        _result = _get_json_content(obj)
 
 
 def test_get_bytes_random_obj():
-    json_str = '{"id": "de0fd76c-4ef4-4dfb-ab3a-8f24a307e033", "source": "https://egtest.dev/cloudcustomevent", "data": {"team": "event grid squad"}, "type": "Azure.Sdk.Sample", "time": "2020-08-07T02:06:08.11969Z", "specversion": "1.0"}'
+    json_str = (
+        '{"id": "de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",'
+        ' "source": "https://egtest.dev/cloudcustomevent",'
+        ' "data": {"team": "event grid squad"},'
+        ' "type": "Azure.Sdk.Sample",'
+        ' "time": "2020-08-07T02:06:08.11969Z",'
+        ' "specversion": "1.0"}'
+    )
     random_obj = {
         "id": "de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
         "source": "https://egtest.dev/cloudcustomevent",
@@ -745,7 +781,14 @@ def test_from_json_storage():
 
 
 def test_from_json():
-    json_str = '{"id": "de0fd76c-4ef4-4dfb-ab3a-8f24a307e033", "source": "https://egtest.dev/cloudcustomevent", "data": {"team": "event grid squad"}, "type": "Azure.Sdk.Sample", "time": "2020-08-07T02:06:08.11969Z", "specversion": "1.0"}'
+    json_str = (
+        '{"id": "de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",'
+        ' "source": "https://egtest.dev/cloudcustomevent",'
+        ' "data": {"team": "event grid squad"},'
+        ' "type": "Azure.Sdk.Sample",'
+        ' "time": "2020-08-07T02:06:08.11969Z",'
+        ' "specversion": "1.0"}'
+    )
     event = CloudEvent.from_json(json_str)
 
     assert event.data == {"team": "event grid squad"}
