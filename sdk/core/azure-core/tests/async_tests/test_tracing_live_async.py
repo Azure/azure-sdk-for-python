@@ -2,14 +2,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import pytest
 import os
-from typing import Any
+
+import pytest
+from devtools_testutils import get_credential
+from opentelemetry.sdk.trace import ReadableSpan
+from opentelemetry.trace import SpanKind, StatusCode
 
 from azure.storage.blob.aio import BlobServiceClient
-from opentelemetry.trace import SpanKind, StatusCode
-from opentelemetry.sdk.trace import ReadableSpan
-from devtools_testutils import get_credential
 
 
 class TestTracingAsync:
@@ -30,7 +30,7 @@ class TestTracingAsync:
 
         client = BlobServiceClient(account_url=account_url, credential=get_credential(is_async=True))
 
-        with tracing_helper.tracer.start_as_current_span(name="root") as parent:
+        with tracing_helper.tracer.start_as_current_span(name="root") as _parent:
             await client.get_service_properties()
 
         # Close the client explicitly
@@ -75,7 +75,7 @@ class TestTracingAsync:
         client = BlobServiceClient(account_url=invalid_url, credential=get_credential(is_async=True))
 
         # Expecting this operation to fail
-        with tracing_helper.tracer.start_as_current_span(name="root") as parent:
+        with tracing_helper.tracer.start_as_current_span(name="root") as _parent:
             try:
                 await client.get_service_properties()
             except Exception:

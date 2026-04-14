@@ -8,18 +8,19 @@ import time
 import urllib
 from unittest import mock
 
+import pytest
+from opentelemetry.instrumentation.requests import RequestsInstrumentor
+from opentelemetry.trace import format_span_id, format_trace_id
+
 from azure.core.pipeline import Pipeline, PipelineResponse, PipelineRequest, PipelineContext
 from azure.core.pipeline.policies import DistributedTracingPolicy, UserAgentPolicy, RetryPolicy
 from azure.core.pipeline.transport import HttpTransport, RequestsTransport
 from azure.core.settings import settings
 from azure.core.tracing._models import SpanKind
 from azure.core.tracing._abstract_span import HttpSpanMixin
-import pytest
-from opentelemetry.trace import format_span_id, format_trace_id
-from opentelemetry.instrumentation.requests import RequestsInstrumentor
 
-from utils import HTTP_RESPONSES, HTTP_REQUESTS, create_http_response, request_and_responses_product
 from tracing_common import FakeSpan
+from utils import HTTP_RESPONSES, HTTP_REQUESTS, create_http_response, request_and_responses_product
 
 
 class TestTracingPolicyPluginImplementation:
@@ -48,7 +49,7 @@ class TestTracingPolicyPluginImplementation:
             policy.on_request(pipeline_request)
             try:
                 raise ValueError("Transport trouble")
-            except:
+            except Exception:
                 policy.on_exception(pipeline_request)
 
         # Check on_response
@@ -171,7 +172,7 @@ class TestTracingPolicyPluginImplementation:
             policy.on_request(pipeline_request)
             try:
                 raise ValueError("Transport trouble")
-            except:
+            except Exception:
                 policy.on_exception(pipeline_request)
 
         assert len(root_span.children) == 0
@@ -206,7 +207,7 @@ class TestTracingPolicyPluginImplementation:
                 policy.on_request(pipeline_request)
                 try:
                     raise ValueError("Transport trouble")
-                except:
+                except Exception:
                     policy.on_exception(pipeline_request)
 
                 user_agent.on_response(pipeline_request, pipeline_response)

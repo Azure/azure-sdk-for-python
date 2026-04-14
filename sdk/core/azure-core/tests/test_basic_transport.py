@@ -3,30 +3,29 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-from http.client import HTTPConnection
 from collections import OrderedDict
+from http.client import HTTPConnection
 import logging
-import pytest
-from unittest import mock
 from socket import timeout as SocketTimeout
+from unittest import mock
 
-from urllib3.util import connection as urllib_connection
-from urllib3.response import HTTPResponse as UrllibResponse
+import pytest
 from urllib3.connection import HTTPConnection as UrllibConnection
+from urllib3.response import HTTPResponse as UrllibResponse
+from urllib3.util import connection as urllib_connection
 
-from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponseImpl
-from azure.core.pipeline._tools import is_rest
-from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse, RequestsTransport
-from azure.core.pipeline.transport._base import HttpTransport, _deserialize_response, _urljoin
-from azure.core.pipeline.policies import HeadersPolicy
-from azure.core.pipeline import Pipeline
 from azure.core.exceptions import (
     HttpResponseError,
-    ServiceRequestError,
     ServiceResponseError,
     ServiceRequestTimeoutError,
     ServiceResponseTimeoutError,
 )
+from azure.core.pipeline import Pipeline
+from azure.core.pipeline._tools import is_rest
+from azure.core.pipeline.policies import HeadersPolicy
+from azure.core.pipeline.transport import HttpResponse as PipelineTransportHttpResponse, RequestsTransport
+from azure.core.pipeline.transport._base import HttpTransport, _deserialize_response, _urljoin
+from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponseImpl
 
 from utils import (
     HTTP_REQUESTS,
@@ -805,7 +804,7 @@ def test_multipart_receive_with_one_changeset(http_request, mock_response):
 
 
 @pytest.mark.parametrize("http_request,mock_response", request_and_responses_product(MOCK_RESPONSES))
-def test_multipart_receive_with_empty_changeset(http_request, mock_response):
+def test_multipart_receive_with_empty_changeset(http_request, mock_response):  # pylint: disable=too-many-statements
 
     changeset = http_request(None, None)
     changeset.set_multipart_mixed()
@@ -1344,20 +1343,20 @@ def test_requests_timeout_response(caplog, port, http_request):
 
     request = http_request("GET", f"http://localhost:{port}/basic/string")
 
-    with mock.patch.object(UrllibConnection, "getresponse", side_effect=SocketTimeout) as mock_method:
-        with pytest.raises(ServiceResponseTimeoutError) as err:
+    with mock.patch.object(UrllibConnection, "getresponse", side_effect=SocketTimeout) as _mock_method:
+        with pytest.raises(ServiceResponseTimeoutError) as _err:
             transport.send(request, read_timeout=0.0001)
 
-        with pytest.raises(ServiceResponseError) as err:
+        with pytest.raises(ServiceResponseError) as _err:
             transport.send(request, read_timeout=0.0001)
 
         stream_request = http_request("GET", f"http://localhost:{port}/streams/basic")
-        with pytest.raises(ServiceResponseTimeoutError) as err:
+        with pytest.raises(ServiceResponseTimeoutError) as _err:
             transport.send(stream_request, stream=True, read_timeout=0.0001)
 
     stream_resp = transport.send(stream_request, stream=True)
-    with mock.patch.object(UrllibResponse, "_handle_chunk", side_effect=SocketTimeout) as mock_method:
-        with pytest.raises(ServiceResponseTimeoutError) as err:
+    with mock.patch.object(UrllibResponse, "_handle_chunk", side_effect=SocketTimeout) as _mock_method:
+        with pytest.raises(ServiceResponseTimeoutError) as _err:
             try:
                 # current HttpResponse
                 stream_resp.read()
@@ -1372,13 +1371,13 @@ def test_requests_timeout_request(caplog, port, http_request):
 
     request = http_request("GET", f"http://localhost:{port}/basic/string")
 
-    with mock.patch.object(urllib_connection, "create_connection", side_effect=SocketTimeout) as mock_method:
-        with pytest.raises(ServiceRequestTimeoutError) as err:
+    with mock.patch.object(urllib_connection, "create_connection", side_effect=SocketTimeout) as _mock_method:
+        with pytest.raises(ServiceRequestTimeoutError) as _err:
             transport.send(request, connection_timeout=0.0001)
 
-        with pytest.raises(ServiceRequestTimeoutError) as err:
+        with pytest.raises(ServiceRequestTimeoutError) as _err:
             transport.send(request, connection_timeout=0.0001)
 
         stream_request = http_request("GET", f"http://localhost:{port}/streams/basic")
-        with pytest.raises(ServiceRequestTimeoutError) as err:
+        with pytest.raises(ServiceRequestTimeoutError) as _err:
             transport.send(stream_request, stream=True, connection_timeout=0.0001)

@@ -9,11 +9,6 @@ import sys
 import threading
 
 import pytest
-from azure.core.instrumentation import get_tracer
-from azure.core.tracing._models import SpanKind, Link
-from azure.core.tracing.opentelemetry import OpenTelemetryTracer
-from azure.core.tracing.common import with_current_context
-
 from opentelemetry.trace import (
     Tracer as OtelTracer,
     Span as OtelSpan,
@@ -22,6 +17,11 @@ from opentelemetry.trace import (
     format_span_id,
     format_trace_id,
 )
+
+from azure.core.instrumentation import get_tracer
+from azure.core.tracing._models import SpanKind, Link
+from azure.core.tracing.opentelemetry import OpenTelemetryTracer
+from azure.core.tracing.common import with_current_context
 
 
 def test_tracer(tracing_helper):
@@ -64,12 +64,12 @@ def test_start_span_with_links(tracing_helper):
     assert tracer
 
     trace_context_headers = {}
-    with tracer.start_as_current_span(name="foo-span") as span:
+    with tracer.start_as_current_span(name="foo-span") as _span:
         trace_context_headers = tracer.get_trace_context()
 
     link = Link(headers=trace_context_headers, attributes={"foo": "bar"})
 
-    with tracer.start_as_current_span(name="bar-span", links=[link]) as span:
+    with tracer.start_as_current_span(name="bar-span", links=[link]) as _span:
         pass
 
     finished_spans = tracing_helper.exporter.get_finished_spans()
@@ -85,7 +85,7 @@ def test_start_span_with_attributes(tracing_helper):
     tracer = get_tracer()
     assert tracer
 
-    with tracer.start_as_current_span(name="foo-span", attributes={"foo": "bar", "biz": 123}) as span:
+    with tracer.start_as_current_span(name="foo-span", attributes={"foo": "bar", "biz": 123}) as _span:
         pass
 
     finished_spans = tracing_helper.exporter.get_finished_spans()
@@ -220,7 +220,7 @@ def test_nest_span_with_thread_pool_executor(tracing_helper):
     assert tracer
 
     def nest_spans():
-        with tracer.start_as_current_span(name="outer-span", kind=SpanKind.INTERNAL) as outer_span:
+        with tracer.start_as_current_span(name="outer-span", kind=SpanKind.INTERNAL) as _outer_span:
             with tracer.start_as_current_span(name="inner-span", kind=SpanKind.INTERNAL) as inner_span:
                 assert isinstance(inner_span, OtelSpan)
                 assert tracer.get_current_span() == inner_span
@@ -280,7 +280,7 @@ def test_span_exception(tracing_helper):
     assert tracer
 
     with pytest.raises(ValueError):
-        with tracer.start_as_current_span(name="foo-span") as span:
+        with tracer.start_as_current_span(name="foo-span") as _span:
             raise ValueError("This is an error")
     finished_spans = tracing_helper.exporter.get_finished_spans()
 
@@ -313,7 +313,7 @@ def test_span_exception_exit(tracing_helper):
     assert span.is_recording()
     try:
         raise ValueError("This is an error")
-    except ValueError as e:
+    except ValueError as _e:
         exc_info = sys.exc_info()
         span.__exit__(*exc_info)
 
@@ -402,12 +402,12 @@ def test_tracer_with_custom_context(tracing_helper):
     tracer = get_tracer()
     assert tracer
 
-    with tracer.start_as_current_span(name="foo-span") as foo_span:
+    with tracer.start_as_current_span(name="foo-span") as _foo_span:
         foo_trace_context = tracer.get_trace_context()
 
     assert "traceparent" in foo_trace_context
 
-    with tracer.start_as_current_span(name="bar-span", context=dict(foo_trace_context)) as bar_span:
+    with tracer.start_as_current_span(name="bar-span", context=dict(foo_trace_context)) as _bar_span:
         pass
 
     finished_spans = tracing_helper.exporter.get_finished_spans()
