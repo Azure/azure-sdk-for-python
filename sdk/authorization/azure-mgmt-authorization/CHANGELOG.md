@@ -1,10 +1,10 @@
 # Release History
 
-## 5.0.0b2 (2026-04-09)
+## 5.0.0b2 (2026-04-14)
 
 ### Features Added
 
-  - Model `AuthorizationManagementClient` added parameter `cloud_setting` in method `__init__`
+  - Client `AuthorizationManagementClient` added parameter `cloud_setting` in method `__init__`
   - Client `AuthorizationManagementClient` added method `send_request`
   - Client `AuthorizationManagementClient` added operation group `attribute_namespaces`
   - Model `AccessReviewDecision` added property `properties`
@@ -46,13 +46,8 @@
   - Model `RoleEligibilityScheduleRequest` added property `system_data`
   - Model `RoleManagementPolicy` added property `system_data`
   - Model `RoleManagementPolicyAssignment` added property `system_data`
-  - Added model `AccessReviewActorIdentity`
-  - Added model `AccessReviewDecisionPrincipalResourceMembership`
-  - Added model `AccessReviewDecisionResource`
-  - Added model `AccessReviewHistoryScheduleSettings`
   - Added model `AccessReviewRecurrencePattern`
   - Added model `AccessReviewRecurrenceRange`
-  - Added model `AccessReviewRecurrenceSettings`
   - Added model `AttributeNamespace`
   - Added model `AttributeNamespaceCreateRequest`
   - Added model `CloudError`
@@ -65,202 +60,36 @@
   - Added model `Resource`
   - Added model `SettableResource`
   - Added model `SystemData`
-  - Model `DenyAssignmentsOperations` added method `create_or_update`
-  - Model `DenyAssignmentsOperations` added method `delete`
-  - Added model `AttributeNamespacesOperations`
+  - Operation group `DenyAssignmentsOperations` added method `create_or_update`
+  - Operation group `DenyAssignmentsOperations` added method `delete`
+  - Added operation group `AttributeNamespacesOperations`
 
 ### Breaking Changes
 
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `recommendation`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `decision`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `justification`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `reviewed_date_time`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `apply_result`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `applied_date_time`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `insights`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `membership_types`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `principal_id_properties_applied_by_principal_id`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `principal_type_properties_applied_by_principal_type`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `principal_name_properties_applied_by_principal_name`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `user_principal_name_properties_applied_by_user_principal_name`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `principal_id_properties_reviewed_by_principal_id`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `principal_type_properties_reviewed_by_principal_type`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `principal_name_properties_reviewed_by_principal_name`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `user_principal_name_properties_reviewed_by_user_principal_name`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `type_properties_resource_type`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `id_properties_resource_id`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `display_name_properties_resource_display_name`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `type_properties_principal_type`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `id_properties_principal_id`
-  - Model `AccessReviewDecision` deleted or renamed its instance variable `display_name_properties_principal_display_name`
-  - Model `AccessReviewDecisionInsight` deleted or renamed its instance variable `type_properties_type`
-  - Model `AccessReviewDecisionInsight` deleted or renamed its instance variable `insight_created_date_time`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `membership_types`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `principal_id_applied_by_principal_id`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `principal_type_applied_by_principal_type`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `principal_name_applied_by_principal_name`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `user_principal_name_applied_by_user_principal_name`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `principal_id_reviewed_by_principal_id`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `principal_type_reviewed_by_principal_type`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `principal_name_reviewed_by_principal_name`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `user_principal_name_reviewed_by_user_principal_name`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `type_resource_type`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `id_resource_id`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `display_name_resource_display_name`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `type_principal_type`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `id_principal_id`
-  - Model `AccessReviewDecisionProperties` deleted or renamed its instance variable `display_name_principal_display_name`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `mail_notifications_enabled`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `reminder_notifications_enabled`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `default_decision_enabled`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `justification_required_on_approval`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `default_decision`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `auto_apply_decisions_enabled`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `recommendations_enabled`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `recommendation_look_back_duration`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `instance_duration_in_days`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `type_properties_recurrence_range_type`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `number_of_occurrences`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `start_date`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `end_date`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `type_properties_recurrence_pattern_type`
-  - Model `AccessReviewDefaultSettings` deleted or renamed its instance variable `interval`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `display_name`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `review_history_period_start_date_time`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `review_history_period_end_date_time`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `decisions`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `status`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `created_date_time`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `scopes`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `instances`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `type_properties_settings_range_type`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `number_of_occurrences`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `start_date`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `end_date`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `type_properties_settings_pattern_type`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `interval`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `principal_id`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `principal_type`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `principal_name`
-  - Model `AccessReviewHistoryDefinition` deleted or renamed its instance variable `user_principal_name`
-  - Model `AccessReviewHistoryDefinitionProperties` deleted or renamed its instance variable `type_settings_range_type`
-  - Model `AccessReviewHistoryDefinitionProperties` deleted or renamed its instance variable `number_of_occurrences`
-  - Model `AccessReviewHistoryDefinitionProperties` deleted or renamed its instance variable `start_date`
-  - Model `AccessReviewHistoryDefinitionProperties` deleted or renamed its instance variable `end_date`
-  - Model `AccessReviewHistoryDefinitionProperties` deleted or renamed its instance variable `type_settings_pattern_type`
-  - Model `AccessReviewHistoryDefinitionProperties` deleted or renamed its instance variable `interval`
-  - Model `AccessReviewHistoryDefinitionProperties` deleted or renamed its instance variable `principal_id`
-  - Model `AccessReviewHistoryDefinitionProperties` deleted or renamed its instance variable `principal_type`
-  - Model `AccessReviewHistoryDefinitionProperties` deleted or renamed its instance variable `principal_name`
-  - Model `AccessReviewHistoryDefinitionProperties` deleted or renamed its instance variable `user_principal_name`
-  - Model `AccessReviewInstance` deleted or renamed its instance variable `status`
-  - Model `AccessReviewInstance` deleted or renamed its instance variable `start_date_time`
-  - Model `AccessReviewInstance` deleted or renamed its instance variable `end_date_time`
-  - Model `AccessReviewInstance` deleted or renamed its instance variable `reviewers`
-  - Model `AccessReviewInstance` deleted or renamed its instance variable `backup_reviewers`
-  - Model `AccessReviewInstance` deleted or renamed its instance variable `reviewers_type`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `display_name`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `status`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `description_for_admins`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `description_for_reviewers`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `reviewers`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `backup_reviewers`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `reviewers_type`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `instances`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `resource_id`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `role_definition_id`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `principal_type_properties_scope_principal_type`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `assignment_state`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `inactive_duration`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `expand_nested_memberships`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `include_inherited_access`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `include_access_below_resource`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `exclude_resource_id`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `exclude_role_definition_id`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `mail_notifications_enabled`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `reminder_notifications_enabled`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `default_decision_enabled`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `justification_required_on_approval`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `default_decision`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `auto_apply_decisions_enabled`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `recommendations_enabled`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `recommendation_look_back_duration`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `instance_duration_in_days`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `type_properties_settings_recurrence_range_type`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `number_of_occurrences`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `start_date`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `end_date`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `type_properties_settings_recurrence_pattern_type`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `interval`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `principal_id`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `principal_type_properties_created_by_principal_type`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `principal_name`
-  - Model `AccessReviewScheduleDefinition` deleted or renamed its instance variable `user_principal_name`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `resource_id`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `role_definition_id`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `principal_type_scope_principal_type`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `assignment_state`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `inactive_duration`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `expand_nested_memberships`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `include_inherited_access`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `include_access_below_resource`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `exclude_resource_id`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `exclude_role_definition_id`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `mail_notifications_enabled`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `reminder_notifications_enabled`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `default_decision_enabled`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `justification_required_on_approval`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `default_decision`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `auto_apply_decisions_enabled`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `recommendations_enabled`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `recommendation_look_back_duration`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `instance_duration_in_days`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `type_settings_recurrence_range_type`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `number_of_occurrences`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `start_date`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `end_date`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `type_settings_recurrence_pattern_type`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `interval`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `principal_id`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `principal_type_created_by_principal_type`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `principal_name`
-  - Model `AccessReviewScheduleDefinitionProperties` deleted or renamed its instance variable `user_principal_name`
-  - Model `AccessReviewScheduleSettings` deleted or renamed its instance variable `type_recurrence_range_type`
-  - Model `AccessReviewScheduleSettings` deleted or renamed its instance variable `number_of_occurrences`
-  - Model `AccessReviewScheduleSettings` deleted or renamed its instance variable `start_date`
-  - Model `AccessReviewScheduleSettings` deleted or renamed its instance variable `end_date`
-  - Model `AccessReviewScheduleSettings` deleted or renamed its instance variable `type_recurrence_pattern_type`
-  - Model `AccessReviewScheduleSettings` deleted or renamed its instance variable `interval`
-  - Model `AlertConfiguration` deleted or renamed its instance variable `alert_definition_id`
-  - Model `AlertConfiguration` deleted or renamed its instance variable `scope`
-  - Model `AlertConfiguration` deleted or renamed its instance variable `is_enabled`
-  - Model `AlertConfiguration` deleted or renamed its instance variable `alert_configuration_type`
-  - Model `AlertConfiguration` deleted or renamed its instance variable `alert_definition`
-  - Model `AlertIncident` deleted or renamed its instance variable `alert_incident_type`
-  - Model `RoleAssignmentCreateParameters` deleted or renamed its instance variable `scope`
-  - Model `RoleAssignmentCreateParameters` deleted or renamed its instance variable `role_definition_id`
-  - Model `RoleAssignmentCreateParameters` deleted or renamed its instance variable `principal_id`
-  - Model `RoleAssignmentCreateParameters` deleted or renamed its instance variable `principal_type`
-  - Model `RoleAssignmentCreateParameters` deleted or renamed its instance variable `description`
-  - Model `RoleAssignmentCreateParameters` deleted or renamed its instance variable `condition`
-  - Model `RoleAssignmentCreateParameters` deleted or renamed its instance variable `condition_version`
-  - Model `RoleAssignmentCreateParameters` deleted or renamed its instance variable `created_on`
-  - Model `RoleAssignmentCreateParameters` deleted or renamed its instance variable `updated_on`
-  - Model `RoleAssignmentCreateParameters` deleted or renamed its instance variable `created_by`
-  - Model `RoleAssignmentCreateParameters` deleted or renamed its instance variable `updated_by`
-  - Model `RoleAssignmentCreateParameters` deleted or renamed its instance variable `delegated_managed_identity_resource_id`
-  - Deleted or renamed model `DenyAssignmentFilter`
-  - Deleted or renamed model `PermissionGetResult`
-  - Deleted or renamed model `RoleAssignmentFilter`
-  - Deleted or renamed model `RoleAssignmentScheduleFilter`
-  - Deleted or renamed model `RoleAssignmentScheduleInstanceFilter`
-  - Deleted or renamed model `RoleAssignmentScheduleRequestFilter`
-  - Deleted or renamed model `RoleDefinitionFilter`
-  - Deleted or renamed model `RoleEligibilityScheduleFilter`
-  - Deleted or renamed model `RoleEligibilityScheduleInstanceFilter`
-  - Deleted or renamed model `RoleEligibilityScheduleRequestFilter`
-  - Deleted or renamed model `ValidationResponse`
-  - Deleted or renamed model `ValidationResponseErrorInfo`
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `AccessReviewDecision` moved instance variable `recommendation`, `decision`, `justification`, `reviewed_date_time`, `apply_result`, `applied_date_time`, `insights`, `membership_types`, `principal_id_properties_applied_by_principal_id`, `principal_type_properties_applied_by_principal_type`, `principal_name_properties_applied_by_principal_name`, `user_principal_name_properties_applied_by_user_principal_name`, `principal_id_properties_reviewed_by_principal_id`, `principal_type_properties_reviewed_by_principal_type`, `principal_name_properties_reviewed_by_principal_name`, `user_principal_name_properties_reviewed_by_user_principal_name`, `type_properties_resource_type`, `id_properties_resource_id`, `display_name_properties_resource_display_name`, `type_properties_principal_type`, `id_properties_principal_id` and `display_name_properties_principal_display_name` under property `properties` whose type is `AccessReviewDecisionProperties`
+  - Model `AccessReviewDecisionInsight` moved instance variable `type_properties_type` and `insight_created_date_time` under property `properties` whose type is `AccessReviewDecisionInsightProperties`
+  - Model `AccessReviewDecisionProperties` moved instance variable `membership_types` under property `principal_resource_membership` whose type is `AccessReviewDecisionPrincipalResourceMembership`
+  - Model `AccessReviewDecisionProperties` moved instance variable `principal_id_applied_by_principal_id`, `principal_type_applied_by_principal_type`, `principal_name_applied_by_principal_name` and `user_principal_name_applied_by_user_principal_name` under property `applied_by` whose type is `AccessReviewActorIdentity`
+  - Model `AccessReviewDecisionProperties` moved instance variable `principal_id_reviewed_by_principal_id`, `principal_type_reviewed_by_principal_type`, `principal_name_reviewed_by_principal_name` and `user_principal_name_reviewed_by_user_principal_name` under property `reviewed_by` whose type is `AccessReviewActorIdentity`
+  - Model `AccessReviewDecisionProperties` moved instance variable `type_resource_type`, `id_resource_id` and `display_name_resource_display_name` under property `resource` whose type is `AccessReviewDecisionResource`
+  - Model `AccessReviewDecisionProperties` moved instance variable `type_principal_type`, `id_principal_id` and `display_name_principal_display_name` under property `principal` whose type is `AccessReviewDecisionIdentity`
+  - Model `AccessReviewDefaultSettings` moved instance variable `mail_notifications_enabled`, `reminder_notifications_enabled`, `default_decision_enabled`, `justification_required_on_approval`, `default_decision`, `auto_apply_decisions_enabled`, `recommendations_enabled`, `recommendation_look_back_duration`, `instance_duration_in_days`, `type_properties_recurrence_range_type`, `number_of_occurrences`, `start_date`, `end_date`, `type_properties_recurrence_pattern_type` and `interval` under property `properties` whose type is `AccessReviewScheduleSettings`
+  - Model `AccessReviewHistoryDefinition` moved instance variable `display_name`, `review_history_period_start_date_time`, `review_history_period_end_date_time`, `decisions`, `status`, `created_date_time`, `scopes`, `instances`, `type_properties_settings_range_type`, `number_of_occurrences`, `start_date`, `end_date`, `type_properties_settings_pattern_type`, `interval`, `principal_id`, `principal_type`, `principal_name` and `user_principal_name` under property `properties` whose type is `AccessReviewHistoryDefinitionProperties`
+  - Model `AccessReviewHistoryDefinitionProperties` moved instance variable `type_settings_range_type`, `number_of_occurrences`, `start_date`, `end_date`, `type_settings_pattern_type` and `interval` under property `settings` whose type is `AccessReviewHistoryScheduleSettings`
+  - Model `AccessReviewHistoryDefinitionProperties` moved instance variable `principal_id`, `principal_type`, `principal_name` and `user_principal_name` under property `created_by` whose type is `AccessReviewActorIdentity`
+  - Model `AccessReviewInstance` moved instance variable `status`, `start_date_time`, `end_date_time`, `reviewers`, `backup_reviewers` and `reviewers_type` under property `properties` whose type is `AccessReviewInstanceProperties`
+  - Model `AccessReviewScheduleDefinition` moved instance variable `display_name`, `status`, `description_for_admins`, `description_for_reviewers`, `reviewers`, `backup_reviewers`, `reviewers_type`, `instances`, `resource_id`, `role_definition_id`, `principal_type_properties_scope_principal_type`, `assignment_state`, `inactive_duration`, `expand_nested_memberships`, `include_inherited_access`, `include_access_below_resource`, `exclude_resource_id`, `exclude_role_definition_id`, `mail_notifications_enabled`, `reminder_notifications_enabled`, `default_decision_enabled`, `justification_required_on_approval`, `default_decision`, `auto_apply_decisions_enabled`, `recommendations_enabled`, `recommendation_look_back_duration`, `instance_duration_in_days`, `type_properties_settings_recurrence_range_type`, `number_of_occurrences`, `start_date`, `end_date`, `type_properties_settings_recurrence_pattern_type`, `interval`, `principal_id`, `principal_type_properties_created_by_principal_type`, `principal_name` and `user_principal_name` under property `properties` whose type is `AccessReviewScheduleDefinitionProperties`
+  - Model `AccessReviewScheduleDefinitionProperties` moved instance variable `resource_id`, `role_definition_id`, `principal_type_scope_principal_type`, `assignment_state`, `inactive_duration`, `expand_nested_memberships`, `include_inherited_access`, `include_access_below_resource`, `exclude_resource_id` and `exclude_role_definition_id` under property `scope` whose type is `AccessReviewScope`
+  - Model `AccessReviewScheduleDefinitionProperties` moved instance variable `mail_notifications_enabled`, `reminder_notifications_enabled`, `default_decision_enabled`, `justification_required_on_approval`, `default_decision`, `auto_apply_decisions_enabled`, `recommendations_enabled`, `recommendation_look_back_duration`, `instance_duration_in_days`, `type_settings_recurrence_range_type`, `number_of_occurrences`, `start_date`, `end_date`, `type_settings_recurrence_pattern_type` and `interval` under property `settings` whose type is `AccessReviewScheduleSettings`
+  - Model `AccessReviewScheduleDefinitionProperties` moved instance variable `principal_id`, `principal_type_created_by_principal_type`, `principal_name` and `user_principal_name` under property `created_by` whose type is `AccessReviewActorIdentity`
+  - Model `AccessReviewScheduleSettings` moved instance variable `type_recurrence_range_type`, `number_of_occurrences`, `start_date`, `end_date`, `type_recurrence_pattern_type` and `interval` under property `recurrence` whose type is `AccessReviewRecurrenceSettings`
+  - Model `AlertConfiguration` moved instance variable `alert_definition_id`, `scope`, `is_enabled`, `alert_configuration_type` and `alert_definition` under property `properties` whose type is `AlertConfigurationProperties`
+  - Model `AlertIncident` moved instance variable `alert_incident_type` under property `properties` whose type is `AlertIncidentProperties`
+  - Model `RoleAssignmentCreateParameters` moved instance variable `scope`, `role_definition_id`, `principal_id`, `principal_type`, `description`, `condition`, `condition_version`, `created_on`, `updated_on`, `created_by`, `updated_by` and `delegated_managed_identity_resource_id` under property `properties` whose type is `RoleAssignmentProperties`
+  - Deleted model `ValidationResponse`
+  - Deleted model `ValidationResponseErrorInfo`
   - Method `ProviderOperationsMetadataOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `ProviderOperationsMetadataOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `RoleAssignmentsOperations.delete` changed its parameter `tenant_id` from `positional_or_keyword` to `keyword_only`
@@ -269,9 +98,12 @@
   - Method `RoleAssignmentsOperations.get_by_id` changed its parameter `tenant_id` from `positional_or_keyword` to `keyword_only`
   - Method `RoleAssignmentsOperations.list_for_resource` changed its parameter `tenant_id` from `positional_or_keyword` to `keyword_only`
   - Method `RoleAssignmentsOperations.list_for_resource_group` changed its parameter `tenant_id` from `positional_or_keyword` to `keyword_only`
-  - Method `RoleAssignmentsOperations.list_for_scope` changed its parameter `tenant_id` from `positional_or_keyword` to `keyword_only`
-  - Method `RoleAssignmentsOperations.list_for_scope` changed its parameter `skip_token` from `positional_or_keyword` to `keyword_only`
+  - Method `RoleAssignmentsOperations.list_for_scope` changed its parameter `tenant_id`/`skip_token` from `positional_or_keyword` to `keyword_only`
   - Method `RoleAssignmentsOperations.list_for_subscription` changed its parameter `tenant_id` from `positional_or_keyword` to `keyword_only`
+
+### Other Changes
+
+  - Deleted model `DenyAssignmentFilter`/`PermissionGetResult`/`RoleAssignmentFilter`/`RoleAssignmentScheduleFilter`/`RoleAssignmentScheduleInstanceFilter`/`RoleAssignmentScheduleRequestFilter`/`RoleDefinitionFilter`/`RoleEligibilityScheduleFilter`/`RoleEligibilityScheduleInstanceFilter`/`RoleEligibilityScheduleRequestFilter` which actually were not used by SDK users
 
 ## 5.0.0b1 (2025-07-23)
 
