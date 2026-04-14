@@ -18,7 +18,7 @@ DESCRIPTION:
     `project_client.beta.agents`.
 
 USAGE:
-    python sample_sessions_files_with_agent_endpoint.py
+    python sample_agent_endpoint.py
 
     Before running the sample:
 
@@ -70,6 +70,12 @@ with (
         ),
         protocols=[AgentEndpointProtocol.RESPONSES],
     )
+
+    patched_agent = project_client.beta.agents.patch_agent_object(
+        agent_name=agent_name,
+        agent_endpoint=endpoint_config,
+    )
+    print(f"Agent endpoint configured for agent: {patched_agent.name}")
 
     # Create an OpenAI client bound to the agent endpoint.
     openai_client = project_client.get_openai_client(agent_name=agent_name)

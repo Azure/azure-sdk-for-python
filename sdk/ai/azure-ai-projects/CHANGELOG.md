@@ -57,6 +57,7 @@ classes to help you author the input to these methods. See new TypedDict classes
 * Renamed environment variable `AZURE_AI_PROJECT_ENDPOINT` to `FOUNDRY_PROJECT_ENDPOINT` in all samples.
 * Renamed environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` to `FOUNDRY_MODEL_NAME` in all samples.
 * Renamed environment variable `AZURE_AI_MODEL_AGENT_NAME` to `FOUNDRY_AGENT_NAME` in all samples.
+* Added Hosted Agents related samples: `sample_agent_endpoint.py`, `sample_agent_endpoint_async.py`, `sample_sessions_crud.py`, `sample_sessions_crud_async.py`, `sample_sessions_files_upload_download.py`, `sample_sessions_files_upload_download_async.py`, `sample_skills_crud.py`, `sample_skills_crud_async.py`, `sample_skills_upload_and_download.py`, `sample_skills_upload_and_download_async.py`, `sample_toolboxes_crud.py`, and `sample_toolboxes_crud_async.py`.
 * Added structured inputs + file upload sample (`sample_agent_structured_inputs_file_upload.py`) demonstrating passing an uploaded file ID to an agent at runtime.
 * Added structured inputs + File Search sample (`sample_agent_file_search_structured_inputs.py`) demonstrating configuring File Search tool resources via structured inputs.
 * Added structured inputs + Code Interpreter sample (`sample_agent_code_interpreter_structured_inputs.py`) demonstrating passing an uploaded file ID to Code Interpreter via structured inputs.

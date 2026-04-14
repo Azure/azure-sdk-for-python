@@ -15,7 +15,7 @@ DESCRIPTION:
     these operations via `project_client.beta.agents`.
 
 USAGE:
-    python sample_sessions_crud.py
+    python sample_sessions_files_upload_download.py
 
     Before running the sample:
 
