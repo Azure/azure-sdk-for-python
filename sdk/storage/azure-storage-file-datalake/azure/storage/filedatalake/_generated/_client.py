@@ -26,11 +26,11 @@ class DataLakeClient:  # pylint: disable=client-accepts-api-version-keyword
     """DataLakeClient.
 
     :ivar service: ServiceOperations operations
-    :vartype service: azure.storage.filedatalake._generated.operations.ServiceOperations
+    :vartype service: azure.storage.filedatalake.operations.ServiceOperations
     :ivar file_system: FileSystemOperations operations
-    :vartype file_system: azure.storage.filedatalake._generated.operations.FileSystemOperations
+    :vartype file_system: azure.storage.filedatalake.operations.FileSystemOperations
     :ivar path: PathOperations operations
-    :vartype path: azure.storage.filedatalake._generated.operations.PathOperations
+    :vartype path: azure.storage.filedatalake.operations.PathOperations
     :param url: The URL of the service account, container, or blob that is the target of the
      desired operation. Required.
     :type url: str

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -159,8 +160,12 @@ class PathClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin):  # ty
 
     def _build_generated_client(self, url: str) -> AzureDataLakeStorageRESTAPI:
         client = AzureDataLakeStorageRESTAPI(
-            url, base_url=url, file_system=self.file_system_name, path=self.path_name,
-             version=self._api_version, pipeline=self._pipeline
+            url,
+            base_url=url,
+            file_system=self.file_system_name,
+            path=self.path_name,
+            version=self._api_version,
+            pipeline=self._pipeline,
         )
         return client
 

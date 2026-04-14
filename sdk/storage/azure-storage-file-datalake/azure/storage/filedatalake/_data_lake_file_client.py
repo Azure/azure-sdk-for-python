@@ -380,7 +380,8 @@ class DataLakeFileClient(PathClient):
         elif expires_on is not None:
             expiry_time = str(expires_on)
         self._datalake_client_for_blob_operation.path.set_expiry(
-            expiry_options=expiry_options, expires_on=expiry_time, **kwargs)
+            expiry_options=expiry_options, expires_on=expiry_time, **kwargs
+        )
 
     @distributed_trace
     def upload_data(

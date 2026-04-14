@@ -63,7 +63,7 @@ class ServiceOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.filedatalake._generated.aio.DataLakeClient`'s
+        :class:`~azure.storage.filedatalake.aio.DataLakeClient`'s
         :attr:`service` attribute.
     """
 
@@ -88,7 +88,7 @@ class ServiceOperations:
         """List filesystems and their properties in given account.
 
         :keyword resource: The value must be "account" for all account operations. "account" Required.
-        :paramtype resource: str or ~azure.storage.filedatalake._generated.models.AccountResourceType
+        :paramtype resource: str or ~azure.storage.filedatalake.models.AccountResourceType
         :keyword prefix: Filters results to filesystems within the specified prefix. Default value is
          None.
         :paramtype prefix: str
@@ -186,7 +186,7 @@ class FileSystemOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.filedatalake._generated.aio.DataLakeClient`'s
+        :class:`~azure.storage.filedatalake.aio.DataLakeClient`'s
         :attr:`file_system` attribute.
     """
 
@@ -211,8 +211,7 @@ class FileSystemOperations:
 
         :keyword resource: The value must be "filesystem" for all filesystem operations. "filesystem"
          Required.
-        :paramtype resource: str or
-         ~azure.storage.filedatalake._generated.models.FileSystemResourceType
+        :paramtype resource: str or ~azure.storage.filedatalake.models.FileSystemResourceType
         :keyword properties: Optional. User-defined properties to be stored with the filesystem, in the
          format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value
          is a base64 encoded string. Note that the string may only contain ASCII characters in the
@@ -303,8 +302,7 @@ class FileSystemOperations:
 
         :keyword resource: The value must be "filesystem" for all filesystem operations. "filesystem"
          Required.
-        :paramtype resource: str or
-         ~azure.storage.filedatalake._generated.models.FileSystemResourceType
+        :paramtype resource: str or ~azure.storage.filedatalake.models.FileSystemResourceType
         :keyword properties: Optional. User-defined properties to be stored with the filesystem, in the
          format of a comma-separated list of name and value pairs "n1=v1, n2=v2, ...", where each value
          is a base64 encoded string. Note that the string may only contain ASCII characters in the
@@ -391,8 +389,7 @@ class FileSystemOperations:
 
         :keyword resource: The value must be "filesystem" for all filesystem operations. "filesystem"
          Required.
-        :paramtype resource: str or
-         ~azure.storage.filedatalake._generated.models.FileSystemResourceType
+        :paramtype resource: str or ~azure.storage.filedatalake.models.FileSystemResourceType
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -481,8 +478,7 @@ class FileSystemOperations:
 
         :keyword resource: The value must be "filesystem" for all filesystem operations. "filesystem"
          Required.
-        :paramtype resource: str or
-         ~azure.storage.filedatalake._generated.models.FileSystemResourceType
+        :paramtype resource: str or ~azure.storage.filedatalake.models.FileSystemResourceType
         :keyword if_modified_since: Specify this header value to operate only on a blob if it has been
          modified since the specified date/time. Default value is None.
         :paramtype if_modified_since: ~datetime.datetime
@@ -707,11 +703,10 @@ class FileSystemOperations:
         :paramtype max_results: int
         :keyword include: Include this parameter to specify one or more datasets to include in the
          response. Default value is None.
-        :paramtype include: list[str or
-         ~azure.storage.filedatalake._generated.models.ListBlobsIncludeItem]
+        :paramtype include: list[str or ~azure.storage.filedatalake.models.ListBlobsIncludeItem]
         :keyword showonly: Include this parameter to specify one or more datasets to include in the
          response. "deleted" Default value is None.
-        :paramtype showonly: str or ~azure.storage.filedatalake._generated.models.ListBlobsShowOnly
+        :paramtype showonly: str or ~azure.storage.filedatalake.models.ListBlobsShowOnly
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -798,7 +793,7 @@ class PathOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.filedatalake._generated.aio.DataLakeClient`'s
+        :class:`~azure.storage.filedatalake.aio.DataLakeClient`'s
         :attr:`path` attribute.
     """
 
@@ -858,11 +853,11 @@ class PathOperations:
 
         :keyword resource: Required only for Create File and Create Directory. The value must be "file"
          or "directory". Known values are: "directory" and "file". Default value is None.
-        :paramtype resource: str or ~azure.storage.filedatalake._generated.models.PathResourceType
+        :paramtype resource: str or ~azure.storage.filedatalake.models.PathResourceType
         :keyword mode: Optional. Valid only when namespace is enabled. This parameter determines the
          behavior of the rename operation. The value must be "legacy" or "posix", and the default value
          will be "posix". Known values are: "legacy" and "posix". Default value is None.
-        :paramtype mode: str or ~azure.storage.filedatalake._generated.models.PathRenameMode
+        :paramtype mode: str or ~azure.storage.filedatalake.models.PathRenameMode
         :keyword continuation: Optional. When deleting a directory, the number of paths that are
          deleted with each invocation is limited. If the number of paths to be deleted exceeds this
          limit, a continuation token is returned in this response header. When a continuation token is
@@ -947,7 +942,7 @@ class PathOperations:
          Currently, the only accepted value is "AES256". Must be provided if the x-ms-encryption-key
          header is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or
-         ~azure.storage.filedatalake._generated.models.EncryptionAlgorithmType
+         ~azure.storage.filedatalake.models.EncryptionAlgorithmType
         :keyword owner: Optional. The owner of the blob or directory. Default value is None.
         :paramtype owner: str
         :keyword group: Optional. The owning group of the blob or directory. Default value is None.
@@ -965,8 +960,7 @@ class PathOperations:
         :paramtype lease_duration: int
         :keyword expiry_options: Required. Indicates mode of the expiry time. Known values are:
          "NeverExpire", "RelativeToCreation", "RelativeToNow", and "Absolute". Default value is None.
-        :paramtype expiry_options: str or
-         ~azure.storage.filedatalake._generated.models.PathExpiryOptions
+        :paramtype expiry_options: str or ~azure.storage.filedatalake.models.PathExpiryOptions
         :keyword expires_on: The time to set the blob to expiry. Default value is None.
         :paramtype expires_on: str
         :keyword encryption_context: Specifies the encryption context to set on the file. Default value
@@ -1136,7 +1130,7 @@ class PathOperations:
          for the owner, owning group, and others, so the x-ms-permissions and x-ms-acl request headers
          are mutually exclusive. Known values are: "append", "flush", "setProperties",
          "setAccessControl", and "setAccessControlRecursive". Required.
-        :paramtype action: str or ~azure.storage.filedatalake._generated.models.PathUpdateAction
+        :paramtype action: str or ~azure.storage.filedatalake.models.PathUpdateAction
         :keyword max_records: Optional. Valid for "SetAccessControlRecursive" operation. It specifies
          the maximum number of files or directories on which the acl change will be applied. If omitted
          or greater than 2,000, the request will process up to 2,000 items. Default value is None.
@@ -1149,8 +1143,7 @@ class PathOperations:
         :paramtype continuation: str
         :keyword mode: Mode for set access control recursive. Known values are: "set", "modify", and
          "remove". Default value is None.
-        :paramtype mode: str or
-         ~azure.storage.filedatalake._generated.models.PathSetAccessControlRecursiveMode
+        :paramtype mode: str or ~azure.storage.filedatalake.models.PathSetAccessControlRecursiveMode
         :keyword force_flag: Optional. Valid for "SetAccessControlRecursive" operation. If set to
          false, the operation will terminate quickly on encountering user errors (4XX). If true, the
          operation will ignore user errors and proceed with the operation on other sub-entities of the
@@ -1398,7 +1391,7 @@ class PathOperations:
          change the lease ID of an active lease. Use "renew" and specify the "x-ms-lease-id" to renew an
          existing lease. Use "release" and specify the "x-ms-lease-id" to release a lease. Known values
          are: "acquire", "break", "change", "renew", and "release". Required.
-        :paramtype lease_action: str or ~azure.storage.filedatalake._generated.models.PathLeaseAction
+        :paramtype lease_action: str or ~azure.storage.filedatalake.models.PathLeaseAction
         :keyword lease_duration: The lease duration is required to acquire a lease, and specifies the
          duration of the lease in seconds. The lease duration must be between 15 and 60 seconds or -1
          for infinite lease. Default value is None.
@@ -1549,7 +1542,7 @@ class PathOperations:
          Currently, the only accepted value is "AES256". Must be provided if the x-ms-encryption-key
          header is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or
-         ~azure.storage.filedatalake._generated.models.EncryptionAlgorithmType
+         ~azure.storage.filedatalake.models.EncryptionAlgorithmType
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -1686,7 +1679,7 @@ class PathOperations:
          in the response headers (Hierarchical Namespace must be enabled for the account), otherwise the
          properties are returned. Known values are: "getAccessControl" and "getStatus". Default value is
          None.
-        :paramtype action: str or ~azure.storage.filedatalake._generated.models.PathGetPropertiesAction
+        :paramtype action: str or ~azure.storage.filedatalake.models.PathGetPropertiesAction
         :keyword upn: Optional. Valid only when Hierarchical Namespace is enabled for the account. If
          "true", the user identity values returned in the x-ms-owner, x-ms-group, and x-ms-acl response
          headers will be transformed from Azure Active Directory Object IDs to User Principal Names. If
@@ -2077,8 +2070,7 @@ class PathOperations:
          modifies one or more POSIX access control rights that pre-exist on files and directories,
          "remove" removes one or more POSIX access control rights that were present earlier on files and
          directories. Known values are: "set", "modify", and "remove". Required.
-        :paramtype mode: str or
-         ~azure.storage.filedatalake._generated.models.PathSetAccessControlRecursiveMode
+        :paramtype mode: str or ~azure.storage.filedatalake.models.PathSetAccessControlRecursiveMode
         :keyword continuation: Optional. When deleting a directory, the number of paths that are
          deleted with each invocation is limited. If the number of paths to be deleted exceeds this
          limit, a continuation token is returned in this response header. When a continuation token is
@@ -2249,7 +2241,7 @@ class PathOperations:
          "acquire-release" it will acquire & complete the operation & release the lease once operation
          is done. Known values are: "acquire", "auto-renew", "release", and "acquire-release". Default
          value is None.
-        :paramtype lease_action: str or ~azure.storage.filedatalake._generated.models.LeaseAction
+        :paramtype lease_action: str or ~azure.storage.filedatalake.models.LeaseAction
         :keyword lease_duration: The lease duration is required to acquire a lease, and specifies the
          duration of the lease in seconds. The lease duration must be between 15 and 60 seconds or -1
          for infinite lease. Default value is None.
@@ -2288,7 +2280,7 @@ class PathOperations:
          Currently, the only accepted value is "AES256". Must be provided if the x-ms-encryption-key
          header is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or
-         ~azure.storage.filedatalake._generated.models.EncryptionAlgorithmType
+         ~azure.storage.filedatalake.models.EncryptionAlgorithmType
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a
          href="https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations">Setting
          Timeouts for Blob Service Operations.</a>. Default value is None.
@@ -2441,7 +2433,7 @@ class PathOperations:
          "acquire-release" it will acquire & complete the operation & release the lease once operation
          is done. Known values are: "acquire", "auto-renew", "release", and "acquire-release". Default
          value is None.
-        :paramtype lease_action: str or ~azure.storage.filedatalake._generated.models.LeaseAction
+        :paramtype lease_action: str or ~azure.storage.filedatalake.models.LeaseAction
         :keyword lease_duration: The lease duration is required to acquire a lease, and specifies the
          duration of the lease in seconds. The lease duration must be between 15 and 60 seconds or -1
          for infinite lease. Default value is None.
@@ -2459,7 +2451,7 @@ class PathOperations:
          Currently, the only accepted value is "AES256". Must be provided if the x-ms-encryption-key
          header is provided. "AES256" Default value is None.
         :paramtype encryption_algorithm: str or
-         ~azure.storage.filedatalake._generated.models.EncryptionAlgorithmType
+         ~azure.storage.filedatalake.models.EncryptionAlgorithmType
         :keyword flush: If file should be flushed after the append. Default value is None.
         :paramtype flush: bool
         :keyword structured_body_type: Required if the request body is a structured message. Specifies
@@ -2574,8 +2566,7 @@ class PathOperations:
 
         :keyword expiry_options: Required. Indicates mode of the expiry time. Known values are:
          "NeverExpire", "RelativeToCreation", "RelativeToNow", and "Absolute". Required.
-        :paramtype expiry_options: str or
-         ~azure.storage.filedatalake._generated.models.PathExpiryOptions
+        :paramtype expiry_options: str or ~azure.storage.filedatalake.models.PathExpiryOptions
         :keyword expires_on: The time to set the blob to expiry. Default value is None.
         :paramtype expires_on: str
         :keyword timeout: The timeout parameter is expressed in seconds. For more information, see <a

@@ -1,3 +1,4 @@
+# pylint: disable=too-many-lines
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -25,7 +26,7 @@ from azure.storage.filedatalake import (
     generate_file_sas,
     generate_file_system_sas,
     PublicAccess,
-    ResourceTypes
+    ResourceTypes,
 )
 from azure.storage.filedatalake._models import FileSasPermissions
 
@@ -34,13 +35,13 @@ from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
-TEST_FILE_SYSTEM_PREFIX = 'filesystem'
+TEST_FILE_SYSTEM_PREFIX = "filesystem"
 # ------------------------------------------------------------------------------
 
 
 class TestFileSystem(StorageRecordedTestCase):
     def _setUp(self, account_name, account_key):
-        url = self.account_url(account_name, 'dfs')
+        url = self.account_url(account_name, "dfs")
         self.dsc = DataLakeServiceClient(url, account_key.secret)
         self.config = self.dsc._config
         self.test_file_systems = []
@@ -74,7 +75,6 @@ class TestFileSystem(StorageRecordedTestCase):
                 return True
         return False
 
-
     # --Test cases for file system ---------------------------------------------
 
     @DataLakePreparer()
@@ -105,7 +105,7 @@ class TestFileSystem(StorageRecordedTestCase):
         file_system_name = self._get_file_system_reference()
 
         # Act
-        file_system_client = self.dsc.get_file_system_client(file_system_name + '/')
+        file_system_client = self.dsc.get_file_system_client(file_system_name + "/")
         created = file_system_client.create_file_system()
 
         # Assert
@@ -129,8 +129,8 @@ class TestFileSystem(StorageRecordedTestCase):
 
         # Assert
         assert props
-        assert props['encryption_scope'] is not None
-        assert props['encryption_scope'].default_encryption_scope == encryption_scope.default_encryption_scope
+        assert props["encryption_scope"] is not None
+        assert props["encryption_scope"].default_encryption_scope == encryption_scope.default_encryption_scope
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -140,7 +140,7 @@ class TestFileSystem(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        url = self.account_url(datalake_storage_account_name, 'dfs')
+        url = self.account_url(datalake_storage_account_name, "dfs")
         token = self.generate_sas(
             generate_account_sas,
             self.dsc.account_name,
@@ -148,7 +148,8 @@ class TestFileSystem(StorageRecordedTestCase):
             ResourceTypes(service=True, file_system=True, object=True),
             permission=AccountSasPermissions(write=True, read=True, create=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=5),
-            encryption_scope="hnstestscope1")
+            encryption_scope="hnstestscope1",
+        )
         file_system_name = self._get_file_system_reference()
         encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
 
@@ -157,10 +158,10 @@ class TestFileSystem(StorageRecordedTestCase):
         file_system_client.create_file_system(encryption_scope_options=encryption_scope)
 
         fsc_sas = FileSystemClient(url, file_system_name, token)
-        fsc_sas.create_file('file1')
-        fsc_sas.create_directory('dir1')
-        dir_props = fsc_sas.get_directory_client('dir1').get_directory_properties()
-        file_props = fsc_sas.get_file_client('file1').get_file_properties()
+        fsc_sas.create_file("file1")
+        fsc_sas.create_directory("dir1")
+        dir_props = fsc_sas.get_directory_client("dir1").get_directory_properties()
+        file_props = fsc_sas.get_file_client("file1").get_file_properties()
 
         # Assert
         assert dir_props
@@ -178,7 +179,7 @@ class TestFileSystem(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        url = self.account_url(datalake_storage_account_name, 'dfs')
+        url = self.account_url(datalake_storage_account_name, "dfs")
         file_system_name = self._get_file_system_reference()
         token = self.generate_sas(
             generate_file_system_sas,
@@ -187,7 +188,8 @@ class TestFileSystem(StorageRecordedTestCase):
             self.dsc.credential.account_key,
             permission=FileSystemSasPermissions(write=True, read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=5),
-            encryption_scope="hnstestscope1")
+            encryption_scope="hnstestscope1",
+        )
         encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
 
         # Act
@@ -195,10 +197,10 @@ class TestFileSystem(StorageRecordedTestCase):
         file_system_client.create_file_system(encryption_scope_options=encryption_scope)
 
         fsc_sas = FileSystemClient(url, file_system_name, token)
-        fsc_sas.create_file('file1')
-        fsc_sas.create_directory('dir1')
-        dir_props = fsc_sas.get_directory_client('dir1').get_directory_properties()
-        file_props = fsc_sas.get_file_client('file1').get_file_properties()
+        fsc_sas.create_file("file1")
+        fsc_sas.create_directory("dir1")
+        dir_props = fsc_sas.get_directory_client("dir1").get_directory_properties()
+        file_props = fsc_sas.get_file_client("file1").get_file_properties()
 
         # Assert
         assert dir_props
@@ -216,24 +218,25 @@ class TestFileSystem(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        url = self.account_url(datalake_storage_account_name, 'dfs')
+        url = self.account_url(datalake_storage_account_name, "dfs")
         file_system_name = self._get_file_system_reference()
         token = self.generate_sas(
             generate_directory_sas,
             self.dsc.account_name,
             file_system_name,
-            'dir1',
+            "dir1",
             self.dsc.credential.account_key,
             permission=FileSasPermissions(write=True, read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=5),
-            encryption_scope="hnstestscope1")
+            encryption_scope="hnstestscope1",
+        )
         encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
 
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
         file_system_client.create_file_system(encryption_scope_options=encryption_scope)
 
-        dir_client = DataLakeDirectoryClient(url, file_system_name, 'dir1', credential=token)
+        dir_client = DataLakeDirectoryClient(url, file_system_name, "dir1", credential=token)
         dir_client.create_directory()
         dir_props = dir_client.get_directory_properties()
 
@@ -250,26 +253,27 @@ class TestFileSystem(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        url = self.account_url(datalake_storage_account_name, 'dfs')
+        url = self.account_url(datalake_storage_account_name, "dfs")
         file_system_name = self._get_file_system_reference()
         token = self.generate_sas(
             generate_file_sas,
             self.dsc.account_name,
             file_system_name,
-            'dir1',
-            'file1',
+            "dir1",
+            "file1",
             self.dsc.credential.account_key,
             permission=FileSasPermissions(write=True, read=True, delete=True),
             expiry=datetime.utcnow() + timedelta(hours=5),
-            encryption_scope="hnstestscope1")
+            encryption_scope="hnstestscope1",
+        )
         encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
 
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
         file_system_client.create_file_system(encryption_scope_options=encryption_scope)
-        file_system_client.create_directory('dir1')
+        file_system_client.create_directory("dir1")
 
-        file_client = DataLakeFileClient(url, file_system_name, 'dir1/file1', token)
+        file_client = DataLakeFileClient(url, file_system_name, "dir1/file1", token)
         file_client.create_file()
         file_props = file_client.get_file_properties()
 
@@ -304,7 +308,7 @@ class TestFileSystem(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        metadata = {'hello': 'world', 'number': '42'}
+        metadata = {"hello": "world", "number": "42"}
         file_system_name = self._get_file_system_reference()
 
         # Act
@@ -322,31 +326,31 @@ class TestFileSystem(StorageRecordedTestCase):
     def test_set_file_system_acl(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
-        variables = kwargs.pop('variables', {})
+        variables = kwargs.pop("variables", {})
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Act
         file_system = self._create_file_system()
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
-        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        access_policy = AccessPolicy(permission=FileSystemSasPermissions(read=True),
-                                     expiry=expiry_time,
-                                     start=start_time)
-        signed_identifier1 = {'testid': access_policy}
+        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow())
+        access_policy = AccessPolicy(
+            permission=FileSystemSasPermissions(read=True), expiry=expiry_time, start=start_time
+        )
+        signed_identifier1 = {"testid": access_policy}
         response = file_system.set_file_system_access_policy(signed_identifier1, public_access=PublicAccess.FileSystem)
 
-        assert response.get('etag') is not None
-        assert response.get('last_modified') is not None
+        assert response.get("etag") is not None
+        assert response.get("last_modified") is not None
         acl1 = file_system.get_file_system_access_policy()
-        assert acl1['public_access'] is not None
-        assert len(acl1['signed_identifiers']) == 1
+        assert acl1["public_access"] is not None
+        assert len(acl1["signed_identifiers"]) == 1
 
         # If set signed identifier without specifying the access policy then it will be default to None
-        signed_identifier2 = {'testid': access_policy, 'test2': access_policy}
+        signed_identifier2 = {"testid": access_policy, "test2": access_policy}
         file_system.set_file_system_access_policy(signed_identifier2)
         acl2 = file_system.get_file_system_access_policy()
-        assert acl2['public_access'] is None
-        assert len(acl2['signed_identifiers']) == 2
+        assert acl2["public_access"] is None
+        assert len(acl2["signed_identifiers"]) == 2
 
         return variables
 
@@ -380,8 +384,8 @@ class TestFileSystem(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        file_system_name1 = self._get_file_system_reference(prefix='es')
-        file_system_name2 = self._get_file_system_reference(prefix='es2')
+        file_system_name1 = self._get_file_system_reference(prefix="es")
+        file_system_name2 = self._get_file_system_reference(prefix="es2")
         encryption_scope = EncryptionScopeOptions(default_encryption_scope="hnstestscope1")
         self.dsc.create_file_system(file_system_name1, encryption_scope_options=encryption_scope)
         self.dsc.create_file_system(file_system_name2, encryption_scope_options=encryption_scope)
@@ -389,7 +393,7 @@ class TestFileSystem(StorageRecordedTestCase):
         # Act
         file_systems = []
         for filesystem in self.dsc.list_file_systems():
-            if filesystem['name'] in [file_system_name1, file_system_name2]:
+            if filesystem["name"] in [file_system_name1, file_system_name2]:
                 file_systems.append(filesystem)
 
         # Assert
@@ -418,7 +422,7 @@ class TestFileSystem(StorageRecordedTestCase):
         )
 
         # Act
-        dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, 'dfs'), credential=sas_token)
+        dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, "dfs"), credential=sas_token)
         file_systems = list(dsc.list_file_systems())
 
         # Assert
@@ -505,7 +509,7 @@ class TestFileSystem(StorageRecordedTestCase):
         old_name = self._get_file_system_reference(prefix="old")
         new_name = self._get_file_system_reference(prefix="new")
         filesystem = self.dsc.create_file_system(old_name)
-        filesystem_lease_id = filesystem.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        filesystem_lease_id = filesystem.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
         with pytest.raises(HttpResponseError):
             self.dsc._rename_file_system(name=old_name, new_name=new_name)
         with pytest.raises(HttpResponseError):
@@ -619,13 +623,13 @@ class TestFileSystem(StorageRecordedTestCase):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system = self._create_file_system()
-        metadata = {'hello': 'world', 'number': '42'}
+        metadata = {"hello": "world", "number": "42"}
         resp = file_system.set_file_system_metadata(metadata)
 
         # Act
-        file_systems = list(self.dsc.list_file_systems(
-            name_starts_with=file_system.file_system_name,
-            include_metadata=True))
+        file_systems = list(
+            self.dsc.list_file_systems(name_starts_with=file_system.file_system_name, include_metadata=True)
+        )
 
         # Assert
         assert file_systems is not None
@@ -646,10 +650,11 @@ class TestFileSystem(StorageRecordedTestCase):
             self._create_file_system(file_system_prefix="filesystem{}".format(i))
 
         # Act
-        file_systems = list(next(self.dsc.list_file_systems(
-            results_per_page=3,
-            name_starts_with="file",
-            include_metadata=True).by_page()))
+        file_systems = list(
+            next(
+                self.dsc.list_file_systems(results_per_page=3, name_starts_with="file", include_metadata=True).by_page()
+            )
+        )
 
         # Assert
         assert file_systems is not None
@@ -667,13 +672,13 @@ class TestFileSystem(StorageRecordedTestCase):
         file_system_name = self._get_file_system_reference()
         file_system = self.dsc.get_file_system_client(file_system_name)
         file_system.create_file_system(public_access="blob")
-        metadata = {'hello': 'world', 'number': '42'}
+        metadata = {"hello": "world", "number": "42"}
         resp = file_system.set_file_system_metadata(metadata)
 
         # Act
-        file_systems = list(self.dsc.list_file_systems(
-            name_starts_with=file_system.file_system_name,
-            include_metadata=True))
+        file_systems = list(
+            self.dsc.list_file_systems(name_starts_with=file_system.file_system_name, include_metadata=True)
+        )
 
         # Assert
         assert file_systems is not None
@@ -691,7 +696,7 @@ class TestFileSystem(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        metadata = {'hello': 'world', 'number': '42'}
+        metadata = {"hello": "world", "number": "42"}
         file_system = self._create_file_system()
         file_system.set_file_system_metadata(metadata)
 
@@ -741,14 +746,14 @@ class TestFileSystem(StorageRecordedTestCase):
     def test_list_paths_create_expiry(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
-        variables = kwargs.pop('variables', {})
+        variables = kwargs.pop("variables", {})
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system = self._create_file_system()
-        file_client = file_system.create_file('file1')
+        file_client = file_system.create_file("file1")
 
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(days=1))
+        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(days=1))
         file_client.set_file_expiry("Absolute", expires_on=expiry_time)
 
         # Act
@@ -772,7 +777,7 @@ class TestFileSystem(StorageRecordedTestCase):
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
         file_system = self._create_file_system()
-        file_system.create_file('file1')
+        file_system.create_file("file1")
 
         # Act
         paths = list(file_system.get_paths(upn=True))
@@ -813,14 +818,15 @@ class TestFileSystem(StorageRecordedTestCase):
         assert len(dir3_paths) == 2
         assert dir3_paths[0].deletion_id is not None
         assert dir3_paths[1].deletion_id is not None
-        assert dir3_paths[0].name == 'dir3/file_in_dir3'
-        assert dir3_paths[1].name == 'dir3/subdir/file_in_subdir'
+        assert dir3_paths[0].name == "dir3/file_in_dir3"
+        assert dir3_paths[1].name == "dir3/subdir/file_in_subdir"
 
         paths_generator1 = file_system.list_deleted_paths(results_per_page=2).by_page()
         paths1 = list(next(paths_generator1))
 
         paths_generator2 = file_system.list_deleted_paths(results_per_page=4).by_page(
-            continuation_token=paths_generator1.continuation_token)
+            continuation_token=paths_generator1.continuation_token
+        )
         paths2 = list(next(paths_generator2))
 
         # Assert
@@ -858,8 +864,9 @@ class TestFileSystem(StorageRecordedTestCase):
         generator1 = file_system.get_paths(max_results=2, upn=True).by_page()
         paths1 = list(next(generator1))
 
-        generator2 = file_system.get_paths(max_results=4, upn=True)\
-            .by_page(continuation_token=generator1.continuation_token)
+        generator2 = file_system.get_paths(max_results=4, upn=True).by_page(
+            continuation_token=generator1.continuation_token
+        )
         paths2 = list(next(generator2))
 
         assert len(paths1) == 2
@@ -884,7 +891,7 @@ class TestFileSystem(StorageRecordedTestCase):
 
             # create a file under the current directory
             file_client = subdir.create_file("file")
-            file_client.append_data(b"abced", 0, 5) # cspell:disable-line
+            file_client.append_data(b"abced", 0, 5)  # cspell:disable-line
             file_client.flush_data(5)
 
         generator1 = file_system.get_paths(path="dir10/subdir", max_results=2, upn=True).by_page()
@@ -978,11 +985,11 @@ class TestFileSystem(StorageRecordedTestCase):
         # Act
         file_system_client = self.dsc.get_file_system_client(file_system_name)
         file_system_client.create_file_system(encryption_scope_options=encryption_scope)
-        file_system_client.create_directory('dir1')
-        file_system_client.create_file('dir1/file1')
+        file_system_client.create_directory("dir1")
+        file_system_client.create_file("dir1/file1")
 
-        dir_props = file_system_client.get_directory_client('dir1').get_directory_properties()
-        file_props = file_system_client.get_file_client('dir1/file1').get_file_properties()
+        dir_props = file_system_client.get_directory_client("dir1").get_directory_properties()
+        file_props = file_system_client.get_file_client("dir1/file1").get_file_properties()
         paths = list(file_system_client.get_paths(recursive=False, upn=True))
 
         # Assert
@@ -1035,11 +1042,11 @@ class TestFileSystem(StorageRecordedTestCase):
         file_system = self._create_file_system()
         directory_client = file_system._get_root_directory_client()
 
-        acl = 'user::rwx,group::r-x,other::rwx'
+        acl = "user::rwx,group::r-x,other::rwx"
         directory_client.set_access_control(acl=acl)
         access_control = directory_client.get_access_control()
 
-        assert acl == access_control['acl']
+        assert acl == access_control["acl"]
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -1049,7 +1056,7 @@ class TestFileSystem(StorageRecordedTestCase):
 
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
         # Arrange
-        file_system_client = self._create_file_system("fenrhxsbfvsdvdsvdsadb") # cspell:disable-line
+        file_system_client = self._create_file_system("fenrhxsbfvsdvdsvdsadb")  # cspell:disable-line
         with file_system_client as fs_client:
             with fs_client.get_file_client("file1.txt") as f_client:
                 f_client.create_file()
@@ -1070,12 +1077,12 @@ class TestFileSystem(StorageRecordedTestCase):
         file_system_client = self._create_file_system("fs2")
         if file_system_client is None:
             file_system_client = self.dsc.get_file_system_client(self._get_file_system_reference(prefix="fs2"))
-        dir_path = 'dir10'
+        dir_path = "dir10"
         dir_client = file_system_client.create_directory(dir_path)
         resp = dir_client.delete_directory()
         with pytest.raises(HttpResponseError):
             file_system_client.get_file_client(dir_path).get_file_properties()
-        restored_dir_client = file_system_client._undelete_path(dir_path, resp['deletion_id'])
+        restored_dir_client = file_system_client._undelete_path(dir_path, resp["deletion_id"])
         resp = restored_dir_client.get_directory_properties()
         assert resp is not None
 
@@ -1089,12 +1096,12 @@ class TestFileSystem(StorageRecordedTestCase):
         file_system_client = self._create_file_system("fs3")
         if file_system_client is None:
             file_system_client = self.dsc.get_file_system_client(self._get_file_system_reference(prefix="fs3"))
-        file_path = 'dir10/file'
+        file_path = "dir10/file"
         dir_client = file_system_client.create_file(file_path)
         resp = dir_client.delete_file()
         with pytest.raises(HttpResponseError):
             file_system_client.get_file_client(file_path).get_file_properties()
-        restored_file_client = file_system_client._undelete_path(file_path, resp['deletion_id'])
+        restored_file_client = file_system_client._undelete_path(file_path, resp["deletion_id"])
         resp = restored_file_client.get_file_properties()
         assert resp is not None
 
@@ -1106,23 +1113,24 @@ class TestFileSystem(StorageRecordedTestCase):
 
         # Arrange
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        url = self.account_url(datalake_storage_account_name, 'dfs')
+        url = self.account_url(datalake_storage_account_name, "dfs")
         file_system_name = self._get_file_system_reference()
         file_system_client = self.dsc.get_file_system_client(file_system_name)
         file_system_client.create_file_system()
-        file_system_client.create_directory('testdir1')
+        file_system_client.create_directory("testdir1")
 
         # Act
         token_credential = self.get_credential(DataLakeServiceClient)
         fsc = FileSystemClient(
-            url, file_system_name,
+            url,
+            file_system_name,
             credential=token_credential,
-            audience=f'https://{datalake_storage_account_name}.blob.core.windows.net/'
+            audience=f"https://{datalake_storage_account_name}.blob.core.windows.net/",
         )
 
         # Assert
         response1 = fsc.exists()
-        response2 = fsc.create_directory('testdir11')
+        response2 = fsc.create_directory("testdir11")
         assert response1 is not None
         assert response2 is not None
 
@@ -1134,23 +1142,21 @@ class TestFileSystem(StorageRecordedTestCase):
 
         # Arrange
         self._setUp(datalake_storage_account_name, datalake_storage_account_key)
-        url = self.account_url(datalake_storage_account_name, 'dfs')
+        url = self.account_url(datalake_storage_account_name, "dfs")
         file_system_name = self._get_file_system_reference()
         file_system_client = self.dsc.get_file_system_client(file_system_name)
         file_system_client.create_file_system()
-        file_system_client.create_directory('testdir2')
+        file_system_client.create_directory("testdir2")
 
         # Act
         token_credential = self.get_credential(DataLakeServiceClient)
         fsc = FileSystemClient(
-            url, file_system_name,
-            credential=token_credential,
-            audience=f'https://badaudience.blob.core.windows.net/'
+            url, file_system_name, credential=token_credential, audience=f"https://badaudience.blob.core.windows.net/"
         )
 
         # Will not raise ClientAuthenticationError despite bad audience due to Bearer Challenge
         fsc.exists()
-        fsc.create_directory('testdir22')
+        fsc.create_directory("testdir22")
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -1159,20 +1165,17 @@ class TestFileSystem(StorageRecordedTestCase):
 
         # Arrange
         token_credential = self.get_credential(DataLakeServiceClient)
-        dsc = DataLakeServiceClient(
-            self.account_url(datalake_storage_account_name, 'dfs'),
-            token_credential
-        )
+        dsc = DataLakeServiceClient(self.account_url(datalake_storage_account_name, "dfs"), token_credential)
         file_system = dsc.create_file_system(self.get_resource_name(TEST_FILE_SYSTEM_PREFIX))
         directory_client = file_system._get_root_directory_client()
 
         # Act
-        acl = 'user::rwx,group::r-x,other::rwx'
+        acl = "user::rwx,group::r-x,other::rwx"
         directory_client.set_access_control(acl=acl)
         access_control = directory_client.get_access_control()
 
         # Assert
-        assert acl == access_control['acl']
+        assert acl == access_control["acl"]
 
     @DataLakePreparer()
     @recorded_by_proxy
@@ -1185,8 +1188,8 @@ class TestFileSystem(StorageRecordedTestCase):
             self.account_url(datalake_storage_account_name, "dfs"),
             credential=token_credential,
         )
-        start = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        expiry = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        start = self.get_datetime_variable(variables, "start_time", datetime.utcnow())
+        expiry = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
         user_delegation_key_1 = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
         user_delegation_key_2 = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
 
@@ -1234,9 +1237,7 @@ class TestFileSystem(StorageRecordedTestCase):
         user_delegation_oid = decoded.get("oid")
         delegated_user_tid = decoded.get("tid")
         user_delegation_key = dsc.get_user_delegation_key(
-            key_start_time=start,
-            key_expiry_time=expiry,
-            delegated_user_tid=delegated_user_tid
+            key_start_time=start, key_expiry_time=expiry, delegated_user_tid=delegated_user_tid
         )
 
         assert user_delegation_key is not None
@@ -1256,9 +1257,7 @@ class TestFileSystem(StorageRecordedTestCase):
         assert "skdutid=" + delegated_user_tid in file_system_token
 
         file_system_client = FileSystemClient(
-            f"{account_url}?{file_system_token}",
-            file_system_name=file_system_name,
-            credential=token_credential
+            f"{account_url}?{file_system_token}", file_system_name=file_system_name, credential=token_credential
         )
         paths = list(file_system_client.get_paths())
         assert len(paths) == 2
@@ -1273,7 +1272,7 @@ class TestFileSystem(StorageRecordedTestCase):
             user_delegation_key,
             permission=FileSasPermissions(write=True, read=True, delete=True),
             expiry=expiry,
-            user_delegation_oid=user_delegation_oid
+            user_delegation_oid=user_delegation_oid,
         )
 
         assert "sduoid=" + user_delegation_oid in directory_token
@@ -1283,7 +1282,7 @@ class TestFileSystem(StorageRecordedTestCase):
             f"{account_url}?{directory_token}",
             file_system_name=file_system_name,
             directory_name=directory_name,
-            credential=token_credential
+            credential=token_credential,
         )
         props = directory_client.get_directory_properties()
         assert props is not None
@@ -1297,7 +1296,7 @@ class TestFileSystem(StorageRecordedTestCase):
             credential=user_delegation_key,
             permission=FileSasPermissions(write=True, read=True, delete=True),
             expiry=expiry,
-            user_delegation_oid=user_delegation_oid
+            user_delegation_oid=user_delegation_oid,
         )
 
         assert "sduoid=" + user_delegation_oid in file_token
@@ -1307,11 +1306,12 @@ class TestFileSystem(StorageRecordedTestCase):
             f"{account_url}?{file_token}",
             file_system_name=file_system_name,
             file_path=f"{directory_name}/{file_name}",
-            credential=token_credential
+            credential=token_credential,
         )
         content = file_client.download_file().readall()
         assert content == data
 
+
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

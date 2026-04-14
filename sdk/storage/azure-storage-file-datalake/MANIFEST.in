@@ -1,8 +1,7 @@
 include *.md
 include LICENSE
-include azure/storage/filedatalake/_generated/py.typed
+include azure/storage/filedatalake/py.typed
 recursive-include tests *.py
 recursive-include samples *.py *.md
 include azure/__init__.py
 include azure/storage/__init__.py
-include azure/storage/filedatalake/__init__.py

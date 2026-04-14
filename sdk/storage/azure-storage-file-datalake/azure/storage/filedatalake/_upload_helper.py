@@ -58,8 +58,14 @@ def upload_datalake_file(
 
         # Extract path HTTP headers from kwargs
         path_http_header_kwargs: Dict[str, Any] = {}
-        for key in ("cache_control", "content_type", "content_md5", "content_encoding",
-                     "content_language", "content_disposition"):
+        for key in (
+            "cache_control",
+            "content_type",
+            "content_md5",
+            "content_encoding",
+            "content_language",
+            "content_disposition",
+        ):
             val = kwargs.pop(key, None)
             if val is not None:
                 path_http_header_kwargs[key] = val
