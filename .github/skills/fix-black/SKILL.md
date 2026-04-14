@@ -1,6 +1,6 @@
 ---
 name: fix-black
-description: Automatically fix black code formatting issues in any Azure SDK for Python package"
+description: Automatically fix black code formatting issues in any Azure SDK for Python package
 ---
 
 # Fix Black Formatting Issues Skill
