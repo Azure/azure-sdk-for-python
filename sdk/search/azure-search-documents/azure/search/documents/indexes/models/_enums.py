@@ -57,6 +57,10 @@ class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gpt5Mini model."""
     GPT5_NANO = "gpt-5-nano"
     """Gpt5Nano model."""
+    GPT_5_4_MINI = "gpt-5.4-mini"
+    """Gpt54Mini model."""
+    GPT_5_4_NANO = "gpt-5.4-nano"
+    """Gpt54Nano model."""
 
 
 class BlobIndexerDataToExtract(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -537,8 +541,8 @@ class KeyPhraseExtractionSkillLanguage(str, Enum, metaclass=CaseInsensitiveEnumM
 class KnowledgeBaseModelKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The AI model to be used for query planning."""
 
-    AZURE_OPEN_AI = "azureOpenAI"
-    """Use Azure Open AI models for query planning."""
+    AZURE_OPENAI = "azureOpenAI"
+    """Use Azure OpenAI models for query planning."""
 
 
 class KnowledgeSourceContentExtractionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

@@ -63,7 +63,7 @@ class KnowledgeSourceParams(_Model):
     """Base type for knowledge source runtime parameters.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AzureBlobKnowledgeSourceParams, IndexedOneLakeKnowledgeSourceParams,
+    AzureBlobKnowledgeSourceParameters, IndexedOneLakeKnowledgeSourceParameters,
     IndexedSharePointKnowledgeSourceParams, RemoteSharePointKnowledgeSourceParams,
     SearchIndexKnowledgeSourceParams, WebKnowledgeSourceParams
 
@@ -136,7 +136,7 @@ class KnowledgeSourceParams(_Model):
         super().__init__(*args, **kwargs)
 
 
-class AzureBlobKnowledgeSourceParams(KnowledgeSourceParams, discriminator="azureBlob"):
+class AzureBlobKnowledgeSourceParameters(KnowledgeSourceParams, discriminator="azureBlob"):
     """Specifies runtime parameters for a azure blob knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
@@ -243,7 +243,7 @@ class CompletedSynchronizationState(_Model):
         super().__init__(*args, **kwargs)
 
 
-class IndexedOneLakeKnowledgeSourceParams(KnowledgeSourceParams, discriminator="indexedOneLake"):
+class IndexedOneLakeKnowledgeSourceParameters(KnowledgeSourceParams, discriminator="indexedOneLake"):
     """Specifies runtime parameters for a indexed OneLake knowledge source.
 
     :ivar knowledge_source_name: The name of the index the params apply to. Required.
