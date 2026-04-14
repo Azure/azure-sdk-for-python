@@ -169,3 +169,21 @@ class TestSamplesAsync(AzureRecordedTestCase):
         executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async()
+
+    @pytest.mark.parametrize(
+        "sample_path",
+        get_async_sample_paths(
+            "hosted_agents",
+            samples_to_skip=[
+                "sample_skills_crud_async.py",  # Service returns 201 (Created) for update; SDK operation expects 200.
+            ],
+        ),
+    )
+    @servicePreparer()
+    @SamplePathPasser()
+    @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
+    async def test_hosted_agents_samples(self, sample_path: str, **kwargs) -> None:
+        env_vars = get_sample_env_vars(kwargs)
+        executor = AsyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
+        await executor.execute_async()
+        await executor.validate_print_calls_by_llm_async()

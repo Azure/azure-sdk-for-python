@@ -35,7 +35,7 @@ from azure.identity import DefaultAzureCredential
 from azure.core.pipeline.policies import HttpLoggingPolicy
 
 from azure.ai.projects import AIProjectClient
-from samples.hosted_agents.hosted_agents_util import create_agent_and_session
+from hosted_agents_util import create_agent_and_session
 
 load_dotenv()
 

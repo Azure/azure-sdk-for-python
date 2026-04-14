@@ -17,6 +17,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.identity.aio import get_bearer_token_provider
 from .._patch import _AuthSecretsFilter
+from ..models._patch import _BETA_OPERATION_FEATURE_HEADERS, _FOUNDRY_FEATURES_HEADER_NAME, _has_header_case_insensitive
 from ._client import AIProjectClient as AIProjectClientGenerated
 from .operations import TelemetryOperations
 
@@ -136,7 +137,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         elif agent_name is not None:
             if self._config.allow_preview:
                 base_url = (
-                    self._config.endpoint.rstrip("/") + f"/agents/{agent_name}/endpoint/openai/v1"
+                    self._config.endpoint.rstrip("/") + f"/agents/{agent_name}/endpoint/protocols/openai"
                 )  # pylint: disable=protected-access
             else:
                 raise ValueError(
@@ -146,6 +147,10 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
                 )
         else:
             base_url = self._config.endpoint.rstrip("/") + "/openai/v1"  # pylint: disable=protected-access
+
+        default_query = dict[str, str](kwargs.pop("default_query", None) or {})
+        if agent_name is not None and "api-version" not in default_query:
+            default_query["api-version"] = self._config.api_version  # pylint: disable=protected-access
 
         logger.debug(  # pylint: disable=specify-parameter-names-in-call
             "[get_openai_client] Creating OpenAI client using Entra ID authentication, base_url = `%s`",  # pylint: disable=line-too-long
@@ -169,6 +174,8 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             http_client = None
 
         default_headers = dict[str, str](kwargs.pop("default_headers", None) or {})
+        if agent_name is not None and not _has_header_case_insensitive(default_headers, _FOUNDRY_FEATURES_HEADER_NAME):
+            default_headers[_FOUNDRY_FEATURES_HEADER_NAME] = _BETA_OPERATION_FEATURE_HEADERS["agents"]
 
         openai_custom_user_agent = default_headers.get("User-Agent", None)
 
@@ -176,6 +183,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
             return AsyncOpenAI(
                 api_key=api_key,
                 base_url=base_url,
+                default_query=default_query,
                 http_client=http_client,
                 **kwargs,
             )

@@ -35,7 +35,7 @@ from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.models import HostedAgentDefinition, VersionRefIndicator, ProtocolVersionRecord
-from samples.hosted_agents.hosted_agents_util import wait_for_agent_version_active
+from hosted_agents_util import wait_for_agent_version_active
 
 load_dotenv()
 
