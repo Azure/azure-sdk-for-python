@@ -25,14 +25,14 @@ if TYPE_CHECKING:
 class FileClient:  # pylint: disable=client-accepts-api-version-keyword
     """Azure File Storage provides scalable file shares in the cloud using SMB and NFS protocols.
 
-    :ivar service: ServiceOperations operations
-    :vartype service: azure.storage.fileshare._generated.aio.operations.ServiceOperations
-    :ivar share: ShareOperations operations
-    :vartype share: azure.storage.fileshare._generated.aio.operations.ShareOperations
     :ivar directory: DirectoryOperations operations
-    :vartype directory: azure.storage.fileshare._generated.aio.operations.DirectoryOperations
+    :vartype directory: azure.storage.fileshare.aio.operations.DirectoryOperations
     :ivar file: FileOperations operations
-    :vartype file: azure.storage.fileshare._generated.aio.operations.FileOperations
+    :vartype file: azure.storage.fileshare.aio.operations.FileOperations
+    :ivar service: ServiceOperations operations
+    :vartype service: azure.storage.fileshare.aio.operations.ServiceOperations
+    :ivar share: ShareOperations operations
+    :vartype share: azure.storage.fileshare.aio.operations.ShareOperations
     :param url: The URL of the service account, share, directory or file that is the target of the
      desired operation. Required.
     :type url: str
@@ -70,10 +70,10 @@ class FileClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.share = ShareOperations(self._client, self._config, self._serialize, self._deserialize)
         self.directory = DirectoryOperations(self._client, self._config, self._serialize, self._deserialize)
         self.file = FileOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.share = ShareOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

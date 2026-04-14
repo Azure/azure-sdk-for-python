@@ -86,7 +86,7 @@ def _construct_endpoints(netloc: str, account_part: str) -> Tuple[str, str, str]
     :return: The account name, primary hostname, and secondary hostname.
     :rtype: Tuple[str, str, str]
     """
-    domain_suffix = netloc[len(account_part):]
+    domain_suffix = netloc[len(account_part) :]
     secondary_idx = account_part.find(_SECONDARY_SUFFIX)
 
     # Case where customer provides secondary URL

@@ -4325,7 +4325,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file1",
-            credential=storage_account_key
+            credential=storage_account_key,
         )
         await file1.create_file(1024, file_property_semantics=None)
         props = await file1.get_file_properties()
@@ -4335,7 +4335,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file2",
-            credential=storage_account_key
+            credential=storage_account_key,
         )
         await file2.create_file(1024, file_property_semantics="New")
         props = await file2.get_file_properties()
@@ -4345,7 +4345,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file2",
-            credential=storage_account_key
+            credential=storage_account_key,
         )
         await file3.create_file(1024, file_property_semantics="Restore", file_permission=TEST_FILE_PERMISSIONS)
         props = await file3.get_file_properties()
@@ -4365,7 +4365,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file",
-            credential=storage_account_key.secret
+            credential=storage_account_key.secret,
         )
         size = 1024
         data = b"abc" * size

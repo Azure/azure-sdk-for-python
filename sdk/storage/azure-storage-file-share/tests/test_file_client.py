@@ -15,7 +15,7 @@ from azure.storage.fileshare import (
     ShareDirectoryClient,
     ShareFileClient,
     ShareServiceClient,
-    VERSION
+    VERSION,
 )
 
 from devtools_testutils import recorded_by_proxy
@@ -237,7 +237,8 @@ class TestStorageFileClient(StorageRecordedTestCase):
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
 
     @pytest.mark.parametrize(
-        "account_url, expected_primary, expected_secondary", [
+        "account_url, expected_primary, expected_secondary",
+        [
             (
                 "https://myaccount.file.core.windows.net/",
                 "myaccount.file.core.windows.net",
@@ -268,7 +269,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
                 "myaccount-secondary-ipv6.file.core.windows.net",
                 "myaccount-secondary-ipv6.file.core.windows.net",
             ),
-        ]
+        ],
     )
     @FileSharePreparer()
     def test_create_service_ipv6(self, account_url, expected_primary, expected_secondary, **kwargs):
@@ -283,7 +284,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
                 credential=storage_account_key.secret,
                 share_name=share_name,
                 directory_path=directory_path,
-                file_path=file_path
+                file_path=file_path,
             )
             self.validate_ipv6_account_endpoints(
                 service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
@@ -300,7 +301,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
                 credential=storage_account_key.secret,
                 share_name=share_name,
                 directory_path=directory_path,
-                file_path=file_path
+                file_path=file_path,
             )
             self.validate_ipv6_account_endpoints(
                 service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
@@ -308,7 +309,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
 
         service = ShareFileClient.from_file_url(
             file_url=f"{account_url}/{share_name}/{directory_path}/{file_path}-secondary",
-            credential=storage_account_key.secret
+            credential=storage_account_key.secret,
         )
         self.validate_ipv6_account_endpoints(
             service, storage_account_name, storage_account_key.secret, expected_primary, expected_secondary
@@ -318,7 +319,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
     def test_create_service_ipv6_custom_domain(self):
         token_credential = self.get_credential(ShareServiceClient)
 
-        hostname= "github.com"
+        hostname = "github.com"
         account_url = f"https://{hostname}"
         for service_type in SERVICES.keys():
             service = service_type(
@@ -327,7 +328,7 @@ class TestStorageFileClient(StorageRecordedTestCase):
                 share_name="foo",
                 directory_path="bar",
                 file_path="baz",
-                token_intent="backup"
+                token_intent="backup",
             )
             assert service is not None
             assert service.scheme == "https"

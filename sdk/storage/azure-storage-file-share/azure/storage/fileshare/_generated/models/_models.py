@@ -294,7 +294,7 @@ class Error(_Model):
      "TotalSharesProvisionedIopsExceedsAccountLimit",
      "TotalSharesProvisionedBandwidthExceedsAccountLimit", and
      "TotalSharesCountExceedsAccountLimit".
-    :vartype code: str or ~azure.storage.fileshare._generated.models.StorageErrorCode
+    :vartype code: str or ~azure.storage.fileshare.models.StorageErrorCode
     :ivar message: The error message.
     :vartype message: str
     :ivar copy_source_status_code: Copy source status code.
@@ -659,7 +659,7 @@ class HandleItem(_Model):
     :ivar last_reconnect_time: Time handle was last connected to (UTC).
     :vartype last_reconnect_time: ~datetime.datetime
     :ivar access_right_list: The access rights.
-    :vartype access_right_list: list[str or ~azure.storage.fileshare._generated.models.AccessRight]
+    :vartype access_right_list: list[str or ~azure.storage.fileshare.models.AccessRight]
     """
 
     handle_id: str = rest_field(
@@ -1347,7 +1347,7 @@ class SharePermission(_Model):
      Required.
     :vartype permission: str
     :ivar format: The permission format. Known values are: "Sddl" and "Binary".
-    :vartype format: str or ~azure.storage.fileshare._generated.models.FilePermissionFormat
+    :vartype format: str or ~azure.storage.fileshare.models.FilePermissionFormat
     """
 
     permission: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -1407,18 +1407,18 @@ class SharePropertiesInternal(_Model):
     :vartype access_tier_transition_state: str
     :ivar lease_status: The current lease status of the share. Known values are: "locked" and
      "unlocked".
-    :vartype lease_status: str or ~azure.storage.fileshare._generated.models.LeaseStatusType
+    :vartype lease_status: str or ~azure.storage.fileshare.models.LeaseStatusType
     :ivar lease_state: Lease state of the share. Known values are: "available", "leased",
      "expired", "breaking", and "broken".
-    :vartype lease_state: str or ~azure.storage.fileshare._generated.models.LeaseStateType
+    :vartype lease_state: str or ~azure.storage.fileshare.models.LeaseStateType
     :ivar lease_duration: When a share is leased, specifies whether the lease is of infinite or
      fixed duration. Known values are: "infinite" and "fixed".
-    :vartype lease_duration: str or ~azure.storage.fileshare._generated.models.LeaseDurationType
+    :vartype lease_duration: str or ~azure.storage.fileshare.models.LeaseDurationType
     :ivar enabled_protocols: The enabled protocols.
     :vartype enabled_protocols: str
     :ivar root_squash: The root squash setting. Known values are: "NoRootSquash", "RootSquash", and
      "AllSquash".
-    :vartype root_squash: str or ~azure.storage.fileshare._generated.models.ShareRootSquash
+    :vartype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
     :ivar enable_snapshot_virtual_directory_access: Whether snapshot virtual directory access is
      enabled.
     :vartype enable_snapshot_virtual_directory_access: bool

@@ -18,7 +18,7 @@ from devtools_testutils import (
     set_custom_default_matcher,
     add_remove_header_sanitizer,
     add_uri_regex_sanitizer,
-    test_proxy
+    test_proxy,
 )
 
 

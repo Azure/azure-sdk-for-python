@@ -4191,7 +4191,7 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file1",
-            credential=storage_account_key
+            credential=storage_account_key,
         )
         file1.create_file(1024, file_property_semantics=None)
         props = file1.get_file_properties()
@@ -4201,7 +4201,7 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file2",
-            credential=storage_account_key
+            credential=storage_account_key,
         )
         file2.create_file(1024, file_property_semantics="New")
         props = file2.get_file_properties()
@@ -4211,7 +4211,7 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file2",
-            credential=storage_account_key
+            credential=storage_account_key,
         )
         file3.create_file(1024, file_property_semantics="Restore", file_permission=TEST_FILE_PERMISSIONS)
         props = file3.get_file_properties()
@@ -4229,12 +4229,13 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file",
-            credential=storage_account_key.secret
+            credential=storage_account_key.secret,
         )
         size = 1024
         data = b"abc" * size
         file_client.create_file(len(data), data=data)
         downloaded_data = file_client.download_file().readall()
         assert downloaded_data == data
+
 
 # ------------------------------------------------------------------------------

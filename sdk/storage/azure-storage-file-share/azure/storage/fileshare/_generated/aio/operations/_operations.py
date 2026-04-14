@@ -90,13 +90,3690 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 JSON = MutableMapping[str, Any]
 
 
+class DirectoryOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.storage.fileshare.aio.FileClient`'s
+        :attr:`directory` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: FileClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def create(  # pylint: disable=too-many-locals
+        self,
+        *,
+        timeout: Optional[int] = None,
+        metadata: Optional[dict[str, str]] = None,
+        file_permission: Optional[str] = None,
+        file_permission_key: Optional[str] = None,
+        file_attributes: Optional[str] = None,
+        file_creation_time: Optional[str] = None,
+        file_last_write_time: Optional[str] = None,
+        file_change_time: Optional[str] = None,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
+        file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """Creates a new directory under the specified share or parent directory.
+
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword file_permission: If specified the permission (security descriptor) shall be set for
+         the directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified. Default value is None.
+        :paramtype file_permission: str
+        :keyword file_permission_key: Key of the permission to be set for the directory/file. Note:
+         Only one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default
+         value is None.
+        :paramtype file_permission_key: str
+        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
+         value: 'Archive' for file and 'Directory' for directory. 'None' can also be specified as
+         default. Default value is None.
+        :paramtype file_attributes: str
+        :keyword file_creation_time: Creation time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_creation_time: str
+        :keyword file_last_write_time: Last write time for the file/directory. Default value: Now.
+         Default value is None.
+        :paramtype file_last_write_time: str
+        :keyword file_change_time: Change time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_change_time: str
+        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
+         "Sddl" and "Binary". Default value is None.
+        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :paramtype owner: str
+        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :paramtype group: str
+        :keyword file_mode: Optional, NFS only. The file mode of the file or directory. Default value
+         is None.
+        :paramtype file_mode: str
+        :keyword file_property_semantics: SMB only. Default value is New. Known values are: "New" and
+         "Restore". Default value is None.
+        :paramtype file_property_semantics: str or
+         ~azure.storage.fileshare.models.FilePropertySemantics
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_directory_create_request(
+            timeout=timeout,
+            metadata=metadata,
+            file_permission=file_permission,
+            file_permission_key=file_permission_key,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time,
+            file_permission_format=file_permission_format,
+            file_request_intent=file_request_intent,
+            owner=owner,
+            group=group,
+            file_mode=file_mode,
+            file_property_semantics=file_property_semantics,
+            allow_trailing_dot=allow_trailing_dot,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
+        response_headers["x-ms-file-permission-key"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-permission-key")
+        )
+        response_headers["x-ms-file-attributes"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-attributes")
+        )
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def get_properties(
+        self,
+        *,
+        sharesnapshot: Optional[str] = None,
+        timeout: Optional[int] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """Returns all system properties for the specified directory, and can also be used to check the
+        existence of a directory.
+
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
+        :paramtype sharesnapshot: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_directory_get_properties_request(
+            sharesnapshot=sharesnapshot,
+            timeout=timeout,
+            file_request_intent=file_request_intent,
+            allow_trailing_dot=allow_trailing_dot,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-file-permission-key"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-permission-key")
+        )
+        response_headers["x-ms-file-attributes"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-attributes")
+        )
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-server-encrypted")
+        )
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def delete(
+        self,
+        *,
+        timeout: Optional[int] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """Removes the specified empty directory. Note that the directory must be empty before it can be
+        deleted.
+
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_directory_delete_request(
+            timeout=timeout,
+            file_request_intent=file_request_intent,
+            allow_trailing_dot=allow_trailing_dot,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def set_properties(  # pylint: disable=too-many-locals
+        self,
+        *,
+        timeout: Optional[int] = None,
+        file_permission: Optional[str] = None,
+        file_permission_key: Optional[str] = None,
+        file_attributes: Optional[str] = None,
+        file_creation_time: Optional[str] = None,
+        file_last_write_time: Optional[str] = None,
+        file_change_time: Optional[str] = None,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """Sets properties for the specified directory.
+
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword file_permission: If specified the permission (security descriptor) shall be set for
+         the directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified. Default value is None.
+        :paramtype file_permission: str
+        :keyword file_permission_key: Key of the permission to be set for the directory/file. Note:
+         Only one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default
+         value is None.
+        :paramtype file_permission_key: str
+        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
+         value: 'Archive' for file and 'Directory' for directory. 'None' can also be specified as
+         default. Default value is None.
+        :paramtype file_attributes: str
+        :keyword file_creation_time: Creation time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_creation_time: str
+        :keyword file_last_write_time: Last write time for the file/directory. Default value: Now.
+         Default value is None.
+        :paramtype file_last_write_time: str
+        :keyword file_change_time: Change time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_change_time: str
+        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
+         "Sddl" and "Binary". Default value is None.
+        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :paramtype owner: str
+        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :paramtype group: str
+        :keyword file_mode: Optional, NFS only. The file mode of the file or directory. Default value
+         is None.
+        :paramtype file_mode: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_directory_set_properties_request(
+            timeout=timeout,
+            file_permission=file_permission,
+            file_permission_key=file_permission_key,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time,
+            file_permission_format=file_permission_format,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            owner=owner,
+            group=group,
+            file_mode=file_mode,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
+        response_headers["x-ms-file-permission-key"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-permission-key")
+        )
+        response_headers["x-ms-file-attributes"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-attributes")
+        )
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def set_metadata(
+        self,
+        *,
+        timeout: Optional[int] = None,
+        metadata: Optional[dict[str, str]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Sets one or more user-defined name-value pairs for the specified directory.
+
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_directory_set_metadata_request(
+            timeout=timeout,
+            metadata=metadata,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def list_files_and_directories_segment(
+        self,
+        *,
+        prefix: Optional[str] = None,
+        sharesnapshot: Optional[str] = None,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        include: Optional[list[Union[str, _models.ListFilesIncludeType]]] = None,
+        timeout: Optional[int] = None,
+        include_extended_info: Optional[bool] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> _models.ListFilesAndDirectoriesSegmentResponse:
+        """Returns a list of files and directories under the specified share or directory. It lists the
+        contents only for a single level of the directory hierarchy.
+
+        :keyword prefix: Filters the results to return only items whose name begins with the specified
+         prefix. Default value is None.
+        :paramtype prefix: str
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
+        :paramtype sharesnapshot: str
+        :keyword marker: A string value that identifies the portion of the list to be returned with the
+         next listing operation. Default value is None.
+        :paramtype marker: str
+        :keyword maxresults: Specifies the maximum number of items to return. Default value is None.
+        :paramtype maxresults: int
+        :keyword include: Include this parameter to specify one or more datasets to include in the
+         response. Default value is None.
+        :paramtype include: list[str or ~azure.storage.fileshare.models.ListFilesIncludeType]
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword include_extended_info: Include extended information. Default value is None.
+        :paramtype include_extended_info: bool
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: ListFilesAndDirectoriesSegmentResponse. The ListFilesAndDirectoriesSegmentResponse is
+         compatible with MutableMapping
+        :rtype: ~azure.storage.fileshare._generated.models.ListFilesAndDirectoriesSegmentResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ListFilesAndDirectoriesSegmentResponse] = kwargs.pop("cls", None)
+
+        _request = build_directory_list_files_and_directories_segment_request(
+            prefix=prefix,
+            sharesnapshot=sharesnapshot,
+            marker=marker,
+            maxresults=maxresults,
+            include=include,
+            timeout=timeout,
+            include_extended_info=include_extended_info,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize_xml(_models.ListFilesAndDirectoriesSegmentResponse, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def list_handles(
+        self,
+        *,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        timeout: Optional[int] = None,
+        sharesnapshot: Optional[str] = None,
+        recursive: Optional[bool] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> _models.ListHandlesResponse:
+        """Lists handles for directory.
+
+        :keyword marker: A string value that identifies the portion of the list to be returned with the
+         next listing operation. Default value is None.
+        :paramtype marker: str
+        :keyword maxresults: Specifies the maximum number of items to return. Default value is None.
+        :paramtype maxresults: int
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
+        :paramtype sharesnapshot: str
+        :keyword recursive: Specifies operation should apply to the directory specified in the URI, its
+         files, its subdirectories and their files. Default value is None.
+        :paramtype recursive: bool
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: ListHandlesResponse. The ListHandlesResponse is compatible with MutableMapping
+        :rtype: ~azure.storage.fileshare._generated.models.ListHandlesResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ListHandlesResponse] = kwargs.pop("cls", None)
+
+        _request = build_directory_list_handles_request(
+            marker=marker,
+            maxresults=maxresults,
+            timeout=timeout,
+            sharesnapshot=sharesnapshot,
+            recursive=recursive,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize_xml(_models.ListHandlesResponse, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def force_close_handles(
+        self,
+        *,
+        handle_id: str,
+        timeout: Optional[int] = None,
+        marker: Optional[str] = None,
+        sharesnapshot: Optional[str] = None,
+        recursive: Optional[bool] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Closes all handles open for given directory.
+
+        :keyword handle_id: Specifies handle ID opened on the file or directory to be closed. Asterisk
+         ('*') is a wildcard that specifies all handles. Required.
+        :paramtype handle_id: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword marker: A string value that identifies the portion of the list to be returned with the
+         next listing operation. Default value is None.
+        :paramtype marker: str
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
+        :paramtype sharesnapshot: str
+        :keyword recursive: Specifies operation should apply to the directory specified in the URI, its
+         files, its subdirectories and their files. Default value is None.
+        :paramtype recursive: bool
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_directory_force_close_handles_request(
+            handle_id=handle_id,
+            timeout=timeout,
+            marker=marker,
+            sharesnapshot=sharesnapshot,
+            recursive=recursive,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-marker"] = self._deserialize("str", response.headers.get("x-ms-marker"))
+        response_headers["x-ms-number-of-handles-closed"] = self._deserialize(
+            "int", response.headers.get("x-ms-number-of-handles-closed")
+        )
+        response_headers["x-ms-number-of-handles-failed"] = self._deserialize(
+            "int", response.headers.get("x-ms-number-of-handles-failed")
+        )
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def rename(  # pylint: disable=too-many-locals
+        self,
+        *,
+        rename_source: str,
+        timeout: Optional[int] = None,
+        replace_if_exists: Optional[bool] = None,
+        ignore_read_only: Optional[bool] = None,
+        source_lease_id: Optional[str] = None,
+        destination_lease_id: Optional[str] = None,
+        file_attributes: Optional[str] = None,
+        file_creation_time: Optional[str] = None,
+        file_last_write_time: Optional[str] = None,
+        file_change_time: Optional[str] = None,
+        file_permission: Optional[str] = None,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
+        file_permission_key: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        allow_source_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Renames a directory. By default, the destination is overwritten and if the destination already
+        exists and has a read-only attribute set, the operation will fail.
+
+        :keyword rename_source: Required. Specifies the URI-style path of the source file, up to 2 KB
+         in length. Required.
+        :paramtype rename_source: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword replace_if_exists: Boolean. Default value is false. Set to true to indicate that the
+         destination should be overwritten. Default value is None.
+        :paramtype replace_if_exists: bool
+        :keyword ignore_read_only: Boolean. Default value is false. Set to true to overwrite the
+         destination even if it has the read-only attribute set. Default value is None.
+        :paramtype ignore_read_only: bool
+        :keyword source_lease_id: Required if the source file has an active lease. Default value is
+         None.
+        :paramtype source_lease_id: str
+        :keyword destination_lease_id: Required if the destination has an active lease. Default value
+         is None.
+        :paramtype destination_lease_id: str
+        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
+         value is None.
+        :paramtype file_attributes: str
+        :keyword file_creation_time: Creation time for the directory. Default value is None.
+        :paramtype file_creation_time: str
+        :keyword file_last_write_time: Last write time for the directory. Default value is None.
+        :paramtype file_last_write_time: str
+        :keyword file_change_time: Change time for the directory. Default value is None.
+        :paramtype file_change_time: str
+        :keyword file_permission: If specified the permission shall be set for the directory. Default
+         value is None.
+        :paramtype file_permission: str
+        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
+         "Sddl" and "Binary". Default value is None.
+        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :keyword file_permission_key: Key of the permission to be set. Default value is None.
+        :paramtype file_permission_key: str
+        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the
+         source URI. Default value is None.
+        :paramtype allow_source_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_directory_rename_request(
+            rename_source=rename_source,
+            timeout=timeout,
+            replace_if_exists=replace_if_exists,
+            ignore_read_only=ignore_read_only,
+            source_lease_id=source_lease_id,
+            destination_lease_id=destination_lease_id,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time,
+            file_permission=file_permission,
+            file_permission_format=file_permission_format,
+            file_permission_key=file_permission_key,
+            metadata=metadata,
+            allow_trailing_dot=allow_trailing_dot,
+            allow_source_trailing_dot=allow_source_trailing_dot,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
+        response_headers["x-ms-file-permission-key"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-permission-key")
+        )
+        response_headers["x-ms-file-attributes"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-attributes")
+        )
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+
+class FileOperations:  # pylint: disable=too-many-public-methods
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.storage.fileshare.aio.FileClient`'s
+        :attr:`file` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: FileClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @distributed_trace_async
+    async def create(  # pylint: disable=too-many-locals
+        self,
+        optional_body: Optional[bytes] = None,
+        *,
+        content_length: int,
+        timeout: Optional[int] = None,
+        file_content_type: Optional[str] = None,
+        file_content_encoding: Optional[str] = None,
+        file_content_language: Optional[str] = None,
+        file_cache_control: Optional[str] = None,
+        file_content_md5: Optional[bytes] = None,
+        file_content_disposition: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        file_permission: Optional[str] = None,
+        file_permission_key: Optional[str] = None,
+        file_attributes: Optional[str] = None,
+        file_creation_time: Optional[str] = None,
+        file_last_write_time: Optional[str] = None,
+        file_change_time: Optional[str] = None,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
+        lease_id: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
+        nfs_file_type: Optional[Union[str, _models.NfsFileType]] = None,
+        content_md5: Optional[bytes] = None,
+        file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
+        optional_content_length: Optional[int] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Creates a new file or replaces a file. Note it only initializes the file with no content.
+
+        :param optional_body: Initial data. Default value is None.
+        :type optional_body: bytes
+        :keyword content_length: Specifies the number of bytes being transmitted in the request body.
+         When the x-ms-write header is set to clear, the value of this header must be set to zero.
+         Required.
+        :paramtype content_length: int
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword file_content_type: Sets the MIME content type of the file. The default type is
+         'application/octet-stream'. Default value is None.
+        :paramtype file_content_type: str
+        :keyword file_content_encoding: Specifies which content encodings have been applied to the
+         file. Default value is None.
+        :paramtype file_content_encoding: str
+        :keyword file_content_language: Specifies the natural languages used by this resource. Default
+         value is None.
+        :paramtype file_content_language: str
+        :keyword file_cache_control: Sets the file's cache control. The File service stores this value
+         but does not use or modify it. Default value is None.
+        :paramtype file_cache_control: str
+        :keyword file_content_md5: An MD5 hash of the file content. This hash is used to verify the
+         integrity of the file during transport. Default value is None.
+        :paramtype file_content_md5: bytes
+        :keyword file_content_disposition: Sets the file's Content-Disposition header. Default value is
+         None.
+        :paramtype file_content_disposition: str
+        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword file_permission: If specified the permission (security descriptor) shall be set for
+         the directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified. Default value is None.
+        :paramtype file_permission: str
+        :keyword file_permission_key: Key of the permission to be set for the directory/file. Note:
+         Only one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default
+         value is None.
+        :paramtype file_permission_key: str
+        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
+         value: 'Archive' for file and 'Directory' for directory. 'None' can also be specified as
+         default. Default value is None.
+        :paramtype file_attributes: str
+        :keyword file_creation_time: Creation time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_creation_time: str
+        :keyword file_last_write_time: Last write time for the file/directory. Default value: Now.
+         Default value is None.
+        :paramtype file_last_write_time: str
+        :keyword file_change_time: Change time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_change_time: str
+        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
+         "Sddl" and "Binary". Default value is None.
+        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :paramtype owner: str
+        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :paramtype group: str
+        :keyword file_mode: Optional, NFS only. The file mode of the file or directory. Default value
+         is None.
+        :paramtype file_mode: str
+        :keyword nfs_file_type: Optional, NFS only. Type of the file or directory. Known values are:
+         "Regular", "Directory", and "SymLink". Default value is None.
+        :paramtype nfs_file_type: str or ~azure.storage.fileshare.models.NfsFileType
+        :keyword content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
+         the data during transport. Default value is None.
+        :paramtype content_md5: bytes
+        :keyword file_property_semantics: SMB only. Default value is New. Known values are: "New" and
+         "Restore". Default value is None.
+        :paramtype file_property_semantics: str or
+         ~azure.storage.fileshare.models.FilePropertySemantics
+        :keyword optional_content_length: Optional. Specifies the content length of the file. Default
+         value is None.
+        :paramtype optional_content_length: int
+        :keyword structured_body_type: Specifies the response content should be returned as a
+         structured message and specifies the message schema version and properties. Default value is
+         None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        file_type: Literal["file"] = kwargs.pop("file_type", _headers.pop("x-ms-type", "file"))
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/octet-stream")
+        )
+        content_type = content_type if optional_body else None
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _content = optional_body
+
+        _request = build_file_create_request(
+            content_length=content_length,
+            timeout=timeout,
+            file_content_type=file_content_type,
+            file_content_encoding=file_content_encoding,
+            file_content_language=file_content_language,
+            file_cache_control=file_cache_control,
+            file_content_md5=file_content_md5,
+            file_content_disposition=file_content_disposition,
+            metadata=metadata,
+            file_permission=file_permission,
+            file_permission_key=file_permission_key,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time,
+            file_permission_format=file_permission_format,
+            lease_id=lease_id,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            owner=owner,
+            group=group,
+            file_mode=file_mode,
+            nfs_file_type=nfs_file_type,
+            content_md5=content_md5,
+            file_property_semantics=file_property_semantics,
+            optional_content_length=optional_content_length,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
+            file_type=file_type,
+            content_type=content_type,
+            version=self._config.version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
+        response_headers["x-ms-file-permission-key"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-permission-key")
+        )
+        response_headers["x-ms-file-attributes"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-attributes")
+        )
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def download(
+        self,
+        *,
+        timeout: Optional[int] = None,
+        range: Optional[str] = None,
+        range_get_content_md5: Optional[bool] = None,
+        lease_id: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        structured_body_type: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterator[bytes]:
+        """Reads or downloads a file from the system, including its metadata and properties.
+
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword range: Return file data only from the specified byte range. Default value is None.
+        :paramtype range: str
+        :keyword range_get_content_md5: When this header is set to true and specified together with the
+         Range header, the service returns the MD5 hash for the range, as long as the range is less than
+         or equal to 4 MB in size. Default value is None.
+        :paramtype range_get_content_md5: bool
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword structured_body_type: Specifies the response content should be returned as a
+         structured message and specifies the message schema version and properties. Default value is
+         None.
+        :paramtype structured_body_type: str
+        :return: AsyncIterator[bytes]
+        :rtype: AsyncIterator[bytes]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
+
+        _request = build_file_download_request(
+            timeout=timeout,
+            range=range,
+            range_get_content_md5=range_get_content_md5,
+            lease_id=lease_id,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            structured_body_type=structured_body_type,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", True)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 206]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
+        response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+        response_headers["Content-Disposition"] = self._deserialize("str", response.headers.get("Content-Disposition"))
+        response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
+        response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
+        response_headers["x-ms-copy-completion-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-copy-completion-time")
+        )
+        response_headers["x-ms-copy-status-description"] = self._deserialize(
+            "str", response.headers.get("x-ms-copy-status-description")
+        )
+        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+        response_headers["x-ms-copy-progress"] = self._deserialize("str", response.headers.get("x-ms-copy-progress"))
+        response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
+        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+        response_headers["x-ms-content-md5"] = self._deserialize("bytearray", response.headers.get("x-ms-content-md5"))
+        response_headers["x-ms-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-server-encrypted")
+        )
+        response_headers["x-ms-file-permission-key"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-permission-key")
+        )
+        response_headers["x-ms-file-attributes"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-attributes")
+        )
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
+        response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
+        response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
+        response_headers["x-ms-structured-content-length"] = self._deserialize(
+            "int", response.headers.get("x-ms-structured-content-length")
+        )
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
+        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get_properties(
+        self,
+        *,
+        sharesnapshot: Optional[str] = None,
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> bool:
+        """Returns all user-defined metadata, standard HTTP properties, and system properties for the
+        file.
+
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
+        :paramtype sharesnapshot: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_get_properties_request(
+            sharesnapshot=sharesnapshot,
+            timeout=timeout,
+            lease_id=lease_id,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
+        response_headers["x-ms-type"] = self._deserialize("str", response.headers.get("x-ms-type"))
+        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
+        response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
+        response_headers["Content-Disposition"] = self._deserialize("str", response.headers.get("Content-Disposition"))
+        response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
+        response_headers["x-ms-copy-completion-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-copy-completion-time")
+        )
+        response_headers["x-ms-copy-status-description"] = self._deserialize(
+            "str", response.headers.get("x-ms-copy-status-description")
+        )
+        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+        response_headers["x-ms-copy-progress"] = self._deserialize("str", response.headers.get("x-ms-copy-progress"))
+        response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
+        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+        response_headers["x-ms-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-server-encrypted")
+        )
+        response_headers["x-ms-file-permission-key"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-permission-key")
+        )
+        response_headers["x-ms-file-attributes"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-attributes")
+        )
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
+        response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
+        response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
+        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+        return 200 <= response.status_code <= 299
+
+    @distributed_trace_async
+    async def delete(
+        self,
+        *,
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Removes the file from the storage account.
+
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_delete_request(
+            timeout=timeout,
+            lease_id=lease_id,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def set_http_headers(  # pylint: disable=too-many-locals
+        self,
+        *,
+        timeout: Optional[int] = None,
+        file_content_length: Optional[int] = None,
+        file_content_type: Optional[str] = None,
+        file_content_encoding: Optional[str] = None,
+        file_content_language: Optional[str] = None,
+        file_cache_control: Optional[str] = None,
+        file_content_md5: Optional[bytes] = None,
+        file_content_disposition: Optional[str] = None,
+        file_permission: Optional[str] = None,
+        file_permission_key: Optional[str] = None,
+        file_attributes: Optional[str] = None,
+        file_creation_time: Optional[str] = None,
+        file_last_write_time: Optional[str] = None,
+        file_change_time: Optional[str] = None,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
+        lease_id: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """Sets HTTP headers on a file.
+
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword file_content_length: Specifies the number of bytes being transmitted. Default value is
+         None.
+        :paramtype file_content_length: int
+        :keyword file_content_type: Sets the MIME content type of the file. The default type is
+         'application/octet-stream'. Default value is None.
+        :paramtype file_content_type: str
+        :keyword file_content_encoding: Specifies which content encodings have been applied to the
+         file. Default value is None.
+        :paramtype file_content_encoding: str
+        :keyword file_content_language: Specifies the natural languages used by this resource. Default
+         value is None.
+        :paramtype file_content_language: str
+        :keyword file_cache_control: Sets the file's cache control. The File service stores this value
+         but does not use or modify it. Default value is None.
+        :paramtype file_cache_control: str
+        :keyword file_content_md5: An MD5 hash of the file content. This hash is used to verify the
+         integrity of the file during transport. Default value is None.
+        :paramtype file_content_md5: bytes
+        :keyword file_content_disposition: Sets the file's Content-Disposition header. Default value is
+         None.
+        :paramtype file_content_disposition: str
+        :keyword file_permission: If specified the permission (security descriptor) shall be set for
+         the directory/file. This header can be used if Permission size is <= 8KB, else
+         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
+         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
+         x-ms-file-permission-key should be specified. Default value is None.
+        :paramtype file_permission: str
+        :keyword file_permission_key: Key of the permission to be set for the directory/file. Note:
+         Only one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default
+         value is None.
+        :paramtype file_permission_key: str
+        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
+         value: 'Archive' for file and 'Directory' for directory. 'None' can also be specified as
+         default. Default value is None.
+        :paramtype file_attributes: str
+        :keyword file_creation_time: Creation time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_creation_time: str
+        :keyword file_last_write_time: Last write time for the file/directory. Default value: Now.
+         Default value is None.
+        :paramtype file_last_write_time: str
+        :keyword file_change_time: Change time for the file/directory. Default value: Now. Default
+         value is None.
+        :paramtype file_change_time: str
+        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
+         "Sddl" and "Binary". Default value is None.
+        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :paramtype owner: str
+        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :paramtype group: str
+        :keyword file_mode: Optional, NFS only. The file mode of the file or directory. Default value
+         is None.
+        :paramtype file_mode: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_set_http_headers_request(
+            timeout=timeout,
+            file_content_length=file_content_length,
+            file_content_type=file_content_type,
+            file_content_encoding=file_content_encoding,
+            file_content_language=file_content_language,
+            file_cache_control=file_cache_control,
+            file_content_md5=file_content_md5,
+            file_content_disposition=file_content_disposition,
+            file_permission=file_permission,
+            file_permission_key=file_permission_key,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time,
+            file_permission_format=file_permission_format,
+            lease_id=lease_id,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            owner=owner,
+            group=group,
+            file_mode=file_mode,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
+        response_headers["x-ms-file-permission-key"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-permission-key")
+        )
+        response_headers["x-ms-file-attributes"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-attributes")
+        )
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def set_metadata(
+        self,
+        *,
+        timeout: Optional[int] = None,
+        metadata: Optional[dict[str, str]] = None,
+        lease_id: Optional[str] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """Sets one or more user-defined name-value pairs for the specified file.
+
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_set_metadata_request(
+            timeout=timeout,
+            metadata=metadata,
+            lease_id=lease_id,
+            file_request_intent=file_request_intent,
+            allow_trailing_dot=allow_trailing_dot,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def acquire_lease(
+        self,
+        *,
+        timeout: Optional[int] = None,
+        lease_duration: Optional[int] = None,
+        proposed_lease_id: Optional[str] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """The Lease File operation establishes and manages a lock on a file for write and delete
+        operations.
+
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_duration: Specifies the duration of the lease, in seconds, or negative one (-1)
+         for a lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
+         duration cannot be changed using renew or change. Default value is None.
+        :paramtype lease_duration: int
+        :keyword proposed_lease_id: Proposed lease ID, in a GUID string format. The File service
+         returns 400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
+         Constructor (String) for a list of valid GUID string formats. Default value is None.
+        :paramtype proposed_lease_id: str
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_acquire_lease_request(
+            timeout=timeout,
+            lease_duration=lease_duration,
+            proposed_lease_id=proposed_lease_id,
+            file_request_intent=file_request_intent,
+            allow_trailing_dot=allow_trailing_dot,
+            action=action,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-lease-id"] = self._deserialize("str", response.headers.get("x-ms-lease-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def release_lease(
+        self,
+        *,
+        lease_id: str,
+        timeout: Optional[int] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """The Lease File operation establishes and manages a lock on a file for write and delete
+        operations.
+
+        :keyword lease_id: Specifies the current lease ID on the resource. Required.
+        :paramtype lease_id: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_release_lease_request(
+            lease_id=lease_id,
+            timeout=timeout,
+            file_request_intent=file_request_intent,
+            allow_trailing_dot=allow_trailing_dot,
+            action=action,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def change_lease(
+        self,
+        *,
+        lease_id: str,
+        timeout: Optional[int] = None,
+        proposed_lease_id: Optional[str] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """The Lease File operation establishes and manages a lock on a file for write and delete
+        operations.
+
+        :keyword lease_id: Specifies the current lease ID on the resource. Required.
+        :paramtype lease_id: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword proposed_lease_id: Proposed lease ID, in a GUID string format. The File service
+         returns 400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
+         Constructor (String) for a list of valid GUID string formats. Default value is None.
+        :paramtype proposed_lease_id: str
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_change_lease_request(
+            lease_id=lease_id,
+            timeout=timeout,
+            proposed_lease_id=proposed_lease_id,
+            file_request_intent=file_request_intent,
+            allow_trailing_dot=allow_trailing_dot,
+            action=action,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-lease-id"] = self._deserialize("str", response.headers.get("x-ms-lease-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def break_lease(
+        self,
+        *,
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        **kwargs: Any
+    ) -> None:
+        """The Lease File operation establishes and manages a lock on a file for write and delete
+        operations.
+
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_break_lease_request(
+            timeout=timeout,
+            lease_id=lease_id,
+            file_request_intent=file_request_intent,
+            allow_trailing_dot=allow_trailing_dot,
+            action=action,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-lease-time"] = self._deserialize("int", response.headers.get("x-ms-lease-time"))
+        response_headers["x-ms-lease-id"] = self._deserialize("str", response.headers.get("x-ms-lease-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def upload_range(  # pylint: disable=too-many-locals
+        self,
+        optional_body: Optional[bytes] = None,
+        *,
+        range: str,
+        file_range_write: Union[str, _models.FileRangeWriteType],
+        content_length: int,
+        timeout: Optional[int] = None,
+        content_md5: Optional[bytes] = None,
+        lease_id: Optional[str] = None,
+        file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        structured_body_type: Optional[str] = None,
+        structured_content_length: Optional[int] = None,
+        **kwargs: Any
+    ) -> None:
+        """Upload a range of bytes to a file.
+
+        :param optional_body: Initial data. Default value is None.
+        :type optional_body: bytes
+        :keyword range: Specifies the range of bytes to be written. Both the start and end of the range
+         must be specified. Required.
+        :paramtype range: str
+        :keyword file_range_write: Specify one of the following options: - Update: Writes the bytes
+         specified by the request body into the specified range. - Clear: Clears the specified range and
+         releases the space used in storage for that range. Known values are: "update" and "clear".
+         Required.
+        :paramtype file_range_write: str or ~azure.storage.fileshare.models.FileRangeWriteType
+        :keyword content_length: The number of bytes being transmitted in the request body. Required.
+        :paramtype content_length: int
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
+         the data during transport. Default value is None.
+        :paramtype content_md5: bytes
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword file_last_written_mode: If the file last write time should be preserved or
+         overwritten. Known values are: "Now" and "Preserve". Default value is None.
+        :paramtype file_last_written_mode: str or ~azure.storage.fileshare.models.FileLastWrittenMode
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword structured_body_type: Specifies the response content should be returned as a
+         structured message and specifies the message schema version and properties. Default value is
+         None.
+        :paramtype structured_body_type: str
+        :keyword structured_content_length: Required if the request body is a structured message.
+         Specifies the length of the blob/file content inside the message body. Will always be smaller
+         than Content-Length. Default value is None.
+        :paramtype structured_content_length: int
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop(
+            "content_type", _headers.pop("Content-Type", "application/octet-stream")
+        )
+        content_type = content_type if optional_body else None
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _content = optional_body
+
+        _request = build_file_upload_range_request(
+            range=range,
+            file_range_write=file_range_write,
+            content_length=content_length,
+            timeout=timeout,
+            content_md5=content_md5,
+            lease_id=lease_id,
+            file_last_written_mode=file_last_written_mode,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            structured_body_type=structured_body_type,
+            structured_content_length=structured_content_length,
+            content_type=content_type,
+            version=self._config.version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-structured-body"] = self._deserialize(
+            "str", response.headers.get("x-ms-structured-body")
+        )
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def upload_range_from_url(  # pylint: disable=too-many-locals
+        self,
+        *,
+        range: str,
+        copy_source: str,
+        file_range_write_from_url: Union[str, _models.FileRangeWriteFromUrlType],
+        content_length: int,
+        source_range: Optional[str] = None,
+        timeout: Optional[int] = None,
+        source_content_crc64: Optional[str] = None,
+        source_if_match_crc64: Optional[str] = None,
+        source_if_none_match_crc64: Optional[str] = None,
+        lease_id: Optional[str] = None,
+        copy_source_authorization: Optional[str] = None,
+        file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        allow_source_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Upload a range of bytes to a file where the contents are read from a URL.
+
+        :keyword range: Specifies the range of bytes to be written. Both the start and end of the range
+         must be specified. Required.
+        :paramtype range: str
+        :keyword copy_source: Specifies the URL of the source file or blob, up to 2 KB in length.
+         Required.
+        :paramtype copy_source: str
+        :keyword file_range_write_from_url: Only update is supported. "update" Required.
+        :paramtype file_range_write_from_url: str or
+         ~azure.storage.fileshare.models.FileRangeWriteFromUrlType
+        :keyword content_length: The number of bytes being transmitted in the request body. Required.
+        :paramtype content_length: int
+        :keyword source_range: Bytes of source data in the specified range. Default value is None.
+        :paramtype source_range: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword source_content_crc64: Specify the CRC64 hash of the source content. Default value is
+         None.
+        :paramtype source_content_crc64: str
+        :keyword source_if_match_crc64: Specify the CRC64 hash value to check for source content
+         integrity. Default value is None.
+        :paramtype source_if_match_crc64: str
+        :keyword source_if_none_match_crc64: Specify the CRC64 hash value to check for source content
+         mismatch. Default value is None.
+        :paramtype source_if_none_match_crc64: str
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword copy_source_authorization: Only Bearer type is supported. Credentials should be a
+         valid OAuth access token to copy source. Default value is None.
+        :paramtype copy_source_authorization: str
+        :keyword file_last_written_mode: If the file last write time should be preserved or
+         overwritten. Known values are: "Now" and "Preserve". Default value is None.
+        :paramtype file_last_written_mode: str or ~azure.storage.fileshare.models.FileLastWrittenMode
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the
+         source URI. Default value is None.
+        :paramtype allow_source_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_upload_range_from_url_request(
+            range=range,
+            copy_source=copy_source,
+            file_range_write_from_url=file_range_write_from_url,
+            content_length=content_length,
+            source_range=source_range,
+            timeout=timeout,
+            source_content_crc64=source_content_crc64,
+            source_if_match_crc64=source_if_match_crc64,
+            source_if_none_match_crc64=source_if_none_match_crc64,
+            lease_id=lease_id,
+            copy_source_authorization=copy_source_authorization,
+            file_last_written_mode=file_last_written_mode,
+            allow_trailing_dot=allow_trailing_dot,
+            allow_source_trailing_dot=allow_source_trailing_dot,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-content-crc64"] = self._deserialize("str", response.headers.get("x-ms-content-crc64"))
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def get_range_list(
+        self,
+        *,
+        sharesnapshot: Optional[str] = None,
+        prevsharesnapshot: Optional[str] = None,
+        timeout: Optional[int] = None,
+        range: Optional[str] = None,
+        lease_id: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        support_rename: Optional[bool] = None,
+        **kwargs: Any
+    ) -> _models.ShareFileRangeList:
+        """Returns the list of valid page ranges for a file or snapshot of a file.
+
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
+        :paramtype sharesnapshot: str
+        :keyword prevsharesnapshot: The previous snapshot parameter is an opaque DateTime value that
+         specifies a previous file snapshot to compare against. Default value is None.
+        :paramtype prevsharesnapshot: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword range: Return file data only from the specified byte range. Default value is None.
+        :paramtype range: str
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword support_rename: This header is allowed only when PrevShareSnapshot query parameter is
+         set. Determines whether the changed ranges for a file that has been renamed or moved should be
+         listed. Default value is None.
+        :paramtype support_rename: bool
+        :return: ShareFileRangeList. The ShareFileRangeList is compatible with MutableMapping
+        :rtype: ~azure.storage.fileshare._generated.models.ShareFileRangeList
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ShareFileRangeList] = kwargs.pop("cls", None)
+
+        _request = build_file_get_range_list_request(
+            sharesnapshot=sharesnapshot,
+            prevsharesnapshot=prevsharesnapshot,
+            timeout=timeout,
+            range=range,
+            lease_id=lease_id,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            support_rename=support_rename,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["x-ms-content-length"] = self._deserialize("int", response.headers.get("x-ms-content-length"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize_xml(_models.ShareFileRangeList, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def start_copy(  # pylint: disable=too-many-locals
+        self,
+        *,
+        copy_source: str,
+        timeout: Optional[int] = None,
+        metadata: Optional[dict[str, str]] = None,
+        file_permission: Optional[str] = None,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
+        file_permission_key: Optional[str] = None,
+        file_permission_copy_mode: Optional[Union[str, _models.PermissionCopyModeType]] = None,
+        ignore_read_only: Optional[bool] = None,
+        file_attributes: Optional[str] = None,
+        file_creation_time: Optional[str] = None,
+        file_last_write_time: Optional[str] = None,
+        file_change_time: Optional[str] = None,
+        set_archive_attribute: Optional[bool] = None,
+        lease_id: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        allow_source_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_mode: Optional[str] = None,
+        file_mode_copy_mode: Optional[Union[str, _models.ModeCopyMode]] = None,
+        file_owner_copy_mode: Optional[Union[str, _models.OwnerCopyMode]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Copies a blob or file to a destination file within the storage account.
+
+        :keyword copy_source: Specifies the URL of the source file or blob, up to 2 KB in length.
+         Required.
+        :paramtype copy_source: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword file_permission: If specified the permission shall be set for the file. Default value
+         is None.
+        :paramtype file_permission: str
+        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
+         "Sddl" and "Binary". Default value is None.
+        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :keyword file_permission_key: Key of the permission to be set. Default value is None.
+        :paramtype file_permission_key: str
+        :keyword file_permission_copy_mode: Specifies the option to copy file security descriptor from
+         source file or to set it using the value which is defined by the header value of
+         x-ms-file-permission or x-ms-file-permission-key. Known values are: "source" and "override".
+         Default value is None.
+        :paramtype file_permission_copy_mode: str or
+         ~azure.storage.fileshare.models.PermissionCopyModeType
+        :keyword ignore_read_only: A boolean value that specifies whether the ReadOnly attribute on a
+         preexisting destination file should be respected or overridden. Default value is None.
+        :paramtype ignore_read_only: bool
+        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
+         value is None.
+        :paramtype file_attributes: str
+        :keyword file_creation_time: Creation time for the file. Default value is None.
+        :paramtype file_creation_time: str
+        :keyword file_last_write_time: Last write time for the file. Default value is None.
+        :paramtype file_last_write_time: str
+        :keyword file_change_time: Change time for the file. Default value is None.
+        :paramtype file_change_time: str
+        :keyword set_archive_attribute: Optional. Sets the archive attribute on the destination file.
+         Default value is None.
+        :paramtype set_archive_attribute: bool
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the
+         source URI. Default value is None.
+        :paramtype allow_source_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :paramtype owner: str
+        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :paramtype group: str
+        :keyword file_mode: Optional, NFS only. The file mode of the file or directory. Default value
+         is None.
+        :paramtype file_mode: str
+        :keyword file_mode_copy_mode: Specifies mode copy option for the file. Known values are:
+         "source" and "override". Default value is None.
+        :paramtype file_mode_copy_mode: str or ~azure.storage.fileshare.models.ModeCopyMode
+        :keyword file_owner_copy_mode: Specifies owner copy option for the file. Known values are:
+         "source" and "override". Default value is None.
+        :paramtype file_owner_copy_mode: str or ~azure.storage.fileshare.models.OwnerCopyMode
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_start_copy_request(
+            copy_source=copy_source,
+            timeout=timeout,
+            metadata=metadata,
+            file_permission=file_permission,
+            file_permission_format=file_permission_format,
+            file_permission_key=file_permission_key,
+            file_permission_copy_mode=file_permission_copy_mode,
+            ignore_read_only=ignore_read_only,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time,
+            set_archive_attribute=set_archive_attribute,
+            lease_id=lease_id,
+            allow_trailing_dot=allow_trailing_dot,
+            allow_source_trailing_dot=allow_source_trailing_dot,
+            file_request_intent=file_request_intent,
+            owner=owner,
+            group=group,
+            file_mode=file_mode,
+            file_mode_copy_mode=file_mode_copy_mode,
+            file_owner_copy_mode=file_owner_copy_mode,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
+        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def abort_copy(
+        self,
+        *,
+        copyid: str,
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Aborts a pending Copy File operation, and leaves a destination file with zero length and full
+        metadata.
+
+        :keyword copyid: The copy identifier provided in the x-ms-copy-id header of the original Copy
+         File operation. Required.
+        :paramtype copyid: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        copy_action_abort_constant: Literal["abort"] = kwargs.pop(
+            "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_abort_copy_request(
+            copyid=copyid,
+            timeout=timeout,
+            lease_id=lease_id,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            copy_action_abort_constant=copy_action_abort_constant,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def list_handles(
+        self,
+        *,
+        marker: Optional[str] = None,
+        maxresults: Optional[int] = None,
+        timeout: Optional[int] = None,
+        sharesnapshot: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> _models.ListHandlesResponse:
+        """Lists handles for file.
+
+        :keyword marker: A string value that identifies the portion of the list to be returned with the
+         next listing operation. Default value is None.
+        :paramtype marker: str
+        :keyword maxresults: Specifies the maximum number of items to return. Default value is None.
+        :paramtype maxresults: int
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
+        :paramtype sharesnapshot: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: ListHandlesResponse. The ListHandlesResponse is compatible with MutableMapping
+        :rtype: ~azure.storage.fileshare._generated.models.ListHandlesResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ListHandlesResponse] = kwargs.pop("cls", None)
+
+        _request = build_file_list_handles_request(
+            marker=marker,
+            maxresults=maxresults,
+            timeout=timeout,
+            sharesnapshot=sharesnapshot,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize_xml(_models.ListHandlesResponse, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def force_close_handles(
+        self,
+        *,
+        handle_id: str,
+        timeout: Optional[int] = None,
+        marker: Optional[str] = None,
+        sharesnapshot: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Closes all handles open for given file.
+
+        :keyword handle_id: Specifies handle ID opened on the file or directory to be closed. Asterisk
+         ('*') is a wildcard that specifies all handles. Required.
+        :paramtype handle_id: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword marker: A string value that identifies the portion of the list to be returned with the
+         next listing operation. Default value is None.
+        :paramtype marker: str
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
+        :paramtype sharesnapshot: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_force_close_handles_request(
+            handle_id=handle_id,
+            timeout=timeout,
+            marker=marker,
+            sharesnapshot=sharesnapshot,
+            allow_trailing_dot=allow_trailing_dot,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["x-ms-marker"] = self._deserialize("str", response.headers.get("x-ms-marker"))
+        response_headers["x-ms-number-of-handles-closed"] = self._deserialize(
+            "int", response.headers.get("x-ms-number-of-handles-closed")
+        )
+        response_headers["x-ms-number-of-handles-failed"] = self._deserialize(
+            "int", response.headers.get("x-ms-number-of-handles-failed")
+        )
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def rename(  # pylint: disable=too-many-locals
+        self,
+        *,
+        rename_source: str,
+        timeout: Optional[int] = None,
+        replace_if_exists: Optional[bool] = None,
+        ignore_read_only: Optional[bool] = None,
+        source_lease_id: Optional[str] = None,
+        destination_lease_id: Optional[str] = None,
+        file_attributes: Optional[str] = None,
+        file_creation_time: Optional[str] = None,
+        file_last_write_time: Optional[str] = None,
+        file_change_time: Optional[str] = None,
+        file_permission: Optional[str] = None,
+        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
+        file_permission_key: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        file_content_type: Optional[str] = None,
+        allow_trailing_dot: Optional[bool] = None,
+        allow_source_trailing_dot: Optional[bool] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Renames a file. By default, the destination is overwritten and if the destination already
+        exists and has a read-only attribute set, the operation will fail.
+
+        :keyword rename_source: Required. Specifies the URI-style path of the source file, up to 2 KB
+         in length. Required.
+        :paramtype rename_source: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword replace_if_exists: Boolean. Default value is false. Set to true to indicate that the
+         destination should be overwritten. Default value is None.
+        :paramtype replace_if_exists: bool
+        :keyword ignore_read_only: Boolean. Default value is false. Set to true to overwrite the
+         destination even if it has the read-only attribute set. Default value is None.
+        :paramtype ignore_read_only: bool
+        :keyword source_lease_id: Required if the source file has an active lease. Default value is
+         None.
+        :paramtype source_lease_id: str
+        :keyword destination_lease_id: Required if the destination has an active lease. Default value
+         is None.
+        :paramtype destination_lease_id: str
+        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
+         value is None.
+        :paramtype file_attributes: str
+        :keyword file_creation_time: Creation time for the file. Default value is None.
+        :paramtype file_creation_time: str
+        :keyword file_last_write_time: Last write time for the file. Default value is None.
+        :paramtype file_last_write_time: str
+        :keyword file_change_time: Change time for the file. Default value is None.
+        :paramtype file_change_time: str
+        :keyword file_permission: If specified the permission shall be set for the file. Default value
+         is None.
+        :paramtype file_permission: str
+        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
+         "Sddl" and "Binary". Default value is None.
+        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
+        :keyword file_permission_key: Key of the permission to be set. Default value is None.
+        :paramtype file_permission_key: str
+        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword file_content_type: Sets the MIME content type of the file. Default value is None.
+        :paramtype file_content_type: str
+        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
+         file/directory path. Default value is None.
+        :paramtype allow_trailing_dot: bool
+        :keyword allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the
+         source URI. Default value is None.
+        :paramtype allow_source_trailing_dot: bool
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_rename_request(
+            rename_source=rename_source,
+            timeout=timeout,
+            replace_if_exists=replace_if_exists,
+            ignore_read_only=ignore_read_only,
+            source_lease_id=source_lease_id,
+            destination_lease_id=destination_lease_id,
+            file_attributes=file_attributes,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            file_change_time=file_change_time,
+            file_permission=file_permission,
+            file_permission_format=file_permission_format,
+            file_permission_key=file_permission_key,
+            metadata=metadata,
+            file_content_type=file_content_type,
+            allow_trailing_dot=allow_trailing_dot,
+            allow_source_trailing_dot=allow_source_trailing_dot,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
+            "bool", response.headers.get("x-ms-request-server-encrypted")
+        )
+        response_headers["x-ms-file-permission-key"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-permission-key")
+        )
+        response_headers["x-ms-file-attributes"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-attributes")
+        )
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def create_symbolic_link(
+        self,
+        *,
+        link_text: str,
+        timeout: Optional[int] = None,
+        metadata: Optional[dict[str, str]] = None,
+        file_creation_time: Optional[str] = None,
+        file_last_write_time: Optional[str] = None,
+        lease_id: Optional[str] = None,
+        owner: Optional[str] = None,
+        group: Optional[str] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Creates a symbolic link to a target file. NFS only.
+
+        :keyword link_text: NFS only. The path to the original file, the symbolic link is pointing to.
+         Required.
+        :paramtype link_text: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
+        :paramtype metadata: dict[str, str]
+        :keyword file_creation_time: Creation time for the file. Default value is None.
+        :paramtype file_creation_time: str
+        :keyword file_last_write_time: Last write time for the file. Default value is None.
+        :paramtype file_last_write_time: str
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
+        :paramtype owner: str
+        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
+         None.
+        :paramtype group: str
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_create_symbolic_link_request(
+            link_text=link_text,
+            timeout=timeout,
+            metadata=metadata,
+            file_creation_time=file_creation_time,
+            file_last_write_time=file_last_write_time,
+            lease_id=lease_id,
+            owner=owner,
+            group=group,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def get_symbolic_link(
+        self,
+        *,
+        timeout: Optional[int] = None,
+        sharesnapshot: Optional[str] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Returns the target of a symbolic link. NFS only.
+
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
+         share snapshot. Default value is None.
+        :paramtype sharesnapshot: str
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_get_symbolic_link_request(
+            timeout=timeout,
+            sharesnapshot=sharesnapshot,
+            file_request_intent=file_request_intent,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-link-text"] = self._deserialize("str", response.headers.get("x-ms-link-text"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+    @distributed_trace_async
+    async def create_hard_link(
+        self,
+        *,
+        target_file: str,
+        timeout: Optional[int] = None,
+        lease_id: Optional[str] = None,
+        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
+        **kwargs: Any
+    ) -> None:
+        """Creates a hard link to a target file. NFS only.
+
+        :keyword target_file: NFS only. Required. Specifies the path of the target file to which the
+         link will be created, up to 2 KiB in length. Required.
+        :paramtype target_file: str
+        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
+        :paramtype timeout: int
+        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
+         value is None.
+        :paramtype lease_id: str
+        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        file_type: Literal["file"] = kwargs.pop("file_type", _headers.pop("x-ms-type", "file"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        _request = build_file_create_hard_link_request(
+            target_file=target_file,
+            timeout=timeout,
+            lease_id=lease_id,
+            file_request_intent=file_request_intent,
+            file_type=file_type,
+            version=self._config.version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize_xml(
+                _models.Error,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["x-ms-file-creation-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-creation-time")
+        )
+        response_headers["x-ms-file-last-write-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-last-write-time")
+        )
+        response_headers["x-ms-file-change-time"] = self._deserialize(
+            "str", response.headers.get("x-ms-file-change-time")
+        )
+        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
+        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
+        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
+        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
+        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
+        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
+        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
+        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
+        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
+        response_headers["x-ms-client-request-id"] = self._deserialize(
+            "str", response.headers.get("x-ms-client-request-id")
+        )
+        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)  # type: ignore
+
+
 class ServiceOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.fileshare._generated.aio.FileClient`'s
+        :class:`~azure.storage.fileshare.aio.FileClient`'s
         :attr:`service` attribute.
     """
 
@@ -125,8 +3802,7 @@ class ServiceOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -201,8 +3877,7 @@ class ServiceOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: StorageServiceProperties. The StorageServiceProperties is compatible with
          MutableMapping
         :rtype: ~azure.storage.fileshare._generated.models.StorageServiceProperties
@@ -299,12 +3974,10 @@ class ServiceOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :keyword include: Include this parameter to specify one or more datasets to include in the
          response. Default value is None.
-        :paramtype include: list[str or
-         ~azure.storage.fileshare._generated.models.ListSharesIncludeType]
+        :paramtype include: list[str or ~azure.storage.fileshare.models.ListSharesIncludeType]
         :return: ListSharesResponse. The ListSharesResponse is compatible with MutableMapping
         :rtype: ~azure.storage.fileshare._generated.models.ListSharesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -469,7 +4142,7 @@ class ShareOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.fileshare._generated.aio.FileClient`'s
+        :class:`~azure.storage.fileshare.aio.FileClient`'s
         :attr:`share` attribute.
     """
 
@@ -511,12 +4184,12 @@ class ShareOperations:
         :paramtype quota: int
         :keyword access_tier: Specifies the access tier of the share. Known values are:
          "TransactionOptimized", "Hot", "Cool", and "Premium". Default value is None.
-        :paramtype access_tier: str or ~azure.storage.fileshare._generated.models.ShareAccessTier
+        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
         :keyword enabled_protocols: Protocols to enable on the share. Default value is None.
         :paramtype enabled_protocols: str
         :keyword root_squash: Root squash to set on the share. Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
-        :paramtype root_squash: str or ~azure.storage.fileshare._generated.models.ShareRootSquash
+        :paramtype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
         :keyword enable_snapshot_virtual_directory_access: Optional. Used to enable snapshot virtual
          directory access. Default value is None.
         :paramtype enable_snapshot_virtual_directory_access: bool
@@ -532,8 +4205,7 @@ class ShareOperations:
          MiB/sec. Default value is None.
         :paramtype paid_bursting_max_bandwidth_mibps: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :keyword share_provisioned_iops: Optional. Specifies the provisioned IOPS of the share. Default
          value is None.
         :paramtype share_provisioned_iops: int
@@ -644,8 +4316,7 @@ class ShareOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
          value is None.
         :paramtype lease_id: str
@@ -787,11 +4458,9 @@ class ShareOperations:
         :paramtype timeout: int
         :keyword delete_snapshots: Specifies the option include to delete the base share and all of its
          snapshots. Known values are: "include" and "include-leased". Default value is None.
-        :paramtype delete_snapshots: str or
-         ~azure.storage.fileshare._generated.models.DeleteSnapshotsOptionType
+        :paramtype delete_snapshots: str or ~azure.storage.fileshare.models.DeleteSnapshotsOptionType
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
          value is None.
         :paramtype lease_id: str
@@ -887,8 +4556,7 @@ class ShareOperations:
          share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -973,8 +4641,7 @@ class ShareOperations:
          share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1062,8 +4729,7 @@ class ShareOperations:
          share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1148,8 +4814,7 @@ class ShareOperations:
          share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1243,8 +4908,7 @@ class ShareOperations:
          share snapshot. Default value is None.
         :paramtype sharesnapshot: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1325,8 +4989,7 @@ class ShareOperations:
         :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
         :paramtype metadata: dict[str, str]
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1407,8 +5070,7 @@ class ShareOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1435,8 +5097,7 @@ class ShareOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1463,8 +5124,7 @@ class ShareOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1489,8 +5149,7 @@ class ShareOperations:
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1580,11 +5239,9 @@ class ShareOperations:
         :keyword file_permission_format: Optional. Specifies the format in which the permission is
          returned. Acceptable values are SDDL or binary. Known values are: "Sddl" and "Binary". Default
          value is None.
-        :paramtype file_permission_format: str or
-         ~azure.storage.fileshare._generated.models.FilePermissionFormat
+        :paramtype file_permission_format: str or ~azure.storage.fileshare.models.FilePermissionFormat
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: SharePermission. The SharePermission is compatible with MutableMapping
         :rtype: ~azure.storage.fileshare._generated.models.SharePermission
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1683,13 +5340,13 @@ class ShareOperations:
         :paramtype quota: int
         :keyword access_tier: Specifies the access tier of the share. Known values are:
          "TransactionOptimized", "Hot", "Cool", and "Premium". Default value is None.
-        :paramtype access_tier: str or ~azure.storage.fileshare._generated.models.ShareAccessTier
+        :paramtype access_tier: str or ~azure.storage.fileshare.models.ShareAccessTier
         :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
          value is None.
         :paramtype lease_id: str
         :keyword root_squash: Root squash to set on the share. Only valid for NFS shares. Known values
          are: "NoRootSquash", "RootSquash", and "AllSquash". Default value is None.
-        :paramtype root_squash: str or ~azure.storage.fileshare._generated.models.ShareRootSquash
+        :paramtype root_squash: str or ~azure.storage.fileshare.models.ShareRootSquash
         :keyword enable_snapshot_virtual_directory_access: Optional. Used to enable snapshot virtual
          directory access. Default value is None.
         :paramtype enable_snapshot_virtual_directory_access: bool
@@ -1705,8 +5362,7 @@ class ShareOperations:
          MiB/sec. Default value is None.
         :paramtype paid_bursting_max_bandwidth_mibps: int
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :keyword share_provisioned_iops: Optional. Specifies the provisioned IOPS of the share. Default
          value is None.
         :paramtype share_provisioned_iops: int
@@ -1826,8 +5482,7 @@ class ShareOperations:
          value is None.
         :paramtype lease_id: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1905,8 +5560,7 @@ class ShareOperations:
          value is None.
         :paramtype lease_id: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: SignedIdentifiers. The SignedIdentifiers is compatible with MutableMapping
         :rtype: ~azure.storage.fileshare._generated.models.SignedIdentifiers
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1999,8 +5653,7 @@ class ShareOperations:
          value is None.
         :paramtype lease_id: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2085,8 +5738,7 @@ class ShareOperations:
          value is None.
         :paramtype lease_id: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: ShareStats. The ShareStats is compatible with MutableMapping
         :rtype: ~azure.storage.fileshare._generated.models.ShareStats
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2180,8 +5832,7 @@ class ShareOperations:
          value is None.
         :paramtype deleted_share_version: str
         :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
+        :paramtype file_request_intent: str or ~azure.storage.fileshare.models.ShareTokenIntent
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2244,3725 +5895,6 @@ class ShareOperations:
         response_headers["x-ms-share-max-burst-credits-for-iops"] = self._deserialize(
             "int", response.headers.get("x-ms-share-max-burst-credits-for-iops")
         )
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-
-class DirectoryOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.storage.fileshare._generated.aio.FileClient`'s
-        :attr:`directory` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: FileClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def create(  # pylint: disable=too-many-locals
-        self,
-        *,
-        timeout: Optional[int] = None,
-        metadata: Optional[dict[str, str]] = None,
-        file_permission: Optional[str] = None,
-        file_permission_key: Optional[str] = None,
-        file_attributes: Optional[str] = None,
-        file_creation_time: Optional[str] = None,
-        file_last_write_time: Optional[str] = None,
-        file_change_time: Optional[str] = None,
-        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        owner: Optional[str] = None,
-        group: Optional[str] = None,
-        file_mode: Optional[str] = None,
-        file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """Creates a new directory under the specified share or parent directory.
-
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword file_permission: If specified the permission (security descriptor) shall be set for
-         the directory/file. This header can be used if Permission size is <= 8KB, else
-         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
-         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
-         x-ms-file-permission-key should be specified. Default value is None.
-        :paramtype file_permission: str
-        :keyword file_permission_key: Key of the permission to be set for the directory/file. Note:
-         Only one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default
-         value is None.
-        :paramtype file_permission_key: str
-        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
-         value: 'Archive' for file and 'Directory' for directory. 'None' can also be specified as
-         default. Default value is None.
-        :paramtype file_attributes: str
-        :keyword file_creation_time: Creation time for the file/directory. Default value: Now. Default
-         value is None.
-        :paramtype file_creation_time: str
-        :keyword file_last_write_time: Last write time for the file/directory. Default value: Now.
-         Default value is None.
-        :paramtype file_last_write_time: str
-        :keyword file_change_time: Change time for the file/directory. Default value: Now. Default
-         value is None.
-        :paramtype file_change_time: str
-        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
-         "Sddl" and "Binary". Default value is None.
-        :paramtype file_permission_format: str or
-         ~azure.storage.fileshare._generated.models.FilePermissionFormat
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
-        :paramtype owner: str
-        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
-         None.
-        :paramtype group: str
-        :keyword file_mode: Optional, NFS only. The file mode of the file or directory. Default value
-         is None.
-        :paramtype file_mode: str
-        :keyword file_property_semantics: SMB only. Default value is New. Known values are: "New" and
-         "Restore". Default value is None.
-        :paramtype file_property_semantics: str or
-         ~azure.storage.fileshare._generated.models.FilePropertySemantics
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_directory_create_request(
-            timeout=timeout,
-            metadata=metadata,
-            file_permission=file_permission,
-            file_permission_key=file_permission_key,
-            file_attributes=file_attributes,
-            file_creation_time=file_creation_time,
-            file_last_write_time=file_last_write_time,
-            file_change_time=file_change_time,
-            file_permission_format=file_permission_format,
-            file_request_intent=file_request_intent,
-            owner=owner,
-            group=group,
-            file_mode=file_mode,
-            file_property_semantics=file_property_semantics,
-            allow_trailing_dot=allow_trailing_dot,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-file-permission-key"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-permission-key")
-        )
-        response_headers["x-ms-file-attributes"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-attributes")
-        )
-        response_headers["x-ms-file-creation-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-creation-time")
-        )
-        response_headers["x-ms-file-last-write-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-last-write-time")
-        )
-        response_headers["x-ms-file-change-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-change-time")
-        )
-        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
-        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
-        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
-        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
-        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
-        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def get_properties(
-        self,
-        *,
-        sharesnapshot: Optional[str] = None,
-        timeout: Optional[int] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """Returns all system properties for the specified directory, and can also be used to check the
-        existence of a directory.
-
-        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
-         share snapshot. Default value is None.
-        :paramtype sharesnapshot: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_directory_get_properties_request(
-            sharesnapshot=sharesnapshot,
-            timeout=timeout,
-            file_request_intent=file_request_intent,
-            allow_trailing_dot=allow_trailing_dot,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-file-permission-key"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-permission-key")
-        )
-        response_headers["x-ms-file-attributes"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-attributes")
-        )
-        response_headers["x-ms-file-creation-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-creation-time")
-        )
-        response_headers["x-ms-file-last-write-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-last-write-time")
-        )
-        response_headers["x-ms-file-change-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-change-time")
-        )
-        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
-        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
-        response_headers["x-ms-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-server-encrypted")
-        )
-        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
-        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
-        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
-        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def delete(
-        self,
-        *,
-        timeout: Optional[int] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """Removes the specified empty directory. Note that the directory must be empty before it can be
-        deleted.
-
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_directory_delete_request(
-            timeout=timeout,
-            file_request_intent=file_request_intent,
-            allow_trailing_dot=allow_trailing_dot,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def set_properties(  # pylint: disable=too-many-locals
-        self,
-        *,
-        timeout: Optional[int] = None,
-        file_permission: Optional[str] = None,
-        file_permission_key: Optional[str] = None,
-        file_attributes: Optional[str] = None,
-        file_creation_time: Optional[str] = None,
-        file_last_write_time: Optional[str] = None,
-        file_change_time: Optional[str] = None,
-        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        owner: Optional[str] = None,
-        group: Optional[str] = None,
-        file_mode: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Sets properties for the specified directory.
-
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword file_permission: If specified the permission (security descriptor) shall be set for
-         the directory/file. This header can be used if Permission size is <= 8KB, else
-         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
-         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
-         x-ms-file-permission-key should be specified. Default value is None.
-        :paramtype file_permission: str
-        :keyword file_permission_key: Key of the permission to be set for the directory/file. Note:
-         Only one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default
-         value is None.
-        :paramtype file_permission_key: str
-        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
-         value: 'Archive' for file and 'Directory' for directory. 'None' can also be specified as
-         default. Default value is None.
-        :paramtype file_attributes: str
-        :keyword file_creation_time: Creation time for the file/directory. Default value: Now. Default
-         value is None.
-        :paramtype file_creation_time: str
-        :keyword file_last_write_time: Last write time for the file/directory. Default value: Now.
-         Default value is None.
-        :paramtype file_last_write_time: str
-        :keyword file_change_time: Change time for the file/directory. Default value: Now. Default
-         value is None.
-        :paramtype file_change_time: str
-        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
-         "Sddl" and "Binary". Default value is None.
-        :paramtype file_permission_format: str or
-         ~azure.storage.fileshare._generated.models.FilePermissionFormat
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
-        :paramtype owner: str
-        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
-         None.
-        :paramtype group: str
-        :keyword file_mode: Optional, NFS only. The file mode of the file or directory. Default value
-         is None.
-        :paramtype file_mode: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_directory_set_properties_request(
-            timeout=timeout,
-            file_permission=file_permission,
-            file_permission_key=file_permission_key,
-            file_attributes=file_attributes,
-            file_creation_time=file_creation_time,
-            file_last_write_time=file_last_write_time,
-            file_change_time=file_change_time,
-            file_permission_format=file_permission_format,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            owner=owner,
-            group=group,
-            file_mode=file_mode,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-file-permission-key"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-permission-key")
-        )
-        response_headers["x-ms-file-attributes"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-attributes")
-        )
-        response_headers["x-ms-file-creation-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-creation-time")
-        )
-        response_headers["x-ms-file-last-write-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-last-write-time")
-        )
-        response_headers["x-ms-file-change-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-change-time")
-        )
-        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
-        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
-        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
-        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
-        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def set_metadata(
-        self,
-        *,
-        timeout: Optional[int] = None,
-        metadata: Optional[dict[str, str]] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Sets one or more user-defined name-value pairs for the specified directory.
-
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_directory_set_metadata_request(
-            timeout=timeout,
-            metadata=metadata,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def list_files_and_directories_segment(
-        self,
-        *,
-        prefix: Optional[str] = None,
-        sharesnapshot: Optional[str] = None,
-        marker: Optional[str] = None,
-        maxresults: Optional[int] = None,
-        include: Optional[list[Union[str, _models.ListFilesIncludeType]]] = None,
-        timeout: Optional[int] = None,
-        include_extended_info: Optional[bool] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> _models.ListFilesAndDirectoriesSegmentResponse:
-        """Returns a list of files and directories under the specified share or directory. It lists the
-        contents only for a single level of the directory hierarchy.
-
-        :keyword prefix: Filters the results to return only items whose name begins with the specified
-         prefix. Default value is None.
-        :paramtype prefix: str
-        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
-         share snapshot. Default value is None.
-        :paramtype sharesnapshot: str
-        :keyword marker: A string value that identifies the portion of the list to be returned with the
-         next listing operation. Default value is None.
-        :paramtype marker: str
-        :keyword maxresults: Specifies the maximum number of items to return. Default value is None.
-        :paramtype maxresults: int
-        :keyword include: Include this parameter to specify one or more datasets to include in the
-         response. Default value is None.
-        :paramtype include: list[str or
-         ~azure.storage.fileshare._generated.models.ListFilesIncludeType]
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword include_extended_info: Include extended information. Default value is None.
-        :paramtype include_extended_info: bool
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: ListFilesAndDirectoriesSegmentResponse. The ListFilesAndDirectoriesSegmentResponse is
-         compatible with MutableMapping
-        :rtype: ~azure.storage.fileshare._generated.models.ListFilesAndDirectoriesSegmentResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ListFilesAndDirectoriesSegmentResponse] = kwargs.pop("cls", None)
-
-        _request = build_directory_list_files_and_directories_segment_request(
-            prefix=prefix,
-            sharesnapshot=sharesnapshot,
-            marker=marker,
-            maxresults=maxresults,
-            include=include,
-            timeout=timeout,
-            include_extended_info=include_extended_info,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize_xml(_models.ListFilesAndDirectoriesSegmentResponse, response.text())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def list_handles(
-        self,
-        *,
-        marker: Optional[str] = None,
-        maxresults: Optional[int] = None,
-        timeout: Optional[int] = None,
-        sharesnapshot: Optional[str] = None,
-        recursive: Optional[bool] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> _models.ListHandlesResponse:
-        """Lists handles for directory.
-
-        :keyword marker: A string value that identifies the portion of the list to be returned with the
-         next listing operation. Default value is None.
-        :paramtype marker: str
-        :keyword maxresults: Specifies the maximum number of items to return. Default value is None.
-        :paramtype maxresults: int
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
-         share snapshot. Default value is None.
-        :paramtype sharesnapshot: str
-        :keyword recursive: Specifies operation should apply to the directory specified in the URI, its
-         files, its subdirectories and their files. Default value is None.
-        :paramtype recursive: bool
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: ListHandlesResponse. The ListHandlesResponse is compatible with MutableMapping
-        :rtype: ~azure.storage.fileshare._generated.models.ListHandlesResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ListHandlesResponse] = kwargs.pop("cls", None)
-
-        _request = build_directory_list_handles_request(
-            marker=marker,
-            maxresults=maxresults,
-            timeout=timeout,
-            sharesnapshot=sharesnapshot,
-            recursive=recursive,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize_xml(_models.ListHandlesResponse, response.text())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def force_close_handles(
-        self,
-        *,
-        handle_id: str,
-        timeout: Optional[int] = None,
-        marker: Optional[str] = None,
-        sharesnapshot: Optional[str] = None,
-        recursive: Optional[bool] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Closes all handles open for given directory.
-
-        :keyword handle_id: Specifies handle ID opened on the file or directory to be closed. Asterisk
-         ('*') is a wildcard that specifies all handles. Required.
-        :paramtype handle_id: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword marker: A string value that identifies the portion of the list to be returned with the
-         next listing operation. Default value is None.
-        :paramtype marker: str
-        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
-         share snapshot. Default value is None.
-        :paramtype sharesnapshot: str
-        :keyword recursive: Specifies operation should apply to the directory specified in the URI, its
-         files, its subdirectories and their files. Default value is None.
-        :paramtype recursive: bool
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_directory_force_close_handles_request(
-            handle_id=handle_id,
-            timeout=timeout,
-            marker=marker,
-            sharesnapshot=sharesnapshot,
-            recursive=recursive,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["x-ms-marker"] = self._deserialize("str", response.headers.get("x-ms-marker"))
-        response_headers["x-ms-number-of-handles-closed"] = self._deserialize(
-            "int", response.headers.get("x-ms-number-of-handles-closed")
-        )
-        response_headers["x-ms-number-of-handles-failed"] = self._deserialize(
-            "int", response.headers.get("x-ms-number-of-handles-failed")
-        )
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def rename(  # pylint: disable=too-many-locals
-        self,
-        *,
-        rename_source: str,
-        timeout: Optional[int] = None,
-        replace_if_exists: Optional[bool] = None,
-        ignore_read_only: Optional[bool] = None,
-        source_lease_id: Optional[str] = None,
-        destination_lease_id: Optional[str] = None,
-        file_attributes: Optional[str] = None,
-        file_creation_time: Optional[str] = None,
-        file_last_write_time: Optional[str] = None,
-        file_change_time: Optional[str] = None,
-        file_permission: Optional[str] = None,
-        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
-        file_permission_key: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        allow_source_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Renames a directory. By default, the destination is overwritten and if the destination already
-        exists and has a read-only attribute set, the operation will fail.
-
-        :keyword rename_source: Required. Specifies the URI-style path of the source file, up to 2 KB
-         in length. Required.
-        :paramtype rename_source: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword replace_if_exists: Boolean. Default value is false. Set to true to indicate that the
-         destination should be overwritten. Default value is None.
-        :paramtype replace_if_exists: bool
-        :keyword ignore_read_only: Boolean. Default value is false. Set to true to overwrite the
-         destination even if it has the read-only attribute set. Default value is None.
-        :paramtype ignore_read_only: bool
-        :keyword source_lease_id: Required if the source file has an active lease. Default value is
-         None.
-        :paramtype source_lease_id: str
-        :keyword destination_lease_id: Required if the destination has an active lease. Default value
-         is None.
-        :paramtype destination_lease_id: str
-        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
-         value is None.
-        :paramtype file_attributes: str
-        :keyword file_creation_time: Creation time for the directory. Default value is None.
-        :paramtype file_creation_time: str
-        :keyword file_last_write_time: Last write time for the directory. Default value is None.
-        :paramtype file_last_write_time: str
-        :keyword file_change_time: Change time for the directory. Default value is None.
-        :paramtype file_change_time: str
-        :keyword file_permission: If specified the permission shall be set for the directory. Default
-         value is None.
-        :paramtype file_permission: str
-        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
-         "Sddl" and "Binary". Default value is None.
-        :paramtype file_permission_format: str or
-         ~azure.storage.fileshare._generated.models.FilePermissionFormat
-        :keyword file_permission_key: Key of the permission to be set. Default value is None.
-        :paramtype file_permission_key: str
-        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the
-         source URI. Default value is None.
-        :paramtype allow_source_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_directory_rename_request(
-            rename_source=rename_source,
-            timeout=timeout,
-            replace_if_exists=replace_if_exists,
-            ignore_read_only=ignore_read_only,
-            source_lease_id=source_lease_id,
-            destination_lease_id=destination_lease_id,
-            file_attributes=file_attributes,
-            file_creation_time=file_creation_time,
-            file_last_write_time=file_last_write_time,
-            file_change_time=file_change_time,
-            file_permission=file_permission,
-            file_permission_format=file_permission_format,
-            file_permission_key=file_permission_key,
-            metadata=metadata,
-            allow_trailing_dot=allow_trailing_dot,
-            allow_source_trailing_dot=allow_source_trailing_dot,
-            file_request_intent=file_request_intent,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-file-permission-key"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-permission-key")
-        )
-        response_headers["x-ms-file-attributes"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-attributes")
-        )
-        response_headers["x-ms-file-creation-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-creation-time")
-        )
-        response_headers["x-ms-file-last-write-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-last-write-time")
-        )
-        response_headers["x-ms-file-change-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-change-time")
-        )
-        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
-        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-
-class FileOperations:  # pylint: disable=too-many-public-methods
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.storage.fileshare._generated.aio.FileClient`'s
-        :attr:`file` attribute.
-    """
-
-    def __init__(self, *args, **kwargs) -> None:
-        input_args = list(args)
-        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: FileClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace_async
-    async def create(  # pylint: disable=too-many-locals
-        self,
-        optional_body: Optional[bytes] = None,
-        *,
-        content_length: int,
-        timeout: Optional[int] = None,
-        file_content_type: Optional[str] = None,
-        file_content_encoding: Optional[str] = None,
-        file_content_language: Optional[str] = None,
-        file_cache_control: Optional[str] = None,
-        file_content_md5: Optional[bytes] = None,
-        file_content_disposition: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-        file_permission: Optional[str] = None,
-        file_permission_key: Optional[str] = None,
-        file_attributes: Optional[str] = None,
-        file_creation_time: Optional[str] = None,
-        file_last_write_time: Optional[str] = None,
-        file_change_time: Optional[str] = None,
-        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
-        lease_id: Optional[str] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        owner: Optional[str] = None,
-        group: Optional[str] = None,
-        file_mode: Optional[str] = None,
-        nfs_file_type: Optional[Union[str, _models.NfsFileType]] = None,
-        content_md5: Optional[bytes] = None,
-        file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
-        optional_content_length: Optional[int] = None,
-        structured_body_type: Optional[str] = None,
-        structured_content_length: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
-        """Creates a new file or replaces a file. Note it only initializes the file with no content.
-
-        :param optional_body: Initial data. Default value is None.
-        :type optional_body: bytes
-        :keyword content_length: Specifies the number of bytes being transmitted in the request body.
-         When the x-ms-write header is set to clear, the value of this header must be set to zero.
-         Required.
-        :paramtype content_length: int
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword file_content_type: Sets the MIME content type of the file. The default type is
-         'application/octet-stream'. Default value is None.
-        :paramtype file_content_type: str
-        :keyword file_content_encoding: Specifies which content encodings have been applied to the
-         file. Default value is None.
-        :paramtype file_content_encoding: str
-        :keyword file_content_language: Specifies the natural languages used by this resource. Default
-         value is None.
-        :paramtype file_content_language: str
-        :keyword file_cache_control: Sets the file's cache control. The File service stores this value
-         but does not use or modify it. Default value is None.
-        :paramtype file_cache_control: str
-        :keyword file_content_md5: An MD5 hash of the file content. This hash is used to verify the
-         integrity of the file during transport. Default value is None.
-        :paramtype file_content_md5: bytes
-        :keyword file_content_disposition: Sets the file's Content-Disposition header. Default value is
-         None.
-        :paramtype file_content_disposition: str
-        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword file_permission: If specified the permission (security descriptor) shall be set for
-         the directory/file. This header can be used if Permission size is <= 8KB, else
-         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
-         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
-         x-ms-file-permission-key should be specified. Default value is None.
-        :paramtype file_permission: str
-        :keyword file_permission_key: Key of the permission to be set for the directory/file. Note:
-         Only one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default
-         value is None.
-        :paramtype file_permission_key: str
-        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
-         value: 'Archive' for file and 'Directory' for directory. 'None' can also be specified as
-         default. Default value is None.
-        :paramtype file_attributes: str
-        :keyword file_creation_time: Creation time for the file/directory. Default value: Now. Default
-         value is None.
-        :paramtype file_creation_time: str
-        :keyword file_last_write_time: Last write time for the file/directory. Default value: Now.
-         Default value is None.
-        :paramtype file_last_write_time: str
-        :keyword file_change_time: Change time for the file/directory. Default value: Now. Default
-         value is None.
-        :paramtype file_change_time: str
-        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
-         "Sddl" and "Binary". Default value is None.
-        :paramtype file_permission_format: str or
-         ~azure.storage.fileshare._generated.models.FilePermissionFormat
-        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
-         value is None.
-        :paramtype lease_id: str
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
-        :paramtype owner: str
-        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
-         None.
-        :paramtype group: str
-        :keyword file_mode: Optional, NFS only. The file mode of the file or directory. Default value
-         is None.
-        :paramtype file_mode: str
-        :keyword nfs_file_type: Optional, NFS only. Type of the file or directory. Known values are:
-         "Regular", "Directory", and "SymLink". Default value is None.
-        :paramtype nfs_file_type: str or ~azure.storage.fileshare._generated.models.NfsFileType
-        :keyword content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
-         the data during transport. Default value is None.
-        :paramtype content_md5: bytes
-        :keyword file_property_semantics: SMB only. Default value is New. Known values are: "New" and
-         "Restore". Default value is None.
-        :paramtype file_property_semantics: str or
-         ~azure.storage.fileshare._generated.models.FilePropertySemantics
-        :keyword optional_content_length: Optional. Specifies the content length of the file. Default
-         value is None.
-        :paramtype optional_content_length: int
-        :keyword structured_body_type: Specifies the response content should be returned as a
-         structured message and specifies the message schema version and properties. Default value is
-         None.
-        :paramtype structured_body_type: str
-        :keyword structured_content_length: Required if the request body is a structured message.
-         Specifies the length of the blob/file content inside the message body. Will always be smaller
-         than Content-Length. Default value is None.
-        :paramtype structured_content_length: int
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        file_type: Literal["file"] = kwargs.pop("file_type", _headers.pop("x-ms-type", "file"))
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", "application/octet-stream")
-        )
-        content_type = content_type if optional_body else None
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _content = optional_body
-
-        _request = build_file_create_request(
-            content_length=content_length,
-            timeout=timeout,
-            file_content_type=file_content_type,
-            file_content_encoding=file_content_encoding,
-            file_content_language=file_content_language,
-            file_cache_control=file_cache_control,
-            file_content_md5=file_content_md5,
-            file_content_disposition=file_content_disposition,
-            metadata=metadata,
-            file_permission=file_permission,
-            file_permission_key=file_permission_key,
-            file_attributes=file_attributes,
-            file_creation_time=file_creation_time,
-            file_last_write_time=file_last_write_time,
-            file_change_time=file_change_time,
-            file_permission_format=file_permission_format,
-            lease_id=lease_id,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            owner=owner,
-            group=group,
-            file_mode=file_mode,
-            nfs_file_type=nfs_file_type,
-            content_md5=content_md5,
-            file_property_semantics=file_property_semantics,
-            optional_content_length=optional_content_length,
-            structured_body_type=structured_body_type,
-            structured_content_length=structured_content_length,
-            file_type=file_type,
-            content_type=content_type,
-            version=self._config.version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-file-permission-key"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-permission-key")
-        )
-        response_headers["x-ms-file-attributes"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-attributes")
-        )
-        response_headers["x-ms-file-creation-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-creation-time")
-        )
-        response_headers["x-ms-file-last-write-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-last-write-time")
-        )
-        response_headers["x-ms-file-change-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-change-time")
-        )
-        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
-        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
-        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
-        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
-        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
-        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
-        response_headers["x-ms-structured-body"] = self._deserialize(
-            "str", response.headers.get("x-ms-structured-body")
-        )
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def download(
-        self,
-        *,
-        timeout: Optional[int] = None,
-        range: Optional[str] = None,
-        range_get_content_md5: Optional[bool] = None,
-        lease_id: Optional[str] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        structured_body_type: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterator[bytes]:
-        """Reads or downloads a file from the system, including its metadata and properties.
-
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword range: Return file data only from the specified byte range. Default value is None.
-        :paramtype range: str
-        :keyword range_get_content_md5: When this header is set to true and specified together with the
-         Range header, the service returns the MD5 hash for the range, as long as the range is less than
-         or equal to 4 MB in size. Default value is None.
-        :paramtype range_get_content_md5: bool
-        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
-         value is None.
-        :paramtype lease_id: str
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword structured_body_type: Specifies the response content should be returned as a
-         structured message and specifies the message schema version and properties. Default value is
-         None.
-        :paramtype structured_body_type: str
-        :return: AsyncIterator[bytes]
-        :rtype: AsyncIterator[bytes]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
-
-        _request = build_file_download_request(
-            timeout=timeout,
-            range=range,
-            range_get_content_md5=range_get_content_md5,
-            lease_id=lease_id,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            structured_body_type=structured_body_type,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", True)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 206]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
-        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
-        response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
-        response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
-        response_headers["Content-Disposition"] = self._deserialize("str", response.headers.get("Content-Disposition"))
-        response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
-        response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
-        response_headers["x-ms-copy-completion-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-copy-completion-time")
-        )
-        response_headers["x-ms-copy-status-description"] = self._deserialize(
-            "str", response.headers.get("x-ms-copy-status-description")
-        )
-        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
-        response_headers["x-ms-copy-progress"] = self._deserialize("str", response.headers.get("x-ms-copy-progress"))
-        response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
-        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
-        response_headers["x-ms-content-md5"] = self._deserialize("bytearray", response.headers.get("x-ms-content-md5"))
-        response_headers["x-ms-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-server-encrypted")
-        )
-        response_headers["x-ms-file-permission-key"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-permission-key")
-        )
-        response_headers["x-ms-file-attributes"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-attributes")
-        )
-        response_headers["x-ms-file-creation-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-creation-time")
-        )
-        response_headers["x-ms-file-last-write-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-last-write-time")
-        )
-        response_headers["x-ms-file-change-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-change-time")
-        )
-        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
-        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
-        response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
-        response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
-        response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
-        response_headers["x-ms-structured-body"] = self._deserialize(
-            "str", response.headers.get("x-ms-structured-body")
-        )
-        response_headers["x-ms-structured-content-length"] = self._deserialize(
-            "int", response.headers.get("x-ms-structured-content-length")
-        )
-        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
-        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
-        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
-        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
-        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def get_properties(
-        self,
-        *,
-        sharesnapshot: Optional[str] = None,
-        timeout: Optional[int] = None,
-        lease_id: Optional[str] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> bool:
-        """Returns all user-defined metadata, standard HTTP properties, and system properties for the
-        file.
-
-        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
-         share snapshot. Default value is None.
-        :paramtype sharesnapshot: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
-         value is None.
-        :paramtype lease_id: str
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: bool
-        :rtype: bool
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_get_properties_request(
-            sharesnapshot=sharesnapshot,
-            timeout=timeout,
-            lease_id=lease_id,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
-        response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
-        response_headers["x-ms-type"] = self._deserialize("str", response.headers.get("x-ms-type"))
-        response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["Content-Encoding"] = self._deserialize("str", response.headers.get("Content-Encoding"))
-        response_headers["Cache-Control"] = self._deserialize("str", response.headers.get("Cache-Control"))
-        response_headers["Content-Disposition"] = self._deserialize("str", response.headers.get("Content-Disposition"))
-        response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
-        response_headers["x-ms-copy-completion-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-copy-completion-time")
-        )
-        response_headers["x-ms-copy-status-description"] = self._deserialize(
-            "str", response.headers.get("x-ms-copy-status-description")
-        )
-        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
-        response_headers["x-ms-copy-progress"] = self._deserialize("str", response.headers.get("x-ms-copy-progress"))
-        response_headers["x-ms-copy-source"] = self._deserialize("str", response.headers.get("x-ms-copy-source"))
-        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
-        response_headers["x-ms-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-server-encrypted")
-        )
-        response_headers["x-ms-file-permission-key"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-permission-key")
-        )
-        response_headers["x-ms-file-attributes"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-attributes")
-        )
-        response_headers["x-ms-file-creation-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-creation-time")
-        )
-        response_headers["x-ms-file-last-write-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-last-write-time")
-        )
-        response_headers["x-ms-file-change-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-change-time")
-        )
-        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
-        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
-        response_headers["x-ms-lease-duration"] = self._deserialize("str", response.headers.get("x-ms-lease-duration"))
-        response_headers["x-ms-lease-state"] = self._deserialize("str", response.headers.get("x-ms-lease-state"))
-        response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
-        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
-        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
-        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
-        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
-        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-        return 200 <= response.status_code <= 299
-
-    @distributed_trace_async
-    async def delete(
-        self,
-        *,
-        timeout: Optional[int] = None,
-        lease_id: Optional[str] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Removes the file from the storage account.
-
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
-         value is None.
-        :paramtype lease_id: str
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_delete_request(
-            timeout=timeout,
-            lease_id=lease_id,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def set_http_headers(  # pylint: disable=too-many-locals
-        self,
-        *,
-        timeout: Optional[int] = None,
-        file_content_length: Optional[int] = None,
-        file_content_type: Optional[str] = None,
-        file_content_encoding: Optional[str] = None,
-        file_content_language: Optional[str] = None,
-        file_cache_control: Optional[str] = None,
-        file_content_md5: Optional[bytes] = None,
-        file_content_disposition: Optional[str] = None,
-        file_permission: Optional[str] = None,
-        file_permission_key: Optional[str] = None,
-        file_attributes: Optional[str] = None,
-        file_creation_time: Optional[str] = None,
-        file_last_write_time: Optional[str] = None,
-        file_change_time: Optional[str] = None,
-        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
-        lease_id: Optional[str] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        owner: Optional[str] = None,
-        group: Optional[str] = None,
-        file_mode: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """Sets HTTP headers on a file.
-
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword file_content_length: Specifies the number of bytes being transmitted. Default value is
-         None.
-        :paramtype file_content_length: int
-        :keyword file_content_type: Sets the MIME content type of the file. The default type is
-         'application/octet-stream'. Default value is None.
-        :paramtype file_content_type: str
-        :keyword file_content_encoding: Specifies which content encodings have been applied to the
-         file. Default value is None.
-        :paramtype file_content_encoding: str
-        :keyword file_content_language: Specifies the natural languages used by this resource. Default
-         value is None.
-        :paramtype file_content_language: str
-        :keyword file_cache_control: Sets the file's cache control. The File service stores this value
-         but does not use or modify it. Default value is None.
-        :paramtype file_cache_control: str
-        :keyword file_content_md5: An MD5 hash of the file content. This hash is used to verify the
-         integrity of the file during transport. Default value is None.
-        :paramtype file_content_md5: bytes
-        :keyword file_content_disposition: Sets the file's Content-Disposition header. Default value is
-         None.
-        :paramtype file_content_disposition: str
-        :keyword file_permission: If specified the permission (security descriptor) shall be set for
-         the directory/file. This header can be used if Permission size is <= 8KB, else
-         x-ms-file-permission-key header shall be used. Default value: Inherit. If SDDL is specified as
-         input, it must have owner, group and dacl. Note: Only one of the x-ms-file-permission or
-         x-ms-file-permission-key should be specified. Default value is None.
-        :paramtype file_permission: str
-        :keyword file_permission_key: Key of the permission to be set for the directory/file. Note:
-         Only one of the x-ms-file-permission or x-ms-file-permission-key should be specified. Default
-         value is None.
-        :paramtype file_permission_key: str
-        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
-         value: 'Archive' for file and 'Directory' for directory. 'None' can also be specified as
-         default. Default value is None.
-        :paramtype file_attributes: str
-        :keyword file_creation_time: Creation time for the file/directory. Default value: Now. Default
-         value is None.
-        :paramtype file_creation_time: str
-        :keyword file_last_write_time: Last write time for the file/directory. Default value: Now.
-         Default value is None.
-        :paramtype file_last_write_time: str
-        :keyword file_change_time: Change time for the file/directory. Default value: Now. Default
-         value is None.
-        :paramtype file_change_time: str
-        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
-         "Sddl" and "Binary". Default value is None.
-        :paramtype file_permission_format: str or
-         ~azure.storage.fileshare._generated.models.FilePermissionFormat
-        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
-         value is None.
-        :paramtype lease_id: str
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
-        :paramtype owner: str
-        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
-         None.
-        :paramtype group: str
-        :keyword file_mode: Optional, NFS only. The file mode of the file or directory. Default value
-         is None.
-        :paramtype file_mode: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_set_http_headers_request(
-            timeout=timeout,
-            file_content_length=file_content_length,
-            file_content_type=file_content_type,
-            file_content_encoding=file_content_encoding,
-            file_content_language=file_content_language,
-            file_cache_control=file_cache_control,
-            file_content_md5=file_content_md5,
-            file_content_disposition=file_content_disposition,
-            file_permission=file_permission,
-            file_permission_key=file_permission_key,
-            file_attributes=file_attributes,
-            file_creation_time=file_creation_time,
-            file_last_write_time=file_last_write_time,
-            file_change_time=file_change_time,
-            file_permission_format=file_permission_format,
-            lease_id=lease_id,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            owner=owner,
-            group=group,
-            file_mode=file_mode,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-file-permission-key"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-permission-key")
-        )
-        response_headers["x-ms-file-attributes"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-attributes")
-        )
-        response_headers["x-ms-file-creation-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-creation-time")
-        )
-        response_headers["x-ms-file-last-write-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-last-write-time")
-        )
-        response_headers["x-ms-file-change-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-change-time")
-        )
-        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
-        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
-        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
-        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
-        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
-        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def set_metadata(
-        self,
-        *,
-        timeout: Optional[int] = None,
-        metadata: Optional[dict[str, str]] = None,
-        lease_id: Optional[str] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """Sets one or more user-defined name-value pairs for the specified file.
-
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
-         value is None.
-        :paramtype lease_id: str
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_set_metadata_request(
-            timeout=timeout,
-            metadata=metadata,
-            lease_id=lease_id,
-            file_request_intent=file_request_intent,
-            allow_trailing_dot=allow_trailing_dot,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def acquire_lease(
-        self,
-        *,
-        timeout: Optional[int] = None,
-        lease_duration: Optional[int] = None,
-        proposed_lease_id: Optional[str] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """The Lease File operation establishes and manages a lock on a file for write and delete
-        operations.
-
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword lease_duration: Specifies the duration of the lease, in seconds, or negative one (-1)
-         for a lease that never expires. A non-infinite lease can be between 15 and 60 seconds. A lease
-         duration cannot be changed using renew or change. Default value is None.
-        :paramtype lease_duration: int
-        :keyword proposed_lease_id: Proposed lease ID, in a GUID string format. The File service
-         returns 400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
-         Constructor (String) for a list of valid GUID string formats. Default value is None.
-        :paramtype proposed_lease_id: str
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        action: Literal["acquire"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "acquire"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_acquire_lease_request(
-            timeout=timeout,
-            lease_duration=lease_duration,
-            proposed_lease_id=proposed_lease_id,
-            file_request_intent=file_request_intent,
-            allow_trailing_dot=allow_trailing_dot,
-            action=action,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-lease-id"] = self._deserialize("str", response.headers.get("x-ms-lease-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def release_lease(
-        self,
-        *,
-        lease_id: str,
-        timeout: Optional[int] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """The Lease File operation establishes and manages a lock on a file for write and delete
-        operations.
-
-        :keyword lease_id: Specifies the current lease ID on the resource. Required.
-        :paramtype lease_id: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        action: Literal["release"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "release"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_release_lease_request(
-            lease_id=lease_id,
-            timeout=timeout,
-            file_request_intent=file_request_intent,
-            allow_trailing_dot=allow_trailing_dot,
-            action=action,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def change_lease(
-        self,
-        *,
-        lease_id: str,
-        timeout: Optional[int] = None,
-        proposed_lease_id: Optional[str] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """The Lease File operation establishes and manages a lock on a file for write and delete
-        operations.
-
-        :keyword lease_id: Specifies the current lease ID on the resource. Required.
-        :paramtype lease_id: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword proposed_lease_id: Proposed lease ID, in a GUID string format. The File service
-         returns 400 (Invalid request) if the proposed lease ID is not in the correct format. See Guid
-         Constructor (String) for a list of valid GUID string formats. Default value is None.
-        :paramtype proposed_lease_id: str
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        action: Literal["change"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "change"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_change_lease_request(
-            lease_id=lease_id,
-            timeout=timeout,
-            proposed_lease_id=proposed_lease_id,
-            file_request_intent=file_request_intent,
-            allow_trailing_dot=allow_trailing_dot,
-            action=action,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-lease-id"] = self._deserialize("str", response.headers.get("x-ms-lease-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def break_lease(
-        self,
-        *,
-        timeout: Optional[int] = None,
-        lease_id: Optional[str] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        **kwargs: Any
-    ) -> None:
-        """The Lease File operation establishes and manages a lock on a file for write and delete
-        operations.
-
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
-         value is None.
-        :paramtype lease_id: str
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        action: Literal["break"] = kwargs.pop("action", _headers.pop("x-ms-lease-action", "break"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_break_lease_request(
-            timeout=timeout,
-            lease_id=lease_id,
-            file_request_intent=file_request_intent,
-            allow_trailing_dot=allow_trailing_dot,
-            action=action,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-lease-time"] = self._deserialize("int", response.headers.get("x-ms-lease-time"))
-        response_headers["x-ms-lease-id"] = self._deserialize("str", response.headers.get("x-ms-lease-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def upload_range(  # pylint: disable=too-many-locals
-        self,
-        optional_body: Optional[bytes] = None,
-        *,
-        range: str,
-        file_range_write: Union[str, _models.FileRangeWriteType],
-        content_length: int,
-        timeout: Optional[int] = None,
-        content_md5: Optional[bytes] = None,
-        lease_id: Optional[str] = None,
-        file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        structured_body_type: Optional[str] = None,
-        structured_content_length: Optional[int] = None,
-        **kwargs: Any
-    ) -> None:
-        """Upload a range of bytes to a file.
-
-        :param optional_body: Initial data. Default value is None.
-        :type optional_body: bytes
-        :keyword range: Specifies the range of bytes to be written. Both the start and end of the range
-         must be specified. Required.
-        :paramtype range: str
-        :keyword file_range_write: Specify one of the following options: - Update: Writes the bytes
-         specified by the request body into the specified range. - Clear: Clears the specified range and
-         releases the space used in storage for that range. Known values are: "update" and "clear".
-         Required.
-        :paramtype file_range_write: str or
-         ~azure.storage.fileshare._generated.models.FileRangeWriteType
-        :keyword content_length: The number of bytes being transmitted in the request body. Required.
-        :paramtype content_length: int
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword content_md5: An MD5 hash of the content. This hash is used to verify the integrity of
-         the data during transport. Default value is None.
-        :paramtype content_md5: bytes
-        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
-         value is None.
-        :paramtype lease_id: str
-        :keyword file_last_written_mode: If the file last write time should be preserved or
-         overwritten. Known values are: "Now" and "Preserve". Default value is None.
-        :paramtype file_last_written_mode: str or
-         ~azure.storage.fileshare._generated.models.FileLastWrittenMode
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword structured_body_type: Specifies the response content should be returned as a
-         structured message and specifies the message schema version and properties. Default value is
-         None.
-        :paramtype structured_body_type: str
-        :keyword structured_content_length: Required if the request body is a structured message.
-         Specifies the length of the blob/file content inside the message body. Will always be smaller
-         than Content-Length. Default value is None.
-        :paramtype structured_content_length: int
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop(
-            "content_type", _headers.pop("Content-Type", "application/octet-stream")
-        )
-        content_type = content_type if optional_body else None
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _content = optional_body
-
-        _request = build_file_upload_range_request(
-            range=range,
-            file_range_write=file_range_write,
-            content_length=content_length,
-            timeout=timeout,
-            content_md5=content_md5,
-            lease_id=lease_id,
-            file_last_written_mode=file_last_written_mode,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            structured_body_type=structured_body_type,
-            structured_content_length=structured_content_length,
-            content_type=content_type,
-            version=self._config.version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-file-last-write-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-last-write-time")
-        )
-        response_headers["x-ms-structured-body"] = self._deserialize(
-            "str", response.headers.get("x-ms-structured-body")
-        )
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def upload_range_from_url(  # pylint: disable=too-many-locals
-        self,
-        *,
-        range: str,
-        copy_source: str,
-        file_range_write_from_url: Union[str, _models.FileRangeWriteFromUrlType],
-        content_length: int,
-        source_range: Optional[str] = None,
-        timeout: Optional[int] = None,
-        source_content_crc64: Optional[str] = None,
-        source_if_match_crc64: Optional[str] = None,
-        source_if_none_match_crc64: Optional[str] = None,
-        lease_id: Optional[str] = None,
-        copy_source_authorization: Optional[str] = None,
-        file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        allow_source_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Upload a range of bytes to a file where the contents are read from a URL.
-
-        :keyword range: Specifies the range of bytes to be written. Both the start and end of the range
-         must be specified. Required.
-        :paramtype range: str
-        :keyword copy_source: Specifies the URL of the source file or blob, up to 2 KB in length.
-         Required.
-        :paramtype copy_source: str
-        :keyword file_range_write_from_url: Only update is supported. "update" Required.
-        :paramtype file_range_write_from_url: str or
-         ~azure.storage.fileshare._generated.models.FileRangeWriteFromUrlType
-        :keyword content_length: The number of bytes being transmitted in the request body. Required.
-        :paramtype content_length: int
-        :keyword source_range: Bytes of source data in the specified range. Default value is None.
-        :paramtype source_range: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword source_content_crc64: Specify the CRC64 hash of the source content. Default value is
-         None.
-        :paramtype source_content_crc64: str
-        :keyword source_if_match_crc64: Specify the CRC64 hash value to check for source content
-         integrity. Default value is None.
-        :paramtype source_if_match_crc64: str
-        :keyword source_if_none_match_crc64: Specify the CRC64 hash value to check for source content
-         mismatch. Default value is None.
-        :paramtype source_if_none_match_crc64: str
-        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
-         value is None.
-        :paramtype lease_id: str
-        :keyword copy_source_authorization: Only Bearer type is supported. Credentials should be a
-         valid OAuth access token to copy source. Default value is None.
-        :paramtype copy_source_authorization: str
-        :keyword file_last_written_mode: If the file last write time should be preserved or
-         overwritten. Known values are: "Now" and "Preserve". Default value is None.
-        :paramtype file_last_written_mode: str or
-         ~azure.storage.fileshare._generated.models.FileLastWrittenMode
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the
-         source URI. Default value is None.
-        :paramtype allow_source_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_upload_range_from_url_request(
-            range=range,
-            copy_source=copy_source,
-            file_range_write_from_url=file_range_write_from_url,
-            content_length=content_length,
-            source_range=source_range,
-            timeout=timeout,
-            source_content_crc64=source_content_crc64,
-            source_if_match_crc64=source_if_match_crc64,
-            source_if_none_match_crc64=source_if_none_match_crc64,
-            lease_id=lease_id,
-            copy_source_authorization=copy_source_authorization,
-            file_last_written_mode=file_last_written_mode,
-            allow_trailing_dot=allow_trailing_dot,
-            allow_source_trailing_dot=allow_source_trailing_dot,
-            file_request_intent=file_request_intent,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-content-crc64"] = self._deserialize("str", response.headers.get("x-ms-content-crc64"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-file-last-write-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-last-write-time")
-        )
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def get_range_list(
-        self,
-        *,
-        sharesnapshot: Optional[str] = None,
-        prevsharesnapshot: Optional[str] = None,
-        timeout: Optional[int] = None,
-        range: Optional[str] = None,
-        lease_id: Optional[str] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        support_rename: Optional[bool] = None,
-        **kwargs: Any
-    ) -> _models.ShareFileRangeList:
-        """Returns the list of valid page ranges for a file or snapshot of a file.
-
-        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
-         share snapshot. Default value is None.
-        :paramtype sharesnapshot: str
-        :keyword prevsharesnapshot: The previous snapshot parameter is an opaque DateTime value that
-         specifies a previous file snapshot to compare against. Default value is None.
-        :paramtype prevsharesnapshot: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword range: Return file data only from the specified byte range. Default value is None.
-        :paramtype range: str
-        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
-         value is None.
-        :paramtype lease_id: str
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword support_rename: This header is allowed only when PrevShareSnapshot query parameter is
-         set. Determines whether the changed ranges for a file that has been renamed or moved should be
-         listed. Default value is None.
-        :paramtype support_rename: bool
-        :return: ShareFileRangeList. The ShareFileRangeList is compatible with MutableMapping
-        :rtype: ~azure.storage.fileshare._generated.models.ShareFileRangeList
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ShareFileRangeList] = kwargs.pop("cls", None)
-
-        _request = build_file_get_range_list_request(
-            sharesnapshot=sharesnapshot,
-            prevsharesnapshot=prevsharesnapshot,
-            timeout=timeout,
-            range=range,
-            lease_id=lease_id,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            support_rename=support_rename,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["x-ms-content-length"] = self._deserialize("int", response.headers.get("x-ms-content-length"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize_xml(_models.ShareFileRangeList, response.text())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def start_copy(  # pylint: disable=too-many-locals
-        self,
-        *,
-        copy_source: str,
-        timeout: Optional[int] = None,
-        metadata: Optional[dict[str, str]] = None,
-        file_permission: Optional[str] = None,
-        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
-        file_permission_key: Optional[str] = None,
-        file_permission_copy_mode: Optional[Union[str, _models.PermissionCopyModeType]] = None,
-        ignore_read_only: Optional[bool] = None,
-        file_attributes: Optional[str] = None,
-        file_creation_time: Optional[str] = None,
-        file_last_write_time: Optional[str] = None,
-        file_change_time: Optional[str] = None,
-        set_archive_attribute: Optional[bool] = None,
-        lease_id: Optional[str] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        allow_source_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        owner: Optional[str] = None,
-        group: Optional[str] = None,
-        file_mode: Optional[str] = None,
-        file_mode_copy_mode: Optional[Union[str, _models.ModeCopyMode]] = None,
-        file_owner_copy_mode: Optional[Union[str, _models.OwnerCopyMode]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Copies a blob or file to a destination file within the storage account.
-
-        :keyword copy_source: Specifies the URL of the source file or blob, up to 2 KB in length.
-         Required.
-        :paramtype copy_source: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword file_permission: If specified the permission shall be set for the file. Default value
-         is None.
-        :paramtype file_permission: str
-        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
-         "Sddl" and "Binary". Default value is None.
-        :paramtype file_permission_format: str or
-         ~azure.storage.fileshare._generated.models.FilePermissionFormat
-        :keyword file_permission_key: Key of the permission to be set. Default value is None.
-        :paramtype file_permission_key: str
-        :keyword file_permission_copy_mode: Specifies the option to copy file security descriptor from
-         source file or to set it using the value which is defined by the header value of
-         x-ms-file-permission or x-ms-file-permission-key. Known values are: "source" and "override".
-         Default value is None.
-        :paramtype file_permission_copy_mode: str or
-         ~azure.storage.fileshare._generated.models.PermissionCopyModeType
-        :keyword ignore_read_only: A boolean value that specifies whether the ReadOnly attribute on a
-         preexisting destination file should be respected or overridden. Default value is None.
-        :paramtype ignore_read_only: bool
-        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
-         value is None.
-        :paramtype file_attributes: str
-        :keyword file_creation_time: Creation time for the file. Default value is None.
-        :paramtype file_creation_time: str
-        :keyword file_last_write_time: Last write time for the file. Default value is None.
-        :paramtype file_last_write_time: str
-        :keyword file_change_time: Change time for the file. Default value is None.
-        :paramtype file_change_time: str
-        :keyword set_archive_attribute: Optional. Sets the archive attribute on the destination file.
-         Default value is None.
-        :paramtype set_archive_attribute: bool
-        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
-         value is None.
-        :paramtype lease_id: str
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the
-         source URI. Default value is None.
-        :paramtype allow_source_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
-        :paramtype owner: str
-        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
-         None.
-        :paramtype group: str
-        :keyword file_mode: Optional, NFS only. The file mode of the file or directory. Default value
-         is None.
-        :paramtype file_mode: str
-        :keyword file_mode_copy_mode: Specifies mode copy option for the file. Known values are:
-         "source" and "override". Default value is None.
-        :paramtype file_mode_copy_mode: str or ~azure.storage.fileshare._generated.models.ModeCopyMode
-        :keyword file_owner_copy_mode: Specifies owner copy option for the file. Known values are:
-         "source" and "override". Default value is None.
-        :paramtype file_owner_copy_mode: str or
-         ~azure.storage.fileshare._generated.models.OwnerCopyMode
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_start_copy_request(
-            copy_source=copy_source,
-            timeout=timeout,
-            metadata=metadata,
-            file_permission=file_permission,
-            file_permission_format=file_permission_format,
-            file_permission_key=file_permission_key,
-            file_permission_copy_mode=file_permission_copy_mode,
-            ignore_read_only=ignore_read_only,
-            file_attributes=file_attributes,
-            file_creation_time=file_creation_time,
-            file_last_write_time=file_last_write_time,
-            file_change_time=file_change_time,
-            set_archive_attribute=set_archive_attribute,
-            lease_id=lease_id,
-            allow_trailing_dot=allow_trailing_dot,
-            allow_source_trailing_dot=allow_source_trailing_dot,
-            file_request_intent=file_request_intent,
-            owner=owner,
-            group=group,
-            file_mode=file_mode,
-            file_mode_copy_mode=file_mode_copy_mode,
-            file_owner_copy_mode=file_owner_copy_mode,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-copy-id"] = self._deserialize("str", response.headers.get("x-ms-copy-id"))
-        response_headers["x-ms-copy-status"] = self._deserialize("str", response.headers.get("x-ms-copy-status"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def abort_copy(
-        self,
-        *,
-        copyid: str,
-        timeout: Optional[int] = None,
-        lease_id: Optional[str] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Aborts a pending Copy File operation, and leaves a destination file with zero length and full
-        metadata.
-
-        :keyword copyid: The copy identifier provided in the x-ms-copy-id header of the original Copy
-         File operation. Required.
-        :paramtype copyid: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
-         value is None.
-        :paramtype lease_id: str
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        copy_action_abort_constant: Literal["abort"] = kwargs.pop(
-            "copy_action_abort_constant", _headers.pop("x-ms-copy-action", "abort")
-        )
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_abort_copy_request(
-            copyid=copyid,
-            timeout=timeout,
-            lease_id=lease_id,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            copy_action_abort_constant=copy_action_abort_constant,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def list_handles(
-        self,
-        *,
-        marker: Optional[str] = None,
-        maxresults: Optional[int] = None,
-        timeout: Optional[int] = None,
-        sharesnapshot: Optional[str] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> _models.ListHandlesResponse:
-        """Lists handles for file.
-
-        :keyword marker: A string value that identifies the portion of the list to be returned with the
-         next listing operation. Default value is None.
-        :paramtype marker: str
-        :keyword maxresults: Specifies the maximum number of items to return. Default value is None.
-        :paramtype maxresults: int
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
-         share snapshot. Default value is None.
-        :paramtype sharesnapshot: str
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: ListHandlesResponse. The ListHandlesResponse is compatible with MutableMapping
-        :rtype: ~azure.storage.fileshare._generated.models.ListHandlesResponse
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[_models.ListHandlesResponse] = kwargs.pop("cls", None)
-
-        _request = build_file_list_handles_request(
-            marker=marker,
-            maxresults=maxresults,
-            timeout=timeout,
-            sharesnapshot=sharesnapshot,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize_xml(_models.ListHandlesResponse, response.text())
-
-        if cls:
-            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def force_close_handles(
-        self,
-        *,
-        handle_id: str,
-        timeout: Optional[int] = None,
-        marker: Optional[str] = None,
-        sharesnapshot: Optional[str] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Closes all handles open for given file.
-
-        :keyword handle_id: Specifies handle ID opened on the file or directory to be closed. Asterisk
-         ('*') is a wildcard that specifies all handles. Required.
-        :paramtype handle_id: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword marker: A string value that identifies the portion of the list to be returned with the
-         next listing operation. Default value is None.
-        :paramtype marker: str
-        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
-         share snapshot. Default value is None.
-        :paramtype sharesnapshot: str
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_force_close_handles_request(
-            handle_id=handle_id,
-            timeout=timeout,
-            marker=marker,
-            sharesnapshot=sharesnapshot,
-            allow_trailing_dot=allow_trailing_dot,
-            file_request_intent=file_request_intent,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["x-ms-marker"] = self._deserialize("str", response.headers.get("x-ms-marker"))
-        response_headers["x-ms-number-of-handles-closed"] = self._deserialize(
-            "int", response.headers.get("x-ms-number-of-handles-closed")
-        )
-        response_headers["x-ms-number-of-handles-failed"] = self._deserialize(
-            "int", response.headers.get("x-ms-number-of-handles-failed")
-        )
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def rename(  # pylint: disable=too-many-locals
-        self,
-        *,
-        rename_source: str,
-        timeout: Optional[int] = None,
-        replace_if_exists: Optional[bool] = None,
-        ignore_read_only: Optional[bool] = None,
-        source_lease_id: Optional[str] = None,
-        destination_lease_id: Optional[str] = None,
-        file_attributes: Optional[str] = None,
-        file_creation_time: Optional[str] = None,
-        file_last_write_time: Optional[str] = None,
-        file_change_time: Optional[str] = None,
-        file_permission: Optional[str] = None,
-        file_permission_format: Optional[Union[str, _models.FilePermissionFormat]] = None,
-        file_permission_key: Optional[str] = None,
-        metadata: Optional[dict[str, str]] = None,
-        file_content_type: Optional[str] = None,
-        allow_trailing_dot: Optional[bool] = None,
-        allow_source_trailing_dot: Optional[bool] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Renames a file. By default, the destination is overwritten and if the destination already
-        exists and has a read-only attribute set, the operation will fail.
-
-        :keyword rename_source: Required. Specifies the URI-style path of the source file, up to 2 KB
-         in length. Required.
-        :paramtype rename_source: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword replace_if_exists: Boolean. Default value is false. Set to true to indicate that the
-         destination should be overwritten. Default value is None.
-        :paramtype replace_if_exists: bool
-        :keyword ignore_read_only: Boolean. Default value is false. Set to true to overwrite the
-         destination even if it has the read-only attribute set. Default value is None.
-        :paramtype ignore_read_only: bool
-        :keyword source_lease_id: Required if the source file has an active lease. Default value is
-         None.
-        :paramtype source_lease_id: str
-        :keyword destination_lease_id: Required if the destination has an active lease. Default value
-         is None.
-        :paramtype destination_lease_id: str
-        :keyword file_attributes: If specified, the provided file attributes shall be set. Default
-         value is None.
-        :paramtype file_attributes: str
-        :keyword file_creation_time: Creation time for the file. Default value is None.
-        :paramtype file_creation_time: str
-        :keyword file_last_write_time: Last write time for the file. Default value is None.
-        :paramtype file_last_write_time: str
-        :keyword file_change_time: Change time for the file. Default value is None.
-        :paramtype file_change_time: str
-        :keyword file_permission: If specified the permission shall be set for the file. Default value
-         is None.
-        :paramtype file_permission: str
-        :keyword file_permission_format: Optional. Used to set permission format. Known values are:
-         "Sddl" and "Binary". Default value is None.
-        :paramtype file_permission_format: str or
-         ~azure.storage.fileshare._generated.models.FilePermissionFormat
-        :keyword file_permission_key: Key of the permission to be set. Default value is None.
-        :paramtype file_permission_key: str
-        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword file_content_type: Sets the MIME content type of the file. Default value is None.
-        :paramtype file_content_type: str
-        :keyword allow_trailing_dot: If true, the trailing dot will not be trimmed from the target
-         file/directory path. Default value is None.
-        :paramtype allow_trailing_dot: bool
-        :keyword allow_source_trailing_dot: If true, the trailing dot will not be trimmed from the
-         source URI. Default value is None.
-        :paramtype allow_source_trailing_dot: bool
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_rename_request(
-            rename_source=rename_source,
-            timeout=timeout,
-            replace_if_exists=replace_if_exists,
-            ignore_read_only=ignore_read_only,
-            source_lease_id=source_lease_id,
-            destination_lease_id=destination_lease_id,
-            file_attributes=file_attributes,
-            file_creation_time=file_creation_time,
-            file_last_write_time=file_last_write_time,
-            file_change_time=file_change_time,
-            file_permission=file_permission,
-            file_permission_format=file_permission_format,
-            file_permission_key=file_permission_key,
-            metadata=metadata,
-            file_content_type=file_content_type,
-            allow_trailing_dot=allow_trailing_dot,
-            allow_source_trailing_dot=allow_source_trailing_dot,
-            file_request_intent=file_request_intent,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-request-server-encrypted"] = self._deserialize(
-            "bool", response.headers.get("x-ms-request-server-encrypted")
-        )
-        response_headers["x-ms-file-permission-key"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-permission-key")
-        )
-        response_headers["x-ms-file-attributes"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-attributes")
-        )
-        response_headers["x-ms-file-creation-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-creation-time")
-        )
-        response_headers["x-ms-file-last-write-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-last-write-time")
-        )
-        response_headers["x-ms-file-change-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-change-time")
-        )
-        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
-        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def create_symbolic_link(
-        self,
-        *,
-        link_text: str,
-        timeout: Optional[int] = None,
-        metadata: Optional[dict[str, str]] = None,
-        file_creation_time: Optional[str] = None,
-        file_last_write_time: Optional[str] = None,
-        lease_id: Optional[str] = None,
-        owner: Optional[str] = None,
-        group: Optional[str] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Creates a symbolic link to a target file. NFS only.
-
-        :keyword link_text: NFS only. The path to the original file, the symbolic link is pointing to.
-         Required.
-        :paramtype link_text: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword metadata: Optional. User-defined metadata for the resource. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword file_creation_time: Creation time for the file. Default value is None.
-        :paramtype file_creation_time: str
-        :keyword file_last_write_time: Last write time for the file. Default value is None.
-        :paramtype file_last_write_time: str
-        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
-         value is None.
-        :paramtype lease_id: str
-        :keyword owner: Optional, NFS only. The owner of the file or directory. Default value is None.
-        :paramtype owner: str
-        :keyword group: Optional, NFS only. The owning group of the file or directory. Default value is
-         None.
-        :paramtype group: str
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_create_symbolic_link_request(
-            link_text=link_text,
-            timeout=timeout,
-            metadata=metadata,
-            file_creation_time=file_creation_time,
-            file_last_write_time=file_last_write_time,
-            lease_id=lease_id,
-            owner=owner,
-            group=group,
-            file_request_intent=file_request_intent,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-file-creation-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-creation-time")
-        )
-        response_headers["x-ms-file-last-write-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-last-write-time")
-        )
-        response_headers["x-ms-file-change-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-change-time")
-        )
-        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
-        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
-        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
-        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
-        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
-        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def get_symbolic_link(
-        self,
-        *,
-        timeout: Optional[int] = None,
-        sharesnapshot: Optional[str] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Returns the target of a symbolic link. NFS only.
-
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword sharesnapshot: The snapshot parameter is an opaque DateTime value that specifies a
-         share snapshot. Default value is None.
-        :paramtype sharesnapshot: str
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_get_symbolic_link_request(
-            timeout=timeout,
-            sharesnapshot=sharesnapshot,
-            file_request_intent=file_request_intent,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-link-text"] = self._deserialize("str", response.headers.get("x-ms-link-text"))
-        response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
-        response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
-        response_headers["x-ms-client-request-id"] = self._deserialize(
-            "str", response.headers.get("x-ms-client-request-id")
-        )
-        response_headers["Date"] = self._deserialize("rfc-1123", response.headers.get("Date"))
-
-        if cls:
-            return cls(pipeline_response, None, response_headers)  # type: ignore
-
-    @distributed_trace_async
-    async def create_hard_link(
-        self,
-        *,
-        target_file: str,
-        timeout: Optional[int] = None,
-        lease_id: Optional[str] = None,
-        file_request_intent: Optional[Union[str, _models.ShareTokenIntent]] = None,
-        **kwargs: Any
-    ) -> None:
-        """Creates a hard link to a target file. NFS only.
-
-        :keyword target_file: NFS only. Required. Specifies the path of the target file to which the
-         link will be created, up to 2 KiB in length. Required.
-        :paramtype target_file: str
-        :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
-        :paramtype timeout: int
-        :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
-         value is None.
-        :paramtype lease_id: str
-        :keyword file_request_intent: Valid values are 'backup'. "backup" Default value is None.
-        :paramtype file_request_intent: str or
-         ~azure.storage.fileshare._generated.models.ShareTokenIntent
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        file_type: Literal["file"] = kwargs.pop("file_type", _headers.pop("x-ms-type", "file"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        _request = build_file_create_hard_link_request(
-            target_file=target_file,
-            timeout=timeout,
-            lease_id=lease_id,
-            file_request_intent=file_request_intent,
-            file_type=file_type,
-            version=self._config.version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize_xml(
-                _models.Error,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        response_headers = {}
-        response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
-        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-file-creation-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-creation-time")
-        )
-        response_headers["x-ms-file-last-write-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-last-write-time")
-        )
-        response_headers["x-ms-file-change-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-file-change-time")
-        )
-        response_headers["x-ms-file-id"] = self._deserialize("str", response.headers.get("x-ms-file-id"))
-        response_headers["x-ms-file-parent-id"] = self._deserialize("str", response.headers.get("x-ms-file-parent-id"))
-        response_headers["x-ms-link-count"] = self._deserialize("int", response.headers.get("x-ms-link-count"))
-        response_headers["x-ms-mode"] = self._deserialize("str", response.headers.get("x-ms-mode"))
-        response_headers["x-ms-owner"] = self._deserialize("str", response.headers.get("x-ms-owner"))
-        response_headers["x-ms-group"] = self._deserialize("str", response.headers.get("x-ms-group"))
-        response_headers["x-ms-file-file-type"] = self._deserialize("str", response.headers.get("x-ms-file-file-type"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-client-request-id"] = self._deserialize(
