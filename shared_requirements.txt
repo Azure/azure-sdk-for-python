@@ -99,3 +99,4 @@ langchain
 langchain-openai
 azure-ai-language-questionanswering
 github-copilot-sdk
+hypercorn

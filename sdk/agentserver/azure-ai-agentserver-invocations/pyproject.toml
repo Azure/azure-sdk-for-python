@@ -24,12 +24,26 @@ dependencies = [
     "azure-ai-agentserver-core>=2.0.0b1",
 ]
 
-[build-system]
-requires = ["setuptools>=69", "wheel"]
-build-backend = "setuptools.build_meta"
+[dependency-groups]
+# keep in sync with dev_requirements.txt
+dev = [
+    "azure-identity",
+    "azure-monitor-opentelemetry-exporter",
+    "azure-monitor-query",
+    "azure-sdk-tools",
+    "httpx",
+    "opentelemetry-api>=1.40.0",
+    "opentelemetry-sdk>=1.40.0",
+    "pytest-asyncio",
+    "pytest",
+]
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python"
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 exclude = [
@@ -66,3 +80,10 @@ pyright = true
 verifytypes = true
 pylint = true
 type_check_samples = false
+
+[tool.uv.sources]
+azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
+azure-identity = { path = "../../identity/azure-identity" }
+azure-monitor-opentelemetry-exporter = { path = "../../monitor/azure-monitor-opentelemetry-exporter" }
+azure-monitor-query = { path = "../../monitor/azure-monitor-query" }
+azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
