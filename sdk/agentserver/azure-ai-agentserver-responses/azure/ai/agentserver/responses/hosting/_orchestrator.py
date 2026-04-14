@@ -685,6 +685,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             cancel_signal=ctx.cancellation_signal,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
         )
         execution.set_response_snapshot(generated_models.ResponseObject(initial_payload))
         execution.subject = _ResponseEventSubject()
@@ -1105,6 +1107,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             cancel_signal=ctx.cancellation_signal if ctx.background else None,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
         )
         execution.set_response_snapshot(generated_models.ResponseObject(response_payload))
         await self._runtime_state.add(execution)
@@ -1381,6 +1385,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             response_context=ctx.context,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
         )
         record.set_response_snapshot(generated_models.ResponseObject(response_payload))
 
@@ -1444,6 +1450,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             cancel_signal=ctx.cancellation_signal,
             initial_model=ctx.model,
             initial_agent_reference=ctx.agent_reference,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
         )
 
         # Register so GET can observe in-flight state
