@@ -123,15 +123,27 @@ class ScenarioOrchestrator:
             # The FoundryExecutionManager (see PR #45541) provides an additional
             # outer recovery layer. If _scenario_result remains None,
             # downstream get_attack_results() returns an empty list safely.
+            #
+            # PyRIT's Scenario._execute_scenario_async saves completed results to memory
+            # (via _update_scenario_result_async) before raising on incomplete objectives.
+            # Retrieve partial results so they aren't lost when some objectives fail
+            # (e.g., evaluator model refuses to score adversarial content).
             try:
-                # Relies on PyRIT FoundryScenario internal `_result` attribute
-                # to retrieve partial results accumulated before the failure.
-                # hasattr guards against future PyRIT versions removing this attribute.
-                # If the attribute type changes, get_attack_results() will fail safely downstream.
-                if hasattr(self._scenario, "_result"):
-                    self._scenario_result = self._scenario._result
-            except Exception as e:
-                self.logger.debug("Failed to retrieve partial scenario result: %s", e, exc_info=True)
+                scenario_result_id = getattr(self._scenario, "_scenario_result_id", None)
+                if scenario_result_id:
+                    memory = self.get_memory()
+                    stored_results = memory.get_scenario_results(scenario_result_ids=[scenario_result_id])
+                    if stored_results and stored_results[0] is not None:
+                        self._scenario_result = stored_results[0]
+                        attack_results = getattr(self._scenario_result, "attack_results", {}) or {}
+                        attack_count = sum(len(v) for v in attack_results.values() if v)
+                        self.logger.info(
+                            "Retrieved partial results from memory for %s: %d attack results recovered.",
+                            self.risk_category,
+                            attack_count,
+                        )
+            except Exception as recovery_err:
+                self.logger.debug("Failed to retrieve partial scenario result: %s", recovery_err, exc_info=True)
 
         self.logger.info(f"Attack execution complete for {self.risk_category}")
 
@@ -141,7 +153,10 @@ class ScenarioOrchestrator:
         """Create attack scoring configuration from RAI scorer.
 
         FoundryScenario uses AttackScoringConfig to configure how attacks are scored.
-        We wrap our RAI scorer in the appropriate configuration.
+        We use the RAI scorer for both objective scoring AND refusal detection.
+        For refusal: a safe response (score=False) means the model refused the attack,
+        triggering crescendo's backtrack logic. A harmful response (score=True) means
+        the model didn't refuse and crescendo should continue escalating.
 
         :return: Attack scoring configuration
         :rtype: Any
@@ -151,6 +166,7 @@ class ScenarioOrchestrator:
 
         return AttackScoringConfig(
             objective_scorer=self.rai_scorer,
+            refusal_scorer=self.rai_scorer,
             use_score_as_feedback=True,
         )
 
@@ -167,12 +183,29 @@ class ScenarioOrchestrator:
             return []
 
         # ScenarioResult.attack_results is a dict[str, List[AttackResult]]
-        # Flatten all results into a single list
+        # keyed by atomic_attack_name (strategy name, e.g. "baseline", "crescendo")
         all_results: List[AttackResult] = []
-        for objective_id, results_list in self._scenario_result.attack_results.items():
+        for strategy_name, results_list in self._scenario_result.attack_results.items():
             all_results.extend(results_list)
 
         return all_results
+
+    def get_attack_results_by_strategy(self) -> Dict[str, List[AttackResult]]:
+        """Get attack results grouped by strategy name.
+
+        Returns a shallow copy of the ScenarioResult.attack_results dict.
+        Keys are ``atomic_attack_name`` values which correspond to
+        FoundryStrategy values (e.g. ``"baseline"``, ``"crescendo"``,
+        ``"multi_turn"``, ``"base64"``).
+
+        :return: Dictionary mapping strategy name to list of AttackResult
+        :rtype: Dict[str, List[AttackResult]]
+        """
+        if not self._scenario_result:
+            self.logger.debug(f"No scenario results for {self.risk_category}")
+            return {}
+
+        return dict(self._scenario_result.attack_results)
 
     def get_memory(self) -> Any:
         """Get the memory instance for querying conversations.

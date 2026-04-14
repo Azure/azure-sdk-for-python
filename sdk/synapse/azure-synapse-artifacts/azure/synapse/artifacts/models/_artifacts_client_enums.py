@@ -435,6 +435,14 @@ class HDInsightClusterAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnu
     USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
 
 
+class HDInsightOndemandClusterResourceGroupAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """HDInsight On-demand cluster resource group authentication type."""
+
+    SERVICE_PRINCIPAL_KEY = "ServicePrincipalKey"
+    SYSTEM_ASSIGNED_MANAGED_IDENTITY = "SystemAssignedManagedIdentity"
+    USER_ASSIGNED_MANAGED_IDENTITY = "UserAssignedManagedIdentity"
+
+
 class HiveAuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication method used to access the Hive server."""
 
@@ -602,6 +610,16 @@ class NetezzaPartitionOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
     DATA_SLICE = "DataSlice"
     DYNAMIC_RANGE = "DynamicRange"
+
+
+class NetezzaSecurityLevelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the security level for the driver connection to the data store. PreferredUnSecured :
+    prefer unsecured, allow fallback to secured connection if required. OnlyUnSecured : strictly
+    unsecured, no fallback.
+    """
+
+    PREFERRED_UN_SECURED = "PreferredUnSecured"
+    ONLY_UN_SECURED = "OnlyUnSecured"
 
 
 class NodeSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):

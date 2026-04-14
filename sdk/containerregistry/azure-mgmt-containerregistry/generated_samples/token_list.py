@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2025-11-01/TokenList.json
+# x-ms-original-file: 2026-01-01-preview/TokenList.json
 if __name__ == "__main__":
     main()

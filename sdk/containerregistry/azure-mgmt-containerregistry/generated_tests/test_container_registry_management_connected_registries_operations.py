@@ -65,6 +65,13 @@ class TestContainerRegistryManagementConnectedRegistriesOperations(AzureMgmtReco
                     },
                     "notificationsList": ["str"],
                     "provisioningState": "str",
+                    "registrySyncResult": {
+                        "syncState": "str",
+                        "syncTrigger": "str",
+                        "lastSuccessfulSyncEndTime": "2020-02-20 00:00:00",
+                        "lastSyncEndTime": "2020-02-20 00:00:00",
+                        "lastSyncStartTime": "2020-02-20 00:00:00",
+                    },
                     "statusDetails": [
                         {
                             "code": "str",
@@ -147,6 +154,18 @@ class TestContainerRegistryManagementConnectedRegistriesOperations(AzureMgmtReco
             registry_name="str",
             connected_registry_name="str",
         ).result()  # call '.result()' to poll until service return final result
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
+    def test_connected_registries_resync(self, resource_group):
+        response = self.client.connected_registries.resync(
+            resource_group_name=resource_group.name,
+            registry_name="str",
+            connected_registry_name="str",
+        )
 
         # please add some check logic here by yourself
         # ...

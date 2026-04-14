@@ -59,6 +59,389 @@ class Actor(_Model):
         super().__init__(*args, **kwargs)
 
 
+class Resource(_Model):
+    """Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the private link resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """The name of the private link resource."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
+
+
+class ProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the private link resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
+    """
+
+
+class Archive(ProxyResource):
+    """An object that represents a archive for a container registry.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the private link resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
+    :ivar properties: The properties of the archive.
+    :vartype properties: ~azure.mgmt.containerregistry.models.ArchiveProperties
+    """
+
+    properties: Optional["_models.ArchiveProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties of the archive."""
+
+    __flattened_items = [
+        "package_source",
+        "published_version",
+        "repository_endpoint_prefix",
+        "repository_endpoint",
+        "provisioning_state",
+    ]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ArchiveProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class ArchivePackageSourceProperties(_Model):
+    """The properties of the archive package source.
+
+    :ivar type: The type of package source for a archive. "remote"
+    :vartype type: str or ~azure.mgmt.containerregistry.models.PackageSourceType
+    :ivar url: The external repository url.
+    :vartype url: str
+    """
+
+    type: Optional[Union[str, "_models.PackageSourceType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of package source for a archive. \"remote\""""
+    url: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The external repository url."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.PackageSourceType"]] = None,
+        url: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArchiveProperties(_Model):
+    """The properties of a archive.
+
+    :ivar package_source: The package source of the archive.
+    :vartype package_source: ~azure.mgmt.containerregistry.models.ArchivePackageSourceProperties
+    :ivar published_version: The published version of the archive.
+    :vartype published_version: str
+    :ivar repository_endpoint_prefix:
+    :vartype repository_endpoint_prefix: str
+    :ivar repository_endpoint:
+    :vartype repository_endpoint: str
+    :ivar provisioning_state: The provisioning state of the archive at the time the operation was
+     called. Known values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and
+     "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.containerregistry.models.ProvisioningState
+    """
+
+    package_source: Optional["_models.ArchivePackageSourceProperties"] = rest_field(
+        name="packageSource", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The package source of the archive."""
+    published_version: Optional[str] = rest_field(
+        name="publishedVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The published version of the archive."""
+    repository_endpoint_prefix: Optional[str] = rest_field(
+        name="repositoryEndpointPrefix", visibility=["read", "create", "update", "delete", "query"]
+    )
+    repository_endpoint: Optional[str] = rest_field(name="repositoryEndpoint", visibility=["read"])
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the archive at the time the operation was called. Known values are:
+     \"Creating\", \"Updating\", \"Deleting\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        package_source: Optional["_models.ArchivePackageSourceProperties"] = None,
+        published_version: Optional[str] = None,
+        repository_endpoint_prefix: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArchiveUpdateParameters(_Model):
+    """The parameters for updating a archive.
+
+    :ivar properties: The properties of the connected registry update parameters.
+    :vartype properties: ~azure.mgmt.containerregistry.models.ArchiveUpdateProperties
+    """
+
+    properties: Optional["_models.ArchiveUpdateProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties of the connected registry update parameters."""
+
+    __flattened_items = ["published_version"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ArchiveUpdateProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class ArchiveUpdateProperties(_Model):
+    """The properties of a archive.
+
+    :ivar published_version: The published version of the archive.
+    :vartype published_version: str
+    """
+
+    published_version: Optional[str] = rest_field(
+        name="publishedVersion", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The published version of the archive."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        published_version: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ArchiveVersion(ProxyResource):
+    """An object that represents an export pipeline for a container registry.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the private link resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
+    :ivar properties: The properties of the archive.
+    :vartype properties: ~azure.mgmt.containerregistry.models.ArchiveVersionProperties
+    """
+
+    properties: Optional["_models.ArchiveVersionProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties of the archive."""
+
+    __flattened_items = ["provisioning_state", "archive_version_error_message"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ArchiveVersionProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class ArchiveVersionProperties(_Model):
+    """The properties of an archive version.
+
+    :ivar provisioning_state: The provisioning state of the archive at the time the operation was
+     called. Known values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and
+     "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.containerregistry.models.ProvisioningState
+    :ivar archive_version_error_message: The detailed error message for the archive version in the
+     case of failure.
+    :vartype archive_version_error_message: str
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the archive at the time the operation was called. Known values are:
+     \"Creating\", \"Updating\", \"Deleting\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
+    archive_version_error_message: Optional[str] = rest_field(
+        name="archiveVersionErrorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The detailed error message for the archive version in the case of failure."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        archive_version_error_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class AuthCredential(_Model):
     """Authentication credential stored for an upstream.
 
@@ -140,51 +523,6 @@ class AzureADAuthenticationAsArmPolicy(_Model):
         super().__init__(*args, **kwargs)
 
 
-class Resource(_Model):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the private link resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the private link resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
-
-
-class ProxyResource(Resource):
-    """Proxy Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the private link resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
-    """
-
-
 class CacheRule(ProxyResource):
     """An object that represents a cache rule for a container registry.
 
@@ -201,12 +539,18 @@ class CacheRule(ProxyResource):
     :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
     :ivar properties: The properties of the cache rule.
     :vartype properties: ~azure.mgmt.containerregistry.models.CacheRuleProperties
+    :ivar identity: The identity of the cache rule.
+    :vartype identity: ~azure.mgmt.containerregistry.models.IdentityProperties
     """
 
     properties: Optional["_models.CacheRuleProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of the cache rule."""
+    identity: Optional["_models.IdentityProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identity of the cache rule."""
 
     __flattened_items = [
         "credential_set_resource_id",
@@ -221,6 +565,7 @@ class CacheRule(ProxyResource):
         self,
         *,
         properties: Optional["_models.CacheRuleProperties"] = None,
+        identity: Optional["_models.IdentityProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -260,8 +605,8 @@ class CacheRuleProperties(_Model):
     :vartype credential_set_resource_id: str
     :ivar source_repository: Source repository pulled from upstream.
     :vartype source_repository: str
-    :ivar target_repository: Target repository specified in docker pull command.
-     Eg: docker pull myregistry.azurecr.io/{targetRepository}:{tag}.
+    :ivar target_repository: Target repository specified in docker pull command. Eg: docker pull
+     myregistry.azurecr.io/{targetRepository}:{tag}.
     :vartype target_repository: str
     :ivar creation_date: The creation date of the cache rule.
     :vartype creation_date: ~datetime.datetime
@@ -281,8 +626,8 @@ class CacheRuleProperties(_Model):
     target_repository: Optional[str] = rest_field(
         name="targetRepository", visibility=["read", "create", "update", "delete", "query"]
     )
-    """Target repository specified in docker pull command.
-     Eg: docker pull myregistry.azurecr.io/{targetRepository}:{tag}."""
+    """Target repository specified in docker pull command. Eg: docker pull
+     myregistry.azurecr.io/{targetRepository}:{tag}."""
     creation_date: Optional[datetime.datetime] = rest_field(name="creationDate", visibility=["read"], format="rfc3339")
     """The creation date of the cache rule."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -316,12 +661,18 @@ class CacheRuleUpdateParameters(_Model):
 
     :ivar properties: The properties of the cache rule update parameters.
     :vartype properties: ~azure.mgmt.containerregistry.models.CacheRuleUpdateProperties
+    :ivar identity: The identity of the cache rule.
+    :vartype identity: ~azure.mgmt.containerregistry.models.IdentityProperties
     """
 
     properties: Optional["_models.CacheRuleUpdateProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of the cache rule update parameters."""
+    identity: Optional["_models.IdentityProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identity of the cache rule."""
 
     __flattened_items = ["credential_set_resource_id"]
 
@@ -330,6 +681,7 @@ class CacheRuleUpdateParameters(_Model):
         self,
         *,
         properties: Optional["_models.CacheRuleUpdateProperties"] = None,
+        identity: Optional["_models.IdentityProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -464,6 +816,7 @@ class ConnectedRegistry(ProxyResource):
         "status_details",
         "notifications_list",
         "garbage_collection",
+        "registry_sync_result",
     ]
 
     @overload
@@ -536,6 +889,9 @@ class ConnectedRegistryProperties(_Model):
     :vartype notifications_list: list[str]
     :ivar garbage_collection: The garbage collection properties of the connected registry.
     :vartype garbage_collection: ~azure.mgmt.containerregistry.models.GarbageCollectionProperties
+    :ivar registry_sync_result: The result of the connected registry's most recent sync with its
+     parent.
+    :vartype registry_sync_result: ~azure.mgmt.containerregistry.models.RegistrySyncResult
     """
 
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -587,6 +943,10 @@ class ConnectedRegistryProperties(_Model):
         name="garbageCollection", visibility=["read", "create", "update", "delete", "query"]
     )
     """The garbage collection properties of the connected registry."""
+    registry_sync_result: Optional["_models.RegistrySyncResult"] = rest_field(
+        name="registrySyncResult", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The result of the connected registry's most recent sync with its parent."""
 
     @overload
     def __init__(
@@ -599,6 +959,7 @@ class ConnectedRegistryProperties(_Model):
         logging: Optional["_models.LoggingProperties"] = None,
         notifications_list: Optional[list[str]] = None,
         garbage_collection: Optional["_models.GarbageCollectionProperties"] = None,
+        registry_sync_result: Optional["_models.RegistrySyncResult"] = None,
     ) -> None: ...
 
     @overload
@@ -838,8 +1199,8 @@ class CredentialSetProperties(_Model):
 
     :ivar login_server: The credentials are stored for this upstream or login server.
     :vartype login_server: str
-    :ivar auth_credentials: List of authentication credentials stored for an upstream.
-     Usually consists of a primary and an optional secondary credential.
+    :ivar auth_credentials: List of authentication credentials stored for an upstream. Usually
+     consists of a primary and an optional secondary credential.
     :vartype auth_credentials: list[~azure.mgmt.containerregistry.models.AuthCredential]
     :ivar creation_date: The creation date of credential store resource.
     :vartype creation_date: ~datetime.datetime
@@ -855,8 +1216,8 @@ class CredentialSetProperties(_Model):
     auth_credentials: Optional[list["_models.AuthCredential"]] = rest_field(
         name="authCredentials", visibility=["read", "create", "update", "delete", "query"]
     )
-    """List of authentication credentials stored for an upstream.
-     Usually consists of a primary and an optional secondary credential."""
+    """List of authentication credentials stored for an upstream. Usually consists of a primary and an
+     optional secondary credential."""
     creation_date: Optional[datetime.datetime] = rest_field(name="creationDate", visibility=["read"], format="rfc3339")
     """The creation date of credential store resource."""
     provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
@@ -945,16 +1306,16 @@ class CredentialSetUpdateParameters(_Model):
 class CredentialSetUpdateProperties(_Model):
     """The parameters for updating credential set properties.
 
-    :ivar auth_credentials: List of authentication credentials stored for an upstream.
-     Usually consists of a primary and an optional secondary credential.
+    :ivar auth_credentials: List of authentication credentials stored for an upstream. Usually
+     consists of a primary and an optional secondary credential.
     :vartype auth_credentials: list[~azure.mgmt.containerregistry.models.AuthCredential]
     """
 
     auth_credentials: Optional[list["_models.AuthCredential"]] = rest_field(
         name="authCredentials", visibility=["read", "create", "update", "delete", "query"]
     )
-    """List of authentication credentials stored for an upstream.
-     Usually consists of a primary and an optional secondary credential."""
+    """List of authentication credentials stored for an upstream. Usually consists of a primary and an
+     optional secondary credential."""
 
     @overload
     def __init__(
@@ -1319,6 +1680,182 @@ class EventResponseMessage(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ExportPipeline(ProxyResource):
+    """An object that represents an export pipeline for a container registry.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the private link resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
+    :ivar properties: The properties of the export pipeline.
+    :vartype properties: ~azure.mgmt.containerregistry.models.ExportPipelineProperties
+    :ivar location: The location of the export pipeline.
+    :vartype location: str
+    :ivar identity: The identity of the export pipeline.
+    :vartype identity: ~azure.mgmt.containerregistry.models.IdentityProperties
+    """
+
+    properties: Optional["_models.ExportPipelineProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties of the export pipeline."""
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The location of the export pipeline."""
+    identity: Optional["_models.IdentityProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identity of the export pipeline."""
+
+    __flattened_items = ["target", "options", "provisioning_state"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ExportPipelineProperties"] = None,
+        location: Optional[str] = None,
+        identity: Optional["_models.IdentityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class ExportPipelineProperties(_Model):
+    """The properties of an export pipeline.
+
+    :ivar target: The target properties of the export pipeline. Required.
+    :vartype target: ~azure.mgmt.containerregistry.models.ExportPipelineTargetProperties
+    :ivar options: The list of all options configured for the pipeline.
+    :vartype options: list[str or ~azure.mgmt.containerregistry.models.PipelineOptions]
+    :ivar provisioning_state: The provisioning state of the pipeline at the time the operation was
+     called. Known values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and
+     "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.containerregistry.models.ProvisioningState
+    """
+
+    target: "_models.ExportPipelineTargetProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target properties of the export pipeline. Required."""
+    options: Optional[list[Union[str, "_models.PipelineOptions"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of all options configured for the pipeline."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the pipeline at the time the operation was called. Known values are:
+     \"Creating\", \"Updating\", \"Deleting\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        target: "_models.ExportPipelineTargetProperties",
+        options: Optional[list[Union[str, "_models.PipelineOptions"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ExportPipelineTargetProperties(_Model):
+    """The properties of the export pipeline target.
+
+    :ivar type: The type of target for the export pipeline.
+    :vartype type: str
+    :ivar uri: The target uri of the export pipeline. When 'AzureStorageBlob':
+     "`https://accountName.blob.core.windows.net/containerName/blobName
+     <https://accountName.blob.core.windows.net/containerName/blobName>`_" When
+     'AzureStorageBlobContainer':  "`https://accountName.blob.core.windows.net/containerName
+     <https://accountName.blob.core.windows.net/containerName>`_".
+    :vartype uri: str
+    :ivar key_vault_uri: They key vault secret uri to obtain the target storage SAS token.
+    :vartype key_vault_uri: str
+    :ivar storage_access_mode: The storage access mode used for the customer storage account. Known
+     values are: "ManagedIdentity" and "SasToken".
+    :vartype storage_access_mode: str or ~azure.mgmt.containerregistry.models.StorageAccessMode
+    """
+
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The type of target for the export pipeline."""
+    uri: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The target uri of the export pipeline. When 'AzureStorageBlob':
+     \"`https://accountName.blob.core.windows.net/containerName/blobName
+     <https://accountName.blob.core.windows.net/containerName/blobName>`_\" When
+     'AzureStorageBlobContainer':  \"`https://accountName.blob.core.windows.net/containerName
+     <https://accountName.blob.core.windows.net/containerName>`_\"."""
+    key_vault_uri: Optional[str] = rest_field(
+        name="keyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """They key vault secret uri to obtain the target storage SAS token."""
+    storage_access_mode: Optional[Union[str, "_models.StorageAccessMode"]] = rest_field(
+        name="storageAccessMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The storage access mode used for the customer storage account. Known values are:
+     \"ManagedIdentity\" and \"SasToken\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[str] = None,
+        uri: Optional[str] = None,
+        key_vault_uri: Optional[str] = None,
+        storage_access_mode: Optional[Union[str, "_models.StorageAccessMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ExportPolicy(_Model):
     """The export policy for a container registry.
 
@@ -1478,8 +2015,7 @@ class IdentityProperties(_Model):
      "SystemAssigned, UserAssigned", and "None".
     :vartype type: str or ~azure.mgmt.containerregistry.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
-     user identity
-     dictionary key references will be ARM resource ids in the form:
+     user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/
      providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str,
@@ -1498,8 +2034,8 @@ class IdentityProperties(_Model):
     user_assigned_identities: Optional[dict[str, "_models.UserIdentityProperties"]] = rest_field(
         name="userAssignedIdentities", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The list of user identities associated with the resource. The user identity
-     dictionary key references will be ARM resource ids in the form:
+    """The list of user identities associated with the resource. The user identity dictionary key
+     references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/
      providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'."""
 
@@ -1578,6 +2114,191 @@ class ImportImageParameters(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ImportPipeline(ProxyResource):
+    """An object that represents an import pipeline for a container registry.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the private link resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
+    :ivar properties: The properties of the import pipeline.
+    :vartype properties: ~azure.mgmt.containerregistry.models.ImportPipelineProperties
+    :ivar location: The location of the import pipeline.
+    :vartype location: str
+    :ivar identity: The identity of the import pipeline.
+    :vartype identity: ~azure.mgmt.containerregistry.models.IdentityProperties
+    """
+
+    properties: Optional["_models.ImportPipelineProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties of the import pipeline."""
+    location: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The location of the import pipeline."""
+    identity: Optional["_models.IdentityProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The identity of the import pipeline."""
+
+    __flattened_items = ["source", "trigger", "options", "provisioning_state"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.ImportPipelineProperties"] = None,
+        location: Optional[str] = None,
+        identity: Optional["_models.IdentityProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class ImportPipelineProperties(_Model):
+    """The properties of an import pipeline.
+
+    :ivar source: The source properties of the import pipeline. Required.
+    :vartype source: ~azure.mgmt.containerregistry.models.ImportPipelineSourceProperties
+    :ivar trigger: The properties that describe the trigger of the import pipeline.
+    :vartype trigger: ~azure.mgmt.containerregistry.models.PipelineTriggerProperties
+    :ivar options: The list of all options configured for the pipeline.
+    :vartype options: list[str or ~azure.mgmt.containerregistry.models.PipelineOptions]
+    :ivar provisioning_state: The provisioning state of the pipeline at the time the operation was
+     called. Known values are: "Creating", "Updating", "Deleting", "Succeeded", "Failed", and
+     "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.containerregistry.models.ProvisioningState
+    """
+
+    source: "_models.ImportPipelineSourceProperties" = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source properties of the import pipeline. Required."""
+    trigger: Optional["_models.PipelineTriggerProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties that describe the trigger of the import pipeline."""
+    options: Optional[list[Union[str, "_models.PipelineOptions"]]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The list of all options configured for the pipeline."""
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of the pipeline at the time the operation was called. Known values are:
+     \"Creating\", \"Updating\", \"Deleting\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source: "_models.ImportPipelineSourceProperties",
+        trigger: Optional["_models.PipelineTriggerProperties"] = None,
+        options: Optional[list[Union[str, "_models.PipelineOptions"]]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ImportPipelineSourceProperties(_Model):
+    """The properties of the import pipeline source.
+
+    :ivar type: The type of source for the import pipeline. "AzureStorageBlobContainer"
+    :vartype type: str or ~azure.mgmt.containerregistry.models.PipelineSourceType
+    :ivar uri: The source uri of the import pipeline. When 'AzureStorageBlob':
+     "`https://accountName.blob.core.windows.net/containerName/blobName
+     <https://accountName.blob.core.windows.net/containerName/blobName>`_" When
+     'AzureStorageBlobContainer': "`https://accountName.blob.core.windows.net/containerName
+     <https://accountName.blob.core.windows.net/containerName>`_".
+    :vartype uri: str
+    :ivar key_vault_uri: They key vault secret uri to obtain the source storage SAS token.
+    :vartype key_vault_uri: str
+    :ivar storage_access_mode: The storage access mode used for the customer storage account. Known
+     values are: "ManagedIdentity" and "SasToken".
+    :vartype storage_access_mode: str or ~azure.mgmt.containerregistry.models.StorageAccessMode
+    """
+
+    type: Optional[Union[str, "_models.PipelineSourceType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of source for the import pipeline. \"AzureStorageBlobContainer\""""
+    uri: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The source uri of the import pipeline. When 'AzureStorageBlob':
+     \"`https://accountName.blob.core.windows.net/containerName/blobName
+     <https://accountName.blob.core.windows.net/containerName/blobName>`_\" When
+     'AzureStorageBlobContainer': \"`https://accountName.blob.core.windows.net/containerName
+     <https://accountName.blob.core.windows.net/containerName>`_\"."""
+    key_vault_uri: Optional[str] = rest_field(
+        name="keyVaultUri", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """They key vault secret uri to obtain the source storage SAS token."""
+    storage_access_mode: Optional[Union[str, "_models.StorageAccessMode"]] = rest_field(
+        name="storageAccessMode", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The storage access mode used for the customer storage account. Known values are:
+     \"ManagedIdentity\" and \"SasToken\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.PipelineSourceType"]] = None,
+        uri: Optional[str] = None,
+        key_vault_uri: Optional[str] = None,
+        storage_access_mode: Optional[Union[str, "_models.StorageAccessMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ImportSource(_Model):
     """ImportSource.
 
@@ -1587,10 +2308,10 @@ class ImportSource(_Model):
     :vartype registry_uri: str
     :ivar credentials: Credentials used when importing from a registry uri.
     :vartype credentials: ~azure.mgmt.containerregistry.models.ImportSourceCredentials
-    :ivar source_image: Repository name of the source image.
-     Specify an image by repository ('hello-world'). This will use the 'latest' tag.
-     Specify an image by tag ('hello-world:latest').
-     Specify an image by sha256-based manifest digest ('hello-world@sha256:abc123'). Required.
+    :ivar source_image: Repository name of the source image. Specify an image by repository
+     ('hello-world'). This will use the 'latest' tag. Specify an image by tag
+     ('hello-world:latest'). Specify an image by sha256-based manifest digest
+     ('hello-world@sha256:abc123'). Required.
     :vartype source_image: str
     """
 
@@ -1607,10 +2328,9 @@ class ImportSource(_Model):
     )
     """Credentials used when importing from a registry uri."""
     source_image: str = rest_field(name="sourceImage", visibility=["read", "create", "update", "delete", "query"])
-    """Repository name of the source image.
-     Specify an image by repository ('hello-world'). This will use the 'latest' tag.
-     Specify an image by tag ('hello-world:latest').
-     Specify an image by sha256-based manifest digest ('hello-world@sha256:abc123'). Required."""
+    """Repository name of the source image. Specify an image by repository ('hello-world'). This will
+     use the 'latest' tag. Specify an image by tag ('hello-world:latest'). Specify an image by
+     sha256-based manifest digest ('hello-world@sha256:abc123'). Required."""
 
     @overload
     def __init__(
@@ -1881,8 +2601,7 @@ class OperationDefinition(_Model):
     is_data_action: Optional[bool] = rest_field(
         name="isDataAction", visibility=["read", "create", "update", "delete", "query"]
     )
-    """This property indicates if the operation is an action or a data action
-     ref:
+    """This property indicates if the operation is an action or a data action ref:
      `https://docs.microsoft.com/en-us/azure/role-based-access-control/role-definitions#management-and-data-operations
      <https://docs.microsoft.com/en-us/azure/role-based-access-control/role-definitions#management-and-data-operations>`_."""
 
@@ -2179,6 +2898,462 @@ class ParentProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class PipelineRun(ProxyResource):
+    """An object that represents a pipeline run for a container registry.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the private link resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.containerregistry.models.SystemData
+    :ivar properties: The properties of a pipeline run.
+    :vartype properties: ~azure.mgmt.containerregistry.models.PipelineRunProperties
+    """
+
+    properties: Optional["_models.PipelineRunProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The properties of a pipeline run."""
+
+    __flattened_items = ["provisioning_state", "request", "response", "force_update_tag"]
+
+    @overload
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.PipelineRunProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
+        super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
+
+
+class PipelineRunProperties(_Model):
+    """The properties of a pipeline run.
+
+    :ivar provisioning_state: The provisioning state of a pipeline run. Known values are:
+     "Creating", "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
+    :vartype provisioning_state: str or ~azure.mgmt.containerregistry.models.ProvisioningState
+    :ivar request: The request parameters for a pipeline run.
+    :vartype request: ~azure.mgmt.containerregistry.models.PipelineRunRequest
+    :ivar response: The response of a pipeline run.
+    :vartype response: ~azure.mgmt.containerregistry.models.PipelineRunResponse
+    :ivar force_update_tag: How the pipeline run should be forced to recreate even if the pipeline
+     run configuration has not changed.
+    :vartype force_update_tag: str
+    """
+
+    provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = rest_field(
+        name="provisioningState", visibility=["read"]
+    )
+    """The provisioning state of a pipeline run. Known values are: \"Creating\", \"Updating\",
+     \"Deleting\", \"Succeeded\", \"Failed\", and \"Canceled\"."""
+    request: Optional["_models.PipelineRunRequest"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The request parameters for a pipeline run."""
+    response: Optional["_models.PipelineRunResponse"] = rest_field(visibility=["read"])
+    """The response of a pipeline run."""
+    force_update_tag: Optional[str] = rest_field(
+        name="forceUpdateTag", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """How the pipeline run should be forced to recreate even if the pipeline run configuration has
+     not changed."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        request: Optional["_models.PipelineRunRequest"] = None,
+        force_update_tag: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PipelineRunRequest(_Model):
+    """The request properties provided for a pipeline run.
+
+    :ivar pipeline_resource_id: The resource ID of the pipeline to run.
+    :vartype pipeline_resource_id: str
+    :ivar artifacts: List of source artifacts to be transferred by the pipeline. Specify an image
+     by repository ('hello-world'). This will use the 'latest' tag. Specify an image by tag
+     ('hello-world:latest'). Specify an image by sha256-based manifest digest
+     ('hello-world@sha256:abc123').
+    :vartype artifacts: list[str]
+    :ivar source: The source properties of the pipeline run.
+    :vartype source: ~azure.mgmt.containerregistry.models.PipelineRunSourceProperties
+    :ivar target: The target properties of the pipeline run.
+    :vartype target: ~azure.mgmt.containerregistry.models.PipelineRunTargetProperties
+    :ivar catalog_digest: The digest of the tar used to transfer the artifacts.
+    :vartype catalog_digest: str
+    """
+
+    pipeline_resource_id: Optional[str] = rest_field(
+        name="pipelineResourceId", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource ID of the pipeline to run."""
+    artifacts: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of source artifacts to be transferred by the pipeline. Specify an image by repository
+     ('hello-world'). This will use the 'latest' tag. Specify an image by tag
+     ('hello-world:latest'). Specify an image by sha256-based manifest digest
+     ('hello-world@sha256:abc123')."""
+    source: Optional["_models.PipelineRunSourceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source properties of the pipeline run."""
+    target: Optional["_models.PipelineRunTargetProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target properties of the pipeline run."""
+    catalog_digest: Optional[str] = rest_field(
+        name="catalogDigest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The digest of the tar used to transfer the artifacts."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        pipeline_resource_id: Optional[str] = None,
+        artifacts: Optional[list[str]] = None,
+        source: Optional["_models.PipelineRunSourceProperties"] = None,
+        target: Optional["_models.PipelineRunTargetProperties"] = None,
+        catalog_digest: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PipelineRunResponse(_Model):
+    """The response properties returned for a pipeline run.
+
+    :ivar status: The current status of the pipeline run.
+    :vartype status: str
+    :ivar imported_artifacts: The artifacts imported in the pipeline run.
+    :vartype imported_artifacts: list[str]
+    :ivar progress: The current progress of the copy operation.
+    :vartype progress: ~azure.mgmt.containerregistry.models.ProgressProperties
+    :ivar start_time: The time the pipeline run started.
+    :vartype start_time: ~datetime.datetime
+    :ivar finish_time: The time the pipeline run finished.
+    :vartype finish_time: ~datetime.datetime
+    :ivar source: The source of the pipeline run.
+    :vartype source: ~azure.mgmt.containerregistry.models.ImportPipelineSourceProperties
+    :ivar target: The target of the pipeline run.
+    :vartype target: ~azure.mgmt.containerregistry.models.ExportPipelineTargetProperties
+    :ivar catalog_digest: The digest of the tar used to transfer the artifacts.
+    :vartype catalog_digest: str
+    :ivar trigger: The trigger that caused the pipeline run.
+    :vartype trigger: ~azure.mgmt.containerregistry.models.PipelineTriggerDescriptor
+    :ivar pipeline_run_error_message: The detailed error message for the pipeline run in the case
+     of failure.
+    :vartype pipeline_run_error_message: str
+    """
+
+    status: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The current status of the pipeline run."""
+    imported_artifacts: Optional[list[str]] = rest_field(
+        name="importedArtifacts", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The artifacts imported in the pipeline run."""
+    progress: Optional["_models.ProgressProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The current progress of the copy operation."""
+    start_time: Optional[datetime.datetime] = rest_field(
+        name="startTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time the pipeline run started."""
+    finish_time: Optional[datetime.datetime] = rest_field(
+        name="finishTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time the pipeline run finished."""
+    source: Optional["_models.ImportPipelineSourceProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source of the pipeline run."""
+    target: Optional["_models.ExportPipelineTargetProperties"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The target of the pipeline run."""
+    catalog_digest: Optional[str] = rest_field(
+        name="catalogDigest", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The digest of the tar used to transfer the artifacts."""
+    trigger: Optional["_models.PipelineTriggerDescriptor"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The trigger that caused the pipeline run."""
+    pipeline_run_error_message: Optional[str] = rest_field(
+        name="pipelineRunErrorMessage", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The detailed error message for the pipeline run in the case of failure."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Optional[str] = None,
+        imported_artifacts: Optional[list[str]] = None,
+        progress: Optional["_models.ProgressProperties"] = None,
+        start_time: Optional[datetime.datetime] = None,
+        finish_time: Optional[datetime.datetime] = None,
+        source: Optional["_models.ImportPipelineSourceProperties"] = None,
+        target: Optional["_models.ExportPipelineTargetProperties"] = None,
+        catalog_digest: Optional[str] = None,
+        trigger: Optional["_models.PipelineTriggerDescriptor"] = None,
+        pipeline_run_error_message: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PipelineRunSourceProperties(_Model):
+    """The pipeline run source properties.
+
+    :ivar type: The type of the source. "AzureStorageBlob"
+    :vartype type: str or ~azure.mgmt.containerregistry.models.PipelineRunSourceType
+    :ivar name: The name of the source.
+    :vartype name: str
+    """
+
+    type: Optional[Union[str, "_models.PipelineRunSourceType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the source. \"AzureStorageBlob\""""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the source."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.PipelineRunSourceType"]] = None,
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PipelineRunTargetProperties(_Model):
+    """The pipeline run target properties.
+
+    :ivar type: The type of the target. "AzureStorageBlob"
+    :vartype type: str or ~azure.mgmt.containerregistry.models.PipelineRunTargetType
+    :ivar name: The name of the target.
+    :vartype name: str
+    """
+
+    type: Optional[Union[str, "_models.PipelineRunTargetType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The type of the target. \"AzureStorageBlob\""""
+    name: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the target."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: Optional[Union[str, "_models.PipelineRunTargetType"]] = None,
+        name: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PipelineSourceTriggerDescriptor(_Model):
+    """The pipeline source trigger descriptor.
+
+    :ivar timestamp: The timestamp when the source update happened.
+    :vartype timestamp: ~datetime.datetime
+    """
+
+    timestamp: Optional[datetime.datetime] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The timestamp when the source update happened."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        timestamp: Optional[datetime.datetime] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PipelineSourceTriggerProperties(_Model):
+    """The source trigger properties of the import pipeline.
+
+    :ivar status: The current status of the source trigger. Required. Known values are: "Enabled"
+     and "Disabled".
+    :vartype status: str or ~azure.mgmt.containerregistry.models.TriggerStatus
+    """
+
+    status: Union[str, "_models.TriggerStatus"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The current status of the source trigger. Required. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.TriggerStatus"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PipelineTriggerDescriptor(_Model):
+    """The pipeline trigger descriptor.
+
+    :ivar source_trigger: The source trigger that caused the pipeline run.
+    :vartype source_trigger: ~azure.mgmt.containerregistry.models.PipelineSourceTriggerDescriptor
+    """
+
+    source_trigger: Optional["_models.PipelineSourceTriggerDescriptor"] = rest_field(
+        name="sourceTrigger", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source trigger that caused the pipeline run."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_trigger: Optional["_models.PipelineSourceTriggerDescriptor"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class PipelineTriggerProperties(_Model):
+    """The trigger properties of the import pipeline.
+
+    :ivar source_trigger: The source trigger properties of the pipeline.
+    :vartype source_trigger: ~azure.mgmt.containerregistry.models.PipelineSourceTriggerProperties
+    """
+
+    source_trigger: Optional["_models.PipelineSourceTriggerProperties"] = rest_field(
+        name="sourceTrigger", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The source trigger properties of the pipeline."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        source_trigger: Optional["_models.PipelineSourceTriggerProperties"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class Policies(_Model):
     """The policies for a container registry.
 
@@ -2194,6 +3369,8 @@ class Policies(_Model):
      audience token for a container registry.
     :vartype azure_ad_authentication_as_arm_policy:
      ~azure.mgmt.containerregistry.models.AzureADAuthenticationAsArmPolicy
+    :ivar soft_delete_policy: The soft delete policy for a container registry.
+    :vartype soft_delete_policy: ~azure.mgmt.containerregistry.models.SoftDeletePolicy
     """
 
     quarantine_policy: Optional["_models.QuarantinePolicy"] = rest_field(
@@ -2216,6 +3393,10 @@ class Policies(_Model):
         name="azureADAuthenticationAsArmPolicy", visibility=["read", "create", "update", "delete", "query"]
     )
     """The policy for using Azure Resource Manager audience token for a container registry."""
+    soft_delete_policy: Optional["_models.SoftDeletePolicy"] = rest_field(
+        name="softDeletePolicy", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The soft delete policy for a container registry."""
 
     @overload
     def __init__(
@@ -2226,6 +3407,7 @@ class Policies(_Model):
         retention_policy: Optional["_models.RetentionPolicy"] = None,
         export_policy: Optional["_models.ExportPolicy"] = None,
         azure_ad_authentication_as_arm_policy: Optional["_models.AzureADAuthenticationAsArmPolicy"] = None,
+        soft_delete_policy: Optional["_models.SoftDeletePolicy"] = None,
     ) -> None: ...
 
     @overload
@@ -2399,6 +3581,8 @@ class PrivateLinkResource(Resource):
     )
     """A resource that supports private link capabilities."""
 
+    __flattened_items = ["group_id", "required_members", "required_zone_names"]
+
     @overload
     def __init__(
         self,
@@ -2414,7 +3598,25 @@ class PrivateLinkResource(Resource):
         """
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
+        _flattened_input = {k: kwargs.pop(k) for k in kwargs.keys() & self.__flattened_items}
         super().__init__(*args, **kwargs)
+        for k, v in _flattened_input.items():
+            setattr(self, k, v)
+
+    def __getattr__(self, name: str) -> Any:
+        if name in self.__flattened_items:
+            if self.properties is None:
+                return None
+            return getattr(self.properties, name)
+        raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{name}'")
+
+    def __setattr__(self, key: str, value: Any) -> None:
+        if key in self.__flattened_items:
+            if self.properties is None:
+                self.properties = self._attr_to_rest_field["properties"]._class_type()
+            setattr(self.properties, key, value)
+        else:
+            super().__setattr__(key, value)
 
 
 class PrivateLinkResourceProperties(_Model):
@@ -2490,6 +3692,34 @@ class PrivateLinkServiceConnectionState(_Model):
         status: Optional[Union[str, "_models.ConnectionStatus"]] = None,
         description: Optional[str] = None,
         actions_required: Optional[Union[str, "_models.ActionsRequired"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ProgressProperties(_Model):
+    """The progress properties.
+
+    :ivar percentage: The percentage complete of the copy operation.
+    :vartype percentage: str
+    """
+
+    percentage: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The percentage complete of the copy operation."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        percentage: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -2657,12 +3887,17 @@ class Registry(TrackedResource):
         "encryption",
         "data_endpoint_enabled",
         "data_endpoint_host_names",
+        "regional_endpoints",
+        "regional_endpoint_host_names",
+        "endpoint_protocol",
         "private_endpoint_connections",
         "public_network_access",
         "network_rule_bypass_options",
         "network_rule_bypass_allowed_for_tasks",
         "zone_redundancy",
         "anonymous_pull_enabled",
+        "metadata_search",
+        "auto_generated_domain_name_label_scope",
         "role_assignment_mode",
     ]
 
@@ -2749,6 +3984,13 @@ class RegistryNameCheckRequest(_Model):
     :ivar type: The resource type of the container registry. This field must be set to
      'Microsoft.ContainerRegistry/registries'. Required. "Microsoft.ContainerRegistry/registries"
     :vartype type: str or ~azure.mgmt.containerregistry.models.ContainerRegistryResourceType
+    :ivar resource_group_name: The resource group name of the container registry.
+    :vartype resource_group_name: str
+    :ivar auto_generated_domain_name_label_scope: The auto generated domain name label of the
+     container registry. This value defaults to "Unsecure". Known values are: "Unsecure",
+     "TenantReuse", "SubscriptionReuse", "ResourceGroupReuse", and "NoReuse".
+    :vartype auto_generated_domain_name_label_scope: str or
+     ~azure.mgmt.containerregistry.models.AutoGeneratedDomainNameLabelScope
     """
 
     name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -2758,6 +4000,16 @@ class RegistryNameCheckRequest(_Model):
     )
     """The resource type of the container registry. This field must be set to
      'Microsoft.ContainerRegistry/registries'. Required. \"Microsoft.ContainerRegistry/registries\""""
+    resource_group_name: Optional[str] = rest_field(
+        name="resourceGroupName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The resource group name of the container registry."""
+    auto_generated_domain_name_label_scope: Optional[Union[str, "_models.AutoGeneratedDomainNameLabelScope"]] = (
+        rest_field(name="autoGeneratedDomainNameLabelScope", visibility=["read", "create", "update", "delete", "query"])
+    )
+    """The auto generated domain name label of the container registry. This value defaults to
+     \"Unsecure\". Known values are: \"Unsecure\", \"TenantReuse\", \"SubscriptionReuse\",
+     \"ResourceGroupReuse\", and \"NoReuse\"."""
 
     @overload
     def __init__(
@@ -2765,6 +4017,10 @@ class RegistryNameCheckRequest(_Model):
         *,
         name: str,
         type: Union[str, "_models.ContainerRegistryResourceType"],
+        resource_group_name: Optional[str] = None,
+        auto_generated_domain_name_label_scope: Optional[
+            Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
+        ] = None,
     ) -> None: ...
 
     @overload
@@ -2781,6 +4037,9 @@ class RegistryNameCheckRequest(_Model):
 class RegistryNameStatus(_Model):
     """The result of a request to check the availability of a container registry name.
 
+    :ivar available_login_server_name: The complete login server name with domain name label (DNL)
+     hash, if available.
+    :vartype available_login_server_name: str
     :ivar name_available: The value that indicates whether the name is available.
     :vartype name_available: bool
     :ivar reason: If any, the reason that the name is not available.
@@ -2790,6 +4049,10 @@ class RegistryNameStatus(_Model):
     :vartype message: str
     """
 
+    available_login_server_name: Optional[str] = rest_field(
+        name="availableLoginServerName", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The complete login server name with domain name label (DNL) hash, if available."""
     name_available: Optional[bool] = rest_field(
         name="nameAvailable", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2804,6 +4067,7 @@ class RegistryNameStatus(_Model):
     def __init__(
         self,
         *,
+        available_login_server_name: Optional[str] = None,
         name_available: Optional[bool] = None,
         reason: Optional[str] = None,
         message: Optional[str] = None,
@@ -2881,6 +4145,15 @@ class RegistryProperties(_Model):
     :ivar data_endpoint_host_names: List of host names that will serve data when
      dataEndpointEnabled is true.
     :vartype data_endpoint_host_names: list[str]
+    :ivar regional_endpoints: Enable per-region endpoints for accessing registry. Known values are:
+     "Enabled" and "Disabled".
+    :vartype regional_endpoints: str or ~azure.mgmt.containerregistry.models.RegionalEndpoints
+    :ivar regional_endpoint_host_names: List of host names that will serve registry when
+     RegionalEndpoints is enabled.
+    :vartype regional_endpoint_host_names: list[str]
+    :ivar endpoint_protocol: The connectivity protocol for the registry, such as IPv4 or dual stack
+     (IPv4 and IPv6). Known values are: "IPv4" and "IPv4AndIPv6".
+    :vartype endpoint_protocol: str or ~azure.mgmt.containerregistry.models.EndpointProtocol
     :ivar private_endpoint_connections: List of private endpoint connections for a container
      registry.
     :vartype private_endpoint_connections:
@@ -2900,6 +4173,14 @@ class RegistryProperties(_Model):
     :vartype zone_redundancy: str or ~azure.mgmt.containerregistry.models.ZoneRedundancy
     :ivar anonymous_pull_enabled: Enables registry-wide pull from unauthenticated clients.
     :vartype anonymous_pull_enabled: bool
+    :ivar metadata_search: Determines whether registry artifacts are indexed for metadata search.
+     Known values are: "Enabled" and "Disabled".
+    :vartype metadata_search: str or ~azure.mgmt.containerregistry.models.MetadataSearch
+    :ivar auto_generated_domain_name_label_scope: Determines the domain name label reuse scope.
+     Known values are: "Unsecure", "TenantReuse", "SubscriptionReuse", "ResourceGroupReuse", and
+     "NoReuse".
+    :vartype auto_generated_domain_name_label_scope: str or
+     ~azure.mgmt.containerregistry.models.AutoGeneratedDomainNameLabelScope
     :ivar role_assignment_mode: Determines registry role assignment mode. Known values are:
      "AbacRepositoryPermissions" and "LegacyRegistryPermissions".
     :vartype role_assignment_mode: str or ~azure.mgmt.containerregistry.models.RoleAssignmentMode
@@ -2937,6 +4218,20 @@ class RegistryProperties(_Model):
     """Enable a single data endpoint per region for serving data."""
     data_endpoint_host_names: Optional[list[str]] = rest_field(name="dataEndpointHostNames", visibility=["read"])
     """List of host names that will serve data when dataEndpointEnabled is true."""
+    regional_endpoints: Optional[Union[str, "_models.RegionalEndpoints"]] = rest_field(
+        name="regionalEndpoints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enable per-region endpoints for accessing registry. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    regional_endpoint_host_names: Optional[list[str]] = rest_field(
+        name="regionalEndpointHostNames", visibility=["read"]
+    )
+    """List of host names that will serve registry when RegionalEndpoints is enabled."""
+    endpoint_protocol: Optional[Union[str, "_models.EndpointProtocol"]] = rest_field(
+        name="endpointProtocol", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connectivity protocol for the registry, such as IPv4 or dual stack (IPv4 and IPv6). Known
+     values are: \"IPv4\" and \"IPv4AndIPv6\"."""
     private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = rest_field(
         name="privateEndpointConnections", visibility=["read"]
     )
@@ -2964,6 +4259,16 @@ class RegistryProperties(_Model):
         name="anonymousPullEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
     """Enables registry-wide pull from unauthenticated clients."""
+    metadata_search: Optional[Union[str, "_models.MetadataSearch"]] = rest_field(
+        name="metadataSearch", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Determines whether registry artifacts are indexed for metadata search. Known values are:
+     \"Enabled\" and \"Disabled\"."""
+    auto_generated_domain_name_label_scope: Optional[Union[str, "_models.AutoGeneratedDomainNameLabelScope"]] = (
+        rest_field(name="autoGeneratedDomainNameLabelScope", visibility=["read", "create", "update", "delete", "query"])
+    )
+    """Determines the domain name label reuse scope. Known values are: \"Unsecure\", \"TenantReuse\",
+     \"SubscriptionReuse\", \"ResourceGroupReuse\", and \"NoReuse\"."""
     role_assignment_mode: Optional[Union[str, "_models.RoleAssignmentMode"]] = rest_field(
         name="roleAssignmentMode", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2979,11 +4284,17 @@ class RegistryProperties(_Model):
         policies: Optional["_models.Policies"] = None,
         encryption: Optional["_models.EncryptionProperty"] = None,
         data_endpoint_enabled: Optional[bool] = None,
+        regional_endpoints: Optional[Union[str, "_models.RegionalEndpoints"]] = None,
+        endpoint_protocol: Optional[Union[str, "_models.EndpointProtocol"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         network_rule_bypass_options: Optional[Union[str, "_models.NetworkRuleBypassOptions"]] = None,
         network_rule_bypass_allowed_for_tasks: Optional[bool] = None,
         zone_redundancy: Optional[Union[str, "_models.ZoneRedundancy"]] = None,
         anonymous_pull_enabled: Optional[bool] = None,
+        metadata_search: Optional[Union[str, "_models.MetadataSearch"]] = None,
+        auto_generated_domain_name_label_scope: Optional[
+            Union[str, "_models.AutoGeneratedDomainNameLabelScope"]
+        ] = None,
         role_assignment_mode: Optional[Union[str, "_models.RoleAssignmentMode"]] = None,
     ) -> None: ...
 
@@ -3011,6 +4322,12 @@ class RegistryPropertiesUpdateParameters(_Model):
     :vartype encryption: ~azure.mgmt.containerregistry.models.EncryptionProperty
     :ivar data_endpoint_enabled: Enable a single data endpoint per region for serving data.
     :vartype data_endpoint_enabled: bool
+    :ivar regional_endpoints: Enable per-region endpoints for accessing registry. Known values are:
+     "Enabled" and "Disabled".
+    :vartype regional_endpoints: str or ~azure.mgmt.containerregistry.models.RegionalEndpoints
+    :ivar endpoint_protocol: The connectivity protocol for the registry, such as IPv4 or dual stack
+     (IPv4 and IPv6). Known values are: "IPv4" and "IPv4AndIPv6".
+    :vartype endpoint_protocol: str or ~azure.mgmt.containerregistry.models.EndpointProtocol
     :ivar public_network_access: Whether or not public network access is allowed for the container
      registry. Known values are: "Enabled" and "Disabled".
     :vartype public_network_access: str or ~azure.mgmt.containerregistry.models.PublicNetworkAccess
@@ -3023,6 +4340,9 @@ class RegistryPropertiesUpdateParameters(_Model):
     :vartype network_rule_bypass_allowed_for_tasks: bool
     :ivar anonymous_pull_enabled: Enables registry-wide pull from unauthenticated clients.
     :vartype anonymous_pull_enabled: bool
+    :ivar metadata_search: Determines whether registry artifacts are indexed for metadata search.
+     Known values are: "Enabled" and "Disabled".
+    :vartype metadata_search: str or ~azure.mgmt.containerregistry.models.MetadataSearch
     :ivar role_assignment_mode: Determines registry role assignment mode. Known values are:
      "AbacRepositoryPermissions" and "LegacyRegistryPermissions".
     :vartype role_assignment_mode: str or ~azure.mgmt.containerregistry.models.RoleAssignmentMode
@@ -3046,6 +4366,16 @@ class RegistryPropertiesUpdateParameters(_Model):
         name="dataEndpointEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
     """Enable a single data endpoint per region for serving data."""
+    regional_endpoints: Optional[Union[str, "_models.RegionalEndpoints"]] = rest_field(
+        name="regionalEndpoints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Enable per-region endpoints for accessing registry. Known values are: \"Enabled\" and
+     \"Disabled\"."""
+    endpoint_protocol: Optional[Union[str, "_models.EndpointProtocol"]] = rest_field(
+        name="endpointProtocol", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The connectivity protocol for the registry, such as IPv4 or dual stack (IPv4 and IPv6). Known
+     values are: \"IPv4\" and \"IPv4AndIPv6\"."""
     public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = rest_field(
         name="publicNetworkAccess", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3064,6 +4394,11 @@ class RegistryPropertiesUpdateParameters(_Model):
         name="anonymousPullEnabled", visibility=["read", "create", "update", "delete", "query"]
     )
     """Enables registry-wide pull from unauthenticated clients."""
+    metadata_search: Optional[Union[str, "_models.MetadataSearch"]] = rest_field(
+        name="metadataSearch", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Determines whether registry artifacts are indexed for metadata search. Known values are:
+     \"Enabled\" and \"Disabled\"."""
     role_assignment_mode: Optional[Union[str, "_models.RoleAssignmentMode"]] = rest_field(
         name="roleAssignmentMode", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -3079,11 +4414,71 @@ class RegistryPropertiesUpdateParameters(_Model):
         policies: Optional["_models.Policies"] = None,
         encryption: Optional["_models.EncryptionProperty"] = None,
         data_endpoint_enabled: Optional[bool] = None,
+        regional_endpoints: Optional[Union[str, "_models.RegionalEndpoints"]] = None,
+        endpoint_protocol: Optional[Union[str, "_models.EndpointProtocol"]] = None,
         public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
         network_rule_bypass_options: Optional[Union[str, "_models.NetworkRuleBypassOptions"]] = None,
         network_rule_bypass_allowed_for_tasks: Optional[bool] = None,
         anonymous_pull_enabled: Optional[bool] = None,
+        metadata_search: Optional[Union[str, "_models.MetadataSearch"]] = None,
         role_assignment_mode: Optional[Union[str, "_models.RoleAssignmentMode"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class RegistrySyncResult(_Model):
+    """The registry sync result of the connected registry.
+
+    :ivar sync_trigger: The action that triggered the most recent registry sync. Required. Known
+     values are: "SyncTokenUpdate", "InitialSync", "ManualResync", and "RecoveryService".
+    :vartype sync_trigger: str or ~azure.mgmt.containerregistry.models.SyncTrigger
+    :ivar sync_state: The status of the connected registry's most recent sync. Required. Known
+     values are: "NotActivated", "Syncing", "Failed", "Succeeded", "TimedOut", and "Pending".
+    :vartype sync_state: str or ~azure.mgmt.containerregistry.models.SyncState
+    :ivar last_sync_start_time: The time that the connected registry's most recent sync started.
+    :vartype last_sync_start_time: ~datetime.datetime
+    :ivar last_sync_end_time: The time that the connected registry's most recent sync ended.
+    :vartype last_sync_end_time: ~datetime.datetime
+    :ivar last_successful_sync_end_time: The time that the connected registry's most recent
+     successful sync ended.
+    :vartype last_successful_sync_end_time: ~datetime.datetime
+    """
+
+    sync_trigger: Union[str, "_models.SyncTrigger"] = rest_field(name="syncTrigger", visibility=["read"])
+    """The action that triggered the most recent registry sync. Required. Known values are:
+     \"SyncTokenUpdate\", \"InitialSync\", \"ManualResync\", and \"RecoveryService\"."""
+    sync_state: Union[str, "_models.SyncState"] = rest_field(name="syncState", visibility=["read"])
+    """The status of the connected registry's most recent sync. Required. Known values are:
+     \"NotActivated\", \"Syncing\", \"Failed\", \"Succeeded\", \"TimedOut\", and \"Pending\"."""
+    last_sync_start_time: Optional[datetime.datetime] = rest_field(
+        name="lastSyncStartTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time that the connected registry's most recent sync started."""
+    last_sync_end_time: Optional[datetime.datetime] = rest_field(
+        name="lastSyncEndTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time that the connected registry's most recent sync ended."""
+    last_successful_sync_end_time: Optional[datetime.datetime] = rest_field(
+        name="lastSuccessfulSyncEndTime", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
+    )
+    """The time that the connected registry's most recent successful sync ended."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        last_sync_start_time: Optional[datetime.datetime] = None,
+        last_sync_end_time: Optional[datetime.datetime] = None,
+        last_successful_sync_end_time: Optional[datetime.datetime] = None,
     ) -> None: ...
 
     @overload
@@ -3129,10 +4524,13 @@ class RegistryUpdateParameters(_Model):
         "policies",
         "encryption",
         "data_endpoint_enabled",
+        "regional_endpoints",
+        "endpoint_protocol",
         "public_network_access",
         "network_rule_bypass_options",
         "network_rule_bypass_allowed_for_tasks",
         "anonymous_pull_enabled",
+        "metadata_search",
         "role_assignment_mode",
     ]
 
@@ -3632,9 +5030,9 @@ class ScopeMapProperties(_Model):
     :ivar provisioning_state: Provisioning state of the resource. Known values are: "Creating",
      "Updating", "Deleting", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.containerregistry.models.ProvisioningState
-    :ivar actions: The list of scoped permissions for registry artifacts.
-     E.g. repositories/repository-name/content/read,
-     repositories/repository-name/metadata/write. Required.
+    :ivar actions: The list of scoped permissions for registry artifacts. E.g.
+     repositories/repository-name/content/read, repositories/repository-name/metadata/write.
+     Required.
     :vartype actions: list[str]
     """
 
@@ -3650,9 +5048,9 @@ class ScopeMapProperties(_Model):
     """Provisioning state of the resource. Known values are: \"Creating\", \"Updating\", \"Deleting\",
      \"Succeeded\", \"Failed\", and \"Canceled\"."""
     actions: list[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The list of scoped permissions for registry artifacts.
-     E.g. repositories/repository-name/content/read,
-     repositories/repository-name/metadata/write. Required."""
+    """The list of scoped permissions for registry artifacts. E.g.
+     repositories/repository-name/content/read, repositories/repository-name/metadata/write.
+     Required."""
 
     @overload
     def __init__(
@@ -3678,17 +5076,15 @@ class ScopeMapPropertiesUpdateParameters(_Model):
 
     :ivar description: The user friendly description of the scope map.
     :vartype description: str
-    :ivar actions: The list of scope permissions for registry artifacts.
-     E.g. repositories/repository-name/pull,
-     repositories/repository-name/delete.
+    :ivar actions: The list of scope permissions for registry artifacts. E.g.
+     repositories/repository-name/pull, repositories/repository-name/delete.
     :vartype actions: list[str]
     """
 
     description: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The user friendly description of the scope map."""
     actions: Optional[list[str]] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """The list of scope permissions for registry artifacts.
-     E.g. repositories/repository-name/pull,
+    """The list of scope permissions for registry artifacts. E.g. repositories/repository-name/pull,
      repositories/repository-name/delete."""
 
     @overload
@@ -3783,6 +5179,52 @@ class Sku(_Model):
         self,
         *,
         name: Union[str, "_models.SkuName"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SoftDeletePolicy(_Model):
+    """The soft delete policy for a container registry.
+
+    :ivar retention_days: The number of days after which a soft-deleted item is permanently
+     deleted.
+    :vartype retention_days: int
+    :ivar last_updated_time: The timestamp when the policy was last updated.
+    :vartype last_updated_time: ~datetime.datetime
+    :ivar status: The value that indicates whether the policy is enabled or not. Known values are:
+     "enabled" and "disabled".
+    :vartype status: str or ~azure.mgmt.containerregistry.models.PolicyStatus
+    """
+
+    retention_days: Optional[int] = rest_field(
+        name="retentionDays", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The number of days after which a soft-deleted item is permanently deleted."""
+    last_updated_time: Optional[datetime.datetime] = rest_field(
+        name="lastUpdatedTime", visibility=["read"], format="rfc3339"
+    )
+    """The timestamp when the policy was last updated."""
+    status: Optional[Union[str, "_models.PolicyStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The value that indicates whether the policy is enabled or not. Known values are: \"enabled\"
+     and \"disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        retention_days: Optional[int] = None,
+        status: Optional[Union[str, "_models.PolicyStatus"]] = None,
     ) -> None: ...
 
     @overload
