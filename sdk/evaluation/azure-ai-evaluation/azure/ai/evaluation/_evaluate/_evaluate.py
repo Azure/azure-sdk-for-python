@@ -2914,13 +2914,13 @@ def _create_result_object(
     """
     # Extract values
     score = metric_values.get("score")
+    label = metric_values.get("label")
     reason = metric_values.get("reason")
     threshold = metric_values.get("threshold")
     passed = metric_values.get("passed")
-    label = metric_values.get("label", passed)
     sample = metric_values.get("sample")
     properties = metric_values.get("properties")
-    status = metric_values.get("status", "completed" if passed is not None else "error")
+    status = metric_values.get("status") or ("completed" if passed is not None else "error")
 
     # Handle decrease boolean metrics
     if is_inverse:
@@ -3134,6 +3134,7 @@ def _add_error_summaries(
                 "reason": None,
                 "threshold": None,
                 "passed": None,
+                "status": "error",
                 "sample": sample,
             }
             run_output_results.append(error_result)
