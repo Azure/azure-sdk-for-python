@@ -291,6 +291,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         feature_flag_refresh_attempted = False
         updated_watched_settings: Mapping[Tuple[str, str], Optional[str]] = {}
         existing_feature_flag_usage = self._tracing_context.feature_filter_usage.copy()
+        page_etags: Mapping[str, str] = {}
         try:
             if self._refresh_enabled and not self._watched_settings and self._refresh_timer.needs_refresh():
                 configuration_refresh_attempted = True
@@ -299,7 +300,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     configuration_settings, page_etags = client.load_configuration_settings(
                         self._selects, headers=headers, **kwargs
                     )
-                    self._page_etags = page_etags
                     settings_refreshed = True
 
             elif self._refresh_enabled and self._watched_settings and self._refresh_timer.needs_refresh():
@@ -336,6 +336,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
             processed_settings = self._process_feature_flags(processed_settings, processed_feature_flags, feature_flags)
             self._dict = processed_settings
+            self._page_etags = page_etags
             if settings_refreshed:
                 # Update the watch keys that have changed
                 self._watched_settings.update(updated_watched_settings)
