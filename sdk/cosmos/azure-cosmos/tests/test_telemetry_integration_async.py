@@ -38,8 +38,8 @@ class TestTelemetryIntegrationAsync(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
         """Set up async resources."""
         self.client = CosmosClient(test_config.TestConfig.host, test_config.TestConfig.masterKey)
-        self.database = await self.client.create_database(self.test_db_name)
-        self.container = await self.database.create_container(
+        self.database = await self.client.create_database_if_not_exists(self.test_db_name)
+        self.container = await self.database.create_container_if_not_exists(
             id=self.test_container_name,
             partition_key=PartitionKey(path="/pk")
         )
