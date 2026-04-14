@@ -4,6 +4,9 @@
 
 ### Features Added
 
+* Added `get_user_delegation_key()` method to `TableServiceClient` for obtaining user delegation keys using Microsoft Entra ID (OAuth) credentials.
+* Added `UserDelegationKey` model to represent the key returned by `get_user_delegation_key()`.
+* Added user delegation SAS support to `generate_table_sas()` via the `user_delegation_key` and `account_name` parameters.
 * Added to support customized encoding and decoding in entity CRUD operations.
 * Added to support Entity property in Tuple and Enum types.
 * Added to support flatten Entity metadata in entity deserialization by passing kwarg `flatten_result_entity` when creating clients.

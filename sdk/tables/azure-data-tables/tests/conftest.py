@@ -29,6 +29,7 @@ import pytest
 from devtools_testutils import (
     add_general_regex_sanitizer,
     add_body_key_sanitizer,
+    add_body_regex_sanitizer,
     add_remove_header_sanitizer,
     test_proxy,
     add_oauth_response_sanitizer,
@@ -91,3 +92,9 @@ def add_sanitizers(test_proxy):
     # Remove the following sanitizers since certain fields are needed in tests and are non-sensitive:
     #  - AZSDK3490: $..etag
     remove_batch_sanitizers(["AZSDK3490"])
+    # Sanitize ISO 8601 timestamps in KeyInfo XML request bodies for getUserDelegationKey
+    add_body_regex_sanitizer(
+        value="2000-01-01T00:00:00Z",
+        regex=r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z",
+        condition={"UriRegex": r".*comp=userdelegationkey.*"},
+    )

@@ -34,8 +34,8 @@ class AzureTableClient:
     :type url: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version. Known values are "2019-02-02" and None. Default value is
-     "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version. Known values are "2025-07-05". Default value is
+     "2025-07-05". Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 

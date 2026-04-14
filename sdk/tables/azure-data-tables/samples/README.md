@@ -27,6 +27,7 @@ These sample programs show common scenarios for the Tables client's offerings.
 |[sample_batching.py][sample_batch] and [sample_batching_async.py][sample_batch_async]| Committing many requests in a single batch|
 |[sample_copy_table.py][sample_copy_table] and [sample_copy_table_async.py][sample_copy_table_async]| Copying a table between Tables table and Storage blob|
 |[sample_get_entity_etag_and_timestamp.py][sample_get_entity_etag_and_timestamp] and [sample_get_entity_etag_and_timestamp_async.py][sample_get_entity_etag_and_timestamp_async]| Getting entity's etag and timestamp|
+|[sample_user_delegation_key.py][sample_user_delegation_key]| Obtaining a user delegation key and generating a user delegation SAS token|
 
 
 ### Prerequisites
@@ -182,4 +183,6 @@ what you can do with the Azure Data Tables client library.
 
 [sample_get_entity_etag_and_timestamp]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_get_entity_etag_and_timestamp.py
 [sample_get_entity_etag_and_timestamp_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_get_entity_etag_and_timestamp_async.py
+
+[sample_user_delegation_key]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_user_delegation_key.py
 

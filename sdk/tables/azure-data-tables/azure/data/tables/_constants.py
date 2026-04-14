@@ -4,8 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 # default values for common package, in case it is used directly
-DEFAULT_X_MS_VERSION = "2018-03-28"
+DEFAULT_X_MS_VERSION = "2019-02-02"
 X_MS_VERSION = "2019-02-02"
+# API version that supports getUserDelegationKey for Tables
+USER_DELEGATION_KEY_API_VERSION = "2025-07-05"
 
 DEFAULT_STORAGE_ENDPOINT_SUFFIX = "core.windows.net"
 DEFAULT_COSMOS_ENDPOINT_SUFFIX = "cosmos.azure.com"

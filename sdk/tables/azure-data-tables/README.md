@@ -284,6 +284,36 @@ for entity in entities:
         print(f"Key: {key}, Value: {entity[key]}")
 ```
 
+### User delegation key and SAS
+When authenticating with Microsoft Entra ID (a `TokenCredential`), you can request a user delegation key and use it to generate a user delegation SAS token. This approach avoids the need for account keys.
+
+```python
+from datetime import datetime, timedelta, timezone
+from azure.data.tables import TableServiceClient, generate_table_sas, TableSasPermissions
+from azure.identity import DefaultAzureCredential
+
+credential = DefaultAzureCredential()
+table_service_client = TableServiceClient(
+    endpoint="https://<my_account_name>.table.core.windows.net", credential=credential
+)
+
+# Get a user delegation key valid for 1 hour
+udk = table_service_client.get_user_delegation_key(
+    key_start_time=datetime.now(timezone.utc),
+    key_expiry_time=datetime.now(timezone.utc) + timedelta(hours=1),
+)
+
+# Generate a user delegation SAS for a specific table
+sas_token = generate_table_sas(
+    credential=udk,
+    table_name="myTable",
+    account_name="<my_account_name>",
+    user_delegation_key=udk,
+    permission=TableSasPermissions(read=True, query=True),
+    expiry=datetime.now(timezone.utc) + timedelta(hours=1),
+)
+```
+
 ## Optional Configuration
 Optional keyword arguments can be passed in at the client and per-operation level. The azure-core [reference documentation][azure_core_ref_docs] describes available configurations for retries, logging, transport protocols, and more.
 
@@ -389,6 +419,7 @@ These code samples show common scenario operations with the Azure Tables client 
 * Query and list entities: [sample_query_table.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_query_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/async_samples/sample_query_table_async.py))
 * Update, upsert, and merge entities: [sample_update_upsert_merge_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py))
 * Committing many requests in a single transaction: [sample_batching.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_batching.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py))
+* User delegation key and SAS: [sample_user_delegation_key.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_user_delegation_key.py)
 
 ### Additional documentation
 For more extensive documentation on Azure Tables, see the [Azure Tables documentation][Tables_product_doc] on learn.microsoft.com.

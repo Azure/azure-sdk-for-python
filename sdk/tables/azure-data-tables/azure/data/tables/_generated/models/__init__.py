@@ -17,6 +17,7 @@ from ._models import (  # type: ignore
     AccessPolicy,
     CorsRule,
     GeoReplication,
+    KeyInfo,
     Logging,
     Metrics,
     RetentionPolicy,
@@ -29,6 +30,7 @@ from ._models import (  # type: ignore
     TableServiceProperties,
     TableServiceStats,
     TablesError,
+    UserDelegationKey,
 )
 
 from ._enums import (  # type: ignore
@@ -44,6 +46,7 @@ __all__ = [
     "AccessPolicy",
     "CorsRule",
     "GeoReplication",
+    "KeyInfo",
     "Logging",
     "Metrics",
     "RetentionPolicy",
@@ -56,6 +59,7 @@ __all__ = [
     "TableServiceProperties",
     "TableServiceStats",
     "TablesError",
+    "UserDelegationKey",
     "GeoReplicationStatusType",
     "OdataMetadataFormat",
     "ResponseFormat",

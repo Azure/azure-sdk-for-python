@@ -45,8 +45,9 @@ from ._policies import (
     TablesRetryPolicy,
 )
 from ._sdk_moniker import SDK_MONIKER
+from ._constants import DEFAULT_X_MS_VERSION
 
-_SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
+_SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06", "2025-07-05"]
 # cspell:disable-next-line
 _DEV_CONN_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1"  # pylint: disable=line-too-long
 
@@ -165,7 +166,7 @@ class TablesBaseClient:  # pylint: disable=too-many-instance-attributes
         )
         # Incompatible assignment when assigning a str value to a Literal type variable
         self._client._config.api_version = get_api_version(
-            api_version, self._client._config.api_version
+            api_version, DEFAULT_X_MS_VERSION
         )  # type: ignore[assignment]
 
     @property

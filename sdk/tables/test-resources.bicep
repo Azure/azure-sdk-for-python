@@ -23,6 +23,14 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2018-09-01-prev
   }
 }
 
+resource storageBlobDelegatorRoleAssignment 'Microsoft.Authorization/roleAssignments@2018-09-01-preview' = {
+  name: guid('storageBlobDelegatorRoleId', resourceGroup().id)
+  properties: {
+    roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', 'db58b8e5-c6ad-4a2a-8342-4190687cbf4a')
+    principalId: testApplicationOid
+  }
+}
+
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: primaryAccountName
   location: location

@@ -4,13 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from datetime import datetime
 from typing import Optional, Any, Dict, List
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 
-from ._generated.models import TableServiceProperties
+from ._generated.models import TableServiceProperties, KeyInfo, UserDelegationKey
 from ._models import (
     TableItem,
     TablePropertiesPaged,
@@ -25,6 +26,7 @@ from ._base_client import parse_connection_str, TablesBaseClient, TransportWrapp
 from ._error import _process_table_error, _reprocess_error
 from ._table_client import TableClient
 from ._serialize import _parameter_filter_substitution
+from ._shared_access_signature import _to_utc_datetime
 
 
 class TableServiceClient(TablesBaseClient):
@@ -306,6 +308,42 @@ class TableServiceClient(TablesBaseClient):
         paged._page_iterator_class = TablePropertiesPaged  # pylint: disable=protected-access
         paged._kwargs.update({"results_per_page": results_per_page})  # pylint: disable=protected-access
         return paged  # type: ignore[return-value]
+
+    @distributed_trace
+    def get_user_delegation_key(
+        self,
+        key_start_time: datetime,
+        key_expiry_time: datetime,
+        **kwargs: Any,
+    ) -> UserDelegationKey:
+        """Obtain a user delegation key for the purpose of signing SAS tokens.
+        A token credential must be present on the service object for this request to succeed.
+
+        :param key_start_time: A DateTime value. Indicates the start time for the
+            validity of the user delegation key. The value should be set to the current
+            time or a time in the future.
+        :type key_start_time: ~datetime.datetime
+        :param key_expiry_time: A DateTime value. Indicates the expiry time for the
+            validity of the user delegation key.
+        :type key_expiry_time: ~datetime.datetime
+        :return: The user delegation key.
+        :rtype: ~azure.data.tables._generated.models.UserDelegationKey
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+        key_info = KeyInfo(
+            start=_to_utc_datetime(key_start_time),
+            expiry=_to_utc_datetime(key_expiry_time),
+        )
+        # getUserDelegationKey requires API version 2025-07-05
+        original_api_version = self._client._config.api_version  # pylint: disable=protected-access
+        self._client._config.api_version = "2025-07-05"  # pylint: disable=protected-access
+        try:
+            return self._client.service.get_user_delegation_key(key_info=key_info, **kwargs)
+        except HttpResponseError as error:
+            _process_table_error(error)
+            raise  # _process_table_error always raises, but this satisfies pylint
+        finally:
+            self._client._config.api_version = original_api_version  # pylint: disable=protected-access
 
     def get_table_client(self, table_name: str, **kwargs: Any) -> TableClient:
         """Get a client to interact with the specified table.
