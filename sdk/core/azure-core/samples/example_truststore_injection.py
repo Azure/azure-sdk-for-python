@@ -27,12 +27,12 @@ import truststore
 truststore.inject_into_ssl()
 
 # Synchronous imports
-from azure.identity import DefaultAzureCredential
-from azure.storage.blob import BlobServiceClient
+from azure.identity import DefaultAzureCredential  # pylint: disable=wrong-import-position
+from azure.storage.blob import BlobServiceClient  # pylint: disable=wrong-import-position
 
 # Asynchronous imports
-from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential
-from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
+from azure.identity.aio import DefaultAzureCredential as AsyncDefaultAzureCredential  # pylint: disable=wrong-import-position
+from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient  # pylint: disable=wrong-import-position
 
 
 # =============================================================================

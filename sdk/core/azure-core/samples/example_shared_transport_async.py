@@ -34,7 +34,7 @@ async def shared_transport_async():
     session = aiohttp.ClientSession()
     shared_transport = AioHttpTransport(
         session=session, session_owner=False
-    )  # here we set session_owner to False to indicate that we don't want to close the session when the client is closed
+    )  # session_owner=False means we don't close the session when the client is closed
     async with shared_transport:
         blob_service_client1 = BlobServiceClient.from_connection_string(
             connection_string,

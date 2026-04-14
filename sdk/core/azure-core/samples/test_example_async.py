@@ -30,7 +30,7 @@ from azure.core import AsyncPipelineClient
 from azure.core.pipeline.policies import AsyncHTTPPolicy, SansIOHTTPPolicy, UserAgentPolicy, AsyncRedirectPolicy
 from azure.core.rest import HttpRequest, AsyncHttpResponse
 
-import trio
+import trio  # pylint: disable=wrong-import-order
 
 
 @pytest.mark.asyncio
