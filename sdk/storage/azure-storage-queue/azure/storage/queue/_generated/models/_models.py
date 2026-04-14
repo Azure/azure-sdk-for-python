@@ -160,7 +160,7 @@ class Error(_Model):
      "AuthorizationProtocolMismatch", "AuthorizationPermissionMismatch",
      "AuthorizationServiceMismatch", "AuthorizationResourceTypeMismatch", and
      "FeatureVersionMismatch".
-    :vartype code: str or ~azure.storage.queue._generated.models.StorageErrorCode
+    :vartype code: str or ~azure.storage.queue.models.StorageErrorCode
     :ivar message: The error message.
     :vartype message: str
     """
@@ -220,7 +220,7 @@ class GeoReplication(_Model):
 
     :ivar status: The status of the secondary location. Required. Known values are: "live",
      "bootstrap", and "unavailable".
-    :vartype status: str or ~azure.storage.queue._generated.models.GeoReplicationStatus
+    :vartype status: str or ~azure.storage.queue.models.GeoReplicationStatus
     :ivar last_sync_time: A GMT date/time value, to the second. All primary writes preceding this
      value are guaranteed to be available for read operations at the secondary. Primary writes after
      this point in time may or may not be available for reads. Required.

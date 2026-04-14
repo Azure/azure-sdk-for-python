@@ -452,7 +452,7 @@ class ServiceOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.queue._generated.QueuesClient`'s
+        :class:`~azure.storage.queue.QueuesClient`'s
         :attr:`service` attribute.
     """
 
@@ -809,7 +809,7 @@ class ServiceOperations:
         :paramtype timeout: int
         :keyword include: Include this parameter to specify that the queue's metadata be returned as
          part of the response body. Default value is None.
-        :paramtype include: list[str or ~azure.storage.queue._generated.models.ListQueuesIncludeType]
+        :paramtype include: list[str or ~azure.storage.queue.models.ListQueuesIncludeType]
         :return: ListQueuesResponse. The ListQueuesResponse is compatible with MutableMapping
         :rtype: ~azure.storage.queue._generated.models.ListQueuesResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -889,7 +889,7 @@ class QueueOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.storage.queue._generated.QueuesClient`'s
+        :class:`~azure.storage.queue.QueuesClient`'s
         :attr:`queue` attribute.
     """
 

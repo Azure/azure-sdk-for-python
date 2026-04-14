@@ -26,9 +26,9 @@ class QueuesClient:  # pylint: disable=client-accepts-api-version-keyword
     """QueuesClient.
 
     :ivar service: ServiceOperations operations
-    :vartype service: azure.storage.queue._generated.operations.ServiceOperations
+    :vartype service: azure.storage.queue.operations.ServiceOperations
     :ivar queue: QueueOperations operations
-    :vartype queue: azure.storage.queue._generated.operations.QueueOperations
+    :vartype queue: azure.storage.queue.operations.QueueOperations
     :param url: The host name of the queue storage account, e.g.
      accountName.queue.core.windows.net. Required.
     :type url: str
