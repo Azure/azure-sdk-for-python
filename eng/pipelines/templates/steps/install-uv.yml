@@ -1,4 +1,13 @@
 steps:
   - pwsh: |
-      python -m pip install uv==0.11.6 --index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/
+      $ErrorActionPreference = 'Stop'
+      $PSNativeCommandUseErrorActionPreference = $true
+      $indexUrl = if ($env:PIP_INDEX_URL) { $env:PIP_INDEX_URL } else { 'https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/' }
+      python -m pip install uv==0.11.6 --index-url $indexUrl
+
+      # prepend the path to the installed uv to the PATH so that it can be used in subsequent steps without needing to know the exact path or relying
+      # the global python instance being prepended on the PATH
+      $scriptsDir = python -c "import sysconfig; print(sysconfig.get_path('scripts'))"
+      $env:PATH = "$scriptsDir$([System.IO.Path]::PathSeparator)$env:PATH"
+      Write-Host "##vso[task.prependpath]$scriptsDir"
     displayName: 'Install uv'
