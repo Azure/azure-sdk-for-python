@@ -1,16 +1,24 @@
 ---
 name: package-domain-knowledge
-description: '**MANDATORY PREREQUISITE** — Must be consulted before making any changes to packages under sdk/. Registry of package-specific domain knowledge including architecture, data flows, type mappings, and common pitfalls. WHEN: "add feature to package", "fix bug in package", "modify package code", "regenerate from autorest/typespec", "change client library".'
+description: 'MANDATORY — Before modifying any package under sdk/, read this registry to load the package-specific skill. Contains architecture, data flows, type mappings, and pitfalls that prevent common mistakes. ALWAYS read this skill when your task involves modifying SDK package code, adding features, fixing bugs, regenerating from autorest/typespec, or changing client libraries.'
 ---
 
 # Package Domain Knowledge Registry
 
-**Before modifying any SDK package in this monorepo, check this registry to see
-if a package-specific skill exists.** Package skills contain tribal knowledge
-(architecture, data flows, type mappings, pitfalls) that prevents common mistakes.
+> **⚠️ MANDATORY: You MUST read this file before modifying any SDK package.**
+> If you skip this step, you risk introducing bugs that are already documented
+> in the package-specific skill.
 
-Always check this registry before modifying any SDK package — even if you think
-you already know the package well.
+## Automatic Loading
+
+If you are modifying a package listed below, you **MUST**:
+
+1. Read the `SKILL.md` at the listed path.
+2. Read **all files** in the `references/` directory next to it.
+3. Apply the knowledge from those files to your work.
+
+Failure to do so risks introducing bugs, incorrect type mappings, or
+architectural violations that the package skill specifically documents.
 
 ## How to Use
 
