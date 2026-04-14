@@ -38,17 +38,17 @@ def _make_http_response_error(status_code, message="Error"):
 
 class TestStatePollingMethodTransient404:
     """Verify that 404 responses during polling are treated as transient when
-    retry_not_found is True.
+    retry_not_found is True, up to 3 retries.
     """
 
     def test_404_retried_then_committed(self):
-        """404 should be retried and eventually succeed when the transaction commits."""
+        """404 should be retried (up to 3 times) and eventually succeed."""
         call_count = 0
 
         def operation():
             nonlocal call_count
             call_count += 1
-            if call_count <= 3:
+            if call_count <= 2:
                 raise _make_resource_not_found()
             return {"state": "Committed"}
 
@@ -57,7 +57,7 @@ class TestStatePollingMethodTransient404:
         poller.run()
 
         assert poller.status() == "finished"
-        assert call_count == 4
+        assert call_count == 3
 
     def test_404_raises_when_retry_not_found_false(self):
         """404 should raise immediately when retry_not_found is False."""
@@ -89,23 +89,19 @@ class TestStatePollingMethodTransient404:
 
         assert poller.status() == "failed"
 
-    def test_many_404s_retried_without_limit(self):
-        """More than 3 consecutive 404s should still be retried (no hard limit)."""
-        call_count = 0
+    def test_404_raises_after_3_retries(self):
+        """After 3 consecutive 404s the poller should give up and raise."""
 
         def operation():
-            nonlocal call_count
-            call_count += 1
-            if call_count <= 10:
-                raise _make_resource_not_found()
-            return {"state": "Committed"}
+            raise _make_resource_not_found()
 
         poller = StatePollingMethod(operation, "Committed", 0, retry_not_found=True)
         poller._status = "polling"
-        poller.run()
 
-        assert poller.status() == "finished"
-        assert call_count == 11
+        with pytest.raises(ResourceNotFoundError):
+            poller.run()
+
+        assert poller.status() == "failed"
 
 
 class TestStatePollingMethodTransient406:
@@ -237,7 +233,7 @@ class TestAsyncStatePollingMethodTransient404:
         async def operation():
             nonlocal call_count
             call_count += 1
-            if call_count <= 3:
+            if call_count <= 2:
                 raise _make_resource_not_found()
             return {"state": "Committed"}
 
@@ -246,7 +242,7 @@ class TestAsyncStatePollingMethodTransient404:
         await poller.run()
 
         assert poller.status() == "finished"
-        assert call_count == 4
+        assert call_count == 3
 
     @pytest.mark.asyncio
     async def test_404_raises_when_retry_not_found_false(self):
@@ -275,22 +271,19 @@ class TestAsyncStatePollingMethodTransient404:
         assert poller.status() == "failed"
 
     @pytest.mark.asyncio
-    async def test_many_404s_retried_without_limit(self):
-        call_count = 0
+    async def test_404_raises_after_3_retries(self):
+        """After 3 consecutive 404s the async poller should give up and raise."""
 
         async def operation():
-            nonlocal call_count
-            call_count += 1
-            if call_count <= 10:
-                raise _make_resource_not_found()
-            return {"state": "Committed"}
+            raise _make_resource_not_found()
 
         poller = AsyncStatePollingMethod(operation, "Committed", 0, retry_not_found=True)
         poller._status = "polling"
-        await poller.run()
 
-        assert poller.status() == "finished"
-        assert call_count == 11
+        with pytest.raises(ResourceNotFoundError):
+            await poller.run()
+
+        assert poller.status() == "failed"
 
 
 class TestAsyncStatePollingMethodTransient406:
