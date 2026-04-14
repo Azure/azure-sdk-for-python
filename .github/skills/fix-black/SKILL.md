@@ -58,4 +58,4 @@ Stage and commit the changes.
 
 ## Notes
 
-- The Azure SDK uses `eng/black-pyproject.toml` for repo-wide configuration (line length 120, Python 3.8+)
+- The Azure SDK uses `eng/black-pyproject.toml` for repo-wide configuration
