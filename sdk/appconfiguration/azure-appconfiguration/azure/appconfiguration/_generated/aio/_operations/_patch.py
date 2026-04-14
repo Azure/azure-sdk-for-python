@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import json
 import urllib.parse
-from typing import Any, AsyncIterable, List, Optional, Union, MutableMapping, Type
+from typing import Any, List, Optional, Union, MutableMapping, Type
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -117,13 +117,12 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
                 _next_headers["Accept-Datetime"] = _SERIALIZER.header("accept_datetime", accept_datetime, "str")
             if accept is not None:
                 _next_headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-            if etag is not None:
-                if_match = prep_if_match(etag, match_condition)
-                if if_match is not None:
-                    _next_headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
-                if_none_match = prep_if_none_match(etag, match_condition)
-                if if_none_match is not None:
-                    _next_headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+            if_match = prep_if_match(etag, match_condition)
+            if if_match is not None:
+                _next_headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
+            if_none_match = prep_if_none_match(etag, match_condition)
+            if if_none_match is not None:
+                _next_headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
             _request = HttpRequest(
                 http_method,
                 urllib.parse.urljoin(continuation_token, _parsed_next_link.path),
@@ -153,7 +152,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
         match_condition: Optional[MatchConditions] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncIterable["_models.KeyValue"]:
+    ) -> dict:
         """Gets a list of key-values in one page.
 
         Gets a list of key-values in one page.
@@ -265,7 +264,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
         match_condition: Optional[MatchConditions] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> AsyncIterable["_models.KeyValue"]:
+    ) -> dict:
         """Checks key-values using HEAD request, returning only headers without the response body.
 
         :keyword key: A filter used to match keys. Default value is None.

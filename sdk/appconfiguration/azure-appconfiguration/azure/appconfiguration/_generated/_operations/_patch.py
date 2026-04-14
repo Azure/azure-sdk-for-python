@@ -10,7 +10,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import json
 import urllib.parse
-from typing import Any, Iterable, List, Optional, Union, MutableMapping, Type
+from typing import Any, List, Optional, Union, MutableMapping, Type
 from azure.core import MatchConditions
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -156,7 +156,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
         match_condition: Optional[MatchConditions] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> Iterable["_models.KeyValue"]:
+    ) -> dict:
         """Gets a list of key-values in one page.
 
         Gets a list of key-values in one page.
@@ -268,7 +268,7 @@ class AzureAppConfigurationClientOperationsMixin(AzureAppConfigClientOpGenerated
         match_condition: Optional[MatchConditions] = None,
         continuation_token: Optional[str] = None,
         **kwargs: Any,
-    ) -> Iterable["_models.KeyValue"]:
+    ) -> dict:
         """Checks key-values using HEAD request, returning only headers without the response body.
 
         :keyword key: A filter used to match keys. Default value is None.
