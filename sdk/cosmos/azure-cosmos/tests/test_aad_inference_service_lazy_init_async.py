@@ -83,14 +83,6 @@ class TestAADInferenceServiceLazyInitAsync(unittest.IsolatedAsyncioTestCase):
     masterKey = configs.masterKey
     credential = CosmosEmulatorCredential() if configs.is_emulator else configs.credential_async
 
-    async def asyncSetUp(self):
-        self.client = CosmosClient(self.host, self.credential)
-        self.database = self.client.get_database_client(self.configs.TEST_DATABASE_ID)
-        self.container = self.database.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
-
-    async def asyncTearDown(self):
-        await self.client.close()
-
     async def test_aad_client_construction_without_inference_endpoint(self):
         """Constructing an async CosmosClient with AAD creds must not raise when
         AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT is unset."""
