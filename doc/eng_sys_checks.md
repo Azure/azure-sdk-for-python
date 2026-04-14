@@ -5,6 +5,7 @@
   - [Skipping a check at build queue time](#skipping-a-check-at-build-queue-time)
   - [Skipping entire sections of builds](#skipping-entire-sections-of-builds)
   - [The pyproject.toml](#the-pyprojecttoml)
+    - [Required Metadata](#required-metadata)
     - [Coverage Enforcement](#coverage-enforcement)
   - [Environment variables important to CI](#environment-variables-important-to-ci)
     - [Atomic Overrides](#atomic-overrides)
@@ -21,6 +22,7 @@
       - [Opt-in to formatting validation](#opt-in-to-formatting-validation)
       - [Running locally](#running-locally)
     - [Change log verification](#change-log-verification)
+    - [CSpell](#cspell)
   - [PR Validation Checks](#pr-validation-checks)
     - [PR validation checks](#pr-validation-checks-1)
       - [whl](#whl)
@@ -116,6 +118,8 @@ This is the most useful skip, but the following skip variables are also supporte
   - Omit checking that a package's keywords are correctly formulated before releasing.
 - `Skip.Black`
   - Omit checking `black` in the `analyze` job.
+- `Skip.SpellCheck`
+  - Omit spell checking in the `analyze` job.
 
 ## The pyproject.toml
 
@@ -139,6 +143,28 @@ black = false
 ```
 
 If a package does not yet have a `pyproject.toml`, creating one with just the section `[tool.azure-sdk-build]` will do no harm to the release of the package in question.
+
+### Required Metadata
+
+Packages with a stable GA release must have a `[tool.azure-sdk-conda]` section in their `pyproject.toml`.
+- This section defines if the package is released individually to Conda, or grouped with other packages in one release bundle (see [conda-release.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/conda-release.md)).
+- The `[tool.azure-sdk-conda]` table **must** include an `in_bundle` key (boolean) indicating whether the package is part of a bundle. When `in_bundle = true`, a `bundle_name` key is also **required** so the conda tooling can map the package into the correct bundle.
+- The presence and correctness of these keys is enforced by the `verifywhl` CI check. Service teams are responsible for updating this metadata.
+
+Here are examples:
+
+```toml
+# Package is released to Conda individually
+[tool.azure-sdk-conda]
+in_bundle = false
+```
+
+```toml
+# Package is released within the `azure-communication` bundle
+[tool.azure-sdk-conda]
+in_bundle = true
+bundle_name = "azure-communication"
+```
 
 ### Coverage Enforcement
 
@@ -272,6 +298,22 @@ to opt into the black invocation.
 ### Change log verification
 
 Change log verification is added to ensure package has valid change log for current version. Guidelines to properly maintain the change log is documented [here.](https://azure.github.io/azure-sdk/policies_releases.html#change-logs/)
+
+### CSpell
+
+[`CSpell`](https://cspell.org/) is a spell checker that runs against package source code to catch common spelling errors. It checks Python source files, documentation, and other text content in the package. For more details, see the [Spelling Check Scripts README](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/common/spelling/README.md).
+
+Spell check configuration can be customized at two levels. Repository-wide terms can be added to [`.vscode/cspell.json`](https://github.com/Azure/azure-sdk-for-python/blob/main/.vscode/cspell.json), while service-specific terms can be added to a `cspell.json` or `cspell.yaml` file in the service directory. In either case, words that are domain-specific or intentionally spelled differently can be added to the `words` list.
+
+If you encounter a CSpell failure in CI, you can resolve it by:
+
+1. Fixing the spelling error in your code or documentation.
+2. Adding the word to your service-level `cspell.json` or `cspell.yaml` file if the word is intentional (e.g., a domain-specific term). If this file does not exist, you can create it.
+3. Adding the word to [`.vscode/cspell.json`](https://github.com/Azure/azure-sdk-for-python/blob/main/.vscode/cspell.json) if it is a common term that applies across the repository.
+4. Adding an inline `cspell:ignore` comment for one-off exceptions:
+   ```python
+   # cspell:ignore specialword
+   ```
 
 ## PR Validation Checks
 

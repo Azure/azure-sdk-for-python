@@ -1103,7 +1103,7 @@ def _build_internal_log_attributes(
     # Create a copy of the base log attributes
     internal_log_attributes: Dict[str, str] = log_attributes.copy()
     # Add threshold if present
-    if event_data.get("threshold"):
+    if event_data.get("threshold") is not None:
         internal_log_attributes["gen_ai.evaluation.threshold"] = str(event_data["threshold"])
 
     # Add testing criteria details if present
@@ -2030,6 +2030,11 @@ def _extract_testing_criteria_metadata(
             "metrics": metrics,
             "is_inverse": is_inverse,
         }
+        # Propagate pass_threshold from evaluator config so result events can include it
+        if evaluator_config and criteria_name in evaluator_config:
+            pass_threshold = evaluator_config[criteria_name].get("_pass_threshold")
+            if pass_threshold is not None:
+                testing_criteria_metadata[criteria_name]["pass_threshold"] = pass_threshold
 
     return testing_criteria_metadata
 
@@ -2353,6 +2358,24 @@ def _convert_single_row_to_aoai_format(
     # Convert criteria groups to results
     run_output_results = []
     top_sample = {}
+    if input_data and len(input_data) > 0 and "sample.generated_sample_data" in input_data:
+        top_sample_str = input_data["sample.generated_sample_data"]
+        if top_sample_str and isinstance(top_sample_str, str):
+            try:
+                top_sample_dict = json.loads(top_sample_str)
+                if top_sample_dict and isinstance(top_sample_dict, dict):
+                    top_sample = top_sample_dict
+                    input_data.pop("sample.generated_sample_data", None)
+                    if "sample.output_status" in input_data:
+                        input_data.pop("sample.output_status", None)
+                    if "sample.output_status.status" in input_data:
+                        input_data.pop("sample.output_status.status", None)
+                    if "sample.output_status.message" in input_data:
+                        input_data.pop("sample.output_status.message", None)
+            except Exception as e:
+                logger.error(
+                    f"Failed to parse generated_sample_data as JSON for row {row_idx}, eval_id: {eval_id}, eval_run_id: {eval_run_id}. Storing as string. Error: {e}"
+                )
 
     # Process each criteria group to extract metric results of output items.
     for criteria_name, metrics in criteria_groups.items():
@@ -2360,8 +2383,6 @@ def _convert_single_row_to_aoai_format(
             criteria_name, metrics, testing_criteria_metadata, logger, eval_id, eval_run_id
         )
         run_output_results.extend(criteria_results)
-        if sample:
-            top_sample = sample
 
     # Add error summaries if needed
     _add_error_summaries(run_output_results, eval_run_summary, testing_criteria_metadata, row_idx)
@@ -2503,6 +2524,14 @@ def _process_criteria_metrics(
     # Extract metric values
     result_per_metric = _extract_metric_values(criteria_name, criteria_type, metrics, expected_metrics, logger)
 
+    # Inject threshold from evaluator config when not present in raw results
+    # (e.g., PythonGrader/code evaluators don't emit a threshold column)
+    config_threshold = testing_criteria_metadata.get(criteria_name, {}).get("pass_threshold")
+    if config_threshold is not None:
+        for metric_values in result_per_metric.values():
+            if _is_none_or_nan(metric_values.get("threshold")):
+                metric_values["threshold"] = config_threshold
+
     # Convert to result objects
     results = []
     top_sample = {}
@@ -2547,7 +2576,8 @@ def _extract_metric_values(
             "score": 4.5,
             "coherence_reason": "Good flow",
             "threshold": 3.0,
-            "sample": {...}
+            "sample": {...},
+            "properties": {"explanation": "Detailed analysis...", "confidence": 0.95}
         }
         expected_metrics = ["score"]
 
@@ -2557,13 +2587,29 @@ def _extract_metric_values(
                 "score": 4.5,
                 "reason": "Good flow",
                 "threshold": 3.0,
-                "sample": {...}
+                "sample": {...},
+                "properties": {"explanation": "Detailed analysis...", "confidence": 0.95}
             }
         }
+
+    Note: If a ``properties`` key is present in the metrics dict and its value is a dict,
+    it is extracted and attached to every per-metric result entry. This allows evaluators
+    to return additional output fields alongside standard score/reason/threshold values.
     """
     result_per_metric = {}
+    properties = None
 
     for metric_key, metric_value in metrics.items():
+        if metric_key == "properties":
+            if isinstance(metric_value, dict):
+                properties = metric_value
+            else:
+                logger.info(
+                    "Evaluator '%s' returned 'properties' as %s instead of dict; ignoring.",
+                    criteria_name,
+                    type(metric_value).__name__,
+                )
+            continue
         metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
         temp_result_per_metric = {}
         if metric not in result_per_metric:
@@ -2582,6 +2628,11 @@ def _extract_metric_values(
         )
         if result_name == "label" and criteria_type == "azure_ai_evaluator" and derived_passed is not None:
             _append_indirect_attachments_to_results(result_per_metric, "passed", metric, derived_passed, None, None)
+
+    if properties is not None:
+        for metric_dict in result_per_metric.values():
+            if metric_dict is not None and len(metric_dict) > 0:
+                metric_dict["properties"] = properties.copy()
 
     empty_metrics = []
     empty_metrics.extend(
@@ -2826,7 +2877,8 @@ def _create_result_object(
             "score": 4.5,
             "reason": "Good logical flow",
             "threshold": 3.0,
-            "sample": {"input": "...", "output": "..."}
+            "sample": {"input": "...", "output": "..."},
+            "properties": {"explanation": "...", "confidence": 0.95}
         }
         criteria_type = "quality"
 
@@ -2840,8 +2892,13 @@ def _create_result_object(
             "reason": "Good logical flow",
             "threshold": 3.0,
             "passed": None,
-            "sample": {"input": "...", "output": "..."}
+            "sample": {"input": "...", "output": "..."},
+            "properties": {"explanation": "...", "confidence": 0.95}
         }
+
+    Note: The ``properties`` field is included only when the evaluator returned a
+    properties dict. It carries additional output fields beyond the standard
+    score/label/reason/threshold/passed values.
     """
     # Extract values
     score = metric_values.get("score")
@@ -2850,6 +2907,7 @@ def _create_result_object(
     threshold = metric_values.get("threshold")
     passed = metric_values.get("passed")
     sample = metric_values.get("sample")
+    properties = metric_values.get("properties")
 
     # Handle decrease boolean metrics
     if is_inverse:
@@ -2869,6 +2927,8 @@ def _create_result_object(
 
     if sample is not None:
         result_obj["sample"] = sample
+    if properties is not None:
+        result_obj["properties"] = properties
 
     return result_obj
 
@@ -3415,6 +3475,8 @@ def _calculate_aoai_evaluation_summary(
                     and result_item["metric"] not in dup_usage_list
                 ):
                     sample_data_list.append(result_item["sample"])
+            if "sample" in aoai_result and aoai_result["sample"] and isinstance(aoai_result["sample"], dict):
+                sample_data_list.append(aoai_result["sample"])
 
         for sample_data in sample_data_list:
             if sample_data and isinstance(sample_data, dict) and "usage" in sample_data:

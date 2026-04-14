@@ -96,10 +96,6 @@ jobs:
         Paths:
           - '**'
 
-    # Authenticate to Azure Artifacts feed immediately after checkout to prevent 401 errors
-    # Public feeds have upstream sources enabled and require authentication for passthrough to pypi.org
-    - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
-
     - template: /eng/pipelines/templates/steps/download-package-artifacts.yml
 
     - template: /eng/pipelines/templates/steps/resolve-package-targeting.yml
@@ -118,7 +114,7 @@ jobs:
         AdditionalTestArgs: '--wheel_dir="$(Build.ArtifactStagingDirectory)"'
         CoverageArg: $(CoverageArg)
         PythonVersion: $(PythonVersion)
-        ToxTestEnv: $(toxenv)
+        CheckEnv: $(checks)
         ToxEnvParallel: ${{ parameters.ToxEnvParallel }}
         InjectedPackages: $(InjectedPackages)
         TestProxy: ${{ parameters.TestProxy }}

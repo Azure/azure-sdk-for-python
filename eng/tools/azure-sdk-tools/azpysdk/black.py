@@ -45,55 +45,66 @@ class black(Check):
             package_dir = parsed.folder
             package_name = parsed.name
 
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for black check")
 
             self.install_dev_reqs(executable, args, package_dir)
 
-            # install black
-            try:
-                install_into_venv(executable, [f"black=={BLACK_VERSION}"], package_dir)
-            except CalledProcessError as e:
-                logger.error(f"Failed to install black: {e}")
-                return e.returncode
-
             logger.info(f"Running black against {package_name}")
-
-            config_file_location = os.path.join(REPO_ROOT, "eng/black-pyproject.toml")
 
             if in_ci():
                 if not is_check_enabled(package_dir, "black", default=False):
                     logger.info(f"Package {package_name} opts-out of black check.")
                     continue
-            try:
-                run_result = subprocess.run(
-                    [
-                        executable,
-                        "-m",
-                        "black",
-                        f"--config={config_file_location}",
-                        package_dir,
-                    ],
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    check=True,
-                )
 
-                if run_result.stderr and "reformatted" in run_result.stderr.decode("utf-8"):
-                    if in_ci():
-                        logger.info(
-                            f"The package {package_name} needs reformat. Run `azpysdk black .` locally from the package root to reformat."
-                        )
-                        results.append(1)
-                    else:
-                        logger.info(f"The package {package_name} was reformatted.")
+            result = self.format_directory(executable, package_dir)
+            if result is None:
+                # install or formatting failed, already logged
+                results.append(1)
+                continue
+
+            if result.stderr and "reformatted" in result.stderr.decode("utf-8"):
+                if in_ci():
+                    logger.info(
+                        f"The package {package_name} needs reformat. Run `azpysdk black .` locally from the package root to reformat."
+                    )
+                    results.append(1)
                 else:
-                    logger.info(f"The package {package_name} is properly formatted, no files changed.")
-
-            except subprocess.CalledProcessError as e:
-                logger.error(f"Unable to invoke black for {package_name}. Ran into exception {e}.")
-                if e.stderr:
-                    logger.error(e.stderr.decode("utf-8"))
-                results.append(e.returncode)
+                    logger.info(f"The package {package_name} was reformatted.")
+            else:
+                logger.info(f"The package {package_name} is properly formatted, no files changed.")
 
         return max(results) if results else 0
+
+    @staticmethod
+    def format_directory(executable: str, target_dir: str) -> Optional[subprocess.CompletedProcess]:
+        """Run black on *target_dir* using the repo-wide config.
+
+        Installs the pinned black version into the environment of *executable*,
+        then formats all Python files under *target_dir*.
+        """
+        try:
+            install_into_venv(executable, [f"black=={BLACK_VERSION}"], target_dir)
+        except CalledProcessError as e:
+            logger.error(f"Failed to install black, skipping formatting: {e}")
+            return None
+
+        config_file_location = os.path.join(REPO_ROOT, "eng/black-pyproject.toml")
+        try:
+            return subprocess.run(
+                [executable, "-m", "black", f"--config={config_file_location}", target_dir],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True,
+            )
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Black formatting failed for {target_dir}: {e}")
+            if e.stderr:
+                logger.error(e.stderr.decode("utf-8"))
+            return None

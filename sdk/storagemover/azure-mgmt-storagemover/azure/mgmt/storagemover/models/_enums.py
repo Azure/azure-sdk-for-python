@@ -23,18 +23,41 @@ class AgentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Agent status."""
 
     REGISTERING = "Registering"
+    """REGISTERING."""
     OFFLINE = "Offline"
+    """OFFLINE."""
     ONLINE = "Online"
+    """ONLINE."""
     EXECUTING = "Executing"
+    """EXECUTING."""
     REQUIRES_ATTENTION = "RequiresAttention"
+    """REQUIRES_ATTENTION."""
     UNREGISTERING = "Unregistering"
+    """UNREGISTERING."""
+
+
+class ConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The connection status."""
+
+    APPROVED = "Approved"
+    """APPROVED."""
+    REJECTED = "Rejected"
+    """REJECTED."""
+    DISCONNECTED = "Disconnected"
+    """DISCONNECTED."""
+    PENDING = "Pending"
+    """PENDING."""
+    STALE = "Stale"
+    """STALE."""
 
 
 class CopyMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Strategy to use for copy."""
 
     ADDITIVE = "Additive"
+    """ADDITIVE."""
     MIRROR = "Mirror"
+    """MIRROR."""
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -54,58 +77,123 @@ class CredentialType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Credentials type."""
 
     AZURE_KEY_VAULT_SMB = "AzureKeyVaultSmb"
+    """AZURE_KEY_VAULT_SMB."""
+    AZURE_KEY_VAULT_S3_WITH_HMAC = "AzureKeyVaultS3WithHMAC"
+    """AZURE_KEY_VAULT_S3_WITH_HMAC."""
+
+
+class DataIntegrityValidation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The Data integrity validation mode."""
+
+    SAVE_VERIFY_FILE_MD5 = "SaveVerifyFileMD5"
+    """SAVE_VERIFY_FILE_MD5."""
+    SAVE_FILE_MD5 = "SaveFileMD5"
+    """SAVE_FILE_MD5."""
+    NONE = "None"
+    """NONE."""
 
 
 class DayOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The day of week."""
 
     MONDAY = "Monday"
+    """MONDAY."""
     TUESDAY = "Tuesday"
+    """TUESDAY."""
     WEDNESDAY = "Wednesday"
+    """WEDNESDAY."""
     THURSDAY = "Thursday"
+    """THURSDAY."""
     FRIDAY = "Friday"
+    """FRIDAY."""
     SATURDAY = "Saturday"
+    """SATURDAY."""
     SUNDAY = "Sunday"
+    """SUNDAY."""
+
+
+class EndpointKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the endpoint source/target."""
+
+    SOURCE = "Source"
+    """SOURCE."""
+    TARGET = "Target"
+    """TARGET."""
 
 
 class EndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The Endpoint resource type."""
 
     AZURE_STORAGE_BLOB_CONTAINER = "AzureStorageBlobContainer"
+    """AZURE_STORAGE_BLOB_CONTAINER."""
     NFS_MOUNT = "NfsMount"
+    """NFS_MOUNT."""
     AZURE_STORAGE_SMB_FILE_SHARE = "AzureStorageSmbFileShare"
+    """AZURE_STORAGE_SMB_FILE_SHARE."""
     SMB_MOUNT = "SmbMount"
+    """SMB_MOUNT."""
     AZURE_MULTI_CLOUD_CONNECTOR = "AzureMultiCloudConnector"
+    """AZURE_MULTI_CLOUD_CONNECTOR."""
     AZURE_STORAGE_NFS_FILE_SHARE = "AzureStorageNfsFileShare"
+    """AZURE_STORAGE_NFS_FILE_SHARE."""
+    S3_WITH_HMAC = "S3WithHMAC"
+    """S3_WITH_HMAC."""
+
+
+class Frequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of schedule — Monthly, Weekly, or Daily."""
+
+    MONTHLY = "Monthly"
+    """MONTHLY."""
+    WEEKLY = "Weekly"
+    """WEEKLY."""
+    DAILY = "Daily"
+    """DAILY."""
+    ONETIME = "Onetime"
+    """ONETIME."""
 
 
 class JobRunScanStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of Agent's scanning of source."""
 
     NOT_STARTED = "NotStarted"
+    """NOT_STARTED."""
     SCANNING = "Scanning"
+    """SCANNING."""
     COMPLETED = "Completed"
+    """COMPLETED."""
 
 
 class JobRunStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current status of the Job Run in a non-terminal state, if exists."""
 
     QUEUED = "Queued"
+    """QUEUED."""
     STARTED = "Started"
+    """STARTED."""
     RUNNING = "Running"
+    """RUNNING."""
     CANCEL_REQUESTED = "CancelRequested"
+    """CANCEL_REQUESTED."""
     CANCELING = "Canceling"
+    """CANCELING."""
     CANCELED = "Canceled"
+    """CANCELED."""
     FAILED = "Failed"
+    """FAILED."""
     SUCCEEDED = "Succeeded"
+    """SUCCEEDED."""
     PAUSED_BY_BANDWIDTH_MANAGEMENT = "PausedByBandwidthManagement"
+    """PAUSED_BY_BANDWIDTH_MANAGEMENT."""
 
 
 class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of the Job."""
 
     ON_PREM_TO_CLOUD = "OnPremToCloud"
+    """ON_PREM_TO_CLOUD."""
     CLOUD_TO_CLOUD = "CloudToCloud"
+    """CLOUD_TO_CLOUD."""
 
 
 class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -129,15 +217,20 @@ class Minute(int, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     ZERO = 0
+    """ZERO."""
     THIRTY = 30
+    """THIRTY."""
 
 
 class NfsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The NFS protocol version."""
 
     NF_SAUTO = "NFSauto"
+    """NF_SAUTO."""
     NF_SV3 = "NFSv3"
+    """NF_SV3."""
     NF_SV4 = "NFSv4"
+    """NF_SV4."""
 
 
 class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -157,6 +250,34 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provisioning state of a resource."""
 
     SUCCEEDED = "Succeeded"
+    """SUCCEEDED."""
     CANCELED = "Canceled"
+    """CANCELED."""
     FAILED = "Failed"
+    """FAILED."""
     DELETING = "Deleting"
+    """DELETING."""
+
+
+class S3WithHmacSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The source type of S3WithHmac endpoint."""
+
+    MINIO = "MINIO"
+    """MINIO."""
+    BACKBLAZE = "BACKBLAZE"
+    """BACKBLAZE."""
+    IBM = "IBM"
+    """IBM."""
+    CLOUDFLARE = "CLOUDFLARE"
+    """CLOUDFLARE."""
+    GCS = "GCS"
+    """GCS."""
+
+
+class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of Job run trigger Manual or Scheduled."""
+
+    MANUAL = "Manual"
+    """MANUAL."""
+    SCHEDULED = "Scheduled"
+    """SCHEDULED."""

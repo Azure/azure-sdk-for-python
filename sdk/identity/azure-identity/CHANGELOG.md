@@ -10,6 +10,16 @@
 
 ### Other Changes
 
+## 1.25.3 (2026-03-12)
+
+### Bugs Fixed
+
+- Fixed an issue where an expired token could skip refresh when a recent token request was made, due to the retry delay taking precedence over expiration. ([#45496](https://github.com/Azure/azure-sdk-for-python/pull/45496))
+
+### Other Changes
+
+- Bumped minimum dependency on `msal` to `>=1.35.1`.
+
 ## 1.26.0b2 (2026-02-11)
 
 ### Breaking Changes
@@ -443,7 +453,7 @@ More information on this change and the consideration behind it can be found [he
 
 ## 1.11.0b3 (2022-08-09)
 
-Azure-identity is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).
+Azure-identity is supported on Python 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/python_version_support_policy.md).
 
 ### Features Added
 
