@@ -76,14 +76,13 @@ class AnalyzeAsyncLROPoller(AsyncLROPoller[PollingReturnType_co]):
             or usage information is not available.
         :rtype: ~azure.ai.contentunderstanding.models.UsageDetails or None
         """
-        try:
-            response = self.polling_method()._pipeline_response.http_response  # type: ignore # pylint: disable=protected-access
-            usage_data = response.json().get("usage")
-            if usage_data is None:
-                return None
-            return _deserialize(_models.UsageDetails, usage_data)
-        except (AttributeError, TypeError, ValueError):
+        if not self.done():
             return None
+        response = self.polling_method()._pipeline_response.http_response  # type: ignore # pylint: disable=protected-access
+        usage_data = response.json().get("usage")
+        if usage_data is None:
+            return None
+        return _deserialize(_models.UsageDetails, usage_data)
 
     @classmethod
     def from_poller(cls, poller: AsyncLROPoller[PollingReturnType_co]) -> "AnalyzeAsyncLROPoller[PollingReturnType_co]":  # pyright: ignore[reportInvalidTypeArguments]  # fmt: skip

@@ -207,9 +207,22 @@ def main() -> None:
 
     # [START get_usage]
     # Access usage details from the poller (available after result() completes).
-    # Usage provides billing and resource consumption information for the analysis,
-    # including document pages processed, contextualization tokens, and LLM/embedding
-    # tokens consumed grouped by model.
+    # Usage reports resource consumption for billing estimation:
+    #
+    # - document_pages_standard/basic/minimal: Pages processed at each extraction tier.
+    #   Standard = layout + OCR (scanned docs), Basic = OCR only, Minimal = digital formats
+    #   (DOCX, XLSX, HTML, TXT) that need no OCR. Charged per 1,000 pages.
+    #
+    # - contextualization_tokens: Fixed-rate tokens charged by Content Understanding for
+    #   preparing context, generating confidence scores, source grounding, and formatting
+    #   output. Typically 1,000 tokens per page. Charged separately from LLM tokens.
+    #
+    # - tokens: Dict of "{model}-input" / "{model}-output" token counts consumed by your
+    #   Foundry model deployment (e.g. "gpt-4.1-input", "gpt-4.1-output"). These are
+    #   billed on your Foundry deployment, not on Content Understanding.
+    #
+    # For full pricing details, see:
+    # https://learn.microsoft.com/azure/ai-services/content-understanding/pricing-explainer
     usage = poller.usage
     if usage:
         print("\nUsage Details:")
