@@ -42,6 +42,10 @@ stages:
                 inputs:
                   versionSpec: '3.12'
 
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  DevFeedName: ${{ parameters.DevFeedName }}
+
               - template: /eng/common/pipelines/templates/steps/retain-run.yml
 
               - template: /eng/common/pipelines/templates/steps/set-test-pipeline-version.yml
@@ -124,6 +128,13 @@ stages:
                       - task: UsePythonVersion@0
                         inputs:
                           versionSpec: '3.9'
+
+                      - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                        parameters:
+                          DevFeedName: ${{ parameters.DevFeedName }}
+                          EnableTwineAuth: false
+                          EnablePipAuth: true
+                          EnableUvAuth: false
 
                       - script: |
                           python -m pip install -r $(Pipeline.Workspace)/release_artifact/release_requirements.txt
@@ -280,6 +291,10 @@ stages:
                   inputs:
                     versionSpec: '3.12.x'
 
+                - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                  parameters:
+                    DevFeedName: ${{ parameters.DevFeedName }}
+
                 - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 
                 - template: /eng/common/pipelines/templates/steps/update-docsms-metadata.yml
@@ -307,6 +322,11 @@ stages:
             steps:
               - checkout: self
               - task: UsePythonVersion@0
+
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  DevFeedName: ${{ parameters.DevFeedName }}
+
               - script: |
                   python -m pip install "./eng/tools/azure-sdk-tools"
                 displayName: Install versioning tool dependencies
@@ -333,6 +353,7 @@ stages:
                 Daily: false
                 ArtifactName: ${{ parameters.ArtifactName }}
                 Artifact: ${{ artifact }}
+                DevFeedName: ${{ parameters.DevFeedName }}
 
   - ${{ if eq(variables['System.TeamProject'], 'internal') }}:
     - stage: Integration
@@ -350,20 +371,35 @@ stages:
         - download: current
           artifact: ${{parameters.ArtifactName}}
           timeoutInMinutes: 5
+
         - task: UsePythonVersion@0
+
+        - template: ../steps/auth-dev-feed.yml
+          parameters:
+            DevFeedName: ${{ parameters.DevFeedName }}
+        
         - script: |
             set -e
             python -m pip install twine
           displayName: Install Twine
 
-        - template: ../steps/auth-dev-feed.yml
-          parameters:
-            DevFeedName: ${{ parameters.DevFeedName }}
-
         - ${{ each artifact in parameters.Artifacts }}:
           - ${{if ne(artifact.skipPublishDevFeed, 'true')}}:
 
             - pwsh: |
+                # If BuildTargetingString is set, check whether this artifact matches any of the
+                # (possibly comma-separated) glob patterns before attempting to publish.
+                # This handles scoped builds where only a subset of packages are built.
+                $targetingString = $env:BUILDTARGETINGSTRING
+                if ($targetingString) {
+                  $globs = $targetingString -split ","
+                  $isTargeted = $globs | Where-Object { "${{artifact.name}}" -like $_.Trim() }
+                  if (-not $isTargeted) {
+                    Write-Host "Package '${{artifact.name}}' does not match BuildTargetingString '$targetingString'. Skipping integration publish."
+                    exit 0
+                  }
+                }
+
                 $fileCount = (Get-ChildItem $(Pipeline.Workspace)/${{parameters.ArtifactName}}/${{artifact.name}} | ? {$_.Name -match "-[0-9]*.[0-9]*.[0-9]*a[0-9]*" } | Measure-Object).Count
 
                 if ($fileCount -eq 0) {
@@ -411,6 +447,10 @@ stages:
             displayName: 'Use Python 3.11'
             inputs:
               versionSpec: '3.11'
+
+          - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+            parameters:
+              DevFeedName: ${{ parameters.DevFeedName }}
 
           - template: /eng/pipelines/templates/steps/install-rex-validation-tool.yml
 

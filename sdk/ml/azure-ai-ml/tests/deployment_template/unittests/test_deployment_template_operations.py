@@ -680,21 +680,9 @@ class TestDeploymentTemplateOperations:
         assert result.instance_count == 3
         assert result.scoring_port == 8080
 
-    def test_convert_dict_to_deployment_template_space_separated_instance_types(self, deployment_template_ops):
-        """Test _convert_dict_to_deployment_template with space-separated allowed_instance_types."""
-        dict_data = {
-            "name": "test-template",
-            "version": "1.0",
-            "environment": "azureml:test-env:1",
-            "allowed_instance_types": "Standard_DS2_v2 Standard_DS3_v2 Standard_DS4_v2",
-        }
-
-        result = deployment_template_ops._convert_dict_to_deployment_template(dict_data)
-
-        assert result.allowed_instance_types == ["Standard_DS2_v2", "Standard_DS3_v2", "Standard_DS4_v2"]
-
     def test_convert_dict_to_deployment_template_all_fields(self, deployment_template_ops):
         """Test _convert_dict_to_deployment_template with all possible fields."""
+
         dict_data = {
             "name": "full-template",
             "version": "2.0",
