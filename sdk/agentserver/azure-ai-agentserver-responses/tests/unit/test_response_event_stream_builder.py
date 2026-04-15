@@ -8,6 +8,17 @@ import pytest
 
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.models import _generated as generated_models
+from azure.ai.agentserver.responses.models._generated import (
+    ResponseCompletedEvent,
+    ResponseCreatedEvent,
+    ResponseFailedEvent,
+    ResponseIncompleteEvent,
+    ResponseInProgressEvent,
+    ResponseObject,
+    ResponseOutputItemAddedEvent,
+    ResponseOutputItemDoneEvent,
+    ResponseStreamEvent,
+)
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 
@@ -23,6 +34,13 @@ def test_event_stream_builder__builds_lifecycle_events() -> None:
         stream.emit_in_progress(),
         stream.emit_completed(),
     ]
+
+    # All events must be typed ResponseStreamEvent subtypes
+    for event in events:
+        assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
+    assert isinstance(events[0], ResponseCreatedEvent)
+    assert isinstance(events[1], ResponseInProgressEvent)
+    assert isinstance(events[2], ResponseCompletedEvent)
 
     assert [event["type"] for event in events] == [
         "response.created",
@@ -51,6 +69,9 @@ def test_event_stream_builder__builds_output_item_events() -> None:
         stream.emit_completed(),
     ]
 
+    for event in events:
+        assert isinstance(event, ResponseStreamEvent), f"Expected ResponseStreamEvent, got {type(event)}"
+
     event_types = [event["type"] for event in events]
     assert "response.output_item.added" in event_types
     assert "response.output_text.delta" in event_types
@@ -69,6 +90,8 @@ def test_event_stream_builder__output_item_added_returns_event_immediately() -> 
 
     emitted = message.emit_added()
 
+    assert isinstance(emitted, ResponseStreamEvent)
+    assert isinstance(emitted, ResponseOutputItemAddedEvent)
     assert emitted["type"] == "response.output_item.added"
     assert emitted["output_index"] == 0
     assert emitted["item"]["id"] == message.item_id
@@ -127,6 +150,8 @@ def test_event_stream_builder__emit_completed_accepts_usage_and_sets_terminal_fi
 
     completed = stream.emit_completed(usage=usage)
 
+    assert isinstance(completed, ResponseStreamEvent)
+    assert isinstance(completed, ResponseCompletedEvent)
     assert completed["type"] == "response.completed"
     assert completed["response"]["status"] == "completed"
     assert completed["response"]["usage"]["total_tokens"] == 3
@@ -147,6 +172,8 @@ def test_event_stream_builder__emit_failed_accepts_error_and_usage() -> None:
 
     failed = stream.emit_failed(code="server_error", message="boom", usage=usage)
 
+    assert isinstance(failed, ResponseStreamEvent)
+    assert isinstance(failed, ResponseFailedEvent)
     assert failed["type"] == "response.failed"
     assert failed["response"]["status"] == "failed"
     assert failed["response"]["error"]["code"] == "server_error"
@@ -169,6 +196,8 @@ def test_event_stream_builder__emit_incomplete_accepts_reason_and_usage() -> Non
 
     incomplete = stream.emit_incomplete(reason="max_output_tokens", usage=usage)
 
+    assert isinstance(incomplete, ResponseStreamEvent)
+    assert isinstance(incomplete, ResponseIncompleteEvent)
     assert incomplete["type"] == "response.incomplete"
     assert incomplete["response"]["status"] == "incomplete"
     assert incomplete["response"]["incomplete_details"]["reason"] == "max_output_tokens"
@@ -200,6 +229,10 @@ def test_event_stream_builder__add_output_item_generic_emits_added_and_done() ->
     added = builder.emit_added(added_item)
     done = builder.emit_done(done_item)
 
+    assert isinstance(added, ResponseStreamEvent)
+    assert isinstance(added, ResponseOutputItemAddedEvent)
+    assert isinstance(done, ResponseStreamEvent)
+    assert isinstance(done, ResponseOutputItemDoneEvent)
     assert added["type"] == "response.output_item.added"
     assert added["output_index"] == 0
     assert done["type"] == "response.output_item.done"
@@ -220,6 +253,8 @@ def test_event_stream_builder__constructor_accepts_seed_response() -> None:
     stream = ResponseEventStream(response=seed_response)
     created = stream.emit_created()
 
+    assert isinstance(stream.response, ResponseObject)
+    assert isinstance(created, ResponseCreatedEvent)
     assert created["response"]["id"] == "resp_builder_seed_response"
     assert created["response"]["model"] == "gpt-4o-mini"
     assert created["response"]["metadata"] == {"source": "seed"}

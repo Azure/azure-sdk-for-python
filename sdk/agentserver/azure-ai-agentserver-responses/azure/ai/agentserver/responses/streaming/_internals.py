@@ -210,7 +210,7 @@ def track_completed_output_item(
         response.output = output_items
 
     try:
-        typed_item: Any = generated_models.OutputItem(item_dict)
+        typed_item: Any = generated_models.OutputItem._deserialize(item_dict, [])
     except Exception:  # pylint: disable=broad-exception-caught
         typed_item = deepcopy(item_dict)
 
