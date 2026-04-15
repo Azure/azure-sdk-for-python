@@ -43,7 +43,7 @@
 
 The library handles all protocol concerns — routing, serialization, SSE framing,
 `stream`/`background` mode negotiation, status lifecycle, and error shapes. You
-register one handler function via the `@app.create_handler` decorator. Your handler
+register one handler function via the `@app.response_handler` decorator. Your handler
 receives a `CreateResponse` request and produces response events. The library wraps
 these events into the correct HTTP response format based on the client's requested
 mode.
@@ -81,7 +81,7 @@ from azure.ai.agentserver.responses import (
 app = ResponsesAgentServerHost()
 
 
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
     text = await context.get_input_text()
     return TextResponse(context, request, text=f"Echo: {text}")
@@ -116,7 +116,7 @@ message. `TextResponse` handles the full event lifecycle internally
 When you have the full text available at once:
 
 ```python
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
     text = await context.get_input_text()
     return TextResponse(context, request, text=f"Echo: {text}")
@@ -125,7 +125,7 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
 `text` can also be a sync or async callable — useful when the answer requires I/O:
 
 ```python
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
     async def _build():
         text = await context.get_input_text()
@@ -143,7 +143,7 @@ When an LLM produces tokens incrementally, pass an `AsyncIterable[str]` to
 ```python
 import asyncio
 
-@app.create_handler
+@app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
     async def generate_tokens():
         tokens = ["Hello", ", ", "world", "!"]
@@ -186,12 +186,12 @@ return TextResponse(
 
 ### Default: Decorator Pattern
 
-The primary way to register a handler is the `@app.create_handler` decorator:
+The primary way to register a handler is the `@app.response_handler` decorator:
 
 ```python
 app = ResponsesAgentServerHost()
 
-@app.create_handler
+@app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     return TextResponse(context, request, text="Hello!")
 
@@ -239,7 +239,7 @@ from starlette.routing import Mount
 
 responses_app = ResponsesAgentServerHost()
 
-@responses_app.create_handler
+@responses_app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     return TextResponse(context, request, text="Hello!")
 
@@ -283,7 +283,7 @@ no custom provider registration is needed.
 ## Handler Signature
 
 ```python
-@app.create_handler
+@app.response_handler
 def handler(
     request: CreateResponse,
     context: ResponseContext,
@@ -311,7 +311,7 @@ lifecycle, and delivers them to the client.
 Use `return` — no generator yield needed:
 
 ```python
-@app.create_handler
+@app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     return TextResponse(context, request, text="Hello!")
 ```
@@ -322,7 +322,7 @@ Use `yield` for full control. Can be **sync** or **async**:
 
 ```python
 # Sync handler
-@app.create_handler
+@app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
@@ -331,7 +331,7 @@ def handler(request: CreateResponse, context: ResponseContext, cancellation_sign
     yield stream.emit_completed()
 
 # Async handler
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
@@ -588,7 +588,7 @@ approach.
 #### Using TextResponse (simplest)
 
 ```python
-@app.create_handler
+@app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     return TextResponse(context, request, text="Hello, world!")
 ```
@@ -674,7 +674,7 @@ next turn.
 #### Multi-Turn Function Calling
 
 ```python
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     stream = ResponseEventStream(response_id=context.response_id, request=request)
     tool_output = await _find_function_call_output(context)
@@ -868,7 +868,7 @@ suppressed and the library handles the winddown.
 For streaming, check cancellation between chunks:
 
 ```python
-@app.create_handler
+@app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     async def stream_tokens():
         async for token in model.stream(prompt):
@@ -884,7 +884,7 @@ def handler(request: CreateResponse, context: ResponseContext, cancellation_sign
 Check the signal between iterations:
 
 ```python
-@app.create_handler
+@app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     stream = ResponseEventStream(...)
     yield stream.emit_created()
@@ -901,7 +901,7 @@ def handler(request: CreateResponse, context: ResponseContext, cancellation_sign
 ### ResponseEventStream Handlers — Async
 
 ```python
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     stream = ResponseEventStream(...)
     yield stream.emit_created()
@@ -936,7 +936,7 @@ When the host shuts down (e.g., SIGTERM), `context.is_shutdown_requested` is set
 from explicit cancel:
 
 ```python
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     stream = ResponseEventStream(...)
     yield stream.emit_created()
