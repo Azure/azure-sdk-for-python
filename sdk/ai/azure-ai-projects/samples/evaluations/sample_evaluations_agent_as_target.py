@@ -33,7 +33,7 @@ USAGE:
 import os
 import time
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
@@ -64,63 +64,33 @@ INPUT_QUERIES = [
 ]
 
 
-def _quality_evaluator(name: str, evaluator_name: str, response_field: str = "{{sample.output_text}}") -> Dict[str, Any]:
-    """Create a quality evaluator configuration block."""
+def _build_evaluator_config(name: str, evaluator_name: str) -> Dict[str, Any]:
+    """Create a standard Azure AI evaluator configuration block."""
     return {
         "type": "azure_ai_evaluator",
         "name": name,
         "evaluator_name": evaluator_name,
-        "evaluator_version": "",
+        "data_mapping": {
+            "query": "{{query}}",
+            "response": "{{response}}",
+            "tool_definitions": "{{tool_definitions}}",
+        },
         "initialization_parameters": {
             "deployment_name": model_deployment_name,
-        },
-        "data_mapping": {
-            "query": "{{item.query}}",
-            "response": response_field,
-            "context": "{{item.context}}",
-            "ground_truth": "{{item.ground_truth}}",
-            "tool_calls": "{{sample.tool_calls}}",
-            "tool_definitions": "{{sample.tool_definitions}}",
-        },
-    }
-
-
-def _safety_evaluator(name: str, evaluator_name: str) -> Dict[str, Any]:
-    """Create a safety evaluator configuration block."""
-    return {
-        "type": "azure_ai_evaluator",
-        "name": name,
-        "evaluator_name": evaluator_name,
-        "evaluator_version": "",
-        "initialization_parameters": {
-            "threshold": 4,
-        },
-        "data_mapping": {
-            "query": "{{item.query}}",
-            "response": "{{sample.output_text}}",
-            "context": "{{item.context}}",
-            "ground_truth": "{{item.ground_truth}}",
-            "tool_calls": "{{sample.tool_calls}}",
-            "tool_definitions": "{{sample.tool_definitions}}",
         },
     }
 
 
 def main() -> None:
-    testing_criteria: List[Dict[str, Any]] = [
-        # Quality evaluators
-        _quality_evaluator("IntentResolution", "builtin.intent_resolution"),
-        _quality_evaluator("Relevance", "builtin.relevance"),
-        _quality_evaluator("Fluency", "builtin.fluency"),
-        _quality_evaluator("Coherence", "builtin.coherence"),
-        _quality_evaluator("Groundedness", "builtin.groundedness", "{{sample.output_items}}"),
-        _quality_evaluator("TaskCompletion", "builtin.task_completion", "{{sample.output_items}}"),
-        _quality_evaluator("ToolCallSuccess", "builtin.tool_call_success", "{{sample.output_items}}"),
-        # Safety evaluators
-        _safety_evaluator("Violence", "builtin.violence"),
-        _safety_evaluator("SelfHarm", "builtin.self_harm"),
-        _safety_evaluator("Sexual", "builtin.sexual"),
-        _safety_evaluator("HateAndUnfairness", "builtin.hate_unfairness"),
+    testing_criteria = [
+        _build_evaluator_config(
+            name="intent_resolution",
+            evaluator_name="builtin.intent_resolution",
+        ),
+        _build_evaluator_config(
+            name="task_adherence",
+            evaluator_name="builtin.task_adherence",
+        ),
     ]
 
     data_source_config = {
