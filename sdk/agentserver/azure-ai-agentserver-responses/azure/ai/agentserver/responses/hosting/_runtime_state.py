@@ -136,8 +136,13 @@ class _RuntimeState:
             result.setdefault("response_id", execution.response_id)
             result.setdefault("object", "response")
             result["status"] = execution.status
+            # S-038 / S-040: forcibly stamp session & conversation on every snapshot
+            if execution.agent_session_id is not None:
+                result["agent_session_id"] = execution.agent_session_id
+            if execution.conversation_id is not None:
+                result["conversation"] = {"id": execution.conversation_id}
             return strip_nulls(result)
-        return {
+        snapshot: dict[str, Any] = {
             "id": execution.response_id,
             "response_id": execution.response_id,
             "object": "response",
@@ -147,3 +152,9 @@ class _RuntimeState:
             "model": execution.initial_model,
             "agent_reference": deepcopy(execution.initial_agent_reference) or {},
         }
+        # S-038 / S-040: forcibly stamp session & conversation on fallback path
+        if execution.agent_session_id is not None:
+            snapshot["agent_session_id"] = execution.agent_session_id
+        if execution.conversation_id is not None:
+            snapshot["conversation"] = {"id": execution.conversation_id}
+        return snapshot

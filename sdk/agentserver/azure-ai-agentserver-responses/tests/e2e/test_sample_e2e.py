@@ -20,6 +20,7 @@ from azure.ai.agentserver.responses import (
     TextResponse,
 )
 from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam, ItemMessage
+from azure.ai.agentserver.responses.models._generated import StructuredOutputsOutputItem
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -28,7 +29,7 @@ from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam, I
 
 def _make_app(handler, **kwargs) -> TestClient:
     app = ResponsesAgentServerHost(**kwargs)
-    app.create_handler(handler)
+    app.response_handler(handler)
     return TestClient(app)
 
 
@@ -503,7 +504,7 @@ def test_sample8_mixin_composition_both_protocols() -> None:
             }
         )
 
-    host.create_handler(_sample8_response_handler)
+    host.response_handler(_sample8_response_handler)
 
     client = TestClient(host)
 
@@ -549,7 +550,7 @@ def test_sample9_self_hosted_responses_under_prefix() -> None:
             text=_create_text,
         )
 
-    responses_app.create_handler(_handler)
+    responses_app.response_handler(_handler)
 
     parent_app = Starlette(
         routes=[
@@ -1344,7 +1345,7 @@ def _structured_full_control_handler(
     yield stream.emit_created()
     yield stream.emit_in_progress()
     builder = stream.add_output_item_structured_outputs()
-    item = {"type": "structured_outputs", "id": builder.item_id, "output": {"status": "ok"}}
+    item = StructuredOutputsOutputItem(id=builder.item_id, output={"status": "ok"})
     yield builder.emit_added(item)
     yield builder.emit_done(item)
     yield stream.emit_completed()

@@ -22,7 +22,11 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.core import detach_context, end_span, flush_spans, set_current_span, trace_stream
-from azure.ai.agentserver.responses.models._generated import AgentReference, CreateResponse
+from azure.ai.agentserver.responses.models._generated import (
+    AgentReference,
+    CreateResponse,
+    ResponseStreamEventType,
+)
 
 from .._options import ResponsesServerOptions
 from .._response_context import IsolationContext, ResponseContext
@@ -30,9 +34,9 @@ from ..models._helpers import get_input_expanded, to_output_item
 from ..models.errors import RequestValidationError
 from ..models.runtime import ResponseExecution, ResponseModeFlags, build_cancelled_response, build_failed_response
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
-from ..streaming._helpers import EVENT_TYPE, _encode_sse
+from ..streaming._helpers import _encode_sse
 from ..streaming._sse import encode_sse_any_event
-from ..streaming._state_machine import normalize_lifecycle_events
+from ..streaming._state_machine import _normalize_lifecycle_events
 from ._execution_context import _ExecutionContext
 from ._observability import (
     CreateSpan,
@@ -208,11 +212,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         # Validate the lifecycle event state machine on startup so
         # misconfigured state machines surface immediately.
-        normalize_lifecycle_events(
+        _normalize_lifecycle_events(
             response_id="resp_validation",
             events=[
-                {"type": EVENT_TYPE.RESPONSE_CREATED.value, "response": {"status": "in_progress"}},
-                {"type": EVENT_TYPE.RESPONSE_COMPLETED.value, "response": {"status": "completed"}},
+                {"type": ResponseStreamEventType.RESPONSE_CREATED.value, "response": {"status": "in_progress"}},
+                {"type": ResponseStreamEventType.RESPONSE_COMPLETED.value, "response": {"status": "completed"}},
             ],
         )
 
@@ -342,7 +346,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         stream = bool(getattr(parsed, "stream", False))
         store = True if getattr(parsed, "store", None) is None else bool(parsed.store)
         background = bool(getattr(parsed, "background", False))
-        model = getattr(parsed, "model", None)
+        model = getattr(parsed, "model", None) or ""
         _expanded = get_input_expanded(parsed)
         input_items = [out for item in _expanded if (out := to_output_item(item, response_id)) is not None]
         previous_response_id: str | None = (
@@ -469,7 +473,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         # B39: Resolve session ID
         config_session_id = getattr(getattr(self._host, "config", None), "session_id", "") or ""
-        agent_session_id = _resolve_session_id(parsed, payload, env_session_id=config_session_id)
+        agent_session_id = _resolve_session_id(
+            parsed, payload, env_session_id=config_session_id, agent_reference=agent_reference
+        )
 
         ctx = self._build_execution_context(
             parsed=parsed,
@@ -833,7 +839,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     )
 
         return JSONResponse(
-            {"id": response_id, "object": "response.deleted", "deleted": True},
+            {"id": response_id, "object": "response", "deleted": True},
             status_code=200,
         )
 
