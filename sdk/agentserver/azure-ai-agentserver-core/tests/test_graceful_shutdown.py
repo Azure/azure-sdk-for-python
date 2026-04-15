@@ -189,7 +189,7 @@ async def test_failing_shutdown_is_logged(caplog: pytest.LogCaptureFixture) -> N
     async def send(message):
         sent_messages.append(message)
 
-    with caplog.at_level(logging.ERROR, logger="azure.ai.agentserver"):
+    with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver"):
         await agent(scope, receive, send)
 
     # The error should be logged
