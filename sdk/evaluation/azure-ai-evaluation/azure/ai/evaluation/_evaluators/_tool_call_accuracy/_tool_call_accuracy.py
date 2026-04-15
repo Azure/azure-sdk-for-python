@@ -232,7 +232,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if _is_intermediate_response(eval_input.get("response")):
             return self._return_not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
-                self.threshold
+                self.threshold,
             )
 
         # Preprocess messages if they are lists

@@ -66,11 +66,11 @@ class TestEvaluate:
                 }
             ],
         )
+        assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_score"] is None
+        assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_result"] == "not_applicable"
+        assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_status"] == "skipped"
         assert (
-            result[ToolCallAccuracyEvaluator._RESULT_KEY] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
-        )
-        assert (
-            "not applicable" in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"].lower()
+            "not applicable" in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reasoning"].lower()
             and ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
-            in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"]
+            in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reasoning"]
         )
