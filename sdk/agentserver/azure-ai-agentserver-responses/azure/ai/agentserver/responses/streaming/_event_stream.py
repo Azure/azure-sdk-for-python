@@ -175,7 +175,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._response.status = "queued"
         return cast(
             generated_models.ResponseQueuedEvent,
-            self.emit_event(
+            self._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_QUEUED.value,
                     "response": self._response_payload(),
@@ -194,7 +194,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._response.status = status  # type: ignore[assignment]
         return cast(
             generated_models.ResponseCreatedEvent,
-            self.emit_event(
+            self._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_CREATED.value,
                     "response": self._response_payload(),
@@ -211,7 +211,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._response.status = "in_progress"
         return cast(
             generated_models.ResponseInProgressEvent,
-            self.emit_event(
+            self._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
                     "response": self._response_payload(),
@@ -235,7 +235,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._set_terminal_fields(usage=usage)
         return cast(
             generated_models.ResponseCompletedEvent,
-            self.emit_event(
+            self._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_COMPLETED.value,
                     "response": self._response_payload(),
@@ -272,7 +272,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._set_terminal_fields(usage=usage)
         return cast(
             generated_models.ResponseFailedEvent,
-            self.emit_event(
+            self._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_FAILED.value,
                     "response": self._response_payload(),
@@ -309,7 +309,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self._set_terminal_fields(usage=usage)
         return cast(
             generated_models.ResponseIncompleteEvent,
-            self.emit_event(
+            self._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_INCOMPLETE.value,
                     "response": self._response_payload(),
@@ -656,7 +656,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         return [construct_event_model(event.as_dict()) for event in self._events]
 
-    def emit_event(self, event: dict[str, Any]) -> generated_models.ResponseStreamEvent:
+    def _emit_event(self, event: dict[str, Any]) -> generated_models.ResponseStreamEvent:
         """Emit a single event, applying defaults and validating the stream.
 
         Accepts a **wire-format** dict (no ``"payload"`` wrapper), constructs
@@ -1061,14 +1061,14 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def output_item_custom_tool_call_output(
         self,
         call_id: str,
-        output: str | list[Any],
+        output: str | list[generated_models.FunctionAndCustomToolCallOutput],
     ) -> Iterator[generated_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a custom tool call output item.
 
         :param call_id: The call ID this output belongs to.
         :type call_id: str
         :param output: The output value (string or structured list).
-        :type output: str | list
+        :type output: str | list[FunctionAndCustomToolCallOutput]
         :returns: An iterator of events.
         :rtype: Iterator[ResponseStreamEvent]
         """
@@ -1475,14 +1475,16 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             yield event
 
     async def aoutput_item_custom_tool_call_output(
-        self, call_id: str, output: str | list[Any]
+        self,
+        call_id: str,
+        output: str | list[generated_models.FunctionAndCustomToolCallOutput],
     ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`output_item_custom_tool_call_output`.
 
         :param call_id: The call ID this output belongs to.
         :type call_id: str
         :param output: The output value (string or structured list).
-        :type output: str | list
+        :type output: str | list[FunctionAndCustomToolCallOutput]
         :returns: An async iterator of events.
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
@@ -1550,7 +1552,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         return _internals.materialize_generated_payload(self._response.as_dict())
 
-    def with_output_item_defaults(self, item: dict[str, Any]) -> dict[str, Any]:
+    def _with_output_item_defaults(self, item: dict[str, Any]) -> dict[str, Any]:
         """Stamp an output item dict with response-level defaults.
 
         :param item: The item dict to stamp.

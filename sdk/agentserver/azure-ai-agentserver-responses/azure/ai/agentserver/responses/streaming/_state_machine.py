@@ -39,7 +39,7 @@ _EVENT_STAGES = {
 class EventStreamValidator:
     """Incremental validator that maintains state across calls.
 
-    Unlike :func:`validate_response_event_stream` which re-scans the full
+    Unlike :func:`_validate_response_event_stream` which re-scans the full
     event list each time, this class validates one event at a time in O(1).
     """
 
@@ -117,7 +117,7 @@ class EventStreamValidator:
             raise ValueError("output item delta cannot appear after output_item.done")
 
 
-def validate_response_event_stream(events: Sequence[Mapping[str, Any]]) -> None:
+def _validate_response_event_stream(events: Sequence[Mapping[str, Any]]) -> None:
     """Validate lifecycle and output-item event ordering for a response stream.
 
     Checks that the first event is ``response.created``, lifecycle events
@@ -137,7 +137,7 @@ def validate_response_event_stream(events: Sequence[Mapping[str, Any]]) -> None:
         validator.validate_next(event)
 
 
-def normalize_lifecycle_events(
+def _normalize_lifecycle_events(
     *, response_id: str, events: Sequence[Mapping[str, Any]], default_model: str | None = None
 ) -> list[dict[str, Any]]:
     """Normalize lifecycle events with ordering and terminal-state guarantees.
@@ -187,7 +187,7 @@ def normalize_lifecycle_events(
             }
         ]
 
-    validate_response_event_stream(normalized)
+    _validate_response_event_stream(normalized)
 
     terminal_count = sum(1 for event in normalized if event["type"] in _TERMINAL_EVENT_TYPES)
 

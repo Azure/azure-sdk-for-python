@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterable
 from copy import deepcopy
-from typing import TYPE_CHECKING, Any, AsyncIterator, Iterator, cast
+from typing import TYPE_CHECKING, AsyncIterator, Iterator, cast
 
 from ...models import _generated as generated_models
 from ._base import EVENT_TYPE, BaseOutputItemBuilder, _require_non_empty
@@ -89,7 +89,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseFunctionCallArgumentsDeltaEvent,
-            self._stream.emit_event(
+            self._stream._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA.value,
                     "item_id": self._item_id,
@@ -110,7 +110,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         self._final_arguments = arguments
         return cast(
             generated_models.ResponseFunctionCallArgumentsDoneEvent,
-            self._stream.emit_event(
+            self._stream._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE.value,
                     "item_id": self._item_id,
@@ -201,7 +201,11 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
         """
         super().__init__(stream=stream, output_index=output_index, item_id=item_id)
         self._call_id = _require_non_empty(call_id, "call_id")
-        self._final_output: str | list[Any] | None = None
+        self._final_output: str | list[
+            generated_models.InputTextContentParam
+            | generated_models.InputImageContentParamAutoParam
+            | generated_models.InputFileContentParam
+        ] | None = None
 
     @property
     def call_id(self) -> str:
@@ -212,11 +216,20 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
         """
         return self._call_id
 
-    def emit_added(self, output: str | list[Any] | None = None) -> generated_models.ResponseOutputItemAddedEvent:
+    def emit_added(
+        self,
+        output: str
+        | list[
+            generated_models.InputTextContentParam
+            | generated_models.InputImageContentParamAutoParam
+            | generated_models.InputFileContentParam
+        ]
+        | None = None,
+    ) -> generated_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for this function-call output.
 
         :param output: Optional initial output value.
-        :type output: str | list[Any] | None
+        :type output: str | list[InputTextContentParam | InputImageContentParamAutoParam | InputFileContentParam] | None
         :returns: The emitted event.
         :rtype: ResponseOutputItemAddedEvent
         """
@@ -230,11 +243,20 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
             }
         )
 
-    def emit_done(self, output: str | list[Any] | None = None) -> generated_models.ResponseOutputItemDoneEvent:
+    def emit_done(
+        self,
+        output: str
+        | list[
+            generated_models.InputTextContentParam
+            | generated_models.InputImageContentParamAutoParam
+            | generated_models.InputFileContentParam
+        ]
+        | None = None,
+    ) -> generated_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for this function-call output.
 
         :param output: Optional final output value. Uses previously set output if ``None``.
-        :type output: str | list[Any] | None
+        :type output: str | list[InputTextContentParam | InputImageContentParamAutoParam | InputFileContentParam] | None
         :returns: The emitted event.
         :rtype: ResponseOutputItemDoneEvent
         """

@@ -104,7 +104,7 @@ class TestLifecycleReturnTypes:
         # The state-machine validator requires ``response.created`` as the first
         # event so we cannot call ``emit_queued`` in isolation.  Instead, verify
         # the underlying cast by constructing the model directly – the same
-        # ``construct_event_model`` helper that ``emit_event`` delegates to.
+        # ``construct_event_model`` helper that ``_emit_event`` delegates to.
         from azure.ai.agentserver.responses.streaming._internals import construct_event_model
 
         raw = {

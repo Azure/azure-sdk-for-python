@@ -74,7 +74,7 @@ class TextContentBuilder:
         self._lifecycle_state = BuilderLifecycleState.ADDED
         return cast(
             generated_models.ResponseContentPartAddedEvent,
-            self._stream.emit_event(
+            self._stream._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_CONTENT_PART_ADDED.value,
                     "item_id": self._item_id,
@@ -91,7 +91,7 @@ class TextContentBuilder:
         self._delta_fragments.append(text)
         return cast(
             generated_models.ResponseTextDeltaEvent,
-            self._stream.emit_event(
+            self._stream._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_OUTPUT_TEXT_DELTA.value,
                     "item_id": self._item_id,
@@ -126,7 +126,7 @@ class TextContentBuilder:
         self._final_text = merged_text
         return cast(
             generated_models.ResponseTextDoneEvent,
-            self._stream.emit_event(
+            self._stream._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_OUTPUT_TEXT_DONE.value,
                     "item_id": self._item_id,
@@ -154,7 +154,7 @@ class TextContentBuilder:
         self._lifecycle_state = BuilderLifecycleState.DONE
         return cast(
             generated_models.ResponseContentPartDoneEvent,
-            self._stream.emit_event(
+            self._stream._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_CONTENT_PART_DONE.value,
                     "item_id": self._item_id,
@@ -186,7 +186,7 @@ class TextContentBuilder:
         annotation_payload = deepcopy(annotation.as_dict())
         return cast(
             generated_models.ResponseOutputTextAnnotationAddedEvent,
-            self._stream.emit_event(
+            self._stream._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_OUTPUT_TEXT_ANNOTATION_ADDED.value,
                     "item_id": self._item_id,
@@ -256,7 +256,7 @@ class RefusalContentBuilder:
         self._lifecycle_state = BuilderLifecycleState.ADDED
         return cast(
             generated_models.ResponseContentPartAddedEvent,
-            self._stream.emit_event(
+            self._stream._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_CONTENT_PART_ADDED.value,
                     "item_id": self._item_id,
@@ -277,7 +277,7 @@ class RefusalContentBuilder:
         """
         return cast(
             generated_models.ResponseRefusalDeltaEvent,
-            self._stream.emit_event(
+            self._stream._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_REFUSAL_DELTA.value,
                     "item_id": self._item_id,
@@ -307,7 +307,7 @@ class RefusalContentBuilder:
         self._final_refusal = final_refusal
         return cast(
             generated_models.ResponseRefusalDoneEvent,
-            self._stream.emit_event(
+            self._stream._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_REFUSAL_DONE.value,
                     "item_id": self._item_id,
@@ -334,7 +334,7 @@ class RefusalContentBuilder:
         self._lifecycle_state = BuilderLifecycleState.DONE
         return cast(
             generated_models.ResponseContentPartDoneEvent,
-            self._stream.emit_event(
+            self._stream._emit_event(
                 {
                     "type": EVENT_TYPE.RESPONSE_CONTENT_PART_DONE.value,
                     "item_id": self._item_id,

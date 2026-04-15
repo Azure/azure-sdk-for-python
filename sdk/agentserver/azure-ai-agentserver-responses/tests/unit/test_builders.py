@@ -124,7 +124,7 @@ def test_output_item_function_call_output_builder__emits_added_and_done_events()
 
 
 def test_output_item_events__item_has_response_id_and_agent_reference() -> None:
-    """B20/B21 — output items carry response_id and agent_reference stamped by with_output_item_defaults."""
+    """B20/B21 — output items carry response_id and agent_reference stamped by _with_output_item_defaults."""
     stream = ResponseEventStream(
         response_id="resp_builder_3c",
         agent_reference={"type": "agent_reference", "name": "agent-a"},
