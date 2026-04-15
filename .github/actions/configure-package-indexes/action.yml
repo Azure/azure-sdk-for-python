@@ -7,7 +7,5 @@ runs:
     - name: Configure package indexes
       run: |
         echo "PIP_INDEX_URL=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" >> "$GITHUB_ENV"
-        echo "PIP_EXTRA_INDEX_URL=https://pypi.org/simple/" >> "$GITHUB_ENV"
-        echo "UV_DEFAULT_INDEX=https://pypi.org/simple/" >> "$GITHUB_ENV"
-        echo "UV_EXTRA_INDEX_URL=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" >> "$GITHUB_ENV"
+        echo "UV_DEFAULT_INDEX=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" >> "$GITHUB_ENV"
       shell: bash
