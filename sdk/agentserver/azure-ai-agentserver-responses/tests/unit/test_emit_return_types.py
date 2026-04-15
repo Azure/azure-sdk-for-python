@@ -81,6 +81,7 @@ from azure.ai.agentserver.responses.models._generated import (
     ResponseWebSearchCallInProgressEvent,
     ResponseWebSearchCallSearchingEvent,
     StructuredOutputsOutputItem,
+    UrlCitationBody,
 )
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
@@ -270,13 +271,12 @@ class TestTextContentBuilderReturnTypes:
         tc.emit_added()
         tc.emit_delta("hello")
         tc.emit_text_done()
-        annotation = {
-            "type": "url_citation",
-            "url": "https://example.com",
-            "start_index": 0,
-            "end_index": 5,
-            "title": "Example",
-        }
+        annotation = UrlCitationBody(
+            url="https://example.com",
+            start_index=0,
+            end_index=5,
+            title="Example",
+        )
         event = tc.emit_annotation_added(annotation)
         assert isinstance(event, ResponseOutputTextAnnotationAddedEvent), (
             f"Expected ResponseOutputTextAnnotationAddedEvent, got {type(event)}"

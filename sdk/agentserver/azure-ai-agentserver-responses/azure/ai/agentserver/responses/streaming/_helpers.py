@@ -57,9 +57,10 @@ def _build_events(
     :returns: A list of typed ``ResponseStreamEvent`` model instances.
     :rtype: list[~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent]
     """
+    ref = agent_reference if isinstance(agent_reference, AgentReference) else AgentReference(agent_reference)
     stream = ResponseEventStream(
         response_id=response_id,
-        agent_reference=agent_reference,
+        agent_reference=ref,
         model=model,
     )
     stream.emit_created(status="in_progress")

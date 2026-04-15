@@ -9,6 +9,7 @@ import pytest
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.models import _generated as generated_models
 from azure.ai.agentserver.responses.models._generated import (
+    AgentReference,
     OutputItemComputerToolCallOutputResource,
     ResponseCompletedEvent,
     ResponseCreatedEvent,
@@ -19,6 +20,7 @@ from azure.ai.agentserver.responses.models._generated import (
     ResponseOutputItemAddedEvent,
     ResponseOutputItemDoneEvent,
     ResponseStreamEvent,
+    ResponseUsage,
 )
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
@@ -26,7 +28,7 @@ from azure.ai.agentserver.responses.streaming._event_stream import ResponseEvent
 def test_event_stream_builder__builds_lifecycle_events() -> None:
     stream = ResponseEventStream(
         response_id="resp_builder_12345",
-        agent_reference={"type": "agent_reference", "name": "unit-agent"},
+        agent_reference=AgentReference(type="agent_reference", name="unit-agent"),
         model="gpt-4o-mini",
     )
 
@@ -82,7 +84,7 @@ def test_event_stream_builder__builds_output_item_events() -> None:
 def test_event_stream_builder__output_item_added_returns_event_immediately() -> None:
     stream = ResponseEventStream(
         response_id="resp_builder_incremental_12345",
-        agent_reference={"type": "agent_reference", "name": "unit-agent"},
+        agent_reference=AgentReference(type="agent_reference", name="unit-agent"),
         model="gpt-4o-mini",
     )
     stream.emit_created(status="queued")
@@ -141,13 +143,13 @@ def test_event_stream_builder__emit_completed_accepts_usage_and_sets_terminal_fi
     text.emit_done()
     message.emit_done()
 
-    usage = {
-        "input_tokens": 1,
-        "input_tokens_details": {"cached_tokens": 0},
-        "output_tokens": 2,
-        "output_tokens_details": {"reasoning_tokens": 0},
-        "total_tokens": 3,
-    }
+    usage = ResponseUsage(
+        input_tokens=1,
+        input_tokens_details={"cached_tokens": 0},
+        output_tokens=2,
+        output_tokens_details={"reasoning_tokens": 0},
+        total_tokens=3,
+    )
 
     completed = stream.emit_completed(usage=usage)
 
@@ -163,13 +165,13 @@ def test_event_stream_builder__emit_failed_accepts_error_and_usage() -> None:
     stream = ResponseEventStream(response_id="resp_builder_failed_params")
     stream.emit_created(status="in_progress")
 
-    usage = {
-        "input_tokens": 4,
-        "input_tokens_details": {"cached_tokens": 0},
-        "output_tokens": 5,
-        "output_tokens_details": {"reasoning_tokens": 0},
-        "total_tokens": 9,
-    }
+    usage = ResponseUsage(
+        input_tokens=4,
+        input_tokens_details={"cached_tokens": 0},
+        output_tokens=5,
+        output_tokens_details={"reasoning_tokens": 0},
+        total_tokens=9,
+    )
 
     failed = stream.emit_failed(code="server_error", message="boom", usage=usage)
 
@@ -187,13 +189,13 @@ def test_event_stream_builder__emit_incomplete_accepts_reason_and_usage() -> Non
     stream = ResponseEventStream(response_id="resp_builder_incomplete_params")
     stream.emit_created(status="in_progress")
 
-    usage = {
-        "input_tokens": 2,
-        "input_tokens_details": {"cached_tokens": 0},
-        "output_tokens": 3,
-        "output_tokens_details": {"reasoning_tokens": 0},
-        "total_tokens": 5,
-    }
+    usage = ResponseUsage(
+        input_tokens=2,
+        input_tokens_details={"cached_tokens": 0},
+        output_tokens=3,
+        output_tokens_details={"reasoning_tokens": 0},
+        total_tokens=5,
+    )
 
     incomplete = stream.emit_incomplete(reason="max_output_tokens", usage=usage)
 

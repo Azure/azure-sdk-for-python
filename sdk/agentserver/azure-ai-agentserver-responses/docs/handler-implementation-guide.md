@@ -1049,7 +1049,9 @@ Terminal methods accept an optional `usage` parameter for reporting token
 consumption:
 
 ```python
-usage = {"input_tokens": 150, "output_tokens": 42, "total_tokens": 192}
+from azure.ai.agentserver.responses.models import ResponseUsage
+
+usage = ResponseUsage(input_tokens=150, output_tokens=42, total_tokens=192)
 
 # Completed with usage
 yield stream.emit_completed(usage=usage)
