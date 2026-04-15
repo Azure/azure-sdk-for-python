@@ -8,11 +8,22 @@ on:
       - "eng/tools/azure-sdk-tools/**"
       - ".github/workflows/azure-sdk-tools.yml"
 
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+
+      - name: Azure Login
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Set up Python 3.13
         uses: actions/setup-python@v4
@@ -36,6 +47,13 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Azure Login
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Set up Python 3.13
         uses: actions/setup-python@v4
         with:
@@ -58,15 +76,23 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Azure Login
+        uses: azure/login@v3
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Set up Python 3.13
         uses: actions/setup-python@v4
         with:
           python-version: 3.13
 
-      - name: Configure UV indexes
+      - name: Configure package indexes
         run: |
           echo "UV_DEFAULT_INDEX=https://pypi.org/simple/" >> "$GITHUB_ENV"
           echo "UV_EXTRA_INDEX_URL=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" >> "$GITHUB_ENV"
+          echo "PIP_INDEX_URL=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" >> "$GITHUB_ENV"
         shell: bash
 
       - name: Install uv
