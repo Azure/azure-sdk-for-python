@@ -20,6 +20,7 @@ from azure.ai.agentserver.responses import (
     TextResponse,
 )
 from azure.ai.agentserver.responses.models import FunctionCallOutputItemParam, ItemMessage
+from azure.ai.agentserver.responses.models._generated import StructuredOutputsOutputItem
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -1344,7 +1345,7 @@ def _structured_full_control_handler(
     yield stream.emit_created()
     yield stream.emit_in_progress()
     builder = stream.add_output_item_structured_outputs()
-    item = {"type": "structured_outputs", "id": builder.item_id, "output": {"status": "ok"}}
+    item = StructuredOutputsOutputItem(id=builder.item_id, output={"status": "ok"})
     yield builder.emit_added(item)
     yield builder.emit_done(item)
     yield stream.emit_completed()

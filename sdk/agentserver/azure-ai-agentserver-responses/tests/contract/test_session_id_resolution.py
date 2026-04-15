@@ -3,7 +3,7 @@
 """Protocol conformance tests for session ID resolution (B39).
 
 Priority: request payload ``agent_session_id`` → ``FOUNDRY_AGENT_SESSION_ID``
-env var → generated UUID.
+env var → deterministic SHA-256 derivation → random hex.
 The resolved session ID MUST be auto-stamped on the
 ``ResponseObject.agent_session_id``.
 
@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import json
 import os
-import uuid
+import re
 from typing import Any
 from unittest.mock import patch
 
@@ -237,11 +237,11 @@ class TestEnvVarFallback:
 # ════════════════════════════════════════════════════════════
 
 
-class TestGeneratedUuidFallback:
-    """Generated UUID when no payload field or env var."""
+class TestGeneratedSessionIdFallback:
+    """Generated session ID when no payload field or env var."""
 
     def test_no_payload_or_env_generates_session_id(self) -> None:
-        """B39 P3: generated UUID when nothing else is available."""
+        """B39 P3: generated hex when nothing else is available."""
         with patch.dict(os.environ, {}, clear=False):
             # Remove FOUNDRY_AGENT_SESSION_ID if present
             env = os.environ.copy()
@@ -256,8 +256,9 @@ class TestGeneratedUuidFallback:
         assert response.status_code == 200
         session_id = response.json()["agent_session_id"]
         assert session_id is not None and session_id != ""
-        # Verify it's a valid UUID
-        uuid.UUID(session_id)
+        # Verify it's a valid 63-char lowercase hex string
+        assert len(session_id) == 63
+        assert re.fullmatch(r"[0-9a-f]+", session_id)
 
     def test_generated_session_id_is_different_per_request(self) -> None:
         """B39 P3: generated session IDs are unique per request."""
@@ -289,7 +290,7 @@ class TestCrossModeConsistency:
     """Session ID stamping works consistently across modes."""
 
     def test_streaming_no_payload_or_env_stamps_generated_session_id(self) -> None:
-        """B39: streaming mode generates and stamps a UUID session ID."""
+        """B39: streaming mode generates and stamps a hex session ID."""
         with patch.dict(os.environ, {}, clear=False):
             env = os.environ.copy()
             env.pop("FOUNDRY_AGENT_SESSION_ID", None)
@@ -307,10 +308,11 @@ class TestCrossModeConsistency:
         assert len(completed_events) == 1
         session_id = completed_events[0]["data"]["response"]["agent_session_id"]
         assert session_id is not None and session_id != ""
-        uuid.UUID(session_id)
+        assert len(session_id) == 63
+        assert re.fullmatch(r"[0-9a-f]+", session_id)
 
     def test_background_no_payload_or_env_stamps_generated_session_id(self) -> None:
-        """B39: background mode generates and stamps a UUID session ID."""
+        """B39: background mode generates and stamps a hex session ID."""
         with patch.dict(os.environ, {}, clear=False):
             env = os.environ.copy()
             env.pop("FOUNDRY_AGENT_SESSION_ID", None)
@@ -326,7 +328,8 @@ class TestCrossModeConsistency:
 
         session_id = terminal["agent_session_id"]
         assert session_id is not None and session_id != ""
-        uuid.UUID(session_id)
+        assert len(session_id) == 63
+        assert re.fullmatch(r"[0-9a-f]+", session_id)
 
     def test_background_streaming_payload_session_id_on_all_events(self) -> None:
         """B39: bg+streaming with payload session ID stamps all lifecycle events."""
