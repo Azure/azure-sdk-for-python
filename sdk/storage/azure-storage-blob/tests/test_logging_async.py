@@ -177,3 +177,58 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
             # the keyword SharedKey is present in the authorization header's value
             assert _AUTHORIZATION_HEADER_NAME in log_as_str
             assert not 'SharedKey' in log_as_str
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_logging_body_option_overrides_constructor(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange - Create client with logging_body=True in constructor
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            logging_enable=True,
+            logging_body=True
+        )
+        container_name = self.get_resource_name('utcontainer')
+        container = bsc.get_container_client(container_name)
+        if self.is_live:
+            try:
+                await container.create_container()
+            except:
+                pass
+        
+        request_body = 'testoverridelogging'
+        blob_name = self.get_resource_name("testoverride")
+        blob_client = container.get_blob_client(blob_name)
+        await blob_client.upload_blob(request_body, overwrite=True)
+
+        # Act - Download without logging_body option (should use constructor default=True)
+        with LogCaptured(self) as log_captured:
+            await blob_client.download_blob()
+            log_as_str = log_captured.getvalue()
+            # Assert - In async, response body shows "Body is streamable" instead of actual content
+            assert "Body is streamable" in log_as_str
+
+        # Act - Download with logging_body=False (should override constructor)
+        with LogCaptured(self) as log_captured:
+            await blob_client.download_blob(logging_body=False)
+            log_as_str = log_captured.getvalue()
+            # Assert - Body should NOT be logged, overriding constructor setting
+            assert "Body is streamable" not in log_as_str
+
+        # Act - Upload with logging_body=False (test request logging override)
+        with LogCaptured(self) as log_captured:
+            await blob_client.upload_blob('uploadtest', overwrite=True, logging_body=False)
+            log_as_str = log_captured.getvalue()
+            # Assert - Request body should NOT be logged
+            assert 'uploadtest' not in log_as_str
+
+        # Act - Upload/Download with logging_enable=False (should override constructor and disable logging entirely)
+        with LogCaptured(self) as log_captured:
+            await blob_client.upload_blob('uploadtest', overwrite=True, logging_enable=False)
+            await blob_client.download_blob(logging_enable=False)
+            log_as_str = log_captured.getvalue()
+            # Assert - No logging should occur
+            assert log_as_str == ''
