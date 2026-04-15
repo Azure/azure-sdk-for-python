@@ -246,7 +246,7 @@ class TestBuildSessionConfig:
             config = _build_session_config()
         assert config["provider"]["type"] == "openai"
         assert config["provider"]["bearer_token"] == "test-key"
-        assert config["provider"]["wire_api"] == "completions"
+        assert config["provider"]["wire_api"] == "responses"
         assert "openai/v1/" in config["provider"]["base_url"]
 
     def test_byok_managed_identity_mode(self):
@@ -257,7 +257,7 @@ class TestBuildSessionConfig:
             config = _build_session_config()
         assert config["provider"]["type"] == "openai"
         assert config["provider"]["bearer_token"] == "placeholder"
-        assert config["provider"]["wire_api"] == "completions"
+        assert config["provider"]["wire_api"] == "responses"
 
     def test_auto_derive_from_project_endpoint(self):
         """Auto-derives RESOURCE_URL from PROJECT_ENDPOINT when no GITHUB_TOKEN."""
