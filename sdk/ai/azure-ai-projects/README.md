@@ -266,11 +266,10 @@ This feature ensures that all operations within a distributed trace share the sa
 Trace context propagation is **enabled by default** when tracing is enabled (for example through `configure_azure_monitor` or the `AIProjectInstrumentor().instrument()` call). To disable it, set the `AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION` environment variable to `false`, or pass `enable_trace_context_propagation=False` to the `AIProjectInstrumentor().instrument()` call.
 
 **When does the change take effect?**
-- Changes to `enable_trace_context_propagation` (whether via `instrument()` or the environment variable) only affect OpenAI clients obtained via `get_openai_client()` **after** the change is applied. Previously acquired clients are unaffected.
-- To apply the new setting to all clients, call `AIProjectInstrumentor().instrument(enable_trace_context_propagation=<value>)` before acquiring your OpenAI clients, or re-acquire the clients after making the change.
+- Changes to `enable_trace_context_propagation` only affect OpenAI clients obtained via `get_openai_client()` **after** the change is applied. Previously acquired clients are unaffected.
 
 **Security and Privacy Considerations:**
-- **Trace IDs are sent to external services**: The `traceparent` and `tracestate` headers from your client-side originating spans are injected into requests sent to service. This enables end-to-end distributed tracing, but note that the trace identifier may be shared beyond the initial API call.
+- **Trace Ids are sent to external services**: The `traceparent` and `tracestate` headers from your client-side originating spans are injected into requests sent to service. This enables end-to-end distributed tracing, but note that the trace identifier may be shared beyond the initial API call.
 - **Enabled by Default**: If you have privacy or compliance requirements that prohibit sharing trace identifiers with services, disable trace context propagation by setting `enable_trace_context_propagation=False` or the environment variable to `false`.
 
 #### Controlling baggage propagation
