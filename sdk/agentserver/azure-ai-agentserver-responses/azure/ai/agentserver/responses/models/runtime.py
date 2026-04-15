@@ -15,7 +15,6 @@ if TYPE_CHECKING:
     from .._response_context import ResponseContext
     from ..hosting._event_subject import _ResponseEventSubject
 
-EVENT_TYPE = ResponseStreamEventType
 
 ResponseStatus = Literal["queued", "in_progress", "completed", "failed", "cancelled", "incomplete"]
 TerminalResponseStatus = Literal["completed", "failed", "cancelled", "incomplete"]
@@ -53,9 +52,9 @@ class StreamEventRecord:
         :rtype: bool
         """
         return self.event_type in {
-            EVENT_TYPE.RESPONSE_COMPLETED.value,
-            EVENT_TYPE.RESPONSE_FAILED.value,
-            EVENT_TYPE.RESPONSE_INCOMPLETE.value,
+            ResponseStreamEventType.RESPONSE_COMPLETED.value,
+            ResponseStreamEventType.RESPONSE_FAILED.value,
+            ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
         }
 
     @classmethod
@@ -238,7 +237,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
             resolved = snapshot.get("status")
             if isinstance(resolved, str):
                 self.status = cast(ResponseStatus, resolved)
-        elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
+        elif event_type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value:
             item = normalized.get("item")
             if item is not None and self.response is not None:
                 item_dict = item.as_dict() if hasattr(item, "as_dict") else item
@@ -246,7 +245,7 @@ class ResponseExecution:  # pylint: disable=too-many-instance-attributes
                     output = self.response.setdefault("output", [])
                     if isinstance(output, list):
                         output.append(deepcopy(item_dict))
-        elif event_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value:
+        elif event_type == ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value:
             item = normalized.get("item")
             output_index = normalized.get("output_index")
             if item is not None and isinstance(output_index, int) and self.response is not None:

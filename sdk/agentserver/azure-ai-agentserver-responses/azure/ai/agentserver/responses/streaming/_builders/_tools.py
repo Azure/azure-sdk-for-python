@@ -8,7 +8,7 @@ from collections.abc import AsyncIterable
 from typing import TYPE_CHECKING, AsyncIterator, Iterator, cast
 
 from ...models import _generated as generated_models
-from ._base import EVENT_TYPE, BaseOutputItemBuilder, _require_non_empty
+from ._base import BaseOutputItemBuilder, _require_non_empty
 
 if TYPE_CHECKING:
     from .._event_stream import ResponseEventStream
@@ -40,7 +40,7 @@ class OutputItemFileSearchCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseFileSearchCallInProgressEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_FILE_SEARCH_CALL_IN_PROGRESS.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_FILE_SEARCH_CALL_IN_PROGRESS.value),
         )
 
     def emit_searching(self) -> generated_models.ResponseFileSearchCallSearchingEvent:
@@ -51,7 +51,7 @@ class OutputItemFileSearchCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseFileSearchCallSearchingEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_FILE_SEARCH_CALL_SEARCHING.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_FILE_SEARCH_CALL_SEARCHING.value),
         )
 
     def emit_completed(self) -> generated_models.ResponseFileSearchCallCompletedEvent:
@@ -62,7 +62,7 @@ class OutputItemFileSearchCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseFileSearchCallCompletedEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_FILE_SEARCH_CALL_COMPLETED.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_FILE_SEARCH_CALL_COMPLETED.value),
         )
 
     def emit_done(self) -> generated_models.ResponseOutputItemDoneEvent:
@@ -93,7 +93,7 @@ class OutputItemWebSearchCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseWebSearchCallInProgressEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_WEB_SEARCH_CALL_IN_PROGRESS.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_WEB_SEARCH_CALL_IN_PROGRESS.value),
         )
 
     def emit_searching(self) -> generated_models.ResponseWebSearchCallSearchingEvent:
@@ -104,7 +104,7 @@ class OutputItemWebSearchCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseWebSearchCallSearchingEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_WEB_SEARCH_CALL_SEARCHING.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_WEB_SEARCH_CALL_SEARCHING.value),
         )
 
     def emit_completed(self) -> generated_models.ResponseWebSearchCallCompletedEvent:
@@ -115,7 +115,7 @@ class OutputItemWebSearchCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseWebSearchCallCompletedEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_WEB_SEARCH_CALL_COMPLETED.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_WEB_SEARCH_CALL_COMPLETED.value),
         )
 
     def emit_done(self) -> generated_models.ResponseOutputItemDoneEvent:
@@ -168,7 +168,7 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseCodeInterpreterCallInProgressEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_CODE_INTERPRETER_CALL_IN_PROGRESS.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_IN_PROGRESS.value),
         )
 
     def emit_interpreting(self) -> generated_models.ResponseCodeInterpreterCallInterpretingEvent:
@@ -179,7 +179,7 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseCodeInterpreterCallInterpretingEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_CODE_INTERPRETER_CALL_INTERPRETING.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_INTERPRETING.value),
         )
 
     def emit_code_delta(self, delta: str) -> generated_models.ResponseCodeInterpreterCallCodeDeltaEvent:
@@ -193,7 +193,7 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
         return cast(
             generated_models.ResponseCodeInterpreterCallCodeDeltaEvent,
             self._emit_item_state_event(
-                EVENT_TYPE.RESPONSE_CODE_INTERPRETER_CALL_CODE_DELTA.value,
+                generated_models.ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_CODE_DELTA.value,
                 extra_payload={"delta": delta},
             ),
         )
@@ -210,7 +210,7 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
         return cast(
             generated_models.ResponseCodeInterpreterCallCodeDoneEvent,
             self._emit_item_state_event(
-                EVENT_TYPE.RESPONSE_CODE_INTERPRETER_CALL_CODE_DONE.value,
+                generated_models.ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_CODE_DONE.value,
                 extra_payload={"code": code},
             ),
         )
@@ -223,7 +223,7 @@ class OutputItemCodeInterpreterCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseCodeInterpreterCallCompletedEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_CODE_INTERPRETER_CALL_COMPLETED.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_CODE_INTERPRETER_CALL_COMPLETED.value),
         )
 
     def emit_done(self) -> generated_models.ResponseOutputItemDoneEvent:
@@ -322,7 +322,7 @@ class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseImageGenCallInProgressEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_IMAGE_GENERATION_CALL_IN_PROGRESS.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_IMAGE_GENERATION_CALL_IN_PROGRESS.value),
         )
 
     def emit_generating(self) -> generated_models.ResponseImageGenCallGeneratingEvent:
@@ -333,7 +333,7 @@ class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseImageGenCallGeneratingEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_IMAGE_GENERATION_CALL_GENERATING.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_IMAGE_GENERATION_CALL_GENERATING.value),
         )
 
     def emit_partial_image(self, partial_image_b64: str) -> generated_models.ResponseImageGenCallPartialImageEvent:
@@ -349,7 +349,7 @@ class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
         return cast(
             generated_models.ResponseImageGenCallPartialImageEvent,
             self._emit_item_state_event(
-                EVENT_TYPE.RESPONSE_IMAGE_GENERATION_CALL_PARTIAL_IMAGE.value,
+                generated_models.ResponseStreamEventType.RESPONSE_IMAGE_GENERATION_CALL_PARTIAL_IMAGE.value,
                 extra_payload={"partial_image_index": partial_index, "partial_image_b64": partial_image_b64},
             ),
         )
@@ -362,7 +362,7 @@ class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseImageGenCallCompletedEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_IMAGE_GENERATION_CALL_COMPLETED.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_IMAGE_GENERATION_CALL_COMPLETED.value),
         )
 
     def emit_done(self, result: str) -> generated_models.ResponseOutputItemDoneEvent:
@@ -456,7 +456,7 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseMCPCallInProgressEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_MCP_CALL_IN_PROGRESS.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_MCP_CALL_IN_PROGRESS.value),
         )
 
     def emit_arguments_delta(self, delta: str) -> generated_models.ResponseMCPCallArgumentsDeltaEvent:
@@ -470,7 +470,7 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         return cast(
             generated_models.ResponseMCPCallArgumentsDeltaEvent,
             self._emit_item_state_event(
-                EVENT_TYPE.RESPONSE_MCP_CALL_ARGUMENTS_DELTA.value,
+                generated_models.ResponseStreamEventType.RESPONSE_MCP_CALL_ARGUMENTS_DELTA.value,
                 extra_payload={"delta": delta},
             ),
         )
@@ -487,7 +487,7 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         return cast(
             generated_models.ResponseMCPCallArgumentsDoneEvent,
             self._emit_item_state_event(
-                EVENT_TYPE.RESPONSE_MCP_CALL_ARGUMENTS_DONE.value,
+                generated_models.ResponseStreamEventType.RESPONSE_MCP_CALL_ARGUMENTS_DONE.value,
                 extra_payload={"arguments": arguments},
             ),
         )
@@ -501,7 +501,7 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         self._terminal_status = "completed"
         return cast(
             generated_models.ResponseMCPCallCompletedEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_MCP_CALL_COMPLETED.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_MCP_CALL_COMPLETED.value),
         )
 
     def emit_failed(self) -> generated_models.ResponseMCPCallFailedEvent:
@@ -513,7 +513,7 @@ class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
         self._terminal_status = "failed"
         return cast(
             generated_models.ResponseMCPCallFailedEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_MCP_CALL_FAILED.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_MCP_CALL_FAILED.value),
         )
 
     def emit_done(self) -> generated_models.ResponseOutputItemDoneEvent:
@@ -627,7 +627,7 @@ class OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseMCPListToolsInProgressEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_MCP_LIST_TOOLS_IN_PROGRESS.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_MCP_LIST_TOOLS_IN_PROGRESS.value),
         )
 
     def emit_completed(self) -> generated_models.ResponseMCPListToolsCompletedEvent:
@@ -638,7 +638,7 @@ class OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseMCPListToolsCompletedEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_MCP_LIST_TOOLS_COMPLETED.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_MCP_LIST_TOOLS_COMPLETED.value),
         )
 
     def emit_failed(self) -> generated_models.ResponseMCPListToolsFailedEvent:
@@ -649,7 +649,7 @@ class OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseMCPListToolsFailedEvent,
-            self._emit_item_state_event(EVENT_TYPE.RESPONSE_MCP_LIST_TOOLS_FAILED.value),
+            self._emit_item_state_event(generated_models.ResponseStreamEventType.RESPONSE_MCP_LIST_TOOLS_FAILED.value),
         )
 
     def emit_done(self) -> generated_models.ResponseOutputItemDoneEvent:
@@ -742,7 +742,7 @@ class OutputItemCustomToolCallBuilder(BaseOutputItemBuilder):
         return cast(
             generated_models.ResponseCustomToolCallInputDeltaEvent,
             self._emit_item_state_event(
-                EVENT_TYPE.RESPONSE_CUSTOM_TOOL_CALL_INPUT_DELTA.value,
+                generated_models.ResponseStreamEventType.RESPONSE_CUSTOM_TOOL_CALL_INPUT_DELTA.value,
                 extra_payload={"delta": delta},
             ),
         )
@@ -759,7 +759,7 @@ class OutputItemCustomToolCallBuilder(BaseOutputItemBuilder):
         return cast(
             generated_models.ResponseCustomToolCallInputDoneEvent,
             self._emit_item_state_event(
-                EVENT_TYPE.RESPONSE_CUSTOM_TOOL_CALL_INPUT_DONE.value,
+                generated_models.ResponseStreamEventType.RESPONSE_CUSTOM_TOOL_CALL_INPUT_DONE.value,
                 extra_payload={"input": input_text},
             ),
         )

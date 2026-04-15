@@ -31,8 +31,6 @@ from ._builders import (
 from ._internals import construct_event_model
 from ._state_machine import EventStreamValidator
 
-EVENT_TYPE = generated_models.ResponseStreamEventType
-
 # Event types whose payload is a full Response snapshot.
 # Lifecycle events nest under a "response" key on the wire.
 _RESPONSE_SNAPSHOT_EVENT_TYPES = _internals._RESPONSE_SNAPSHOT_EVENT_TYPES  # pylint: disable=protected-access
@@ -177,7 +175,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             generated_models.ResponseQueuedEvent,
             self._emit_event(
                 {
-                    "type": EVENT_TYPE.RESPONSE_QUEUED.value,
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_QUEUED.value,
                     "response": self._response_payload(),
                 }
             ),
@@ -196,7 +194,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             generated_models.ResponseCreatedEvent,
             self._emit_event(
                 {
-                    "type": EVENT_TYPE.RESPONSE_CREATED.value,
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_CREATED.value,
                     "response": self._response_payload(),
                 }
             ),
@@ -213,7 +211,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             generated_models.ResponseInProgressEvent,
             self._emit_event(
                 {
-                    "type": EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_IN_PROGRESS.value,
                     "response": self._response_payload(),
                 }
             ),
@@ -237,7 +235,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             generated_models.ResponseCompletedEvent,
             self._emit_event(
                 {
-                    "type": EVENT_TYPE.RESPONSE_COMPLETED.value,
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_COMPLETED.value,
                     "response": self._response_payload(),
                 }
             ),
@@ -274,7 +272,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             generated_models.ResponseFailedEvent,
             self._emit_event(
                 {
-                    "type": EVENT_TYPE.RESPONSE_FAILED.value,
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
                     "response": self._response_payload(),
                 }
             ),
@@ -311,7 +309,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             generated_models.ResponseIncompleteEvent,
             self._emit_event(
                 {
-                    "type": EVENT_TYPE.RESPONSE_INCOMPLETE.value,
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
                     "response": self._response_payload(),
                 }
             ),

@@ -10,8 +10,6 @@ from typing import TYPE_CHECKING, Any, cast
 
 from ...models import _generated as generated_models
 
-EVENT_TYPE = generated_models.ResponseStreamEventType
-
 if TYPE_CHECKING:
     from .._event_stream import ResponseEventStream
 
@@ -107,7 +105,7 @@ class BaseOutputItemBuilder:
             generated_models.ResponseOutputItemAddedEvent,
             self._stream._emit_event(
                 {
-                    "type": EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value,
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value,
                     "output_index": self._output_index,
                     "item": stamped_item,
                 }
@@ -129,7 +127,7 @@ class BaseOutputItemBuilder:
             generated_models.ResponseOutputItemDoneEvent,
             self._stream._emit_event(
                 {
-                    "type": EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value,
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value,
                     "output_index": self._output_index,
                     "item": stamped_item,
                 }

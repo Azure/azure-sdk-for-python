@@ -9,7 +9,7 @@ from copy import deepcopy
 from typing import TYPE_CHECKING, AsyncIterator, Iterator, cast
 
 from ...models import _generated as generated_models
-from ._base import EVENT_TYPE, BaseOutputItemBuilder, _require_non_empty
+from ._base import BaseOutputItemBuilder, _require_non_empty
 
 if TYPE_CHECKING:
     from .._event_stream import ResponseEventStream
@@ -91,7 +91,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
             generated_models.ResponseFunctionCallArgumentsDeltaEvent,
             self._stream._emit_event(
                 {
-                    "type": EVENT_TYPE.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA.value,
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA.value,
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "delta": delta,
@@ -112,7 +112,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
             generated_models.ResponseFunctionCallArgumentsDoneEvent,
             self._stream._emit_event(
                 {
-                    "type": EVENT_TYPE.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE.value,
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE.value,
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "name": self._name,

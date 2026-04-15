@@ -15,8 +15,6 @@ from ._event_stream import ResponseEventStream
 from ._internals import _RESPONSE_SNAPSHOT_EVENT_TYPES
 from ._sse import encode_sse_event
 
-EVENT_TYPE = generated_models.ResponseStreamEventType
-
 
 def strip_nulls(d: dict) -> dict:
     """Recursively remove keys whose values are ``None`` from a dict.

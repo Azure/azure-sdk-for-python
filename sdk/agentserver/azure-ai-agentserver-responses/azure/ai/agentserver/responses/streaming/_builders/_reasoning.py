@@ -8,7 +8,7 @@ from collections.abc import AsyncIterable
 from typing import TYPE_CHECKING, AsyncIterator, Iterator, cast
 
 from ...models import _generated as generated_models
-from ._base import EVENT_TYPE, BaseOutputItemBuilder, BuilderLifecycleState
+from ._base import BaseOutputItemBuilder, BuilderLifecycleState
 
 if TYPE_CHECKING:
     from .._event_stream import ResponseEventStream
@@ -68,7 +68,7 @@ class ReasoningSummaryPartBuilder:
             generated_models.ResponseReasoningSummaryPartAddedEvent,
             self._stream._emit_event(
                 {
-                    "type": EVENT_TYPE.RESPONSE_REASONING_SUMMARY_PART_ADDED.value,
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_PART_ADDED.value,
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "summary_index": self._summary_index,
@@ -89,7 +89,7 @@ class ReasoningSummaryPartBuilder:
             generated_models.ResponseReasoningSummaryTextDeltaEvent,
             self._stream._emit_event(
                 {
-                    "type": EVENT_TYPE.RESPONSE_REASONING_SUMMARY_TEXT_DELTA.value,
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_TEXT_DELTA.value,
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "summary_index": self._summary_index,
@@ -111,7 +111,7 @@ class ReasoningSummaryPartBuilder:
             generated_models.ResponseReasoningSummaryTextDoneEvent,
             self._stream._emit_event(
                 {
-                    "type": EVENT_TYPE.RESPONSE_REASONING_SUMMARY_TEXT_DONE.value,
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_TEXT_DONE.value,
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "summary_index": self._summary_index,
@@ -134,7 +134,7 @@ class ReasoningSummaryPartBuilder:
             generated_models.ResponseReasoningSummaryPartDoneEvent,
             self._stream._emit_event(
                 {
-                    "type": EVENT_TYPE.RESPONSE_REASONING_SUMMARY_PART_DONE.value,
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_PART_DONE.value,
                     "item_id": self._item_id,
                     "output_index": self._output_index,
                     "summary_index": self._summary_index,

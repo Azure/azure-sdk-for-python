@@ -22,7 +22,11 @@ from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
 from azure.ai.agentserver.core import detach_context, end_span, flush_spans, set_current_span, trace_stream
-from azure.ai.agentserver.responses.models._generated import AgentReference, CreateResponse
+from azure.ai.agentserver.responses.models._generated import (
+    AgentReference,
+    CreateResponse,
+    ResponseStreamEventType,
+)
 
 from .._options import ResponsesServerOptions
 from .._response_context import IsolationContext, ResponseContext
@@ -30,7 +34,7 @@ from ..models._helpers import get_input_expanded, to_output_item
 from ..models.errors import RequestValidationError
 from ..models.runtime import ResponseExecution, ResponseModeFlags, build_cancelled_response, build_failed_response
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
-from ..streaming._helpers import EVENT_TYPE, _encode_sse
+from ..streaming._helpers import _encode_sse
 from ..streaming._sse import encode_sse_any_event
 from ..streaming._state_machine import _normalize_lifecycle_events
 from ._execution_context import _ExecutionContext
@@ -211,8 +215,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         _normalize_lifecycle_events(
             response_id="resp_validation",
             events=[
-                {"type": EVENT_TYPE.RESPONSE_CREATED.value, "response": {"status": "in_progress"}},
-                {"type": EVENT_TYPE.RESPONSE_COMPLETED.value, "response": {"status": "completed"}},
+                {"type": ResponseStreamEventType.RESPONSE_CREATED.value, "response": {"status": "in_progress"}},
+                {"type": ResponseStreamEventType.RESPONSE_COMPLETED.value, "response": {"status": "completed"}},
             ],
         )
 
