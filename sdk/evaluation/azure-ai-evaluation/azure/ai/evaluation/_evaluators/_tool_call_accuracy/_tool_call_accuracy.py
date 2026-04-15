@@ -256,7 +256,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
         llm_output = prompty_output_dict.get("llm_output", prompty_output_dict)
         if isinstance(llm_output, dict):
-                        # Handle skipped status from LLM
+            # Handle skipped status from LLM
             llm_status = llm_output.get("status", "completed")
             if llm_status == "skipped":
                 reason = llm_output.get("reasoning", "")
@@ -281,15 +281,17 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             score = float(score)
             score_result = "pass" if score >= self.threshold else "fail"
             llm_properties = llm_output.get("properties", {})
-            llm_properties.update({
-                "prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                "completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                "total_tokens": prompty_output_dict.get("total_token_count", 0),
-                "finish_reason": prompty_output_dict.get("finish_reason", ""),
-                "model": prompty_output_dict.get("model_id", ""),
-                "sample_input": prompty_output_dict.get("sample_input", ""),
-                "sample_output": prompty_output_dict.get("sample_output", ""),
-            })
+            llm_properties.update(
+                {
+                    "prompt_tokens": prompty_output_dict.get("input_token_count", 0),
+                    "completion_tokens": prompty_output_dict.get("output_token_count", 0),
+                    "total_tokens": prompty_output_dict.get("total_token_count", 0),
+                    "finish_reason": prompty_output_dict.get("finish_reason", ""),
+                    "model": prompty_output_dict.get("model_id", ""),
+                    "sample_input": prompty_output_dict.get("sample_input", ""),
+                    "sample_output": prompty_output_dict.get("sample_output", ""),
+                }
+            )
             response_dict = {
                 f"{self._result_key}_score": score,
                 f"{self._result_key}_result": score_result,
