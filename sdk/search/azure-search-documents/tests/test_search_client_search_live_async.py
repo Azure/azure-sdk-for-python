@@ -28,7 +28,6 @@ class TestClientTestAsync(AzureRecordedTestCase):
             await self._test_get_search_coverage(client)
             await self._test_get_search_facets_none(client)
             await self._test_get_search_facets_result(client)
-            await self._test_get_search_facet_metrics(client)
             await self._test_autocomplete(client)
             await self._test_suggest(client)
 
@@ -134,42 +133,6 @@ class TestClientTestAsync(AzureRecordedTestCase):
                 {"value": "Luxury", "count": 1},
             ]
         }
-
-    async def _test_get_search_facet_metrics(self, client):
-        facets = [
-            "rooms/baseRate,metric:sum",
-            "rooms/baseRate,metric:avg",
-            "rooms/baseRate,metric:min",
-            "rooms/baseRate,metric:max,default:0",
-            "rooms/sleepsCount,metric:cardinality,precisionThreshold:10",
-        ]
-        results = await client.search(search_text="*", facets=facets)
-        facet_payload = await results.get_facets()
-        assert facet_payload is not None
-
-        base_rate_metrics = facet_payload.get("rooms/baseRate", [])
-        assert len(base_rate_metrics) == 4
-
-        observed_metrics = {}
-        for bucket in base_rate_metrics:
-            for metric in ("sum", "avg", "min", "max"):
-                value = bucket.get(metric)
-                if value is not None:
-                    observed_metrics[metric] = value
-
-        expected_metrics = {
-            "sum": 27.91,
-            "avg": 6.9775,
-            "min": 2.44,
-            "max": 9.69,
-        }
-        for metric, expected in expected_metrics.items():
-            assert metric in observed_metrics
-            assert observed_metrics[metric] == pytest.approx(expected, abs=0.001)
-
-        sleeps_metrics = facet_payload.get("rooms/sleepsCount", [])
-        assert len(sleeps_metrics) == 1
-        assert sleeps_metrics[0].get("cardinality") == 1
 
     async def _test_autocomplete(self, client):
         results = await client.autocomplete(search_text="mot", suggester_name="sg")

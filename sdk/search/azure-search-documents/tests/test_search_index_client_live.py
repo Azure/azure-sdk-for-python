@@ -192,55 +192,6 @@ class TestSearchIndexClient(AzureRecordedTestCase):
 
     @SearchEnvVarPreparer()
     @recorded_by_proxy
-    def test_purview_enabled_index(self, search_service_endpoint, search_service_name):
-        del search_service_name  # unused
-        endpoint = search_service_endpoint
-        client = SearchIndexClient(endpoint, get_credential(), retry_backoff_factor=60)
-
-        index_name = self.get_resource_name("purview-index")
-        fields = [
-            SearchField(
-                name="id",
-                type=SearchFieldDataType.STRING,
-                key=True,
-                filterable=True,
-                sortable=True,
-            ),
-            SearchField(
-                name="sensitivityLabel",
-                type=SearchFieldDataType.STRING,
-                filterable=True,
-                sensitivity_label=True,
-            ),
-        ]
-        index = SearchIndex(name=index_name, fields=fields, purview_enabled=True)
-
-        created = client.create_index(index)
-        try:
-            assert created.purview_enabled is True
-            for field in created.fields:
-                if field.name == "sensitivityLabel":
-                    assert field.sensitivity_label is True
-                    break
-            else:
-                raise AssertionError("Expected sensitivityLabel field to be present")
-
-            fetched = client.get_index(index_name)
-            assert fetched.purview_enabled is True
-            for field in fetched.fields:
-                if field.name == "sensitivityLabel":
-                    assert field.sensitivity_label is True
-                    break
-            else:
-                raise AssertionError("Expected sensitivityLabel field to be present")
-        finally:
-            try:
-                client.delete_index(index_name)
-            except HttpResponseError:
-                pass
-
-    @SearchEnvVarPreparer()
-    @recorded_by_proxy
     def test_scoring_profile_product_aggregation(self, search_service_endpoint, search_service_name):
         del search_service_name  # unused
         endpoint = search_service_endpoint

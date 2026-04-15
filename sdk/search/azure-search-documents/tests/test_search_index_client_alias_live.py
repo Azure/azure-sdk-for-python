@@ -25,6 +25,7 @@ from search_service_preparer import SearchEnvVarPreparer, search_decorator
 
 
 class TestSearchClientAlias(AzureRecordedTestCase):
+    @pytest.mark.skip(reason="Aliases endpoint not yet deployed for 2026-04-01 GA API version")
     @SearchEnvVarPreparer()
     @search_decorator(schema="hotel_schema.json", index_batch="hotel_small.json")
     @recorded_by_proxy

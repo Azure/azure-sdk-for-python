@@ -71,3 +71,6 @@ pyright = true
 verifytypes = true
 pylint = true
 type_check_samples = false
+
+[tool.uv.sources]
+azure-monitor-opentelemetry-exporter = { path = "../../monitor/azure-monitor-opentelemetry-exporter" }
