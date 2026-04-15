@@ -248,9 +248,19 @@ The canonical definition of which install-and-test checks run in each mode lives
 | `devtest` | — | ✓ | — |
 | `regression` | — | ✓ | — |
 
-The nightly pipeline runs against the full Python version and platform matrix:
+Static analysis checks always run against **Python 3.10** (configured via `PythonVersion` in `eng/pipelines/templates/variables/globals.yml`).
 
-![res/full_matrix.png](res/full_matrix.png)
+The install-and-test checks run across the following Python version and platform matrix:
+
+| Platform | Python Version |
+|---|---|---|---|---|
+| Linux | `3.9` |
+| Linux | `3.10` |
+| Linux | `3.13` |
+| Linux | `3.14` |
+| Linux | `PyPy 3.11` |
+| Windows | `3.12` |
+| macOS | `3.11` |
 
 ## Static Analysis Checks
 
