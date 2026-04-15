@@ -1,11 +1,10 @@
 {
-  "commit": "98a4db5d6c32ff5a3ad5780fce6c716cafdbbeec",
+  "apiVersion": "2021-08-31-preview",
+  "apiVersions": {
+    "Microsoft.ExtendedLocation": "2021-08-31-preview"
+  },
+  "commit": "e2c526cba2b39a4d2b5666fba68af1992613ef9d",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
-  "autorest": "3.10.2",
-  "use": [
-    "@autorest/python@6.50.0",
-    "@autorest/modelerfour@4.27.0"
-  ],
-  "autorest_command": "autorest specification/extendedlocation/resource-manager/Microsoft.ExtendedLocation/CustomLocations/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/home/v-chenjiang/spec/worktrees/sdk-azure-mgmt-extendedlocation/sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/extendedlocation/resource-manager/Microsoft.ExtendedLocation/CustomLocations/readme.md"
+  "typespec_src": "specification/extendedlocation/resource-manager/Microsoft.ExtendedLocation/CustomLocations",
+  "emitterVersion": "0.61.3"
 }
