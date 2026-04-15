@@ -103,6 +103,7 @@ def _extract_input_with_attachments(request) -> str:
     return text
 
 _COGNITIVE_SERVICES_SCOPE = "https://cognitiveservices.azure.com/.default"
+_FOUNDRY_SCOPE = "https://ai.azure.com/.default"
 
 
 # ---------------------------------------------------------------------------
@@ -257,15 +258,19 @@ class CopilotAdapter:
         # Multi-turn: conversation_id -> live CopilotSession
         self._sessions: Dict[str, Any] = {}
 
-        # Credential for BYOK token refresh.
+        # Credential for BYOK token refresh and MCP server auth.
         _has_byok_provider = (
             "provider" in self._session_config
             and not os.getenv("AZURE_AI_FOUNDRY_API_KEY")
             and not os.getenv("GITHUB_TOKEN")
         )
+        _has_mcp_auto_auth = any(
+            s.get("headers", {}).get("_auto_auth")
+            for s in self._session_config.get("mcp_servers", {}).values()
+        )
         if credential is not None:
             self._credential = credential
-        elif _has_byok_provider:
+        elif _has_byok_provider or _has_mcp_auto_auth:
             from azure.identity import DefaultAzureCredential
             self._credential = DefaultAzureCredential()
         else:
@@ -275,16 +280,22 @@ class CopilotAdapter:
         self._server: Optional[ResponsesAgentServerHost] = None
 
     def _refresh_token_if_needed(self) -> Dict[str, Any]:
-        """Return the session config, refreshing the bearer token if using Foundry."""
-        if "provider" not in self._session_config:
-            return self._session_config
-
+        """Return the session config, refreshing tokens for BYOK and MCP servers."""
         if self._credential is not None:
-            token = self._credential.get_token(_COGNITIVE_SERVICES_SCOPE).token
-            self._session_config["provider"]["bearer_token"] = token
-            return self._session_config
+            # Refresh BYOK provider token
+            if "provider" in self._session_config:
+                token = self._credential.get_token(_COGNITIVE_SERVICES_SCOPE).token
+                self._session_config["provider"]["bearer_token"] = token
 
-        # Static API key — no refresh needed
+            # Refresh MCP server auth headers (toolbox endpoints use Foundry scope)
+            mcp_servers = self._session_config.get("mcp_servers")
+            if mcp_servers:
+                foundry_token = self._credential.get_token(_FOUNDRY_SCOPE).token
+                for server in mcp_servers.values():
+                    headers = server.get("headers", {})
+                    if headers.get("_auto_auth"):
+                        headers["Authorization"] = f"Bearer {foundry_token}"
+
         return self._session_config
 
     async def _ensure_client(self) -> CopilotClient:
@@ -327,6 +338,12 @@ class CopilotAdapter:
         # GitHubCopilotAdapter discovers them, so they flow through here
         # automatically — no need to pass them as separate kwargs.
         sdk_config = {k: v for k, v in config.items() if not k.startswith("_") and v is not None}
+
+        # Strip internal _auto_auth flags from MCP server headers
+        if "mcp_servers" in sdk_config:
+            for server in sdk_config["mcp_servers"].values():
+                headers = server.get("headers", {})
+                headers.pop("_auto_auth", None)
 
         session = await client.create_session(
             **sdk_config,
@@ -586,6 +603,27 @@ class GitHubCopilotAdapter(CopilotAdapter):
                 self._session_config.setdefault("tools", []).extend(discovered_tools)
                 logger.info("Discovered %d tools from .github/tools/", len(discovered_tools))
 
+        # MCP toolbox discovery — load from mcp.json and/or env var
+        if "mcp_servers" not in self._session_config:
+            mcp_servers = self._discover_mcp_servers(root)
+            if mcp_servers:
+                self._session_config["mcp_servers"] = mcp_servers
+
+        # Ensure credential is available for MCP auto-auth (discovery happens
+        # after super().__init__, so the credential check needs to run again).
+        if self._credential is None and self._session_config.get("mcp_servers"):
+            needs_auth = any(
+                s.get("headers", {}).get("_auto_auth")
+                for s in self._session_config["mcp_servers"].values()
+            )
+            if needs_auth:
+                try:
+                    from azure.identity import DefaultAzureCredential
+                    self._credential = DefaultAzureCredential()
+                    logger.info("Created credential for MCP server auto-auth")
+                except Exception:
+                    logger.warning("Failed to create credential for MCP auto-auth", exc_info=True)
+
     @staticmethod
     def _discover_skill_directories(project_root: pathlib.Path) -> list[str]:
         """Find skill directories containing SKILL.md files."""
@@ -604,6 +642,60 @@ class GitHubCopilotAdapter(CopilotAdapter):
         from ._tool_discovery import discover_tools
 
         return discover_tools(project_root)
+
+    @staticmethod
+    def _discover_mcp_servers(project_root: pathlib.Path) -> dict:
+        """Discover MCP server configs from ``mcp.json`` and environment variables.
+
+        Sources (merged in order):
+        1. ``mcp.json`` in the project root — static config for MCP servers.
+        2. ``FOUNDRY_AGENT_TOOLBOX_ENDPOINT`` env var — platform-injected toolbox URL.
+        3. ``TOOLBOX_MCP_ENDPOINT`` env var — local dev override.
+
+        For servers without an explicit ``Authorization`` header, the adapter
+        will inject a fresh token automatically before each session via
+        ``_refresh_token_if_needed()``.  Set ``_auto_auth: true`` in the
+        server's ``headers`` dict to opt in (this is the default for
+        servers added from environment variables).
+        """
+        import json as _json
+
+        servers: dict = {}
+
+        # 1. Load from mcp.json
+        mcp_path = project_root / "mcp.json"
+        if mcp_path.exists():
+            try:
+                with open(mcp_path) as f:
+                    servers.update(_json.load(f))
+                logger.info("Loaded MCP servers from mcp.json: %s", list(servers.keys()))
+            except Exception:
+                logger.warning("Failed to load mcp.json", exc_info=True)
+
+        # 2. Platform-injected toolbox endpoint
+        toolbox_url = (
+            os.getenv("FOUNDRY_AGENT_TOOLBOX_ENDPOINT")
+            or os.getenv("TOOLBOX_MCP_ENDPOINT")
+        )
+        if toolbox_url and "foundry-toolbox" not in servers:
+            servers["foundry-toolbox"] = {
+                "type": "http",
+                "url": toolbox_url,
+                "tools": ["*"],
+                "headers": {
+                    "Foundry-Features": "Toolboxes=V1Preview",
+                    "_auto_auth": True,
+                },
+            }
+            logger.info("Added toolbox MCP server from env: %s", toolbox_url)
+
+        # Mark servers that need auto-auth (no explicit Authorization header)
+        for server in servers.values():
+            headers = server.setdefault("headers", {})
+            if "Authorization" not in headers:
+                headers["_auto_auth"] = True
+
+        return servers
 
     @classmethod
     def from_project(cls, project_path: str = ".", **kwargs) -> "GitHubCopilotAdapter":
