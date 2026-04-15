@@ -38,7 +38,7 @@ class QueueAuthSamplesAsync(object):
     account_name = os.getenv("STORAGE_ACCOUNT_NAME")
     access_key = os.getenv("STORAGE_ACCOUNT_KEY")
 
-    async def authentication_by_connection_string_async(self):
+    async def authentication_by_connection_string_async(self):  # pylint: disable=name-too-long
         if self.connection_string is None:
             print(
                 "Missing required environment variable(s). Please see specific test for more details."
@@ -56,7 +56,7 @@ class QueueAuthSamplesAsync(object):
 
         # Get information for the Queue Service
         async with queue_service:
-            properties = await queue_service.get_service_properties()
+            _properties = await queue_service.get_service_properties()
 
     async def authentication_by_shared_key_async(self):
         if self.account_url is None or self.access_key is None:
@@ -75,7 +75,7 @@ class QueueAuthSamplesAsync(object):
         # [END async_create_queue_service_client]
         # Get information for the Queue Service
         async with queue_service:
-            properties = await queue_service.get_service_properties()
+            _properties = await queue_service.get_service_properties()
 
     async def authentication_by_oauth_async(self):
         if self.account_url is None:
@@ -99,9 +99,9 @@ class QueueAuthSamplesAsync(object):
 
         # Get information for the Queue Service
         async with queue_service:
-            properties = await queue_service.get_service_properties()
+            _properties = await queue_service.get_service_properties()
 
-    async def authentication_by_shared_access_signature_async(self):
+    async def authentication_by_shared_access_signature_async(self):  # pylint: disable=name-too-long
         if (
             self.connection_string is None
             or self.account_name is None
@@ -118,7 +118,7 @@ class QueueAuthSamplesAsync(object):
         # Instantiate a QueueServiceClient using a connection string
         from azure.storage.queue.aio import QueueServiceClient
 
-        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
+        _queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Create a SAS token to use for authentication of a client
         from azure.storage.queue import (
@@ -138,7 +138,7 @@ class QueueAuthSamplesAsync(object):
 
         # Get information for the Queue Service
         async with token_auth_queue_service:
-            properties = await token_auth_queue_service.get_service_properties()
+            _properties = await token_auth_queue_service.get_service_properties()
 
 
 async def main():

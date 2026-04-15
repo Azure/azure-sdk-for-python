@@ -6,6 +6,10 @@
 import unittest
 
 import pytest
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import QueuePreparer
+
 from azure.core.exceptions import DecodeError, HttpResponseError, ResourceExistsError
 from azure.storage.queue import (
     BinaryBase64DecodePolicy,
@@ -16,10 +20,6 @@ from azure.storage.queue import (
     TextBase64EncodePolicy,
 )
 from azure.storage.queue._message_encoding import NoDecodePolicy, NoEncodePolicy
-
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import QueuePreparer
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = "mytestqueue"
@@ -38,7 +38,7 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
     def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX):
         queue = self._get_queue_reference(qsc, prefix)
         try:
-            created = queue.create_queue()
+            _created = queue.create_queue()
         except ResourceExistsError:
             pass
         return queue
@@ -46,7 +46,7 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
     def _validate_encoding(self, queue, message):
         # Arrange
         try:
-            created = queue.create_queue()
+            _created = queue.create_queue()
         except ResourceExistsError:
             pass
 
@@ -111,7 +111,7 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange.
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        _qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
@@ -132,7 +132,7 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange.
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        _qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
@@ -165,7 +165,7 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
             # Asserts
             assert str(
                 e.exception.startswith(
-                    "Message content must not be bytes. " "Use the BinaryBase64EncodePolicy to send bytes."
+                    "Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes."
                 )
             )
 
@@ -175,7 +175,7 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        _qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),
@@ -199,7 +199,7 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        _qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = QueueClient(
             account_url=self.account_url(storage_account_name, "queue"),
             queue_name=self.get_resource_name(TEST_QUEUE_PREFIX),

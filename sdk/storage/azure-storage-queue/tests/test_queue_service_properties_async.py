@@ -6,6 +6,10 @@
 import unittest
 
 import pytest
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import QueuePreparer
+
 from azure.core.exceptions import HttpResponseError
 from azure.storage.queue import (
     CorsRule,
@@ -14,10 +18,6 @@ from azure.storage.queue import (
     RetentionPolicy,
 )
 from azure.storage.queue.aio import QueueServiceClient
-
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import QueuePreparer
 
 
 class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
@@ -82,8 +82,7 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
 
         assert len(cors1) == len(cors2)
 
-        for i in range(0, len(cors1)):
-            rule1 = cors1[i]
+        for i, rule1 in enumerate(cors1):
             rule2 = cors2[i]
             assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
             assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
@@ -234,7 +233,7 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Assert
-        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
+        _qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         pytest.raises(ValueError, RetentionPolicy, True, None)
 
     @QueuePreparer()
@@ -261,7 +260,7 @@ class TestAsyncQueueServiceProperties(AsyncStorageRecordedTestCase):
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
-        minute_metrics = Metrics(
+        _minute_metrics = Metrics(
             enabled=True,
             include_apis=True,
             retention_policy=RetentionPolicy(enabled=True, days=366),

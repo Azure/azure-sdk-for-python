@@ -101,7 +101,7 @@ class QueueServiceSamplesAsync(object):
             # [END async_set_queue_service_properties]
 
             # [START async_get_queue_service_properties]
-            properties = await queue_service.get_service_properties()
+            _properties = await queue_service.get_service_properties()
             # [END async_get_queue_service_properties]
 
     async def queues_in_account_async(self):
@@ -143,13 +143,13 @@ class QueueServiceSamplesAsync(object):
             sys.exit(1)
 
         # Instantiate the QueueServiceClient from a connection string
-        from azure.storage.queue.aio import QueueServiceClient, QueueClient
+        from azure.storage.queue.aio import QueueServiceClient
 
         queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # [START async_get_queue_client]
         # Get the queue client to interact with a specific queue
-        queue = queue_service.get_queue_client(queue="asyncmyqueue2")
+        _queue = queue_service.get_queue_client(queue="asyncmyqueue2")
         # [END async_get_queue_client]
 
 

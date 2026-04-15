@@ -84,7 +84,7 @@ class QueueMessageSamples(object):
             # [END create_queue_client]
 
             # Use the newly authenticated client to receive messages
-            my_message = token_auth_queue.receive_messages()
+            _my_message = token_auth_queue.receive_messages()
 
         finally:
             # Delete the queue
@@ -110,7 +110,7 @@ class QueueMessageSamples(object):
             # [END set_queue_metadata]
 
             # [START get_queue_properties]
-            properties = queue.get_queue_properties().metadata
+            _properties = queue.get_queue_properties().metadata
             # [END get_queue_properties]
 
         finally:
@@ -297,7 +297,7 @@ class QueueMessageSamples(object):
 
             # [START peek_message]
             # Peek at one message at the front of the queue
-            msg = queue.peek_messages()
+            _msg = queue.peek_messages()
 
             # Peek at the last 5 messages
             messages = queue.peek_messages(max_messages=5)
@@ -334,7 +334,7 @@ class QueueMessageSamples(object):
 
             # Update the message
             list_result = next(messages)
-            message = queue.update_message(
+            _message = queue.update_message(
                 list_result.id,
                 pop_receipt=list_result.pop_receipt,
                 visibility_timeout=0,

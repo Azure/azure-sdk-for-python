@@ -54,7 +54,7 @@ class QueueAuthSamples(object):
         # [END auth_from_connection_string]
 
         # Get information for the Queue Service
-        properties = queue_service.get_service_properties()
+        _properties = queue_service.get_service_properties()
 
     def authentication_by_shared_key(self):
         if self.account_url is None or self.access_key is None:
@@ -73,7 +73,7 @@ class QueueAuthSamples(object):
         # [END create_queue_service_client]
 
         # Get information for the Queue Service
-        properties = queue_service.get_service_properties()
+        _properties = queue_service.get_service_properties()
 
     def authentication_by_oauth(self):
         if self.account_url is None:
@@ -96,9 +96,9 @@ class QueueAuthSamples(object):
         # [END create_queue_service_client_oauth]
 
         # Get information for the Queue Service
-        properties = queue_service.get_service_properties()
+        _properties = queue_service.get_service_properties()
 
-    def authentication_by_shared_access_signature(self):
+    def authentication_by_shared_access_signature(self):  # pylint: disable=name-too-long
         if (
             self.connection_string is None
             or self.account_name is None
@@ -115,7 +115,7 @@ class QueueAuthSamples(object):
         # Instantiate a QueueServiceClient using a connection string
         from azure.storage.queue import QueueServiceClient
 
-        queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
+        _queue_service = QueueServiceClient.from_connection_string(conn_str=self.connection_string)
 
         # Create a SAS token to use for authentication of a client
         from azure.storage.queue import (
@@ -135,7 +135,7 @@ class QueueAuthSamples(object):
         token_auth_queue_service = QueueServiceClient(account_url=self.account_url, credential=sas_token)
 
         # Get information for the Queue Service
-        properties = token_auth_queue_service.get_service_properties()
+        _properties = token_auth_queue_service.get_service_properties()
 
 
 if __name__ == "__main__":

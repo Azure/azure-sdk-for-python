@@ -11,6 +11,17 @@ from json import dumps, loads
 from unittest import mock
 
 import pytest
+from cryptography.hazmat import backends
+from cryptography.hazmat.primitives.ciphers import Cipher
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.hazmat.primitives.ciphers.algorithms import AES
+from cryptography.hazmat.primitives.ciphers.modes import CBC
+from cryptography.hazmat.primitives.padding import PKCS7
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
+from settings.testcase import QueuePreparer
+
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.queue import (
     BinaryBase64DecodePolicy,
@@ -28,17 +39,6 @@ from azure.storage.queue._encryption import (
     _validate_and_unwrap_cek,
     _WrappedContentKey,
 )
-from cryptography.hazmat import backends
-from cryptography.hazmat.primitives.ciphers import Cipher
-from cryptography.hazmat.primitives.ciphers.aead import AESGCM
-from cryptography.hazmat.primitives.ciphers.algorithms import AES
-from cryptography.hazmat.primitives.ciphers.modes import CBC
-from cryptography.hazmat.primitives.padding import PKCS7
-
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
-from settings.testcase import QueuePreparer
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = "encryptionqueue"
@@ -52,7 +52,7 @@ def _decode_base64_to_bytes(data):
 
 
 @mock.patch("os.urandom", mock_urandom)
-class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
+class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):  # pylint: disable=too-many-public-methods
     # --Helpers-----------------------------------------------------------------
     def _get_queue_reference(self, qsc, prefix=TEST_QUEUE_PREFIX, **kwargs):
         queue_name = self.get_resource_name(prefix)
@@ -62,7 +62,7 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
     async def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX, **kwargs):
         queue = self._get_queue_reference(qsc, prefix, **kwargs)
         try:
-            created = await queue.create_queue()
+            _created = await queue.create_queue()
         except ResourceExistsError:
             pass
         return queue
@@ -193,7 +193,7 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         list_result1.content = "Updated"
 
         # Act
-        message = await queue.update_message(list_result1)
+        _message = await queue.update_message(list_result1)
         async for m in queue.receive_messages():
             messages.append(m)
         list_result2 = messages[0]
@@ -311,7 +311,7 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         with pytest.raises(AttributeError) as e:
             await queue.send_message("message")
 
-        assert str(e.value.args[0]), _ERROR_OBJECT_INVALID.format("key encryption key" == "get_kid")
+        assert str(e.value.args[0]), _ERROR_OBJECT_INVALID.format("key encryption key", "get_kid")
 
         queue.key_encryption_key = KeyWrapper("key1")
         queue.key_encryption_key.get_kid = None
@@ -336,7 +336,8 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         valid_key = KeyWrapper("key1")
 
         # Act
-        invalid_key_1 = lambda: None  # functions are objects, so this effectively creates an empty object
+        def invalid_key_1():  # functions are objects, so this effectively creates an empty object
+            return None
         invalid_key_1.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_1.get_kid = valid_key.get_kid
         # No attribute wrap_key
@@ -344,7 +345,8 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         with pytest.raises(AttributeError):
             await queue.send_message("message")
 
-        invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
+        def invalid_key_2():  # functions are objects, so this effectively creates an empty object
+            return None
         invalid_key_2.wrap_key = valid_key.wrap_key
         invalid_key_2.get_kid = valid_key.get_kid
         # No attribute get_key_wrap_algorithm
@@ -352,7 +354,8 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         with pytest.raises(AttributeError):
             await queue.send_message("message")
 
-        invalid_key_3 = lambda: None  # functions are objects, so this effectively creates an empty object
+        def invalid_key_3():  # functions are objects, so this effectively creates an empty object
+            return None
         invalid_key_3.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_3.wrap_key = valid_key.wrap_key
         # No attribute get_kid
@@ -395,7 +398,8 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
 
         # Act
         valid_key = KeyWrapper("key1")
-        invalid_key_1 = lambda: None  # functions are objects, so this effectively creates an empty object
+        def invalid_key_1():  # functions are objects, so this effectively creates an empty object
+            return None
         invalid_key_1.unwrap_key = valid_key.unwrap_key
         # No attribute get_kid
         queue.key_encryption_key = invalid_key_1
@@ -404,7 +408,8 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
 
         assert "Decryption failed." in str(e.value.args[0])
 
-        invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
+        def invalid_key_2():  # functions are objects, so this effectively creates an empty object
+            return None
         invalid_key_2.get_kid = valid_key.get_kid
         # No attribute unwrap_key
         queue.key_encryption_key = invalid_key_2
