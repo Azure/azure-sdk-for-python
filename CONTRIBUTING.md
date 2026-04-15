@@ -113,7 +113,7 @@ This repo uses Central Feed Services (CFS) as the default package source for CI,
  
   The `azpysdk` tool automatically configures pip and uv subprocesses to use the CFS feed by setting the `PIP_INDEX_URL` and `UV_DEFAULT_INDEX` environment variables. If you have already set these variables to a different feed, `azpysdk` will respect your configuration and won't override them.
   
-If you wish to bypass CFS and install directly from PyPI,use the `--pypi` flag to pull from PyPI:
+If you wish to bypass CFS and install directly from PyPI, use the `--pypi` flag to pull from PyPI:
 
 ```
 azpysdk --pypi <command>

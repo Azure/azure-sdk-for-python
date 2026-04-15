@@ -189,14 +189,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         logger.info("Installing from PyPI (--pypi flag set)")
     else:
         using_cfs = False
-        if shutil.which("uv"):
-            if not os.environ.get("UV_DEFAULT_INDEX"):
-                os.environ["UV_DEFAULT_INDEX"] = CFS_INDEX_URL
-                using_cfs = True
-        else:
-            if not os.environ.get("PIP_INDEX_URL"):
-                os.environ["PIP_INDEX_URL"] = CFS_INDEX_URL
-                using_cfs = True
+        if not os.environ.get("PIP_INDEX_URL"):
+            os.environ["PIP_INDEX_URL"] = CFS_INDEX_URL
+            using_cfs = True
+        if not os.environ.get("UV_DEFAULT_INDEX"):
+            os.environ["UV_DEFAULT_INDEX"] = CFS_INDEX_URL
+            using_cfs = True
 
         if using_cfs:
             logger.info("Installing from CFS feed: %s", CFS_INDEX_URL)
