@@ -17,6 +17,9 @@ _X_AGENT_RESPONSE_ID_HEADER = "x-agent-response-id"
 
 _DEFAULT_AGENT_REFERENCE_NAME = "server-default-agent"
 
+# Intentionally capped at 63 hex characters per spec. A full SHA-256 hex digest
+# is 64 characters, but the session ID contract uses 63. Do not change this
+# without reviewing the cross-language contract.
 _SESSION_ID_LENGTH = 63
 
 
@@ -358,8 +361,8 @@ def derive_session_id(
 ) -> str:
     """Derive a deterministic session ID from conversational context.
 
-    Mirrors the .NET ``SessionIdDerivation.Derive`` logic (minus the explicit
-    session ID and env fallbacks which are handled by the caller):
+    Mirrors the ``SessionIdDerivation.Derive`` logic per spec (minus the
+    explicit session ID and env fallbacks which are handled by the caller):
 
     - If *conversation_id* or *previous_response_id* is available, extract
       the partition hint via :meth:`IdGenerator.extract_partition_key` and

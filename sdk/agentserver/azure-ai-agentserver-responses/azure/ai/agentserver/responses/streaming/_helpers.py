@@ -35,7 +35,7 @@ def _build_events(
     response_id: str,
     *,
     include_progress: bool,
-    agent_reference: AgentReference | dict[str, Any],
+    agent_reference: AgentReference | dict[str, Any] | None,
     model: str | None,
 ) -> list[generated_models.ResponseStreamEvent]:
     """Build a minimal lifecycle event sequence for a response.
@@ -55,7 +55,12 @@ def _build_events(
     :returns: A list of typed ``ResponseStreamEvent`` model instances.
     :rtype: list[~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent]
     """
-    ref = agent_reference if isinstance(agent_reference, AgentReference) else AgentReference(agent_reference)
+    if agent_reference is None:
+        ref = None
+    elif isinstance(agent_reference, AgentReference):
+        ref = agent_reference
+    else:
+        ref = AgentReference(agent_reference)
     stream = ResponseEventStream(
         response_id=response_id,
         agent_reference=ref,

@@ -3,7 +3,7 @@
 """Strongly-typed return type assertions for every public emit_* method.
 
 Every builder ``emit_*`` method must return the specific ``ResponseStreamEvent``
-subtype matching the .NET SDK parity (e.g. ``emit_added()`` on a message
+subtype per spec (e.g. ``emit_added()`` on a message
 builder returns ``ResponseOutputItemAddedEvent``, not the base
 ``ResponseStreamEvent``).  These tests assert the ``isinstance`` contract for
 every public emit method on every builder class.
