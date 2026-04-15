@@ -2,7 +2,53 @@
 
 ## 2.1.0b1 (2026-04-15)
 
-skip changelog generation
+### Features Added
+
+  - Model `CustomLocationOperation` added property `display`
+  - Model `MatchExpressionsProperties` added property `values_property`
+  - Model `PatchableCustomLocations` added property `properties`
+  - Model `PatchableResourceSyncRule` added property `properties`
+  - Model `ProxyResource` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Model `TrackedResource` added property `system_data`
+  - Added model `CustomLocationOperationValueDisplay`
+  - Model `CustomLocationsOperations` added parameter `properties` in method `update`
+
+### Breaking Changes
+
+  - Deleted or renamed model `CustomLocations`
+  - Model `CustomLocationOperation` deleted or renamed its instance variable `description`
+  - Model `CustomLocationOperation` deleted or renamed its instance variable `operation`
+  - Model `CustomLocationOperation` deleted or renamed its instance variable `provider`
+  - Model `CustomLocationOperation` deleted or renamed its instance variable `resource`
+  - Model `MatchExpressionsProperties` deleted or renamed its instance variable `values`
+  - Model `PatchableCustomLocations` deleted or renamed its instance variable `authentication`
+  - Model `PatchableCustomLocations` deleted or renamed its instance variable `cluster_extension_ids`
+  - Model `PatchableCustomLocations` deleted or renamed its instance variable `display_name`
+  - Model `PatchableCustomLocations` deleted or renamed its instance variable `host_resource_id`
+  - Model `PatchableCustomLocations` deleted or renamed its instance variable `host_type`
+  - Model `PatchableCustomLocations` deleted or renamed its instance variable `namespace`
+  - Model `PatchableCustomLocations` deleted or renamed its instance variable `provisioning_state`
+  - Model `PatchableResourceSyncRule` deleted or renamed its instance variable `priority`
+  - Model `PatchableResourceSyncRule` deleted or renamed its instance variable `provisioning_state`
+  - Model `PatchableResourceSyncRule` deleted or renamed its instance variable `selector`
+  - Model `PatchableResourceSyncRule` deleted or renamed its instance variable `target_resource_group`
+  - Deleted or renamed model `CustomLocationOperationsList`
+  - Method `CustomLocationsOperations.update` changed its parameter `identity` from `positional_or_keyword` to `keyword_only`
+  - Method `CustomLocationsOperations.update` changed its parameter `tags` from `positional_or_keyword` to `keyword_only`
+  - Method `CustomLocationsOperations.update` inserted a `positional_or_keyword` parameter `parameters`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `authentication` of kind `positional_or_keyword`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `cluster_extension_ids` of kind `positional_or_keyword`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `display_name` of kind `positional_or_keyword`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `host_resource_id` of kind `positional_or_keyword`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `host_type` of kind `positional_or_keyword`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `namespace` of kind `positional_or_keyword`
+  - Method `CustomLocationsOperations.update` deleted or renamed its parameter `provisioning_state` of kind `positional_or_keyword`
+  - Method `ResourceSyncRulesOperations.begin_update` inserted a `positional_or_keyword` parameter `parameters`
+  - Method `ResourceSyncRulesOperations.begin_update` deleted or renamed its parameter `tags` of kind `positional_or_keyword`
+  - Method `ResourceSyncRulesOperations.begin_update` deleted or renamed its parameter `priority` of kind `positional_or_keyword`
+  - Method `ResourceSyncRulesOperations.begin_update` deleted or renamed its parameter `selector` of kind `positional_or_keyword`
+  - Method `ResourceSyncRulesOperations.begin_update` deleted or renamed its parameter `target_resource_group` of kind `positional_or_keyword`
 
 ## 2.0.0 (2024-10-30)
 
