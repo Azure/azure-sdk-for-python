@@ -1,20 +1,13 @@
 name: 'Configure Package Indexes'
-description: 'Configure pip/uv package indexes based on fork status'
+description: 'Configure pip/uv package indexes to use Azure SDK CFS feed'
 
 runs:
   using: 'composite'
   steps:
     - name: Configure package indexes
       run: |
-        if [[ "${{ github.event.pull_request.head.repo.full_name }}" == "${{ github.repository }}" || "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-          echo "Using Azure SDK private feed"
-          echo "PIP_INDEX_URL=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" >> "$GITHUB_ENV"
-          echo "PIP_EXTRA_INDEX_URL=https://pypi.org/simple/" >> "$GITHUB_ENV"
-          echo "UV_DEFAULT_INDEX=https://pypi.org/simple/" >> "$GITHUB_ENV"
-          echo "UV_EXTRA_INDEX_URL=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" >> "$GITHUB_ENV"
-        else
-          echo "Fork PR detected - using PyPI only"
-          echo "PIP_INDEX_URL=https://pypi.org/simple/" >> "$GITHUB_ENV"
-          echo "UV_DEFAULT_INDEX=https://pypi.org/simple/" >> "$GITHUB_ENV"
-        fi
+        echo "PIP_INDEX_URL=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" >> "$GITHUB_ENV"
+        echo "PIP_EXTRA_INDEX_URL=https://pypi.org/simple/" >> "$GITHUB_ENV"
+        echo "UV_DEFAULT_INDEX=https://pypi.org/simple/" >> "$GITHUB_ENV"
+        echo "UV_EXTRA_INDEX_URL=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/" >> "$GITHUB_ENV"
       shell: bash
