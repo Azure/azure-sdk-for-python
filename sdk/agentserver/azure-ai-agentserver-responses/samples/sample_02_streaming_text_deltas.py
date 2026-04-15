@@ -48,7 +48,7 @@ from azure.ai.agentserver.responses import (
 app = ResponsesAgentServerHost()
 
 
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     """Stream tokens one at a time using TextResponse."""
     user_text = await context.get_input_text() or "world"

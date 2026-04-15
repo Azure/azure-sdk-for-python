@@ -68,7 +68,7 @@ class ResponsesAgentServerHost(AgentServerHost):
     """Responses protocol host for Azure AI Hosted Agents.
 
     A :class:`~azure.ai.agentserver.core.AgentServerHost` subclass that adds
-    the Responses API endpoints.  Use the :meth:`create_handler` decorator
+    the Responses API endpoints.  Use the :meth:`response_handler` decorator
     to wire a handler function to the create endpoint.
 
     For multi-protocol agents, compose via cooperative inheritance::
@@ -82,7 +82,7 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         app = ResponsesAgentServerHost()
 
-        @app.create_handler
+        @app.response_handler
         def my_handler(request, context, cancellation_signal):
             yield event
 
@@ -108,7 +108,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         store: ResponseProviderProtocol | None = None,
         **kwargs: Any,
     ) -> None:
-        # Handler slot — populated via @app.create_handler decorator
+        # Handler slot — populated via @app.response_handler decorator
         self._create_fn: Optional[CreateHandlerFn] = None
 
         # Normalize prefix
@@ -227,7 +227,7 @@ class ResponsesAgentServerHost(AgentServerHost):
     # Handler decorator
     # ------------------------------------------------------------------
 
-    def create_handler(self, fn: CreateHandlerFn) -> CreateHandlerFn:
+    def response_handler(self, fn: CreateHandlerFn) -> CreateHandlerFn:
         """Register a function as the create-response handler.
 
         The handler function must accept exactly three positional parameters:
@@ -236,7 +236,7 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         Usage::
 
-            @app.create_handler
+            @app.response_handler
             def my_handler(request, context, cancellation_signal):
                 yield event
 
@@ -279,7 +279,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
         if self._create_fn is None:
-            raise NotImplementedError("No create handler registered. Use the @app.create_handler decorator.")
+            raise NotImplementedError("No create handler registered. Use the @app.response_handler decorator.")
         result = self._create_fn(request, context, cancellation_signal)
         return self._normalize_handler_result(result)
 
