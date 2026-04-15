@@ -302,7 +302,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         feature_flag_refresh_attempted = False
         updated_watched_settings: Mapping[Tuple[str, str], Optional[str]] = {}
         existing_feature_flag_usage = self._tracing_context.feature_filter_usage.copy()
-        page_etags: Mapping[str, str] = {}
+        page_etags: List[List[str]] = []
         try:
             if self._refresh_enabled and not self._watched_settings and self._refresh_timer.needs_refresh():
                 configuration_refresh_attempted = True
