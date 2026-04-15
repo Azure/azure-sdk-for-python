@@ -100,10 +100,10 @@ class BaseOutputItemBuilder:
         :raises ValueError: If the builder is not in ``NOT_STARTED`` state.
         """
         self._ensure_transition(BuilderLifecycleState.NOT_STARTED, BuilderLifecycleState.ADDED)
-        stamped_item = self._stream._with_output_item_defaults(item)
+        stamped_item = self._stream._with_output_item_defaults(item)  # pylint: disable=protected-access
         return cast(
             generated_models.ResponseOutputItemAddedEvent,
-            self._stream._emit_event(
+            self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value,
                     "output_index": self._output_index,
@@ -122,10 +122,10 @@ class BaseOutputItemBuilder:
         :raises ValueError: If the builder is not in ``ADDED`` state.
         """
         self._ensure_transition(BuilderLifecycleState.ADDED, BuilderLifecycleState.DONE)
-        stamped_item = self._stream._with_output_item_defaults(item)
+        stamped_item = self._stream._with_output_item_defaults(item)  # pylint: disable=protected-access
         return cast(
             generated_models.ResponseOutputItemDoneEvent,
-            self._stream._emit_event(
+            self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value,
                     "output_index": self._output_index,
@@ -153,7 +153,7 @@ class BaseOutputItemBuilder:
         }
         if extra_payload:
             event.update(deepcopy(extra_payload))
-        return self._stream._emit_event(event)
+        return self._stream._emit_event(event)  # pylint: disable=protected-access
 
 
 class OutputItemBuilder(BaseOutputItemBuilder):

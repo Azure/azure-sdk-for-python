@@ -66,7 +66,7 @@ class ReasoningSummaryPartBuilder:
         self._lifecycle_state = BuilderLifecycleState.ADDED
         return cast(
             generated_models.ResponseReasoningSummaryPartAddedEvent,
-            self._stream._emit_event(
+            self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": generated_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_PART_ADDED.value,
                     "item_id": self._item_id,
@@ -87,7 +87,7 @@ class ReasoningSummaryPartBuilder:
         """
         return cast(
             generated_models.ResponseReasoningSummaryTextDeltaEvent,
-            self._stream._emit_event(
+            self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": generated_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_TEXT_DELTA.value,
                     "item_id": self._item_id,
@@ -109,7 +109,7 @@ class ReasoningSummaryPartBuilder:
         self._final_text = final_text
         return cast(
             generated_models.ResponseReasoningSummaryTextDoneEvent,
-            self._stream._emit_event(
+            self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": generated_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_TEXT_DONE.value,
                     "item_id": self._item_id,
@@ -132,7 +132,7 @@ class ReasoningSummaryPartBuilder:
         self._lifecycle_state = BuilderLifecycleState.DONE
         return cast(
             generated_models.ResponseReasoningSummaryPartDoneEvent,
-            self._stream._emit_event(
+            self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": generated_models.ResponseStreamEventType.RESPONSE_REASONING_SUMMARY_PART_DONE.value,
                     "item_id": self._item_id,

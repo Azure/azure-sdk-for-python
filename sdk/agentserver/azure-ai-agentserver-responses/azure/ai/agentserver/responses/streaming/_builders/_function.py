@@ -89,7 +89,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         """
         return cast(
             generated_models.ResponseFunctionCallArgumentsDeltaEvent,
-            self._stream._emit_event(
+            self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": generated_models.ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DELTA.value,
                     "item_id": self._item_id,
@@ -110,7 +110,7 @@ class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
         self._final_arguments = arguments
         return cast(
             generated_models.ResponseFunctionCallArgumentsDoneEvent,
-            self._stream._emit_event(
+            self._stream._emit_event(  # pylint: disable=protected-access
                 {
                     "type": generated_models.ResponseStreamEventType.RESPONSE_FUNCTION_CALL_ARGUMENTS_DONE.value,
                     "item_id": self._item_id,
