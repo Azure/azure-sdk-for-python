@@ -1,0 +1,11 @@
+{
+  "commit": "c962ac7fb7c81a90b43449d021f1cf9eeecce2b7",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "autorest": "3.10.2",
+  "use": [
+    "@autorest/python@6.50.0",
+    "@autorest/modelerfour@4.27.0"
+  ],
+  "autorest_command": "autorest specification/hanaonazure/resource-manager/Microsoft.HanaOnAzure/HanaOnAzure/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/home/v-chenjiang/spec/worktrees/sdk-azure-mgmt-hanaonazure/sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/hanaonazure/resource-manager/Microsoft.HanaOnAzure/HanaOnAzure/readme.md"
+}

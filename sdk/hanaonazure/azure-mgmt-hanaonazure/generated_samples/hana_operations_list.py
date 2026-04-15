@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -7,6 +8,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
+
 from azure.mgmt.hanaonazure import HanaManagementClient
 
 """
@@ -14,7 +16,7 @@ from azure.mgmt.hanaonazure import HanaManagementClient
     pip install azure-identity
     pip install azure-mgmt-hanaonazure
 # USAGE
-    python list_all_hana_management_operations_supported_by_hana_rp.py
+    python hana_operations_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -34,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/hanaonazure/resource-manager/Microsoft.HanaOnAzure/preview/2020-02-07-preview/examples/HanaOperations_List.json
+# x-ms-original-file: specification/hanaonazure/resource-manager/Microsoft.HanaOnAzure/HanaOnAzure/preview/2020-02-07-preview/examples/HanaOperations_List.json
 if __name__ == "__main__":
     main()
