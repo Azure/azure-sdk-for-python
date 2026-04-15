@@ -23,7 +23,7 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 def _build_client() -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(_noop_response_handler)
+    app.response_handler(_noop_response_handler)
     return TestClient(app)
 
 
@@ -372,7 +372,7 @@ def test_input_items_in_flight_fallback_to_runtime() -> None:
         return _events()
 
     _app = ResponsesAgentServerHost()
-    _app.create_handler(_fast_handler)
+    _app.response_handler(_fast_handler)
     client = TestClient(_app, raise_server_exceptions=False)
 
     item = _message_input("inflight_msg_001", "in-flight-content")
