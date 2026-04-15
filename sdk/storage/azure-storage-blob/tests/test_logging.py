@@ -236,3 +236,85 @@ class TestStorageLogging(StorageRecordedTestCase):
             log_as_str = log_captured.getvalue()
             # Assert - No logging should occur
             assert log_as_str == ''
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_logging_body_isolation_between_requests(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange - Create client with logging_body=True in constructor
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            logging_enable=True,
+            logging_body=True
+        )
+        container_name = self.get_resource_name('utcontainer')
+        container = bsc.get_container_client(container_name)
+        if self.is_live:
+            try:
+                container.create_container()
+            except:
+                pass
+        
+        request_body_1 = 'isolationtest1'
+        request_body_2 = 'isolationtest2'
+        blob_name_1 = self.get_resource_name("testblob1")
+        blob_name_2 = self.get_resource_name("testblob2")
+        blob_client_1 = container.get_blob_client(blob_name_1)
+        blob_client_2 = container.get_blob_client(blob_name_2)
+        blob_client_1.upload_blob(request_body_1, overwrite=True)
+        blob_client_2.upload_blob(request_body_2, overwrite=True)
+
+        # Act - First request with logging_body=False
+        with LogCaptured(self) as log_captured:
+            blob_client_1.download_blob(logging_body=False)
+            log_as_str = log_captured.getvalue()
+            # Assert - Body should NOT be logged
+            assert request_body_1 not in log_as_str
+
+        # Act - Second request without logging_body option (should revert to constructor default=True)
+        with LogCaptured(self) as log_captured:
+            blob_client_2.download_blob()
+            log_as_str = log_captured.getvalue()
+            # Assert - Body SHOULD be logged, proving previous request's False didn't persist
+            assert request_body_2 in log_as_str
+
+        # Act - Third request with logging_body=True
+        with LogCaptured(self) as log_captured:
+            blob_client_1.download_blob(logging_body=True)
+            log_as_str = log_captured.getvalue()
+            # Assert - Body should be logged
+            assert request_body_1 in log_as_str
+
+        # Act - Fourth request without logging_body option (should still use constructor default=True)
+        with LogCaptured(self) as log_captured:
+            blob_client_2.download_blob()
+            log_as_str = log_captured.getvalue()
+            # Assert - Body SHOULD be logged, proving previous request's True didn't change the default
+            assert request_body_2 in log_as_str
+
+        # Act - Create new client with logging_body=False and verify isolation works in reverse
+        bsc_no_body = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            logging_enable=True,
+            logging_body=False
+        )
+        container_no_body = bsc_no_body.get_container_client(container_name)
+        blob_client_no_body = container_no_body.get_blob_client(blob_name_1)
+
+        # Act - Request with logging_body=True
+        with LogCaptured(self) as log_captured:
+            blob_client_no_body.download_blob(logging_body=True)
+            log_as_str = log_captured.getvalue()
+            # Assert - Body should be logged
+            assert request_body_1 in log_as_str
+
+        # Act - Next request without logging_body option (should revert to constructor default=False)
+        with LogCaptured(self) as log_captured:
+            blob_client_no_body.download_blob()
+            log_as_str = log_captured.getvalue()
+            # Assert - Body should NOT be logged, proving previous True didn't persist
+            assert request_body_1 not in log_as_str
