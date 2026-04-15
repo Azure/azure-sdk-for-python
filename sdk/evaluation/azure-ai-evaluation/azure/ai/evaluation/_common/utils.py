@@ -962,3 +962,198 @@ def upload(path: str, container_client: ContainerClient, logger=None):
             category=ErrorCategory.UPLOAD_ERROR,
             blame=ErrorBlame.SYSTEM_ERROR,
         ) from e
+
+
+# region Multi-turn utilities
+
+
+def _merge_query_response_messages(query, response):
+    """Merge query and response message lists into a single conversation.
+
+    :param query: The query messages.
+    :type query: List[dict]
+    :param response: The response messages.
+    :type response: List[dict]
+    :return: The merged conversation messages.
+    :rtype: List[dict]
+    """
+    return [*query, *response]
+
+
+def _split_messages_at_latest_user(messages):
+    """Split messages into query/response slices at the latest user turn.
+
+    :param messages: The conversation messages.
+    :type messages: List[dict]
+    :return: A tuple of (query_messages, response_messages).
+    :rtype: Tuple[List[dict], List[dict]]
+    """
+    latest_user_index = max(i for i, message in enumerate(messages) if message["role"] == "user")
+    return messages[: latest_user_index + 1], messages[latest_user_index + 1:]
+
+
+def _wrap_string_messages(query, response):
+    """Wrap string query/response into separate message lists.
+
+    :param query: The query string.
+    :type query: str
+    :param response: The response string.
+    :type response: str
+    :return: A tuple of (query_messages, response_messages).
+    :rtype: Tuple[List[dict], List[dict]]
+    """
+    return (
+        [{"role": "user", "content": [{"type": "text", "text": query}]}],
+        [{"role": "assistant", "content": [{"type": "text", "text": response}]}],
+    )
+
+
+def serialize_messages(messages):
+    """Serialize a list of chat messages into a labeled text transcript for multi-turn prompts.
+
+    **Input format:** List of message dicts, each with ``"role"`` (``user``, ``assistant``, ``tool``,
+    ``system``, ``developer``) and ``"content"`` (string or list of content-block dicts like
+    ``{"type": "text", "text": "..."}``). Tool messages may include ``tool_call_id`` and content
+    blocks of type ``tool_result``/``tool_call``.
+
+    **Output format:** Plain-text transcript with labeled turns::
+
+        User turn 1:
+          <user text>
+
+        Agent turn 1:
+          <assistant text>
+          [TOOL_CALL] func_name({"arg": "val"})
+          [TOOL_RESULT] <result>
+
+        User turn 2:
+          <user text>
+        ...
+
+    System/developer messages are included as a system preamble. Consecutive messages of the same
+    role are grouped into a single turn. Assistant string content is auto-normalized to content-block
+    format for consistent formatting.
+
+    :param messages: Chat messages with role and content.
+    :type messages: List[dict]
+    :return: Formatted text transcript.
+    :rtype: str
+    """
+    if not messages:
+        return ""
+
+    all_user_queries = []
+    all_agent_responses = []
+    cur_user_query = []
+    cur_agent_response = []
+    system_message = None
+
+    for msg in messages:
+        if not isinstance(msg, dict):
+            continue
+        role = msg.get("role")
+        if not role:
+            continue
+
+        # _get_agent_response expects content as list of dicts, not a plain string
+        normalized = msg
+        if role == "assistant" and isinstance(msg.get("content"), str):
+            normalized = {**msg, "content": [{"type": "text", "text": msg["content"]}]}
+
+        if role in ("system", "developer"):
+            system_message = msg.get("content", "")
+
+        elif role == "user" and "content" in msg:
+            if cur_agent_response:
+                formatted = _get_agent_response(cur_agent_response, include_tool_messages=True)
+                all_agent_responses.append([formatted])
+                cur_agent_response = []
+            content = msg["content"]
+            if isinstance(content, str):
+                text_in_msg = [content]
+            else:
+                text_in_msg = _extract_text_from_content(content)
+            if text_in_msg:
+                cur_user_query.append(text_in_msg)
+
+        elif role in ("assistant", "tool"):
+            if cur_user_query:
+                all_user_queries.append(cur_user_query)
+                cur_user_query = []
+            cur_agent_response.append(normalized)
+
+    # Flush any remaining buffered turn
+    if cur_user_query:
+        all_user_queries.append(cur_user_query)
+    if cur_agent_response:
+        formatted = _get_agent_response(cur_agent_response, include_tool_messages=True)
+        all_agent_responses.append([formatted])
+
+    conversation_history = {
+        "user_queries": all_user_queries,
+        "agent_responses": all_agent_responses[:len(all_user_queries) - 1]
+        if len(all_user_queries) > 0
+        else [],
+    }
+    if system_message:
+        conversation_history["system_message"] = system_message
+
+    result = _pretty_format_conversation_history(conversation_history)
+
+    # Append any trailing agent turn (the final response after the last user query)
+    start = max(len(all_user_queries) - 1, 0)
+    for i, agent_response in enumerate(all_agent_responses[start:], start=start):
+        result += f"Agent turn {i + 1}:\n"
+        for msg_text in agent_response:
+            if isinstance(msg_text, list):
+                for submsg in msg_text:
+                    result += "  " + "\n  ".join(submsg.split("\n")) + "\n"
+            else:
+                result += "  " + "\n  ".join(msg_text.split("\n")) + "\n"
+        result += "\n"
+
+    return result.rstrip("\n")
+
+
+def _resolve_evaluation_level(evaluation_level, error_target):
+    """Validate and normalize the evaluation_level parameter.
+
+    :param evaluation_level: The evaluation level to resolve.
+    :type evaluation_level: Optional[Union[EvaluationLevel, str]]
+    :param error_target: The error target for exceptions.
+    :type error_target: ErrorTarget
+    :return: The resolved EvaluationLevel or None for auto-detect.
+    :rtype: Optional[EvaluationLevel]
+    """
+    from .constants import EvaluationLevel
+
+    valid = [level.value for level in EvaluationLevel]
+    if evaluation_level is None:
+        return None
+    if isinstance(evaluation_level, EvaluationLevel):
+        return evaluation_level
+    if isinstance(evaluation_level, str):
+        try:
+            return EvaluationLevel(evaluation_level)
+        except ValueError:
+            raise EvaluationException(
+                message=(
+                    f"Invalid evaluation_level '{evaluation_level}'. "
+                    f"Must be one of: {valid}."
+                ),
+                blame=ErrorBlame.USER_ERROR,
+                category=ErrorCategory.INVALID_VALUE,
+                target=error_target,
+            )
+    raise EvaluationException(
+        message=(
+            f"Invalid evaluation_level '{evaluation_level}'. "
+            f"Must be one of: {valid}."
+        ),
+        blame=ErrorBlame.USER_ERROR,
+        category=ErrorCategory.INVALID_VALUE,
+        target=error_target,
+    )
+
+
+# endregion Multi-turn utilities

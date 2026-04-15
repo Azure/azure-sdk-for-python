@@ -61,6 +61,17 @@ class EvaluatorScoringPattern(Enum):
     SCALE_1_5 = "scale_1_5"  # 1-5 scale (quality evaluators)
 
 
+class EvaluationLevel(str, Enum):
+    """Supported evaluation levels for multi-turn evaluators.
+
+    - ``CONVERSATION``: Force conversation-level evaluation using the multi-turn path.
+    - ``TRACE``: Force trace-level evaluation using the single-turn query/response path.
+    """
+
+    CONVERSATION = "conversation"
+    TRACE = "trace"
+
+
 class Tasks:
     """Defines types of annotation tasks supported by RAI Service."""
 
