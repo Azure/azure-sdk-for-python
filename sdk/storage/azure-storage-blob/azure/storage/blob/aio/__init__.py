@@ -79,7 +79,7 @@ async def upload_blob_to_url(
     :rtype: dict[str, Any]
     """
     client = BlobClient.from_blob_url(blob_url, credential=credential)
-    async with client:
+    async with client:  # pylint: disable=not-async-context-manager
         return await client.upload_blob(data=data, blob_type=BlobType.BLOCKBLOB, **kwargs)
 
 
@@ -146,7 +146,7 @@ async def download_blob_from_url(
     """
     overwrite = kwargs.pop("overwrite", False)
     client = BlobClient.from_blob_url(blob_url, credential=credential)
-    async with client:
+    async with client:  # pylint: disable=not-async-context-manager
         if hasattr(output, "write"):
             await _download_to_stream(client, output, **kwargs)
         else:
