@@ -2223,6 +2223,32 @@ class TestCreateResultObjectStatus:
         }
         assert error_result["status"] == "error"
 
+    def test_status_empty_string_falls_back_to_passed(self):
+        """Empty string is not a valid status — should infer from passed."""
+        result = self._call({"score": 3.0, "passed": True, "status": ""})
+        assert result["status"] == "completed"
+
+    def test_status_invalid_value_falls_back_to_passed(self):
+        """Unrecognized status value should infer from passed."""
+        result = self._call({"score": 2.0, "passed": False, "status": "unknown"})
+        assert result["status"] == "completed"
+
+    def test_status_explicit_none_falls_back_to_passed(self):
+        """Explicitly provided status=None should infer from passed."""
+        result = self._call({"score": 5.0, "passed": True, "status": None})
+        assert result["status"] == "completed"
+
+    def test_status_completed_preserved_when_passed_is_none(self):
+        """Explicit 'completed' status should not be overridden even if passed=None."""
+        result = self._call({"score": None, "passed": None, "status": "completed"})
+        assert result["status"] == "completed"
+
+    def test_status_fallback_passed_false_is_completed(self):
+        """passed=False with no status should infer 'completed' (evaluated but failed)."""
+        result = self._call({"score": 1.0, "passed": False})
+        assert result["status"] == "completed"
+        assert result["passed"] is False
+
 
 @pytest.mark.unittest
 class TestCalculateAoaiEvaluationSummary:

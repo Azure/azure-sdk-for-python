@@ -2920,7 +2920,9 @@ def _create_result_object(
     passed = metric_values.get("passed")
     sample = metric_values.get("sample")
     properties = metric_values.get("properties")
-    status = metric_values.get("status") or ("completed" if passed is not None else "error")
+    status = metric_values.get("status") 
+    if status not in ("completed", "error", "skipped"):
+        status = "completed" if passed is not None else "error"
 
     # Handle decrease boolean metrics
     if is_inverse:
