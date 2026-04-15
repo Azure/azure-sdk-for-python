@@ -286,7 +286,7 @@ class TrackedResource(Resource):
         self.location = location
 
 
-class ConnectedCluster(TrackedResource):
+class ConnectedCluster(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Represents a connected cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.

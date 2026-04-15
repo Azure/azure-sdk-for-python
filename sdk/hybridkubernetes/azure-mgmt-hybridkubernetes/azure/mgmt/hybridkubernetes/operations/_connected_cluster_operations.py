@@ -57,8 +57,8 @@ def build_create_or_replace_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters/{clusterName}",
-    )  # pylint: disable=line-too-long
+        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters/{clusterName}",  # pylint: disable=line-too-long
+    )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
@@ -93,8 +93,8 @@ def build_update_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters/{clusterName}",
-    )  # pylint: disable=line-too-long
+        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters/{clusterName}",  # pylint: disable=line-too-long
+    )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
@@ -126,8 +126,8 @@ def build_get_request(resource_group_name: str, cluster_name: str, subscription_
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters/{clusterName}",
-    )  # pylint: disable=line-too-long
+        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters/{clusterName}",  # pylint: disable=line-too-long
+    )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
@@ -159,8 +159,8 @@ def build_delete_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters/{clusterName}",
-    )  # pylint: disable=line-too-long
+        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters/{clusterName}",  # pylint: disable=line-too-long
+    )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
@@ -193,8 +193,8 @@ def build_list_cluster_user_credential_request(  # pylint: disable=name-too-long
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters/{clusterName}/listClusterUserCredential",
-    )  # pylint: disable=line-too-long
+        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters/{clusterName}/listClusterUserCredential",  # pylint: disable=line-too-long
+    )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
@@ -226,8 +226,8 @@ def build_list_by_resource_group_request(resource_group_name: str, subscription_
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters",
-    )  # pylint: disable=line-too-long
+        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Kubernetes/connectedClusters",  # pylint: disable=line-too-long
+    )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
         "resourceGroupName": _SERIALIZER.url(
@@ -351,7 +351,7 @@ class ConnectedClusterOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)  # pylint: disable=protected-access
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -734,7 +734,7 @@ class ConnectedClusterOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)
+        deserialized = response.stream_download(self._client._pipeline, decompress=_decompress)  # pylint: disable=protected-access
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
