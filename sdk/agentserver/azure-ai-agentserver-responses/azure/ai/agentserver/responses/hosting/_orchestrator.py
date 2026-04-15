@@ -33,7 +33,6 @@ from ..models.runtime import (
 )
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..streaming._helpers import (
-    EVENT_TYPE,
     _apply_stream_event_defaults,
     _build_events,
     _coerce_handler_event,
@@ -126,8 +125,8 @@ async def _iter_with_winddown(
 
 _OUTPUT_ITEM_EVENT_TYPES: frozenset[str] = frozenset(
     {
-        EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value,
-        EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value,
+        generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value,
+        generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value,
     }
 )
 
@@ -135,11 +134,11 @@ _OUTPUT_ITEM_EVENT_TYPES: frozenset[str] = frozenset(
 # Used by FR-008a output manipulation detection.
 _RESPONSE_SNAPSHOT_TYPES: frozenset[str] = frozenset(
     {
-        EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
-        EVENT_TYPE.RESPONSE_COMPLETED.value,
-        EVENT_TYPE.RESPONSE_FAILED.value,
-        EVENT_TYPE.RESPONSE_INCOMPLETE.value,
-        EVENT_TYPE.RESPONSE_QUEUED.value,
+        generated_models.ResponseStreamEventType.RESPONSE_IN_PROGRESS.value,
+        generated_models.ResponseStreamEventType.RESPONSE_COMPLETED.value,
+        generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+        generated_models.ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
+        generated_models.ResponseStreamEventType.RESPONSE_QUEUED.value,
     }
 )
 
@@ -308,7 +307,8 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                     record.response_created_signal.set()
                 else:
                     # Track output_item.added events for FR-008a
-                    if normalized.get("type") == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
+                    _item_added = generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
+                    if normalized.get("type") == _item_added.value:
                         output_item_count += 1
 
                     # FR-008a: detect direct Output manipulation on response.* events
@@ -510,9 +510,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
     _TERMINAL_SSE_TYPES: frozenset[str] = frozenset(
         {
-            EVENT_TYPE.RESPONSE_COMPLETED.value,
-            EVENT_TYPE.RESPONSE_FAILED.value,
-            EVENT_TYPE.RESPONSE_INCOMPLETE.value,
+            generated_models.ResponseStreamEventType.RESPONSE_COMPLETED.value,
+            generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+            generated_models.ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
         }
     )
 
@@ -619,7 +619,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :rtype: ResponseStreamEvent
         """
         cancel_event: dict[str, Any] = {
-            "type": EVENT_TYPE.RESPONSE_FAILED.value,
+            "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
             "response": _build_cancelled_response(ctx.response_id, ctx.agent_reference, ctx.model).as_dict(),
         }
         return await self._normalize_and_append(ctx, state, cancel_event)
@@ -640,7 +640,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :rtype: ResponseStreamEvent
         """
         failed_event: dict[str, Any] = {
-            "type": EVENT_TYPE.RESPONSE_FAILED.value,
+            "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
             "response": {
                 "id": ctx.response_id,
                 "object": "response",
@@ -685,6 +685,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             cancel_signal=ctx.cancellation_signal,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
         )
         execution.set_response_snapshot(generated_models.ResponseObject(initial_payload))
         execution.subject = _ResponseEventSubject()
@@ -899,7 +901,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 # appended to the state machine before we emit response.failed.
                 _pre_coerced = _coerce_handler_event(raw)
                 _pre_type = _pre_coerced.get("type", "")
-                if _pre_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
+                if _pre_type == generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value:
                     output_item_count += 1
                 if _pre_type in _RESPONSE_SNAPSHOT_TYPES:
                     _pre_response = _pre_coerced.get("response") or {}
@@ -1105,6 +1107,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             cancel_signal=ctx.cancellation_signal if ctx.background else None,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
         )
         execution.set_response_snapshot(generated_models.ResponseObject(response_payload))
         await self._runtime_state.add(execution)
@@ -1381,6 +1385,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             response_context=ctx.context,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
         )
         record.set_response_snapshot(generated_models.ResponseObject(response_payload))
 
@@ -1444,6 +1450,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             cancel_signal=ctx.cancellation_signal,
             initial_model=ctx.model,
             initial_agent_reference=ctx.agent_reference,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
         )
 
         # Register so GET can observe in-flight state
