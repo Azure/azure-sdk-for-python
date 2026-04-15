@@ -9,6 +9,7 @@ import pytest
 from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.models import _generated as generated_models
 from azure.ai.agentserver.responses.models._generated import (
+    OutputItemComputerToolCallOutputResource,
     ResponseCompletedEvent,
     ResponseCreatedEvent,
     ResponseFailedEvent,
@@ -211,20 +212,24 @@ def test_event_stream_builder__add_output_item_generic_emits_added_and_done() ->
 
     item_id = IdGenerator.new_computer_call_output_item_id("resp_builder_generic_item")
     builder = stream.add_output_item(item_id)
-    added_item = {
-        "id": item_id,
-        "type": "computer_call_output",
-        "call_id": "call_1",
-        "output": {"type": "computer_screenshot", "image_url": "https://example.com/1.png"},
-        "status": "in_progress",
-    }
-    done_item = {
-        "id": item_id,
-        "type": "computer_call_output",
-        "call_id": "call_1",
-        "output": {"type": "computer_screenshot", "image_url": "https://example.com/2.png"},
-        "status": "completed",
-    }
+    added_item = OutputItemComputerToolCallOutputResource(
+        {
+            "id": item_id,
+            "type": "computer_call_output",
+            "call_id": "call_1",
+            "output": {"type": "computer_screenshot", "image_url": "https://example.com/1.png"},
+            "status": "in_progress",
+        }
+    )
+    done_item = OutputItemComputerToolCallOutputResource(
+        {
+            "id": item_id,
+            "type": "computer_call_output",
+            "call_id": "call_1",
+            "output": {"type": "computer_screenshot", "image_url": "https://example.com/2.png"},
+            "status": "completed",
+        }
+    )
 
     added = builder.emit_added(added_item)
     done = builder.emit_done(done_item)

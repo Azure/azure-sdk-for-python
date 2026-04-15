@@ -33,8 +33,6 @@ Builder classes covered:
 
 from __future__ import annotations
 
-import pytest
-
 from azure.ai.agentserver.responses.models._generated import (
     ResponseCodeInterpreterCallCodeDeltaEvent,
     ResponseCodeInterpreterCallCodeDoneEvent,
@@ -82,9 +80,9 @@ from azure.ai.agentserver.responses.models._generated import (
     ResponseWebSearchCallCompletedEvent,
     ResponseWebSearchCallInProgressEvent,
     ResponseWebSearchCallSearchingEvent,
+    StructuredOutputsOutputItem,
 )
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
-
 
 # ---- helper ----
 
@@ -170,7 +168,7 @@ class TestGenericOutputItemBuilderReturnTypes:
         s = _stream()
         s.emit_created()
         builder = s.add_output_item_structured_outputs()
-        item = {"type": "structured_outputs", "id": builder.item_id, "output": "data"}
+        item = StructuredOutputsOutputItem(id=builder.item_id, output="data")
         event = builder.emit_added(item)
         assert isinstance(event, ResponseOutputItemAddedEvent), (
             f"Expected ResponseOutputItemAddedEvent, got {type(event)}"
@@ -180,7 +178,7 @@ class TestGenericOutputItemBuilderReturnTypes:
         s = _stream()
         s.emit_created()
         builder = s.add_output_item_structured_outputs()
-        item = {"type": "structured_outputs", "id": builder.item_id, "output": "data"}
+        item = StructuredOutputsOutputItem(id=builder.item_id, output="data")
         builder.emit_added(item)
         event = builder.emit_done(item)
         assert isinstance(event, ResponseOutputItemDoneEvent), (

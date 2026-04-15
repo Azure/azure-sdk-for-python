@@ -707,8 +707,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :returns: An iterator of two events.
         :rtype: Iterator[ResponseStreamEvent]
         """
-        yield builder.emit_added(item)
-        yield builder.emit_done(item)
+        yield builder._emit_added(item)  # pylint: disable=protected-access
+        yield builder._emit_done(item)  # pylint: disable=protected-access
 
     def output_item_message(
         self,

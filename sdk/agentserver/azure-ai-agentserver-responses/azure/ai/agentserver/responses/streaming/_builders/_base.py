@@ -161,37 +161,26 @@ class BaseOutputItemBuilder:
 class OutputItemBuilder(BaseOutputItemBuilder):
     """Generic output-item builder for item types without dedicated scoped builders."""
 
-    def _coerce_item(self, item: generated_models.OutputItem | dict[str, Any]) -> dict[str, Any]:
-        """Coerce an item to a plain dict.
-
-        :param item: A dict or a generated model with ``as_dict()``.
-        :type item: OutputItem | dict[str, Any]
-        :returns: A deep-copied dict representation of the item.
-        :rtype: dict[str, Any]
-        :raises TypeError: If *item* is not a dict or model with ``as_dict()``.
-        """
-        if isinstance(item, dict):
-            return deepcopy(item)
-        if hasattr(item, "as_dict"):
-            return item.as_dict()
-        raise TypeError("item must be a dict or a generated model with as_dict()")
-
-    def emit_added(self, item: generated_models.OutputItem | dict[str, Any]) -> generated_models.ResponseOutputItemAddedEvent:
+    def emit_added(
+        self, item: generated_models.OutputItem
+    ) -> generated_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for a generic item.
 
-        :param item: The output item (dict or model with ``as_dict()``).
-        :type item: OutputItem | dict[str, Any]
+        :param item: The output item model instance.
+        :type item: OutputItem
         :returns: The emitted event.
         :rtype: ResponseOutputItemAddedEvent
         """
-        return self._emit_added(self._coerce_item(item))
+        return self._emit_added(item.as_dict())
 
-    def emit_done(self, item: generated_models.OutputItem | dict[str, Any]) -> generated_models.ResponseOutputItemDoneEvent:
+    def emit_done(
+        self, item: generated_models.OutputItem
+    ) -> generated_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for a generic item.
 
-        :param item: The completed output item (dict or model with ``as_dict()``).
-        :type item: OutputItem | dict[str, Any]
+        :param item: The completed output item model instance.
+        :type item: OutputItem
         :returns: The emitted event.
         :rtype: ResponseOutputItemDoneEvent
         """
-        return self._emit_done(self._coerce_item(item))
+        return self._emit_done(item.as_dict())
