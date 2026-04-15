@@ -99,8 +99,6 @@ jobs:
 
       - name: Configure package indexes
         uses: ./.github/actions/configure-package-indexes
-        with:
-          include-uv: 'true'
 
       - name: Install uv
         run: |
