@@ -16,7 +16,7 @@ from azure.mgmt.resourcehealth import ResourceHealthMgmtClient
     pip install azure-identity
     pip install azure-mgmt-resourcehealth
 # USAGE
-    python impacted_resources_list_by_subscription_id_list_by_event_id.py
+    python event_fetch_billing_communication_details_by_subscription_id_and_tracking_id.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,13 +31,12 @@ def main():
         subscription_id="subscriptionId",
     )
 
-    response = client.impacted_resources.list_by_subscription_id_and_event_id(
-        event_tracking_id="BC_1-FXZ",
+    response = client.event.fetch_billling_communication_details_by_subscription_id_and_tracking_id(
+        event_tracking_id="eventTrackingId",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/ResourceHealth/stable/2025-05-01/examples/ImpactedResources_ListBySubscriptionId_ListByEventId.json
+# x-ms-original-file: specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/ResourceHealth/stable/2025-05-01/examples/Event_fetchBillingCommunicationDetailsBySubscriptionIdAndTrackingId.json
 if __name__ == "__main__":
     main()

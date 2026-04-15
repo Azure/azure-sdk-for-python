@@ -20,9 +20,9 @@ class TestResourceHealthMgmtEmergingIssuesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_emerging_issues_list(self, resource_group):
         response = self.client.emerging_issues.list(
-            api_version="2023-10-01-preview",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -30,10 +30,10 @@ class TestResourceHealthMgmtEmergingIssuesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get(self, resource_group):
+    def test_emerging_issues_get(self, resource_group):
         response = self.client.emerging_issues.get(
             issue_name="str",
-            api_version="2023-10-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself

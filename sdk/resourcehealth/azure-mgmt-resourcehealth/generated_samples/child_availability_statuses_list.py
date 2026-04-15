@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -37,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/preview/2023-10-01-preview/examples/ChildAvailabilityStatuses_List.json
+# x-ms-original-file: specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/ResourceHealth/stable/2025-05-01/examples/ChildAvailabilityStatuses_List.json
 if __name__ == "__main__":
     main()

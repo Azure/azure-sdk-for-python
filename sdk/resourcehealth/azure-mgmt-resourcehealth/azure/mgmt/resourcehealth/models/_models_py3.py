@@ -1,5 +1,5 @@
+# pylint: disable=line-too-long,useless-suppression,too-many-lines
 # coding=utf-8
-# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,21 +7,15 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from collections.abc import MutableMapping
 import datetime
-import sys
-from typing import Any, List, Optional, TYPE_CHECKING, Union
+from typing import Any, Optional, TYPE_CHECKING, Union
 
-from .. import _serialization
-
-if sys.version_info >= (3, 9):
-    from collections.abc import MutableMapping
-else:
-    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+from .._utils import serialization as _serialization
 
 if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
     from .. import models as _models
-JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
+JSON = MutableMapping[str, Any]
 
 
 class AvailabilityStatus(_serialization.Model):
@@ -99,7 +93,7 @@ class AvailabilityStatusListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.AvailabilityStatus"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.AvailabilityStatus"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of availabilityStatuses. Required.
@@ -113,7 +107,7 @@ class AvailabilityStatusListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class AvailabilityStatusProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+class AvailabilityStatusProperties(_serialization.Model):
     """Properties of availability state.
 
     :ivar availability_state: Availability status of the resource. When it is null, this
@@ -222,8 +216,8 @@ class AvailabilityStatusProperties(_serialization.Model):  # pylint: disable=too
         reason_chronicity: Optional[Union[str, "_models.ReasonChronicityTypes"]] = None,
         reported_time: Optional[datetime.datetime] = None,
         recently_resolved: Optional["_models.AvailabilityStatusPropertiesRecentlyResolved"] = None,
-        recommended_actions: Optional[List["_models.RecommendedAction"]] = None,
-        service_impacting_events: Optional[List["_models.ServiceImpactingEvent"]] = None,
+        recommended_actions: Optional[list["_models.RecommendedAction"]] = None,
+        service_impacting_events: Optional[list["_models.ServiceImpactingEvent"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -375,7 +369,7 @@ class EmergingIssueImpact(_serialization.Model):
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
-        regions: Optional[List["_models.ImpactedRegion"]] = None,
+        regions: Optional[list["_models.ImpactedRegion"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -409,7 +403,7 @@ class EmergingIssueListResult(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.EmergingIssuesGetResult"]] = None,
+        value: Optional[list["_models.EmergingIssuesGetResult"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -430,7 +424,7 @@ class Resource(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -459,10 +453,10 @@ class Resource(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.system_data = None
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+        self.system_data: Optional["_models.SystemData"] = None
 
 
 class ProxyResource(Resource):
@@ -472,7 +466,7 @@ class ProxyResource(Resource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -491,7 +485,7 @@ class EmergingIssuesGetResult(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -530,8 +524,8 @@ class EmergingIssuesGetResult(ProxyResource):
         self,
         *,
         refresh_timestamp: Optional[datetime.datetime] = None,
-        status_banners: Optional[List["_models.StatusBanner"]] = None,
-        status_active_events: Optional[List["_models.StatusActiveEvent"]] = None,
+        status_banners: Optional[list["_models.StatusBanner"]] = None,
+        status_active_events: Optional[list["_models.StatusActiveEvent"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -576,18 +570,18 @@ class ErrorResponse(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.code = None
-        self.message = None
-        self.details = None
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.details: Optional[str] = None
 
 
-class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class Event(ProxyResource):
     """Service health event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -598,10 +592,11 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
      information.
     :vartype system_data: ~azure.mgmt.resourcehealth.models.SystemData
     :ivar event_type: Type of event. Known values are: "ServiceIssue", "PlannedMaintenance",
-     "HealthAdvisory", "RCA", "EmergingIssues", and "SecurityAdvisory".
+     "HealthAdvisory", "RCA", "EmergingIssues", "SecurityAdvisory", and "Billing".
     :vartype event_type: str or ~azure.mgmt.resourcehealth.models.EventTypeValues
-    :ivar event_sub_type: Sub type of the event. Currently used to determine retirement
-     communications for health advisory events. "Retirement"
+    :ivar event_sub_type: Sub-type of event. Known values are: "Retirement",
+     "ForeignExchangeRateChange", "Underbilling", "Overbilling", "PriceChanges", "TaxChanges",
+     "MeterIDChanges", and "UnauthorizedPartyAbuse".
     :vartype event_sub_type: str or ~azure.mgmt.resourcehealth.models.EventSubTypeValues
     :ivar event_source: Source of event. Known values are: "ResourceHealth" and "ServiceHealth".
     :vartype event_source: str or ~azure.mgmt.resourcehealth.models.EventSourceValues
@@ -609,7 +604,8 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :vartype status: str or ~azure.mgmt.resourcehealth.models.EventStatusValues
     :ivar title: Title text of event.
     :vartype title: str
-    :ivar summary: Summary text of event.
+    :ivar summary: Summary text of event. Use fetchEventDetails endpoint to get summary of
+     sensitive events.
     :vartype summary: str
     :ivar header: Header text of event.
     :vartype header: str
@@ -618,6 +614,10 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :ivar event_level: Level of event. Known values are: "Critical", "Error", "Warning", and
      "Informational".
     :vartype event_level: str or ~azure.mgmt.resourcehealth.models.EventLevelValues
+    :ivar is_event_sensitive: If true the event may contains sensitive data. Use the post
+     events/{trackingId}/fetchEventDetails endpoint to fetch sensitive data see
+     https://learn.microsoft.com/en-us/azure/service-health/security-advisories-elevated-access.
+    :vartype is_event_sensitive: bool
     :ivar external_incident_id: The id of the Incident.
     :vartype external_incident_id: str
     :ivar reason: The reason for the Incident.
@@ -644,7 +644,8 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
      this event.
     :vartype enable_microsoft_support: bool
     :ivar description: Contains the communication message for the event, that could include
-     summary, root cause and other details.
+     summary, root cause and other details. Use fetchEventDetails endpoint to get description of
+     sensitive events.
     :vartype description: str
     :ivar platform_initiated: Is true if the event is platform initiated.
     :vartype platform_initiated: bool
@@ -668,13 +669,28 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
     :vartype duration: int
     :ivar impact_type: The type of the impact.
     :vartype impact_type: str
-    :ivar maintenance_id: Unique identifier for planned maintenance event.
-    :vartype maintenance_id: str
-    :ivar maintenance_type: The type of planned maintenance event.
-    :vartype maintenance_type: str
-    :ivar arg_query: Azure Resource Graph query to fetch the affected resources from their existing
-     Azure Resource Graph locations.
-    :vartype arg_query: str
+    :ivar event_tags: A list of metadata tags associated with the event. Possible values include:
+     -Action Recommended: Action may be required by you to avoid possible disruptions or mitigate
+     risks for your services. It is recommended to evaluate these actions and the potential impact
+     on your services.
+
+     * False Positive: After investigation, we've determined your service is healthy and
+       service issues did not impact your services as originally communicated.
+     * Preliminary PIR: For our largest, most impactful service issues a Preliminary Post
+       Incident Review (PIR) is published generally within 72 hours of mitigation, to summarize what
+       we have learned so far from the still-in-progress investigation.
+     * Final PIR: For service issues, a Final Post Incident Review (PIR) may be published to
+       provide additional details or learnings. Sometimes this requires us to complete an internal
+       retrospective, generally within 14 days of mitigation.
+    :vartype event_tags: list[str]
+    :ivar new_rate: Billing rate change information - new rate.
+    :vartype new_rate: float
+    :ivar old_rate: Billing rate change information - old rate.
+    :vartype old_rate: float
+    :ivar currency_type: Billing currency type information. Example: USD, CAD.
+    :vartype currency_type: str
+    :ivar billing_id: Billing identifier information.
+    :vartype billing_id: str
     """
 
     _validation = {
@@ -698,6 +714,7 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
         "header": {"key": "properties.header", "type": "str"},
         "level": {"key": "properties.level", "type": "str"},
         "event_level": {"key": "properties.eventLevel", "type": "str"},
+        "is_event_sensitive": {"key": "properties.isEventSensitive", "type": "bool"},
         "external_incident_id": {"key": "properties.externalIncidentId", "type": "str"},
         "reason": {"key": "properties.reason", "type": "str"},
         "article": {"key": "properties.article", "type": "EventPropertiesArticle"},
@@ -721,9 +738,11 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
         },
         "duration": {"key": "properties.duration", "type": "int"},
         "impact_type": {"key": "properties.impactType", "type": "str"},
-        "maintenance_id": {"key": "properties.maintenanceId", "type": "str"},
-        "maintenance_type": {"key": "properties.maintenanceType", "type": "str"},
-        "arg_query": {"key": "properties.argQuery", "type": "str"},
+        "event_tags": {"key": "properties.eventTags", "type": "[str]"},
+        "new_rate": {"key": "properties.newRate", "type": "float"},
+        "old_rate": {"key": "properties.oldRate", "type": "float"},
+        "currency_type": {"key": "properties.currencyType", "type": "str"},
+        "billing_id": {"key": "properties.billingId", "type": "str"},
     }
 
     def __init__(  # pylint: disable=too-many-locals
@@ -738,15 +757,16 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
         header: Optional[str] = None,
         level: Optional[Union[str, "_models.LevelValues"]] = None,
         event_level: Optional[Union[str, "_models.EventLevelValues"]] = None,
+        is_event_sensitive: Optional[bool] = None,
         external_incident_id: Optional[str] = None,
         reason: Optional[str] = None,
         article: Optional["_models.EventPropertiesArticle"] = None,
-        links: Optional[List["_models.Link"]] = None,
+        links: Optional[list["_models.Link"]] = None,
         impact_start_time: Optional[datetime.datetime] = None,
         impact_mitigation_time: Optional[datetime.datetime] = None,
-        impact: Optional[List["_models.Impact"]] = None,
+        impact: Optional[list["_models.Impact"]] = None,
         recommended_actions: Optional["_models.EventPropertiesRecommendedActions"] = None,
-        faqs: Optional[List["_models.Faq"]] = None,
+        faqs: Optional[list["_models.Faq"]] = None,
         is_hir: Optional[bool] = None,
         enable_microsoft_support: Optional[bool] = None,
         description: Optional[str] = None,
@@ -758,17 +778,20 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
         additional_information: Optional["_models.EventPropertiesAdditionalInformation"] = None,
         duration: Optional[int] = None,
         impact_type: Optional[str] = None,
-        maintenance_id: Optional[str] = None,
-        maintenance_type: Optional[str] = None,
-        arg_query: Optional[str] = None,
+        event_tags: Optional[list[str]] = None,
+        new_rate: Optional[float] = None,
+        old_rate: Optional[float] = None,
+        currency_type: Optional[str] = None,
+        billing_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword event_type: Type of event. Known values are: "ServiceIssue", "PlannedMaintenance",
-         "HealthAdvisory", "RCA", "EmergingIssues", and "SecurityAdvisory".
+         "HealthAdvisory", "RCA", "EmergingIssues", "SecurityAdvisory", and "Billing".
         :paramtype event_type: str or ~azure.mgmt.resourcehealth.models.EventTypeValues
-        :keyword event_sub_type: Sub type of the event. Currently used to determine retirement
-         communications for health advisory events. "Retirement"
+        :keyword event_sub_type: Sub-type of event. Known values are: "Retirement",
+         "ForeignExchangeRateChange", "Underbilling", "Overbilling", "PriceChanges", "TaxChanges",
+         "MeterIDChanges", and "UnauthorizedPartyAbuse".
         :paramtype event_sub_type: str or ~azure.mgmt.resourcehealth.models.EventSubTypeValues
         :keyword event_source: Source of event. Known values are: "ResourceHealth" and "ServiceHealth".
         :paramtype event_source: str or ~azure.mgmt.resourcehealth.models.EventSourceValues
@@ -776,7 +799,8 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
         :paramtype status: str or ~azure.mgmt.resourcehealth.models.EventStatusValues
         :keyword title: Title text of event.
         :paramtype title: str
-        :keyword summary: Summary text of event.
+        :keyword summary: Summary text of event. Use fetchEventDetails endpoint to get summary of
+         sensitive events.
         :paramtype summary: str
         :keyword header: Header text of event.
         :paramtype header: str
@@ -785,6 +809,10 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
         :keyword event_level: Level of event. Known values are: "Critical", "Error", "Warning", and
          "Informational".
         :paramtype event_level: str or ~azure.mgmt.resourcehealth.models.EventLevelValues
+        :keyword is_event_sensitive: If true the event may contains sensitive data. Use the post
+         events/{trackingId}/fetchEventDetails endpoint to fetch sensitive data see
+         https://learn.microsoft.com/en-us/azure/service-health/security-advisories-elevated-access.
+        :paramtype is_event_sensitive: bool
         :keyword external_incident_id: The id of the Incident.
         :paramtype external_incident_id: str
         :keyword reason: The reason for the Incident.
@@ -812,7 +840,8 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
          this event.
         :paramtype enable_microsoft_support: bool
         :keyword description: Contains the communication message for the event, that could include
-         summary, root cause and other details.
+         summary, root cause and other details. Use fetchEventDetails endpoint to get description of
+         sensitive events.
         :paramtype description: str
         :keyword platform_initiated: Is true if the event is platform initiated.
         :paramtype platform_initiated: bool
@@ -836,13 +865,28 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
         :paramtype duration: int
         :keyword impact_type: The type of the impact.
         :paramtype impact_type: str
-        :keyword maintenance_id: Unique identifier for planned maintenance event.
-        :paramtype maintenance_id: str
-        :keyword maintenance_type: The type of planned maintenance event.
-        :paramtype maintenance_type: str
-        :keyword arg_query: Azure Resource Graph query to fetch the affected resources from their
-         existing Azure Resource Graph locations.
-        :paramtype arg_query: str
+        :keyword event_tags: A list of metadata tags associated with the event. Possible values
+          include: -Action Recommended: Action may be required by you to avoid possible disruptions or
+          mitigate risks for your services. It is recommended to evaluate these actions and the potential
+          impact on your services.
+
+          * False Positive: After investigation, we've determined your service is healthy and
+            service issues did not impact your services as originally communicated.
+          * Preliminary PIR: For our largest, most impactful service issues a Preliminary Post
+            Incident Review (PIR) is published generally within 72 hours of mitigation, to summarize what
+            we have learned so far from the still-in-progress investigation.
+          * Final PIR: For service issues, a Final Post Incident Review (PIR) may be published
+            to provide additional details or learnings. Sometimes this requires us to complete an internal
+            retrospective, generally within 14 days of mitigation.
+        :paramtype event_tags: list[str]
+        :keyword new_rate: Billing rate change information - new rate.
+        :paramtype new_rate: float
+        :keyword old_rate: Billing rate change information - old rate.
+        :paramtype old_rate: float
+        :keyword currency_type: Billing currency type information. Example: USD, CAD.
+        :paramtype currency_type: str
+        :keyword billing_id: Billing identifier information.
+        :paramtype billing_id: str
         """
         super().__init__(**kwargs)
         self.event_type = event_type
@@ -854,6 +898,7 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
         self.header = header
         self.level = level
         self.event_level = event_level
+        self.is_event_sensitive = is_event_sensitive
         self.external_incident_id = external_incident_id
         self.reason = reason
         self.article = article
@@ -874,18 +919,20 @@ class Event(ProxyResource):  # pylint: disable=too-many-instance-attributes
         self.additional_information = additional_information
         self.duration = duration
         self.impact_type = impact_type
-        self.maintenance_id = maintenance_id
-        self.maintenance_type = maintenance_type
-        self.arg_query = arg_query
+        self.event_tags = event_tags
+        self.new_rate = new_rate
+        self.old_rate = old_rate
+        self.currency_type = currency_type
+        self.billing_id = billing_id
 
 
-class EventImpactedResource(ProxyResource):  # pylint: disable=too-many-instance-attributes
+class EventImpactedResource(ProxyResource):
     """Impacted resource for an event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -901,16 +948,6 @@ class EventImpactedResource(ProxyResource):  # pylint: disable=too-many-instance
     :vartype target_resource_id: str
     :ivar target_region: Impacted resource region name.
     :vartype target_region: str
-    :ivar resource_name: Resource name of the impacted resource.
-    :vartype resource_name: str
-    :ivar resource_group: Resource group name of the impacted resource.
-    :vartype resource_group: str
-    :ivar status: Status of the impacted resource.
-    :vartype status: str
-    :ivar maintenance_start_time: Start time of maintenance for the impacted resource.
-    :vartype maintenance_start_time: str
-    :ivar maintenance_end_time: End time of maintenance for the impacted resource.
-    :vartype maintenance_end_time: str
     :ivar info: Additional information.
     :vartype info: list[~azure.mgmt.resourcehealth.models.KeyValueItem]
     """
@@ -923,11 +960,6 @@ class EventImpactedResource(ProxyResource):  # pylint: disable=too-many-instance
         "target_resource_type": {"readonly": True},
         "target_resource_id": {"readonly": True},
         "target_region": {"readonly": True},
-        "resource_name": {"readonly": True},
-        "resource_group": {"readonly": True},
-        "status": {"readonly": True},
-        "maintenance_start_time": {"readonly": True},
-        "maintenance_end_time": {"readonly": True},
     }
 
     _attribute_map = {
@@ -938,28 +970,18 @@ class EventImpactedResource(ProxyResource):  # pylint: disable=too-many-instance
         "target_resource_type": {"key": "properties.targetResourceType", "type": "str"},
         "target_resource_id": {"key": "properties.targetResourceId", "type": "str"},
         "target_region": {"key": "properties.targetRegion", "type": "str"},
-        "resource_name": {"key": "properties.resourceName", "type": "str"},
-        "resource_group": {"key": "properties.resourceGroup", "type": "str"},
-        "status": {"key": "properties.status", "type": "str"},
-        "maintenance_start_time": {"key": "properties.maintenanceStartTime", "type": "str"},
-        "maintenance_end_time": {"key": "properties.maintenanceEndTime", "type": "str"},
         "info": {"key": "properties.info", "type": "[KeyValueItem]"},
     }
 
-    def __init__(self, *, info: Optional[List["_models.KeyValueItem"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, info: Optional[list["_models.KeyValueItem"]] = None, **kwargs: Any) -> None:
         """
         :keyword info: Additional information.
         :paramtype info: list[~azure.mgmt.resourcehealth.models.KeyValueItem]
         """
         super().__init__(**kwargs)
-        self.target_resource_type = None
-        self.target_resource_id = None
-        self.target_region = None
-        self.resource_name = None
-        self.resource_group = None
-        self.status = None
-        self.maintenance_start_time = None
-        self.maintenance_end_time = None
+        self.target_resource_type: Optional[str] = None
+        self.target_resource_id: Optional[str] = None
+        self.target_region: Optional[str] = None
         self.info = info
 
 
@@ -985,7 +1007,7 @@ class EventImpactedResourceListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: List["_models.EventImpactedResource"], next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: list["_models.EventImpactedResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of eventImpactedResources. Required.
@@ -1079,7 +1101,7 @@ class EventPropertiesRecommendedActions(_serialization.Model):
         self,
         *,
         message: Optional[str] = None,
-        actions: Optional[List["_models.EventPropertiesRecommendedActionsItem"]] = None,
+        actions: Optional[list["_models.EventPropertiesRecommendedActionsItem"]] = None,
         locale_code: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -1145,7 +1167,7 @@ class Events(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Event"], next_link: Optional[str] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Event"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
         :keyword value: The list of event. Required.
         :paramtype value: list[~azure.mgmt.resourcehealth.models.Event]
@@ -1202,12 +1224,16 @@ class Impact(_serialization.Model):
 
     :ivar impacted_service: Impacted service name.
     :vartype impacted_service: str
+    :ivar impacted_service_guid: Impacted service guid. This is the permanent identifier for the
+     impacted service.
+    :vartype impacted_service_guid: str
     :ivar impacted_regions: List regions impacted by the service health event.
     :vartype impacted_regions: list[~azure.mgmt.resourcehealth.models.ImpactedServiceRegion]
     """
 
     _attribute_map = {
         "impacted_service": {"key": "impactedService", "type": "str"},
+        "impacted_service_guid": {"key": "impactedServiceGuid", "type": "str"},
         "impacted_regions": {"key": "impactedRegions", "type": "[ImpactedServiceRegion]"},
     }
 
@@ -1215,17 +1241,22 @@ class Impact(_serialization.Model):
         self,
         *,
         impacted_service: Optional[str] = None,
-        impacted_regions: Optional[List["_models.ImpactedServiceRegion"]] = None,
+        impacted_service_guid: Optional[str] = None,
+        impacted_regions: Optional[list["_models.ImpactedServiceRegion"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword impacted_service: Impacted service name.
         :paramtype impacted_service: str
+        :keyword impacted_service_guid: Impacted service guid. This is the permanent identifier for the
+         impacted service.
+        :paramtype impacted_service_guid: str
         :keyword impacted_regions: List regions impacted by the service health event.
         :paramtype impacted_regions: list[~azure.mgmt.resourcehealth.models.ImpactedServiceRegion]
         """
         super().__init__(**kwargs)
         self.impacted_service = impacted_service
+        self.impacted_service_guid = impacted_service_guid
         self.impacted_regions = impacted_regions
 
 
@@ -1267,7 +1298,7 @@ class ImpactedResourceStatus(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1358,7 +1389,8 @@ class ImpactedServiceRegion(_serialization.Model):
     :ivar last_update_time: It provides the Timestamp for when the last update for the service
      health event.
     :vartype last_update_time: ~datetime.datetime
-    :ivar updates: List of updates for given service health event.
+    :ivar updates: List of updates for given service health event.  Use fetchEventDetails endpoint
+     to get updates of sensitive events.
     :vartype updates: list[~azure.mgmt.resourcehealth.models.Update]
     """
 
@@ -1376,10 +1408,10 @@ class ImpactedServiceRegion(_serialization.Model):
         *,
         impacted_region: Optional[str] = None,
         status: Optional[Union[str, "_models.EventStatusValues"]] = None,
-        impacted_subscriptions: Optional[List[str]] = None,
-        impacted_tenants: Optional[List[str]] = None,
+        impacted_subscriptions: Optional[list[str]] = None,
+        impacted_tenants: Optional[list[str]] = None,
         last_update_time: Optional[datetime.datetime] = None,
-        updates: Optional[List["_models.Update"]] = None,
+        updates: Optional[list["_models.Update"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1395,7 +1427,8 @@ class ImpactedServiceRegion(_serialization.Model):
         :keyword last_update_time: It provides the Timestamp for when the last update for the service
          health event.
         :paramtype last_update_time: ~datetime.datetime
-        :keyword updates: List of updates for given service health event.
+        :keyword updates: List of updates for given service health event.  Use fetchEventDetails
+         endpoint to get updates of sensitive events.
         :paramtype updates: list[~azure.mgmt.resourcehealth.models.Update]
         """
         super().__init__(**kwargs)
@@ -1431,8 +1464,8 @@ class KeyValueItem(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.key = None
-        self.value = None
+        self.key: Optional[str] = None
+        self.value: Optional[str] = None
 
 
 class Link(_serialization.Model):
@@ -1526,7 +1559,7 @@ class MetadataEntity(ProxyResource):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.  # pylint: disable=line-too-long
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
@@ -1568,9 +1601,9 @@ class MetadataEntity(ProxyResource):
         self,
         *,
         display_name: Optional[str] = None,
-        depends_on: Optional[List[str]] = None,
-        applicable_scenarios: Optional[List[Union[str, "_models.Scenario"]]] = None,
-        supported_values: Optional[List["_models.MetadataSupportedValueDetail"]] = None,
+        depends_on: Optional[list[str]] = None,
+        applicable_scenarios: Optional[list[Union[str, "_models.Scenario"]]] = None,
+        supported_values: Optional[list["_models.MetadataSupportedValueDetail"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1606,7 +1639,7 @@ class MetadataEntityListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.MetadataEntity"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.MetadataEntity"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: The list of metadata entities.
@@ -1622,40 +1655,63 @@ class MetadataEntityListResult(_serialization.Model):
 class MetadataSupportedValueDetail(_serialization.Model):
     """The metadata supported value detail.
 
-    :ivar id: The id.
+    :ivar id: The id of the metadata value.
     :vartype id: str
+    :ivar previous_id: The previous value of the id field incase the data has changed.
+    :vartype previous_id: str
+    :ivar service_guid: The permanent guid for the service. Used when the id is a service name.
+    :vartype service_guid: str
     :ivar display_name: The display name.
     :vartype display_name: str
     :ivar resource_types: The list of associated resource types.
     :vartype resource_types: list[str]
+    :ivar priority: Priority of this metadata supported value. Lower number is given higher
+     preference.
+    :vartype priority: int
     """
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
+        "previous_id": {"key": "previousId", "type": "str"},
+        "service_guid": {"key": "serviceGuid", "type": "str"},
         "display_name": {"key": "displayName", "type": "str"},
         "resource_types": {"key": "resourceTypes", "type": "[str]"},
+        "priority": {"key": "priority", "type": "int"},
     }
 
     def __init__(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        previous_id: Optional[str] = None,
+        service_guid: Optional[str] = None,
         display_name: Optional[str] = None,
-        resource_types: Optional[List[str]] = None,
+        resource_types: Optional[list[str]] = None,
+        priority: Optional[int] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword id: The id.
+        :keyword id: The id of the metadata value.
         :paramtype id: str
+        :keyword previous_id: The previous value of the id field incase the data has changed.
+        :paramtype previous_id: str
+        :keyword service_guid: The permanent guid for the service. Used when the id is a service name.
+        :paramtype service_guid: str
         :keyword display_name: The display name.
         :paramtype display_name: str
         :keyword resource_types: The list of associated resource types.
         :paramtype resource_types: list[str]
+        :keyword priority: Priority of this metadata supported value. Lower number is given higher
+         preference.
+        :paramtype priority: int
         """
         super().__init__(**kwargs)
         self.id = id
+        self.previous_id = previous_id
+        self.service_guid = service_guid
         self.display_name = display_name
         self.resource_types = resource_types
+        self.priority = priority
 
 
 class Operation(_serialization.Model):
@@ -1750,7 +1806,7 @@ class OperationListResult(_serialization.Model):
         "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(self, *, value: List["_models.Operation"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Operation"], **kwargs: Any) -> None:
         """
         :keyword value: List of operations available in the Microsoft.ResourceHealth resource provider.
          Required.
@@ -1980,7 +2036,7 @@ class StatusActiveEvent(_serialization.Model):
         stage: Optional[Union[str, "_models.StageValues"]] = None,
         published: Optional[bool] = None,
         last_modified_time: Optional[datetime.datetime] = None,
-        impacts: Optional[List["_models.EmergingIssueImpact"]] = None,
+        impacts: Optional[list["_models.EmergingIssueImpact"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2138,15 +2194,35 @@ class Update(_serialization.Model):
     :ivar update_date_time: It provides the Timestamp for the given update for the service health
      event.
     :vartype update_date_time: ~datetime.datetime
+    :ivar event_tags: A list of metadata tags associated with the event. Possible values include:
+     -Action Recommended: Action may be required by you to avoid possible disruptions or mitigate
+     risks for your services. It is recommended to evaluate these actions and the potential impact
+     on your services.
+
+     * False Positive: After investigation, we've determined your service is healthy and
+       service issues did not impact your services as originally communicated.
+     * Preliminary PIR: For our largest, most impactful service issues a Preliminary Post
+       Incident Review (PIR) is published generally within 72 hours of mitigation, to summarize what
+       we have learned so far from the still-in-progress investigation.
+     * Final PIR: For service issues, a Final Post Incident Review (PIR) may be published to
+       provide additional details or learnings. Sometimes this requires us to complete an internal
+       retrospective, generally within 14 days of mitigation.
+    :vartype event_tags: list[str]
     """
 
     _attribute_map = {
         "summary": {"key": "summary", "type": "str"},
         "update_date_time": {"key": "updateDateTime", "type": "iso-8601"},
+        "event_tags": {"key": "eventTags", "type": "[str]"},
     }
 
     def __init__(
-        self, *, summary: Optional[str] = None, update_date_time: Optional[datetime.datetime] = None, **kwargs: Any
+        self,
+        *,
+        summary: Optional[str] = None,
+        update_date_time: Optional[datetime.datetime] = None,
+        event_tags: Optional[list[str]] = None,
+        **kwargs: Any
     ) -> None:
         """
         :keyword summary: Summary text for the given update for the service health event.
@@ -2154,7 +2230,22 @@ class Update(_serialization.Model):
         :keyword update_date_time: It provides the Timestamp for the given update for the service
          health event.
         :paramtype update_date_time: ~datetime.datetime
+        :keyword event_tags: A list of metadata tags associated with the event. Possible values
+          include: -Action Recommended: Action may be required by you to avoid possible disruptions or
+          mitigate risks for your services. It is recommended to evaluate these actions and the potential
+          impact on your services.
+
+          * False Positive: After investigation, we've determined your service is healthy and
+            service issues did not impact your services as originally communicated.
+          * Preliminary PIR: For our largest, most impactful service issues a Preliminary Post
+            Incident Review (PIR) is published generally within 72 hours of mitigation, to summarize what
+            we have learned so far from the still-in-progress investigation.
+          * Final PIR: For service issues, a Final Post Incident Review (PIR) may be published
+            to provide additional details or learnings. Sometimes this requires us to complete an internal
+            retrospective, generally within 14 days of mitigation.
+        :paramtype event_tags: list[str]
         """
         super().__init__(**kwargs)
         self.summary = summary
         self.update_date_time = update_date_time
+        self.event_tags = event_tags

@@ -20,10 +20,10 @@ class TestResourceHealthMgmtChildAvailabilityStatusesOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_get_by_resource(self, resource_group):
+    def test_child_availability_statuses_get_by_resource(self, resource_group):
         response = self.client.child_availability_statuses.get_by_resource(
             resource_uri="str",
-            api_version="2023-10-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -31,10 +31,10 @@ class TestResourceHealthMgmtChildAvailabilityStatusesOperations(AzureMgmtRecorde
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_list(self, resource_group):
+    def test_child_availability_statuses_list(self, resource_group):
         response = self.client.child_availability_statuses.list(
             resource_uri="str",
-            api_version="2023-10-01-preview",
+            api_version="2025-05-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

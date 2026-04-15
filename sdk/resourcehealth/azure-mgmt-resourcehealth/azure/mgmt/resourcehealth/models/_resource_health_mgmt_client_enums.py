@@ -52,11 +52,16 @@ class EventStatusValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class EventSubTypeValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Sub type of the event. Currently used to determine retirement communications for health
-    advisory events.
-    """
+    """Sub-type of event."""
 
     RETIREMENT = "Retirement"
+    FOREIGN_EXCHANGE_RATE_CHANGE = "ForeignExchangeRateChange"
+    UNDERBILLING = "Underbilling"
+    OVERBILLING = "Overbilling"
+    PRICE_CHANGES = "PriceChanges"
+    TAX_CHANGES = "TaxChanges"
+    METER_ID_CHANGES = "MeterIDChanges"
+    UNAUTHORIZED_PARTY_ABUSE = "UnauthorizedPartyAbuse"
 
 
 class EventTypeValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -68,6 +73,7 @@ class EventTypeValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RCA = "RCA"
     EMERGING_ISSUES = "EmergingIssues"
     SECURITY_ADVISORY = "SecurityAdvisory"
+    BILLING = "Billing"
 
 
 class IssueNameParameter(str, Enum, metaclass=CaseInsensitiveEnumMeta):

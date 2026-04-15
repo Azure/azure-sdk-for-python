@@ -21,10 +21,10 @@ class TestResourceHealthMgmtChildResourcesOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list(self, resource_group):
+    async def test_child_resources_list(self, resource_group):
         response = self.client.child_resources.list(
             resource_uri="str",
-            api_version="2023-10-01-preview",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

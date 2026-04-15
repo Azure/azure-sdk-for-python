@@ -21,10 +21,10 @@ class TestResourceHealthMgmtEventOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_subscription_id_and_tracking_id(self, resource_group):
+    async def test_event_get_by_subscription_id_and_tracking_id(self, resource_group):
         response = await self.client.event.get_by_subscription_id_and_tracking_id(
             event_tracking_id="str",
-            api_version="2023-10-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -32,10 +32,10 @@ class TestResourceHealthMgmtEventOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_fetch_details_by_subscription_id_and_tracking_id(self, resource_group):
+    async def test_event_fetch_details_by_subscription_id_and_tracking_id(self, resource_group):
         response = await self.client.event.fetch_details_by_subscription_id_and_tracking_id(
             event_tracking_id="str",
-            api_version="2023-10-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -43,10 +43,21 @@ class TestResourceHealthMgmtEventOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_get_by_tenant_id_and_tracking_id(self, resource_group):
+    async def test_event_fetch_billling_communication_details_by_subscription_id_and_tracking_id(self, resource_group):
+        response = await self.client.event.fetch_billling_communication_details_by_subscription_id_and_tracking_id(
+            event_tracking_id="str",
+            api_version="2025-05-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_event_get_by_tenant_id_and_tracking_id(self, resource_group):
         response = await self.client.event.get_by_tenant_id_and_tracking_id(
             event_tracking_id="str",
-            api_version="2023-10-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself
@@ -54,10 +65,10 @@ class TestResourceHealthMgmtEventOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_fetch_details_by_tenant_id_and_tracking_id(self, resource_group):
+    async def test_event_fetch_details_by_tenant_id_and_tracking_id(self, resource_group):
         response = await self.client.event.fetch_details_by_tenant_id_and_tracking_id(
             event_tracking_id="str",
-            api_version="2023-10-01-preview",
+            api_version="2025-05-01",
         )
 
         # please add some check logic here by yourself

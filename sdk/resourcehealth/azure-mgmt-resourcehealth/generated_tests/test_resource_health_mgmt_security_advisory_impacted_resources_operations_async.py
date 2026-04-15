@@ -21,10 +21,10 @@ class TestResourceHealthMgmtSecurityAdvisoryImpactedResourcesOperationsAsync(Azu
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_subscription_id_and_event_id(self, resource_group):
+    async def test_security_advisory_impacted_resources_list_by_subscription_id_and_event_id(self, resource_group):
         response = self.client.security_advisory_impacted_resources.list_by_subscription_id_and_event_id(
             event_tracking_id="str",
-            api_version="2023-10-01-preview",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -32,10 +32,10 @@ class TestResourceHealthMgmtSecurityAdvisoryImpactedResourcesOperationsAsync(Azu
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_list_by_tenant_id_and_event_id(self, resource_group):
+    async def test_security_advisory_impacted_resources_list_by_tenant_id_and_event_id(self, resource_group):
         response = self.client.security_advisory_impacted_resources.list_by_tenant_id_and_event_id(
             event_tracking_id="str",
-            api_version="2023-10-01-preview",
+            api_version="2025-05-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
