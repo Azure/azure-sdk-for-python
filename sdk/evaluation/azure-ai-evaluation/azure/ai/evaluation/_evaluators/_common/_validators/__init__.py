@@ -8,6 +8,7 @@ from ._conversation_validator import ConversationValidator
 from ._tool_definitions_validator import ToolDefinitionsValidator
 from ._tool_calls_validator import ToolCallsValidator
 from ._task_navigation_efficiency_validator import TaskNavigationEfficiencyValidator
+from ._messages_validator import MessagesOrQueryResponseInputValidator
 
 __all__ = [
     "ValidatorInterface",
@@ -15,4 +16,5 @@ __all__ = [
     "ToolDefinitionsValidator",
     "ToolCallsValidator",
     "TaskNavigationEfficiencyValidator",
+    "MessagesOrQueryResponseInputValidator",
 ]

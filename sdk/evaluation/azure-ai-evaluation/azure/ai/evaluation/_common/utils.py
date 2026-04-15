@@ -22,6 +22,7 @@ from azure.ai.evaluation._model_configurations import (
 
 from . import constants
 from .constants import EvaluatorScoringPattern, EVALUATOR_SCORING_PATTERNS, SCORING_PATTERN_CONFIG
+from azure.ai.evaluation._evaluators._common._validators._validation_constants import MessageRole
 
 _nltk_data_download_lock = threading.Lock()
 
@@ -1057,13 +1058,13 @@ def serialize_messages(messages):
 
         # _get_agent_response expects content as list of dicts, not a plain string
         normalized = msg
-        if role == "assistant" and isinstance(msg.get("content"), str):
+        if role == MessageRole.ASSISTANT and isinstance(msg.get("content"), str):
             normalized = {**msg, "content": [{"type": "text", "text": msg["content"]}]}
 
-        if role in ("system", "developer"):
+        if role in (MessageRole.SYSTEM, MessageRole.DEVELOPER):
             system_message = msg.get("content", "")
 
-        elif role == "user" and "content" in msg:
+        elif role == MessageRole.USER and "content" in msg:
             if cur_agent_response:
                 formatted = _get_agent_response(cur_agent_response, include_tool_messages=True)
                 all_agent_responses.append([formatted])
@@ -1076,7 +1077,7 @@ def serialize_messages(messages):
             if text_in_msg:
                 cur_user_query.append(text_in_msg)
 
-        elif role in ("assistant", "tool"):
+        elif role in (MessageRole.ASSISTANT, MessageRole.TOOL):
             if cur_user_query:
                 all_user_queries.append(cur_user_query)
                 cur_user_query = []
