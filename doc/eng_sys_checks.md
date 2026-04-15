@@ -178,6 +178,8 @@ analyze_python_version = "3.11"
 This setting is read by `eng/scripts/dispatch_checks.py` and is passed to `azpysdk` via the `--python` flag (which requires `--isolate` and `uv`). This is useful for packages that use newer syntax or type features that require a more recent Python interpreter.
 
 > **Note:** This setting only affects the Python interpreter version used for the analyze venv; it does not change the minimum supported Python version declared in `setup.py`/`pyproject.toml`.
+>
+> **Warning:** This override applies to _all_ analyze checks dispatched by `dispatch_checks.py`, including `apistub`. The `apistub` tool currently requires Python < 3.11 (`PYTHON_VERSION_LIMIT = (3, 11)` in `azpysdk/apistub.py`). Do not set `analyze_python_version` to `3.11` or higher for packages that still run `apistub` through the standard dispatched analyze flow.
 
 ## Environment variables important to CI
 
@@ -187,7 +189,7 @@ A handful of environment variables influence how `azpysdk` behaves both in CI an
 |---|---|
 | `TF_BUILD` | Signals that the build is running in CI. When set, all relative dev dependencies are pre-built before checks run. |
 | `PREBUILT_WHEEL_DIR` | When set, checks look in this directory for a pre-built wheel instead of building one fresh. |
-| `PIP_INDEX_URL` || `UV_DEFAULT_INDEX` | Standard pip/uv index override. Set to the public dev feed during nightly alpha builds. |
+| `PIP_INDEX_URL` / `UV_DEFAULT_INDEX` | Standard pip/uv index override. Set to the public dev feed during nightly alpha builds. |
 
 ### Atomic Overrides
 
@@ -253,7 +255,7 @@ Static analysis checks always run against **Python 3.10** (configured via `Pytho
 The install-and-test checks run across the following Python version and platform matrix:
 
 | Platform | Python Version |
-|---|---|---|---|---|
+|---|---|
 | Linux | `3.9` |
 | Linux | `3.10` |
 | Linux | `3.13` |
@@ -264,13 +266,13 @@ The install-and-test checks run across the following Python version and platform
 
 ## Static Analysis Checks
 
-Static analysis runs on every changed package in every PR and every nightly build. The checks in this section are stateless — they inspect source code and packaging metadata without building or installing anything — and cover type correctness, code style, security, documentation quality, and distribution hygiene.
+Static analysis runs on every changed package in every PR and every nightly build. The checks in this section primarily inspect source code and packaging metadata, and also include distribution verification checks (`verifywhl`, `verifysdist`) that build and inspect package artifacts without installing them. Together they cover type correctness, code style, security, documentation quality, and distribution hygiene.
 
 ### MyPy
 
 <a name="mypy"></a>
 
-[`MyPy`](https://pypi.org/project/mypy/) performs static type checking across the package, flagging annotation inconsistencies and type mismatches that would cause runtime errors. It runs against the earliest supported Python version (3.9 by default) and respects `py.typed` markers and stub files.
+[`MyPy`](https://pypi.org/project/mypy/) performs static type checking across the package, flagging annotation inconsistencies and type mismatches that would cause runtime errors. It runs against Python 3.10 by default and respects `py.typed` markers and stub files.
 
 To run locally:
 
@@ -306,7 +308,7 @@ azpysdk verifytypes .
 
 <a name="pylint"></a>
 
-[`Pylint`](https://pypi.org/project/pylint/) enforces the Azure SDK [custom lint rules](https://github.com/Azure/azure-sdk-tools/tree/main/tools/pylint-extensions/azure-pylint-guidelines-checker) on top of standard Python style guidelines. Like MyPy, it runs against the earliest supported Python version (3.9), so that version must be available locally.
+[`Pylint`](https://pypi.org/project/pylint/) enforces the Azure SDK [custom lint rules](https://github.com/Azure/azure-sdk-tools/tree/main/tools/pylint-extensions/azure-pylint-guidelines-checker) on top of standard Python style guidelines. In CI it runs using the Python version configured for analyze checks (3.10 by default, or the value of `analyze_python_version` if set), so that version must be available locally to reproduce the check.
 
 To run locally:
 
