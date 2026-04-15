@@ -71,7 +71,6 @@ def _as_dict(obj: _Model | dict[str, Any]) -> dict[str, Any]:  # pylint: disable
     return obj
 
 
-
 class ResponseEventStream:  # pylint: disable=too-many-public-methods
     """Response event stream with deterministic sequence numbers."""
 
