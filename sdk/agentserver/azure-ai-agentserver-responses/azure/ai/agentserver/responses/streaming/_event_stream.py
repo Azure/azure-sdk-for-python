@@ -7,7 +7,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterable
 from copy import deepcopy
 from datetime import datetime, timezone
-from typing import Any, AsyncIterator, Iterator, Sequence
+from typing import Any, AsyncIterator, Iterator, Sequence, cast
 
 from .._id_generator import IdGenerator
 from ..models import _generated as generated_models
@@ -166,69 +166,81 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         return self._response
 
-    def emit_queued(self) -> generated_models.ResponseStreamEvent:
+    def emit_queued(self) -> generated_models.ResponseQueuedEvent:
         """Emit a ``response.queued`` lifecycle event.
 
         :returns: The emitted event model instance.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseQueuedEvent
         """
         self._response.status = "queued"
-        return self.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_QUEUED.value,
-                "response": self._response_payload(),
-            }
+        return cast(
+            generated_models.ResponseQueuedEvent,
+            self.emit_event(
+                {
+                    "type": EVENT_TYPE.RESPONSE_QUEUED.value,
+                    "response": self._response_payload(),
+                }
+            ),
         )
 
-    def emit_created(self, *, status: str = "in_progress") -> generated_models.ResponseStreamEvent:
+    def emit_created(self, *, status: str = "in_progress") -> generated_models.ResponseCreatedEvent:
         """Emit a ``response.created`` lifecycle event.
 
         :keyword status: Initial status to set on the response. Defaults to ``"in_progress"``.
         :keyword type status: str
         :returns: The emitted event model instance.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseCreatedEvent
         """
         self._response.status = status  # type: ignore[assignment]
-        return self.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_CREATED.value,
-                "response": self._response_payload(),
-            }
+        return cast(
+            generated_models.ResponseCreatedEvent,
+            self.emit_event(
+                {
+                    "type": EVENT_TYPE.RESPONSE_CREATED.value,
+                    "response": self._response_payload(),
+                }
+            ),
         )
 
-    def emit_in_progress(self) -> generated_models.ResponseStreamEvent:
+    def emit_in_progress(self) -> generated_models.ResponseInProgressEvent:
         """Emit a ``response.in_progress`` lifecycle event.
 
         :returns: The emitted event model instance.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseInProgressEvent
         """
         self._response.status = "in_progress"
-        return self.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
-                "response": self._response_payload(),
-            }
+        return cast(
+            generated_models.ResponseInProgressEvent,
+            self.emit_event(
+                {
+                    "type": EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
+                    "response": self._response_payload(),
+                }
+            ),
         )
 
     def emit_completed(
         self, *, usage: generated_models.ResponseUsage | dict[str, Any] | None = None
-    ) -> generated_models.ResponseStreamEvent:
+    ) -> generated_models.ResponseCompletedEvent:
         """Emit a ``response.completed`` terminal lifecycle event.
 
         :keyword usage: Optional usage statistics to attach to the response.
         :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
         :returns: The emitted event model instance.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseCompletedEvent
         """
         self._response.status = "completed"
         self._response.error = None  # type: ignore[assignment]
         self._response.incomplete_details = None  # type: ignore[assignment]
         self._set_terminal_fields(usage=usage)
-        return self.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_COMPLETED.value,
-                "response": self._response_payload(),
-            }
+        return cast(
+            generated_models.ResponseCompletedEvent,
+            self.emit_event(
+                {
+                    "type": EVENT_TYPE.RESPONSE_COMPLETED.value,
+                    "response": self._response_payload(),
+                }
+            ),
         )
 
     def emit_failed(
@@ -237,7 +249,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         code: str | generated_models.ResponseErrorCode = "server_error",
         message: str = "An internal server error occurred.",
         usage: generated_models.ResponseUsage | dict[str, Any] | None = None,
-    ) -> generated_models.ResponseStreamEvent:
+    ) -> generated_models.ResponseFailedEvent:
         """Emit a ``response.failed`` terminal lifecycle event.
 
         :keyword code: Error code describing the failure.
@@ -247,7 +259,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :keyword usage: Optional usage statistics to attach to the response.
         :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
         :returns: The emitted event model instance.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseFailedEvent
         """
         self._response.status = "failed"
         self._response.incomplete_details = None  # type: ignore[assignment]
@@ -258,11 +270,14 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             }
         )
         self._set_terminal_fields(usage=usage)
-        return self.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_FAILED.value,
-                "response": self._response_payload(),
-            }
+        return cast(
+            generated_models.ResponseFailedEvent,
+            self.emit_event(
+                {
+                    "type": EVENT_TYPE.RESPONSE_FAILED.value,
+                    "response": self._response_payload(),
+                }
+            ),
         )
 
     def emit_incomplete(
@@ -270,7 +285,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         *,
         reason: str | None = None,
         usage: generated_models.ResponseUsage | dict[str, Any] | None = None,
-    ) -> generated_models.ResponseStreamEvent:
+    ) -> generated_models.ResponseIncompleteEvent:
         """Emit a ``response.incomplete`` terminal lifecycle event.
 
         :keyword reason: Optional reason for incompleteness.
@@ -280,7 +295,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any]
                                 | None
         :returns: The emitted event model instance.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseIncompleteEvent
         """
         self._response.status = "incomplete"
         self._response.error = None  # type: ignore[assignment]
@@ -293,11 +308,14 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
                 }
             )
         self._set_terminal_fields(usage=usage)
-        return self.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_INCOMPLETE.value,
-                "response": self._response_payload(),
-            }
+        return cast(
+            generated_models.ResponseIncompleteEvent,
+            self.emit_event(
+                {
+                    "type": EVENT_TYPE.RESPONSE_INCOMPLETE.value,
+                    "response": self._response_payload(),
+                }
+            ),
         )
 
     def add_output_item(self, item_id: str) -> OutputItemBuilder:

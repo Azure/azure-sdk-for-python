@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from enum import Enum
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, cast
 
 from ...models import _generated as generated_models
 
@@ -92,42 +92,48 @@ class BaseOutputItemBuilder:
             )
         self._lifecycle_state = new_state
 
-    def _emit_added(self, item: dict[str, Any]) -> generated_models.ResponseStreamEvent:
+    def _emit_added(self, item: dict[str, Any]) -> generated_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event with lifecycle guard.
 
         :param item: The output item dict to include in the event.
         :type item: dict[str, Any]
         :returns: The emitted event.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseOutputItemAddedEvent
         :raises ValueError: If the builder is not in ``NOT_STARTED`` state.
         """
         self._ensure_transition(BuilderLifecycleState.NOT_STARTED, BuilderLifecycleState.ADDED)
         stamped_item = self._stream.with_output_item_defaults(item)
-        return self._stream.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value,
-                "output_index": self._output_index,
-                "item": stamped_item,
-            }
+        return cast(
+            generated_models.ResponseOutputItemAddedEvent,
+            self._stream.emit_event(
+                {
+                    "type": EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value,
+                    "output_index": self._output_index,
+                    "item": stamped_item,
+                }
+            ),
         )
 
-    def _emit_done(self, item: dict[str, Any]) -> generated_models.ResponseStreamEvent:
+    def _emit_done(self, item: dict[str, Any]) -> generated_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event with lifecycle guard.
 
         :param item: The completed output item dict to include in the event.
         :type item: dict[str, Any]
         :returns: The emitted event.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseOutputItemDoneEvent
         :raises ValueError: If the builder is not in ``ADDED`` state.
         """
         self._ensure_transition(BuilderLifecycleState.ADDED, BuilderLifecycleState.DONE)
         stamped_item = self._stream.with_output_item_defaults(item)
-        return self._stream.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value,
-                "output_index": self._output_index,
-                "item": stamped_item,
-            }
+        return cast(
+            generated_models.ResponseOutputItemDoneEvent,
+            self._stream.emit_event(
+                {
+                    "type": EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value,
+                    "output_index": self._output_index,
+                    "item": stamped_item,
+                }
+            ),
         )
 
     def _emit_item_state_event(
@@ -170,22 +176,22 @@ class OutputItemBuilder(BaseOutputItemBuilder):
             return item.as_dict()
         raise TypeError("item must be a dict or a generated model with as_dict()")
 
-    def emit_added(self, item: generated_models.OutputItem | dict[str, Any]) -> generated_models.ResponseStreamEvent:
+    def emit_added(self, item: generated_models.OutputItem | dict[str, Any]) -> generated_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for a generic item.
 
         :param item: The output item (dict or model with ``as_dict()``).
         :type item: OutputItem | dict[str, Any]
         :returns: The emitted event.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseOutputItemAddedEvent
         """
         return self._emit_added(self._coerce_item(item))
 
-    def emit_done(self, item: generated_models.OutputItem | dict[str, Any]) -> generated_models.ResponseStreamEvent:
+    def emit_done(self, item: generated_models.OutputItem | dict[str, Any]) -> generated_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for a generic item.
 
         :param item: The completed output item (dict or model with ``as_dict()``).
         :type item: OutputItem | dict[str, Any]
         :returns: The emitted event.
-        :rtype: ResponseStreamEvent
+        :rtype: ResponseOutputItemDoneEvent
         """
         return self._emit_done(self._coerce_item(item))
