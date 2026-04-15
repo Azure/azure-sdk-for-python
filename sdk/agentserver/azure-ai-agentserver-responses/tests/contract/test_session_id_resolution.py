@@ -55,7 +55,7 @@ def _simple_text_handler(request: Any, context: Any, cancellation_signal: Any):
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(handler or _noop_handler)
+    app.response_handler(handler or _noop_handler)
     return TestClient(app)
 
 

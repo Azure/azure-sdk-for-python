@@ -62,7 +62,7 @@ def _capture_handler(request: CreateResponse, context: ResponseContext, cancella
 
 def _build_client() -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(_capture_handler)
+    app.response_handler(_capture_handler)
     return TestClient(app)
 
 

@@ -60,7 +60,7 @@ app = ResponsesAgentServerHost()
 # call.  The convenience generator handles all inner events for you.
 
 
-@app.create_handler
+@app.response_handler
 async def handler(
     request: CreateResponse,
     context: ResponseContext,

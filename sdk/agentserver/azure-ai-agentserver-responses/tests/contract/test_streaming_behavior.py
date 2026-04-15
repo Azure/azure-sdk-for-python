@@ -26,7 +26,7 @@ def _noop_response_handler(request: Any, context: Any, cancellation_signal: Any)
 
 def _build_client() -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(_noop_response_handler)
+    app.response_handler(_noop_response_handler)
     return TestClient(app)
 
 
@@ -216,7 +216,7 @@ def test_streaming__forwards_emitted_event_before_late_handler_failure() -> None
         return _events()
 
     app = ResponsesAgentServerHost()
-    app.create_handler(_fail_after_first_event_handler)
+    app.response_handler(_fail_after_first_event_handler)
     client = TestClient(app)
 
     with client.stream(
@@ -326,7 +326,7 @@ def test_streaming__pre_creation_handler_failure_produces_terminal_event() -> No
     """B4 — Handler raising before any yield in streaming mode → SSE stream terminates with a proper terminal event."""
     handler = _throwing_before_yield_handler
     app = ResponsesAgentServerHost()
-    app.create_handler(handler)
+    app.response_handler(handler)
     client = TestClient(app, raise_server_exceptions=False)
 
     with client.stream(
@@ -388,7 +388,7 @@ def test_streaming__post_creation_error_yields_response_failed_not_error_event()
     """B13 — Handler raising after response.created → terminal is response.failed, NOT a standalone error event."""
     handler = _throwing_after_created_handler
     app = ResponsesAgentServerHost()
-    app.create_handler(handler)
+    app.response_handler(handler)
     client = TestClient(app, raise_server_exceptions=False)
 
     with client.stream(
@@ -427,7 +427,7 @@ def test_stream_pre_creation_error_emits_error_event() -> None:
     B8: The standalone ``error`` event must be the only event; ``response.created`` must NOT appear.
     """
     _app = ResponsesAgentServerHost()
-    _app.create_handler(_throwing_before_yield_handler)
+    _app.response_handler(_throwing_before_yield_handler)
     client = TestClient(_app, raise_server_exceptions=False)
 
     with client.stream(
@@ -449,7 +449,7 @@ def test_stream_post_creation_error_emits_response_failed() -> None:
     B13: After response.created, handler failures surface as ``response.failed``, not raw ``error``.
     """
     _app = ResponsesAgentServerHost()
-    _app.create_handler(_throwing_after_created_handler)
+    _app.response_handler(_throwing_after_created_handler)
     client = TestClient(_app, raise_server_exceptions=False)
 
     with client.stream(

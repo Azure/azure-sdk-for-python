@@ -48,7 +48,7 @@ class _CreateModeCase:
 
 def _build_client() -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(_noop_response_handler)
+    app.response_handler(_noop_response_handler)
     return TestClient(app)
 
 

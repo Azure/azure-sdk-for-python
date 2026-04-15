@@ -88,7 +88,7 @@ from azure.ai.agentserver.responses import (
 
 app = ResponsesAgentServerHost()
 
-@app.create_handler
+@app.response_handler
 async def handle_create(request: CreateResponse, context: ResponseContext, cancellation_signal):
     input_text = await context.get_input_text()
     return TextResponse(context, request, text=f"Echo: {input_text}")
@@ -139,7 +139,7 @@ from azure.ai.agentserver.responses import (
 
 app = ResponsesAgentServerHost()
 
-@app.create_handler
+@app.response_handler
 async def handle_create(request: CreateResponse, context: ResponseContext, cancellation_signal):
     stream = ResponseEventStream(context, request)
     stream.emit_created()
@@ -173,7 +173,7 @@ agent.run()  # or manual uvicorn/hypercorn setup
 # Responses protocol
 app = ResponsesAgentServerHost()
 
-@app.create_handler
+@app.response_handler
 async def handle(request, context, cancellation_signal):
     ...
 
@@ -216,7 +216,7 @@ class MyHost(InvocationAgentServerHost, ResponsesAgentServerHost):
 
 app = MyHost()
 
-@app.create_handler
+@app.response_handler
 async def handle_responses(request, context, cancellation_signal):
     return TextResponse(context, request, text="Hello from Responses!")
 

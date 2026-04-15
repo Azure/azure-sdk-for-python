@@ -42,7 +42,7 @@ def _delayed_response_handler(request: Any, context: Any, cancellation_signal: A
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(handler or _noop_response_handler)
+    app.response_handler(handler or _noop_response_handler)
     return TestClient(app)
 
 
@@ -244,7 +244,7 @@ def test_delete__returns_404_for_non_bg_in_flight_response() -> None:
     release_gate = threading.Event()
     handler = _make_blocking_sync_response_handler(started_gate, release_gate)
     app = ResponsesAgentServerHost()
-    app.create_handler(handler)
+    app.response_handler(handler)
     client = TestClient(app)
     response_id = IdGenerator.new_response_id()
 
