@@ -22,7 +22,6 @@ from azure.ai.evaluation._model_configurations import (
 
 from . import constants
 from .constants import EvaluatorScoringPattern, EVALUATOR_SCORING_PATTERNS, SCORING_PATTERN_CONFIG
-from azure.ai.evaluation._evaluators._common._validators._validation_constants import MessageRole
 
 _nltk_data_download_lock = threading.Lock()
 
@@ -1042,6 +1041,8 @@ def serialize_messages(messages):
     """
     if not messages:
         return ""
+
+    from azure.ai.evaluation._evaluators._common._validators._validation_constants import MessageRole
 
     all_user_queries = []
     all_agent_responses = []
