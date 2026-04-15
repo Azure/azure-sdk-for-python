@@ -377,13 +377,21 @@ class CopilotAdapter:
         # that returns one. We use `async for` to delegate to _handle_create.
         adapter = self
 
-        @self._server.create_handler
+        # Compatibility: public b1 packages renamed create_handler -> response_handler
+        _decorator = getattr(self._server, "response_handler", None) or self._server.create_handler
+
+        @_decorator
         async def handle_create(request, context, cancellation_signal):
             async for event in adapter._handle_create(request, context, cancellation_signal):
                 yield event
 
     async def _handle_create(self, request, context, cancellation_signal):
-        """Handle POST /responses — bridge Copilot SDK events to RAPI stream."""
+        """Handle POST /responses — bridge Copilot SDK events to RAPI stream.
+
+        Supports reasoning events (ASSISTANT_REASONING_DELTA / ASSISTANT_REASONING)
+        from reasoning models, emitting them as RAPI reasoning output items before
+        the message output item.
+        """
         input_text = _extract_input_with_attachments(request)
 
         # Resolve conversation identity for multi-turn session reuse.
@@ -429,13 +437,6 @@ class CopilotAdapter:
             yield stream.emit_created()
             yield stream.emit_in_progress()
 
-            # Start message output item
-            msg = stream.add_output_item_message()
-            yield msg.emit_added()
-
-            text_builder = msg.add_text_content()
-            yield text_builder.emit_added()
-
             # NOW send the prompt to Copilot SDK
             await session.send(input_text)
 
@@ -445,6 +446,31 @@ class CopilotAdapter:
             content_started = False
             event_count = 0
             usage = None
+
+            # Reasoning state (for reasoning models like o1/o3)
+            reasoning_builder = None
+            reasoning_part = None
+            reasoning_text_acc = ""
+            reasoning_started = False
+            reasoning_done = False
+
+            # Message/text builders created lazily (after reasoning completes)
+            msg = None
+            text_builder = None
+
+            def _ensure_msg():
+                nonlocal msg, text_builder
+                if msg is None:
+                    msg = stream.add_output_item_message()
+                    text_builder = msg.add_text_content()
+                return msg, text_builder
+
+            def _close_reasoning():
+                nonlocal reasoning_done
+                if reasoning_started and not reasoning_done and reasoning_part and reasoning_builder:
+                    reasoning_done = True
+                    return True
+                return False
 
             while True:
                 # Check if the client disconnected
@@ -476,21 +502,82 @@ class CopilotAdapter:
                     call_id = getattr(data, "call_id", "")
                     args = str(getattr(data, "arguments", ""))[:500]
                     logger.info(f"Copilot #{event_count:03d}: {event_name} tool={tool_name!r} call_id={call_id!r} args={args}")
+                elif "REASONING" in event_name:
+                    logger.info(f"Copilot #{event_count:03d}: {event_name} len={len(getattr(data, 'delta_content', '') or getattr(data, 'reasoning_text', '') or '')}")
                 elif event_text:
                     logger.info(f"Copilot #{event_count:03d}: {event_name} len={len(event_text)}")
                 else:
                     logger.info(f"Copilot #{event_count:03d}: {event_name}")
 
-                # Yield text deltas (only from DELTA events)
-                if event_text and event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA:
+                # ----------------------------------------------------------
+                # Reasoning delta (streaming thinking tokens)
+                # ----------------------------------------------------------
+                if event.type == SessionEventType.ASSISTANT_REASONING_DELTA and data:
+                    delta = getattr(data, "delta_content", "") or ""
+                    if delta and not reasoning_done:
+                        if not reasoning_started:
+                            reasoning_builder = stream.add_output_item_reasoning_item()
+                            yield reasoning_builder.emit_added()
+                            reasoning_part = reasoning_builder.add_summary_part()
+                            yield reasoning_part.emit_added()
+                            reasoning_started = True
+                        reasoning_text_acc += delta
+                        yield reasoning_part.emit_text_delta(delta)
+
+                # ----------------------------------------------------------
+                # Reasoning complete
+                # ----------------------------------------------------------
+                elif event.type == SessionEventType.ASSISTANT_REASONING and data:
+                    full = getattr(data, "reasoning_text", "") or getattr(data, "content", "") or ""
+                    if not reasoning_done and reasoning_started and reasoning_part and reasoning_builder:
+                        final = full if full else reasoning_text_acc
+                        yield reasoning_part.emit_text_done(final)
+                        yield reasoning_part.emit_done()
+                        yield reasoning_builder.emit_done()
+                        reasoning_done = True
+                    elif full and not reasoning_done:
+                        # Build reasoning from scratch when we only get a final event
+                        reasoning_builder = stream.add_output_item_reasoning_item()
+                        yield reasoning_builder.emit_added()
+                        reasoning_part = reasoning_builder.add_summary_part()
+                        yield reasoning_part.emit_added()
+                        yield reasoning_part.emit_text_delta(full)
+                        yield reasoning_part.emit_text_done(full)
+                        yield reasoning_part.emit_done()
+                        yield reasoning_builder.emit_done()
+                        reasoning_done = True
+
+                # ----------------------------------------------------------
+                # Text delta
+                # ----------------------------------------------------------
+                elif event_text and event.type == SessionEventType.ASSISTANT_MESSAGE_DELTA:
+                    if _close_reasoning() and reasoning_part and reasoning_builder:
+                        yield reasoning_part.emit_text_done(reasoning_text_acc)
+                        yield reasoning_part.emit_done()
+                        yield reasoning_builder.emit_done()
+                    _m, _t = _ensure_msg()
+                    if not content_started:
+                        yield _m.emit_added()
+                        yield _t.emit_added()
                     content_started = True
                     accumulated_text += event_text
-                    yield text_builder.emit_delta(event_text)
+                    yield _t.emit_delta(event_text)
+
+                # ----------------------------------------------------------
+                # Final message (non-streaming fallback)
+                # ----------------------------------------------------------
                 elif event_text and event.type == SessionEventType.ASSISTANT_MESSAGE:
-                    # Final message — use as accumulated text if we missed deltas
                     if not content_started:
+                        if _close_reasoning() and reasoning_part and reasoning_builder:
+                            yield reasoning_part.emit_text_done(reasoning_text_acc)
+                            yield reasoning_part.emit_done()
+                            yield reasoning_builder.emit_done()
+                        _m, _t = _ensure_msg()
+                        yield _m.emit_added()
+                        yield _t.emit_added()
                         accumulated_text = event_text
-                        yield text_builder.emit_delta(event_text)
+                        yield _t.emit_delta(event_text)
+                        content_started = True
 
                 # Track usage
                 elif event.type == SessionEventType.ASSISTANT_USAGE and data:
@@ -520,18 +607,31 @@ class CopilotAdapter:
         finally:
             unsubscribe()
 
+        # Close any open reasoning that didn't get a REASONING complete event
+        if reasoning_started and not reasoning_done and reasoning_part and reasoning_builder:
+            yield reasoning_part.emit_text_done(reasoning_text_acc)
+            yield reasoning_part.emit_done()
+            yield reasoning_builder.emit_done()
+
         # Handle empty response
-        if not accumulated_text:
-            accumulated_text = "(No response text was produced by the agent.)"
-            yield text_builder.emit_delta(accumulated_text)
+        if not content_started:
+            _m, _t = _ensure_msg()
+            yield _m.emit_added()
+            yield _t.emit_added()
+            accumulated_text = accumulated_text or "(No response text was produced by the agent.)"
+            yield _t.emit_delta(accumulated_text)
+            content_started = True
 
         # Emit done events — correct RAPI ordering (enforced by state machine)
-        yield text_builder.emit_done(accumulated_text)
-        yield msg.emit_content_done(text_builder)
+        yield text_builder.emit_text_done(accumulated_text)
+        yield text_builder.emit_done()
         yield msg.emit_done()
         yield stream.emit_completed(usage=usage)
 
-        logger.info(f"Response complete: {event_count} Copilot events, {len(accumulated_text)} chars")
+        logger.info(
+            f"Response complete: {event_count} Copilot events, "
+            f"{len(accumulated_text)} text chars, {len(reasoning_text_acc)} reasoning chars"
+        )
 
     def run(self, port: int = None):
         """Start the adapter server.
