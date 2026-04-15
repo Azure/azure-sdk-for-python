@@ -4,13 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
+from datetime import datetime
 from typing import Optional, Any, Dict, List
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import Pipeline
 
-from ._generated.models import TableServiceProperties
+from ._generated.models import KeyInfo, TableServiceProperties, UserDelegationKey
 from ._models import (
     TableItem,
     TablePropertiesPaged,
@@ -306,6 +307,47 @@ class TableServiceClient(TablesBaseClient):
         paged._page_iterator_class = TablePropertiesPaged  # pylint: disable=protected-access
         paged._kwargs.update({"results_per_page": results_per_page})  # pylint: disable=protected-access
         return paged  # type: ignore[return-value]
+
+    @distributed_trace
+    def get_user_delegation_key(
+        self,
+        key_start_time: datetime,
+        key_expiry_time: datetime,
+        *,
+        delegated_user_tid: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
+    ) -> UserDelegationKey:
+        """Get a user delegation key for the Table service.
+
+        The key can be used to sign a user delegation SAS. This operation
+        requires OAuth (Entra ID / TokenCredential) authentication and is
+        only supported for Azure Storage accounts (not Cosmos DB).
+
+        :param key_start_time: Start time for the key's validity, as a UTC datetime.
+        :type key_start_time: ~datetime.datetime
+        :param key_expiry_time: Expiry time for the key's validity, as a UTC datetime.
+        :type key_expiry_time: ~datetime.datetime
+        :keyword delegated_user_tid: The Microsoft Entra tenant ID of the delegated user.
+        :paramtype delegated_user_tid: str or None
+        :keyword timeout: The timeout parameter is expressed in seconds.
+        :paramtype timeout: int or None
+        :return: The user delegation key.
+        :rtype: ~azure.data.tables.UserDelegationKey
+        :raises: :class:`~azure.core.exceptions.HttpResponseError`
+        """
+        if timeout is not None:
+            kwargs["timeout"] = timeout
+        key_info = KeyInfo(
+            start=key_start_time.replace(microsecond=0, tzinfo=None).isoformat() + "Z",
+            expiry=key_expiry_time.replace(microsecond=0, tzinfo=None).isoformat() + "Z",
+            delegated_user_tid=delegated_user_tid,
+        )
+        try:
+            return self._client.service.get_user_delegation_key(key_info=key_info, **kwargs)
+        except HttpResponseError as error:
+            _process_table_error(error)
+            raise
 
     def get_table_client(self, table_name: str, **kwargs: Any) -> TableClient:
         """Get a client to interact with the specified table.

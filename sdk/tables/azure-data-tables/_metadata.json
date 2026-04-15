@@ -1,6 +1,6 @@
 {
-  "apiVersion": "2019-02-02",
+  "apiVersion": "2025-07-05",
   "apiVersions": {
-    "Data.Tables": "2019-02-02"
+    "Data.Tables": "2025-07-05"
   }
 }

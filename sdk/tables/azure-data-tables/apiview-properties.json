@@ -4,6 +4,7 @@
         "azure.data.tables.models.AccessPolicy": "Data.Tables.AccessPolicy",
         "azure.data.tables.models.CorsRule": "Data.Tables.CorsRule",
         "azure.data.tables.models.GeoReplication": "Data.Tables.GeoReplication",
+        "azure.data.tables.models.KeyInfo": "Data.Tables.KeyInfo",
         "azure.data.tables.models.Logging": "Data.Tables.Logging",
         "azure.data.tables.models.Metrics": "Data.Tables.Metrics",
         "azure.data.tables.models.RetentionPolicy": "Data.Tables.RetentionPolicy",
@@ -16,6 +17,7 @@
         "azure.data.tables.models.TableServiceError": "Data.Tables.TablesServiceError",
         "azure.data.tables.models.TableServiceProperties": "Data.Tables.TableServiceProperties",
         "azure.data.tables.models.TableServiceStats": "Data.Tables.TableServiceStats",
+        "azure.data.tables.models.UserDelegationKey": "Data.Tables.UserDelegationKey",
         "azure.data.tables.models.OdataMetadataFormat": "Data.Tables.OdataMetadataFormat",
         "azure.data.tables.models.ResponseFormat": "Data.Tables.ResponseFormat",
         "azure.data.tables.models.GeoReplicationStatusType": "Data.Tables.GeoReplicationStatusType",
@@ -46,6 +48,8 @@
         "azure.data.tables.operations.ServiceOperations.get_properties": "Data.Tables.Service.getProperties",
         "azure.data.tables.aio.operations.ServiceOperations.get_properties": "Data.Tables.Service.getProperties",
         "azure.data.tables.operations.ServiceOperations.get_statistics": "Data.Tables.Service.getStatistics",
-        "azure.data.tables.aio.operations.ServiceOperations.get_statistics": "Data.Tables.Service.getStatistics"
+        "azure.data.tables.aio.operations.ServiceOperations.get_statistics": "Data.Tables.Service.getStatistics",
+        "azure.data.tables.operations.ServiceOperations.get_user_delegation_key": "Data.Tables.Service.getUserDelegationKey",
+        "azure.data.tables.aio.operations.ServiceOperations.get_user_delegation_key": "Data.Tables.Service.getUserDelegationKey"
     }
 }

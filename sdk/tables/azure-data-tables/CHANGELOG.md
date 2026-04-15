@@ -4,6 +4,10 @@
 
 ### Features Added
 
+* Added `TableServiceClient.get_user_delegation_key()` to obtain a user delegation key for generating user delegation SAS tokens. This operation requires OAuth (Microsoft Entra ID / `TokenCredential`) authentication and is only supported for Azure Storage accounts.
+* Updated `generate_table_sas()` to accept a `UserDelegationKey` as the `credential` parameter for generating user delegation SAS tokens.
+* Added `UserDelegationKey` model to the public API.
+* Added support for API version "2025-07-05".
 * Added to support customized encoding and decoding in entity CRUD operations.
 * Added to support Entity property in Tuple and Enum types.
 * Added to support flatten Entity metadata in entity deserialization by passing kwarg `flatten_result_entity` when creating clients.

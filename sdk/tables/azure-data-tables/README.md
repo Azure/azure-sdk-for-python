@@ -197,6 +197,7 @@ Two different clients are provided to interact with the various components of th
     * Get and set account setting
     * Query, create, and delete tables within the account.
     * Get a `TableClient` to access a specific table using the `get_table_client` method.
+    * Get a user delegation key for generating user delegation SAS tokens (Azure Storage only, requires `TokenCredential`).
 2. **`TableClient`** -
     * Interacts with a specific table (which need not exist yet).
     * Create, delete, query, and upsert entities within the specified table.
@@ -231,6 +232,7 @@ The following sections provide several code snippets covering some of the most c
 * [Creating a table](#creating-a-table "Creating a table")
 * [Creating entities](#creating-entities "Creating entities")
 * [Querying entities](#querying-entities "Querying entities")
+* [Generating a user delegation SAS token](#generating-a-user-delegation-sas-token "Generating a user delegation SAS token")
 
 
 ### Creating a table
@@ -282,6 +284,43 @@ entities = table_client.query_entities(my_filter)
 for entity in entities:
     for key in entity.keys():
         print(f"Key: {key}, Value: {entity[key]}")
+```
+
+### Generating a user delegation SAS token
+User delegation SAS tokens provide a more secure alternative to account-key-based SAS tokens by using Microsoft Entra ID credentials. This feature is supported only for Azure Storage accounts (not Cosmos DB).
+
+```python
+from datetime import datetime, timedelta, timezone
+from azure.data.tables import TableServiceClient, generate_table_sas, TableSasPermissions
+from azure.identity import DefaultAzureCredential
+from azure.core.credentials import AzureSasCredential
+
+credential = DefaultAzureCredential()
+account_name = "<my_account_name>"
+
+with TableServiceClient(
+    endpoint=f"https://{account_name}.table.core.windows.net", credential=credential
+) as table_service_client:
+    # Get a user delegation key valid for 1 hour
+    udk = table_service_client.get_user_delegation_key(
+        key_start_time=datetime.now(tz=timezone.utc),
+        key_expiry_time=datetime.now(tz=timezone.utc) + timedelta(hours=1),
+    )
+
+    # Generate a user delegation SAS token for a specific table
+    sas_token = generate_table_sas(
+        credential=udk,
+        table_name="myTable",
+        account_name=account_name,
+        permission=TableSasPermissions(read=True, query=True),
+        expiry=datetime.now(tz=timezone.utc) + timedelta(hours=1),
+    )
+
+    # Use the SAS token to create a client
+    sas_table_client = TableServiceClient(
+        endpoint=f"https://{account_name}.table.core.windows.net",
+        credential=AzureSasCredential(sas_token),
+    ).get_table_client("myTable")
 ```
 
 ## Optional Configuration
@@ -389,6 +428,7 @@ These code samples show common scenario operations with the Azure Tables client 
 * Query and list entities: [sample_query_table.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/sample_query_table.py) ([async version](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/tables/azure-data-tables/samples/async_samples/sample_query_table_async.py))
 * Update, upsert, and merge entities: [sample_update_upsert_merge_entities.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_update_upsert_merge_entities.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_update_upsert_merge_entities_async.py))
 * Committing many requests in a single transaction: [sample_batching.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_batching.py) ([async version](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/async_samples/sample_batching_async.py))
+* User delegation SAS: [sample_user_delegation_sas.py](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/tables/azure-data-tables/samples/sample_user_delegation_sas.py)
 
 ### Additional documentation
 For more extensive documentation on Azure Tables, see the [Azure Tables documentation][Tables_product_doc] on learn.microsoft.com.
