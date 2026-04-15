@@ -15,7 +15,6 @@ from azure.ai.evaluation._evaluators._common._validators import MessagesOrQueryR
 from azure.ai.evaluation._evaluators._common._validators._validation_constants import MessageRole
 from azure.ai.evaluation._exceptions import EvaluationException, ErrorTarget
 
-
 # region EvaluationLevel enum tests
 
 
@@ -157,13 +156,7 @@ class TestSerializeMessages:
             {"role": "user", "content": [{"type": "text", "text": "What is 2+2?"}]},
             {"role": "assistant", "content": [{"type": "text", "text": "4"}]},
         ]
-        expected = (
-            "User turn 1:\n"
-            "  What is 2+2?\n"
-            "\n"
-            "Agent turn 1:\n"
-            "  4"
-        )
+        expected = "User turn 1:\n" "  What is 2+2?\n" "\n" "Agent turn 1:\n" "  4"
         assert serialize_messages(messages) == expected
 
     def test_multi_turn(self):
@@ -230,13 +223,7 @@ class TestSerializeMessages:
             {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
             {"role": "assistant", "content": "Hi there!"},
         ]
-        expected = (
-            "User turn 1:\n"
-            "  Hello\n"
-            "\n"
-            "Agent turn 1:\n"
-            "  Hi there!"
-        )
+        expected = "User turn 1:\n" "  Hello\n" "\n" "Agent turn 1:\n" "  Hi there!"
         assert serialize_messages(messages) == expected
 
     def test_string_content_user(self):
@@ -245,13 +232,7 @@ class TestSerializeMessages:
             {"role": "user", "content": "Hello"},
             {"role": "assistant", "content": [{"type": "text", "text": "Hi"}]},
         ]
-        expected = (
-            "User turn 1:\n"
-            "  Hello\n"
-            "\n"
-            "Agent turn 1:\n"
-            "  Hi"
-        )
+        expected = "User turn 1:\n" "  Hello\n" "\n" "Agent turn 1:\n" "  Hi"
         assert serialize_messages(messages) == expected
 
     def test_consecutive_user_messages_grouped_into_one_turn(self):
@@ -415,13 +396,7 @@ class TestSerializeMessages:
             {"role": "user", "content": [{"type": "text", "text": "Hi"}]},
             {"role": "assistant", "content": [{"type": "text", "text": "Hello"}]},
         ]
-        expected = (
-            "User turn 1:\n"
-            "  Hi\n"
-            "\n"
-            "Agent turn 1:\n"
-            "  Hello"
-        )
+        expected = "User turn 1:\n" "  Hi\n" "\n" "Agent turn 1:\n" "  Hello"
         assert serialize_messages(messages) == expected
 
     def test_skips_messages_without_role(self):
@@ -430,13 +405,7 @@ class TestSerializeMessages:
             {"role": "user", "content": [{"type": "text", "text": "Hi"}]},
             {"role": "assistant", "content": [{"type": "text", "text": "Hello"}]},
         ]
-        expected = (
-            "User turn 1:\n"
-            "  Hi\n"
-            "\n"
-            "Agent turn 1:\n"
-            "  Hello"
-        )
+        expected = "User turn 1:\n" "  Hi\n" "\n" "Agent turn 1:\n" "  Hello"
         assert serialize_messages(messages) == expected
 
 
@@ -495,64 +464,75 @@ class TestMessagesOrQueryResponseInputValidator:
     def test_message_missing_role(self):
         validator = self._make_validator()
         with pytest.raises(EvaluationException, match="must contain a 'role' key"):
-            validator.validate_eval_input({
-                "messages": [{"content": "no role"}]
-            })
+            validator.validate_eval_input({"messages": [{"content": "no role"}]})
 
     def test_invalid_role(self):
         validator = self._make_validator()
         with pytest.raises(EvaluationException, match="Invalid role"):
-            validator.validate_eval_input({
-                "messages": [
-                    {"role": "unknown_role", "content": "test"},
-                    {"role": "user", "content": [{"type": "text", "text": "Hi"}]},
-                    {"role": "assistant", "content": [{"type": "text", "text": "Hello"}]},
-                ]
-            })
+            validator.validate_eval_input(
+                {
+                    "messages": [
+                        {"role": "unknown_role", "content": "test"},
+                        {"role": "user", "content": [{"type": "text", "text": "Hi"}]},
+                        {"role": "assistant", "content": [{"type": "text", "text": "Hello"}]},
+                    ]
+                }
+            )
 
     def test_no_user_message(self):
         validator = self._make_validator()
         with pytest.raises(EvaluationException, match="at least one message with role 'user'"):
-            validator.validate_eval_input({
-                "messages": [
-                    {"role": "assistant", "content": [{"type": "text", "text": "Hello"}]},
-                ]
-            })
+            validator.validate_eval_input(
+                {
+                    "messages": [
+                        {"role": "assistant", "content": [{"type": "text", "text": "Hello"}]},
+                    ]
+                }
+            )
 
     def test_no_assistant_message(self):
         validator = self._make_validator()
         with pytest.raises(EvaluationException, match="at least one message with role 'assistant'"):
-            validator.validate_eval_input({
-                "messages": [
-                    {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
-                ]
-            })
+            validator.validate_eval_input(
+                {
+                    "messages": [
+                        {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
+                    ]
+                }
+            )
 
     def test_last_message_not_assistant(self):
         validator = self._make_validator()
         with pytest.raises(EvaluationException, match="last message must have role 'assistant'"):
-            validator.validate_eval_input({
-                "messages": [
-                    {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
-                    {"role": "assistant", "content": [{"type": "text", "text": "Hi"}]},
-                    {"role": "user", "content": [{"type": "text", "text": "Bye"}]},
-                ]
-            })
+            validator.validate_eval_input(
+                {
+                    "messages": [
+                        {"role": "user", "content": [{"type": "text", "text": "Hello"}]},
+                        {"role": "assistant", "content": [{"type": "text", "text": "Hi"}]},
+                        {"role": "user", "content": [{"type": "text", "text": "Bye"}]},
+                    ]
+                }
+            )
 
     def test_last_assistant_no_text_content(self):
         validator = self._make_validator()
         with pytest.raises(EvaluationException, match="must contain text content"):
-            validator.validate_eval_input({
-                "messages": [
-                    {"role": "user", "content": [{"type": "text", "text": "Do something"}]},
-                    {
-                        "role": "assistant",
-                        "content": [
-                            {"type": "tool_call", "tool_call": {"id": "1", "function": {"name": "f", "arguments": {}}}},
-                        ],
-                    },
-                ]
-            })
+            validator.validate_eval_input(
+                {
+                    "messages": [
+                        {"role": "user", "content": [{"type": "text", "text": "Do something"}]},
+                        {
+                            "role": "assistant",
+                            "content": [
+                                {
+                                    "type": "tool_call",
+                                    "tool_call": {"id": "1", "function": {"name": "f", "arguments": {}}},
+                                },
+                            ],
+                        },
+                    ]
+                }
+            )
 
     def test_developer_role_accepted(self):
         """Developer role messages should be accepted."""

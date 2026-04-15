@@ -65,8 +65,7 @@ class MessagesOrQueryResponseInputValidator(ToolDefinitionsValidator):
                 if role not in valid_roles:
                     raise EvaluationException(
                         message=(
-                            f"Invalid role '{role}' at message index {i}. "
-                            f"Must be one of: {sorted(valid_roles)}."
+                            f"Invalid role '{role}' at message index {i}. " f"Must be one of: {sorted(valid_roles)}."
                         ),
                         blame=ErrorBlame.USER_ERROR,
                         category=ErrorCategory.INVALID_VALUE,
@@ -92,8 +91,7 @@ class MessagesOrQueryResponseInputValidator(ToolDefinitionsValidator):
             if messages[-1]["role"] != MessageRole.ASSISTANT:
                 raise EvaluationException(
                     message=(
-                        f"The last message must have role 'assistant', "
-                        f"but found role '{messages[-1]['role']}'."
+                        f"The last message must have role 'assistant', " f"but found role '{messages[-1]['role']}'."
                     ),
                     blame=ErrorBlame.USER_ERROR,
                     category=ErrorCategory.INVALID_VALUE,
@@ -103,9 +101,7 @@ class MessagesOrQueryResponseInputValidator(ToolDefinitionsValidator):
             last_content = messages[-1].get("content", "")
             if isinstance(last_content, list):
                 has_text = any(
-                    isinstance(c, dict) and c.get("type") in ("text",)
-                    or isinstance(c, str)
-                    for c in last_content
+                    isinstance(c, dict) and c.get("type") in ("text",) or isinstance(c, str) for c in last_content
                 )
                 if not has_text:
                     raise EvaluationException(

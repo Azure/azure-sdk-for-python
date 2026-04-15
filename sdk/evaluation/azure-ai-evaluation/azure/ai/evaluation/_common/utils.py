@@ -989,7 +989,7 @@ def _split_messages_at_latest_user(messages):
     :rtype: Tuple[List[dict], List[dict]]
     """
     latest_user_index = max(i for i, message in enumerate(messages) if message["role"] == "user")
-    return messages[: latest_user_index + 1], messages[latest_user_index + 1:]
+    return messages[: latest_user_index + 1], messages[latest_user_index + 1 :]
 
 
 def _wrap_string_messages(query, response):
@@ -1091,9 +1091,7 @@ def serialize_messages(messages):
 
     conversation_history = {
         "user_queries": all_user_queries,
-        "agent_responses": all_agent_responses[:len(all_user_queries) - 1]
-        if len(all_user_queries) > 0
-        else [],
+        "agent_responses": all_agent_responses[: len(all_user_queries) - 1] if len(all_user_queries) > 0 else [],
     }
     if system_message:
         conversation_history["system_message"] = system_message
@@ -1137,19 +1135,13 @@ def _resolve_evaluation_level(evaluation_level, error_target):
             return EvaluationLevel(evaluation_level)
         except ValueError:
             raise EvaluationException(
-                message=(
-                    f"Invalid evaluation_level '{evaluation_level}'. "
-                    f"Must be one of: {valid}."
-                ),
+                message=(f"Invalid evaluation_level '{evaluation_level}'. " f"Must be one of: {valid}."),
                 blame=ErrorBlame.USER_ERROR,
                 category=ErrorCategory.INVALID_VALUE,
                 target=error_target,
             )
     raise EvaluationException(
-        message=(
-            f"Invalid evaluation_level '{evaluation_level}'. "
-            f"Must be one of: {valid}."
-        ),
+        message=(f"Invalid evaluation_level '{evaluation_level}'. " f"Must be one of: {valid}."),
         blame=ErrorBlame.USER_ERROR,
         category=ErrorCategory.INVALID_VALUE,
         target=error_target,
