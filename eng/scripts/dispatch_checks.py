@@ -138,6 +138,7 @@ async def run_check(
     mark_arg: Optional[str],
     dest_dir: Optional[str] = None,
     service: Optional[str] = None,
+    generate_md: bool = False,
 ) -> CheckResult:
     """Run a single check (subprocess) within a concurrency semaphore, capturing output and timing.
 
@@ -155,6 +156,8 @@ async def run_check(
     :type total: int
     :param proxy_port: Dedicated proxy port assigned to this check instance.
     :type proxy_port: int
+    :param generate_md: When True and check is 'apistub', pass ``--md`` to generate api.md in-place.
+    :type generate_md: bool
     :returns: A :class:`CheckResult` describing exit code, duration and captured output.
     :rtype: CheckResult
     """
@@ -167,6 +170,8 @@ async def run_check(
             cmd += ["--mark_arg", mark_arg]
         if dest_dir and check == "apistub":
             cmd += ["--dest-dir", dest_dir]
+        if generate_md and check == "apistub":
+            cmd += ["--md"]
         logger.info(f"[START {idx}/{total}] {check} :: {package}\nCMD: {' '.join(cmd)}")
         env = os.environ.copy()
         env["PROXY_URL"] = f"http://localhost:{proxy_port}"
@@ -267,6 +272,7 @@ async def run_all_checks(
     injected_packages: str,
     dest_dir: Optional[str] = None,
     service: Optional[str] = None,
+    generate_md: bool = False,
 ):
     """Run all checks for all packages concurrently and return the worst exit code.
 
@@ -279,6 +285,8 @@ async def run_all_checks(
     :param wheel_dir: The directory where wheels should be located and stored when built.
         In CI should correspond to `$(Build.ArtifactStagingDirectory)`.
     :type wheel_dir: str
+    :param generate_md: When True, pass ``--md`` to ``apistub`` checks to generate api.md in-place.
+    :type generate_md: bool
     :returns: The worst exit code from all checks (0 if all passed).
     :rtype: int
     """
@@ -343,6 +351,7 @@ async def run_all_checks(
                     mark_arg,
                     dest_dir,
                     service,
+                    generate_md,
                 )
             )
         )
@@ -499,6 +508,14 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     )
 
     parser.add_argument(
+        "--md",
+        dest="generate_md",
+        action="store_true",
+        default=False,
+        help="When set, pass --md to apistub checks to generate api.md in-place.",
+    )
+
+    parser.add_argument(
         "--disable-compatibility-filter",
         dest="disable_compatibility_filter",
         action="store_true",
@@ -598,6 +615,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
                 args.injected_packages,
                 args.dest_dir,
                 effective_service,
+                args.generate_md,
             )
         )
     except KeyboardInterrupt:

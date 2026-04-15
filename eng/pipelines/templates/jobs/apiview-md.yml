@@ -21,8 +21,14 @@ jobs:
         inputs:
           versionSpec: '3.10'
 
-      - script: |
-          python -m pip install -r eng/ci_tools.txt
+      - template: /eng/pipelines/templates/steps/use-venv.yml
+        parameters:
+          VirtualEnvironmentName: "venv-apiview-md"
+
+      - pwsh: |
+          $ErrorActionPreference = 'Stop'
+          $PSNativeCommandUseErrorActionPreference = $true
+          $(PIP_EXE) install -r eng/ci_tools.txt
         displayName: 'Install CI tools'
 
       - script: |
@@ -30,13 +36,21 @@ jobs:
           git config --global user.email "azuresdk@microsoft.com"
         displayName: 'Configure git'
 
-      # Run `azpysdk apistub --md` for all packages.
-      # The generated api.md is written directly into each package directory
-      # so git can detect the changes.
-      - script: |
-          azpysdk apistub --md "azure-*"
+      # Run `azpysdk apistub --md` for all packages in parallel via dispatch_checks.py.
+      # Each package is processed in its own isolated virtual environment. The generated
+      # api.md is written directly into each package directory so git can detect the changes.
+      - task: PythonScript@0
         displayName: 'Regenerate api.md for all packages'
         continueOnError: true
+        inputs:
+          scriptPath: 'eng/scripts/dispatch_checks.py'
+          arguments: >-
+            "azure-*"
+            --checks="apistub"
+            --md
+            --disablecov
+            --filter-type="Omit_management"
+            --max-parallel 8
 
       # Stage only api.md files so the PR contains exclusively api.md updates.
       - bash: |
