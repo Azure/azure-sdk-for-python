@@ -21,4 +21,11 @@ extends:
           steps:
           - pwsh: |
               Write-Host "Test"
+              New-Item -Path $(Build.ArtifactStagingDirectory) -ItemType Directory -Force
+              Copy-Item -Path $(Build.SourcesDirectory)/README.md -Destination $(Build.ArtifactStagingDirectory)
             displayName: 'Say test'
+
+          - template: /eng/common/pipelines/templates/steps/publish-1es-artifact.yml
+            parameters:
+              artifactName: readme
+              artifactPath: $(Build.ArtifactStagingDirectory)
