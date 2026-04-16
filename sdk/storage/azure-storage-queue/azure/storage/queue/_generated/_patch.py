@@ -20,6 +20,7 @@ from ._version import VERSION
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
+
 class QueuesClientConfiguration(QueuesClientConfigurationInternal):
     """Configuration for QueuesClient.
 
@@ -42,7 +43,7 @@ class QueuesClientConfiguration(QueuesClientConfigurationInternal):
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
-        
+
         self.url = url
         self.credential = credential
         self.version = version
@@ -50,6 +51,7 @@ class QueuesClientConfiguration(QueuesClientConfigurationInternal):
         kwargs.setdefault("sdk_moniker", "storage-queue/{}".format(VERSION))
         self.polling_interval = kwargs.get("polling_interval", 30)
         self._configure(**kwargs)
+
 
 class QueuesClient(QueuesClientInternal):
     """QueuesClient that supports being instantiated with a pre-built pipeline."""
