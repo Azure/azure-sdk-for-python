@@ -17,7 +17,7 @@ from settings.testcase import BlobPreparer
 from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.blob import BlobSasPermissions, StandardBlobTier, StorageErrorCode, generate_blob_sas
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
-from azure.storage.blob._shared.policies import StorageContentValidation
+from azure.storage.blob._shared.validation import calculate_content_md5
 
 
 # ------------------------------------------------------------------------------
@@ -167,7 +167,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         dest_blob_name = self.get_resource_name('destblob')
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
-        src_md5 = StorageContentValidation.get_content_md5(self.source_blob_data)
+        src_md5 = calculate_content_md5(self.source_blob_data)
 
         # Act part 1: put block from url with md5 validation
         await dest_blob.stage_block_from_url(
@@ -183,7 +183,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         assert len(committed) == 0
 
         # Act part 2: put block from url with wrong md5
-        fake_md5 = StorageContentValidation.get_content_md5(b"POTATO")
+        fake_md5 = calculate_content_md5(b"POTATO")
         with pytest.raises(HttpResponseError) as error:
             await dest_blob.stage_block_from_url(
                 block_id=2,
