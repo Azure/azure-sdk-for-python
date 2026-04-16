@@ -102,7 +102,7 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
         self.telemetry = TelemetryOperations(self)  # type: ignore
 
     @distributed_trace
-    def get_openai_client(self, agent_name: Optional[str] = None, **kwargs: Any) -> AsyncOpenAI:
+    def get_openai_client(self, *, agent_name: Optional[str] = None, **kwargs: Any) -> AsyncOpenAI:
         """Get an authenticated AsyncOpenAI client from the `openai` package.
 
         Keyword arguments are passed to the AsyncOpenAI client constructor.
@@ -111,16 +111,16 @@ class AIProjectClient(AIProjectClientGenerated):  # pylint: disable=too-many-ins
 
         * ``base_url`` set to the endpoint provided to the AIProjectClient constructor, with "/openai/v1" appended.
           If ``agent_name`` is provided (and ``allow_preview=True`` was set on the AIProjectClient), ``base_url``
-          is instead set to the Agent's endpoint ``{endpoint}/agents/{agent_name}/endpoint/openai/v1``.
+          is instead set to the Agent's endpoint ``{endpoint}/agents/{agent_name}/endpoint/protocols/openai``.
           Can be overridden by passing ``base_url`` as a keyword argument.
         * ``api_key`` set to a get_bearer_token_provider() callable that uses the TokenCredential provided to the
           AIProjectClient constructor, with scope "https://ai.azure.com/.default".
           Can be overridden by passing ``api_key`` as a keyword argument.
 
-        :param agent_name: Optional name of an Agent. When provided, the AsyncOpenAI client's ``base_url``
+        :keyword agent_name: Optional name of an Agent. When provided, the AsyncOpenAI client's ``base_url``
             is pointed at the Agent's endpoint. Requires ``allow_preview=True`` to have been set on the
             AIProjectClient constructor; otherwise a :exc:`ValueError` is raised.
-        :type agent_name: str or None
+        :paramtype agent_name: str or None
 
         :return: An authenticated AsyncOpenAI client
         :rtype: ~openai.AsyncOpenAI
