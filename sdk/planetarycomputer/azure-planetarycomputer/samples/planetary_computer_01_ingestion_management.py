@@ -129,7 +129,9 @@ def create_or_replace_source(
     logging.info(f"First call result: {first_result.id}")
 
     # Second call - replaces again with modified token (demonstrates update capability)
-    updated_token = "sp=rl&st=2024-01-01T00:00:00Z&se=2024-12-31T23:59:59Z&sv=2023-01-03&sr=c&sig=UpdatedRandomSignature123456"
+    updated_token = (
+        "sp=rl&st=2024-01-01T00:00:00Z&se=2024-12-31T23:59:59Z&sv=2023-01-03&sr=c&sig=UpdatedRandomSignature123456"
+    )
 
     updated_connection_info = SharedAccessSignatureTokenConnection(
         container_uri=sas_container_uri, shared_access_signature_token=updated_token
@@ -317,7 +319,8 @@ def manage_operations(client: PlanetaryComputerProClient):
             logging.info(f"Failed to cancel operation {operation.id}: {e.message}")
             pass
 
-    # Cancel all operations
+    # Cancel all operations across the entire GeoCatalog instance.
+    # WARNING: This cancels ALL pending/running operations, not just those for a specific collection.
     try:
         client.ingestion.cancel_all_operations()
     except HttpResponseError as e:

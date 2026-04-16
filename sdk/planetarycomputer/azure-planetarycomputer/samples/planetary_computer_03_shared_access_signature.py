@@ -35,7 +35,7 @@ logging.basicConfig(level=logging.INFO)
 
 def generate_sas_token(client: PlanetaryComputerProClient, collection_id: str):
     """Generate a SAS token for a collection."""
-    get_token_response = client.shared_access_signature.get_token(collection_id=collection_id, duration_in_minutes=60)
+    get_token_response = client.sas.get_token(collection_id=collection_id, duration_in_minutes=60)
     return get_token_response
 
 
@@ -54,7 +54,7 @@ def sign_asset_href(client: PlanetaryComputerProClient, collection_id: str):
     else:
         raise Exception("No thumbnail found in collection assets.")
 
-    get_sign_response = client.shared_access_signature.get_sign(href=href, duration_in_minutes=60)
+    get_sign_response = client.sas.get_sign(href=href, duration_in_minutes=60)
     return get_sign_response.href, href  # Return both signed and unsigned hrefs
 
 
@@ -80,7 +80,7 @@ def download_asset(signed_href: str):
 
 def revoke_token(client: PlanetaryComputerProClient):
     """Revoke the current SAS token."""
-    revoke_token_response = client.shared_access_signature.revoke_token()
+    revoke_token_response = client.sas.revoke_token()
     return revoke_token_response
 
 

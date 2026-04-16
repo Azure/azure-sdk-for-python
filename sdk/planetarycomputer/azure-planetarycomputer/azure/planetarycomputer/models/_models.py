@@ -335,112 +335,20 @@ class Geometry(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ImageParameters(_Model):
-    """Parameters for requesting a rendered image from a collection.
-
-    :ivar cql: Cql. Required.
-    :vartype cql: dict[str, any]
-    :ivar zoom: Zoom.
-    :vartype zoom: float
-    :ivar geometry: Geometry.
-    :vartype geometry: ~azure.planetarycomputer.models.Geometry
-    :ivar render_parameters: JSON-encoded visualization parameters. Required.
-    :vartype render_parameters: str
-    :ivar columns: Width of the output image in pixels. Required.
-    :vartype columns: int
-    :ivar rows: Height of the output image in pixels. Required.
-    :vartype rows: int
-    :ivar show_branding: Whether to include branding on the output image.
-    :vartype show_branding: bool
-    :ivar image_size: Image size.
-    :vartype image_size: str
-    """
-
-    cql: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Cql. Required."""
-    zoom: Optional[float] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Zoom."""
-    geometry: Optional["_models.Geometry"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Geometry."""
-    render_parameters: str = rest_field(
-        name="render_params", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """JSON-encoded visualization parameters. Required."""
-    columns: int = rest_field(name="cols", visibility=["read", "create", "update", "delete", "query"])
-    """Width of the output image in pixels. Required."""
-    rows: int = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """Height of the output image in pixels. Required."""
-    show_branding: Optional[bool] = rest_field(
-        name="showBranding", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Whether to include branding on the output image."""
-    image_size: Optional[str] = rest_field(name="imageSize", visibility=["read", "create", "update", "delete", "query"])
-    """Image size."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        cql: dict[str, Any],
-        render_parameters: str,
-        columns: int,
-        rows: int,
-        zoom: Optional[float] = None,
-        geometry: Optional["_models.Geometry"] = None,
-        show_branding: Optional[bool] = None,
-        image_size: Optional[str] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
-class ImageResponse(_Model):
-    """Response model for image exports.
-
-    :ivar url: URL of the exported image. Required.
-    :vartype url: str
-    """
-
-    url: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
-    """URL of the exported image. Required."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        url: str,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class IngestionDefinition(_Model):
     """Microsoft Planetary Computer Pro geo-catalog ingestion creation model.
 
     :ivar id: Ingestion id. Required.
     :vartype id: str
-    :ivar import_type: Ingestion type. Required. "StaticCatalog"
+    :ivar import_type: Ingestion type. Required. Known values are: "StaticCatalog" and
+     "StacGeoparquet".
     :vartype import_type: str or ~azure.planetarycomputer.models.IngestionType
     :ivar display_name: Ingestion name.
     :vartype display_name: str
     :ivar source_catalog_url: Source catalog URL. Required for StaticCatalog ingestion type.
     :vartype source_catalog_url: str
+    :ivar stac_geoparquet_url: Parquet catalog URL. Required for StacGeoparquet ingestion type.
+    :vartype stac_geoparquet_url: str
     :ivar skip_existing_items: Skip processing existing items in the catalog.
     :vartype skip_existing_items: bool
     :ivar keep_original_assets: Keep original source assets.
@@ -456,7 +364,7 @@ class IngestionDefinition(_Model):
     import_type: Union[str, "_models.IngestionType"] = rest_field(
         name="importType", visibility=["read", "create", "update"]
     )
-    """Ingestion type. Required. \"StaticCatalog\""""
+    """Ingestion type. Required. Known values are: \"StaticCatalog\" and \"StacGeoparquet\"."""
     display_name: Optional[str] = rest_field(
         name="displayName", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -465,6 +373,10 @@ class IngestionDefinition(_Model):
         name="sourceCatalogUrl", visibility=["read", "create", "update", "delete", "query"]
     )
     """Source catalog URL. Required for StaticCatalog ingestion type."""
+    stac_geoparquet_url: Optional[str] = rest_field(
+        name="stacGeoparquetUrl", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Parquet catalog URL. Required for StacGeoparquet ingestion type."""
     skip_existing_items: Optional[bool] = rest_field(
         name="skipExistingItems", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -485,6 +397,7 @@ class IngestionDefinition(_Model):
         import_type: Union[str, "_models.IngestionType"],
         display_name: Optional[str] = None,
         source_catalog_url: Optional[str] = None,
+        stac_geoparquet_url: Optional[str] = None,
         skip_existing_items: Optional[bool] = None,
         keep_original_assets: Optional[bool] = None,
     ) -> None: ...
@@ -3700,6 +3613,54 @@ class TileMatrixSetBoundingBox(_Model):
         super().__init__(*args, **kwargs)
 
 
+class TileMatrixSetLimitsEntry(_Model):
+    """Limits for a specific tile matrix within a tileset, defining the valid row/column range.
+
+    :ivar tile_matrix: Identifier of the tile matrix level. Required.
+    :vartype tile_matrix: str
+    :ivar min_tile_row: Minimum tile row index at this zoom level. Required.
+    :vartype min_tile_row: int
+    :ivar max_tile_row: Maximum tile row index at this zoom level. Required.
+    :vartype max_tile_row: int
+    :ivar min_tile_col: Minimum tile column index at this zoom level. Required.
+    :vartype min_tile_col: int
+    :ivar max_tile_col: Maximum tile column index at this zoom level. Required.
+    :vartype max_tile_col: int
+    """
+
+    tile_matrix: str = rest_field(name="tileMatrix", visibility=["read", "create", "update", "delete", "query"])
+    """Identifier of the tile matrix level. Required."""
+    min_tile_row: int = rest_field(name="minTileRow", visibility=["read", "create", "update", "delete", "query"])
+    """Minimum tile row index at this zoom level. Required."""
+    max_tile_row: int = rest_field(name="maxTileRow", visibility=["read", "create", "update", "delete", "query"])
+    """Maximum tile row index at this zoom level. Required."""
+    min_tile_col: int = rest_field(name="minTileCol", visibility=["read", "create", "update", "delete", "query"])
+    """Minimum tile column index at this zoom level. Required."""
+    max_tile_col: int = rest_field(name="maxTileCol", visibility=["read", "create", "update", "delete", "query"])
+    """Maximum tile column index at this zoom level. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tile_matrix: str,
+        min_tile_row: int,
+        max_tile_row: int,
+        min_tile_col: int,
+        max_tile_col: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class TilerAssetGeoJson(_Model):
     """Represents GeoJSON with feature with an asset property.
 
@@ -3914,7 +3875,7 @@ class TilerInfoGeoJsonFeature(_Model):
     :ivar id: Unique identifier for the feature.
     :vartype id: str
     :ivar bounding_box: Bounding box coordinates for the feature.
-    :vartype bounding_box: float
+    :vartype bounding_box: list[float]
     """
 
     type: Union[str, "_models.FeatureType"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -3925,7 +3886,9 @@ class TilerInfoGeoJsonFeature(_Model):
     """Properties. Required."""
     id: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Unique identifier for the feature."""
-    bounding_box: Optional[float] = rest_field(name="bbox", visibility=["read", "create", "update", "delete", "query"])
+    bounding_box: Optional[list[float]] = rest_field(
+        name="bbox", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Bounding box coordinates for the feature."""
 
     @overload
@@ -3936,7 +3899,7 @@ class TilerInfoGeoJsonFeature(_Model):
         geometry: "_models.Geometry",
         properties: dict[str, "_models.TilerInfo"],
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        bounding_box: Optional[float] = None,
+        bounding_box: Optional[list[float]] = None,
     ) -> None: ...
 
     @overload
@@ -4002,10 +3965,6 @@ class TilerStacSearchDefinition(_Model):
     :vartype hash: str
     :ivar search: Search. Required.
     :vartype search: dict[str, any]
-    :ivar where: SQL WHERE clause representing the search filters. Required.
-    :vartype where: str
-    :ivar order_by: SQL ORDER BY clause for sorting results. Required.
-    :vartype order_by: str
     :ivar last_used: Timestamp when the search was last accessed. Required.
     :vartype last_used: ~datetime.datetime
     :ivar use_count: Number of times the search has been accessed. Required.
@@ -4018,10 +3977,6 @@ class TilerStacSearchDefinition(_Model):
     """Unique hash identifier for the search query. Required."""
     search: dict[str, Any] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Search. Required."""
-    where: str = rest_field(name="_where", visibility=["read", "create", "update", "delete", "query"])
-    """SQL WHERE clause representing the search filters. Required."""
-    order_by: str = rest_field(name="orderby", visibility=["read", "create", "update", "delete", "query"])
-    """SQL ORDER BY clause for sorting results. Required."""
     last_used: datetime.datetime = rest_field(
         name="lastused", visibility=["read", "create", "update", "delete", "query"], format="rfc3339"
     )
@@ -4037,8 +3992,6 @@ class TilerStacSearchDefinition(_Model):
         *,
         hash: str,
         search: dict[str, Any],
-        where: str,
-        order_by: str,
         last_used: datetime.datetime,
         use_count: int,
         metadata: "_models.MosaicMetadata",
@@ -4083,6 +4036,240 @@ class TilerStacSearchRegistration(_Model):
         *,
         search: "_models.TilerStacSearchDefinition",
         links: Optional[list["_models.StacLink"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TileSetBoundingBox(_Model):
+    """Bounding box for a tile set.
+
+    :ivar lower_left: Lower-left corner coordinates [x, y]. Required.
+    :vartype lower_left: list[float]
+    :ivar upper_right: Upper-right corner coordinates [x, y]. Required.
+    :vartype upper_right: list[float]
+    :ivar crs: Coordinate reference system identifier.
+    :vartype crs: str
+    """
+
+    lower_left: list[float] = rest_field(name="lowerLeft", visibility=["read", "create", "update", "delete", "query"])
+    """Lower-left corner coordinates [x, y]. Required."""
+    upper_right: list[float] = rest_field(name="upperRight", visibility=["read", "create", "update", "delete", "query"])
+    """Upper-right corner coordinates [x, y]. Required."""
+    crs: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Coordinate reference system identifier."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        lower_left: list[float],
+        upper_right: list[float],
+        crs: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TileSetEntry(_Model):
+    """Summary information about a single tileset within a list of available tilesets.
+
+    :ivar title: Human-readable title of the tileset.
+    :vartype title: str
+    :ivar data_type: Type of data in the tiles (e.g., 'map', 'vector').
+    :vartype data_type: str
+    :ivar crs: Coordinate reference system identifier.
+    :vartype crs: str
+    :ivar links: Links related to this tileset.
+    :vartype links: list[~azure.planetarycomputer.models.TileSetLink]
+    :ivar bounding_box: Bounding box of the tileset.
+    :vartype bounding_box: ~azure.planetarycomputer.models.TileSetBoundingBox
+    :ivar access_constraints: Access constraints for the tileset.
+    :vartype access_constraints: str
+    """
+
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable title of the tileset."""
+    data_type: Optional[str] = rest_field(name="dataType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of data in the tiles (e.g., 'map', 'vector')."""
+    crs: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Coordinate reference system identifier."""
+    links: Optional[list["_models.TileSetLink"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Links related to this tileset."""
+    bounding_box: Optional["_models.TileSetBoundingBox"] = rest_field(
+        name="boundingBox", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Bounding box of the tileset."""
+    access_constraints: Optional[str] = rest_field(
+        name="accessConstraints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Access constraints for the tileset."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: Optional[str] = None,
+        data_type: Optional[str] = None,
+        crs: Optional[str] = None,
+        links: Optional[list["_models.TileSetLink"]] = None,
+        bounding_box: Optional["_models.TileSetBoundingBox"] = None,
+        access_constraints: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TileSetLink(_Model):
+    """A link object used in OGC tile resources.
+
+    :ivar href: The URL target of the link. Required.
+    :vartype href: str
+    :ivar rel: The relationship type of the link. Required.
+    :vartype rel: str
+    :ivar type: The media type of the linked resource.
+    :vartype type: str
+    :ivar title: Human-readable title of the link.
+    :vartype title: str
+    """
+
+    href: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The URL target of the link. Required."""
+    rel: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The relationship type of the link. Required."""
+    type: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The media type of the linked resource."""
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable title of the link."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        href: str,
+        rel: str,
+        type: Optional[str] = None,
+        title: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TileSetList(_Model):
+    """Response containing a list of available tilesets.
+
+    :ivar tilesets: Array of available tilesets. Required.
+    :vartype tilesets: list[~azure.planetarycomputer.models.TileSetEntry]
+    """
+
+    tilesets: list["_models.TileSetEntry"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Array of available tilesets. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        tilesets: list["_models.TileSetEntry"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TileSetMetadata(_Model):
+    """Detailed metadata about a specific tileset, including tile matrix set limits.
+
+    :ivar title: Human-readable title of the tileset.
+    :vartype title: str
+    :ivar data_type: Type of data in the tiles.
+    :vartype data_type: str
+    :ivar crs: Coordinate reference system identifier.
+    :vartype crs: str
+    :ivar links: Links related to this tileset.
+    :vartype links: list[~azure.planetarycomputer.models.TileSetLink]
+    :ivar bounding_box: Bounding box of the tileset.
+    :vartype bounding_box: ~azure.planetarycomputer.models.TileSetBoundingBox
+    :ivar access_constraints: Access constraints for the tileset.
+    :vartype access_constraints: str
+    :ivar tile_matrix_set_limits: Limits for each tile matrix level in the tileset.
+    :vartype tile_matrix_set_limits: list[~azure.planetarycomputer.models.TileMatrixSetLimitsEntry]
+    """
+
+    title: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Human-readable title of the tileset."""
+    data_type: Optional[str] = rest_field(name="dataType", visibility=["read", "create", "update", "delete", "query"])
+    """Type of data in the tiles."""
+    crs: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Coordinate reference system identifier."""
+    links: Optional[list["_models.TileSetLink"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Links related to this tileset."""
+    bounding_box: Optional["_models.TileSetBoundingBox"] = rest_field(
+        name="boundingBox", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Bounding box of the tileset."""
+    access_constraints: Optional[str] = rest_field(
+        name="accessConstraints", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Access constraints for the tileset."""
+    tile_matrix_set_limits: Optional[list["_models.TileMatrixSetLimitsEntry"]] = rest_field(
+        name="tileMatrixSetLimits", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Limits for each tile matrix level in the tileset."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        title: Optional[str] = None,
+        data_type: Optional[str] = None,
+        crs: Optional[str] = None,
+        links: Optional[list["_models.TileSetLink"]] = None,
+        bounding_box: Optional["_models.TileSetBoundingBox"] = None,
+        access_constraints: Optional[str] = None,
+        tile_matrix_set_limits: Optional[list["_models.TileMatrixSetLimitsEntry"]] = None,
     ) -> None: ...
 
     @overload

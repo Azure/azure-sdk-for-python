@@ -48,9 +48,7 @@ from azure.planetarycomputer.models import (
 import logging
 
 # Enable HTTP request/response logging
-logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
-    logging.ERROR
-)
+logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
 logging.basicConfig(level=logging.INFO)
 
 
@@ -62,16 +60,12 @@ def create_collection(client: PlanetaryComputerProClient, collection_id):
 
     if any(c.id == collection_id for c in get_all_collections_response["collections"]):
         logging.info(f"Collection '{collection_id}' already exists, deleting it...")
-        collection_delete_operation = client.stac.begin_delete_collection(
-            collection_id, polling=True
-        )
+        collection_delete_operation = client.stac.begin_delete_collection(collection_id, polling=True)
         collection_delete_operation.result()
         logging.info(f"Deleted collection '{collection_id}'")
 
     # Define collection spatial and temporal extents (Georgia state bounds)
-    spatial_extent = StacExtensionSpatialExtent(
-        bounding_box=[[-85.605165, 30.357851, -80.839729, 35.000659]]
-    )
+    spatial_extent = StacExtensionSpatialExtent(bounding_box=[[-85.605165, 30.357851, -80.839729, 35.000659]])
     temporal_extent = StacCollectionTemporalExtent(
         interval=[
             [
@@ -149,9 +143,7 @@ def create_collection(client: PlanetaryComputerProClient, collection_id):
 
     # Create the collection
     logging.info(f"Creating collection '{collection_id}'...")
-    collection_create_operation = client.stac.begin_create_collection(
-        body=collection_data, polling=False
-    )
+    collection_create_operation = client.stac.begin_create_collection(body=collection_data, polling=False)
     collection_create_operation.result()
     logging.info(f"Collection '{collection_id}' created successfully")
 
@@ -176,9 +168,7 @@ def update_collection(client: PlanetaryComputerProClient, collection_id):
 
     # Update the collection
     logging.info("Updating collection...")
-    client.stac.create_or_replace_collection(
-        collection_id=collection_id, body=collection
-    )
+    client.stac.replace_collection(collection_id=collection_id, body=collection)
 
     # Verify the update
     updated_collection = client.stac.get_collection(collection_id=collection_id)
@@ -199,9 +189,7 @@ def manage_partition_type(client: PlanetaryComputerProClient, collection_id):
         logging.info("Collection is not empty, skipping partition type update")
     else:
         logging.info("Updating partition type to YEAR scheme...")
-        client.stac.replace_partition_type(
-            collection_id, body=PartitionType(scheme=PartitionTypeScheme.YEAR)
-        )
+        client.stac.replace_partition_type(collection_id, body=PartitionType(scheme=PartitionTypeScheme.YEAR))
         logging.info("Partition type updated successfully")
 
 
@@ -218,20 +206,12 @@ def manage_render_options(client: PlanetaryComputerProClient, collection_id):
     )
 
     # Check if render option already exists
-    stac_collection_mosaics_get_all_response = client.stac.list_render_options(
-        collection_id=collection_id
-    )
+    stac_collection_mosaics_get_all_response = client.stac.list_render_options(collection_id=collection_id)
 
-    if any(
-        ro.id == render_option.id for ro in stac_collection_mosaics_get_all_response
-    ):
+    if any(ro.id == render_option.id for ro in stac_collection_mosaics_get_all_response):
         logging.info("Render option 'natural-color' already exists.")
-        client.stac.delete_render_option(
-            collection_id=collection_id, render_option_id=render_option.id
-        )
-        logging.info(
-            "Deleted existing render option 'natural-color'. Proceeding to create a new one."
-        )
+        client.stac.delete_render_option(collection_id=collection_id, render_option_id=render_option.id)
+        logging.info("Deleted existing render option 'natural-color'. Proceeding to create a new one.")
 
     # Create render option without description initially
     render_option = RenderOption(
@@ -258,9 +238,7 @@ def manage_render_options(client: PlanetaryComputerProClient, collection_id):
     )
 
     # Get the created render option
-    retrieved_option = client.stac.get_render_option(
-        collection_id=collection_id, render_option_id=render_option.id
-    )
+    retrieved_option = client.stac.get_render_option(collection_id=collection_id, render_option_id=render_option.id)
     logging.info(f"Retrieved: {retrieved_option.name}")
 
 
@@ -274,14 +252,10 @@ def manage_mosaics(client: PlanetaryComputerProClient, collection_id):
     )
 
     # Check existing mosaics
-    stac_collection_mosaics_get_all_response = client.stac.list_mosaics(
-        collection_id=collection_id
-    )
+    stac_collection_mosaics_get_all_response = client.stac.list_mosaics(collection_id=collection_id)
 
     if any(m.id == mosaic.id for m in stac_collection_mosaics_get_all_response):
-        logging.info(
-            f"Mosaic {mosaic.id} already exists. Deleting it before creating a new one."
-        )
+        logging.info(f"Mosaic {mosaic.id} already exists. Deleting it before creating a new one.")
         client.stac.delete_mosaic(collection_id=collection_id, mosaic_id=mosaic.id)
 
     # Create Mosaic
@@ -302,9 +276,7 @@ def manage_mosaics(client: PlanetaryComputerProClient, collection_id):
     logging.info(stac_collection_mosaics_create_or_replace_response)
 
     # Get the mosaic
-    retrieved_mosaic = client.stac.get_mosaic(
-        collection_id=collection_id, mosaic_id=mosaic.id
-    )
+    retrieved_mosaic = client.stac.get_mosaic(collection_id=collection_id, mosaic_id=mosaic.id)
     logging.info(retrieved_mosaic)
 
 
@@ -342,9 +314,7 @@ def get_landing_page(client: PlanetaryComputerProClient):
 
 def manage_queryables(client: PlanetaryComputerProClient, collection_id):
     """Create and manage queryables for a collection."""
-    stac_queryables_get_all_response = client.stac.get_collection_queryables(
-        collection_id=collection_id
-    )
+    stac_queryables_get_all_response = client.stac.get_collection_queryables(collection_id=collection_id)
 
     queryable = StacQueryable(
         name="eo:cloud_cover",
@@ -355,13 +325,8 @@ def manage_queryables(client: PlanetaryComputerProClient, collection_id):
         },
     )
 
-    if any(
-        q == queryable.name
-        for q in stac_queryables_get_all_response["properties"].keys()
-    ):
-        client.stac.delete_queryable(
-            collection_id=collection_id, queryable_name=queryable.name
-        )
+    if any(q == queryable.name for q in stac_queryables_get_all_response["properties"].keys()):
+        client.stac.delete_queryable(collection_id=collection_id, queryable_name=queryable.name)
         logging.info(f"Deleted existing '{queryable.name}' queryable.")
 
     stac_queryables_create_response = client.stac.create_queryables(
@@ -410,17 +375,13 @@ def manage_collection_assets(client: PlanetaryComputerProClient, collection_id):
     thumbnail_tuple = ("thumbnail.png", thumbnail_bytes)
 
     try:
-        client.stac.delete_collection_asset(
-            collection_id=collection_id, asset_id="thumbnail"
-        )
+        client.stac.delete_collection_asset(collection_id=collection_id, asset_id="thumbnail")
         logging.info("Deleted existing thumbnail asset.")
     except Exception:
         logging.info("No existing thumbnail asset to delete.")
 
     # Create Collection Asset
-    client.stac.create_collection_asset(
-        collection_id=collection_id, body={"data": data, "file": thumbnail_tuple}
-    )
+    client.stac.create_collection_asset(collection_id=collection_id, body={"data": data, "file": thumbnail_tuple})
 
     # Create or replace Collection Asset
     thumbnail_bytes.seek(0)  # Reset BytesIO position
@@ -439,9 +400,7 @@ def manage_collection_assets(client: PlanetaryComputerProClient, collection_id):
     )
 
     # Get the thumbnail as bytes
-    thumbnail_response = client.stac.get_collection_thumbnail(
-        collection_id=collection_id
-    )
+    thumbnail_response = client.stac.get_collection_thumbnail(collection_id=collection_id)
 
     # Convert the generator to bytes
     thumbnail_bytes_result = b"".join(thumbnail_response)
@@ -459,9 +418,7 @@ def main():
 
     # Create client
     credential = DefaultAzureCredential()
-    client = PlanetaryComputerProClient(
-        endpoint=endpoint, credential=credential, logging_enable=True
-    )
+    client = PlanetaryComputerProClient(endpoint=endpoint, credential=credential, logging_enable=True)
 
     logging.info(f"Connected to: {endpoint}")
     logging.info(f"Collection ID: {collection_id}\n")

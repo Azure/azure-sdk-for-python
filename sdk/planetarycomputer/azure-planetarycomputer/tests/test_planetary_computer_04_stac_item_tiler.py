@@ -58,27 +58,19 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
-        test_logger.info(
-            "Calling: get_tile_matrix_definitions(tile_matrix_set_id='WebMercatorQuad')"
-        )
-        response = client.data.get_tile_matrix_definitions(
-            tile_matrix_set_id="WebMercatorQuad"
-        )
+        test_logger.info("Calling: get_tile_matrix_definitions(tile_matrix_set_id='WebMercatorQuad')")
+        response = client.data.get_tile_matrix_definitions(tile_matrix_set_id="WebMercatorQuad")
 
         test_logger.info(f"Response type: {type(response)}")
         if hasattr(response, "as_dict"):
             response_dict = response.as_dict()
             test_logger.info(f"Response keys: {list(response_dict.keys())}")
-            test_logger.info(
-                f"Number of tile matrices: {len(response_dict.get('tileMatrices', []))}"
-            )
+            test_logger.info(f"Number of tile matrices: {len(response_dict.get('tileMatrices', []))}")
 
         # Assert basic structure
         assert response is not None, "Response should not be None"
         assert hasattr(response, "id"), "Response should have id attribute"
-        assert (
-            response.id is not None and len(response.id) > 0
-        ), f"ID should not be empty, got {response.id}"
+        assert response.id is not None and len(response.id) > 0, f"ID should not be empty, got {response.id}"
         # Note: In playback mode, ID may be "Sanitized" due to test proxy sanitization
         assert hasattr(response, "tile_matrices"), "Response should have tile_matrices"
         assert len(response.tile_matrices) > 0, "Should have at least one tile matrix"
@@ -86,13 +78,9 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         # Validate tile matrix structure
         first_matrix = response.tile_matrices[0]
         assert hasattr(first_matrix, "id"), "Tile matrix should have id"
-        assert hasattr(
-            first_matrix, "scale_denominator"
-        ), "Tile matrix should have scale_denominator"
+        assert hasattr(first_matrix, "scale_denominator"), "Tile matrix should have scale_denominator"
         assert hasattr(first_matrix, "tile_width"), "Tile matrix should have tile_width"
-        assert hasattr(
-            first_matrix, "tile_height"
-        ), "Tile matrix should have tile_height"
+        assert hasattr(first_matrix, "tile_height"), "Tile matrix should have tile_height"
         assert first_matrix.tile_width == 256, "Standard tile width should be 256"
         assert first_matrix.tile_height == 256, "Standard tile height should be 256"
 
@@ -123,9 +111,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         test_logger.info(f"Number of tile matrices: {len(response)}")
 
         # Assert response is a list
-        assert isinstance(
-            response, list
-        ), f"Response should be a list, got {type(response)}"
+        assert isinstance(response, list), f"Response should be a list, got {type(response)}"
         assert len(response) > 0, "Should have at least one tile matrix"
 
         # Check for expected tile matrix sets
@@ -134,9 +120,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
 
         # All items should be strings
         for item in response:
-            assert isinstance(
-                item, str
-            ), f"Each item should be a string, got {type(item)}"
+            assert isinstance(item, str), f"Each item should be a string, got {type(item)}"
 
         test_logger.info("Test PASSED\n")
 
@@ -167,28 +151,22 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         test_logger.info(
             f"Calling: list_available_assets(collection_id='{planetarycomputer_collection_id}', item_id='{planetarycomputer_item_id}')"
         )
-        response = client.data.list_available_assets(
+        response = client.data.list_item_available_assets(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
         )
 
         test_logger.info(f"Response type: {type(response)}")
         test_logger.info(f"Response: {response}")
-        test_logger.info(
-            f"Number of assets: {len(response) if isinstance(response, list) else 'N/A'}"
-        )
+        test_logger.info(f"Number of assets: {len(response) if isinstance(response, list) else 'N/A'}")
 
         # Assert response is a list
-        assert isinstance(
-            response, list
-        ), f"Response should be a list, got {type(response)}"
+        assert isinstance(response, list), f"Response should be a list, got {type(response)}"
         assert len(response) > 0, "Should have at least one asset"
 
         # All items should be strings
         for asset in response:
-            assert isinstance(
-                asset, str
-            ), f"Each asset should be a string, got {type(asset)}"
+            assert isinstance(asset, str), f"Each asset should be a string, got {type(asset)}"
             assert len(asset) > 0, "Asset name should not be empty"
 
         test_logger.info("Test PASSED\n")
@@ -220,7 +198,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         test_logger.info(
             f"Calling: list_bounds(collection_id='{planetarycomputer_collection_id}', item_id='{planetarycomputer_item_id}')"
         )
-        response = client.data.get_bounds(
+        response = client.data.get_item_bounds(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
         )
@@ -237,16 +215,12 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
 
         # Assert bounds is a list with 4 coordinates
         assert isinstance(bounds, list), f"Bounds should be a list, got {type(bounds)}"
-        assert (
-            len(bounds) == 4
-        ), f"Bounds should have 4 coordinates [minx, miny, maxx, maxy], got {len(bounds)}"
+        assert len(bounds) == 4, f"Bounds should have 4 coordinates [minx, miny, maxx, maxy], got {len(bounds)}"
 
         # Validate coordinate structure: [minx, miny, maxx, maxy]
         minx, miny, maxx, maxy = bounds
         for coord in bounds:
-            assert isinstance(
-                coord, (int, float)
-            ), f"Each coordinate should be numeric, got {type(coord)}"
+            assert isinstance(coord, (int, float)), f"Each coordinate should be numeric, got {type(coord)}"
 
         # Validate bounds logic
         assert minx < maxx, f"minx ({minx}) should be less than maxx ({maxx})"
@@ -281,14 +255,14 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_preview(...)")
-        response = client.data.get_preview(
+        response = client.data.get_item_preview(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             format=TilerImageFormat.PNG,
             width=512,
             height=512,
             assets=["image"],
-            asset_band_indices="image|1,2,3",
+            asset_band_indices=["image|1,2,3"],
         )
 
         test_logger.info(f"Response type: {type(response)}")
@@ -301,12 +275,8 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         # Verify PNG magic bytes
         png_magic = b"\x89PNG\r\n\x1a\n"
         assert len(image_bytes) > 0, "Image bytes should not be empty"
-        assert (
-            len(image_bytes) > 100
-        ), f"Image should be substantial, got only {len(image_bytes)} bytes"
-        assert (
-            image_bytes[:8] == png_magic
-        ), "Response should be a valid PNG image (magic bytes mismatch)"
+        assert len(image_bytes) > 100, f"Image should be substantial, got only {len(image_bytes)} bytes"
+        assert image_bytes[:8] == png_magic, "Response should be a valid PNG image (magic bytes mismatch)"
 
         # Parse and validate the PNG image
         try:
@@ -318,13 +288,9 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
             test_logger.info(f"PIL Image mode: {image.mode}")
 
             # Validate image properties
-            assert (
-                image.format == "PNG"
-            ), f"Image format should be PNG, got {image.format}"
+            assert image.format == "PNG", f"Image format should be PNG, got {image.format}"
             width, height = image.size
-            assert (
-                width > 0 and height > 0
-            ), f"Image should have non-zero dimensions, got {width}x{height}"
+            assert width > 0 and height > 0, f"Image should have non-zero dimensions, got {width}x{height}"
             # Note: Actual dimensions may differ slightly from requested due to aspect ratio preservation
 
         except ImportError:
@@ -357,7 +323,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_info_geo_json(...)")
-        response = client.data.get_info_geo_json(
+        response = client.data.get_item_info_geo_json(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             assets=["image"],
@@ -401,7 +367,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: list_statistics(...)")
-        response = client.data.list_statistics(
+        response = client.data.list_item_statistics(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             assets=["image"],
@@ -443,7 +409,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_wmts_capabilities(...)")
-        response = client.data.get_wmts_capabilities(
+        response = client.data.get_item_wmts_capabilities(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             tile_matrix_set_id="WebMercatorQuad",
@@ -452,7 +418,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
             min_zoom=7,
             max_zoom=14,
             assets=["image"],
-            asset_band_indices="image|1,2,3",
+            asset_band_indices=["image|1,2,3"],
         )
 
         test_logger.info(f"Response type: {type(response)}")
@@ -468,15 +434,9 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         # Validate XML structure
         assert len(xml_bytes) > 0, "XML bytes should not be empty"
         # Note: WMTS Capabilities XML may not have <?xml declaration
-        assert (
-            "<Capabilities" in xml_string
-        ), "Response should contain Capabilities element"
-        assert (
-            "WMTS" in xml_string or "wmts" in xml_string.lower()
-        ), "Response should reference WMTS"
-        assert (
-            "TileMatrix" in xml_string
-        ), "Response should contain TileMatrix information"
+        assert "<Capabilities" in xml_string, "Response should contain Capabilities element"
+        assert "WMTS" in xml_string or "wmts" in xml_string.lower(), "Response should reference WMTS"
+        assert "TileMatrix" in xml_string, "Response should contain TileMatrix information"
 
         test_logger.info("Test PASSED\n")
 
@@ -500,7 +460,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         test_logger.info(
             f"Calling: get_asset_statistics(collection_id='{planetarycomputer_collection_id}', item_id='{planetarycomputer_item_id}', assets=['image'])"
         )
-        response = client.data.get_asset_statistics(
+        response = client.data.get_item_asset_statistics(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             assets=["image"],
@@ -541,17 +501,15 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
                 ]
             ]
         )
-        geojson_feature = Feature(
-            type=FeatureType.FEATURE, geometry=geometry, properties={}
-        )
+        geojson_feature = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
 
         test_logger.info("Calling: crop_geo_json(...)")
-        response = client.data.crop_geo_json(
+        response = client.data.crop_feature_geo_json(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             body=geojson_feature,
             assets=["image"],
-            asset_band_indices="image|1,2,3",
+            asset_band_indices=["image|1,2,3"],
             format=TilerImageFormat.PNG,
         )
 
@@ -592,19 +550,17 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
                 ]
             ]
         )
-        geojson_feature = Feature(
-            type=FeatureType.FEATURE, geometry=geometry, properties={}
-        )
+        geojson_feature = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
 
         test_logger.info("Calling: crop_geo_json_with_dimensions(...)")
-        response = client.data.crop_geo_json_with_dimensions(
+        response = client.data.crop_feature_geo_json_width_by_height(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             width=256,
             height=256,
             body=geojson_feature,
             assets=["image"],
-            asset_band_indices="image|1,2,3",
+            asset_band_indices=["image|1,2,3"],
             format=TilerImageFormat.PNG,
         )
 
@@ -645,12 +601,10 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
                 ]
             ]
         )
-        geojson_feature = Feature(
-            type=FeatureType.FEATURE, geometry=geometry, properties={}
-        )
+        geojson_feature = Feature(type=FeatureType.FEATURE, geometry=geometry, properties={})
 
         test_logger.info("Calling: get_geo_json_statistics(...)")
-        response = client.data.get_geo_json_statistics(
+        response = client.data.get_item_geo_json_statistics(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             body=geojson_feature,
@@ -682,7 +636,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_part(...)")
-        response = client.data.get_part(
+        response = client.data.get_item_bbox_crop(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             minx=bounds[0],
@@ -691,7 +645,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
             maxy=bounds[3],
             format=TilerImageFormat.PNG,
             assets=["image"],
-            asset_band_indices="image|1,2,3",
+            asset_band_indices=["image|1,2,3"],
         )
 
         image_bytes = b"".join(response)
@@ -722,7 +676,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_part_with_dimensions(...)")
-        response = client.data.get_part_with_dimensions(
+        response = client.data.get_item_bbox_crop_with_dimensions(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             minx=bounds[0],
@@ -733,7 +687,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
             height=256,
             format=TilerImageFormat.PNG,
             assets=["image"],
-            asset_band_indices="image|1,2,3",
+            asset_band_indices=["image|1,2,3"],
         )
 
         image_bytes = b"".join(response)
@@ -764,7 +718,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_point(...)")
-        response = client.data.get_point(
+        response = client.data.get_item_point(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             longitude=point[0],
@@ -795,12 +749,12 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_preview_with_format(...)")
-        response = client.data.get_preview_with_format(
+        response = client.data.get_item_preview_with_format(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             format=TilerImageFormat.JPEG,
             assets=["image"],
-            asset_band_indices="image|1,2,3",
+            asset_band_indices=["image|1,2,3"],
         )
 
         image_bytes = b"".join(response)
@@ -829,7 +783,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_tile_json(...)")
-        response = client.data.get_tile_json(
+        response = client.data.get_item_tile_json(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             tile_matrix_set_id="WebMercatorQuad",
@@ -838,7 +792,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
             min_zoom=7,
             max_zoom=14,
             assets=["image"],
-            asset_band_indices="image|1,2,3",
+            asset_band_indices=["image|1,2,3"],
         )
 
         test_logger.info(f"Response: {response}")
@@ -865,7 +819,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_tile(...)")
-        response = client.data.get_tile(
+        response = client.data.get_tile_by_scale_and_format(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             tile_matrix_set_id="WebMercatorQuad",
@@ -874,7 +828,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
             y=6564,
             scale=1,
             assets=["image"],
-            asset_band_indices="image|1,2,3",
+            asset_band_indices=["image|1,2,3"],
             format=TilerImageFormat.PNG,
         )
 
@@ -910,7 +864,7 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
         client = self.create_client(endpoint=planetarycomputer_endpoint)
 
         test_logger.info("Calling: get_item_asset_details(...)")
-        response = client.data.get_item_asset_details(
+        response = client.data.get_item_info(
             collection_id=planetarycomputer_collection_id,
             item_id=planetarycomputer_item_id,
             assets=["image"],
@@ -926,3 +880,48 @@ class TestPlanetaryComputerStacItemTiler(PlanetaryComputerProClientTestBase):
             test_logger.info(f"Response dict: {response_dict}")
         elif isinstance(response, dict):
             test_logger.info(f"Response keys: {list(response.keys())}")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_20_list_tilesets(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id
+    ):
+        """Test listing tilesets for a specific item."""
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_20_list_tilesets")
+        test_logger.info("=" * 80)
+
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+
+        response = client.data.list_tilesets(
+            collection_id=planetarycomputer_collection_id,
+            item_id=planetarycomputer_item_id,
+        )
+
+        test_logger.info(f"Response type: {type(response)}")
+        assert response is not None, "Response should not be None"
+
+        test_logger.info("Test PASSED\n")
+
+    @PlanetaryComputerPreparer()
+    @recorded_by_proxy
+    def test_21_get_tileset_metadata(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id, planetarycomputer_item_id
+    ):
+        """Test getting tileset metadata for a specific item."""
+        test_logger.info("=" * 80)
+        test_logger.info("TEST: test_21_get_tileset_metadata")
+        test_logger.info("=" * 80)
+
+        client = self.create_client(endpoint=planetarycomputer_endpoint)
+
+        response = client.data.get_tileset_metadata(
+            collection_id=planetarycomputer_collection_id,
+            item_id=planetarycomputer_item_id,
+            tile_matrix_set_id="WebMercatorQuad",
+        )
+
+        test_logger.info(f"Response type: {type(response)}")
+        assert response is not None, "Response should not be None"
+
+        test_logger.info("Test PASSED\n")

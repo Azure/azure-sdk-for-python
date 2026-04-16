@@ -49,9 +49,7 @@ from azure.planetarycomputer.models import (
 import logging
 
 # Enable HTTP request/response logging
-logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
-    logging.ERROR
-)
+logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
 logging.basicConfig(level=logging.INFO)
 
 
@@ -63,16 +61,12 @@ async def create_collection(client: PlanetaryComputerProClient, collection_id):
 
     if any(c.id == collection_id for c in get_all_collections_response["collections"]):
         logging.info(f"Collection '{collection_id}' already exists, deleting it...")
-        collection_delete_operation = await client.stac.begin_delete_collection(
-            collection_id, polling=True
-        )
+        collection_delete_operation = await client.stac.begin_delete_collection(collection_id, polling=True)
         await collection_delete_operation.result()
         logging.info(f"Deleted collection '{collection_id}'")
 
     # Define collection spatial and temporal extents (Georgia state bounds)
-    spatial_extent = StacExtensionSpatialExtent(
-        bounding_box=[[-85.605165, 30.357851, -80.839729, 35.000659]]
-    )
+    spatial_extent = StacExtensionSpatialExtent(bounding_box=[[-85.605165, 30.357851, -80.839729, 35.000659]])
     temporal_extent = StacCollectionTemporalExtent(
         interval=[
             [
@@ -150,9 +144,7 @@ async def create_collection(client: PlanetaryComputerProClient, collection_id):
 
     # Create the collection
     logging.info(f"Creating collection '{collection_id}'...")
-    collection_create_operation = await client.stac.begin_create_collection(
-        body=collection_data, polling=False
-    )
+    collection_create_operation = await client.stac.begin_create_collection(body=collection_data, polling=False)
     await collection_create_operation.result()
     logging.info(f"Collection '{collection_id}' created successfully")
 
@@ -177,9 +169,7 @@ async def update_collection(client: PlanetaryComputerProClient, collection_id):
 
     # Update the collection
     logging.info("Updating collection...")
-    await client.stac.create_or_replace_collection(
-        collection_id=collection_id, body=collection
-    )
+    await client.stac.replace_collection(collection_id=collection_id, body=collection)
 
     # Verify the update
     updated_collection = await client.stac.get_collection(collection_id=collection_id)
@@ -200,9 +190,7 @@ async def manage_partition_type(client: PlanetaryComputerProClient, collection_i
         logging.info("Collection is not empty, skipping partition type update")
     else:
         logging.info("Updating partition type to YEAR scheme...")
-        await client.stac.replace_partition_type(
-            collection_id, body=PartitionType(scheme=PartitionTypeScheme.YEAR)
-        )
+        await client.stac.replace_partition_type(collection_id, body=PartitionType(scheme=PartitionTypeScheme.YEAR))
         logging.info("Partition type updated successfully")
 
 
@@ -219,20 +207,12 @@ async def manage_render_options(client: PlanetaryComputerProClient, collection_i
     )
 
     # Check if render option already exists
-    stac_collection_mosaics_get_all_response = await client.stac.list_render_options(
-        collection_id=collection_id
-    )
+    stac_collection_mosaics_get_all_response = await client.stac.list_render_options(collection_id=collection_id)
 
-    if any(
-        ro.id == render_option.id for ro in stac_collection_mosaics_get_all_response
-    ):
+    if any(ro.id == render_option.id for ro in stac_collection_mosaics_get_all_response):
         logging.info("Render option 'natural-color' already exists.")
-        await client.stac.delete_render_option(
-            collection_id=collection_id, render_option_id=render_option.id
-        )
-        logging.info(
-            "Deleted existing render option 'natural-color'. Proceeding to create a new one."
-        )
+        await client.stac.delete_render_option(collection_id=collection_id, render_option_id=render_option.id)
+        logging.info("Deleted existing render option 'natural-color'. Proceeding to create a new one.")
 
     # Create render option without description initially
     render_option = RenderOption(
@@ -244,9 +224,7 @@ async def manage_render_options(client: PlanetaryComputerProClient, collection_i
     )
 
     logging.info(f"Creating render option '{render_option.id}'...")
-    await client.stac.create_render_option(
-        collection_id=collection_id, body=render_option
-    )
+    await client.stac.create_render_option(collection_id=collection_id, body=render_option)
 
     # List render options
     await client.stac.list_render_options(collection_id=collection_id)
@@ -277,17 +255,11 @@ async def manage_mosaics(client: PlanetaryComputerProClient, collection_id):
     )
 
     # Check existing mosaics
-    stac_collection_mosaics_get_all_response = await client.stac.list_mosaics(
-        collection_id=collection_id
-    )
+    stac_collection_mosaics_get_all_response = await client.stac.list_mosaics(collection_id=collection_id)
 
     if any(m.id == mosaic.id for m in stac_collection_mosaics_get_all_response):
-        logging.info(
-            f"Mosaic {mosaic.id} already exists. Deleting it before creating a new one."
-        )
-        await client.stac.delete_mosaic(
-            collection_id=collection_id, mosaic_id=mosaic.id
-        )
+        logging.info(f"Mosaic {mosaic.id} already exists. Deleting it before creating a new one.")
+        await client.stac.delete_mosaic(collection_id=collection_id, mosaic_id=mosaic.id)
 
     # Create Mosaic
     stac_collection_mosaics_add_response = await client.stac.add_mosaic(
@@ -299,19 +271,15 @@ async def manage_mosaics(client: PlanetaryComputerProClient, collection_id):
     # Update with description
     mosaic.description = "Most recent available imagery in this collection"
 
-    stac_collection_mosaics_create_or_replace_response = (
-        await client.stac.replace_mosaic(
-            collection_id=collection_id,
-            mosaic_id=mosaic.id,
-            body=mosaic,
-        )
+    stac_collection_mosaics_create_or_replace_response = await client.stac.replace_mosaic(
+        collection_id=collection_id,
+        mosaic_id=mosaic.id,
+        body=mosaic,
     )
     logging.info(stac_collection_mosaics_create_or_replace_response)
 
     # Get the mosaic
-    retrieved_mosaic = await client.stac.get_mosaic(
-        collection_id=collection_id, mosaic_id=mosaic.id
-    )
+    retrieved_mosaic = await client.stac.get_mosaic(collection_id=collection_id, mosaic_id=mosaic.id)
     logging.info(retrieved_mosaic)
 
 
@@ -349,9 +317,7 @@ async def get_landing_page(client: "PlanetaryComputerProClient"):
 
 async def manage_queryables(client: PlanetaryComputerProClient, collection_id):
     """Create and manage queryables for a collection."""
-    stac_queryables_get_all_response = await client.stac.get_collection_queryables(
-        collection_id=collection_id
-    )
+    stac_queryables_get_all_response = await client.stac.get_collection_queryables(collection_id=collection_id)
 
     queryable = StacQueryable(
         name="eo:cloud_cover",
@@ -362,13 +328,8 @@ async def manage_queryables(client: PlanetaryComputerProClient, collection_id):
         },
     )
 
-    if any(
-        q == queryable.name
-        for q in stac_queryables_get_all_response["properties"].keys()
-    ):
-        await client.stac.delete_queryable(
-            collection_id=collection_id, queryable_name=queryable.name
-        )
+    if any(q == queryable.name for q in stac_queryables_get_all_response["properties"].keys()):
+        await client.stac.delete_queryable(collection_id=collection_id, queryable_name=queryable.name)
         logging.info(f"Deleted existing '{queryable.name}' queryable.")
 
     stac_queryables_create_response = await client.stac.create_queryables(
@@ -391,9 +352,7 @@ async def manage_queryables(client: PlanetaryComputerProClient, collection_id):
     await client.stac.list_queryables()
 
 
-async def get_collection_configuration(
-    client: PlanetaryComputerProClient, collection_id
-):
+async def get_collection_configuration(client: PlanetaryComputerProClient, collection_id):
     """Get collection configuration."""
     result = await client.stac.get_collection_configuration(collection_id=collection_id)
     logging.info(result)
@@ -419,17 +378,13 @@ async def manage_collection_assets(client: PlanetaryComputerProClient, collectio
     thumbnail_tuple = ("thumbnail.png", thumbnail_bytes)
 
     try:
-        await client.stac.delete_collection_asset(
-            collection_id=collection_id, asset_id="thumbnail"
-        )
+        await client.stac.delete_collection_asset(collection_id=collection_id, asset_id="thumbnail")
         logging.info("Deleted existing thumbnail asset.")
     except Exception:
         logging.info("No existing thumbnail asset to delete.")
 
     # Create Collection Asset
-    await client.stac.create_collection_asset(
-        collection_id=collection_id, body={"data": data, "file": thumbnail_tuple}
-    )
+    await client.stac.create_collection_asset(collection_id=collection_id, body={"data": data, "file": thumbnail_tuple})
 
     # Create or replace Collection Asset
     thumbnail_bytes.seek(0)  # Reset BytesIO position
@@ -448,9 +403,7 @@ async def manage_collection_assets(client: PlanetaryComputerProClient, collectio
     )
 
     # Get the thumbnail as bytes
-    thumbnail_response = await client.stac.get_collection_thumbnail(
-        collection_id=collection_id
-    )
+    thumbnail_response = await client.stac.get_collection_thumbnail(collection_id=collection_id)
 
     # Convert the generator to bytes
     # Collect the async iterator into a list
@@ -472,9 +425,7 @@ async def main():
 
     # Create client
     credential = DefaultAzureCredential()
-    client = PlanetaryComputerProClient(
-        endpoint=endpoint, credential=credential, logging_enable=True
-    )
+    client = PlanetaryComputerProClient(endpoint=endpoint, credential=credential, logging_enable=True)
 
     logging.info(f"Connected to: {endpoint}")
     logging.info(f"Collection ID: {collection_id}\n")

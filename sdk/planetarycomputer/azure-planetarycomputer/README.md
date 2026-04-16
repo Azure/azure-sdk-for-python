@@ -92,7 +92,7 @@ client = PlanetaryComputerProClient(endpoint=endpoint, credential=credential)
 - **Ingestion Runs**: Create and monitor ingestion runs with detailed operation tracking
 - **Partition Configuration**: Configure how data is partitioned and processed during ingestion
 
-#### Shared Access Signature Operations (`client.shared_access_signature`)
+#### Shared Access Signature Operations (`client.sas`)
 
 - **Token Generation**: Generate SAS tokens with configurable duration for collections to enable secure access
 - **Asset Signing**: Sign asset HREFs for secure downloads of managed storage assets
@@ -101,6 +101,19 @@ client = PlanetaryComputerProClient(endpoint=endpoint, credential=credential)
 ## Examples
 
 The following section provides several code snippets covering common GeoCatalog workflows. For complete working examples, see the [samples][pc_samples] directory.
+
+- [List STAC collections](#list-stac-collections)
+- [Search for STAC items](#search-for-stac-items)
+- [Get STAC item details](#get-stac-item-details)
+- [Create a STAC collection](#create-stac-collection)
+- [Configure collection visualization](#configure-collection-visualization)
+- [Register and render mosaic tiles](#register-and-render-mosaic-tiles)
+- [Extract point values](#extract-point-values)
+- [Generate map tiles](#generate-map-tiles)
+- [Set up ingestion sources](#set-up-ingestion-sources)
+- [Data ingestion management](#data-ingestion-management)
+- [Generate SAS token for secure access](#generate-sas-token-for-secure-access)
+- [Async operations](#async-operations)
 
 ### List STAC Collections
 
@@ -115,7 +128,7 @@ endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
 client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
 # List all collections
-collections_response = client.stac.list_collections()
+collections_response = client.stac.get_collections()
 
 for collection in collections_response.collections:
     print(f"Collection: {collection.id}")
@@ -158,7 +171,7 @@ search_params = StacSearchParameters(
     limit=10
 )
 
-search_result = client.stac.search_items(body=search_params)
+search_result = client.stac.search(body=search_params)
 print(f"Found {len(search_result.features)} items")
 ```
 
@@ -193,38 +206,124 @@ from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.planetarycomputer.models import (
     StacCollection,
     StacExtensionSpatialExtent,
-    StacExtensionTemporalExtent,
-    StacExtent
+    StacCollectionTemporalExtent,
+    StacExtensionExtent,
 )
 from azure.identity import DefaultAzureCredential
 
 endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
 client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
-# Define collection with proper extent
-spatial_extent = StacExtensionSpatialExtent(bbox=[[-180.0, -90.0, 180.0, 90.0]])
-temporal_extent = StacExtensionTemporalExtent(interval=[["2023-01-01T00:00:00Z", None]])
-
+# Define collection
 collection = StacCollection(
     id="my-collection",
-    type="Collection",
-    stac_version="1.0.0",
     description="A collection of geospatial data",
     license="proprietary",
-    extent=StacExtent(
-        spatial=spatial_extent,
-        temporal=temporal_extent
+    extent=StacExtensionExtent(
+        spatial=StacExtensionSpatialExtent(bounding_box=[[-180.0, -90.0, 180.0, 90.0]]),
+        temporal=StacCollectionTemporalExtent(interval=[[None, None]]),
     ),
-    links=[]
+    links=[],
+    stac_version="1.0.0",
+    type="Collection",
 )
 
-# Create the collection
-created_collection = client.stac.create_or_update_collection(
-    collection_id="my-collection",
-    body=collection
+# Create the collection (long-running operation)
+poller = client.stac.begin_create_collection(body=collection)
+poller.result()  # Wait for completion
+
+print(f"Created collection: {collection.id}")
+```
+
+### Configure Collection Visualization
+
+Configure render options and tile settings to control how collection data is displayed:
+
+```python
+from azure.planetarycomputer import PlanetaryComputerProClient
+from azure.planetarycomputer.models import RenderOption, TileSettings
+from azure.identity import DefaultAzureCredential
+
+endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
+client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
+
+collection_id = "my-collection"
+
+# Add a render option for visualizing data
+render_option = RenderOption(
+    id="true-color",
+    name="True Color",
+    type="raster-tile",
+    options="assets=image&rescale=0,255",
+)
+client.stac.create_render_option(collection_id=collection_id, body=render_option)
+
+# Configure tile settings
+tile_settings = TileSettings(min_zoom=6, max_items_per_tile=10)
+client.stac.replace_tile_settings(collection_id=collection_id, body=tile_settings)
+
+# List all render options
+for option in client.stac.list_render_options(collection_id=collection_id):
+    print(f"Render option: {option.id} - {option.name}")
+```
+
+### Register and Render Mosaic Tiles
+
+Register a STAC search as a mosaic and retrieve tiles from it:
+
+```python
+from azure.planetarycomputer import PlanetaryComputerProClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
+client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
+
+# Register a mosaic search
+registration = client.data.register_mosaics_search(
+    body={
+        "collections": ["naip"],
+        "filter-lang": "cql2-json",
+        "filter": {
+            "op": "=",
+            "args": [{"property": "naip:year"}, "2021"]
+        },
+    }
+)
+print(f"Search ID: {registration.search_id}")
+
+# Get TileJSON metadata for the registered mosaic
+tile_json = client.data.get_searches_tile_json(
+    search_id=registration.search_id,
+    tile_matrix_set_id="WebMercatorQuad",
+    assets=["image"],
+)
+print(f"Tile URLs: {tile_json.tiles}")
+print(f"Bounds: {tile_json.bounds}")
+```
+
+### Extract Point Values
+
+Extract pixel values at a specific geographic coordinate:
+
+```python
+from azure.planetarycomputer import PlanetaryComputerProClient
+from azure.identity import DefaultAzureCredential
+
+endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
+client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
+
+# Get pixel values at a coordinate for a specific item
+point_data = client.data.get_item_point(
+    collection_id="naip",
+    item_id="ga_m_3308421_se_16_060_20211114",
+    longitude=-84.41,
+    latitude=33.65,
+    assets=["image"],
 )
 
-print(f"Created collection: {created_collection.id}")
+print(f"Coordinates: {point_data.coordinates}")
+print(f"Band names: {point_data.band_names}")
+print(f"Values: {point_data.values_property}")
 ```
 
 ### Generate Map Tiles
@@ -242,14 +341,15 @@ collection_id = "naip"
 item_id = "ga_m_3308421_se_16_060_20211114"
 
 # Get a specific tile for the item
-tile_response = client.data.get_item_tile(
+tile_response = client.data.get_tile(
     collection_id=collection_id,
     item_id=item_id,
     tile_matrix_set_id="WebMercatorQuad",
     z=14,  # Zoom level
     x=4322,  # Tile X coordinate
     y=6463,  # Tile Y coordinate
-    assets=["image"]
+    assets=["image"],
+    format="png",
 )
 
 # Save tile to file
@@ -258,37 +358,73 @@ with open("tile.png", "wb") as f:
         f.write(chunk)
 ```
 
+### Set Up Ingestion Sources
+
+Configure data sources for ingestion using Managed Identity or SAS token authentication:
+
+```python
+from azure.planetarycomputer import PlanetaryComputerProClient
+from azure.planetarycomputer.models import (
+    ManagedIdentityIngestionSource,
+    ManagedIdentityConnection,
+)
+from azure.identity import DefaultAzureCredential
+
+endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
+client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
+
+# Create a Managed Identity ingestion source
+source = ManagedIdentityIngestionSource(
+    id="my-storage-source",
+    connection_info=ManagedIdentityConnection(
+        container_uri="https://mystorage.blob.core.windows.net/geospatial-data",
+        object_id="00000000-0000-0000-0000-000000000000",
+    ),
+)
+created_source = client.ingestion.create_source(body=source)
+print(f"Created source: {created_source.id}")
+
+# List available managed identities
+for identity in client.ingestion.list_managed_identities():
+    print(f"Identity: {identity.object_id} - {identity.resource_id}")
+
+# List all configured sources
+for src in client.ingestion.list_sources():
+    print(f"Source: {src.id} ({src.kind})")
+```
+
 ### Data Ingestion Management
 
 Manage data ingestion operations:
 
 ```python
 from azure.planetarycomputer import PlanetaryComputerProClient
-from azure.planetarycomputer.models import IngestionJob, PartitionType
+from azure.planetarycomputer.models import IngestionDefinition, IngestionType
 from azure.identity import DefaultAzureCredential
 
 endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
 client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
-# Create an ingestion job
-ingestion_job = IngestionJob(
+# Create an ingestion definition
+ingestion = IngestionDefinition(
+    id="my-ingestion-001",
+    import_type=IngestionType.STATIC_CATALOG,
+    display_name="My data ingestion",
+    source_catalog_url="https://example.com/catalog.json",
+)
+
+created = client.ingestion.create(
     collection_id="my-collection",
-    partition_type=PartitionType.YEAR_MONTH,
-    description="Ingestion job for geospatial data"
+    body=ingestion,
 )
 
-created_job = client.ingestion.create_or_update_job(
-    job_id="ingestion-job-001",
-    body=ingestion_job
-)
+print(f"Created ingestion: {created.id}")
+print(f"Status: {created.status}")
 
-print(f"Created job: {created_job.id}")
-print(f"Status: {created_job.status}")
-
-# List all ingestion jobs
-jobs = client.ingestion.list_jobs()
-for job in jobs.value:
-    print(f"Job: {job.id} - Status: {job.status}")
+# List all ingestions for a collection
+ingestions = client.ingestion.list(collection_id="my-collection")
+for ing in ingestions:
+    print(f"Ingestion: {ing.id} - Status: {ing.status}")
 ```
 
 ### Generate SAS Token for Secure Access
@@ -297,45 +433,91 @@ Generate Shared Access Signatures for secure data access:
 
 ```python
 from azure.planetarycomputer import PlanetaryComputerProClient
-from azure.planetarycomputer.models import SignedUrlRequest, AccessPermission
 from azure.identity import DefaultAzureCredential
-from datetime import datetime, timedelta
 
 endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
 client = PlanetaryComputerProClient(endpoint=endpoint, credential=DefaultAzureCredential())
 
-# Generate a SAS token for a collection
-sas_request = SignedUrlRequest(
-    permissions=[AccessPermission.READ],
-    expires_on=datetime.utcnow() + timedelta(hours=1)
-)
-
-sas_response = client.shared_access_signature.generate_collection_signed_url(
+# Generate a SAS token for a collection (valid for 60 minutes)
+token_response = client.sas.get_token(
     collection_id="naip",
-    body=sas_request
+    duration_in_minutes=60,
 )
 
-print(f"SAS URL: {sas_response.url}")
-print(f"Expires on: {sas_response.expires_on}")
+print(f"SAS Token: {token_response.token}")
+print(f"Expiry: {token_response.expires_on}")
+
+# Sign an asset HREF for secure download
+signed = client.sas.get_sign(
+    href="https://storage.blob.core.windows.net/container/path/to/asset.tif",
+    duration_in_minutes=60,
+)
+
+print(f"Signed URL: {signed.href}")
 ```
 
-### Troubleshooting
+### Async Operations
+
+All operations are also available as async. Use `aio` for the async client:
+
+```python
+import asyncio
+from azure.planetarycomputer.aio import PlanetaryComputerProClient
+from azure.identity.aio import DefaultAzureCredential
+
+async def main():
+    endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
+    credential = DefaultAzureCredential()
+
+    async with PlanetaryComputerProClient(endpoint=endpoint, credential=credential) as client:
+        # List collections
+        collections_response = await client.stac.get_collections()
+        for collection in collections_response.collections:
+            print(f"Collection: {collection.id}")
+
+        # Get a specific item
+        item = await client.stac.get_item(
+            collection_id="naip",
+            item_id="ga_m_3308421_se_16_060_20211114",
+        )
+        print(f"Item: {item.id}")
+
+    await credential.close()
+
+asyncio.run(main())
+```
+
+## Troubleshooting
 
 ### General
 
 Planetary Computer client library will raise exceptions defined in [Azure Core][python_azure_core_exceptions].
-Error codes and messages raised by the GeoCatalog service can be found in the service documentation.
+
+```python
+from azure.core.exceptions import HttpResponseError
+from azure.planetarycomputer import PlanetaryComputerProClient
+from azure.identity import DefaultAzureCredential
+
+client = PlanetaryComputerProClient(
+    endpoint="https://your-endpoint.geocatalog.spatio.azure.com",
+    credential=DefaultAzureCredential(),
+)
+
+try:
+    client.stac.get_collection(collection_id="non-existent-collection")
+except HttpResponseError as e:
+    print(f"Status code: {e.status_code}")
+    print(f"Reason: {e.reason}")
+    print(f"Message: {e.message}")
+```
 
 ### Logging
 
 This library uses the standard [logging][python_logging] library for logging.
-
 Basic information about HTTP sessions (URLs, headers, etc.) is logged at `INFO` level.
 
 Detailed `DEBUG` level logging, including request/response bodies and **unredacted**
 headers, can be enabled on the client or per-operation with the `logging_enable` keyword argument.
-
-See full SDK logging documentation with examples in the [Azure SDK documentation][sdk_logging_docs].
 
 ```python
 import sys
@@ -344,21 +526,23 @@ import logging
 from azure.planetarycomputer import PlanetaryComputerProClient
 from azure.identity import DefaultAzureCredential
 
-logging.basicConfig(level=logging.DEBUG,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    stream=sys.stdout)
+# Enable DEBUG logging for all SDK calls
+logging.basicConfig(level=logging.DEBUG, stream=sys.stdout)
 
-endpoint = "https://your-endpoint.geocatalog.spatio.azure.com"
-credential = DefaultAzureCredential()
-client = PlanetaryComputerProClient(endpoint=endpoint, credential=credential)
+client = PlanetaryComputerProClient(
+    endpoint="https://your-endpoint.geocatalog.spatio.azure.com",
+    credential=DefaultAzureCredential(),
+)
 
-# Enable logging for a specific operation
+# Or enable logging for a single operation
 item = client.stac.get_item(
     collection_id="naip",
     item_id="ga_m_3308421_se_16_060_20211114",
-    logging_enable=True
+    logging_enable=True,
 )
 ```
+
+See full SDK logging documentation in the [Azure SDK documentation][sdk_logging_docs].
 
 ### Optional Configuration
 
@@ -369,7 +553,17 @@ The azure-core [reference documentation][azure_core_ref_docs] describes availabl
 
 ### More sample code
 
-See the `samples` directory for several code snippets illustrating common patterns for working with GeoCatalog resources.
+For complete working examples, see the individual sample files:
+
+| Scenario | Sync | Async |
+|---|---|---|
+| STAC Collection Management | [sample][sample_00] | [async sample][sample_00_async] |
+| Ingestion Management | [sample][sample_01] | [async sample][sample_01_async] |
+| STAC Specification (Items, Search) | [sample][sample_02] | [async sample][sample_02_async] |
+| Shared Access Signatures | [sample][sample_03] | [async sample][sample_03_async] |
+| STAC Item Tiler | [sample][sample_04] | [async sample][sample_04_async] |
+| Mosaics Tiler | [sample][sample_05] | [async sample][sample_05_async] |
+| Map Legends | [sample][sample_06] | [async sample][sample_06_async] |
 
 ### Additional documentation
 
@@ -408,6 +602,21 @@ additional questions or comments.
 [python_logging]: https://docs.python.org/3/library/logging.html
 [sdk_logging_docs]: https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-logging
 [azure_core_ref_docs]: https://aka.ms/azsdk/python/core/docs
+
+[sample_00]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples/planetary_computer_00_stac_collection.py
+[sample_00_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples/async/planetary_computer_00_stac_collection_async.py
+[sample_01]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples/planetary_computer_01_ingestion_management.py
+[sample_01_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples/async/planetary_computer_01_ingestion_management_async.py
+[sample_02]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples/planetary_computer_02_stac_specification.py
+[sample_02_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples/async/planetary_computer_02_stac_specification_async.py
+[sample_03]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples/planetary_computer_03_shared_access_signature.py
+[sample_03_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples/async/planetary_computer_03_shared_access_signature_async.py
+[sample_04]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples/planetary_computer_04_stac_item_tiler.py
+[sample_04_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples/async/planetary_computer_04_stac_item_tiler_async.py
+[sample_05]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples/planetary_computer_05_mosaics_tiler.py
+[sample_05_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples/async/planetary_computer_05_mosaics_tiler_async.py
+[sample_06]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples/planetary_computer_06_map_legends.py
+[sample_06_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/planetarycomputer/azure-planetarycomputer/samples/async/planetary_computer_06_map_legends_async.py
 
 [code_of_conduct]: https://opensource.microsoft.com/codeofconduct/
 [microsoft_cla]: https://cla.microsoft.com

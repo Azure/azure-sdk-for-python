@@ -25,9 +25,7 @@ from azure.planetarycomputer.models import ColorMapNames
 import logging
 
 # Enable HTTP request/response logging
-logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(
-    logging.ERROR
-)
+logging.getLogger("azure.core.pipeline.policies.http_logging_policy").setLevel(logging.ERROR)
 logging.basicConfig(level=logging.INFO)
 
 
@@ -41,9 +39,7 @@ async def get_class_map_legend(client: "PlanetaryComputerProClient"):
 
 async def get_interval_legend(client: "PlanetaryComputerProClient"):
     """Get an interval legend (continuous color map)."""
-    result = await client.data.get_interval_legend(
-        classmap_name=ColorMapNames.MODIS64_A1
-    )
+    result = await client.data.get_interval_legend(classmap_name=ColorMapNames.MODIS64_A1)
     logging.info(result)
 
 
