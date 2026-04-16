@@ -203,12 +203,12 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
     :keyword SmbEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         *,
         multichannel: Optional[SmbMultichannel] = None,
         encryption_in_transit: Optional[SmbEncryptionInTransit] = None,
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         if multichannel is None and encryption_in_transit is None:
             raise ValueError("The value 'multichannel' or 'encryption_in_transit' must be specified.")
@@ -246,12 +246,12 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
     :keyword ShareNfsSettings nfs: Sets NFS settings.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=unused-argument
         self,
         *,
         smb: Optional[ShareSmbSettings] = None,
         nfs: Optional[ShareNfsSettings] = None,
-        **kwargs: Any,  # pylint: disable=unused-argument
+        **kwargs: Any,
     ) -> None:
         if smb is None and nfs is None:
             raise ValueError("The value 'smb' or 'nfs' must be specified.")
@@ -383,13 +383,17 @@ class AccessPolicy(GenAccessPolicy):
     :type start: ~datetime.datetime or str
     """
 
+    start: Optional[Union["datetime", str]]  # type: ignore[assignment]
+    expiry: Optional[Union["datetime", str]]  # type: ignore[assignment]
+    permission: Optional[Union[ShareSasPermissions, str]]  # type: ignore[assignment]
+
     def __init__(
         self,
         permission: Optional[Union[ShareSasPermissions, str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
     ) -> None:
-        super().__init__(start=start, expiry=expiry, permission=permission)
+        super().__init__(start=start, expiry=expiry, permission=permission)  # type: ignore[arg-type]
 
 
 class LeaseProperties(DictMixin):
@@ -1053,13 +1057,14 @@ class DirectoryPropertiesPaged(PageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [
-            DirectoryProperties._from_generated(i)
-            for i in self._response.segment.directory_items  # pylint: disable=protected-access
+            DirectoryProperties._from_generated(i)  # pylint: disable=protected-access
+            for i in self._response.segment.directory_items
         ]
         self.current_page.extend(
             [
-                FileProperties._from_generated(i) for i in self._response.segment.file_items
-            ]  # pylint: disable=protected-access
+                FileProperties._from_generated(i)  # pylint: disable=protected-access
+                for i in self._response.segment.file_items
+            ]
         )
         return self._response.next_marker or None, self.current_page
 
