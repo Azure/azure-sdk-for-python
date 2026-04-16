@@ -134,7 +134,7 @@ def _make_blocking_sync_response_handler(started_gate: EventGate, release_gate: 
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(handler or _noop_response_handler)
+    app.response_handler(handler or _noop_response_handler)
     return TestClient(app)
 
 
@@ -291,7 +291,7 @@ async def test_cancel__stream_disconnect_sets_handler_cancellation_signal() -> N
 
     app = ResponsesAgentServerHost()
 
-    @app.create_handler
+    @app.response_handler
     def _handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
@@ -362,7 +362,7 @@ async def test_cancel__background_stream_disconnect_does_not_cancel_handler() ->
 
     app = ResponsesAgentServerHost()
 
-    @app.create_handler
+    @app.response_handler
     def _handler(request: Any, context: Any, cancellation_signal: Any):
         async def _events():
             from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
@@ -600,14 +600,14 @@ def test_cancel__provider_fallback_returns_400_for_completed_after_restart() -> 
 
     # First app instance: create and complete a response
     app1 = ResponsesAgentServerHost(store=provider)
-    app1.create_handler(_noop_response_handler)
+    app1.response_handler(_noop_response_handler)
     client1 = TestClient(app1)
     response_id = _create_background_response(client1)
     _wait_for_status(client1, response_id, "completed")
 
     # Second app instance (simulating restart): fresh runtime state, same provider
     app2 = ResponsesAgentServerHost(store=provider)
-    app2.create_handler(_noop_response_handler)
+    app2.response_handler(_noop_response_handler)
     client2 = TestClient(app2)
 
     cancel_response = client2.post(f"/responses/{response_id}/cancel")
@@ -627,14 +627,14 @@ def test_cancel__provider_fallback_returns_400_for_failed_after_restart() -> Non
 
     # First app instance: create a response that fails
     app1 = ResponsesAgentServerHost(store=provider)
-    app1.create_handler(_raising_response_handler)
+    app1.response_handler(_raising_response_handler)
     client1 = TestClient(app1)
     response_id = _create_background_response(client1)
     _wait_for_status(client1, response_id, "failed")
 
     # Second app instance (simulating restart)
     app2 = ResponsesAgentServerHost(store=provider)
-    app2.create_handler(_noop_response_handler)
+    app2.response_handler(_noop_response_handler)
     client2 = TestClient(app2)
 
     cancel_response = client2.post(f"/responses/{response_id}/cancel")
@@ -675,7 +675,7 @@ def test_cancel__persisted_state_is_cancelled_even_when_handler_completes_after_
         return _events()
 
     app = ResponsesAgentServerHost(store=provider)
-    app.create_handler(_uncooperative_handler)
+    app.response_handler(_uncooperative_handler)
     client = TestClient(app)
 
     create = client.post(

@@ -197,7 +197,7 @@ class AgentServerHost(Starlette):
                         self._graceful_shutdown_timeout,
                     )
                 except Exception:  # pylint: disable=broad-exception-caught
-                    logger.exception("Error in on_shutdown")
+                    logger.warning("Error in on_shutdown", exc_info=True)
 
         # Merge routes: subclass routes (if any) + health endpoint
         all_routes: list[Any] = list(routes or [])

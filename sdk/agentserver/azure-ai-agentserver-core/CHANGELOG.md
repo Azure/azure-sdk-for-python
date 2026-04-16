@@ -1,29 +1,55 @@
 # Release History
 
-## 2.0.0b1 (Unreleased)
+## 2.0.0b1 (2026-04-14)
 
-### Features Added
-
-- `AgentServerHost` base class (Starlette subclass) with health probe (`/readiness`), graceful shutdown, and port binding.
-- Automatic OpenTelemetry tracing with Azure Monitor and OTLP exporters (included as primary dependencies).
-- `request_span()` host method and `end_span()` / `record_error()` / `trace_stream()` public functions for protocol SDK tracing.
-- Overridable tracing setup via `configure_tracing` constructor parameter.
-- `create_error_response()` utility for standard error envelope responses.
-- Cooperative mixin inheritance for multi-protocol composition.
-- Hypercorn-based ASGI server with HTTP/1.1 support.
+This is a major architectural rewrite. The package has been redesigned as a lightweight hosting
+foundation. Protocol implementations that were previously bundled in this package have moved to
+dedicated protocol packages (`azure-ai-agentserver-responses`, `azure-ai-agentserver-invocations`).
+See the [Migration Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/agentserver/azure-ai-agentserver-core/MigrationGuide.md)
+for upgrading from 1.x versions.
 
 ### Breaking Changes
 
-- Renamed `AgentHost` → `AgentServerHost`; now inherits from `Starlette` directly.
-- Removed `register_routes()` — protocol packages now subclass `AgentServerHost` and pass routes via `super().__init__()`.
-- Removed lazy `app` property — `AgentServerHost` IS the ASGI app.
-- Replaced `TracingHelper` class with module-level functions (`request_span`, `end_span`, `record_error`, `trace_stream`, `configure_tracing`).
-- Replaced `ErrorResponse.create()` static method with module-level `create_error_response()` function.
-- Removed `AgentLogger` / `get_logger()` — use `logging.getLogger("azure.ai.agentserver")` directly.
-- Removed `AGENT_LOG_LEVEL` and `AGENT_GRACEFUL_SHUTDOWN_TIMEOUT` environment variable support from `Constants`.
-- Removed `leaf_customer_span_id` baggage mechanism and W3C Baggage propagation.
-- OpenTelemetry is now a required dependency (was optional `[tracing]` extras).
-- Renamed health endpoint from `/healthy` to `/readiness`.
+- **Package split**: All Responses API protocol types (models, handler decorators, SSE streaming)
+  have moved to `azure-ai-agentserver-responses`. All Invocations protocol types have moved to
+  `azure-ai-agentserver-invocations`. This package now contains only the shared hosting foundation.
+- **`FoundryCBAgent` removed**: Replaced by `AgentServerHost`, a Starlette subclass that IS the
+  ASGI app (no separate `.app` property or `register_routes()`).
+- **`AgentRunContext` removed**: Protocol packages provide their own context types
+  (`ResponseContext` in Responses, `request.state` in Invocations).
+- **`TracingHelper` class removed**: Replaced by module-level functions (`request_span`,
+  `end_span`, `record_error`, `trace_stream`) for a simpler functional API.
+- **`AgentLogger` / `get_logger()` removed**: Use `logging.getLogger("azure.ai.agentserver")`
+  directly, or rely on the SDK's automatic console logging setup.
+- **`ErrorResponse.create()` removed**: Replaced by `create_error_response()` module-level function.
+- **Health endpoint renamed**: `/healthy` → `/readiness`.
+- **OpenTelemetry is now a required dependency** (was optional `[tracing]` extras in 1.x).
+- **Environment variables changed**: `AGENT_LOG_LEVEL` and `AGENT_GRACEFUL_SHUTDOWN_TIMEOUT` are
+  no longer read from `Constants`. Use the `log_level` and `graceful_shutdown_timeout` constructor
+  parameters instead.
+
+### Features Added
+
+- `AgentServerHost` base class with built-in health probe (`/readiness`), graceful shutdown
+  (configurable timeout), and Hypercorn-based ASGI serving.
+- Cooperative mixin inheritance for multi-protocol composition — a single server can host both
+  Responses and Invocations endpoints.
+- Automatic OpenTelemetry tracing with Azure Monitor and OTLP exporters.
+- `configure_observability` constructor parameter for overridable logging + tracing setup.
+  Console `StreamHandler` is attached to the root logger by default so user `logging.info()`
+  calls are visible without any extra configuration.
+- `request_span()` context manager for creating request-scoped OTel spans with GenAI semantic
+  convention attributes.
+- `end_span()`, `record_error()`, `flush_spans()`, `trace_stream()` public functions for
+  protocol SDK tracing lifecycle.
+- `set_current_span()` / `detach_context()` for explicit OTel context management during
+  streaming, ensuring child spans are correctly parented.
+- `AgentConfig` dataclass for resolved configuration from environment variables (Foundry agent
+  name, version, project ID, session ID, etc.).
+- `create_error_response()` utility for standard error envelope JSON responses.
+- `build_server_version()` for constructing `x-platform-server` header segments.
+- HTTP access logging with configurable format via `access_log` and `access_log_format`
+  constructor parameters.
 
 ## 1.0.0b1 (2025-11-07)
 
