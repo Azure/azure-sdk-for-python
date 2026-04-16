@@ -48,10 +48,11 @@ from ...operations._operations import (
     build_beta_agents_delete_session_file_request,
     build_beta_agents_delete_session_request,
     build_beta_agents_download_session_file_request,
+    build_beta_agents_get_session_files_request,
+    build_beta_agents_get_session_log_stream_request,
     build_beta_agents_get_session_request,
-    build_beta_agents_list_session_files_request,
     build_beta_agents_list_sessions_request,
-    build_beta_agents_patch_agent_object_request,
+    build_beta_agents_patch_agent_details_request,
     build_beta_agents_upload_session_file_request,
     build_beta_evaluation_taxonomies_create_request,
     build_beta_evaluation_taxonomies_delete_request,
@@ -212,7 +213,7 @@ class AgentsOperations:
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
         _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
+        _stream = True
         pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
         )
@@ -3012,7 +3013,7 @@ class BetaAgentsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def patch_agent_object(
+    async def patch_agent_details(
         self,
         agent_name: str,
         *,
@@ -3038,7 +3039,7 @@ class BetaAgentsOperations:
         """
 
     @overload
-    async def patch_agent_object(
+    async def patch_agent_details(
         self, agent_name: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Updates an agent endpoint.
@@ -3056,7 +3057,7 @@ class BetaAgentsOperations:
         """
 
     @overload
-    async def patch_agent_object(
+    async def patch_agent_details(
         self, agent_name: str, body: IO[bytes], *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> _models.AgentDetails:
         """Updates an agent endpoint.
@@ -3074,7 +3075,7 @@ class BetaAgentsOperations:
         """
 
     @distributed_trace_async
-    async def patch_agent_object(
+    async def patch_agent_details(
         self,
         agent_name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
@@ -3121,7 +3122,7 @@ class BetaAgentsOperations:
         else:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_beta_agents_patch_agent_object_request(
+        _request = build_beta_agents_patch_agent_details_request(
             agent_name=agent_name,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3575,6 +3576,113 @@ class BetaAgentsOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
+    async def get_session_log_stream(
+        self, agent_name: str, agent_version: str, session_id: str, **kwargs: Any
+    ) -> _models.SessionLogEvent:
+        """Streams console logs (stdout / stderr) for a specific hosted agent session
+        as a Server-Sent Events (SSE) stream.
+
+        Each SSE frame contains:
+
+        * `event`: always `"log"`
+        * `data`: a plain-text log line (currently JSON-formatted, but the schema
+        is not contractual and may include additional keys or change format
+        over time — clients should treat it as an opaque string)
+
+        Example SSE frames:
+
+        .. code-block::
+
+           event: log
+           data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting
+        FoundryCBAgent server on port 8088"}
+
+           event: log
+           data: {"timestamp":"2026-03-10T09:33:17.130Z","stream":"stderr","message":"INFO: Application
+        startup complete."}
+
+           event: log
+           data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+        connected to container"}
+
+           event: log
+           data: {"timestamp":"2026-03-10T09:35:52.714Z","stream":"status","message":"No logs since
+        last 60 seconds"}
+
+        The stream remains open until the client disconnects or the server
+        terminates the connection. Clients should handle reconnection as needed.
+
+        :param agent_name: The name of the hosted agent. Required.
+        :type agent_name: str
+        :param agent_version: The version of the agent. Required.
+        :type agent_version: str
+        :param session_id: The session ID (maps to an ADC sandbox). Required.
+        :type session_id: str
+        :return: SessionLogEvent. The SessionLogEvent is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.SessionLogEvent
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.SessionLogEvent] = kwargs.pop("cls", None)
+
+        _request = build_beta_agents_get_session_log_stream_request(
+            agent_name=agent_name,
+            agent_version=agent_version,
+            session_id=session_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = True
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        response_headers = {}
+        response_headers["Content-Type"] = self._deserialize("str", response.headers.get("Content-Type"))
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.SessionLogEvent, response.text())
+
+        if cls:
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
     async def _upload_session_file(
         self, agent_name: str, session_id: str, content: bytes, *, path: str, **kwargs: Any
     ) -> _models.SessionFileWriteResponse:
@@ -3729,7 +3837,7 @@ class BetaAgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def list_session_files(
+    async def get_session_files(
         self, agent_name: str, session_id: str, *, path: str, **kwargs: Any
     ) -> _models.SessionDirectoryListResponse:
         """List files and directories at a given path in the session sandbox. Returns only the immediate
@@ -3759,7 +3867,7 @@ class BetaAgentsOperations:
 
         cls: ClsType[_models.SessionDirectoryListResponse] = kwargs.pop("cls", None)
 
-        _request = build_beta_agents_list_session_files_request(
+        _request = build_beta_agents_get_session_files_request(
             agent_name=agent_name,
             session_id=session_id,
             path=path,
@@ -7194,7 +7302,7 @@ class BetaToolboxesOperations:
     @overload
     async def create_version(
         self,
-        toolbox_name: str,
+        name: str,
         *,
         tools: List[_models.Tool],
         content_type: str = "application/json",
@@ -7205,9 +7313,9 @@ class BetaToolboxesOperations:
     ) -> _models.ToolboxVersionObject:
         """Create a new version of a toolbox. If the toolbox does not exist, it will be created.
 
-        :param toolbox_name: The name of the toolbox. If the toolbox does not exist, it will be
-         created. Required.
-        :type toolbox_name: str
+        :param name: The name of the toolbox. If the toolbox does not exist, it will be created.
+         Required.
+        :type name: str
         :keyword tools: The list of tools to include in this version. Required.
         :paramtype tools: list[~azure.ai.projects.models.Tool]
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7227,13 +7335,13 @@ class BetaToolboxesOperations:
 
     @overload
     async def create_version(
-        self, toolbox_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ToolboxVersionObject:
         """Create a new version of a toolbox. If the toolbox does not exist, it will be created.
 
-        :param toolbox_name: The name of the toolbox. If the toolbox does not exist, it will be
-         created. Required.
-        :type toolbox_name: str
+        :param name: The name of the toolbox. If the toolbox does not exist, it will be created.
+         Required.
+        :type name: str
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7246,13 +7354,13 @@ class BetaToolboxesOperations:
 
     @overload
     async def create_version(
-        self, toolbox_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ToolboxVersionObject:
         """Create a new version of a toolbox. If the toolbox does not exist, it will be created.
 
-        :param toolbox_name: The name of the toolbox. If the toolbox does not exist, it will be
-         created. Required.
-        :type toolbox_name: str
+        :param name: The name of the toolbox. If the toolbox does not exist, it will be created.
+         Required.
+        :type name: str
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -7266,7 +7374,7 @@ class BetaToolboxesOperations:
     @distributed_trace_async
     async def create_version(
         self,
-        toolbox_name: str,
+        name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         tools: List[_models.Tool] = _Unset,
@@ -7277,9 +7385,9 @@ class BetaToolboxesOperations:
     ) -> _models.ToolboxVersionObject:
         """Create a new version of a toolbox. If the toolbox does not exist, it will be created.
 
-        :param toolbox_name: The name of the toolbox. If the toolbox does not exist, it will be
-         created. Required.
-        :type toolbox_name: str
+        :param name: The name of the toolbox. If the toolbox does not exist, it will be created.
+         Required.
+        :type name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword tools: The list of tools to include in this version. Required.
@@ -7322,7 +7430,7 @@ class BetaToolboxesOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_toolboxes_create_version_request(
-            toolbox_name=toolbox_name,
+            name=name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7366,11 +7474,11 @@ class BetaToolboxesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, toolbox_name: str, **kwargs: Any) -> _models.ToolboxObject:
+    async def get(self, name: str, **kwargs: Any) -> _models.ToolboxObject:
         """Retrieve a toolbox.
 
-        :param toolbox_name: The name of the toolbox to retrieve. Required.
-        :type toolbox_name: str
+        :param name: The name of the toolbox to retrieve. Required.
+        :type name: str
         :return: ToolboxObject. The ToolboxObject is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.ToolboxObject
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7389,7 +7497,7 @@ class BetaToolboxesOperations:
         cls: ClsType[_models.ToolboxObject] = kwargs.pop("cls", None)
 
         _request = build_beta_toolboxes_get_request(
-            toolbox_name=toolbox_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7523,7 +7631,7 @@ class BetaToolboxesOperations:
     @distributed_trace
     def list_versions(
         self,
-        toolbox_name: str,
+        name: str,
         *,
         limit: Optional[int] = None,
         order: Optional[Union[str, _models.PageOrder]] = None,
@@ -7532,8 +7640,8 @@ class BetaToolboxesOperations:
     ) -> AsyncItemPaged["_models.ToolboxVersionObject"]:
         """List all versions of a toolbox.
 
-        :param toolbox_name: The name of the toolbox to list versions for. Required.
-        :type toolbox_name: str
+        :param name: The name of the toolbox to list versions for. Required.
+        :type name: str
         :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
          100, and the
          default is 20. Default value is None.
@@ -7568,7 +7676,7 @@ class BetaToolboxesOperations:
         def prepare_request(_continuation_token=None):
 
             _request = build_beta_toolboxes_list_versions_request(
-                toolbox_name=toolbox_name,
+                name=name,
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -7615,11 +7723,11 @@ class BetaToolboxesOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
-    async def get_version(self, toolbox_name: str, version: str, **kwargs: Any) -> _models.ToolboxVersionObject:
+    async def get_version(self, name: str, version: str, **kwargs: Any) -> _models.ToolboxVersionObject:
         """Retrieve a specific version of a toolbox.
 
-        :param toolbox_name: The name of the toolbox. Required.
-        :type toolbox_name: str
+        :param name: The name of the toolbox. Required.
+        :type name: str
         :param version: The version identifier to retrieve. Required.
         :type version: str
         :return: ToolboxVersionObject. The ToolboxVersionObject is compatible with MutableMapping
@@ -7640,7 +7748,7 @@ class BetaToolboxesOperations:
         cls: ClsType[_models.ToolboxVersionObject] = kwargs.pop("cls", None)
 
         _request = build_beta_toolboxes_get_version_request(
-            toolbox_name=toolbox_name,
+            name=name,
             version=version,
             api_version=self._config.api_version,
             headers=_headers,
@@ -7684,12 +7792,12 @@ class BetaToolboxesOperations:
 
     @overload
     async def update(
-        self, toolbox_name: str, *, default_version: str, content_type: str = "application/json", **kwargs: Any
+        self, name: str, *, default_version: str, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ToolboxObject:
         """Update a toolbox to point to a specific version.
 
-        :param toolbox_name: The name of the toolbox to update. Required.
-        :type toolbox_name: str
+        :param name: The name of the toolbox to update. Required.
+        :type name: str
         :keyword default_version: The version identifier that the toolbox should point to. When set,
          the toolbox's default version will resolve to this version instead of the latest. Required.
         :paramtype default_version: str
@@ -7703,12 +7811,12 @@ class BetaToolboxesOperations:
 
     @overload
     async def update(
-        self, toolbox_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ToolboxObject:
         """Update a toolbox to point to a specific version.
 
-        :param toolbox_name: The name of the toolbox to update. Required.
-        :type toolbox_name: str
+        :param name: The name of the toolbox to update. Required.
+        :type name: str
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -7721,12 +7829,12 @@ class BetaToolboxesOperations:
 
     @overload
     async def update(
-        self, toolbox_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.ToolboxObject:
         """Update a toolbox to point to a specific version.
 
-        :param toolbox_name: The name of the toolbox to update. Required.
-        :type toolbox_name: str
+        :param name: The name of the toolbox to update. Required.
+        :type name: str
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -7739,12 +7847,12 @@ class BetaToolboxesOperations:
 
     @distributed_trace_async
     async def update(
-        self, toolbox_name: str, body: Union[JSON, IO[bytes]] = _Unset, *, default_version: str = _Unset, **kwargs: Any
+        self, name: str, body: Union[JSON, IO[bytes]] = _Unset, *, default_version: str = _Unset, **kwargs: Any
     ) -> _models.ToolboxObject:
         """Update a toolbox to point to a specific version.
 
-        :param toolbox_name: The name of the toolbox to update. Required.
-        :type toolbox_name: str
+        :param name: The name of the toolbox to update. Required.
+        :type name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword default_version: The version identifier that the toolbox should point to. When set,
@@ -7781,7 +7889,7 @@ class BetaToolboxesOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_toolboxes_update_request(
-            toolbox_name=toolbox_name,
+            name=name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -7825,11 +7933,11 @@ class BetaToolboxesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(self, toolbox_name: str, **kwargs: Any) -> None:
+    async def delete(self, name: str, **kwargs: Any) -> None:
         """Delete a toolbox and all its versions.
 
-        :param toolbox_name: The name of the toolbox to delete. Required.
-        :type toolbox_name: str
+        :param name: The name of the toolbox to delete. Required.
+        :type name: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7848,7 +7956,7 @@ class BetaToolboxesOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_beta_toolboxes_delete_request(
-            toolbox_name=toolbox_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -7877,11 +7985,11 @@ class BetaToolboxesOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
     @distributed_trace_async
-    async def delete_version(self, toolbox_name: str, version: str, **kwargs: Any) -> None:
+    async def delete_version(self, name: str, version: str, **kwargs: Any) -> None:
         """Delete a specific version of a toolbox.
 
-        :param toolbox_name: The name of the toolbox. Required.
-        :type toolbox_name: str
+        :param name: The name of the toolbox. Required.
+        :type name: str
         :param version: The version identifier to delete. Required.
         :type version: str
         :return: None
@@ -7902,7 +8010,7 @@ class BetaToolboxesOperations:
         cls: ClsType[None] = kwargs.pop("cls", None)
 
         _request = build_beta_toolboxes_delete_version_request(
-            toolbox_name=toolbox_name,
+            name=name,
             version=version,
             api_version=self._config.api_version,
             headers=_headers,
@@ -8186,11 +8294,11 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get(self, skill_name: str, **kwargs: Any) -> _models.SkillObject:
+    async def get(self, name: str, **kwargs: Any) -> _models.SkillObject:
         """Retrieves a skill.
 
-        :param skill_name: The unique name of the skill. Required.
-        :type skill_name: str
+        :param name: The unique name of the skill. Required.
+        :type name: str
         :return: SkillObject. The SkillObject is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.SkillObject
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8209,7 +8317,7 @@ class BetaSkillsOperations:
         cls: ClsType[_models.SkillObject] = kwargs.pop("cls", None)
 
         _request = build_beta_skills_get_request(
-            skill_name=skill_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -8251,11 +8359,11 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def download(self, skill_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
+    async def download(self, name: str, **kwargs: Any) -> AsyncIterator[bytes]:
         """Downloads a skill package.
 
-        :param skill_name: The unique name of the skill. Required.
-        :type skill_name: str
+        :param name: The unique name of the skill. Required.
+        :type name: str
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8274,7 +8382,7 @@ class BetaSkillsOperations:
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         _request = build_beta_skills_download_request(
-            skill_name=skill_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -8408,7 +8516,7 @@ class BetaSkillsOperations:
     @overload
     async def update(
         self,
-        skill_name: str,
+        name: str,
         *,
         content_type: str = "application/json",
         description: Optional[str] = None,
@@ -8418,8 +8526,8 @@ class BetaSkillsOperations:
     ) -> _models.SkillObject:
         """Updates an existing skill.
 
-        :param skill_name: The unique name of the skill. Required.
-        :type skill_name: str
+        :param name: The unique name of the skill. Required.
+        :type name: str
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -8442,12 +8550,12 @@ class BetaSkillsOperations:
 
     @overload
     async def update(
-        self, skill_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SkillObject:
         """Updates an existing skill.
 
-        :param skill_name: The unique name of the skill. Required.
-        :type skill_name: str
+        :param name: The unique name of the skill. Required.
+        :type name: str
         :param body: Required.
         :type body: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
@@ -8460,12 +8568,12 @@ class BetaSkillsOperations:
 
     @overload
     async def update(
-        self, skill_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+        self, name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.SkillObject:
         """Updates an existing skill.
 
-        :param skill_name: The unique name of the skill. Required.
-        :type skill_name: str
+        :param name: The unique name of the skill. Required.
+        :type name: str
         :param body: Required.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
@@ -8479,7 +8587,7 @@ class BetaSkillsOperations:
     @distributed_trace_async
     async def update(
         self,
-        skill_name: str,
+        name: str,
         body: Union[JSON, IO[bytes]] = _Unset,
         *,
         description: Optional[str] = None,
@@ -8489,8 +8597,8 @@ class BetaSkillsOperations:
     ) -> _models.SkillObject:
         """Updates an existing skill.
 
-        :param skill_name: The unique name of the skill. Required.
-        :type skill_name: str
+        :param name: The unique name of the skill. Required.
+        :type name: str
         :param body: Is either a JSON type or a IO[bytes] type. Required.
         :type body: JSON or IO[bytes]
         :keyword description: A human-readable description of the skill. Default value is None.
@@ -8534,7 +8642,7 @@ class BetaSkillsOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_skills_update_request(
-            skill_name=skill_name,
+            name=name,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -8578,11 +8686,11 @@ class BetaSkillsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def delete(self, skill_name: str, **kwargs: Any) -> _models.DeleteSkillResponse:
+    async def delete(self, name: str, **kwargs: Any) -> _models.DeleteSkillResponse:
         """Deletes a skill.
 
-        :param skill_name: The unique name of the skill. Required.
-        :type skill_name: str
+        :param name: The unique name of the skill. Required.
+        :type name: str
         :return: DeleteSkillResponse. The DeleteSkillResponse is compatible with MutableMapping
         :rtype: ~azure.ai.projects.models.DeleteSkillResponse
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -8601,7 +8709,7 @@ class BetaSkillsOperations:
         cls: ClsType[_models.DeleteSkillResponse] = kwargs.pop("cls", None)
 
         _request = build_beta_skills_delete_request(
-            skill_name=skill_name,
+            name=name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

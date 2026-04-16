@@ -185,9 +185,7 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "hosted_agents",
-            samples_to_skip=[
-                "sample_skills_crud.py",  # Service currently returns 201 (Created) for update; SDK operation expects 200.
-            ],
+            samples_to_skip=[],
         ),
     )
     @servicePreparer()

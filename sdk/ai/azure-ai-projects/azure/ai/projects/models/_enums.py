@@ -701,6 +701,15 @@ class SearchContextSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HIGH."""
 
 
+class SessionLogEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Known SSE event types emitted by the hosted agent session log stream. Additional event types
+    may be introduced in future versions.
+    """
+
+    LOG = "log"
+    """A log line from the agent session container."""
+
+
 class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of TextResponseFormatConfigurationType."""
 

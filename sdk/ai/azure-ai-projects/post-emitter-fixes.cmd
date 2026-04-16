@@ -36,6 +36,9 @@ REM In emitted code, these first 7 of those lines are associated with GA operati
 REM from the 8th occurrence onward.
 powershell -Command "$gaCount=7; $old=[char]34+'GET'+[char]34+', urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params'; $new=$old+', headers=_headers'; foreach ($f in 'azure\ai\projects\aio\operations\_operations.py','azure\ai\projects\operations\_operations.py') { $c=Get-Content $f -Raw; $parts=$c -split [regex]::Escape($old); $r=$parts[0]; for ($i=1; $i -lt $parts.Length; $i++) { if ($i -le $gaCount) { $r+=$old+$parts[$i] } else { $r+=$new+$parts[$i] } }; Set-Content $f $r -NoNewline }"
 
+REM Force streaming in get_session_log_stream for both sync and async operations.
+powershell -Command "$files='azure\ai\projects\operations\_operations.py','azure\ai\projects\aio\operations\_operations.py'; foreach ($f in $files) { $lines=Get-Content $f; $inFunc=$false; for ($i=0; $i -lt $lines.Length; $i++) { if ($lines[$i] -match '^\s*(async\s+)?def\s+get_session_log_stream\(') { $inFunc=$true; continue }; if ($inFunc -and $lines[$i] -match '^\s*(async\s+)?def\s+\w+\(') { $inFunc=$false }; if ($inFunc -and $lines[$i] -match 'kwargs\.pop\(.+stream.+False\)') { $indent=([regex]::Match($lines[$i], '^\s*')).Value; $lines[$i]=$indent + '_stream = True' } }; Set-Content $f $lines }"
+
 REM Fix Sphinx issue in class ToolChoiceAllowed, in "tools" property doc string. The "Required" cannot come at the end of the code-block.
 REM move it to the end of the text before the code block, and make sure there are no periods after "]".
 REM     .. code-block:: json

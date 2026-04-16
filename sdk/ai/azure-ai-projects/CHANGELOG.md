@@ -13,10 +13,10 @@ need to set `allow_preview=True` on the `AIProjectClient` constructor.
   * `delete_session_file()`
   * `download_session_file()`
   * `get_session()`
-  * `list_session_files()`
+  * `get_session_files()`
   * `list_sessions()`
   * `upload_session_file()`
-* Also on `.beta.agents` sub-client, a new method `patch_agent_object()`.
+* Also on `.beta.agents` sub-client, a new method `patch_agent_details()`.
 * New `beta.skills` sub-client added, with Skills operations:
   * `create()`
   * `create_from_package()`

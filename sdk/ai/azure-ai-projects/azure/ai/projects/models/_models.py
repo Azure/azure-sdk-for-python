@@ -1326,14 +1326,14 @@ class AzureAIModelTarget(Target, discriminator="azure_ai_model"):
     :vartype model: str
     :ivar sampling_params: The parameters used to control the sampling behavior of the model during
      text generation.
-    :vartype sampling_params: ~azure.ai.projects.models.ModelSamplingConfig
+    :vartype sampling_params: ~azure.ai.projects.models.ModelSamplingParams
     """
 
     type: Literal["azure_ai_model"] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
     """The type of target, always ``azure_ai_model``. Required. Default value is \"azure_ai_model\"."""
     model: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The unique identifier of the Azure AI model."""
-    sampling_params: Optional["_models.ModelSamplingConfig"] = rest_field(
+    sampling_params: Optional["_models.ModelSamplingParams"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The parameters used to control the sampling behavior of the model during text generation."""
@@ -1343,7 +1343,7 @@ class AzureAIModelTarget(Target, discriminator="azure_ai_model"):
         self,
         *,
         model: Optional[str] = None,
-        sampling_params: Optional["_models.ModelSamplingConfig"] = None,
+        sampling_params: Optional["_models.ModelSamplingParams"] = None,
     ) -> None: ...
 
     @overload
@@ -7328,7 +7328,7 @@ class ModelDeploymentSku(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ModelSamplingConfig(_Model):
+class ModelSamplingParams(_Model):
     """Represents a set of parameters used to control the sampling behavior of a language model during
     text generation.
 
@@ -8694,6 +8694,66 @@ class SessionFileWriteResponse(_Model):
         *,
         path: str,
         bytes_written: int,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class SessionLogEvent(_Model):
+    """A single Server-Sent Event frame emitted by the hosted agent session log stream.
+
+    Each frame contains an ``event`` field identifying the event type and a ``data``
+    field carrying the payload as plain text. Although the current ``data`` payload
+    is JSON-formatted, its schema is not contractual — additional keys may appear
+    and the format may change over time. Clients should treat ``data`` as an
+    opaque string and optionally attempt JSON parsing.
+
+    New event types may be added in the future. Clients should gracefully
+    ignore unrecognized event types.
+
+    Wire format:
+
+    .. code-block::
+
+       event: log
+       data: {"timestamp":"2026-03-10T09:33:17.121Z","stream":"stdout","message":"Starting server
+    on port 18080"}
+
+       event: log
+       data: {"timestamp":"2026-03-10T09:34:52.714Z","stream":"status","message":"Successfully
+    connected to container"}.
+
+    :ivar event: The SSE event type. Currently ``log``, but additional event types may be added in
+     the future. Clients should ignore unrecognized event types. Required. "log"
+    :vartype event: str or ~azure.ai.projects.models.SessionLogEventType
+    :ivar data: The event payload as plain text. Currently JSON-formatted but the schema is not
+     contractual and may change. Required.
+    :vartype data: str
+    """
+
+    event: Union[str, "_models.SessionLogEventType"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The SSE event type. Currently ``log``, but additional event types may be added in the future.
+     Clients should ignore unrecognized event types. Required. \"log\""""
+    data: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The event payload as plain text. Currently JSON-formatted but the schema is not contractual and
+     may change. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        event: Union[str, "_models.SessionLogEventType"],
+        data: str,
     ) -> None: ...
 
     @overload

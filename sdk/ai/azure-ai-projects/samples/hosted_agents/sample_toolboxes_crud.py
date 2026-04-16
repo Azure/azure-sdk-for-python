@@ -81,14 +81,14 @@ with (
     ]
 
     created = project_client.beta.toolboxes.create_version(
-        toolbox_name=toolbox_name,
+        name=toolbox_name,
         description="Toolbox version with MCP require_approval set to 'never'.",
         tools=tools_with_mcp_approval_required,
     )
     print(f"Created toolbox: {created.name} with MCP tools requiring approval 'never' in version {created.version}")
 
     created = project_client.beta.toolboxes.create_version(
-        toolbox_name=toolbox_name,
+        name=toolbox_name,
         description="Toolbox version with MCP require_approval set to 'always'.",
         tools=tools_with_mcp_approval_always,
     )
@@ -100,10 +100,10 @@ with (
     )
     print(f"Updated toolbox: {updated.name} default version is now {updated.default_version}")
 
-    fetched = project_client.beta.toolboxes.get(toolbox_name=toolbox_name)
+    fetched = project_client.beta.toolboxes.get(name=toolbox_name)
     print(f"Retrieved toolbox with default version: {fetched.default_version}")
     fetched_version = project_client.beta.toolboxes.get_version(
-        toolbox_name=toolbox_name,
+        name=toolbox_name,
         version=fetched.default_version,
     )
     print_mcp_require_approval(fetched_version.tools)
@@ -114,10 +114,10 @@ with (
     )
     print(f"Updated toolbox: {updated.name} default version is now {updated.default_version}")
 
-    fetched = project_client.beta.toolboxes.get(toolbox_name=toolbox_name)
+    fetched = project_client.beta.toolboxes.get(name=toolbox_name)
     print(f"Retrieved toolbox with default version: {fetched.default_version}")
     fetched_version = project_client.beta.toolboxes.get_version(
-        toolbox_name=toolbox_name,
+        name=toolbox_name,
         version=fetched.default_version,
     )
     print_mcp_require_approval(fetched_version.tools)
@@ -127,5 +127,5 @@ with (
     for item in toolboxes:
         print(f"  - {item.name} ({item.id})")
 
-    project_client.beta.toolboxes.delete(toolbox_name=toolbox_name)
+    project_client.beta.toolboxes.delete(name=toolbox_name)
     print("Toolbox deleted")

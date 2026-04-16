@@ -25,6 +25,10 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format '<registry>/<repository>[:<tag>|@<digest>]'
+
+    You can build and push an example image from
+    `samples/hosted_agents/assets/responses-echo-agent` and use that image value
+    for `FOUNDRY_AGENT_CONTAINER_IMAGE`.
 """
 
 import os
@@ -60,7 +64,7 @@ with (
             memory="1Gi",
             image=image,
             container_protocol_versions=[
-                ProtocolVersionRecord(protocol="responses", version="v1"),
+                ProtocolVersionRecord(protocol="responses", version="1.0.0"),
             ],
         ),
         metadata={"enableVnextExperience": "true"},
