@@ -84,48 +84,51 @@ class TestAADInferenceServiceLazyInit(unittest.TestCase):
     masterKey = configs.masterKey
     credential = CosmosEmulatorCredential() if configs.is_emulator else configs.credential
 
+    def setUp(self):
+        """Save the env var state before each test."""
+        self._saved_endpoint = os.environ.get("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT")
+
+    def tearDown(self):
+        """Ensure the env var is always unset after each test to prevent leakage."""
+        os.environ.pop("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT", None)
+
     def test_aad_client_construction_without_inference_endpoint(self):
         """Constructing a CosmosClient with AAD creds must not raise when
         AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT is unset."""
-        saved = os.environ.pop("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT", None)
-        try:
-            client = cosmos_client.CosmosClient(self.host, self.credential)
-            db = client.get_database_client(self.configs.TEST_DATABASE_ID)
-            container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+        os.environ.pop("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT", None)
 
-            item = get_test_item(0)
-            container.create_item(item)
-            read_result = container.read_item(item=item['id'], partition_key='pk')
-            assert read_result['id'] == item['id']
+        client = cosmos_client.CosmosClient(self.host, self.credential)
+        db = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
-            query_results = list(container.query_items(
-                query='SELECT * FROM c WHERE c.id=@id',
-                parameters=[{"name": "@id", "value": item['id']}],
-                partition_key='pk'
-            ))
-            assert len(query_results) == 1
+        item = get_test_item(0)
+        container.create_item(item)
+        read_result = container.read_item(item=item['id'], partition_key='pk')
+        assert read_result['id'] == item['id']
 
-            container.delete_item(item=item['id'], partition_key='pk')
-        finally:
-            if saved is not None:
-                os.environ["AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT"] = saved
+        query_results = list(container.query_items(
+            query='SELECT * FROM c WHERE c.id=@id',
+            parameters=[{"name": "@id", "value": item['id']}],
+            partition_key='pk'
+        ))
+        assert len(query_results) == 1
+
+        container.delete_item(item=item['id'], partition_key='pk')
 
     def test_aad_client_construction_with_inference_endpoint(self):
         """Constructing a CosmosClient with AAD creds must also work when
         AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT IS set."""
         os.environ["AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT"] = "https://example.com"
-        try:
-            client = cosmos_client.CosmosClient(self.host, self.credential)
-            db = client.get_database_client(self.configs.TEST_DATABASE_ID)
-            container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
-            item = get_test_item(1)
-            container.create_item(item)
-            read_result = container.read_item(item=item['id'], partition_key='pk')
-            assert read_result['id'] == item['id']
-            container.delete_item(item=item['id'], partition_key='pk')
-        finally:
-            os.environ.pop("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT", None)
+        client = cosmos_client.CosmosClient(self.host, self.credential)
+        db = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+
+        item = get_test_item(1)
+        container.create_item(item)
+        read_result = container.read_item(item=item['id'], partition_key='pk')
+        assert read_result['id'] == item['id']
+        container.delete_item(item=item['id'], partition_key='pk')
 
 
 if __name__ == "__main__":

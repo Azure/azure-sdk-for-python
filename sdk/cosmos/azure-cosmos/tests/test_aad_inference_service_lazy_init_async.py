@@ -83,52 +83,55 @@ class TestAADInferenceServiceLazyInitAsync(unittest.IsolatedAsyncioTestCase):
     masterKey = configs.masterKey
     credential = CosmosEmulatorCredential() if configs.is_emulator else configs.credential_async
 
+    def setUp(self):
+        """Save the env var state before each test."""
+        self._saved_endpoint = os.environ.get("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT")
+
+    def tearDown(self):
+        """Ensure the env var is always unset after each test to prevent leakage."""
+        os.environ.pop("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT", None)
+
     async def test_aad_client_construction_without_inference_endpoint(self):
         """Constructing an async CosmosClient with AAD creds must not raise when
         AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT is unset."""
-        saved = os.environ.pop("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT", None)
-        try:
-            client = CosmosClient(self.host, self.credential)
-            db = client.get_database_client(self.configs.TEST_DATABASE_ID)
-            container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+        os.environ.pop("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT", None)
 
-            item = get_test_item(0)
-            await container.create_item(item)
-            read_result = await container.read_item(item=item['id'], partition_key='pk')
-            assert read_result['id'] == item['id']
+        client = CosmosClient(self.host, self.credential)
+        db = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
-            query_results = [
-                doc async for doc in container.query_items(
-                    query='SELECT * FROM c WHERE c.id=@id',
-                    parameters=[{"name": "@id", "value": item['id']}],
-                    partition_key='pk'
-                )
-            ]
-            assert len(query_results) == 1
+        item = get_test_item(0)
+        await container.create_item(item)
+        read_result = await container.read_item(item=item['id'], partition_key='pk')
+        assert read_result['id'] == item['id']
 
-            await container.delete_item(item=item['id'], partition_key='pk')
-            await client.close()
-        finally:
-            if saved is not None:
-                os.environ["AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT"] = saved
+        query_results = [
+            doc async for doc in container.query_items(
+                query='SELECT * FROM c WHERE c.id=@id',
+                parameters=[{"name": "@id", "value": item['id']}],
+                partition_key='pk'
+            )
+        ]
+        assert len(query_results) == 1
+
+        await container.delete_item(item=item['id'], partition_key='pk')
+        await client.close()
 
     async def test_aad_client_construction_with_inference_endpoint(self):
         """Constructing an async CosmosClient with AAD creds must also work when
         AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT IS set."""
         os.environ["AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT"] = "https://placeholder.example.com"
-        try:
-            client = CosmosClient(self.host, self.credential)
-            db = client.get_database_client(self.configs.TEST_DATABASE_ID)
-            container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
 
-            item = get_test_item(1)
-            await container.create_item(item)
-            read_result = await container.read_item(item=item['id'], partition_key='pk')
-            assert read_result['id'] == item['id']
-            await container.delete_item(item=item['id'], partition_key='pk')
-            await client.close()
-        finally:
-            os.environ.pop("AZURE_COSMOS_SEMANTIC_RERANKER_INFERENCE_ENDPOINT", None)
+        client = CosmosClient(self.host, self.credential)
+        db = client.get_database_client(self.configs.TEST_DATABASE_ID)
+        container = db.get_container_client(self.configs.TEST_SINGLE_PARTITION_CONTAINER_ID)
+
+        item = get_test_item(1)
+        await container.create_item(item)
+        read_result = await container.read_item(item=item['id'], partition_key='pk')
+        assert read_result['id'] == item['id']
+        await container.delete_item(item=item['id'], partition_key='pk')
+        await client.close()
 
 
 if __name__ == "__main__":
