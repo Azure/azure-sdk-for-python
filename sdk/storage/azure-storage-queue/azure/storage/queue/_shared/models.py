@@ -292,10 +292,7 @@ class ResourceTypes(object):
     _str: str
 
     def __init__(
-        self,
-        service: bool = False,
-        container: bool = False,
-        object: bool = False,  # pylint: disable=redefined-builtin
+        self, service: bool = False, container: bool = False, object: bool = False  # pylint: disable=redefined-builtin
     ) -> None:
         self.service = service
         self.container = container
@@ -316,7 +313,7 @@ class ResourceTypes(object):
         :param str string: Specify service, container, or object in
             in the string with the first letter of the word.
         :return: A ResourceTypes object
-        :rtype: ~azure.storage.queue.ResourceTypes
+        :rtype: ~azure.storage.blob.ResourceTypes
         """
         res_service = "s" in string
         res_container = "c" in string
@@ -440,7 +437,7 @@ class AccountSasPermissions(object):
         :param str permission: Specify permissions in
             the string with the first letter of the word.
         :return: An AccountSasPermissions object
-        :rtype: ~azure.storage.queue.AccountSasPermissions
+        :rtype: ~azure.storage.blob.AccountSasPermissions
         """
         p_read = "r" in permission
         p_write = "w" in permission
@@ -505,7 +502,7 @@ class Services(object):
         :param str string: Specify blob, queue, or file in
             in the string with the first letter of the word.
         :return: A Services object
-        :rtype: ~azure.storage.queue.Services
+        :rtype: ~azure.storage.blob.Services
         """
         res_blob = "b" in string
         res_queue = "q" in string

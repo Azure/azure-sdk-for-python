@@ -16,9 +16,7 @@ except ImportError:
     pass
 
 try:
-    from azure.core.pipeline.transport import (  # pylint: disable=non-abstract-transport-import
-        AioHttpTransport,
-    )
+    from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=non-abstract-transport-import
 except ImportError:
     AioHttpTransport = None
 
@@ -154,16 +152,9 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         try:
             if (
                 isinstance(request.context.transport, AioHttpTransport)
+                or isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport)
                 or isinstance(
-                    getattr(request.context.transport, "_transport", None),
-                    AioHttpTransport,
-                )
-                or isinstance(
-                    getattr(
-                        getattr(request.context.transport, "_transport", None),
-                        "_transport",
-                        None,
-                    ),
+                    getattr(getattr(request.context.transport, "_transport", None), "_transport", None),
                     AioHttpTransport,
                 )
             ):
