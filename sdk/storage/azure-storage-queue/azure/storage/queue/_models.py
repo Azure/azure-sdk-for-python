@@ -306,6 +306,10 @@ class AccessPolicy(GenAccessPolicy):
         be interpreted as UTC.
     """
 
+    start: Optional[Union["datetime", str]]  # type: ignore[assignment]
+    expiry: Optional[Union["datetime", str]]  # type: ignore[assignment]
+    permission: Optional[Union[QueueSasPermissions, str]]  # type: ignore[assignment]
+
     def __init__(
         self,
         permission: Optional[Union[QueueSasPermissions, str]] = None,
