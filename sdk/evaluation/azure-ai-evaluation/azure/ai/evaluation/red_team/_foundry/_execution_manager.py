@@ -208,9 +208,16 @@ class FoundryExecutionManager:
                 )
                 self._result_processors[risk_value] = result_processor
 
-                # Generate JSONL output
-                output_path = os.path.join(self.output_dir, f"{risk_value}_results.jsonl")
-                result_processor.to_jsonl(output_path)
+                # Generate per-strategy JSONL files directly from the scenario's
+                # strategy grouping.  ScenarioResult.attack_results is keyed by
+                # atomic_attack_name (the FoundryStrategy value, e.g. "baseline",
+                # "crescendo"), so each strategy gets its own file — matching the
+                # legacy orchestrator path where each (strategy, risk) pair had a
+                # separate UUID-based JSONL file.
+                strategy_files = result_processor.to_jsonl_per_strategy(
+                    output_dir=self.output_dir,
+                    risk_value=risk_value,
+                )
 
                 # Get summary stats
                 stats = result_processor.get_summary_stats()
@@ -220,7 +227,7 @@ class FoundryExecutionManager:
                 strategy_results = self._group_results_by_strategy(
                     orchestrator=orchestrator,
                     risk_value=risk_value,
-                    output_path=output_path,
+                    strategy_files=strategy_files,
                     attack_strategies=attack_strategies,
                     include_baseline=include_baseline,
                 )
@@ -354,23 +361,24 @@ class FoundryExecutionManager:
         self,
         orchestrator: ScenarioOrchestrator,
         risk_value: str,
-        output_path: str,
+        strategy_files: Dict[str, str],
         attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]],
         include_baseline: bool,
     ) -> Dict[str, Dict[str, Any]]:
         """Group attack results by strategy for red_team_info format.
 
-        Uses the requested attack strategies as keys (via get_strategy_name) rather than
-        extracting from PyRIT attack identifiers, since PyRIT's PromptSendingAttack
-        is used for all single-turn attacks regardless of converter. The overall ASR is
-        used for each strategy because Foundry batches all strategies per risk category.
+        Each strategy is assigned its own JSONL data file, written via
+        ``FoundryResultProcessor.to_jsonl_per_strategy()``, so that downstream
+        result processing reads only the conversations that belong to that
+        strategy — matching the legacy orchestrator path where each
+        ``(strategy, risk)`` pair had its own file.
 
         :param orchestrator: Completed scenario orchestrator
         :type orchestrator: ScenarioOrchestrator
         :param risk_value: Risk category value
         :type risk_value: str
-        :param output_path: Path to JSONL output file
-        :type output_path: str
+        :param strategy_files: Dictionary mapping strategy key to per-strategy JSONL path
+        :type strategy_files: Dict[str, str]
         :param attack_strategies: Original list of requested attack strategies
         :type attack_strategies: List[Union[AttackStrategy, List[AttackStrategy]]]
         :param include_baseline: Whether baseline was included in execution
@@ -388,39 +396,53 @@ class FoundryExecutionManager:
         foundry_strategies, special_strategies = StrategyMapper.filter_for_foundry(attack_strategies)
 
         # Create an entry per requested Foundry strategy using get_strategy_name() as key
-        # so it matches ATTACK_STRATEGY_COMPLEXITY_MAP and _red_team.py eval matching
         for strategy in foundry_strategies:
             strategy_key = get_strategy_name(strategy)
+            data_file = strategy_files.get(strategy_key, "")
+            if not data_file:
+                self.logger.warning(
+                    f"No JSONL file found for strategy '{strategy_key}' in {risk_value}. "
+                    f"Available keys: {list(strategy_files.keys())}"
+                )
             results[strategy_key] = {
-                "data_file": output_path,
+                "data_file": data_file,
                 "status": "completed",
                 "asr": overall_asr,
             }
 
         # Add entries for special strategies that were executed (e.g., IndirectJailbreak via XPIA)
-        # Baseline is handled separately below
+        # Baseline is handled separately below.
+        # Special strategies like IndirectJailbreak run through PromptSendingAttack
+        # so their results appear under "baseline" in strategy_files.
         for strategy in special_strategies:
             flat = strategy if not isinstance(strategy, list) else strategy[0]
             if flat != AttackStrategy.Baseline:
                 strategy_key = get_strategy_name(strategy)
+                # XPIA/IndirectJailbreak uses baseline's PromptSendingAttack,
+                # so its data lives in the "baseline" file.
+                data_file = strategy_files.get(strategy_key, "") or strategy_files.get("baseline", "")
                 results[strategy_key] = {
-                    "data_file": output_path,
+                    "data_file": data_file,
                     "status": "completed",
                     "asr": overall_asr,
                 }
 
         # Add baseline entry if it was included
         if include_baseline:
-            results[get_strategy_name(AttackStrategy.Baseline)] = {
-                "data_file": output_path,
+            baseline_key = get_strategy_name(AttackStrategy.Baseline)
+            data_file = strategy_files.get(baseline_key, "")
+            results[baseline_key] = {
+                "data_file": data_file,
                 "status": "completed",
                 "asr": overall_asr,
             }
 
         # Fallback if no strategies produced results
         if not results:
+            # Use the first available file or empty string
+            fallback_file = next(iter(strategy_files.values()), "")
             results["Foundry"] = {
-                "data_file": output_path,
+                "data_file": fallback_file,
                 "status": "completed",
                 "asr": overall_asr,
             }

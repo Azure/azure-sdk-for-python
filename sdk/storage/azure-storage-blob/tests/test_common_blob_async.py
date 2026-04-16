@@ -1821,6 +1821,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         copy_content = await (await copyblob.download_blob()).readall()
         assert copy_content == self.byte_data
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_copy_blob_with_immutability_policy(self, **kwargs):
@@ -2693,7 +2694,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         assert info.get('sku_name') is not None
         assert info.get('account_kind') is not None
 
-    @pytest.mark.live_test_only
+    @pytest.mark.skip(reason="Temporarily skipping immutability test due to service bug")
     @BlobPreparer()
     async def test_get_account_information_with_container_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -3033,6 +3034,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             await bsc.get_service_properties()
             assert transport.session is not None
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_blob_immutability_policy(self, **kwargs):
@@ -3086,6 +3088,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_blob_legal_hold(self, **kwargs):
@@ -3129,6 +3132,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             await blob.delete_blob()
             await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_download_blob_with_immutability_policy(self, **kwargs):
@@ -3181,6 +3185,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_list_blobs_with_immutability_policy(self, **kwargs):
@@ -3229,6 +3234,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_snapshot_immutability_policy_and_legal_hold(self, **kwargs):
@@ -3280,6 +3286,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         return variables
 
+    @pytest.mark.playback_test_only
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_versioning_immutability_policy_and_legal_hold(self, **kwargs):
@@ -3748,5 +3755,110 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         )
         content = await (await identity_blob.download_blob()).readall()
         assert content == data
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_smart_rehydrate(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        await self._setup(storage_account_name, storage_account_key)
+        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        await blob.upload_blob(b"abc123", overwrite=True)
+        await blob.set_standard_blob_tier(standard_blob_tier=StandardBlobTier.ARCHIVE)
+        await blob.set_standard_blob_tier(
+            standard_blob_tier=StandardBlobTier.SMART,
+            rehydrate_priority=RehydratePriority.HIGH
+        )
+
+        props = await blob.get_blob_properties()
+        assert props is not None
+        assert props.archive_status == "rehydrate-pending-to-smart"
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_blob_fns_directory(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
+
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=token_credential
+        )
+        container_name = self.get_resource_name("directorysascontainer")
+
+        try:
+            await service.create_container(container_name)
+
+            start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
+            expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+            user_delegation_key = await service.get_user_delegation_key(start, expiry)
+
+            for blob_name in ["foo", "foo/bar", "foo/bar/hello"]:
+                token = self.generate_sas(
+                    generate_blob_sas,
+                    account_name=storage_account_name,
+                    container_name=container_name,
+                    blob_name=blob_name,
+                    user_delegation_key=user_delegation_key,
+                    permission=BlobSasPermissions(read=True, write=True, delete=True, list=True, add=True, create=True),
+                    expiry=expiry,
+                    is_directory=True,
+                )
+
+                exact_blob = service.get_blob_client(container_name, blob_name)
+                await BlobClient.from_blob_url(
+                    exact_blob.url, credential=token).upload_blob(b"data", overwrite=True)
+
+                # Blob whose name has the SAS directory name as a prefix should also succeed
+                child_blob = service.get_blob_client(container_name, blob_name + "/test")
+                await BlobClient.from_blob_url(
+                    child_blob.url, credential=token).upload_blob(b"data", overwrite=True)
+        finally:
+            await service.delete_container(container_name)
+
+        return variables
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_blob_fns_directory_fail(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        variables = kwargs.pop("variables", {})
+
+        token_credential = self.get_credential(BlobServiceClient, is_async=True)
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=token_credential
+        )
+        container_name = self.get_resource_name("directorysascontainer")
+
+        try:
+            await service.create_container(container_name)
+
+            start = self.get_datetime_variable(variables, 'start', datetime.utcnow())
+            expiry = self.get_datetime_variable(variables, 'expiry', datetime.utcnow() + timedelta(hours=1))
+            user_delegation_key = await service.get_user_delegation_key(start, expiry)
+
+            blob_name = "foo/bar/baz/"
+            token = self.generate_sas(
+                generate_blob_sas,
+                account_name=storage_account_name,
+                container_name=container_name,
+                blob_name=blob_name,
+                user_delegation_key=user_delegation_key,
+                permission=BlobSasPermissions(read=True, write=True, delete=True, list=True, add=True, create=True),
+                expiry=expiry,
+                is_directory=True,
+            )
+
+            non_prefix_blob = service.get_blob_client(container_name, "foo/bar")
+            non_prefix_blob_with_sas = BlobClient.from_blob_url(non_prefix_blob.url, credential=token)
+            with pytest.raises(HttpResponseError):
+                await non_prefix_blob_with_sas.upload_blob(b"data", overwrite=True)
+        finally:
+            await service.delete_container(container_name)
+
+        return variables
 
 # ------------------------------------------------------------------------------

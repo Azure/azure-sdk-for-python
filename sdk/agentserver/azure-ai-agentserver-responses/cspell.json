@@ -1,0 +1,31 @@
+{
+    "ignoreWords": [
+      "mcpl",
+      "mcpr",
+      "mcpa",
+      "ctco",
+      "lsho",
+      "funcs",
+      "addl",
+      "badid",
+      "aoutput",
+      "finalizer",
+      "coro",
+      "nostream",
+      "genai",
+      "aarguments",
+      "atext",
+      "arefusal",
+      "asummary",
+      "acode",
+      "JVBE"
+    ],
+    "ignorePaths": [
+      "*.csv",
+      "*.json",
+      "*.rst",
+      "samples/*.py",
+      "samples/*.txt",
+      "Makefile"
+    ]
+  }
