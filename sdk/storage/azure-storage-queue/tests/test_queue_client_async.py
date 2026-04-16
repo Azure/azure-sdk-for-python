@@ -213,9 +213,7 @@ class TestAsyncStorageQueueClient(AsyncStorageRecordedTestCase):
 
     @QueuePreparer()
     def test_create_service_empty_key(self):
-        QUEUE_SERVICES = [QueueServiceClient, QueueClient]
-
-        for service_type in QUEUE_SERVICES:
+        for service_type in SERVICES:
             # Act
             with pytest.raises(ValueError) as e:
                 service_type("testaccount", credential="", queue_name="foo")
