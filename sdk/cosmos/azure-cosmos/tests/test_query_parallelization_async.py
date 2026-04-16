@@ -78,22 +78,8 @@ class TestResolveMaxDegree:
         # The user explicitly asked for 100, we respect that
         assert _resolve_max_degree(100, 5) == 100
 
-    def test_negative_one_auto(self):
-        result = _resolve_max_degree(-1, 20)
-        assert result > 0
-        assert result <= 32  # cap
-
-    def test_auto_respects_partition_count(self):
-        # With 2 partitions, auto should return at most 2
-        result = _resolve_max_degree(-1, 2)
-        assert result <= 2
-
-    def test_auto_caps_at_32(self):
-        result = _resolve_max_degree(-1, 1000)
-        assert result <= 32
-
-    @pytest.mark.parametrize("bad_value", [-2, -5, -100])
-    def test_invalid_negative_raises(self, bad_value):
+    @pytest.mark.parametrize("bad_value", [-1, -2, -5, -100])
+    def test_negative_raises(self, bad_value):
         with pytest.raises(ValueError, match="max_concurrency"):
             _resolve_max_degree(bad_value, 10)
 
@@ -948,8 +934,8 @@ class TestPrefixQueryParallelFanOut:
         # Serial: None and 0 both yield 0 (serial)
         assert _resolve_max_degree(None, 5) == 0
         assert _resolve_max_degree(0, 5) == 0
-        # Parallel: positive value or auto (-1) yield > 0
+        # Parallel: positive value yields that value
         assert _resolve_max_degree(3, 5) == 3
-        assert _resolve_max_degree(-1, 5) > 0
-        # Single range: auto still returns a value but at most 1
-        assert _resolve_max_degree(-1, 1) <= 1
+        # Negative values are rejected
+        with pytest.raises(ValueError):
+            _resolve_max_degree(-1, 5)

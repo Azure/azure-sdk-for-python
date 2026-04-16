@@ -100,18 +100,18 @@ async def query_parallel_with_hedging(container):
     print(f"  Retrieved {count} items")
 
 
-async def query_auto_parallel_with_hedging(container):
-    """Auto-tuned parallelism + hedging.
+async def query_parallel_with_hedging_high_concurrency(container):
+    """Higher parallelism + hedging.
 
-    max_concurrency=-1 lets the SDK auto-select concurrency based on
-    partition count and CPU cores: min(num_partitions, cpu_count*2, 32).
+    max_concurrency=8 fans out across up to 8 partitions concurrently.
     Combined with hedging, the worst case is bounded by:
-        min(num_partitions, cpu_count*2, 32) * availability_strategy_max_concurrency
+        max_concurrency * availability_strategy_max_concurrency = 8 * 2 = 16
+    In the normal (happy) path, hedging doesn't trigger, so it's just 8.
     """
-    print("\n--- Auto-parallel query (degree=-1) with hedging ---")
+    print("\n--- Parallel query (degree=8) with hedging ---")
     items = container.query_items(
         query="SELECT * FROM c ORDER BY c._ts",
-        max_concurrency=-1,
+        max_concurrency=8,
         availability_strategy=True,  # use client defaults
     )
     count = 0
@@ -142,7 +142,7 @@ async def run_sample():
         await query_parallel_no_hedging(container)
         await query_serial_with_hedging(container)
         await query_parallel_with_hedging(container)
-        await query_auto_parallel_with_hedging(container)
+        await query_parallel_with_hedging_high_concurrency(container)
 
     print("\nDone.")
 

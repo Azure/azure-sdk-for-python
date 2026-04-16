@@ -591,7 +591,6 @@ class ContainerProxy:
         :keyword int max_concurrency: The maximum number of concurrent operations that run client side
             during parallel query execution. A positive value limits the number of concurrent operations to the
             set value. If set to 0 (the default), client-side parallelization is disabled and queries run serially.
-            If set to -1, the system automatically decides the number of concurrent operations to run.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
@@ -693,8 +692,7 @@ class ContainerProxy:
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword int max_concurrency: The maximum number of concurrent operations that run client side
             during parallel query execution. A positive value limits the number of concurrent operations to the
-            set value. If set to 0 (the default), the system does not impose a limit and queries run serially.
-            If set to -1, the system automatically decides the number of concurrent operations to run.
+            set value. If set to 0 (the default), client-side parallelization is disabled and queries run serially.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.
@@ -790,8 +788,7 @@ class ContainerProxy:
         :keyword int max_item_count: Max number of items to be returned in the enumeration operation.
         :keyword int max_concurrency: The maximum number of concurrent operations that run client side
             during parallel query execution. A positive value limits the number of concurrent operations to the
-            set value. If set to 0 (the default), the system does not impose a limit and queries run serially.
-            If set to -1, the system automatically decides the number of concurrent operations to run.
+            set value. If set to 0 (the default), client-side parallelization is disabled and queries run serially.
         :keyword parameters: Optional array of parameters to the query.
             Each parameter is a dict() with 'name' and 'value' keys.
             Ignored if no query is provided.

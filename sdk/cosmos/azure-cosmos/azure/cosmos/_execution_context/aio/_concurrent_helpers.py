@@ -26,7 +26,6 @@ concurrently during cross-partition query execution.
 """
 
 import asyncio  # pylint: disable=do-not-import-asyncio
-import os
 
 # pylint: disable=protected-access
 
@@ -35,25 +34,20 @@ def _resolve_max_degree(max_concurrency, num_partitions):
     """Resolve the effective concurrency limit from the user-supplied value.
 
     :param int max_concurrency: The user-configured value.
-        * 0  -> serial (no concurrency)
-        * >0 -> use that value
-        * -1 -> auto (min of num_partitions, cpu_count * 2, capped at 32)
+        * 0 or None -> serial (no concurrency)
+        * >0        -> use that value
     :param int num_partitions: Number of target partition key ranges.
     :returns: The effective concurrency limit, or 0 for serial execution.
     :rtype: int
     """
     if max_concurrency is None or max_concurrency == 0:
         return 0  # serial
-    if max_concurrency > 0:
-        return max_concurrency
-    if max_concurrency != -1:
+    if max_concurrency < 0:
         raise ValueError(
-            f"max_concurrency must be -1 (auto), 0 (serial), or a positive "
+            f"max_concurrency must be 0 (serial) or a positive "
             f"integer, got {max_concurrency}."
         )
-    # -1: auto
-    cpu = os.cpu_count() or 4
-    return min(num_partitions, cpu * 2, 32)
+    return max_concurrency
 
 
 async def concurrent_peek_producers(producers, semaphore):
