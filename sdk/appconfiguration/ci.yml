@@ -1,40 +1,19 @@
 # NOTE: Please refer to https://aka.ms/azsdk/engsys/ci-yaml before editing this file.
 
-trigger:
-  branches:
-    include:
-      - main
-      - hotfix/*
-      - release/*
-      - restapi*
-  paths:
-    include:
-      - sdk/appconfiguration/
-      - sdk/core/
+trigger: none
 
-pr:
-  branches:
-    include:
-      - main
-      - feature/*
-      - hotfix/*
-      - release/*
-      - restapi*
-  paths:
-    include:
-      - sdk/appconfiguration/
-      - sdk/core/
+pr: none
 
-extends:
-  template: ../../eng/pipelines/templates/stages/archetype-sdk-client.yml
-  parameters:
-    TestProxy: true
-    ServiceDirectory: appconfiguration
-    VerifyAutorest: false
-    Artifacts:
-    - name: azure-appconfiguration
-      safeName: azureappconfiguration
-    - name: azure-appconfiguration-provider
-      safeName: azureappconfigurationprovider
-    - name: azure-mgmt-appconfiguration
-      safeName: azuremgmtappconfiguration
+variables:
+  - template: /eng/pipelines/templates/variables/image.yml
+
+jobs:
+- job: Tests
+  displayName: Run tests
+  pool:
+    name: $(LINUXPOOL)
+    vmImage: $(LINUXVMIMAGE)
+  steps:
+  - pwsh: |
+      Write-Host "Test"
+    displayName: 'Say test'
