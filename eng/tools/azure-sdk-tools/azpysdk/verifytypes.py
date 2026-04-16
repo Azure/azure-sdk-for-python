@@ -51,7 +51,13 @@ class verifytypes(Check):
             package_dir = parsed.folder
             package_name = parsed.name
             module = parsed.namespace
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for verifytypes check")
 
             self.install_dev_reqs(executable, args, package_dir)

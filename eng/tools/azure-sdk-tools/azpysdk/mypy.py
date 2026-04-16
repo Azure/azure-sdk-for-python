@@ -53,7 +53,13 @@ class mypy(Check):
             package_name = parsed.name
             additional_requirements = ADDITIONAL_LOCKED_DEPENDENCIES
 
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for mypy check")
 
             # # need to install dev_requirements to ensure that type-hints properly resolve

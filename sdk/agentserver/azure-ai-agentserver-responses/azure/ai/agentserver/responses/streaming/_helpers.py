@@ -15,8 +15,6 @@ from ._event_stream import ResponseEventStream
 from ._internals import _RESPONSE_SNAPSHOT_EVENT_TYPES
 from ._sse import encode_sse_event
 
-EVENT_TYPE = generated_models.ResponseStreamEventType
-
 
 def strip_nulls(d: dict) -> dict:
     """Recursively remove keys whose values are ``None`` from a dict.
@@ -37,7 +35,7 @@ def _build_events(
     response_id: str,
     *,
     include_progress: bool,
-    agent_reference: AgentReference | dict[str, Any],
+    agent_reference: AgentReference | dict[str, Any] | None,
     model: str | None,
 ) -> list[generated_models.ResponseStreamEvent]:
     """Build a minimal lifecycle event sequence for a response.
@@ -57,9 +55,15 @@ def _build_events(
     :returns: A list of typed ``ResponseStreamEvent`` model instances.
     :rtype: list[~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent]
     """
+    if agent_reference is None:
+        ref = None
+    elif isinstance(agent_reference, AgentReference):
+        ref = agent_reference
+    else:
+        ref = AgentReference(agent_reference)
     stream = ResponseEventStream(
         response_id=response_id,
-        agent_reference=agent_reference,
+        agent_reference=ref,
         model=model,
     )
     stream.emit_created(status="in_progress")
