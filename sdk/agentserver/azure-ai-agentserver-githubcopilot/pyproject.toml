@@ -24,6 +24,7 @@ dependencies = [
     "azure-ai-agentserver-responses>=1.0.0a1",
     "github-copilot-sdk>=0.2.0,<0.3.0",
     "azure-identity",
+    "httpx>=0.24.0",
     "pyyaml>=6.0",
 ]
 
