@@ -17,6 +17,7 @@ extends:
           pool:
             name: $(LINUXPOOL)
             vmImage: $(LINUXVMIMAGE)
+            os: linux
           steps:
           - pwsh: |
               Write-Host "Test"
