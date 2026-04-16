@@ -15,7 +15,7 @@ from itertools import islice
 from typing import (
     Any, AsyncIterator, Awaitable,
     Generator, Callable, cast, Dict,
-    Generic, IO, Literal, Optional, overload,
+    Generic, IO, Optional, overload,
     Tuple, TypeVar, Union, TYPE_CHECKING
 )
 
@@ -24,7 +24,7 @@ from azure.core.exceptions import DecodeError, HttpResponseError, IncompleteRead
 from .._shared.request_handlers import validate_and_format_range_headers
 from .._shared.response_handlers import parse_length_from_content_range, process_storage_error
 from .._shared.constants import DEFAULT_MAX_CONCURRENCY
-from .._shared.validation import is_md5_validation
+from .._shared.validation import is_md5_validation, CV_TYPE_PARSED
 from .._deserialize import deserialize_blob_properties, get_page_ranges_result
 from .._download import process_range_and_offset, _ChunkDownloader
 from .._encryption import (
@@ -239,7 +239,7 @@ class StorageStreamDownloader(Generic[T]):  # pylint: disable=too-many-instance-
         config: "StorageConfiguration" = None,  # type: ignore [assignment]
         start_range: Optional[int] = None,
         end_range: Optional[int] = None,
-        validate_content: Optional[Union[bool, Literal['crc64', 'md5']]] = None,
+        validate_content: CV_TYPE_PARSED = None,
         encryption_options: Dict[str, Any] = None,  # type: ignore [assignment]
         max_concurrency: Optional[int] = None,
         name: str = None,  # type: ignore [assignment]

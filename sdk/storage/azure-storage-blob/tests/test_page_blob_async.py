@@ -24,7 +24,7 @@ from azure.storage.blob import (
     generate_blob_sas
 )
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
-from azure.storage.blob._shared.policies import StorageContentValidation
+from azure.storage.blob._shared.validation import calculate_content_md5
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
@@ -577,7 +577,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
-        src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
+        src_md5 = calculate_content_md5(source_blob_data)
         sas = self.generate_sas(
             generate_blob_sas,
             source_blob_client.account_name,
@@ -607,11 +607,11 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act part 2: put block from url with wrong md5
         with pytest.raises(HttpResponseError):
-            await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE,
-                                                                0,
-                                                                source_content_md5=StorageContentValidation.get_content_md5(
-                                                                    b"POTATO"))
+            await destination_blob_client.upload_pages_from_url(
+                source_blob_client.url + "?" + sas, 0,
+                SOURCE_BLOB_SIZE,
+                0,
+                source_content_md5=calculate_content_md5(b"POTATO"))
 
     @BlobPreparer()
     @recorded_by_proxy_async
