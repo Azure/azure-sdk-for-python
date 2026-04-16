@@ -210,14 +210,23 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
         http_request = request.http_request
         options = request.context.options
 
-        # For logging_enable and logging_body, per-request setting will override the global setting
-        # Pop logging_body regardless to clean up options
-        logging_body = options.pop("logging_body", self.logging_body)
-        if options.pop("logging_enable", self.enable_http_logger):
-            # Save logging settings to context so they can be used on response
-            request.context["logging_enable"] = True
-            request.context["logging_body"] = logging_body
+        # Check if logging settings are already determined (from a previous retry attempt)
+        if "logging_enable" not in request.context:
+            # First attempt - pop from options and store decision in context
+            # For logging_enable and logging_body, per-request setting will override the global setting
+            logging_body = options.pop("logging_body", self.logging_body)
+            logging_enable = options.pop("logging_enable", self.enable_http_logger)
 
+            # Only store in context if logging is enabled to avoid polluting context
+            if logging_enable:
+                request.context["logging_enable"] = True
+                request.context["logging_body"] = logging_body
+        else:
+            # Retry attempt - use the settings stored in context from the first attempt
+            logging_enable = request.context.get("logging_enable", False)
+            logging_body = request.context.get("logging_body", False)
+
+        if logging_enable:
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 
@@ -262,9 +271,10 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                 _LOGGER.debug("Failed to log request: %r", err)
 
     def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
-        # Logging settings should always be present in context if logging is enabled, if not present, disable.
-        if response.context.pop("logging_enable", False):
-            logging_body = response.context.pop("logging_body", False)
+        # Logging settings should always be present in context if logging is enabled
+        # Use .get() instead of .pop() to preserve context values for potential retries
+        if response.context.get("logging_enable", False):
+            logging_body = response.context.get("logging_body", False)
             if not _LOGGER.isEnabledFor(logging.DEBUG):
                 return
 

@@ -318,3 +318,79 @@ class TestStorageLogging(StorageRecordedTestCase):
             log_as_str = log_captured.getvalue()
             # Assert - Body should NOT be logged, proving previous True didn't persist
             assert request_body_1 not in log_as_str
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_logging_body_option_on_retry(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        # Arrange - Create client with logging enabled and retry configured
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            logging_enable=True,
+            retry_total=1,
+            initial_backoff=0.1,
+            increment_base=0.1,
+        )
+        container_name = self.get_resource_name('utcontainer')
+        container = bsc.get_container_client(container_name)
+        if self.is_live:
+            try:
+                container.create_container()
+            except:
+                pass
+        
+        request_body = 'testretrylogging'
+        blob_name = self.get_resource_name("testretry")
+        blob_client = container.get_blob_client(blob_name)
+        blob_client.upload_blob(request_body, overwrite=True)
+
+        # Test 1: logging_body=False should prevent logging on both original and retry attempts
+        call_count = 0
+        def response_hook_fail_once(response):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                response.http_response.status_code = 408  # Request Timeout - triggers retry
+        
+        with LogCaptured(self) as log_captured:
+            call_count = 0
+            blob_client.download_blob(raw_response_hook=response_hook_fail_once, logging_body=False)
+            log_as_str = log_captured.getvalue()
+            # Assert - Body should NOT be logged on either attempt
+            assert request_body not in log_as_str
+            assert call_count == 2  # Verify retry happened
+
+        # Test 2: logging_body=True should log on both original and retry attempts
+        with LogCaptured(self) as log_captured:
+            call_count = 0
+            blob_client.download_blob(raw_response_hook=response_hook_fail_once, logging_body=True)
+            log_as_str = log_captured.getvalue()
+            # Assert - Body should be logged on both attempts
+            assert request_body in log_as_str
+            assert log_as_str.count(request_body) == 2  # Should appear twice (original + retry)
+            assert call_count == 2  # Verify retry happened
+
+        # Test 3: Verify that logging_body override persists correctly across retries
+        # even when constructor has logging_body=True
+        bsc_with_body = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            logging_enable=True,
+            logging_body=True,
+            retry_total=1,
+            initial_backoff=0.1,
+            increment_base=0.1,
+        )
+        container_with_body = bsc_with_body.get_container_client(container_name)
+        blob_client_with_body = container_with_body.get_blob_client(blob_name)
+
+        with LogCaptured(self) as log_captured:
+            call_count = 0
+            blob_client_with_body.download_blob(raw_response_hook=response_hook_fail_once, logging_body=False)
+            log_as_str = log_captured.getvalue()
+            # Assert - logging_body=False should override constructor setting on both attempts
+            assert request_body not in log_as_str
+            assert call_count == 2  # Verify retry happened
