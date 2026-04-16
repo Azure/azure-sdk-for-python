@@ -77,7 +77,7 @@ from .._shared.base_client import StorageAccountHostsMixin
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import process_storage_error, return_response_headers
-from .._shared.validation import ChecksumAlgorithm, parse_validation_option
+from .._shared.validation import is_crc64_validation, parse_validation_option
 
 if TYPE_CHECKING:
     from azure.core import MatchConditions
@@ -627,7 +627,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         validate_content = parse_validation_option(kwargs.pop('validate_content', None))
-        if validate_content == ChecksumAlgorithm.CRC64 and self.key_encryption_key:
+        if is_crc64_validation(validate_content) and self.key_encryption_key:
             raise ValueError("Using encryption and content validation together is not currently supported.")
         options = _upload_blob_options(
             data=data,
@@ -776,7 +776,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         if kwargs.get('cpk') and self.scheme.lower() != 'https':
             raise ValueError("Customer provided encryption key must be used over HTTPS.")
         validate_content = parse_validation_option(kwargs.pop('validate_content', None))
-        if validate_content == ChecksumAlgorithm.CRC64 and self.key_encryption_key:
+        if is_crc64_validation(validate_content) and self.key_encryption_key:
             raise ValueError("Using encryption and content validation together is not currently supported.")
         options = _download_blob_options(
             blob_name=self.blob_name,

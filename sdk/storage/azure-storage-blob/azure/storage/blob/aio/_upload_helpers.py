@@ -6,7 +6,7 @@
 
 import inspect
 from io import SEEK_SET, UnsupportedOperation
-from typing import Any, cast, Dict, IO, Literal, Optional, TypeVar, Union, TYPE_CHECKING
+from typing import Any, cast, Dict, IO, Optional, TypeVar, TYPE_CHECKING
 
 from azure.core.exceptions import HttpResponseError, ResourceModifiedError
 
@@ -32,6 +32,7 @@ from .._shared.uploads_async import (
     upload_data_chunks,
     upload_substream_blocks
 )
+from .._shared.validation import CV_TYPE_PARSED
 from .._upload_helpers import _any_conditions, _convert_mod_error
 
 if TYPE_CHECKING:
@@ -47,7 +48,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
     encryption_options: Dict[str, Any],
     blob_settings: "StorageConfiguration",
     headers: Dict[str, Any],
-    validate_content: Optional[Union[bool, Literal['crc64', 'md5']]],
+    validate_content: CV_TYPE_PARSED,
     max_concurrency: Optional[int],
     length: Optional[int] = None,
     **kwargs: Any
@@ -193,7 +194,7 @@ async def upload_page_blob(
     headers: Dict[str, Any],
     stream: IO,
     length: Optional[int] = None,
-    validate_content: Optional[Union[bool, Literal['crc64', 'md5']]] = None,
+    validate_content: CV_TYPE_PARSED = None,
     max_concurrency: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
@@ -271,7 +272,7 @@ async def upload_append_blob(  # pylint: disable=unused-argument
     headers: Dict[str, Any],
     stream: IO,
     length: Optional[int] = None,
-    validate_content: Optional[Union[bool, Literal['crc64', 'md5']]] = None,
+    validate_content: CV_TYPE_PARSED = None,
     max_concurrency: Optional[int] = None,
     **kwargs: Any
 ) -> Dict[str, Any]:
