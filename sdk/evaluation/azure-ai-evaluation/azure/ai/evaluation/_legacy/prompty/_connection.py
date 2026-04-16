@@ -53,10 +53,16 @@ class Connection(ABC):
             else:
                 connection = dataclass_from_dict(OpenAIConnection, connection_dict)
 
+        elif connection_type in [AnthropicConnection.TYPE, "anthropic"]:
+            if not _is_empty_connection_config(connection_dict):
+                connection = AnthropicConnection.from_env()
+            else:
+                connection = dataclass_from_dict(AnthropicConnection, connection_dict)
+
         else:
             error_message = (
                 f"'{connection_type}' is not a supported connection type. Valid values are "
-                f"[{AzureOpenAIConnection.TYPE}, {OpenAIConnection.TYPE}]"
+                f"[{AzureOpenAIConnection.TYPE}, {OpenAIConnection.TYPE}, {AnthropicConnection.TYPE}]"
             )
             raise MissingRequiredInputError(error_message)
 
@@ -117,3 +123,26 @@ class AzureOpenAIConnection(Connection):
         # set default API version
         if not self.api_version:
             self.api_version = "2024-02-01"
+
+
+@dataclass
+class AnthropicConnection(Connection):
+    """Connection class for Anthropic endpoints."""
+
+    api_key: str
+    model: str
+    base_url: Optional[str] = None
+    max_tokens: int = 4096
+
+    TYPE: ClassVar[str] = "anthropic"
+
+    @property
+    def type(self) -> str:
+        return AnthropicConnection.TYPE
+
+    @classmethod
+    def from_env(cls) -> "AnthropicConnection":
+        return cls(
+            api_key=os.environ.get("ANTHROPIC_API_KEY", ""),
+            model=os.environ.get("ANTHROPIC_MODEL", ""),
+        )

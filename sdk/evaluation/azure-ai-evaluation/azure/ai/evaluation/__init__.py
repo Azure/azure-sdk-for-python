@@ -37,6 +37,7 @@ from ._evaluators._tool_call_success import _ToolCallSuccessEvaluator
 from ._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
+    AnthropicModelConfiguration,
     Conversation,
     EvaluationResult,
     EvaluatorConfig,
@@ -125,6 +126,7 @@ __all__ = [
     "ProtectedMaterialEvaluator",
     "AzureAIProject",
     "AzureOpenAIModelConfiguration",
+    "AnthropicModelConfiguration",
     "OpenAIModelConfiguration",
     "EvaluatorConfig",
     "Conversation",

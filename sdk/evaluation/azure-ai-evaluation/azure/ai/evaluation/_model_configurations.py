@@ -2,11 +2,10 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Any, Dict, List, Literal, TypedDict, Union
+from typing import Any, Dict, List, Literal, Optional, TypedDict, Union
 
 from typing_extensions import NotRequired
 from ._evaluator_definition import EvaluatorDefinition
-from typing import Dict, List, Optional, Any
 
 
 class AzureOpenAIModelConfiguration(TypedDict):
@@ -81,6 +80,43 @@ class OpenAIModelConfiguration(TypedDict):
     base_url: NotRequired[str]
     organization: NotRequired[str]
     extra_headers: NotRequired[Dict[str, str]]
+
+
+class AnthropicModelConfiguration(TypedDict):
+    """Model configuration for Anthropic models
+
+    :param type: The type of the model configuration. Must be set to 'anthropic' for
+        AnthropicModelConfiguration to be recognized correctly.
+    :type type: Literal["anthropic"]
+    :param api_key: API key needed to make requests to the Anthropic model
+    :type api_key: str
+    :param model: Name of Anthropic model to use (e.g. 'claude-3-5-sonnet-20241022')
+    :type model: str
+    :param base_url: Base URL for the Anthropic API. Optional, defaults to Anthropic's API endpoint.
+    :type base_url: NotRequired[str]
+    :param max_tokens: Maximum number of tokens to generate. Optional, defaults to 4096.
+    :type max_tokens: NotRequired[int]
+
+    .. note::
+        The ``type`` field must be explicitly set to ``"anthropic"`` when using this configuration,
+        as it is required to distinguish Anthropic configurations from OpenAI configurations.
+
+    .. admonition:: Example:
+
+        .. literalinclude:: ../samples/evaluation_samples_common.py
+            :start-after: [START create_anthropic_model_config]
+            :end-before: [END create_anthropic_model_config]
+            :language: python
+            :dedent: 8
+            :caption: Creating an AnthropicModelConfiguration object.
+
+    """
+
+    type: NotRequired[Literal["anthropic"]]
+    api_key: str
+    model: str
+    base_url: NotRequired[str]
+    max_tokens: NotRequired[int]
 
 
 class AzureAIProject(TypedDict):

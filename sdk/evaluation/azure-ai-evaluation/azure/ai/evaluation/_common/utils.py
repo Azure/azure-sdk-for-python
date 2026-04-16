@@ -12,11 +12,12 @@ import nltk
 from azure.storage.blob import ContainerClient
 from typing_extensions import NotRequired, Required, TypeGuard, TypeIs
 from azure.ai.evaluation._legacy._adapters._errors import MissingRequiredPackage
-from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE
+from azure.ai.evaluation._constants import AZURE_OPENAI_TYPE, OPENAI_TYPE, ANTHROPIC_TYPE
 from azure.ai.evaluation._exceptions import ErrorMessage, ErrorBlame, ErrorCategory, ErrorTarget, EvaluationException
 from azure.ai.evaluation._model_configurations import (
     AzureAIProject,
     AzureOpenAIModelConfiguration,
+    AnthropicModelConfiguration,
     OpenAIModelConfiguration,
 )
 
@@ -206,17 +207,27 @@ def _is_openai_model_config(val: object) -> TypeGuard[OpenAIModelConfiguration]:
     return isinstance(val, dict) and all(isinstance(val.get(k), str) for k in ("model"))
 
 
+def _is_anthropic_model_config(val: object) -> TypeGuard[AnthropicModelConfiguration]:
+    return (
+        isinstance(val, dict)
+        and val.get("type") == ANTHROPIC_TYPE
+        and all(isinstance(val.get(k), str) for k in ("api_key", "model"))
+    )
+
+
 def parse_model_config_type(
-    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration, AnthropicModelConfiguration],
 ) -> None:
     if _is_aoi_model_config(model_config):
         model_config["type"] = AZURE_OPENAI_TYPE
+    elif _is_anthropic_model_config(model_config):
+        model_config["type"] = ANTHROPIC_TYPE
     elif _is_openai_model_config(model_config):
         model_config["type"] = OPENAI_TYPE
 
 
 def construct_prompty_model_config(
-    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration],
+    model_config: Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration, AnthropicModelConfiguration],
     default_api_version: str,
     user_agent: str,
 ) -> dict:
@@ -303,7 +314,19 @@ def validate_azure_ai_project(o: object) -> AzureAIProject:
     return cast(AzureAIProject, o)
 
 
-def validate_model_config(config: dict) -> Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration]:
+def validate_model_config(
+    config: dict,
+) -> Union[AzureOpenAIModelConfiguration, OpenAIModelConfiguration, AnthropicModelConfiguration]:
+    # If type is explicitly set to "anthropic", validate against AnthropicModelConfiguration
+    if config.get("type") == ANTHROPIC_TYPE:
+        try:
+            return _validate_typed_dict(config, AnthropicModelConfiguration)
+        except TypeError as e:
+            msg = "Model config validation failed."
+            raise EvaluationException(
+                message=msg, internal_message=msg, category=ErrorCategory.MISSING_FIELD, blame=ErrorBlame.USER_ERROR
+            ) from e
+
     try:
         return _validate_typed_dict(config, AzureOpenAIModelConfiguration)
     except TypeError:

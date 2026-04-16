@@ -203,6 +203,8 @@ AZURE_OPENAI_TYPE: Literal["azure_openai"] = "azure_openai"
 
 OPENAI_TYPE: Literal["openai"] = "openai"
 
+ANTHROPIC_TYPE: Literal["anthropic"] = "anthropic"
+
 EVALUATION_PASS_FAIL_MAPPING = {
     True: "pass",
     False: "fail",
