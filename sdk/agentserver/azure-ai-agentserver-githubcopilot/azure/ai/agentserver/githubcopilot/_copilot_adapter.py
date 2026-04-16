@@ -31,17 +31,17 @@ from copilot.session import PermissionRequestResult, ProviderConfig
 
 from azure.ai.agentserver.core import AgentServerHost  # noqa: F401 (re-exported for subclasses)
 from azure.ai.agentserver.responses import (
+    ResponseContext,
     ResponseEventStream,
     ResponsesServerOptions,
+    get_conversation_id,
 )
-
-# get_input_text was made public in responses 1.0.0b1 (this repo).
-# Fall back to the private helper when running against an older dev-feed build.
-try:
-    from azure.ai.agentserver.responses import get_input_text
-except ImportError:
-    from azure.ai.agentserver.responses.models._helpers import _get_input_text as get_input_text  # type: ignore
 from azure.ai.agentserver.responses.hosting import ResponsesAgentServerHost
+from azure.ai.agentserver.responses.models import (
+    ItemMessage,
+    MessageContentInputFileContent,
+    MessageContentInputImageContent,
+)
 
 from ._tool_acl import ToolAcl
 
@@ -52,49 +52,42 @@ _BUILD_TAG = "replat-v3-conversation-id-from-rawbody"
 logger.info(f"Adapter loaded: {_BUILD_TAG}")
 
 
-def _extract_input_with_attachments(request) -> str:
+async def _extract_input_with_attachments(context: ResponseContext) -> str:
     """Extract text from a RAPI request, including any file/image attachments.
 
-    ``get_input_text`` only returns the text portion of the request input.
-    This helper also checks for ``input_file`` and ``input_image`` items and
-    appends their content to the prompt so the Copilot SDK (which only accepts
-    a string prompt) can still reason about attachments.
+    Uses ``ResponseContext.get_input_text()`` for text content and
+    ``ResponseContext.get_input_items()`` for file/image attachments so that
+    item references are properly resolved and shorthand inputs are expanded.
     """
-    text = get_input_text(request)
+    text = await context.get_input_text()
 
-    # Check for attachment items in the request input
-    input_items = getattr(request, "input", None)
-    if not isinstance(input_items, list):
-        return text
-
-    attachment_parts = []
-    for item in input_items:
-        item_type = None
-        if isinstance(item, dict):
-            item_type = item.get("type")
-        else:
-            item_type = getattr(item, "type", None)
-
-        if item_type == "input_file":
-            filename = (item.get("filename") if isinstance(item, dict) else getattr(item, "filename", None)) or "file"
-            file_data = (item.get("file_data") if isinstance(item, dict) else getattr(item, "file_data", None)) or ""
-            if file_data:
-                # base64 content — decode if possible, otherwise include raw
-                import base64
-                try:
-                    decoded = base64.b64decode(file_data).decode("utf-8", errors="replace")
-                    attachment_parts.append(f"\n[Attached file: {filename}]\n{decoded}")
-                except Exception:
-                    attachment_parts.append(f"\n[Attached file: {filename} (binary, {len(file_data)} chars base64)]")
-
-        elif item_type == "input_image":
-            image_url = (item.get("image_url") if isinstance(item, dict) else getattr(item, "image_url", None)) or ""
-            if isinstance(image_url, dict):
-                image_url = image_url.get("url", "")
-            elif hasattr(image_url, "url"):
-                image_url = image_url.url
-            if image_url:
-                attachment_parts.append(f"\n[Attached image: {image_url[:200]}]")
+    # Walk resolved input items for file/image content parts
+    items = await context.get_input_items()
+    attachment_parts: list[str] = []
+    for item in items:
+        if not isinstance(item, ItemMessage):
+            continue
+        for part in item.content or []:
+            if isinstance(part, MessageContentInputFileContent):
+                filename = getattr(part, "filename", None) or "file"
+                file_data = getattr(part, "file_data", None) or ""
+                if file_data:
+                    import base64
+                    try:
+                        decoded = base64.b64decode(file_data).decode("utf-8", errors="replace")
+                        attachment_parts.append(f"\n[Attached file: {filename}]\n{decoded}")
+                    except Exception:
+                        attachment_parts.append(
+                            f"\n[Attached file: {filename} (binary, {len(file_data)} chars base64)]"
+                        )
+            elif isinstance(part, MessageContentInputImageContent):
+                image_url = getattr(part, "image_url", None) or ""
+                if isinstance(image_url, dict):
+                    image_url = image_url.get("url", "")
+                elif hasattr(image_url, "url"):
+                    image_url = image_url.url
+                if image_url:
+                    attachment_parts.append(f"\n[Attached image: {image_url[:200]}]")
 
     if attachment_parts:
         logger.info("Extracted %d attachment(s) from request input", len(attachment_parts))
@@ -392,25 +385,16 @@ class CopilotAdapter:
         from reasoning models, emitting them as RAPI reasoning output items before
         the message output item.
         """
-        input_text = _extract_input_with_attachments(request)
+        input_text = await _extract_input_with_attachments(context)
 
         # Resolve conversation identity for multi-turn session reuse.
-        # Prefer conversation_id from the context (set when the request includes
-        # a "conversation" field).  Fall back to session_id from the raw request
-        # body so callers who only pass session_id still get multi-turn.
+        # Prefer conversation_id from the context (set by the hosting framework
+        # when the request includes a "conversation" field).  Fall back to the
+        # get_conversation_id helper which reads request.conversation.
         conversation_id = getattr(context, "conversation_id", None)
         if not conversation_id:
-            raw_body = getattr(context, "raw_body", None)
-            if isinstance(raw_body, dict):
-                # Try session_id first (direct Responses API callers),
-                # then conversation.id (Playground via Chat Completions translation)
-                conversation_id = raw_body.get("session_id")
-                if not conversation_id:
-                    conv = raw_body.get("conversation")
-                    if isinstance(conv, dict):
-                        conversation_id = conv.get("id")
+            conversation_id = get_conversation_id(context.request)
             if conversation_id:
-                # Also set on context so downstream code (e.g. history bootstrap) sees it
                 context.conversation_id = conversation_id
 
         response_id = getattr(context, "response_id", None) or "unknown"

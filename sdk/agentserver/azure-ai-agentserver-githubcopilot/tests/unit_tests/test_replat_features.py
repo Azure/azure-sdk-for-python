@@ -5,16 +5,17 @@
 """Unit tests for replat features (core 2.0 + responses 1.0).
 
 Tests cover:
-- Input text extraction with attachment handling
-- Conversation ID fallback (session_id and conversation.id from raw_body)
+- Input text extraction with attachment handling via ResponseContext
+- Conversation ID resolution via get_conversation_id helper
 - Session config building and BYOK URL derivation
 """
 
+import asyncio
 import importlib
 import os
 import sys
 from types import SimpleNamespace
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -30,14 +31,14 @@ sys.modules.setdefault("copilot.session", _copilot_mock.session)
 sys.modules.setdefault("copilot.generated", _copilot_mock.generated)
 sys.modules.setdefault("copilot.generated.session_events", _copilot_mock.generated.session_events)
 
-# Also mock agentserver packages if not installed
-for mod_name in [
-    "azure.ai.agentserver.core",
-    "azure.ai.agentserver.responses",
-    "azure.ai.agentserver.responses.hosting",
-]:
-    if mod_name not in sys.modules:
-        sys.modules[mod_name] = MagicMock()
+from azure.ai.agentserver.responses.models import (
+    ItemMessage,
+    MessageContentInputFileContent,
+    MessageContentInputImageContent,
+    MessageContentInputTextContent,
+    MessageRole,
+)
+from azure.ai.agentserver.responses.models._helpers import get_conversation_id
 
 from azure.ai.agentserver.githubcopilot._copilot_adapter import (
     _build_session_config,
@@ -57,57 +58,76 @@ from azure.ai.agentserver.githubcopilot._copilot_adapter import GitHubCopilotAda
 class TestExtractInputWithAttachments:
     """Tests for _extract_input_with_attachments()."""
 
+    def _make_context(self, text="", items=None):
+        """Create a mock ResponseContext with async helpers."""
+        ctx = MagicMock()
+        ctx.get_input_text = AsyncMock(return_value=text)
+        ctx.get_input_items = AsyncMock(return_value=items or [])
+        return ctx
+
     def test_text_only_request(self):
-        """Returns text from get_input_text when no attachments."""
-        request = SimpleNamespace(input=[
-            {"type": "message", "role": "user", "content": [
-                {"type": "input_text", "text": "hello"}
-            ]}
-        ])
-        with patch("azure.ai.agentserver.githubcopilot._copilot_adapter.get_input_text", return_value="hello"):
-            result = _extract_input_with_attachments(request)
+        """Returns text from context.get_input_text when no attachments."""
+        ctx = self._make_context(text="hello", items=[])
+        result = asyncio.get_event_loop().run_until_complete(
+            _extract_input_with_attachments(ctx)
+        )
         assert result == "hello"
 
     def test_with_file_attachment(self):
         """Appends decoded file content to prompt text."""
         import base64
         file_content = base64.b64encode(b"file contents here").decode()
-        request = SimpleNamespace(input=[
-            {"type": "input_text", "text": "check this"},
-            {"type": "input_file", "filename": "test.txt", "file_data": file_content},
-        ])
-        with patch("azure.ai.agentserver.githubcopilot._copilot_adapter.get_input_text", return_value="check this"):
-            result = _extract_input_with_attachments(request)
+        msg = ItemMessage(
+            role=MessageRole.USER,
+            content=[
+                MessageContentInputTextContent(text="check this"),
+                MessageContentInputFileContent(filename="test.txt", file_data=file_content),
+            ],
+        )
+        ctx = self._make_context(text="check this", items=[msg])
+        result = asyncio.get_event_loop().run_until_complete(
+            _extract_input_with_attachments(ctx)
+        )
         assert "check this" in result
         assert "[Attached file: test.txt]" in result
         assert "file contents here" in result
 
     def test_with_image_attachment(self):
         """Appends image URL reference to prompt text."""
-        request = SimpleNamespace(input=[
-            {"type": "input_text", "text": "what is this"},
-            {"type": "input_image", "image_url": {"url": "https://example.com/img.png"}},
-        ])
-        with patch("azure.ai.agentserver.githubcopilot._copilot_adapter.get_input_text", return_value="what is this"):
-            result = _extract_input_with_attachments(request)
+        msg = ItemMessage(
+            role=MessageRole.USER,
+            content=[
+                MessageContentInputTextContent(text="what is this"),
+                MessageContentInputImageContent(image_url="https://example.com/img.png"),
+            ],
+        )
+        ctx = self._make_context(text="what is this", items=[msg])
+        result = asyncio.get_event_loop().run_until_complete(
+            _extract_input_with_attachments(ctx)
+        )
         assert "what is this" in result
         assert "[Attached image: https://example.com/img.png]" in result
 
-    def test_no_input_attribute(self):
-        """Returns plain text when request has no input attribute."""
-        request = SimpleNamespace()
-        with patch("azure.ai.agentserver.githubcopilot._copilot_adapter.get_input_text", return_value="hello"):
-            result = _extract_input_with_attachments(request)
+    def test_no_items(self):
+        """Returns plain text when no input items."""
+        ctx = self._make_context(text="hello", items=[])
+        result = asyncio.get_event_loop().run_until_complete(
+            _extract_input_with_attachments(ctx)
+        )
         assert result == "hello"
 
-    def test_dict_items(self):
-        """Handles input items as dicts (not objects)."""
-        request = SimpleNamespace(input=[
-            {"type": "input_file", "filename": "data.csv", "file_data": ""},
-        ])
-        with patch("azure.ai.agentserver.githubcopilot._copilot_adapter.get_input_text", return_value="test"):
-            result = _extract_input_with_attachments(request)
-        # Empty file_data should not add attachment
+    def test_empty_file_data(self):
+        """Empty file_data should not add attachment."""
+        msg = ItemMessage(
+            role=MessageRole.USER,
+            content=[
+                MessageContentInputFileContent(filename="data.csv", file_data=""),
+            ],
+        )
+        ctx = self._make_context(text="test", items=[msg])
+        result = asyncio.get_event_loop().run_until_complete(
+            _extract_input_with_attachments(ctx)
+        )
         assert result == "test"
 
 
@@ -118,100 +138,41 @@ class TestExtractInputWithAttachments:
 
 @pytest.mark.unit
 class TestConversationIdFallback:
-    """Tests for conversation_id resolution in _handle_create."""
-
-    def _make_context(self, conversation_id=None, raw_body=None):
-        """Create a mock ResponseContext."""
-        ctx = MagicMock()
-        ctx.conversation_id = conversation_id
-        ctx.raw_body = raw_body
-        ctx.response_id = "test-response-id"
-        ctx.request = None
-        return ctx
+    """Tests for conversation_id resolution using get_conversation_id helper."""
 
     def test_context_conversation_id_used_when_present(self):
         """Uses context.conversation_id when it's set."""
-        ctx = self._make_context(conversation_id="conv_123")
+        ctx = MagicMock()
+        ctx.conversation_id = "conv_123"
         # conversation_id is already set — no fallback needed
         assert ctx.conversation_id == "conv_123"
 
-    def test_fallback_to_session_id_in_raw_body(self):
-        """Falls back to raw_body['session_id'] when conversation_id is None."""
-        ctx = self._make_context(
-            conversation_id=None,
-            raw_body={"session_id": "session-abc", "input": "hello"}
-        )
-        # Simulate the fallback logic from _handle_create
-        conversation_id = ctx.conversation_id
-        if not conversation_id:
-            raw_body = ctx.raw_body
-            if isinstance(raw_body, dict):
-                conversation_id = raw_body.get("session_id")
-        assert conversation_id == "session-abc"
+    def test_fallback_to_get_conversation_id_string(self):
+        """Falls back to get_conversation_id when context has no conversation_id."""
+        from azure.ai.agentserver.responses.models import CreateResponse
+        request = CreateResponse(model="test", conversation="conv-from-request")
+        conversation_id = get_conversation_id(request)
+        assert conversation_id == "conv-from-request"
 
-    def test_fallback_to_conversation_id_in_raw_body(self):
-        """Falls back to raw_body['conversation']['id'] for Playground."""
-        ctx = self._make_context(
-            conversation_id=None,
-            raw_body={
-                "input": "hello",
-                "conversation": {"id": "conv_playground_456"},
-            }
-        )
-        # Simulate the fallback logic from _handle_create
-        conversation_id = ctx.conversation_id
-        if not conversation_id:
-            raw_body = ctx.raw_body
-            if isinstance(raw_body, dict):
-                conversation_id = raw_body.get("session_id")
-                if not conversation_id:
-                    conv = raw_body.get("conversation")
-                    if isinstance(conv, dict):
-                        conversation_id = conv.get("id")
+    def test_fallback_to_get_conversation_id_object(self):
+        """Falls back to get_conversation_id with conversation object."""
+        from azure.ai.agentserver.responses.models import CreateResponse, ConversationParam_2
+        request = CreateResponse(model="test", conversation=ConversationParam_2(id="conv_playground_456"))
+        conversation_id = get_conversation_id(request)
         assert conversation_id == "conv_playground_456"
 
-    def test_session_id_takes_priority_over_conversation(self):
-        """session_id in raw_body takes priority over conversation.id."""
-        ctx = self._make_context(
-            conversation_id=None,
-            raw_body={
-                "session_id": "session-priority",
-                "conversation": {"id": "conv_lower_priority"},
-            }
-        )
-        conversation_id = ctx.conversation_id
-        if not conversation_id:
-            raw_body = ctx.raw_body
-            if isinstance(raw_body, dict):
-                conversation_id = raw_body.get("session_id")
-                if not conversation_id:
-                    conv = raw_body.get("conversation")
-                    if isinstance(conv, dict):
-                        conversation_id = conv.get("id")
-        assert conversation_id == "session-priority"
-
-    def test_none_when_nothing_available(self):
-        """Returns None when no conversation identity is available."""
-        ctx = self._make_context(conversation_id=None, raw_body={"input": "hello"})
-        conversation_id = ctx.conversation_id
-        if not conversation_id:
-            raw_body = ctx.raw_body
-            if isinstance(raw_body, dict):
-                conversation_id = raw_body.get("session_id")
-                if not conversation_id:
-                    conv = raw_body.get("conversation")
-                    if isinstance(conv, dict):
-                        conversation_id = conv.get("id")
+    def test_none_when_no_conversation(self):
+        """Returns None when request has no conversation set."""
+        from azure.ai.agentserver.responses.models import CreateResponse
+        request = CreateResponse(model="test")
+        conversation_id = get_conversation_id(request)
         assert conversation_id is None
 
-    def test_none_when_raw_body_not_dict(self):
-        """Returns None when raw_body is not a dict."""
-        ctx = self._make_context(conversation_id=None, raw_body=None)
-        conversation_id = ctx.conversation_id
-        if not conversation_id:
-            raw_body = ctx.raw_body
-            if isinstance(raw_body, dict):
-                conversation_id = raw_body.get("session_id")
+    def test_none_when_empty_conversation(self):
+        """Returns None when conversation is empty string."""
+        from azure.ai.agentserver.responses.models import CreateResponse
+        request = CreateResponse(model="test", conversation="")
+        conversation_id = get_conversation_id(request)
         assert conversation_id is None
 
 
