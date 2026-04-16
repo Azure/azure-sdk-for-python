@@ -460,7 +460,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models.BatchNodeDeallocateOptions] = None,
+        options: Optional[_models._models.BatchNodeDeallocateOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -476,7 +476,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for deallocating the Compute Node. Default value is None.
-        :type options: ~azure.batch.models.BatchNodeDeallocateOptions
+        :type options: ~azure.batch.models._models.BatchNodeDeallocateOptions
         :keyword service_timeout: The maximum time that the server can spend processing the initial request to
          deallocate the Compute Node, in seconds. The default is 30 seconds. If the value is larger
          than 30, the default will be used instead.". Default value is None.
@@ -518,7 +518,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models.BatchNodeRebootOptions] = None,
+        options: Optional[_models._models.BatchNodeRebootOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -534,7 +534,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for rebooting the Compute Node. Default value is None.
-        :type options: ~azure.batch.models.BatchNodeRebootOptions
+        :type options: ~azure.batch.models._models.BatchNodeRebootOptions
         :keyword service_timeout: The maximum time that the server can spend processing the initial request to
          reboot the Compute Node, in seconds. The default is 30 seconds. If the value is larger than 30,
          the default will be used instead.". Default value is None.
@@ -574,7 +574,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models.BatchNodeReimageOptions] = None,
+        options: Optional[_models._models.BatchNodeReimageOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -594,7 +594,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for reimaging the Compute Node. Default value is None.
-        :type options: ~azure.batch.models.BatchNodeReimageOptions
+        :type options: ~azure.batch.models._models.BatchNodeReimageOptions
         :keyword service_timeout: The maximum time that the server can spend processing the initial request to
          reimage the Compute Node, in seconds. The default is 30 seconds. If the value is larger than 30,
          the default will be used instead.". Default value is None.
@@ -922,7 +922,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     async def begin_terminate_job(
         self,
         job_id: str,
-        options: Optional[_models.BatchJobTerminateOptions] = None,
+        options: Optional[_models._models.BatchJobTerminateOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -946,7 +946,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param job_id: The ID of the Job to terminate. Required.
         :type job_id: str
         :param options: The options to use for terminating the Job. Default value is None.
-        :type options: ~azure.batch.models.BatchJobTerminateOptions
+        :type options: ~azure.batch.models._models.BatchJobTerminateOptions
         :keyword service_timeout: The maximum time that the server can spend processing the initial request
          to terminate the Job, in seconds. The default is 30 seconds. If the value is larger than 30,
          the default will be used instead.". Default value is None.

@@ -818,7 +818,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             client.begin_reboot_node(
                 batch_pool.name,
                 nodes[0].id,
-                models.BatchNodeRebootOptions(node_reboot_kind=models.BatchNodeRebootKind.TERMINATE),
+                models._models.BatchNodeRebootOptions(node_reboot_kind=models._enums.BatchNodeRebootKind.TERMINATE),
                 polling_interval=5,
             )
         )
@@ -1416,7 +1416,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         poller = await wrap_result(
             client.begin_terminate_job(
                 job_id=job_param.id,
-                options=models.BatchJobTerminateOptions(termination_reason="UserTerminate"),
+                options=models._models.BatchJobTerminateOptions(termination_reason="UserTerminate"),
                 polling_interval=5,
             )
         )
