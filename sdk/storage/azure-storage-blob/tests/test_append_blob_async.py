@@ -6,18 +6,21 @@
 
 import aiohttp
 import tempfile
-import uuid
 from datetime import datetime, timedelta
-from os import path, remove
 
 import pytest
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
 from azure.mgmt.storage.aio import StorageManagementClient
-from azure.storage.blob import BlobSasPermissions, generate_blob_sas, BlobImmutabilityPolicyMode, ImmutabilityPolicy
-from azure.storage.blob._shared.policies import StorageContentValidation
-from azure.storage.blob import BlobType
+from azure.storage.blob import (
+    BlobSasPermissions,
+    BlobType,
+    generate_blob_sas,
+    BlobImmutabilityPolicyMode,
+    ImmutabilityPolicy
+)
 from azure.storage.blob.aio import BlobServiceClient, BlobClient
+from azure.storage.blob._shared.validation import calculate_content_md5
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
@@ -350,7 +353,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
-        src_md5 = StorageContentValidation.get_content_md5(source_blob_data)
+        src_md5 = calculate_content_md5(source_blob_data)
         sas = self.generate_sas(
             generate_blob_sas,
             source_blob_client.account_name,
@@ -380,9 +383,9 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act part 2: put block from url with wrong md5
         with pytest.raises(HttpResponseError):
-            await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                source_content_md5=StorageContentValidation.get_content_md5(
-                                                                    b"POTATO"))
+            await destination_blob_client.append_block_from_url(
+                source_blob_client.url + '?' + sas,
+                source_content_md5=calculate_content_md5(b"POTATO"))
 
     @BlobPreparer()
     @recorded_by_proxy_async

@@ -8,7 +8,7 @@
 from io import BytesIO
 from typing import (
     Any, AnyStr, AsyncGenerator, AsyncIterable, cast,
-    Dict, IO, Iterable, List, Literal, Optional, Tuple, Union,
+    Dict, IO, Iterable, List, Optional, Tuple, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote, urlparse
@@ -58,7 +58,7 @@ from ._shared.request_handlers import (
 from ._shared.response_handlers import return_headers_and_deserialized, return_response_headers
 from ._shared.uploads import IterStreamer
 from ._shared.uploads_async import AsyncIterStreamer
-from ._shared.validation import parse_validation_option
+from ._shared.validation import CV_TYPE_PARSED, parse_validation_option
 from ._upload_helpers import _any_conditions
 
 if TYPE_CHECKING:
@@ -111,7 +111,7 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     length: Optional[int],
     metadata: Optional[Dict[str, str]],
     encryption_options: Dict[str, Any],
-    validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]],
+    validate_content: CV_TYPE_PARSED,
     config: "StorageConfiguration",
     sdk_moniker: str,
     client: "AzureBlobStorage",
@@ -259,7 +259,7 @@ def _download_blob_options(
     length: Optional[int],
     encoding: Optional[str],
     encryption_options: Dict[str, Any],
-    validate_content: Optional[Union[bool, Literal['auto', 'crc64', 'md5']]],
+    validate_content: CV_TYPE_PARSED,
     config: "StorageConfiguration",
     sdk_moniker: str,
     client: "AzureBlobStorage",
