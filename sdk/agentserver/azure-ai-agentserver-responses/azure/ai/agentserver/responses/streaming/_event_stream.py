@@ -7,7 +7,7 @@ from __future__ import annotations
 from collections.abc import AsyncIterable
 from copy import deepcopy
 from datetime import datetime, timezone
-from typing import Any, AsyncIterator, Iterator, Sequence
+from typing import Any, AsyncIterator, Iterator, Sequence, cast
 
 from .._id_generator import IdGenerator
 from ..models import _generated as generated_models
@@ -30,8 +30,6 @@ from ._builders import (
 )
 from ._internals import construct_event_model
 from ._state_machine import EventStreamValidator
-
-EVENT_TYPE = generated_models.ResponseStreamEventType
 
 # Event types whose payload is a full Response snapshot.
 # Lifecycle events nest under a "response" key on the wire.
@@ -71,7 +69,6 @@ def _as_dict(obj: _Model | dict[str, Any]) -> dict[str, Any]:  # pylint: disable
     return obj
 
 
-
 class ResponseEventStream:  # pylint: disable=too-many-public-methods
     """Response event stream with deterministic sequence numbers."""
 
@@ -79,23 +76,23 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         self,
         *,
         response_id: str | None = None,
-        agent_reference: AgentReference | dict[str, Any] | None = None,
+        agent_reference: AgentReference | None = None,
         model: str | None = None,
-        request: generated_models.CreateResponse | dict[str, Any] | None = None,
-        response: generated_models.ResponseObject | dict[str, Any] | None = None,
+        request: generated_models.CreateResponse | None = None,
+        response: generated_models.ResponseObject | None = None,
     ) -> None:
         """Initialize a new response event stream.
 
         :param response_id: Unique identifier for the response. Inferred from *response* if omitted.
         :type response_id: str | None
-        :param agent_reference: Optional agent reference model or metadata dict.
-        :type agent_reference: AgentReference | dict[str, Any] | None
+        :param agent_reference: Optional agent reference model.
+        :type agent_reference: AgentReference | None
         :param model: Optional model identifier to stamp on the response.
         :type model: str | None
         :param request: Optional create-response request to seed the response envelope from.
-        :type request: ~azure.ai.agentserver.responses.models._generated.CreateResponse | dict[str, Any] | None
+        :type request: ~azure.ai.agentserver.responses.models._generated.CreateResponse | None
         :param response: Optional pre-existing response envelope to build upon.
-        :type response: ~azure.ai.agentserver.responses.models._generated.ResponseObject | dict[str, Any] | None
+        :type response: ~azure.ai.agentserver.responses.models._generated.ResponseObject | None
         :raises ValueError: If both *request* and *response* are provided, or if *response_id* cannot be resolved.
         """
         if request is not None and response is not None:
@@ -167,69 +164,81 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         return self._response
 
-    def emit_queued(self) -> generated_models.ResponseStreamEvent:
+    def emit_queued(self) -> generated_models.ResponseQueuedEvent:
         """Emit a ``response.queued`` lifecycle event.
 
         :returns: The emitted event model instance.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseQueuedEvent
         """
         self._response.status = "queued"
-        return self.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_QUEUED.value,
-                "response": self._response_payload(),
-            }
+        return cast(
+            generated_models.ResponseQueuedEvent,
+            self._emit_event(
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_QUEUED.value,
+                    "response": self._response_payload(),
+                }
+            ),
         )
 
-    def emit_created(self, *, status: str = "in_progress") -> generated_models.ResponseStreamEvent:
+    def emit_created(self, *, status: str = "in_progress") -> generated_models.ResponseCreatedEvent:
         """Emit a ``response.created`` lifecycle event.
 
         :keyword status: Initial status to set on the response. Defaults to ``"in_progress"``.
         :keyword type status: str
         :returns: The emitted event model instance.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseCreatedEvent
         """
         self._response.status = status  # type: ignore[assignment]
-        return self.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_CREATED.value,
-                "response": self._response_payload(),
-            }
+        return cast(
+            generated_models.ResponseCreatedEvent,
+            self._emit_event(
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_CREATED.value,
+                    "response": self._response_payload(),
+                }
+            ),
         )
 
-    def emit_in_progress(self) -> generated_models.ResponseStreamEvent:
+    def emit_in_progress(self) -> generated_models.ResponseInProgressEvent:
         """Emit a ``response.in_progress`` lifecycle event.
 
         :returns: The emitted event model instance.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseInProgressEvent
         """
         self._response.status = "in_progress"
-        return self.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
-                "response": self._response_payload(),
-            }
+        return cast(
+            generated_models.ResponseInProgressEvent,
+            self._emit_event(
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_IN_PROGRESS.value,
+                    "response": self._response_payload(),
+                }
+            ),
         )
 
     def emit_completed(
-        self, *, usage: generated_models.ResponseUsage | dict[str, Any] | None = None
-    ) -> generated_models.ResponseStreamEvent:
+        self, *, usage: generated_models.ResponseUsage | None = None
+    ) -> generated_models.ResponseCompletedEvent:
         """Emit a ``response.completed`` terminal lifecycle event.
 
         :keyword usage: Optional usage statistics to attach to the response.
-        :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
+        :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | None
         :returns: The emitted event model instance.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseCompletedEvent
         """
         self._response.status = "completed"
         self._response.error = None  # type: ignore[assignment]
         self._response.incomplete_details = None  # type: ignore[assignment]
         self._set_terminal_fields(usage=usage)
-        return self.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_COMPLETED.value,
-                "response": self._response_payload(),
-            }
+        return cast(
+            generated_models.ResponseCompletedEvent,
+            self._emit_event(
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_COMPLETED.value,
+                    "response": self._response_payload(),
+                }
+            ),
         )
 
     def emit_failed(
@@ -237,8 +246,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         *,
         code: str | generated_models.ResponseErrorCode = "server_error",
         message: str = "An internal server error occurred.",
-        usage: generated_models.ResponseUsage | dict[str, Any] | None = None,
-    ) -> generated_models.ResponseStreamEvent:
+        usage: generated_models.ResponseUsage | None = None,
+    ) -> generated_models.ResponseFailedEvent:
         """Emit a ``response.failed`` terminal lifecycle event.
 
         :keyword code: Error code describing the failure.
@@ -246,9 +255,9 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :keyword message: Human-readable error message.
         :keyword type message: str
         :keyword usage: Optional usage statistics to attach to the response.
-        :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
+        :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | None
         :returns: The emitted event model instance.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseFailedEvent
         """
         self._response.status = "failed"
         self._response.incomplete_details = None  # type: ignore[assignment]
@@ -259,29 +268,31 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             }
         )
         self._set_terminal_fields(usage=usage)
-        return self.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_FAILED.value,
-                "response": self._response_payload(),
-            }
+        return cast(
+            generated_models.ResponseFailedEvent,
+            self._emit_event(
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+                    "response": self._response_payload(),
+                }
+            ),
         )
 
     def emit_incomplete(
         self,
         *,
         reason: str | None = None,
-        usage: generated_models.ResponseUsage | dict[str, Any] | None = None,
-    ) -> generated_models.ResponseStreamEvent:
+        usage: generated_models.ResponseUsage | None = None,
+    ) -> generated_models.ResponseIncompleteEvent:
         """Emit a ``response.incomplete`` terminal lifecycle event.
 
         :keyword reason: Optional reason for incompleteness.
         :keyword type reason: str | ~azure.ai.agentserver.responses.models._generated.ResponseIncompleteReason
                                 | None
         :keyword usage: Optional usage statistics to attach to the response.
-        :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any]
-                                | None
+        :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | None
         :returns: The emitted event model instance.
-        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseStreamEvent
+        :rtype: ~azure.ai.agentserver.responses.models._generated.ResponseIncompleteEvent
         """
         self._response.status = "incomplete"
         self._response.error = None  # type: ignore[assignment]
@@ -294,11 +305,14 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
                 }
             )
         self._set_terminal_fields(usage=usage)
-        return self.emit_event(
-            {
-                "type": EVENT_TYPE.RESPONSE_INCOMPLETE.value,
-                "response": self._response_payload(),
-            }
+        return cast(
+            generated_models.ResponseIncompleteEvent,
+            self._emit_event(
+                {
+                    "type": generated_models.ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
+                    "response": self._response_payload(),
+                }
+            ),
         )
 
     def add_output_item(self, item_id: str) -> OutputItemBuilder:
@@ -640,7 +654,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         return [construct_event_model(event.as_dict()) for event in self._events]
 
-    def emit_event(self, event: dict[str, Any]) -> generated_models.ResponseStreamEvent:
+    def _emit_event(self, event: dict[str, Any]) -> generated_models.ResponseStreamEvent:
         """Emit a single event, applying defaults and validating the stream.
 
         Accepts a **wire-format** dict (no ``"payload"`` wrapper), constructs
@@ -690,8 +704,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :returns: An iterator of two events.
         :rtype: Iterator[ResponseStreamEvent]
         """
-        yield builder.emit_added(item)
-        yield builder.emit_done(item)
+        yield builder._emit_added(item)  # pylint: disable=protected-access
+        yield builder._emit_done(item)  # pylint: disable=protected-access
 
     def output_item_message(
         self,
@@ -815,7 +829,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def output_item_computer_call(
         self,
         call_id: str,
-        action: generated_models.ComputerAction | dict[str, Any],
+        action: generated_models.ComputerAction,
         *,
         pending_safety_checks: list[generated_models.ComputerCallSafetyCheckParam] | None = None,
         status: str = "completed",
@@ -825,7 +839,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :param call_id: Unique identifier for this tool call.
         :type call_id: str
         :param action: The computer action to perform.
-        :type action: ComputerAction | dict
+        :type action: ComputerAction
         :keyword pending_safety_checks: Optional safety checks.
         :keyword type pending_safety_checks: list[ComputerCallSafetyCheckParam] | None
         :keyword status: Status of the call; defaults to ``"completed"``.
@@ -849,7 +863,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def output_item_computer_call_output(
         self,
         call_id: str,
-        output: generated_models.ComputerScreenshotImage | dict[str, Any],
+        output: generated_models.ComputerScreenshotImage,
         *,
         acknowledged_safety_checks: list[generated_models.ComputerCallSafetyCheckParam] | None = None,
     ) -> Iterator[generated_models.ResponseStreamEvent]:
@@ -858,7 +872,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :param call_id: The call ID this output belongs to.
         :type call_id: str
         :param output: The screenshot image output.
-        :type output: ComputerScreenshotImage | dict
+        :type output: ComputerScreenshotImage
         :keyword acknowledged_safety_checks: Optional acknowledged safety checks.
         :keyword type acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None
         :returns: An iterator of events.
@@ -879,7 +893,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def output_item_local_shell_call(
         self,
         call_id: str,
-        action: generated_models.LocalShellExecAction | dict[str, Any],
+        action: generated_models.LocalShellExecAction,
         *,
         status: str = "completed",
     ) -> Iterator[generated_models.ResponseStreamEvent]:
@@ -888,7 +902,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :param call_id: Unique identifier for this tool call.
         :type call_id: str
         :param action: The shell exec action.
-        :type action: LocalShellExecAction | dict
+        :type action: LocalShellExecAction
         :keyword status: Status of the call; defaults to ``"completed"``.
         :keyword type status: str
         :returns: An iterator of events.
@@ -920,8 +934,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def output_item_function_shell_call(
         self,
         call_id: str,
-        action: generated_models.FunctionShellAction | dict[str, Any],
-        environment: generated_models.FunctionShellCallEnvironment | dict[str, Any],
+        action: generated_models.FunctionShellAction,
+        environment: generated_models.FunctionShellCallEnvironment,
         *,
         status: str = "completed",
     ) -> Iterator[generated_models.ResponseStreamEvent]:
@@ -930,9 +944,9 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :param call_id: Unique identifier for this tool call.
         :type call_id: str
         :param action: The function shell action.
-        :type action: FunctionShellAction | dict
+        :type action: FunctionShellAction
         :param environment: The execution environment.
-        :type environment: FunctionShellCallEnvironment | dict
+        :type environment: FunctionShellCallEnvironment
         :keyword status: Status of the call; defaults to ``"completed"``.
         :keyword type status: str
         :returns: An iterator of events.
@@ -954,7 +968,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def output_item_function_shell_call_output(
         self,
         call_id: str,
-        output: list[generated_models.FunctionShellCallOutputContent] | list[dict[str, Any]],
+        output: list[generated_models.FunctionShellCallOutputContent],
         *,
         status: str = "completed",
         max_output_length: int | None = None,
@@ -964,7 +978,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :param call_id: The call ID this output belongs to.
         :type call_id: str
         :param output: The output content list.
-        :type output: list[FunctionShellCallOutputContent] | list[dict]
+        :type output: list[FunctionShellCallOutputContent]
         :keyword status: Status of the output; defaults to ``"completed"``.
         :keyword type status: str
         :keyword max_output_length: Maximum output length; defaults to ``0``.
@@ -987,7 +1001,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def output_item_apply_patch_call(
         self,
         call_id: str,
-        operation: generated_models.ApplyPatchFileOperation | dict[str, Any],
+        operation: generated_models.ApplyPatchFileOperation,
         *,
         status: str = "completed",
     ) -> Iterator[generated_models.ResponseStreamEvent]:
@@ -996,7 +1010,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :param call_id: Unique identifier for this tool call.
         :type call_id: str
         :param operation: The patch file operation.
-        :type operation: ApplyPatchFileOperation | dict
+        :type operation: ApplyPatchFileOperation
         :keyword status: Status of the call; defaults to ``"completed"``.
         :keyword type status: str
         :returns: An iterator of events.
@@ -1045,14 +1059,14 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     def output_item_custom_tool_call_output(
         self,
         call_id: str,
-        output: str | list[Any],
+        output: str | list[generated_models.FunctionAndCustomToolCallOutput],
     ) -> Iterator[generated_models.ResponseStreamEvent]:
         """Yield the full lifecycle for a custom tool call output item.
 
         :param call_id: The call ID this output belongs to.
         :type call_id: str
         :param output: The output value (string or structured list).
-        :type output: str | list
+        :type output: str | list[FunctionAndCustomToolCallOutput]
         :returns: An iterator of events.
         :rtype: Iterator[ResponseStreamEvent]
         """
@@ -1286,7 +1300,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     async def aoutput_item_computer_call(
         self,
         call_id: str,
-        action: generated_models.ComputerAction | dict[str, Any],
+        action: generated_models.ComputerAction,
         *,
         pending_safety_checks: list[generated_models.ComputerCallSafetyCheckParam] | None = None,
         status: str = "completed",
@@ -1296,7 +1310,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :param call_id: Unique identifier for this tool call.
         :type call_id: str
         :param action: The computer action.
-        :type action: ComputerAction | dict
+        :type action: ComputerAction
         :keyword pending_safety_checks: Optional safety checks.
         :keyword type pending_safety_checks: list[ComputerCallSafetyCheckParam] | None
         :keyword status: Status; defaults to ``"completed"``.
@@ -1312,7 +1326,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     async def aoutput_item_computer_call_output(
         self,
         call_id: str,
-        output: generated_models.ComputerScreenshotImage | dict[str, Any],
+        output: generated_models.ComputerScreenshotImage,
         *,
         acknowledged_safety_checks: list[generated_models.ComputerCallSafetyCheckParam] | None = None,
     ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
@@ -1321,7 +1335,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :param call_id: The call ID this output belongs to.
         :type call_id: str
         :param output: The screenshot image output.
-        :type output: ComputerScreenshotImage | dict
+        :type output: ComputerScreenshotImage
         :keyword acknowledged_safety_checks: Optional acknowledged safety checks.
         :keyword type acknowledged_safety_checks: list[ComputerCallSafetyCheckParam] | None
         :returns: An async iterator of events.
@@ -1335,7 +1349,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     async def aoutput_item_local_shell_call(
         self,
         call_id: str,
-        action: generated_models.LocalShellExecAction | dict[str, Any],
+        action: generated_models.LocalShellExecAction,
         *,
         status: str = "completed",
     ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
@@ -1344,7 +1358,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :param call_id: Unique identifier for this tool call.
         :type call_id: str
         :param action: The shell exec action.
-        :type action: LocalShellExecAction | dict
+        :type action: LocalShellExecAction
         :keyword status: Status; defaults to ``"completed"``.
         :keyword type status: str
         :returns: An async iterator of events.
@@ -1369,8 +1383,8 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     async def aoutput_item_function_shell_call(
         self,
         call_id: str,
-        action: generated_models.FunctionShellAction | dict[str, Any],
-        environment: generated_models.FunctionShellCallEnvironment | dict[str, Any],
+        action: generated_models.FunctionShellAction,
+        environment: generated_models.FunctionShellCallEnvironment,
         *,
         status: str = "completed",
     ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
@@ -1379,9 +1393,9 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :param call_id: Unique identifier for this tool call.
         :type call_id: str
         :param action: The function shell action.
-        :type action: FunctionShellAction | dict
+        :type action: FunctionShellAction
         :param environment: The execution environment.
-        :type environment: FunctionShellCallEnvironment | dict
+        :type environment: FunctionShellCallEnvironment
         :keyword status: Status; defaults to ``"completed"``.
         :keyword type status: str
         :returns: An async iterator of events.
@@ -1393,7 +1407,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     async def aoutput_item_function_shell_call_output(
         self,
         call_id: str,
-        output: list[generated_models.FunctionShellCallOutputContent] | list[dict[str, Any]],
+        output: list[generated_models.FunctionShellCallOutputContent],
         *,
         status: str = "completed",
         max_output_length: int | None = None,
@@ -1403,7 +1417,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :param call_id: The call ID this output belongs to.
         :type call_id: str
         :param output: The output content list.
-        :type output: list[FunctionShellCallOutputContent] | list[dict]
+        :type output: list[FunctionShellCallOutputContent]
         :keyword status: Status; defaults to ``"completed"``.
         :keyword type status: str
         :keyword max_output_length: Maximum output length.
@@ -1419,7 +1433,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
     async def aoutput_item_apply_patch_call(
         self,
         call_id: str,
-        operation: generated_models.ApplyPatchFileOperation | dict[str, Any],
+        operation: generated_models.ApplyPatchFileOperation,
         *,
         status: str = "completed",
     ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
@@ -1428,7 +1442,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         :param call_id: Unique identifier for this tool call.
         :type call_id: str
         :param operation: The patch file operation.
-        :type operation: ApplyPatchFileOperation | dict
+        :type operation: ApplyPatchFileOperation
         :keyword status: Status; defaults to ``"completed"``.
         :keyword type status: str
         :returns: An async iterator of events.
@@ -1459,14 +1473,16 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             yield event
 
     async def aoutput_item_custom_tool_call_output(
-        self, call_id: str, output: str | list[Any]
+        self,
+        call_id: str,
+        output: str | list[generated_models.FunctionAndCustomToolCallOutput],
     ) -> AsyncIterator[generated_models.ResponseStreamEvent]:
         """Async variant of :meth:`output_item_custom_tool_call_output`.
 
         :param call_id: The call ID this output belongs to.
         :type call_id: str
         :param output: The output value (string or structured list).
-        :type output: str | list
+        :type output: str | list[FunctionAndCustomToolCallOutput]
         :returns: An async iterator of events.
         :rtype: AsyncIterator[ResponseStreamEvent]
         """
@@ -1534,7 +1550,7 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
         """
         return _internals.materialize_generated_payload(self._response.as_dict())
 
-    def with_output_item_defaults(self, item: dict[str, Any]) -> dict[str, Any]:
+    def _with_output_item_defaults(self, item: dict[str, Any]) -> dict[str, Any]:
         """Stamp an output item dict with response-level defaults.
 
         :param item: The item dict to stamp.
@@ -1549,11 +1565,11 @@ class ResponseEventStream:  # pylint: disable=too-many-public-methods
             stamped["agent_reference"] = self._agent_reference
         return stamped
 
-    def _set_terminal_fields(self, *, usage: generated_models.ResponseUsage | dict[str, Any] | None) -> None:
+    def _set_terminal_fields(self, *, usage: generated_models.ResponseUsage | None) -> None:
         """Set terminal fields on the response envelope (completed_at, usage).
 
         :keyword usage: Optional usage statistics to attach.
-        :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | dict[str, Any] | None
+        :keyword type usage: ~azure.ai.agentserver.responses.models._generated.ResponseUsage | None
         :rtype: None
         """
         # B6: completed_at is non-null only for completed status
