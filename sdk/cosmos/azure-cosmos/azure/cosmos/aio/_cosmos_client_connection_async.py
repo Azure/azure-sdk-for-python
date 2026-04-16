@@ -3200,6 +3200,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # Merge results sequentially to maintain correct aggregation semantics
                 for partial_result, resp_headers in task_results:
                     self.last_response_headers = resp_headers
+                    if internal_headers_capture is not None:
+                        internal_headers_capture.clear()
+                        internal_headers_capture.update(resp_headers)
                     self._UpdateSessionIfRequired(req_headers, partial_result, resp_headers)
                     try:
                         results = base._merge_query_results(results, partial_result, query)
@@ -3238,6 +3241,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         **kwargs
                     )
                     self.last_response_headers = last_response_headers
+                    if internal_headers_capture is not None:
+                        internal_headers_capture.clear()
+                        internal_headers_capture.update(last_response_headers)
                     self._UpdateSessionIfRequired(req_headers, partial_result, last_response_headers)
                     try:
                         results = base._merge_query_results(results, partial_result, query)
