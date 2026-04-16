@@ -52,7 +52,17 @@ powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 
 powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace 'list of tool definitions might look like:', 'list of tool definitions might look like the following. Required.' | Set-Content azure\ai\projects\models\_models.py"
 powershell -Command "(Get-Content azure\ai\projects\models\_models.py) -replace '        \]\. Required\.', '        ]' | Set-Content azure\ai\projects\models\_models.py"
 
+REM Fix Sphinx docutils warnings in class SessionLogEvent: the generated docstring wraps two long
+REM ``data:`` JSON lines mid-string inside a ``.. code-block::`` section. The wrapped continuation
+REM lines have wrong indentation (4 spaces instead of 7), causing "unexpected unindent" warnings.
+REM Join each broken pair back into one line.
+powershell -Command "$f='azure\ai\projects\models\_models.py'; $c=Get-Content $f -Raw; $c=$c -replace '(Starting server)\r?\n[ \t]+(on port 18080)', '$1 $2'; $c=$c -replace '(Successfully)\r?\n[ \t]+(connected to container\"})\.?', '$1 $2'; Set-Content $f $c -NoNewline; $lines=Get-Content $f; $out=@(); foreach ($line in $lines) { if ($line -match '^\s*on port 18080' -and $line -notmatch 'data:') { continue }; if ($line -match '^\s*connected to container' -and $line -notmatch 'data:') { continue }; if ($line -match '^\s*data: .*2026-03-10T09:33:17.121Z') { $out += ('       ' + $line.TrimStart()); continue }; if ($line -match '^\s*data: .*2026-03-10T09:34:52.714Z') { $out += ('       ' + $line.TrimStart()); continue }; $out += $line }; Set-Content $f $out"
+
+REM Fix Sphinx docutils warnings in get_session_log_stream docstrings (sync + async).
+REM The emitter wraps bullet/code-block lines with insufficient indentation.
+powershell -Command "$files='azure\ai\projects\operations\_operations.py','azure\ai\projects\aio\operations\_operations.py'; foreach ($f in $files) { $c=Get-Content $f -Raw; $c=$c -replace 'schema\r?\n\s+is not contractual and may include additional keys or change format\r?\n\s+over time [^\r\n]*clients should treat it as an opaque string\)', 'schema is not contractual and may include additional keys or change format over time; clients should treat it as an opaque string)'; $c=$c -replace '(message\":\"Starting)\r?\n\s+(FoundryCBAgent server on port 8088\"})', '$1 $2'; $c=$c -replace '(message\":\"INFO: Application)\r?\n\s+(startup complete\.\"})', '$1 $2'; $c=$c -replace '(message\":\"Successfully)\r?\n\s+(connected to container\"})', '$1 $2'; $c=$c -replace '(message\":\"No logs since)\r?\n\s+(last 60 seconds\"})', '$1 $2'; Set-Content $f $c -NoNewline }"
+
 REM Finishing by running 'black' tool to format code. 
-black --config ../../../eng/black-pyproject.toml .
+black --config ../../../eng/black-pyproject.toml . || echo black not found, skipping formatting.
 
 
