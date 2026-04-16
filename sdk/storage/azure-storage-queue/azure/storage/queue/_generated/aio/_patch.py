@@ -7,11 +7,12 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, TYPE_CHECKING
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.core import AsyncPipelineClient
 
-from .._configuration import QueuesClientConfiguration
+from .._version import VERSION
+from ._configuration import QueuesClientConfiguration as QueuesClientConfigurationInternal
 from .._utils.serialization import Deserializer, Serializer
 from .operations import QueueOperations, ServiceOperations
 from ._client import QueuesClient as _QueuesClient
@@ -20,20 +21,46 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
+class QueuesClientConfiguration(QueuesClientConfigurationInternal):
+    """Configuration for QueuesClient.
+
+    Note that all parameters used to create this instance are saved as instance
+    attributes.
+
+    :param url: The host name of the queue storage account, e.g.
+     accountName.queue.core.windows.net. Required.
+    :type url: str
+    :param credential: Credential used to authenticate requests to the service. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :keyword version: Specifies the version of the operation to use for this request. Known values
+     are "2026-04-06". Default value is "2026-04-06". Note that overriding this default value may
+     result in unsupported behavior.
+    :paramtype version: str
+    """
+
+    def __init__(self, url: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs: Any) -> None:
+        version: str = kwargs.pop("version", "2026-04-06")
+
+        if url is None:
+            raise ValueError("Parameter 'url' must not be None.")
+
+        self.url = url
+        self.credential = credential
+        self.version = version
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://storage.azure.com/.default"])
+        kwargs.setdefault("sdk_moniker", "storage-queue/{}".format(VERSION))
+        self.polling_interval = kwargs.get("polling_interval", 30)
+        self._configure(**kwargs)
+
+
 class QueuesClient(_QueuesClient):
     """QueuesClient that supports being instantiated with a pre-built pipeline."""
 
-    def __init__(self, url: str, credential: "AsyncTokenCredential" = None, **kwargs: Any) -> None:
+    def __init__(self, url: str, credential: Optional["AsyncTokenCredential"] = None, **kwargs: Any) -> None:
         _pipeline = kwargs.pop("pipeline", None)
         if _pipeline is not None:
-            # When a pre-built pipeline is provided, skip the generated credential/policy setup.
-            _endpoint = "{url}"
-            self._config = QueuesClientConfiguration.__new__(QueuesClientConfiguration)
-            version = kwargs.pop("version", "2026-06-06")
-            self._config.url = url
-            self._config.credential = credential
-            self._config.version = version
-            self._client: AsyncPipelineClient = AsyncPipelineClient(base_url=_endpoint, pipeline=_pipeline)
+            self._config = QueuesClientConfiguration(url=url, credential=credential, **kwargs)
+            self._client: AsyncPipelineClient = AsyncPipelineClient(base_url="{url}", pipeline=_pipeline)
             self._serialize = Serializer()
             self._deserialize = Deserializer()
             self._serialize.client_side_validation = False
