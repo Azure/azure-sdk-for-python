@@ -55,7 +55,7 @@ app = ResponsesAgentServerHost()
 # emit complete output items with one call each.
 
 
-@app.create_handler
+@app.response_handler
 async def handler(
     request: CreateResponse,
     context: ResponseContext,

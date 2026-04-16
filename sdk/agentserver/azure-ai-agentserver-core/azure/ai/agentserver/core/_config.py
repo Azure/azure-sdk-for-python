@@ -41,7 +41,7 @@ _DEFAULT_SSE_KEEPALIVE_INTERVAL = 0
 # ======================================================================
 
 
-class AgentConfig:
+class AgentConfig:  # pylint: disable=too-many-instance-attributes
     """Resolved configuration for an agent server host.
 
     All values are populated from environment variables at creation time.

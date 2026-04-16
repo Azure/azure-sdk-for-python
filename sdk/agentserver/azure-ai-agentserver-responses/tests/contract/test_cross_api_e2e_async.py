@@ -154,7 +154,7 @@ class _AsyncAsgiClient:
 def _build_client(handler: Any) -> _AsyncAsgiClient:
     """Create a fully isolated async ASGI client."""
     app = ResponsesAgentServerHost()
-    app.create_handler(handler)
+    app.response_handler(handler)
     return _AsyncAsgiClient(app)
 
 
