@@ -4,16 +4,20 @@ trigger: none
 
 pr: none
 
-variables:
-  - template: /eng/pipelines/templates/variables/image.yml
-
-jobs:
-- job: Tests
-  displayName: Run tests
-  pool:
-    name: $(LINUXPOOL)
-    vmImage: $(LINUXVMIMAGE)
-  steps:
-  - pwsh: |
-      Write-Host "Test"
-    displayName: 'Say test'
+extends:
+  template: /eng/pipelines/templates/stages/1es-redirect.yml
+  parameters:
+    stages:
+      - stage: Tests
+        variables:
+          - template: /eng/pipelines/templates/variables/image.yml
+        jobs:
+        - job: Tests
+          displayName: Run tests
+          pool:
+            name: $(LINUXPOOL)
+            vmImage: $(LINUXVMIMAGE)
+          steps:
+          - pwsh: |
+              Write-Host "Test"
+            displayName: 'Say test'
