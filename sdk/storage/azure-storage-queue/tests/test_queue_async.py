@@ -16,7 +16,7 @@ from azure.core.exceptions import (
     ResourceExistsError,
     ResourceNotFoundError,
 )
-from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=no-name-in-module
 from azure.storage.queue import (
     AccessPolicy,
     AccountSasPermissions,
