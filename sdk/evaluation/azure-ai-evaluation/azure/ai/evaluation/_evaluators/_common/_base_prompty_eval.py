@@ -456,8 +456,8 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
             f"{self._result_key}_score": None,
             f"{self._result_key}_result": "not_applicable",
             f"{self._result_key}_passed": None,
-            f"{self._result_key}_reasoning": f"Not applicable: {error_message}",
+            f"{self._result_key}_reason": f"Not applicable: {error_message}",
             f"{self._result_key}_status": "skipped",
             f"{self._result_key}_threshold": threshold,
-            f"{self._result_key}_properties": {},
+            f"{self._result_key}_properties": None,
         }

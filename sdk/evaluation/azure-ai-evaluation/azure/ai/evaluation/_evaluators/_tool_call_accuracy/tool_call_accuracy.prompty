@@ -61,7 +61,7 @@ Before performing any evaluation, check for the following conditions. If ANY are
 
 When skipped, return:
 ```json
-{"score": null, "reasoning": "<explain why evaluation was skipped>", "status": "skipped", "properties": null}
+{"reason": "<explain why evaluation was skipped>", "score": null, "status": "skipped", "properties": null}
 ```
 
 
@@ -150,11 +150,11 @@ TOOL DEFINITIONS: {{tool_definitions}}
 # Tasks
 ## Please provide your evaluation for the assistant RESPONSE in relation to the user QUERY and tool definitions based on the Definitions and examples above.
 Your output should consist only of a JSON object that has the following keys:
+  - reason: a string that explains your thought process to decide on the tool call accuracy level, based on the Chain of Thought structure. Start this string with 'Let's think step by step:'. When status is "skipped", explain why the evaluation was skipped.
   - score: an integer value between 1 and 5 that represents the level of tool call success, based on the level definitions mentioned before. You need to be very precise when deciding on this level. Ensure you are correctly following the rating system based on the description of each level. Set to null when status is "skipped".
   - status: a string indicating the evaluation status. Must be one of:
       - "completed": tool calls were present, tool definitions were available, and evaluation was performed.
       - "skipped": evaluation was not performed because there were no tool calls to evaluate, or tool definitions were missing for the tool calls. When skipped, set score to null and properties to null.
-  - reasoning: a string that explains your thought process to decide on the tool call accuracy level, based on the Chain of Thought structure. Start this string with 'Let's think step by step:'. When status is "skipped", explain why the evaluation was skipped.
   - properties: a dictionary that contains the following keys:
         - tool_calls_made_by_agent: total number of tool calls made by the agent
         - correct_tool_calls_made_by_agent: total number of correct tool calls made by the agent

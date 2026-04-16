@@ -258,7 +258,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             # Handle skipped status from LLM
             llm_status = llm_output.get("status", "completed")
             if llm_status == "skipped":
-                reason = llm_output.get("reasoning", "")
+                reason = llm_output.get("reason", "")
                 return self._return_not_applicable_result(reason, self.threshold)
 
             score = llm_output.get(self._LLM_SCORE_KEY, None)
@@ -276,10 +276,10 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 )
 
             # Format the output
-            reason = llm_output.get("reasoning", "")
+            reason = llm_output.get("reason", "")
             score = float(score)
             score_result = "pass" if score >= self.threshold else "fail"
-            llm_properties = llm_output.get("properties", {})
+            llm_properties = llm_output.get("properties", {}) or {}
             llm_properties.update(
                 {
                     "prompt_tokens": prompty_output_dict.get("input_token_count", 0),
@@ -295,7 +295,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 f"{self._result_key}_score": score,
                 f"{self._result_key}_result": score_result,
                 f"{self._result_key}_passed": score_result == "pass",
-                f"{self._result_key}_reasoning": reason,
+                f"{self._result_key}_reason": reason,
                 f"{self._result_key}_status": "completed",
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_properties": llm_properties,

@@ -70,7 +70,7 @@ class TestEvaluate:
         assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_result"] == "not_applicable"
         assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_status"] == "skipped"
         assert (
-            "not applicable" in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reasoning"].lower()
+            "not applicable" in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"].lower()
             and ToolCallAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE
-            in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reasoning"]
+            in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"]
         )
