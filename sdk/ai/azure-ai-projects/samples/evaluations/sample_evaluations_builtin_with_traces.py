@@ -149,7 +149,7 @@ def main() -> None:
         metadata["agent_id"] = args.agent_id
 
     elif args.trace_ids:
-        trace_ids = args.trace_ids
+        trace_ids = list(args.trace_ids)
         print(f"Mode: Explicit trace IDs ({len(trace_ids)} provided)")
 
     else:
