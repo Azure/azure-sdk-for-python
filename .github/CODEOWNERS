@@ -382,6 +382,10 @@
 # PRLabel: %Purview
 /sdk/purview/    @adyabansal-ms
 
+# ServiceLabel: %PostgreSQL Auth
+# PRLabel: %PostgreSQL Auth
+/sdk/postgresql/azure-postgresql-auth/    @alxhghs @carlovi81 @mattboentoro @nasc17 @nehrao1 @rmendiza
+
 # PRLabel: %Recovery Services
 /sdk/recoveryservices/    @DheerendraRathor
 
@@ -704,6 +708,9 @@
 
 # ServiceLabel: %PostgreSQL %Service Attention
 # ServiceOwners: @lfittl-msft @niklarin @sr-msft @sunilagarwal
+
+# ServiceLabel: %PostgreSQL Auth
+# ServiceOwners: @alxhghs @carlovi81 @mattboentoro @nasc17 @nehrao1 @rmendiza
 
 # ServiceLabel: %Redis Cache %Service Attention
 # ServiceOwners: @yegu-ms

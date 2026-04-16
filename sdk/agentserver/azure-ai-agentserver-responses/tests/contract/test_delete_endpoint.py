@@ -42,7 +42,7 @@ def _delayed_response_handler(request: Any, context: Any, cancellation_signal: A
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(handler or _noop_response_handler)
+    app.response_handler(handler or _noop_response_handler)
     return TestClient(app)
 
 
@@ -111,7 +111,7 @@ def test_delete__deletes_stored_completed_response() -> None:
     assert delete_response.status_code == 200
     payload = delete_response.json()
     assert payload.get("id") == response_id
-    assert payload.get("object") == "response.deleted"
+    assert payload.get("object") == "response"
     assert payload.get("deleted") is True
 
 
@@ -244,7 +244,7 @@ def test_delete__returns_404_for_non_bg_in_flight_response() -> None:
     release_gate = threading.Event()
     handler = _make_blocking_sync_response_handler(started_gate, release_gate)
     app = ResponsesAgentServerHost()
-    app.create_handler(handler)
+    app.response_handler(handler)
     client = TestClient(app)
     response_id = IdGenerator.new_response_id()
 
@@ -315,7 +315,7 @@ def test_delete__deletes_stored_failed_response() -> None:
     assert delete_response.status_code == 200
     payload = delete_response.json()
     assert payload.get("id") == response_id
-    assert payload.get("object") == "response.deleted"
+    assert payload.get("object") == "response"
     assert payload.get("deleted") is True
 
 
@@ -349,7 +349,7 @@ def test_delete__deletes_stored_incomplete_response() -> None:
     assert delete_response.status_code == 200
     payload = delete_response.json()
     assert payload.get("id") == response_id
-    assert payload.get("object") == "response.deleted"
+    assert payload.get("object") == "response"
     assert payload.get("deleted") is True
 
 
@@ -386,7 +386,7 @@ def test_delete__deletes_stored_cancelled_response() -> None:
     assert delete_response.status_code == 200
     payload = delete_response.json()
     assert payload.get("id") == response_id
-    assert payload.get("object") == "response.deleted"
+    assert payload.get("object") == "response"
     assert payload.get("deleted") is True
 
 
@@ -462,6 +462,6 @@ def test_delete__deletes_completed_background_response() -> None:
     payload = delete.json()
     assert payload["id"] == response_id
     assert payload["deleted"] is True
-    assert payload.get("object") in {"response.deleted", "response"}, (
-        f"DELETE result must include a recognised object type, got: {payload.get('object')}"
+    assert payload.get("object") == "response", (
+        f"DELETE result must have object='response', got: {payload.get('object')}"
     )
