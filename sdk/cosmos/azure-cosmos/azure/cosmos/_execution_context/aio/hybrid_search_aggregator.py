@@ -120,7 +120,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                 )
                 if gone_errors:
                     global_statistics_doc_producers = await self._repair_document_producer(
-                        global_statistics_query, target_all_ranges=True)
+                        global_statistics_query, target_all_ranges=use_all_ranges)
                 else:
                     global_statistics_doc_producers = peeked
             else:
@@ -133,7 +133,7 @@ class _HybridSearchContextAggregator(_QueryExecutionContextBase):  # pylint: dis
                         if exceptions._partition_range_is_gone(e):
                             global_statistics_doc_producers = await self._repair_document_producer(
                                 global_statistics_query,
-                                target_all_ranges=True
+                                target_all_ranges=use_all_ranges
                             )
                         else:
                             raise

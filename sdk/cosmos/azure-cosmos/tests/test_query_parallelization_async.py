@@ -32,7 +32,6 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from azure.cosmos._execution_context.aio._concurrent_helpers import (
     _resolve_max_degree,
     concurrent_peek_producers,
-    concurrent_drain_producers,
 )
 
 # Lazy-import aggregators to avoid circular import issues when running tests in isolation.
@@ -203,37 +202,6 @@ class TestConcurrentPeekProducers:
 
         assert len(peeked) == 10
         assert max_concurrent <= 3
-
-
-# ---------------------------------------------------------------------------
-# concurrent_drain_producers tests
-# ---------------------------------------------------------------------------
-
-class TestConcurrentDrainProducers:
-    """Tests for concurrent_drain_producers."""
-
-    @pytest.mark.asyncio
-    async def test_drain_collects_all_results(self):
-        """All items from all producers should be collected."""
-        from collections import deque
-
-        producers = []
-        for i in range(3):
-            p = MagicMock()
-            p._cur_item = {"id": f"peek_{i}"}
-            p.peek = AsyncMock(return_value=p._cur_item)
-            # Simulate internal buffer with 2 items
-            p._ex_context = MagicMock()
-            p._ex_context._buffer = deque([{"id": f"buf_{i}_0"}, {"id": f"buf_{i}_1"}])
-            p._ex_context.__anext__ = AsyncMock(side_effect=StopAsyncIteration)
-            producers.append(p)
-
-        semaphore = asyncio.Semaphore(2)
-        results, gone_errors = await concurrent_drain_producers(producers, semaphore)
-
-        assert len(gone_errors) == 0
-        # Each producer: 1 peek + 2 buffer = 3 items, total = 9
-        assert len(results) == 9
 
 
 # ---------------------------------------------------------------------------

@@ -3172,6 +3172,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         range_min=max(single_range.min, feed_range_epk.min),
                         range_max=min(single_range.max, feed_range_epk.max),
                         isMinInclusive=True, isMaxInclusive=False)
+                    # set the session token for this specific partition to avoid sending compound token
+                    await base.set_session_token_header_async(self, task_headers, path, request_params,
+                                                              options, overlapping_range["id"])
                     if single_range.min == EPK_sub_range.min and EPK_sub_range.max == single_range.max:
                         task_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = overlapping_range["id"]
                     else:
@@ -3217,6 +3220,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                         range_min=max(single_range.min, feed_range_epk.min),
                         range_max=min(single_range.max, feed_range_epk.max),
                         isMinInclusive=True, isMaxInclusive=False)
+                    # set the session token for this specific partition to avoid sending compound token
+                    await base.set_session_token_header_async(self, req_headers, path, request_params,
+                                                              options, over_lapping_range["id"])
                     if single_range.min == EPK_sub_range.min and EPK_sub_range.max == single_range.max:
                         req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = over_lapping_range["id"]
                     else:
