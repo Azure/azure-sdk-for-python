@@ -222,7 +222,13 @@ class McpBridge:
                 },
             )
             resp.raise_for_status()
-            return resp.json().get("result", {}).get("tools", [])
+            data = resp.json()
+            if "error" in data:
+                logger.warning("MCP tools/list error: %s", data["error"])
+            tools = data.get("result", {}).get("tools", [])
+            if not tools:
+                logger.debug("MCP tools/list raw response: %s", json.dumps(data)[:2000])
+            return tools
 
     async def call_tool(self, name: str, arguments: Dict[str, Any]) -> str:
         """Call ``tools/call`` and return the text result.
