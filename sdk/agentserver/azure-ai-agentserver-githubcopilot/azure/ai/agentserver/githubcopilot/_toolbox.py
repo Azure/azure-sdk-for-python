@@ -2,17 +2,29 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # ---------------------------------------------------------
-"""Foundry toolbox MCP discovery and auth helpers.
+"""Foundry toolbox MCP bridge and discovery.
 
-Centralises all toolbox-related logic: discovering MCP servers from
-``mcp.json``, adding an explicit toolbox endpoint, injecting auth
-headers, and preparing SDK-safe config dicts.
+Centralises all toolbox-related logic:
+
+- Discovering MCP server configs from ``mcp.json``
+- Connecting to toolbox MCP endpoints via HTTP (JSON-RPC)
+- Discovering available tools via ``tools/list``
+- Creating Copilot SDK ``Tool`` wrappers that proxy calls to the MCP endpoint
+- Handling auth token refresh
+
+Instead of passing ``mcp_servers`` to the Copilot SDK (which has issues
+with dotted tool names), we own the entire MCP interaction and register
+tools as regular Copilot SDK custom tools.
 """
-import copy
+import asyncio
 import json
 import logging
 import pathlib
-from typing import Any, Dict, Optional
+import re
+from typing import Any, Dict, List, Optional
+
+import httpx
+from copilot.tools import Tool, ToolResult
 
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
@@ -22,7 +34,7 @@ _FOUNDRY_SCOPE = "https://ai.azure.com/.default"
 
 
 # ---------------------------------------------------------------------------
-# Discovery
+# Discovery — read mcp.json and build server config dicts
 # ---------------------------------------------------------------------------
 
 def discover_mcp_servers(
@@ -60,9 +72,7 @@ def discover_mcp_servers(
         except Exception:
             logger.warning("Failed to load mcp.json", exc_info=True)
 
-    # 2. Explicit toolbox endpoint (takes precedence over mcp.json only when
-    #    the key is absent — callers that want to override should remove the
-    #    key from their mcp.json).
+    # 2. Explicit toolbox endpoint
     if toolbox_endpoint and _FOUNDRY_TOOLBOX_SERVER_KEY not in servers:
         servers[_FOUNDRY_TOOLBOX_SERVER_KEY] = {
             "type": "http",
@@ -75,16 +85,11 @@ def discover_mcp_servers(
         }
         logger.info("Added toolbox MCP server: %s", toolbox_endpoint)
 
-    # Ensure any server loaded from mcp.json that already declares
-    # "Foundry-Features" gets auto-auth stamped too, and any server
-    # without an explicit Authorization header gets _auto_auth.
-    # Also inject the Foundry-Features header for toolbox endpoints
-    # (URLs containing /toolboxes/) that don't already have it.
+    # Auto-inject headers for toolbox endpoints
     for server in servers.values():
         headers = server.setdefault("headers", {})
         if "Authorization" not in headers:
             headers["_auto_auth"] = True
-        # Auto-inject Foundry-Features for toolbox endpoints
         url = server.get("url", "")
         if "/toolboxes/" in url and "Foundry-Features" not in headers:
             headers["Foundry-Features"] = _FOUNDRY_TOOLBOX_FEATURE_HEADER
@@ -109,17 +114,311 @@ def refresh_mcp_auth(servers: Dict[str, Any], credential: Any) -> None:
             headers["Authorization"] = f"Bearer {token}"
 
 
-def make_sdk_safe_mcp_config(servers: Dict[str, Any]) -> Dict[str, Any]:
-    """Return a deep copy of *servers* with internal flags stripped.
+# ---------------------------------------------------------------------------
+# Tool name sanitisation
+# ---------------------------------------------------------------------------
 
-    The Copilot SDK does not understand ``_auto_auth`` or other internal
-    flags (keys starting with ``_``).  This helper produces a clean copy
-    safe for ``create_session(**sdk_config)``.
+def _sanitize_tool_name(name: str) -> str:
+    """Make a tool name safe for the Copilot SDK / LLM function-call API.
+
+    Replaces dots, hyphens, and other non-alphanumeric/underscore characters
+    with underscores, then strips the common ``FoundryMCPServerpreview.``
+    prefix to keep names short and readable.
     """
-    clean = copy.deepcopy(servers)
-    for server in clean.values():
-        headers = server.get("headers", {})
-        # Remove all internal flags
-        for key in [k for k in headers if k.startswith("_")]:
-            del headers[key]
-    return clean
+    # Strip the verbose server prefix
+    name = re.sub(r"^FoundryMCPServerpreview\.", "", name)
+    # Also strip any other "ServerName." prefix pattern
+    name = re.sub(r"^[A-Za-z0-9]+\.", "", name)
+    # Replace invalid chars with underscores
+    return re.sub(r"[^a-zA-Z0-9_]", "_", name)
+
+
+# ---------------------------------------------------------------------------
+# MCP Bridge — HTTP JSON-RPC client for Foundry toolbox endpoints
+# ---------------------------------------------------------------------------
+
+class McpBridge:
+    """HTTP-based MCP client that connects to a Foundry toolbox MCP endpoint.
+
+    Handles the MCP lifecycle: ``initialize`` → ``notifications/initialized``
+    → ``tools/list`` → ``tools/call``.
+
+    When *credential* is provided, the ``Authorization`` header is refreshed
+    automatically before each ``call_tool`` request.
+    """
+
+    def __init__(self, endpoint: str, headers: Dict[str, str], credential: Any = None):
+        self._endpoint = endpoint
+        self._headers = dict(headers)
+        self._session_id: Optional[str] = None
+        self._req_id = 0
+        self._credential = credential
+
+    def _next_id(self) -> int:
+        self._req_id += 1
+        return self._req_id
+
+    def _request_headers(self) -> Dict[str, str]:
+        headers = dict(self._headers)
+        if self._credential:
+            try:
+                token = self._credential.get_token(_FOUNDRY_SCOPE).token
+                headers["Authorization"] = f"Bearer {token}"
+            except Exception:
+                logger.warning("Failed to refresh token for MCP bridge", exc_info=True)
+        if self._session_id:
+            headers["mcp-session-id"] = self._session_id
+        return headers
+
+    async def initialize(self) -> str:
+        """Send MCP ``initialize`` + ``notifications/initialized``.
+
+        :returns: The server name from the MCP ``initialize`` response.
+        """
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            resp = await client.post(
+                self._endpoint,
+                headers=self._headers,
+                json={
+                    "jsonrpc": "2.0",
+                    "id": self._next_id(),
+                    "method": "initialize",
+                    "params": {
+                        "protocolVersion": "2025-03-26",
+                        "capabilities": {},
+                        "clientInfo": {
+                            "name": "agentserver-toolbox-bridge",
+                            "version": "1.0.0",
+                        },
+                    },
+                },
+            )
+            resp.raise_for_status()
+            data = resp.json()
+            self._session_id = resp.headers.get("mcp-session-id")
+
+            # Send initialized notification
+            await client.post(
+                self._endpoint,
+                headers=self._request_headers(),
+                json={"jsonrpc": "2.0", "method": "notifications/initialized"},
+            )
+
+        return (
+            data.get("result", {}).get("serverInfo", {}).get("name", "unknown")
+        )
+
+    async def list_tools(self) -> List[Dict[str, Any]]:
+        """Call ``tools/list`` and return the tools array."""
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            resp = await client.post(
+                self._endpoint,
+                headers=self._request_headers(),
+                json={
+                    "jsonrpc": "2.0",
+                    "id": self._next_id(),
+                    "method": "tools/list",
+                    "params": {},
+                },
+            )
+            resp.raise_for_status()
+            return resp.json().get("result", {}).get("tools", [])
+
+    async def call_tool(self, name: str, arguments: Dict[str, Any]) -> str:
+        """Call ``tools/call`` and return the text result.
+
+        :param name: The original MCP tool name (not sanitised).
+        :param arguments: Tool arguments dict.
+        :returns: Formatted text result.
+        """
+        logger.info("MCP tools/call: %s args=%s", name, list(arguments.keys()))
+        async with httpx.AsyncClient(timeout=60.0) as client:
+            resp = await client.post(
+                self._endpoint,
+                headers=self._request_headers(),
+                json={
+                    "jsonrpc": "2.0",
+                    "id": self._next_id(),
+                    "method": "tools/call",
+                    "params": {"name": name, "arguments": arguments},
+                },
+            )
+            resp.raise_for_status()
+            data = resp.json()
+        if "error" in data:
+            err = data["error"]
+            logger.warning("MCP tools/call error for %s: %s", name, err)
+            return f"Error: {err.get('message', err)}"
+        result = data.get("result", {})
+        return _format_tool_result(result)
+
+    async def close(self) -> None:
+        """No-op — HTTP clients are created per-request to avoid event loop issues."""
+        pass
+
+
+# ---------------------------------------------------------------------------
+# Result formatting
+# ---------------------------------------------------------------------------
+
+def _format_tool_result(result: Dict[str, Any]) -> str:
+    """Extract text from an MCP ``tools/call`` result."""
+    content = result.get("content", [])
+    texts = [
+        c.get("text", "")
+        for c in content
+        if isinstance(c, dict) and c.get("type") == "text"
+    ]
+    base_text = "\n".join(t for t in texts if t).strip()
+
+    # Append citation metadata when present (Azure AI Search pattern)
+    citations = _extract_citations(result)
+    if not citations:
+        return base_text or json.dumps(result)
+
+    lines = ["", "Sources:"]
+    for idx, c in enumerate(citations, start=1):
+        title = c.get("title", "source")
+        url = c.get("url", "")
+        score = c.get("score")
+        if score is not None:
+            lines.append(f"{idx}. {title} (score: {score})")
+        else:
+            lines.append(f"{idx}. {title}")
+        if url:
+            lines.append(f"   {url}")
+
+    citation_block = "\n".join(lines)
+    if base_text:
+        return f"{base_text}\n{citation_block}"
+    return citation_block.lstrip()
+
+
+def _extract_citations(result: Dict[str, Any]) -> List[Dict[str, Any]]:
+    """Extract citation metadata from ``structuredContent.documents[]``."""
+    structured = result.get("structuredContent")
+    if not isinstance(structured, dict):
+        return []
+    docs = structured.get("documents")
+    if not isinstance(docs, list):
+        return []
+
+    citations: List[Dict[str, Any]] = []
+    for doc in docs:
+        if not isinstance(doc, dict):
+            continue
+        citations.append({
+            "title": doc.get("title") or doc.get("id") or "source",
+            "url": doc.get("url"),
+            "score": doc.get("score"),
+        })
+    return citations
+
+
+# ---------------------------------------------------------------------------
+# Copilot SDK Tool wrappers
+# ---------------------------------------------------------------------------
+
+def _make_copilot_tools(bridge: McpBridge, mcp_tools: List[Dict[str, Any]]) -> List[Tool]:
+    """Convert MCP tool definitions into Copilot SDK ``Tool`` objects.
+
+    Tool names are sanitised (stripped of server prefixes, dots/hyphens →
+    underscores) because the Copilot API rejects names with those characters.
+    The original MCP name is preserved for the ``tools/call`` RPC.
+    """
+    tools = []
+    seen_names: Dict[str, int] = {}
+
+    for mcp_tool in mcp_tools:
+        mcp_name = mcp_tool["name"]
+        sdk_name = _sanitize_tool_name(mcp_name)
+
+        # Deduplicate names (e.g. two servers with same tool base name)
+        if sdk_name in seen_names:
+            seen_names[sdk_name] += 1
+            sdk_name = f"{sdk_name}_{seen_names[sdk_name]}"
+        else:
+            seen_names[sdk_name] = 0
+
+        desc = mcp_tool.get("description", f"MCP tool: {mcp_name}")
+        schema = mcp_tool.get("inputSchema", {"type": "object", "properties": {}})
+
+        def _make_handler(original_name: str):
+            async def async_handler(invocation):
+                args = getattr(invocation, "arguments", None) or {}
+                if not isinstance(args, dict):
+                    args = {}
+                try:
+                    result_text = await bridge.call_tool(original_name, args)
+                    return ToolResult(text_result_for_llm=result_text)
+                except Exception as e:
+                    logger.warning("Tool %s failed: %s", original_name, e)
+                    return ToolResult(
+                        text_result_for_llm=f"Error calling {original_name}: {e}",
+                        result_type="failure",
+                        error=str(e),
+                    )
+
+            return async_handler
+
+        tools.append(Tool(
+            name=sdk_name,
+            description=desc,
+            parameters=schema,
+            handler=_make_handler(mcp_name),
+        ))
+
+    return tools
+
+
+# ---------------------------------------------------------------------------
+# High-level: connect to toolbox and return SDK tools
+# ---------------------------------------------------------------------------
+
+async def connect_toolbox(
+    endpoint: str,
+    headers: Optional[Dict[str, str]] = None,
+    credential: Any = None,
+    name: Optional[str] = None,
+) -> tuple["McpBridge", List[Tool]]:
+    """Connect to a Foundry toolbox MCP endpoint and return SDK-ready tools.
+
+    1. Builds auth headers from *headers* or *credential*
+    2. Initialises the MCP session
+    3. Discovers tools via ``tools/list``
+    4. Creates Copilot SDK ``Tool`` wrappers
+
+    :param endpoint: Toolbox MCP endpoint URL.
+    :param headers: Pre-built headers dict (including Authorization).
+    :param credential: Azure credential with ``get_token()`` method (used
+        when *headers* is not provided or has no Authorization).
+    :param name: Display name for logging.
+    :returns: ``(bridge, tools)`` — caller must ``await bridge.close()`` on shutdown.
+    """
+    h = dict(headers or {})
+    h.setdefault("Content-Type", "application/json")
+
+    # Auto-inject auth from credential if not already set
+    if "Authorization" not in h and credential is not None:
+        token = credential.get_token(_FOUNDRY_SCOPE).token
+        h["Authorization"] = f"Bearer {token}"
+
+    # Auto-inject toolbox feature header
+    if "/toolboxes/" in endpoint:
+        h.setdefault("Foundry-Features", _FOUNDRY_TOOLBOX_FEATURE_HEADER)
+
+    bridge = McpBridge(endpoint, h, credential=credential)
+    server_name = await bridge.initialize()
+    mcp_tools = await bridge.list_tools()
+    sdk_tools = _make_copilot_tools(bridge, mcp_tools)
+
+    display = name or server_name
+    logger.info(
+        "Toolbox '%s' connected: %d tools discovered (%s)",
+        display,
+        len(sdk_tools),
+        ", ".join(t.name for t in sdk_tools[:10])
+        + ("..." if len(sdk_tools) > 10 else ""),
+    )
+
+    return bridge, sdk_tools

@@ -44,7 +44,7 @@ from azure.ai.agentserver.responses.models import (
 )
 
 from ._tool_acl import ToolAcl
-from ._toolbox import discover_mcp_servers, make_sdk_safe_mcp_config, refresh_mcp_auth
+from ._toolbox import connect_toolbox, discover_mcp_servers
 
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
@@ -273,17 +273,12 @@ class CopilotAdapter:
         self._server: Optional[ResponsesAgentServerHost] = None
 
     def _refresh_token_if_needed(self) -> Dict[str, Any]:
-        """Return the session config, refreshing tokens for BYOK and MCP servers."""
+        """Return the session config, refreshing tokens for BYOK provider."""
         if self._credential is not None:
             # Refresh BYOK provider token
             if "provider" in self._session_config:
                 token = self._credential.get_token(_COGNITIVE_SERVICES_SCOPE).token
                 self._session_config["provider"]["bearer_token"] = token
-
-            # Refresh MCP server auth headers (toolbox endpoints use Foundry scope)
-            mcp_servers = self._session_config.get("mcp_servers")
-            if mcp_servers:
-                refresh_mcp_auth(mcp_servers, self._credential)
 
         return self._session_config
 
@@ -328,21 +323,9 @@ class CopilotAdapter:
         # automatically — no need to pass them as separate kwargs.
         sdk_config = {k: v for k, v in config.items() if not k.startswith("_") and v is not None}
 
-        # Deep-copy MCP servers and strip internal flags so we never mutate
-        # the canonical _session_config (needed for future token refreshes).
-        if "mcp_servers" in sdk_config:
-            sdk_config["mcp_servers"] = make_sdk_safe_mcp_config(sdk_config["mcp_servers"])
-            logger.info(
-                "Passing %d MCP server(s) to create_session: %s",
-                len(sdk_config["mcp_servers"]),
-                list(sdk_config["mcp_servers"].keys()),
-            )
-            for name, server in sdk_config["mcp_servers"].items():
-                logger.debug(
-                    "  MCP server %r: type=%s, url=%s, tools=%s, headers=%s",
-                    name, server.get("type"), server.get("url"),
-                    server.get("tools"), list(server.get("headers", {}).keys()),
-                )
+        # MCP servers are no longer passed to the SDK — toolbox tools are
+        # registered as regular custom tools via the McpBridge approach.
+        sdk_config.pop("mcp_servers", None)
 
         session = await client.create_session(
             **sdk_config,
@@ -508,6 +491,11 @@ class CopilotAdapter:
                             logger.info(f"Copilot #{event_count:03d}: MCP server {srv_name!r} {srv_status}")
                 elif "REASONING" in event_name:
                     logger.info(f"Copilot #{event_count:03d}: {event_name} len={len(getattr(data, 'delta_content', '') or getattr(data, 'reasoning_text', '') or '')}")
+                elif event_name == "EXTERNAL_TOOL_REQUESTED" and data:
+                    req_id = getattr(data, "request_id", "?")
+                    tool = getattr(data, "tool_name", "?")
+                    args = str(getattr(data, "arguments", ""))[:300]
+                    logger.info(f"Copilot #{event_count:03d}: {event_name} request_id={req_id!r} tool_name={tool!r} args={args}")
                 elif event_text:
                     logger.info(f"Copilot #{event_count:03d}: {event_name} len={len(event_text)}")
                 else:
@@ -689,6 +677,9 @@ class GitHubCopilotAdapter(CopilotAdapter):
         super().__init__(**kwargs)
         root = pathlib.Path(project_root or os.getcwd())
 
+        # Track MCP bridges for cleanup
+        self._toolbox_bridges: list = []
+
         # Skill discovery
         if skill_directories:
             self._session_config["skill_directories"] = skill_directories
@@ -708,14 +699,15 @@ class GitHubCopilotAdapter(CopilotAdapter):
                 self._session_config.setdefault("tools", []).extend(discovered_tools)
                 logger.info("Discovered %d tools from .github/tools/", len(discovered_tools))
 
-        # MCP toolbox discovery — load from mcp.json and/or explicit endpoint
+        # MCP toolbox discovery — find endpoints from mcp.json and/or explicit param.
+        # Servers are stored in _session_config["mcp_servers"] so that
+        # connect_toolboxes() can iterate them later during async init.
         if "mcp_servers" not in self._session_config:
             mcp_servers = discover_mcp_servers(root, toolbox_endpoint=toolbox_endpoint)
             if mcp_servers:
                 self._session_config["mcp_servers"] = mcp_servers
 
-        # Ensure credential is available for MCP auto-auth (discovery happens
-        # after super().__init__, so the credential check needs to run again).
+        # Ensure credential is available for toolbox auth
         if self._credential is None and self._session_config.get("mcp_servers"):
             needs_auth = any(
                 s.get("headers", {}).get("_auto_auth")
@@ -763,8 +755,49 @@ class GitHubCopilotAdapter(CopilotAdapter):
         root = pathlib.Path(project_path).resolve()
         return cls(project_root=str(root), **kwargs)
 
+    async def connect_toolboxes(self):
+        """Connect to toolbox MCP servers and register their tools.
+
+        Iterates over servers discovered at ``__init__`` time, connects to each
+        via :func:`connect_toolbox`, and appends the resulting SDK ``Tool``
+        objects to the session config.  Each :class:`McpBridge` is stored on
+        ``self._toolbox_bridges`` for lifecycle management.
+        """
+        mcp_servers = self._session_config.get("mcp_servers")
+        if not mcp_servers:
+            return
+
+        for name, server_cfg in list(mcp_servers.items()):
+            url = server_cfg.get("url")
+            if not url:
+                continue
+
+            headers = dict(server_cfg.get("headers", {}))
+
+            # Resolve auto-auth token
+            if headers.pop("_auto_auth", None) and self._credential:
+                try:
+                    token = self._credential.get_token("https://ai.azure.com/.default").token
+                    headers["Authorization"] = f"Bearer {token}"
+                except Exception:
+                    logger.warning("Failed to acquire token for toolbox %r", name, exc_info=True)
+                    continue
+
+            try:
+                bridge, tools = await connect_toolbox(
+                    url, headers=headers, credential=self._credential, name=name,
+                )
+                self._toolbox_bridges.append(bridge)
+                self._session_config.setdefault("tools", []).extend(tools)
+                logger.info(
+                    "Connected toolbox %r: %d tools registered",
+                    name, len(tools),
+                )
+            except Exception:
+                logger.warning("Failed to connect toolbox %r at %s", name, url, exc_info=True)
+
     async def initialize(self):
-        """Discover deployments and configure the model and wire API at startup.
+        """Discover deployments, configure the model, and connect toolboxes.
 
         Call after construction and before ``run()``.  Discovery always runs
         to validate the configured model against available deployments and to
@@ -772,10 +805,16 @@ class GitHubCopilotAdapter(CopilotAdapter):
         capabilities.  If ``AZURE_AI_FOUNDRY_MODEL`` is set, the configured
         model is matched against discovered deployments; if not found, the
         best available model is auto-selected.
+
+        Also connects to any discovered MCP toolbox servers and registers
+        their tools as regular SDK custom tools.
         """
+        # Connect toolbox MCP servers (independent of model discovery)
+        await self.connect_toolboxes()
+
         resource_url = self._session_config.get("_foundry_resource_url")
         if not resource_url:
-            return  # Not using Foundry models — nothing to discover
+            return  # Not using Foundry models — nothing more to discover
 
         configured_model = self._session_config.get("model")
         logger.info(
@@ -977,8 +1016,7 @@ class GitHubCopilotAdapter(CopilotAdapter):
                 client = await self._ensure_client()
                 config = self._refresh_token_if_needed()
                 sdk_config = {k: v for k, v in config.items() if not k.startswith("_") and v is not None}
-                if "mcp_servers" in sdk_config:
-                    sdk_config["mcp_servers"] = make_sdk_safe_mcp_config(sdk_config["mcp_servers"])
+                sdk_config.pop("mcp_servers", None)
                 session = await client.create_session(
                     **sdk_config,
                     on_permission_request=self._make_permission_handler(),
