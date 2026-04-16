@@ -55,17 +55,10 @@ class RetentionPolicy(GeneratedRetentionPolicy):
         All data older than this value will be deleted.
     """
 
-    enabled: bool = False
-    """Indicates whether a retention policy is enabled for the storage service."""
-    days: Optional[int] = None
-    """Indicates the number of days that metrics or logging or soft-deleted data should be retained.
-        All data older than this value will be deleted."""
-
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
-        self.enabled = enabled
-        self.days = days
-        if self.enabled and (self.days is None):
+        if enabled and days is None:
             raise ValueError("If policy is enabled, 'days' must be specified.")
+        super().__init__(enabled=enabled, days=days)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -93,20 +86,13 @@ class Metrics(GeneratedMetrics):
         Determines how long the associated data should persist.
     """
 
-    version: str = "1.0"
-    """The version of Storage Analytics to configure."""
-    enabled: bool = False
-    """Indicates whether metrics are enabled for the File service."""
-    include_apis: bool
-    """Indicates whether metrics should generate summary statistics for called API operations."""
-    retention_policy: RetentionPolicy = RetentionPolicy()
-    """Determines how long the associated data should persist."""
-
     def __init__(self, **kwargs: Any) -> None:
-        self.version = kwargs.get("version", "1.0")
-        self.enabled = kwargs.get("enabled", False)
-        self.include_apis = kwargs.get("include_apis")  # type: ignore [assignment]
-        self.retention_policy = kwargs.get("retention_policy") or RetentionPolicy()
+        super().__init__(
+            version=kwargs.get("version", "1.0"),
+            enabled=kwargs.get("enabled", False),
+            include_apis=kwargs.get("include_apis"),
+            retention_policy=kwargs.get("retention_policy") or RetentionPolicy(),
+        )
 
     @classmethod
     def _from_generated(cls, generated):
@@ -152,27 +138,14 @@ class CorsRule(GeneratedCorsRule):
         preflight response.
     """
 
-    allowed_origins: str
-    """The comma-delimited string representation of the list of origin domains
-        that will be allowed via CORS, or "*" to allow all domains."""
-    allowed_methods: str
-    """The comma-delimited string representation of the list of HTTP methods
-        that are allowed to be executed by the origin."""
-    allowed_headers: str
-    """The comma-delimited string representation of the list of headers
-        allowed to be a part of the cross-origin request."""
-    exposed_headers: str
-    """The comma-delimited string representation of the list of response
-        headers to expose to CORS clients."""
-    max_age_in_seconds: int
-    """The number of seconds that the client/browser should cache a pre-flight response."""
-
     def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
-        self.allowed_origins = ",".join(allowed_origins)
-        self.allowed_methods = ",".join(allowed_methods)
-        self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
-        self.exposed_headers = ",".join(kwargs.get("exposed_headers", []))
-        self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
+        super().__init__(
+            allowed_origins=",".join(allowed_origins),
+            allowed_methods=",".join(allowed_methods),
+            allowed_headers=",".join(kwargs.get("allowed_headers", [])),
+            exposed_headers=",".join(kwargs.get("exposed_headers", [])),
+            max_age_in_seconds=kwargs.get("max_age_in_seconds", 0),
+        )
 
     @staticmethod
     def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
@@ -209,11 +182,8 @@ class SmbMultichannel(GeneratedSmbMultichannel):
     :keyword bool enabled: If SMB Multichannel is enabled.
     """
 
-    enabled: bool
-    """If SMB Multichannel is enabled."""
-
     def __init__(self, *, enabled: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
-        self.enabled = enabled
+        super().__init__(enabled=enabled)
 
 
 class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
@@ -222,11 +192,8 @@ class SmbEncryptionInTransit(GeneratedSmbEncryptionInTransit):
     :keyword bool required: If encryption in transit is required.
     """
 
-    required: bool
-    """If encryption in transit is enabled."""
-
     def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
-        self.required = required
+        super().__init__(required=required)
 
 
 class ShareSmbSettings(GeneratedShareSmbSettings):
@@ -236,22 +203,16 @@ class ShareSmbSettings(GeneratedShareSmbSettings):
     :keyword SmbEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
     """
 
-    multichannel: Optional[SmbMultichannel]
-    """Sets the multichannel settings."""
-    encryption_in_transit: Optional[SmbEncryptionInTransit]
-    """Sets the encryption in transit settings."""
-
     def __init__(
-        self,  # pylint: disable=unused-argument
+        self,
         *,
         multichannel: Optional[SmbMultichannel] = None,
         encryption_in_transit: Optional[SmbEncryptionInTransit] = None,
-        **kwargs: Any
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
-        self.multichannel = multichannel
-        self.encryption_in_transit = encryption_in_transit
-        if self.multichannel is None and self.encryption_in_transit is None:
+        if multichannel is None and encryption_in_transit is None:
             raise ValueError("The value 'multichannel' or 'encryption_in_transit' must be specified.")
+        super().__init__(multichannel=multichannel, encryption_in_transit=encryption_in_transit)
 
 
 class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
@@ -260,11 +221,8 @@ class NfsEncryptionInTransit(GeneratedNfsEncryptionInTransit):
     :keyword bool required: If encryption in transit is required.
     """
 
-    required: bool
-    """If encryption in transit is enabled."""
-
     def __init__(self, *, required: bool, **kwargs: Any) -> None:  # pylint: disable=unused-argument
-        self.required = required
+        super().__init__(required=required)
 
 
 class ShareNfsSettings(GeneratedShareNfsSettings):
@@ -273,13 +231,10 @@ class ShareNfsSettings(GeneratedShareNfsSettings):
     :keyword NfsEncryptionInTransit encryption_in_transit: Sets the encryption in transit settings.
     """
 
-    encryption_in_transit: NfsEncryptionInTransit
-    """Sets the encryption in transit settings."""
-
     def __init__(
         self, *, encryption_in_transit: NfsEncryptionInTransit, **kwargs: Any  # pylint: disable=unused-argument
     ) -> None:
-        self.encryption_in_transit = encryption_in_transit
+        super().__init__(encryption_in_transit=encryption_in_transit)
 
 
 class ShareProtocolSettings(GeneratedShareProtocolSettings):
@@ -291,22 +246,16 @@ class ShareProtocolSettings(GeneratedShareProtocolSettings):
     :keyword ShareNfsSettings nfs: Sets NFS settings.
     """
 
-    smb: Optional[ShareSmbSettings]
-    """Sets the SMB settings."""
-    nfs: Optional[ShareNfsSettings]
-    """Sets the NFS settings."""
-
     def __init__(
-        self,  # pylint: disable=unused-argument
+        self,
         *,
         smb: Optional[ShareSmbSettings] = None,
         nfs: Optional[ShareNfsSettings] = None,
-        **kwargs: Any
+        **kwargs: Any,  # pylint: disable=unused-argument
     ) -> None:
-        self.smb = smb
-        self.nfs = nfs
-        if self.smb is None and self.nfs is None:
+        if smb is None and nfs is None:
             raise ValueError("The value 'smb' or 'nfs' must be specified.")
+        super().__init__(smb=smb, nfs=nfs)
 
     @classmethod
     def _from_generated(cls, generated):
@@ -434,23 +383,13 @@ class AccessPolicy(GenAccessPolicy):
     :type start: ~datetime.datetime or str
     """
 
-    permission: Optional[Union[ShareSasPermissions, str]]  # type: ignore [assignment]
-    """The permissions associated with the shared access signature. The user is restricted to
-        operations allowed by the permissions."""
-    expiry: Optional[Union["datetime", str]]  # type: ignore [assignment]
-    """The time at which the shared access signature becomes invalid."""
-    start: Optional[Union["datetime", str]]  # type: ignore [assignment]
-    """The time at which the shared access signature becomes valid."""
-
     def __init__(
         self,
         permission: Optional[Union[ShareSasPermissions, str]] = None,
         expiry: Optional[Union["datetime", str]] = None,
         start: Optional[Union["datetime", str]] = None,
     ) -> None:
-        self.start = start
-        self.expiry = expiry
-        self.permission = permission
+        super().__init__(start=start, expiry=expiry, permission=permission)
 
 
 class LeaseProperties(DictMixin):
