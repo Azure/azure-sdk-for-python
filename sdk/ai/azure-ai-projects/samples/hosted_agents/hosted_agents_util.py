@@ -24,7 +24,7 @@ def wait_for_agent_version_active(
     for attempt in range(max_attempts):
         time.sleep(poll_interval_seconds)
         version_details = project_client.agents.get_version(agent_name=agent_name, agent_version=agent_version)
-        status = version_details["status"]
+        status = version_details.status
 
         if logger:
             logger.debug(f"Agent version status: {status} (attempt {attempt + 1}/{max_attempts})")

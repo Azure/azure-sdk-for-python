@@ -1922,9 +1922,9 @@ def build_beta_toolboxes_create_version_request(  # pylint: disable=name-too-lon
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/toolboxes/{toolbox_name}/versions"
+    _url = "/toolboxes/{name}/versions"
     path_format_arguments = {
-        "toolbox_name": _SERIALIZER.url("name", name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1948,9 +1948,9 @@ def build_beta_toolboxes_get_request(name: str, **kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/toolboxes/{toolbox_name}"
+    _url = "/toolboxes/{name}"
     path_format_arguments = {
-        "toolbox_name": _SERIALIZER.url("name", name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -2014,9 +2014,9 @@ def build_beta_toolboxes_list_versions_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/toolboxes/{toolbox_name}/versions"
+    _url = "/toolboxes/{name}/versions"
     path_format_arguments = {
-        "toolbox_name": _SERIALIZER.url("name", name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -2046,9 +2046,9 @@ def build_beta_toolboxes_get_version_request(name: str, version: str, **kwargs: 
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/toolboxes/{toolbox_name}/versions/{version}"
+    _url = "/toolboxes/{name}/versions/{version}"
     path_format_arguments = {
-        "toolbox_name": _SERIALIZER.url("name", name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
         "version": _SERIALIZER.url("version", version, "str"),
     }
 
@@ -2072,9 +2072,9 @@ def build_beta_toolboxes_update_request(name: str, **kwargs: Any) -> HttpRequest
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/toolboxes/{toolbox_name}"
+    _url = "/toolboxes/{name}"
     path_format_arguments = {
-        "toolbox_name": _SERIALIZER.url("name", name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -2095,9 +2095,9 @@ def build_beta_toolboxes_delete_request(name: str, **kwargs: Any) -> HttpRequest
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     # Construct URL
-    _url = "/toolboxes/{toolbox_name}"
+    _url = "/toolboxes/{name}"
     path_format_arguments = {
-        "toolbox_name": _SERIALIZER.url("name", name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -2115,9 +2115,9 @@ def build_beta_toolboxes_delete_version_request(  # pylint: disable=name-too-lon
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     # Construct URL
-    _url = "/toolboxes/{toolbox_name}/versions/{version}"
+    _url = "/toolboxes/{name}/versions/{version}"
     path_format_arguments = {
-        "toolbox_name": _SERIALIZER.url("name", name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
         "version": _SERIALIZER.url("version", version, "str"),
     }
 
@@ -2180,9 +2180,9 @@ def build_beta_skills_get_request(name: str, **kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/skills/{skill_name}"
+    _url = "/skills/{name}"
     path_format_arguments = {
-        "skill_name": _SERIALIZER.url("name", name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -2204,9 +2204,9 @@ def build_beta_skills_download_request(name: str, **kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/zip")
 
     # Construct URL
-    _url = "/skills/{skill_name}:download"
+    _url = "/skills/{name}:download"
     path_format_arguments = {
-        "skill_name": _SERIALIZER.url("name", name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -2263,9 +2263,9 @@ def build_beta_skills_update_request(name: str, **kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/skills/{skill_name}"
+    _url = "/skills/{name}"
     path_format_arguments = {
-        "skill_name": _SERIALIZER.url("name", name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -2289,9 +2289,9 @@ def build_beta_skills_delete_request(name: str, **kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/skills/{skill_name}"
+    _url = "/skills/{name}"
     path_format_arguments = {
-        "skill_name": _SERIALIZER.url("name", name, "str"),
+        "name": _SERIALIZER.url("name", name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore

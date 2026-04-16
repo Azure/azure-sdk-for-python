@@ -131,6 +131,21 @@ class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Session TTL exceeded (30 days from last activity)."""
 
 
+class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning status of an agent version."""
+
+    CREATING = "creating"
+    """The agent version is being provisioned."""
+    ACTIVE = "active"
+    """The agent version is active and ready to serve requests."""
+    FAILED = "failed"
+    """The agent version provisioning failed."""
+    DELETING = "deleting"
+    """The agent version is being deleted."""
+    DELETED = "deleted"
+    """The agent version has been deleted."""
+
+
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Strategies for attacks."""
 

@@ -873,6 +873,10 @@ class AgentVersionDetails(_Model):
     :vartype created_at: ~datetime.datetime
     :ivar definition: Required.
     :vartype definition: ~azure.ai.projects.models.AgentDefinition
+    :ivar status: The provisioning status of the agent version. Defaults to 'active' for non-hosted
+     agents. For hosted agents, reflects infrastructure readiness. Known values are: "creating",
+     "active", "failed", "deleting", and "deleted".
+    :vartype status: str or ~azure.ai.projects.models.AgentVersionStatus
     :ivar instance_identity: The instance identity of the agent.
     :vartype instance_identity: ~azure.ai.projects.models.AgentIdentity
     :ivar blueprint: The blueprint for the agent.
@@ -909,6 +913,12 @@ class AgentVersionDetails(_Model):
     """The Unix timestamp (seconds) when the agent was created. Required."""
     definition: "_models.AgentDefinition" = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Required."""
+    status: Optional[Union[str, "_models.AgentVersionStatus"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The provisioning status of the agent version. Defaults to 'active' for non-hosted agents. For
+     hosted agents, reflects infrastructure readiness. Known values are: \"creating\", \"active\",
+     \"failed\", \"deleting\", and \"deleted\"."""
     instance_identity: Optional["_models.AgentIdentity"] = rest_field(visibility=["read"])
     """The instance identity of the agent."""
     blueprint: Optional["_models.AgentIdentity"] = rest_field(visibility=["read"])
@@ -930,6 +940,7 @@ class AgentVersionDetails(_Model):
         created_at: datetime.datetime,
         definition: "_models.AgentDefinition",
         description: Optional[str] = None,
+        status: Optional[Union[str, "_models.AgentVersionStatus"]] = None,
     ) -> None: ...
 
     @overload
