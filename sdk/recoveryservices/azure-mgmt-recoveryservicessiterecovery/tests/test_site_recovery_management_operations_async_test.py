@@ -6,24 +6,24 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.recoveryservicessiterecovery import SiteRecoveryManagementClient
+from azure.mgmt.recoveryservicessiterecovery.aio import SiteRecoveryManagementClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.live_test_only
-class TestSiteRecoveryManagementReplicationRecoveryPlansOperations(AzureMgmtRecordedTestCase):
+class TestSiteRecoveryManagementOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(SiteRecoveryManagementClient)
+        self.client = self.create_mgmt_client(SiteRecoveryManagementClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_replication_recovery_plans_list(self, resource_group):
-        response = self.client.replication_recovery_plans.list(
+    @recorded_by_proxy_async
+    async def test_operations_list(self, resource_group):
+        response = self.client.operations.list(
             resource_group_name=resource_group.name,
-            resource_name="str",
         )
-        result = [r for r in response]
+        result = [r async for r in response]
         assert len(result)
