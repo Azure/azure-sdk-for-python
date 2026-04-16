@@ -17,43 +17,6 @@ if TYPE_CHECKING:
     from .. import models as _models
 
 
-class AuthenticationTokenSettings(_Model):
-    """The settings for an authentication token that the Task can use to perform Batch service
-    operations.
-
-    :ivar access: The Batch resources to which the token grants access. The authentication token
-     grants access to a limited set of Batch service operations. Currently the only supported value
-     for the access property is 'job', which grants access to all operations related to the Job
-     which contains the Task.
-    :vartype access: list[str or ~azure.batch.models.BatchAccessScope]
-    """
-
-    access: Optional[list[Union[str, "_models.BatchAccessScope"]]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The Batch resources to which the token grants access. The authentication token grants access to
-     a limited set of Batch service operations. Currently the only supported value for the access
-     property is 'job', which grants access to all operations related to the Job which contains the
-     Task."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        access: Optional[list[Union[str, "_models.BatchAccessScope"]]] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
-
-
 class AutomaticOsUpgradePolicy(_Model):
     """The configuration parameters used for performing automatic OS upgrade.
 
@@ -1163,7 +1126,7 @@ class BatchJobConstraints(_Model):
      time the Job is created. If the Job does not complete within the time limit, the Batch service
      terminates it and any Tasks that are still running. In this case, the termination reason will
      be MaxWallClockTimeExpiry. If this property is not specified, there is no time limit on how
-     long the Job may run.
+     long the Job may run. The time duration is specified in ISO 8601 format.
     :vartype max_wall_clock_time: ~datetime.timedelta
     :ivar max_task_retry_count: The maximum number of times each Task may be retried. The Batch
      service retries a Task if its exit code is nonzero. Note that this value specifically controls
@@ -1181,7 +1144,8 @@ class BatchJobConstraints(_Model):
     """The maximum elapsed time that the Job may run, measured from the time the Job is created. If
      the Job does not complete within the time limit, the Batch service terminates it and any Tasks
      that are still running. In this case, the termination reason will be MaxWallClockTimeExpiry. If
-     this property is not specified, there is no time limit on how long the Job may run."""
+     this property is not specified, there is no time limit on how long the Job may run. The time
+     duration is specified in ISO 8601 format."""
     max_task_retry_count: Optional[int] = rest_field(
         name="maxTaskRetryCount", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1646,15 +1610,6 @@ class BatchJobManagerTask(_Model):
      download failed, the Task fails.
     :vartype application_package_references:
      list[~azure.batch.models.BatchApplicationPackageReference]
-    :ivar authentication_token_settings: The settings for an authentication token that the Task can
-     use to perform Batch service operations. If this property is set, the Batch service provides
-     the Task with an authentication token which can be used to authenticate Batch service
-     operations without requiring an Account access key. The token is provided via the
-     AZ_BATCH_AUTHENTICATION_TOKEN environment variable. The operations that the Task can carry out
-     using the token depend on the settings. For example, a Task can request Job permissions in
-     order to add other Tasks to the Job, or check the status of the Job or of other Tasks under the
-     Job.
-    :vartype authentication_token_settings: ~azure.batch.models.AuthenticationTokenSettings
     :ivar allow_low_priority_node: Whether the Job Manager Task may run on a Spot/Low-priority
      Compute Node. The default value is true.
     :vartype allow_low_priority_node: bool
@@ -1754,16 +1709,6 @@ class BatchJobManagerTask(_Model):
      already on the Compute Node, and is up to date, then it is not re-downloaded; the existing copy
      on the Compute Node is used. If a referenced Application Package cannot be installed, for
      example because the package has been deleted or because download failed, the Task fails."""
-    authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = rest_field(
-        name="authenticationTokenSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The settings for an authentication token that the Task can use to perform Batch service
-     operations. If this property is set, the Batch service provides the Task with an authentication
-     token which can be used to authenticate Batch service operations without requiring an Account
-     access key. The token is provided via the AZ_BATCH_AUTHENTICATION_TOKEN environment variable.
-     The operations that the Task can carry out using the token depend on the settings. For example,
-     a Task can request Job permissions in order to add other Tasks to the Job, or check the status
-     of the Job or of other Tasks under the Job."""
     allow_low_priority_node: Optional[bool] = rest_field(
         name="allowLowPriorityNode", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -1787,7 +1732,6 @@ class BatchJobManagerTask(_Model):
         user_identity: Optional["_models.UserIdentity"] = None,
         run_exclusive: Optional[bool] = None,
         application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = None,
-        authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = None,
         allow_low_priority_node: Optional[bool] = None,
     ) -> None: ...
 
@@ -2318,11 +2262,13 @@ class BatchJobReleaseTask(_Model):
      within the time limit, the Batch service terminates it. The default value is 15 minutes. You
      may not specify a timeout longer than 15 minutes. If you do, the Batch service rejects it with
      an error; if you are calling the REST API directly, the HTTP status code is 400 (Bad Request).
+     The time duration is specified in ISO 8601 format.
     :vartype max_wall_clock_time: ~datetime.timedelta
     :ivar retention_time: The minimum time to retain the Task directory for the Job Release Task on
      the Compute Node. After this time, the Batch service may delete the Task directory and all its
      contents. The default is 7 days, i.e. the Task directory will be retained for 7 days unless the
-     Compute Node is removed or the Job is deleted.
+     Compute Node is removed or the Job is deleted. The time duration is specified in ISO 8601
+     format.
     :vartype retention_time: ~datetime.timedelta
     :ivar user_identity: The user identity under which the Job Release Task runs. If omitted, the
      Task runs as a non-administrative user unique to the Task.
@@ -2376,14 +2322,15 @@ class BatchJobReleaseTask(_Model):
      from the time the Task starts. If the Task does not complete within the time limit, the Batch
      service terminates it. The default value is 15 minutes. You may not specify a timeout longer
      than 15 minutes. If you do, the Batch service rejects it with an error; if you are calling the
-     REST API directly, the HTTP status code is 400 (Bad Request)."""
+     REST API directly, the HTTP status code is 400 (Bad Request). The time duration is specified in
+     ISO 8601 format."""
     retention_time: Optional[datetime.timedelta] = rest_field(
         name="retentionTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """The minimum time to retain the Task directory for the Job Release Task on the Compute Node.
      After this time, the Batch service may delete the Task directory and all its contents. The
      default is 7 days, i.e. the Task directory will be retained for 7 days unless the Compute Node
-     is removed or the Job is deleted."""
+     is removed or the Job is deleted. The time duration is specified in ISO 8601 format."""
     user_identity: Optional["_models.UserIdentity"] = rest_field(
         name="userIdentity", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2677,7 +2624,7 @@ class BatchJobScheduleConfiguration(_Model):
      that is 'due' in one recurrenceInterval is not carried forward into the next recurrence
      interval. The default is infinite. The minimum value is 1 minute. If you specify a lower value,
      the Batch service rejects the schedule with an error; if you are calling the REST API directly,
-     the HTTP status code is 400 (Bad Request).
+     the HTTP status code is 400 (Bad Request). The time duration is specified in ISO 8601 format.
     :vartype start_window: ~datetime.timedelta
     :ivar recurrence_interval: The time interval between the start times of two successive Jobs
      under the Job Schedule. A Job Schedule can have at most one active Job under it at any given
@@ -2692,7 +2639,7 @@ class BatchJobScheduleConfiguration(_Model):
      created, within the startWindow after the doNotRunUntil time, and the schedule is complete as
      soon as that Job finishes. The minimum value is 1 minute. If you specify a lower value, the
      Batch service rejects the schedule with an error; if you are calling the REST API directly, the
-     HTTP status code is 400 (Bad Request).
+     HTTP status code is 400 (Bad Request). The time duration is specified in ISO 8601 format.
     :vartype recurrence_interval: ~datetime.timedelta
     """
 
@@ -2719,7 +2666,7 @@ class BatchJobScheduleConfiguration(_Model):
      one recurrenceInterval is not carried forward into the next recurrence interval. The default is
      infinite. The minimum value is 1 minute. If you specify a lower value, the Batch service
      rejects the schedule with an error; if you are calling the REST API directly, the HTTP status
-     code is 400 (Bad Request)."""
+     code is 400 (Bad Request). The time duration is specified in ISO 8601 format."""
     recurrence_interval: Optional[datetime.timedelta] = rest_field(
         name="recurrenceInterval", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -2736,7 +2683,7 @@ class BatchJobScheduleConfiguration(_Model):
      startWindow after the doNotRunUntil time, and the schedule is complete as soon as that Job
      finishes. The minimum value is 1 minute. If you specify a lower value, the Batch service
      rejects the schedule with an error; if you are calling the REST API directly, the HTTP status
-     code is 400 (Bad Request)."""
+     code is 400 (Bad Request). The time duration is specified in ISO 8601 format."""
 
     @overload
     def __init__(
@@ -2892,16 +2839,18 @@ class BatchJobScheduleStatistics(_Model):
      limited to the range between startTime and lastUpdateTime. Required.
     :vartype last_update_time: ~datetime.datetime
     :ivar user_cpu_time: The total user mode CPU time (summed across all cores and all Compute
-     Nodes) consumed by all Tasks in all Jobs created under the schedule. Required.
+     Nodes) consumed by all Tasks in all Jobs created under the schedule. The time duration is
+     specified in ISO 8601 format. Required.
     :vartype user_cpu_time: ~datetime.timedelta
     :ivar kernel_cpu_time: The total kernel mode CPU time (summed across all cores and all Compute
-     Nodes) consumed by all Tasks in all Jobs created under the schedule. Required.
+     Nodes) consumed by all Tasks in all Jobs created under the schedule. The time duration is
+     specified in ISO 8601 format. Required.
     :vartype kernel_cpu_time: ~datetime.timedelta
     :ivar wall_clock_time: The total wall clock time of all the Tasks in all the Jobs created under
      the schedule. The wall clock time is the elapsed time from when the Task started running on a
      Compute Node to when it finished (or to the last time the statistics were updated, if the Task
      had not finished by then). If a Task was retried, this includes the wall clock time of all the
-     Task retries. Required.
+     Task retries. The time duration is specified in ISO 8601 format. Required.
     :vartype wall_clock_time: ~datetime.timedelta
     :ivar read_iops: The total number of disk read operations made by all Tasks in all Jobs created
      under the schedule. Required.
@@ -2930,7 +2879,8 @@ class BatchJobScheduleStatistics(_Model):
      wait time for a Task is defined as the elapsed time between the creation of the Task and the
      start of Task execution. (If the Task is retried due to failures, the wait time is the time to
      the most recent Task execution.). This value is only reported in the Account lifetime
-     statistics; it is not included in the Job statistics. Required.
+     statistics; it is not included in the Job statistics. The time duration is specified in ISO
+     8601 format. Required.
     :vartype wait_time: ~datetime.timedelta
     """
 
@@ -2949,20 +2899,22 @@ class BatchJobScheduleStatistics(_Model):
         name="userCPUTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """The total user mode CPU time (summed across all cores and all Compute Nodes) consumed by all
-     Tasks in all Jobs created under the schedule. Required."""
+     Tasks in all Jobs created under the schedule. The time duration is specified in ISO 8601
+     format. Required."""
     kernel_cpu_time: datetime.timedelta = rest_field(
         name="kernelCPUTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """The total kernel mode CPU time (summed across all cores and all Compute Nodes) consumed by all
-     Tasks in all Jobs created under the schedule. Required."""
+     Tasks in all Jobs created under the schedule. The time duration is specified in ISO 8601
+     format. Required."""
     wall_clock_time: datetime.timedelta = rest_field(
         name="wallClockTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """The total wall clock time of all the Tasks in all the Jobs created under the schedule. The wall
      clock time is the elapsed time from when the Task started running on a Compute Node to when it
      finished (or to the last time the statistics were updated, if the Task had not finished by
-     then). If a Task was retried, this includes the wall clock time of all the Task retries.
-     Required."""
+     then). If a Task was retried, this includes the wall clock time of all the Task retries. The
+     time duration is specified in ISO 8601 format. Required."""
     read_iops: int = rest_field(
         name="readIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
     )
@@ -3002,7 +2954,8 @@ class BatchJobScheduleStatistics(_Model):
      Task is defined as the elapsed time between the creation of the Task and the start of Task
      execution. (If the Task is retried due to failures, the wait time is the time to the most
      recent Task execution.). This value is only reported in the Account lifetime statistics; it is
-     not included in the Job statistics. Required."""
+     not included in the Job statistics. The time duration is specified in ISO 8601 format.
+     Required."""
 
     @overload
     def __init__(
@@ -3364,15 +3317,18 @@ class BatchJobStatistics(_Model):
      limited to the range between startTime and lastUpdateTime. Required.
     :vartype last_update_time: ~datetime.datetime
     :ivar user_cpu_time: The total user mode CPU time (summed across all cores and all Compute
-     Nodes) consumed by all Tasks in the Job. Required.
+     Nodes) consumed by all Tasks in the Job. The time duration is specified in ISO 8601 format.
+     Required.
     :vartype user_cpu_time: ~datetime.timedelta
     :ivar kernel_cpu_time: The total kernel mode CPU time (summed across all cores and all Compute
-     Nodes) consumed by all Tasks in the Job. Required.
+     Nodes) consumed by all Tasks in the Job. The time duration is specified in ISO 8601 format.
+     Required.
     :vartype kernel_cpu_time: ~datetime.timedelta
     :ivar wall_clock_time: The total wall clock time of all Tasks in the Job.  The wall clock time
      is the elapsed time from when the Task started running on a Compute Node to when it finished
      (or to the last time the statistics were updated, if the Task had not finished by then). If a
-     Task was retried, this includes the wall clock time of all the Task retries. Required.
+     Task was retried, this includes the wall clock time of all the Task retries. The time duration
+     is specified in ISO 8601 format. Required.
     :vartype wall_clock_time: ~datetime.timedelta
     :ivar read_iops: The total number of disk read operations made by all Tasks in the Job.
      Required.
@@ -3400,7 +3356,7 @@ class BatchJobStatistics(_Model):
      defined as the elapsed time between the creation of the Task and the start of Task execution.
      (If the Task is retried due to failures, the wait time is the time to the most recent Task
      execution.) This value is only reported in the Account lifetime statistics; it is not included
-     in the Job statistics. Required.
+     in the Job statistics. The time duration is specified in ISO 8601 format. Required.
     :vartype wait_time: ~datetime.timedelta
     """
 
@@ -3419,19 +3375,20 @@ class BatchJobStatistics(_Model):
         name="userCPUTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """The total user mode CPU time (summed across all cores and all Compute Nodes) consumed by all
-     Tasks in the Job. Required."""
+     Tasks in the Job. The time duration is specified in ISO 8601 format. Required."""
     kernel_cpu_time: datetime.timedelta = rest_field(
         name="kernelCPUTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """The total kernel mode CPU time (summed across all cores and all Compute Nodes) consumed by all
-     Tasks in the Job. Required."""
+     Tasks in the Job. The time duration is specified in ISO 8601 format. Required."""
     wall_clock_time: datetime.timedelta = rest_field(
         name="wallClockTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """The total wall clock time of all Tasks in the Job.  The wall clock time is the elapsed time
      from when the Task started running on a Compute Node to when it finished (or to the last time
      the statistics were updated, if the Task had not finished by then). If a Task was retried, this
-     includes the wall clock time of all the Task retries. Required."""
+     includes the wall clock time of all the Task retries. The time duration is specified in ISO
+     8601 format. Required."""
     read_iops: int = rest_field(
         name="readIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
     )
@@ -3464,8 +3421,8 @@ class BatchJobStatistics(_Model):
     """The total wait time of all Tasks in the Job. The wait time for a Task is defined as the elapsed
      time between the creation of the Task and the start of Task execution. (If the Task is retried
      due to failures, the wait time is the time to the most recent Task execution.) This value is
-     only reported in the Account lifetime statistics; it is not included in the Job statistics.
-     Required."""
+     only reported in the Account lifetime statistics; it is not included in the Job statistics. The
+     time duration is specified in ISO 8601 format. Required."""
 
     @overload
     def __init__(
@@ -4025,7 +3982,7 @@ class BatchNodeDeallocateOptions(_Model):
     :vartype node_deallocate_option: str or ~azure.batch.models.BatchNodeDeallocateOption
     """
 
-    node_deallocate_option: Optional[Union[str, "_models.BatchNodeDeallocateOption"]] = rest_field(
+    node_deallocate_option: Optional[Union[str, "_models._enums.BatchNodeDeallocateOption"]] = rest_field(
         name="nodeDeallocateOption", visibility=["read", "create", "update", "delete", "query"]
     )
     """When to deallocate the Compute Node and what to do with currently running Tasks. The default
@@ -4036,7 +3993,7 @@ class BatchNodeDeallocateOptions(_Model):
     def __init__(
         self,
         *,
-        node_deallocate_option: Optional[Union[str, "_models.BatchNodeDeallocateOption"]] = None,
+        node_deallocate_option: Optional[Union[str, "_models._enums.BatchNodeDeallocateOption"]] = None,
     ) -> None: ...
 
     @overload
@@ -4342,7 +4299,7 @@ class BatchNodeRebootOptions(_Model):
     :vartype node_reboot_kind: str or ~azure.batch.models.BatchNodeRebootKind
     """
 
-    node_reboot_kind: Optional[Union[str, "_models.BatchNodeRebootKind"]] = rest_field(
+    node_reboot_kind: Optional[Union[str, "_models._enums.BatchNodeRebootKind"]] = rest_field(
         name="nodeRebootOption", visibility=["read", "create", "update", "delete", "query"]
     )
     """When to reboot the Compute Node and what to do with currently running Tasks. The default value
@@ -4353,7 +4310,7 @@ class BatchNodeRebootOptions(_Model):
     def __init__(
         self,
         *,
-        node_reboot_kind: Optional[Union[str, "_models.BatchNodeRebootKind"]] = None,
+        node_reboot_kind: Optional[Union[str, "_models._enums.BatchNodeRebootKind"]] = None,
     ) -> None: ...
 
     @overload
@@ -4376,7 +4333,7 @@ class BatchNodeReimageOptions(_Model):
     :vartype node_reimage_option: str or ~azure.batch.models.BatchNodeReimageOption
     """
 
-    node_reimage_option: Optional[Union[str, "_models.BatchNodeReimageOption"]] = rest_field(
+    node_reimage_option: Optional[Union[str, "_models._enums.BatchNodeReimageOption"]] = rest_field(
         name="nodeReimageOption", visibility=["read", "create", "update", "delete", "query"]
     )
     """When to reimage the Compute Node and what to do with currently running Tasks. The default value
@@ -4387,7 +4344,7 @@ class BatchNodeReimageOptions(_Model):
     def __init__(
         self,
         *,
-        node_reimage_option: Optional[Union[str, "_models.BatchNodeReimageOption"]] = None,
+        node_reimage_option: Optional[Union[str, "_models._enums.BatchNodeReimageOption"]] = None,
     ) -> None: ...
 
     @overload
@@ -4462,7 +4419,7 @@ class BatchNodeRemoveOptions(_Model):
     :ivar resize_timeout: The timeout for removal of Compute Nodes to the Pool. The default value
      is 15 minutes. The minimum value is 5 minutes. If you specify a value less than 5 minutes, the
      Batch service returns an error; if you are calling the REST API directly, the HTTP status code
-     is 400 (Bad Request).
+     is 400 (Bad Request). The time duration is specified in ISO 8601 format.
     :vartype resize_timeout: ~datetime.timedelta
     :ivar node_deallocation_option: Determines what to do with a Compute Node and its running
      task(s) after it has been selected for deallocation. The default value is requeue. Known values
@@ -4479,7 +4436,7 @@ class BatchNodeRemoveOptions(_Model):
     """The timeout for removal of Compute Nodes to the Pool. The default value is 15 minutes. The
      minimum value is 5 minutes. If you specify a value less than 5 minutes, the Batch service
      returns an error; if you are calling the REST API directly, the HTTP status code is 400 (Bad
-     Request)."""
+     Request). The time duration is specified in ISO 8601 format."""
     node_deallocation_option: Optional[Union[str, "_models.BatchNodeDeallocationOption"]] = rest_field(
         name="nodeDeallocationOption", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -4785,7 +4742,8 @@ class BatchPool(_Model):
     :vartype virtual_machine_configuration: ~azure.batch.models.VirtualMachineConfiguration
     :ivar resize_timeout: The timeout for allocation of Compute Nodes to the Pool. This is the
      timeout for the most recent resize operation. (The initial sizing when the Pool is created
-     counts as a resize.) The default value is 15 minutes.
+     counts as a resize.) The default value is 15 minutes. The time duration is specified in ISO
+     8601 format.
     :vartype resize_timeout: ~datetime.timedelta
     :ivar resize_errors: A list of errors encountered while performing the last resize on the Pool.
      This property is set only if one or more errors occurred during the last Pool resize, and only
@@ -4813,7 +4771,8 @@ class BatchPool(_Model):
     :vartype auto_scale_formula: str
     :ivar auto_scale_evaluation_interval: The time interval at which to automatically adjust the
      Pool size according to the autoscale formula. This property is set only if the Pool
-     automatically scales, i.e. enableAutoScale is true.
+     automatically scales, i.e. enableAutoScale is true. The time duration is specified in ISO 8601
+     format.
     :vartype auto_scale_evaluation_interval: ~datetime.timedelta
     :ivar auto_scale_run: The results and errors from the last execution of the autoscale formula.
      This property is set only if the Pool automatically scales, i.e. enableAutoScale is true.
@@ -4911,7 +4870,7 @@ class BatchPool(_Model):
     resize_timeout: Optional[datetime.timedelta] = rest_field(name="resizeTimeout", visibility=["read"])
     """The timeout for allocation of Compute Nodes to the Pool. This is the timeout for the most
      recent resize operation. (The initial sizing when the Pool is created counts as a resize.) The
-     default value is 15 minutes."""
+     default value is 15 minutes. The time duration is specified in ISO 8601 format."""
     resize_errors: Optional[list["_models.ResizeError"]] = rest_field(name="resizeErrors", visibility=["read"])
     """A list of errors encountered while performing the last resize on the Pool. This property is set
      only if one or more errors occurred during the last Pool resize, and only when the Pool
@@ -4938,7 +4897,7 @@ class BatchPool(_Model):
     )
     """The time interval at which to automatically adjust the Pool size according to the autoscale
      formula. This property is set only if the Pool automatically scales, i.e. enableAutoScale is
-     true."""
+     true. The time duration is specified in ISO 8601 format."""
     auto_scale_run: Optional["_models.AutoScaleRun"] = rest_field(name="autoScaleRun", visibility=["read"])
     """The results and errors from the last execution of the autoscale formula. This property is set
      only if the Pool automatically scales, i.e. enableAutoScale is true."""
@@ -5041,7 +5000,7 @@ class BatchPoolCreateOptions(_Model):
      applies only to manual scaling; it has no effect when enableAutoScale is set to true. The
      default value is 15 minutes. The minimum value is 5 minutes. If you specify a value less than 5
      minutes, the Batch service returns an error; if you are calling the REST API directly, the HTTP
-     status code is 400 (Bad Request).
+     status code is 400 (Bad Request). The time duration is specified in ISO 8601 format.
     :vartype resize_timeout: ~datetime.timedelta
     :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool. This
      property must not be specified if enableAutoScale is set to true. If enableAutoScale is set to
@@ -5070,7 +5029,8 @@ class BatchPoolCreateOptions(_Model):
      Pool size according to the autoscale formula. The default value is 15 minutes. The minimum and
      maximum value are 5 minutes and 168 hours respectively. If you specify a value less than 5
      minutes or greater than 168 hours, the Batch service returns an error; if you are calling the
-     REST API directly, the HTTP status code is 400 (Bad Request).
+     REST API directly, the HTTP status code is 400 (Bad Request). The time duration is specified in
+     ISO 8601 format.
     :vartype auto_scale_evaluation_interval: ~datetime.timedelta
     :ivar enable_inter_node_communication: Whether the Pool permits direct communication between
      Compute Nodes. Enabling inter-node communication limits the maximum size of the Pool due to
@@ -5139,7 +5099,7 @@ class BatchPoolCreateOptions(_Model):
      scaling; it has no effect when enableAutoScale is set to true. The default value is 15 minutes.
      The minimum value is 5 minutes. If you specify a value less than 5 minutes, the Batch service
      returns an error; if you are calling the REST API directly, the HTTP status code is 400 (Bad
-     Request)."""
+     Request). The time duration is specified in ISO 8601 format."""
     target_dedicated_nodes: Optional[int] = rest_field(
         name="targetDedicatedNodes", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5176,7 +5136,7 @@ class BatchPoolCreateOptions(_Model):
      formula. The default value is 15 minutes. The minimum and maximum value are 5 minutes and 168
      hours respectively. If you specify a value less than 5 minutes or greater than 168 hours, the
      Batch service returns an error; if you are calling the REST API directly, the HTTP status code
-     is 400 (Bad Request)."""
+     is 400 (Bad Request). The time duration is specified in ISO 8601 format."""
     enable_inter_node_communication: Optional[bool] = rest_field(
         name="enableInterNodeCommunication", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5287,7 +5247,7 @@ class BatchPoolEnableAutoScaleOptions(_Model):
      property value error; if you are calling the REST API directly, the HTTP status code is 400
      (Bad Request). If you specify a new interval, then the existing autoscale evaluation schedule
      will be stopped and a new autoscale evaluation schedule will be started, with its starting time
-     being the time when this request was issued.
+     being the time when this request was issued. The time duration is specified in ISO 8601 format.
     :vartype auto_scale_evaluation_interval: ~datetime.timedelta
     """
 
@@ -5310,7 +5270,8 @@ class BatchPoolEnableAutoScaleOptions(_Model):
      Batch service rejects the request with an invalid property value error; if you are calling the
      REST API directly, the HTTP status code is 400 (Bad Request). If you specify a new interval,
      then the existing autoscale evaluation schedule will be stopped and a new autoscale evaluation
-     schedule will be started, with its starting time being the time when this request was issued."""
+     schedule will be started, with its starting time being the time when this request was issued.
+     The time duration is specified in ISO 8601 format."""
 
     @overload
     def __init__(
@@ -5664,7 +5625,8 @@ class BatchPoolResizeOptions(_Model):
     :ivar resize_timeout: The timeout for allocation of Nodes to the Pool or removal of Compute
      Nodes from the Pool. The default value is 15 minutes. The minimum value is 5 minutes. If you
      specify a value less than 5 minutes, the Batch service returns an error; if you are calling the
-     REST API directly, the HTTP status code is 400 (Bad Request).
+     REST API directly, the HTTP status code is 400 (Bad Request). The time duration is specified in
+     ISO 8601 format.
     :vartype resize_timeout: ~datetime.timedelta
     :ivar node_deallocation_option: Determines what to do with a Compute Node and its running
      task(s) if the Pool size is decreasing. The default value is requeue. Known values are:
@@ -5686,7 +5648,7 @@ class BatchPoolResizeOptions(_Model):
     """The timeout for allocation of Nodes to the Pool or removal of Compute Nodes from the Pool. The
      default value is 15 minutes. The minimum value is 5 minutes. If you specify a value less than 5
      minutes, the Batch service returns an error; if you are calling the REST API directly, the HTTP
-     status code is 400 (Bad Request)."""
+     status code is 400 (Bad Request). The time duration is specified in ISO 8601 format."""
     node_deallocation_option: Optional[Union[str, "_models.BatchNodeDeallocationOption"]] = rest_field(
         name="nodeDeallocationOption", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5860,7 +5822,8 @@ class BatchPoolSpecification(_Model):
      applies only to manual scaling; it has no effect when enableAutoScale is set to true. The
      default value is 15 minutes. The minimum value is 5 minutes. If you specify a value less than 5
      minutes, the Batch service rejects the request with an error; if you are calling the REST API
-     directly, the HTTP status code is 400 (Bad Request).
+     directly, the HTTP status code is 400 (Bad Request). The time duration is specified in ISO 8601
+     format.
     :vartype resize_timeout: ~datetime.timedelta
     :ivar target_dedicated_nodes: The desired number of dedicated Compute Nodes in the Pool. This
      property must not be specified if enableAutoScale is set to true. If enableAutoScale is set to
@@ -5887,7 +5850,7 @@ class BatchPoolSpecification(_Model):
      maximum value are 5 minutes and 168 hours respectively. If you specify a value less than 5
      minutes or greater than 168 hours, the Batch service rejects the request with an invalid
      property value error; if you are calling the REST API directly, the HTTP status code is 400
-     (Bad Request).
+     (Bad Request). The time duration is specified in ISO 8601 format.
     :vartype auto_scale_evaluation_interval: ~datetime.timedelta
     :ivar enable_inter_node_communication: Whether the Pool permits direct communication between
      Compute Nodes. Enabling inter-node communication limits the maximum size of the Pool due to
@@ -5953,7 +5916,7 @@ class BatchPoolSpecification(_Model):
      scaling; it has no effect when enableAutoScale is set to true. The default value is 15 minutes.
      The minimum value is 5 minutes. If you specify a value less than 5 minutes, the Batch service
      rejects the request with an error; if you are calling the REST API directly, the HTTP status
-     code is 400 (Bad Request)."""
+     code is 400 (Bad Request). The time duration is specified in ISO 8601 format."""
     target_dedicated_nodes: Optional[int] = rest_field(
         name="targetDedicatedNodes", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5987,7 +5950,8 @@ class BatchPoolSpecification(_Model):
      formula. The default value is 15 minutes. The minimum and maximum value are 5 minutes and 168
      hours respectively. If you specify a value less than 5 minutes or greater than 168 hours, the
      Batch service rejects the request with an invalid property value error; if you are calling the
-     REST API directly, the HTTP status code is 400 (Bad Request)."""
+     REST API directly, the HTTP status code is 400 (Bad Request). The time duration is specified in
+     ISO 8601 format."""
     enable_inter_node_communication: Optional[bool] = rest_field(
         name="enableInterNodeCommunication", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6370,7 +6334,7 @@ class BatchPoolUsageStatistics(_Model):
      limited to the range between startTime and lastUpdateTime. Required.
     :vartype last_update_time: ~datetime.datetime
     :ivar dedicated_core_time: The aggregated wall-clock time of the dedicated Compute Node cores
-     being part of the Pool. Required.
+     being part of the Pool. The time duration is specified in ISO 8601 format. Required.
     :vartype dedicated_core_time: ~datetime.timedelta
     """
 
@@ -6386,8 +6350,8 @@ class BatchPoolUsageStatistics(_Model):
     dedicated_core_time: datetime.timedelta = rest_field(
         name="dedicatedCoreTime", visibility=["read", "create", "update", "delete", "query"]
     )
-    """The aggregated wall-clock time of the dedicated Compute Node cores being part of the Pool.
-     Required."""
+    """The aggregated wall-clock time of the dedicated Compute Node cores being part of the Pool. The
+     time duration is specified in ISO 8601 format. Required."""
 
     @overload
     def __init__(
@@ -7072,15 +7036,6 @@ class BatchTask(_Model):
      because the package has been deleted or because download failed, the Task fails.
     :vartype application_package_references:
      list[~azure.batch.models.BatchApplicationPackageReference]
-    :ivar authentication_token_settings: The settings for an authentication token that the Task can
-     use to perform Batch service operations. If this property is set, the Batch service provides
-     the Task with an authentication token which can be used to authenticate Batch service
-     operations without requiring an Account access key. The token is provided via the
-     AZ_BATCH_AUTHENTICATION_TOKEN environment variable. The operations that the Task can carry out
-     using the token depend on the settings. For example, a Task can request Job permissions in
-     order to add other Tasks to the Job, or check the status of the Job or of other Tasks under the
-     Job.
-    :vartype authentication_token_settings: ~azure.batch.models.AuthenticationTokenSettings
     """
 
     id: str = rest_field(visibility=["read"])
@@ -7197,16 +7152,6 @@ class BatchTask(_Model):
      date, then it is not re-downloaded; the existing copy on the Compute Node is used. If a
      referenced Package cannot be installed, for example because the package has been deleted or
      because download failed, the Task fails."""
-    authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = rest_field(
-        name="authenticationTokenSettings", visibility=["read"]
-    )
-    """The settings for an authentication token that the Task can use to perform Batch service
-     operations. If this property is set, the Batch service provides the Task with an authentication
-     token which can be used to authenticate Batch service operations without requiring an Account
-     access key. The token is provided via the AZ_BATCH_AUTHENTICATION_TOKEN environment variable.
-     The operations that the Task can carry out using the token depend on the settings. For example,
-     a Task can request Job permissions in order to add other Tasks to the Job, or check the status
-     of the Job or of other Tasks under the Job."""
 
     @overload
     def __init__(  # pylint: disable=too-many-locals
@@ -7232,11 +7177,13 @@ class BatchTaskConstraints(_Model):
     :ivar max_wall_clock_time: The maximum elapsed time that the Task may run, measured from the
      time the Task starts. If the Task does not complete within the time limit, the Batch service
      terminates it. If this is not specified, there is no time limit on how long the Task may run.
+     The time duration is specified in ISO 8601 format.
     :vartype max_wall_clock_time: ~datetime.timedelta
     :ivar retention_time: The minimum time to retain the Task directory on the Compute Node where
      it ran, from the time it completes execution. After this time, the Batch service may delete the
      Task directory and all its contents. The default is 7 days, i.e. the Task directory will be
-     retained for 7 days unless the Compute Node is removed or the Job is deleted.
+     retained for 7 days unless the Compute Node is removed or the Job is deleted. The time duration
+     is specified in ISO 8601 format.
     :vartype retention_time: ~datetime.timedelta
     :ivar max_task_retry_count: The maximum number of times the Task may be retried. The Batch
      service retries a Task if its exit code is nonzero. Note that this value specifically controls
@@ -7254,14 +7201,16 @@ class BatchTaskConstraints(_Model):
     )
     """The maximum elapsed time that the Task may run, measured from the time the Task starts. If the
      Task does not complete within the time limit, the Batch service terminates it. If this is not
-     specified, there is no time limit on how long the Task may run."""
+     specified, there is no time limit on how long the Task may run. The time duration is specified
+     in ISO 8601 format."""
     retention_time: Optional[datetime.timedelta] = rest_field(
         name="retentionTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """The minimum time to retain the Task directory on the Compute Node where it ran, from the time
      it completes execution. After this time, the Batch service may delete the Task directory and
      all its contents. The default is 7 days, i.e. the Task directory will be retained for 7 days
-     unless the Compute Node is removed or the Job is deleted."""
+     unless the Compute Node is removed or the Job is deleted. The time duration is specified in ISO
+     8601 format."""
     max_task_retry_count: Optional[int] = rest_field(
         name="maxTaskRetryCount", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -7583,15 +7532,6 @@ class BatchTaskCreateOptions(_Model):
      because the package has been deleted or because download failed, the Task fails.
     :vartype application_package_references:
      list[~azure.batch.models.BatchApplicationPackageReference]
-    :ivar authentication_token_settings: The settings for an authentication token that the Task can
-     use to perform Batch service operations. If this property is set, the Batch service provides
-     the Task with an authentication token which can be used to authenticate Batch service
-     operations without requiring an Account access key. The token is provided via the
-     AZ_BATCH_AUTHENTICATION_TOKEN environment variable. The operations that the Task can carry out
-     using the token depend on the settings. For example, a Task can request Job permissions in
-     order to add other Tasks to the Job, or check the status of the Job or of other Tasks under the
-     Job.
-    :vartype authentication_token_settings: ~azure.batch.models.AuthenticationTokenSettings
     """
 
     id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
@@ -7695,16 +7635,6 @@ class BatchTaskCreateOptions(_Model):
      date, then it is not re-downloaded; the existing copy on the Compute Node is used. If a
      referenced Package cannot be installed, for example because the package has been deleted or
      because download failed, the Task fails."""
-    authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = rest_field(
-        name="authenticationTokenSettings", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """The settings for an authentication token that the Task can use to perform Batch service
-     operations. If this property is set, the Batch service provides the Task with an authentication
-     token which can be used to authenticate Batch service operations without requiring an Account
-     access key. The token is provided via the AZ_BATCH_AUTHENTICATION_TOKEN environment variable.
-     The operations that the Task can carry out using the token depend on the settings. For example,
-     a Task can request Job permissions in order to add other Tasks to the Job, or check the status
-     of the Job or of other Tasks under the Job."""
 
     @overload
     def __init__(
@@ -7725,7 +7655,6 @@ class BatchTaskCreateOptions(_Model):
         multi_instance_settings: Optional["_models.MultiInstanceSettings"] = None,
         depends_on: Optional["_models.BatchTaskDependencies"] = None,
         application_package_references: Optional[list["_models.BatchApplicationPackageReference"]] = None,
-        authentication_token_settings: Optional["_models.AuthenticationTokenSettings"] = None,
     ) -> None: ...
 
     @overload
@@ -8272,15 +8201,16 @@ class BatchTaskStatistics(_Model):
      limited to the range between startTime and lastUpdateTime. Required.
     :vartype last_update_time: ~datetime.datetime
     :ivar user_cpu_time: The total user mode CPU time (summed across all cores and all Compute
-     Nodes) consumed by the Task. Required.
+     Nodes) consumed by the Task. The time duration is specified in ISO 8601 format. Required.
     :vartype user_cpu_time: ~datetime.timedelta
     :ivar kernel_cpu_time: The total kernel mode CPU time (summed across all cores and all Compute
-     Nodes) consumed by the Task. Required.
+     Nodes) consumed by the Task. The time duration is specified in ISO 8601 format. Required.
     :vartype kernel_cpu_time: ~datetime.timedelta
     :ivar wall_clock_time: The total wall clock time of the Task. The wall clock time is the
      elapsed time from when the Task started running on a Compute Node to when it finished (or to
      the last time the statistics were updated, if the Task had not finished by then). If the Task
-     was retried, this includes the wall clock time of all the Task retries. Required.
+     was retried, this includes the wall clock time of all the Task retries. The time duration is
+     specified in ISO 8601 format. Required.
     :vartype wall_clock_time: ~datetime.timedelta
     :ivar read_iops: The total number of disk read operations made by the Task. Required.
     :vartype read_iops: int
@@ -8292,8 +8222,8 @@ class BatchTaskStatistics(_Model):
     :vartype write_io_gib: float
     :ivar wait_time: The total wait time of the Task. The wait time for a Task is defined as the
      elapsed time between the creation of the Task and the start of Task execution. (If the Task is
-     retried due to failures, the wait time is the time to the most recent Task execution.).
-     Required.
+     retried due to failures, the wait time is the time to the most recent Task execution.). The
+     time duration is specified in ISO 8601 format. Required.
     :vartype wait_time: ~datetime.timedelta
     """
 
@@ -8312,19 +8242,20 @@ class BatchTaskStatistics(_Model):
         name="userCPUTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """The total user mode CPU time (summed across all cores and all Compute Nodes) consumed by the
-     Task. Required."""
+     Task. The time duration is specified in ISO 8601 format. Required."""
     kernel_cpu_time: datetime.timedelta = rest_field(
         name="kernelCPUTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """The total kernel mode CPU time (summed across all cores and all Compute Nodes) consumed by the
-     Task. Required."""
+     Task. The time duration is specified in ISO 8601 format. Required."""
     wall_clock_time: datetime.timedelta = rest_field(
         name="wallClockTime", visibility=["read", "create", "update", "delete", "query"]
     )
     """The total wall clock time of the Task. The wall clock time is the elapsed time from when the
      Task started running on a Compute Node to when it finished (or to the last time the statistics
      were updated, if the Task had not finished by then). If the Task was retried, this includes the
-     wall clock time of all the Task retries. Required."""
+     wall clock time of all the Task retries. The time duration is specified in ISO 8601 format.
+     Required."""
     read_iops: int = rest_field(
         name="readIOps", visibility=["read", "create", "update", "delete", "query"], format="str"
     )
@@ -8342,7 +8273,8 @@ class BatchTaskStatistics(_Model):
     )
     """The total wait time of the Task. The wait time for a Task is defined as the elapsed time
      between the creation of the Task and the start of Task execution. (If the Task is retried due
-     to failures, the wait time is the time to the most recent Task execution.). Required."""
+     to failures, the wait time is the time to the most recent Task execution.). The time duration
+     is specified in ISO 8601 format. Required."""
 
     @overload
     def __init__(
@@ -9905,9 +9837,6 @@ class NfsMountConfiguration(_Model):
         super().__init__(*args, **kwargs)
 
 
-# TODO: Open Sphinx issue that needs to be addressed through TypeSpec.
-# See: https://github.com/microsoft/typespec/issues/8654
-# Revert any changes made here with `*` and `\`.
 class OutputFile(_Model):
     """On every file uploads, Batch service writes two log files to the compute node,
     'fileuploadout.txt' and 'fileuploaderr.txt'. These log files are used to learn more about a
@@ -9916,14 +9845,14 @@ class OutputFile(_Model):
     :ivar file_pattern: A pattern indicating which file(s) to upload. Both relative and absolute
      paths are supported. Relative paths are relative to the Task working directory. The following
      wildcards are supported: * matches 0 or more characters (for example pattern abc* would match
-     abc or abcdef), \\*\\* matches any directory, ? matches any single character, [abc] matches one
+     abc or abcdef), ** matches any directory, ? matches any single character, [abc] matches one
      character in the brackets, and [a-c] matches one character in the range. Brackets can include a
      negation to match any character not specified (for example [!abc] matches any character but a,
      b, or c). If a file name starts with "." it is ignored by default but may be matched by
      specifying it explicitly (for example *.gif will not match .a.gif, but .*.gif will). A simple
-     example: \\*\\*\\\\*.txt matches any file that does not start in '.' and ends with .txt in the Task
+     example: **\\*.txt matches any file that does not start in '.' and ends with .txt in the Task
      working directory or any subdirectory. If the filename contains a wildcard character it can be
-     escaped using brackets (for example abc[*] would match a file named abc*). Note that both \\\\
+     escaped using brackets (for example abc[*] would match a file named abc*). Note that both \\
      and / are treated as directory separators on Windows, but only / is on Linux. Environment
      variables (%var% on Windows or $var on Linux) are expanded prior to the pattern being applied.
      Required.
@@ -9939,14 +9868,14 @@ class OutputFile(_Model):
     """A pattern indicating which file(s) to upload. Both relative and absolute paths are supported.
      Relative paths are relative to the Task working directory. The following wildcards are
      supported: * matches 0 or more characters (for example pattern abc* would match abc or abcdef),
-     \\*\\* matches any directory, ? matches any single character, [abc] matches one character in the
+     ** matches any directory, ? matches any single character, [abc] matches one character in the
      brackets, and [a-c] matches one character in the range. Brackets can include a negation to
      match any character not specified (for example [!abc] matches any character but a, b, or c). If
      a file name starts with \".\" it is ignored by default but may be matched by specifying it
      explicitly (for example *.gif will not match .a.gif, but .*.gif will). A simple example:
-     \\*\\*\\\\*.txt matches any file that does not start in '.' and ends with .txt in the Task working
+     **\*.txt matches any file that does not start in '.' and ends with .txt in the Task working
      directory or any subdirectory. If the filename contains a wildcard character it can be escaped
-     using brackets (for example abc[*] would match a file named abc*). Note that both \\\\ and / are
+     using brackets (for example abc[*] would match a file named abc*). Note that both \ and / are
      treated as directory separators on Windows, but only / is on Linux. Environment variables
      (%var% on Windows or $var on Linux) are expanded prior to the pattern being applied. Required."""
     destination: "_models.OutputFileDestination" = rest_field(
@@ -10421,8 +10350,8 @@ class RollingUpgradePolicy(_Model):
      value of this field should be between 0 and 100, inclusive.
     :vartype max_unhealthy_upgraded_instance_percent: int
     :ivar pause_time_between_batches: The wait time between completing the update for all virtual
-     machines in one batch and starting the next batch. The time duration should be specified in ISO
-     8601 format..
+     machines in one batch and starting the next batch. The time duration is specified in ISO 8601
+     format.
     :vartype pause_time_between_batches: ~datetime.timedelta
     :ivar prioritize_unhealthy_instances: Upgrade all unhealthy instances in a scale set before any
      healthy instances.
@@ -10468,7 +10397,7 @@ class RollingUpgradePolicy(_Model):
         name="pauseTimeBetweenBatches", visibility=["read", "create", "update", "delete", "query"]
     )
     """The wait time between completing the update for all virtual machines in one batch and starting
-     the next batch. The time duration should be specified in ISO 8601 format.."""
+     the next batch. The time duration is specified in ISO 8601 format."""
     prioritize_unhealthy_instances: Optional[bool] = rest_field(
         name="prioritizeUnhealthyInstances", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -10915,8 +10844,11 @@ class VirtualMachineConfiguration(_Model):
     :ivar license_type: This only applies to Images that contain the Windows operating system, and
      should only be used when you hold valid on-premises licenses for the Compute
      Nodes which will be deployed. If omitted, no on-premises licensing discount is
-     applied. Values are: Windows_Server (the on-premises license is for Windows
-     Server) and Windows_Client (the on-premises license is for Windows Client).
+     applied. Values are:
+
+      Windows_Server - The on-premises license is for Windows
+     Server.
+      Windows_Client - The on-premises license is for Windows Client.
     :vartype license_type: str
     :ivar container_configuration: The container configuration for the Pool. If specified, setup is
      performed on each Compute Node in the Pool to allow Tasks to run in containers. All regular
@@ -10984,8 +10916,11 @@ class VirtualMachineConfiguration(_Model):
     """This only applies to Images that contain the Windows operating system, and
      should only be used when you hold valid on-premises licenses for the Compute
      Nodes which will be deployed. If omitted, no on-premises licensing discount is
-     applied. Values are: Windows_Server (the on-premises license is for Windows
-     Server) and Windows_Client (the on-premises license is for Windows Client)."""
+     applied. Values are:
+     
+      Windows_Server - The on-premises license is for Windows
+     Server.
+      Windows_Client - The on-premises license is for Windows Client."""
     container_configuration: Optional["_models.BatchContainerConfiguration"] = rest_field(
         name="containerConfiguration", visibility=["read", "create", "update", "delete", "query"]
     )

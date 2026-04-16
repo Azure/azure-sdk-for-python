@@ -3085,7 +3085,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchApplication], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.BatchApplication],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -3167,6 +3170,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3194,7 +3198,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchApplication, response.json())
 
@@ -3312,7 +3316,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchPoolUsageMetrics], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.BatchPoolUsageMetrics],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -3521,7 +3528,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchPool], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.BatchPool],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -3854,6 +3864,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -3881,7 +3892,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchPool, response.json())
 
@@ -4275,6 +4286,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -4303,7 +4315,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.AutoScaleRun, response.json())
 
@@ -4845,7 +4857,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchSupportedImage], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.BatchSupportedImage],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -4960,7 +4975,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchPoolNodeCounts], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.BatchPoolNodeCounts],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -5191,6 +5209,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -5218,7 +5237,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchJob, response.json())
 
@@ -5703,7 +5722,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
     def _terminate_job_internal(  # pylint: disable=inconsistent-return-statements
         self,
         job_id: str,
-        options: Optional[_models.BatchJobTerminateOptions] = None,
+        options: Optional[_models._models.BatchJobTerminateOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -5725,7 +5744,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param job_id: The ID of the Job to terminate. Required.
         :type job_id: str
         :param options: The options to use for terminating the Job. Default value is None.
-        :type options: ~azure.batch.models.BatchJobTerminateOptions
+        :type options: ~azure.batch.models._models.BatchJobTerminateOptions
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -6017,7 +6036,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchJob], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.BatchJob],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -6146,7 +6168,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchJob], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.BatchJob],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -6277,7 +6302,8 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                list[_models.BatchJobPreparationAndReleaseTaskStatus], deserialized.get("value", [])
+                list[_models.BatchJobPreparationAndReleaseTaskStatus],
+                deserialized.get("value", []),
             )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -6360,6 +6386,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6387,7 +6414,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchTaskCountsResult, response.json())
 
@@ -6705,6 +6732,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -6732,7 +6760,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchJobSchedule, response.json())
 
@@ -7490,7 +7518,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchJobSchedule], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.BatchJobSchedule],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -7709,7 +7740,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchTask], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.BatchTask],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -7810,6 +7844,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -7837,7 +7872,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchCreateTaskCollectionResult, response.json())
 
@@ -8052,6 +8087,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8080,7 +8116,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchTask, response.json())
 
@@ -8298,7 +8334,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchSubtask], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.BatchSubtask],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -8723,6 +8762,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -8757,7 +8797,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -8973,7 +9013,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchNodeFile], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.BatchNodeFile],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -9342,6 +9385,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -9369,7 +9413,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchNode, response.json())
 
@@ -9383,7 +9427,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models.BatchNodeRebootOptions] = None,
+        options: Optional[_models._models.BatchNodeRebootOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -9398,7 +9442,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for rebooting the Compute Node. Default value is None.
-        :type options: ~azure.batch.models.BatchNodeRebootOptions
+        :type options: ~azure.batch.models._models.BatchNodeRebootOptions
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -9561,7 +9605,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models.BatchNodeReimageOptions] = None,
+        options: Optional[_models._models.BatchNodeReimageOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -9578,7 +9622,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for reimaging the Compute Node. Default value is None.
-        :type options: ~azure.batch.models.BatchNodeReimageOptions
+        :type options: ~azure.batch.models._models.BatchNodeReimageOptions
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -9659,7 +9703,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models.BatchNodeDeallocateOptions] = None,
+        options: Optional[_models._models.BatchNodeDeallocateOptions] = None,
         *,
         service_timeout: Optional[int] = None,
         ocp_date: Optional[datetime.datetime] = None,
@@ -9674,7 +9718,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for deallocating the Compute Node. Default value is None.
-        :type options: ~azure.batch.models.BatchNodeDeallocateOptions
+        :type options: ~azure.batch.models._models.BatchNodeDeallocateOptions
         :keyword service_timeout: The maximum time that the server can spend processing the request, in
          seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
          instead.". Default value is None.
@@ -9995,6 +10039,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10022,7 +10067,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchNodeRemoteLoginSettings, response.json())
 
@@ -10103,6 +10148,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10130,7 +10176,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.UploadBatchServiceLogsResult, response.json())
 
@@ -10237,7 +10283,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchNode], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.BatchNode],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -10329,6 +10378,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", False)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10356,7 +10406,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
 
         if _stream:
-            deserialized = response.iter_bytes()
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.BatchNodeVMExtension, response.json())
 
@@ -10460,7 +10510,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchNodeVMExtension], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.BatchNodeVMExtension],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
@@ -10656,6 +10709,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         }
         _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
+        _decompress = kwargs.pop("decompress", True)
         _stream = kwargs.pop("stream", True)
         pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             _request, stream=_stream, **kwargs
@@ -10690,7 +10744,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         response_headers["request-id"] = self._deserialize("str", response.headers.get("request-id"))
         response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
 
-        deserialized = response.iter_bytes()
+        deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -10904,7 +10958,10 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
 
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(list[_models.BatchNodeFile], deserialized.get("value", []))
+            list_of_elem = _deserialize(
+                list[_models.BatchNodeFile],
+                deserialized.get("value", []),
+            )
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.get("odata.nextLink") or None, iter(list_of_elem)
