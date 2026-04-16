@@ -44,6 +44,7 @@ from azure.ai.agentserver.responses.models import (
 )
 
 from ._tool_acl import ToolAcl
+from ._toolbox import discover_mcp_servers, make_sdk_safe_mcp_config, refresh_mcp_auth
 
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
@@ -96,7 +97,6 @@ async def _extract_input_with_attachments(context: ResponseContext) -> str:
     return text
 
 _COGNITIVE_SERVICES_SCOPE = "https://cognitiveservices.azure.com/.default"
-_FOUNDRY_SCOPE = "https://ai.azure.com/.default"
 
 
 # ---------------------------------------------------------------------------
@@ -283,11 +283,7 @@ class CopilotAdapter:
             # Refresh MCP server auth headers (toolbox endpoints use Foundry scope)
             mcp_servers = self._session_config.get("mcp_servers")
             if mcp_servers:
-                foundry_token = self._credential.get_token(_FOUNDRY_SCOPE).token
-                for server in mcp_servers.values():
-                    headers = server.get("headers", {})
-                    if headers.get("_auto_auth"):
-                        headers["Authorization"] = f"Bearer {foundry_token}"
+                refresh_mcp_auth(mcp_servers, self._credential)
 
         return self._session_config
 
@@ -332,11 +328,21 @@ class CopilotAdapter:
         # automatically — no need to pass them as separate kwargs.
         sdk_config = {k: v for k, v in config.items() if not k.startswith("_") and v is not None}
 
-        # Strip internal _auto_auth flags from MCP server headers
+        # Deep-copy MCP servers and strip internal flags so we never mutate
+        # the canonical _session_config (needed for future token refreshes).
         if "mcp_servers" in sdk_config:
-            for server in sdk_config["mcp_servers"].values():
-                headers = server.get("headers", {})
-                headers.pop("_auto_auth", None)
+            sdk_config["mcp_servers"] = make_sdk_safe_mcp_config(sdk_config["mcp_servers"])
+            logger.info(
+                "Passing %d MCP server(s) to create_session: %s",
+                len(sdk_config["mcp_servers"]),
+                list(sdk_config["mcp_servers"].keys()),
+            )
+            for name, server in sdk_config["mcp_servers"].items():
+                logger.debug(
+                    "  MCP server %r: type=%s, url=%s, tools=%s, headers=%s",
+                    name, server.get("type"), server.get("url"),
+                    server.get("tools"), list(server.get("headers", {}).keys()),
+                )
 
         session = await client.create_session(
             **sdk_config,
@@ -486,6 +492,20 @@ class CopilotAdapter:
                     call_id = getattr(data, "call_id", "")
                     args = str(getattr(data, "arguments", ""))[:500]
                     logger.info(f"Copilot #{event_count:03d}: {event_name} tool={tool_name!r} call_id={call_id!r} args={args}")
+                elif event_name == "SESSION_TOOLS_UPDATED" and data:
+                    raw_tools = getattr(data, "tools", None) or []
+                    tool_names = [getattr(t, "name", str(t)) for t in raw_tools]
+                    logger.info(f"Copilot #{event_count:03d}: {event_name} tools({len(tool_names)})={tool_names}")
+                elif event_name == "SESSION_MCP_SERVERS_LOADED" and data:
+                    servers = getattr(data, "servers", None) or []
+                    for srv in servers:
+                        srv_name = getattr(srv, "name", "?")
+                        srv_status = getattr(srv, "status", "?")
+                        srv_error = getattr(srv, "error", None)
+                        if srv_error:
+                            logger.warning(f"Copilot #{event_count:03d}: MCP server {srv_name!r} {srv_status}: {srv_error}")
+                        else:
+                            logger.info(f"Copilot #{event_count:03d}: MCP server {srv_name!r} {srv_status}")
                 elif "REASONING" in event_name:
                     logger.info(f"Copilot #{event_count:03d}: {event_name} len={len(getattr(data, 'delta_content', '') or getattr(data, 'reasoning_text', '') or '')}")
                 elif event_text:
@@ -663,6 +683,7 @@ class GitHubCopilotAdapter(CopilotAdapter):
         skill_directories: Optional[list[str]] = None,
         tools: Optional[list] = None,
         project_root: Optional[str] = None,
+        toolbox_endpoint: Optional[str] = None,
         **kwargs,
     ):
         super().__init__(**kwargs)
@@ -687,9 +708,9 @@ class GitHubCopilotAdapter(CopilotAdapter):
                 self._session_config.setdefault("tools", []).extend(discovered_tools)
                 logger.info("Discovered %d tools from .github/tools/", len(discovered_tools))
 
-        # MCP toolbox discovery — load from mcp.json and/or env var
+        # MCP toolbox discovery — load from mcp.json and/or explicit endpoint
         if "mcp_servers" not in self._session_config:
-            mcp_servers = self._discover_mcp_servers(root)
+            mcp_servers = discover_mcp_servers(root, toolbox_endpoint=toolbox_endpoint)
             if mcp_servers:
                 self._session_config["mcp_servers"] = mcp_servers
 
@@ -726,60 +747,6 @@ class GitHubCopilotAdapter(CopilotAdapter):
         from ._tool_discovery import discover_tools
 
         return discover_tools(project_root)
-
-    @staticmethod
-    def _discover_mcp_servers(project_root: pathlib.Path) -> dict:
-        """Discover MCP server configs from ``mcp.json`` and environment variables.
-
-        Sources (merged in order):
-        1. ``mcp.json`` in the project root — static config for MCP servers.
-        2. ``FOUNDRY_AGENT_TOOLBOX_ENDPOINT`` env var — platform-injected toolbox URL.
-        3. ``TOOLBOX_MCP_ENDPOINT`` env var — local dev override.
-
-        For servers without an explicit ``Authorization`` header, the adapter
-        will inject a fresh token automatically before each session via
-        ``_refresh_token_if_needed()``.  Set ``_auto_auth: true`` in the
-        server's ``headers`` dict to opt in (this is the default for
-        servers added from environment variables).
-        """
-        import json as _json
-
-        servers: dict = {}
-
-        # 1. Load from mcp.json
-        mcp_path = project_root / "mcp.json"
-        if mcp_path.exists():
-            try:
-                with open(mcp_path) as f:
-                    servers.update(_json.load(f))
-                logger.info("Loaded MCP servers from mcp.json: %s", list(servers.keys()))
-            except Exception:
-                logger.warning("Failed to load mcp.json", exc_info=True)
-
-        # 2. Platform-injected toolbox endpoint
-        toolbox_url = (
-            os.getenv("FOUNDRY_AGENT_TOOLBOX_ENDPOINT")
-            or os.getenv("TOOLBOX_MCP_ENDPOINT")
-        )
-        if toolbox_url and "foundry-toolbox" not in servers:
-            servers["foundry-toolbox"] = {
-                "type": "http",
-                "url": toolbox_url,
-                "tools": ["*"],
-                "headers": {
-                    "Foundry-Features": "Toolboxes=V1Preview",
-                    "_auto_auth": True,
-                },
-            }
-            logger.info("Added toolbox MCP server from env: %s", toolbox_url)
-
-        # Mark servers that need auto-auth (no explicit Authorization header)
-        for server in servers.values():
-            headers = server.setdefault("headers", {})
-            if "Authorization" not in headers:
-                headers["_auto_auth"] = True
-
-        return servers
 
     @classmethod
     def from_project(cls, project_path: str = ".", **kwargs) -> "GitHubCopilotAdapter":
@@ -1010,6 +977,8 @@ class GitHubCopilotAdapter(CopilotAdapter):
                 client = await self._ensure_client()
                 config = self._refresh_token_if_needed()
                 sdk_config = {k: v for k, v in config.items() if not k.startswith("_") and v is not None}
+                if "mcp_servers" in sdk_config:
+                    sdk_config["mcp_servers"] = make_sdk_safe_mcp_config(sdk_config["mcp_servers"])
                 session = await client.create_session(
                     **sdk_config,
                     on_permission_request=self._make_permission_handler(),
