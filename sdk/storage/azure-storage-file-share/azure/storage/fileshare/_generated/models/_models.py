@@ -471,8 +471,8 @@ class FileProperty(_Model):
     :vartype change_time: ~datetime.datetime
     :ivar last_modified: The last modified time.
     :vartype last_modified: ~datetime.datetime
-    :ivar e_tag: The ETag of the file.
-    :vartype e_tag: str
+    :ivar etag: The ETag of the file.
+    :vartype etag: str
     """
 
     content_length: int = rest_field(
@@ -519,8 +519,7 @@ class FileProperty(_Model):
         xml={"attribute": False, "name": "Last-Modified", "text": False, "unwrapped": False},
     )
     """The last modified time."""
-    e_tag: Optional[str] = rest_field(
-        name="eTag",
+    etag: Optional[str] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Etag", "text": False, "unwrapped": False},
     )
@@ -538,7 +537,7 @@ class FileProperty(_Model):
         last_write_time: Optional[datetime.datetime] = None,
         change_time: Optional[datetime.datetime] = None,
         last_modified: Optional[datetime.datetime] = None,
-        e_tag: Optional[str] = None,
+        etag: Optional[str] = None,
     ) -> None: ...
 
     @overload
@@ -1381,8 +1380,8 @@ class SharePropertiesInternal(_Model):
 
     :ivar last_modified: The last modified time. Required.
     :vartype last_modified: ~datetime.datetime
-    :ivar e_tag: The ETag of the share. Required.
-    :vartype e_tag: str
+    :ivar etag: The ETag of the share. Required.
+    :vartype etag: str
     :ivar quota: The share quota. Required.
     :vartype quota: int
     :ivar provisioned_iops: The provisioned IOPS.
@@ -1449,8 +1448,7 @@ class SharePropertiesInternal(_Model):
         xml={"attribute": False, "name": "Last-Modified", "text": False, "unwrapped": False},
     )
     """The last modified time. Required."""
-    e_tag: str = rest_field(
-        name="eTag",
+    etag: str = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "Etag", "text": False, "unwrapped": False},
     )
@@ -1624,7 +1622,7 @@ class SharePropertiesInternal(_Model):
         self,
         *,
         last_modified: datetime.datetime,
-        e_tag: str,
+        etag: str,
         quota: int,
         provisioned_iops: Optional[int] = None,
         provisioned_ingress_m_bps: Optional[int] = None,

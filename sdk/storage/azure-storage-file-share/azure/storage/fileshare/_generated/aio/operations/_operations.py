@@ -1535,7 +1535,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
         response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
         response_headers["Content-Range"] = self._deserialize("str", response.headers.get("Content-Range"))
@@ -1547,7 +1547,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
         response_headers["Accept-Ranges"] = self._deserialize("str", response.headers.get("Accept-Ranges"))
         response_headers["x-ms-copy-completion-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-copy-completion-time")
+            "rfc-1123", response.headers.get("x-ms-copy-completion-time")
         )
         response_headers["x-ms-copy-status-description"] = self._deserialize(
             "str", response.headers.get("x-ms-copy-status-description")
@@ -1681,7 +1681,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
-        response_headers["Last-Modified"] = self._deserialize("str", response.headers.get("Last-Modified"))
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["x-ms-meta"] = self._deserialize("{str}", response.headers.get("x-ms-meta"))
         response_headers["x-ms-type"] = self._deserialize("str", response.headers.get("x-ms-type"))
         response_headers["Content-Length"] = self._deserialize("int", response.headers.get("Content-Length"))
@@ -1693,7 +1693,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         response_headers["Content-Disposition"] = self._deserialize("str", response.headers.get("Content-Disposition"))
         response_headers["Content-Language"] = self._deserialize("str", response.headers.get("Content-Language"))
         response_headers["x-ms-copy-completion-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-copy-completion-time")
+            "rfc-1123", response.headers.get("x-ms-copy-completion-time")
         )
         response_headers["x-ms-copy-status-description"] = self._deserialize(
             "str", response.headers.get("x-ms-copy-status-description")
@@ -2603,9 +2603,9 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         content_length: int,
         source_range: Optional[str] = None,
         timeout: Optional[int] = None,
-        source_content_crc64: Optional[str] = None,
-        source_if_match_crc64: Optional[str] = None,
-        source_if_none_match_crc64: Optional[str] = None,
+        source_content_crc64: Optional[bytes] = None,
+        source_if_match_crc64: Optional[bytes] = None,
+        source_if_none_match_crc64: Optional[bytes] = None,
         lease_id: Optional[str] = None,
         copy_source_authorization: Optional[str] = None,
         file_last_written_mode: Optional[Union[str, _models.FileLastWrittenMode]] = None,
@@ -2633,13 +2633,13 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         :paramtype timeout: int
         :keyword source_content_crc64: Specify the CRC64 hash of the source content. Default value is
          None.
-        :paramtype source_content_crc64: str
+        :paramtype source_content_crc64: bytes
         :keyword source_if_match_crc64: Specify the CRC64 hash value to check for source content
          integrity. Default value is None.
-        :paramtype source_if_match_crc64: str
+        :paramtype source_if_match_crc64: bytes
         :keyword source_if_none_match_crc64: Specify the CRC64 hash value to check for source content
          mismatch. Default value is None.
-        :paramtype source_if_none_match_crc64: str
+        :paramtype source_if_none_match_crc64: bytes
         :keyword lease_id: If specified, the lease ID must match the lease ID of the file. Default
          value is None.
         :paramtype lease_id: str
@@ -2717,7 +2717,9 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
-        response_headers["x-ms-content-crc64"] = self._deserialize("str", response.headers.get("x-ms-content-crc64"))
+        response_headers["x-ms-content-crc64"] = self._deserialize(
+            "bytearray", response.headers.get("x-ms-content-crc64")
+        )
         response_headers["x-ms-request-server-encrypted"] = self._deserialize(
             "bool", response.headers.get("x-ms-request-server-encrypted")
         )

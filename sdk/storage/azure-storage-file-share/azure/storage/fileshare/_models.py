@@ -463,7 +463,7 @@ class ContentSettings(DictMixin):
         content_disposition: Optional[str] = None,
         cache_control: Optional[str] = None,
         content_md5: Optional[bytearray] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self.content_type = content_type or kwargs.get("Content-Type")
         self.content_encoding = content_encoding or kwargs.get("Content-Encoding")
@@ -585,7 +585,7 @@ class ShareProperties(DictMixin):
         props = cls()
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
-        props.etag = generated.properties.e_tag
+        props.etag = generated.properties.etag
         props.quota = generated.properties.quota
         props.access_tier = generated.properties.access_tier
         props.next_allowed_quota_downgrade_time = generated.properties.next_allowed_quota_downgrade_time
@@ -983,7 +983,7 @@ class DirectoryProperties(DictMixin):
         props.last_access_time = generated.properties.last_access_time
         props.last_write_time = generated.properties.last_write_time
         props.change_time = generated.properties.change_time
-        props.etag = generated.properties.e_tag
+        props.etag = generated.properties.etag
         props.permission_key = generated.permission_key
         return props
 
@@ -1053,10 +1053,13 @@ class DirectoryPropertiesPaged(PageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.current_page = [
-            DirectoryProperties._from_generated(i) for i in self._response.segment.directory_items  # pylint: disable=protected-access
+            DirectoryProperties._from_generated(i)
+            for i in self._response.segment.directory_items  # pylint: disable=protected-access
         ]
         self.current_page.extend(
-            [FileProperties._from_generated(i) for i in self._response.segment.file_items]  # pylint: disable=protected-access
+            [
+                FileProperties._from_generated(i) for i in self._response.segment.file_items
+            ]  # pylint: disable=protected-access
         )
         return self._response.next_marker or None, self.current_page
 
@@ -1245,7 +1248,7 @@ class FileProperties(DictMixin):
         props = cls()
         props.name = unquote(generated.name.content) if generated.name.encoded else generated.name.content
         props.file_id = generated.file_id
-        props.etag = generated.properties.e_tag
+        props.etag = generated.properties.etag
         props.file_attributes = generated.attributes
         props.last_modified = generated.properties.last_modified
         props.creation_time = generated.properties.creation_time
