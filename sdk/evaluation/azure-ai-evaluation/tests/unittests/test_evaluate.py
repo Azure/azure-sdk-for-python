@@ -46,6 +46,7 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _process_criteria_metrics,
     _create_result_object,
     _calculate_aoai_evaluation_summary,
+    _get_metric_from_criteria,
 )
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
@@ -2249,6 +2250,24 @@ class TestCreateResultObjectStatus:
         assert result["status"] == "completed"
         assert result["passed"] is False
 
+    def test_status_completed_for_score_only_evaluator(self):
+        """Score-only evaluator (valid score, no passed) should get status='completed'."""
+        result = self._call({"score": 0.85, "passed": None})
+        assert result["status"] == "completed"
+        assert result["passed"] is None
+        assert result["score"] == 0.85
+
+    def test_status_error_when_nan_score_and_no_passed(self):
+        """NaN score with no passed is a genuine failure — status='error'."""
+        result = self._call({"score": float("nan"), "passed": None})
+        assert result["status"] == "error"
+        assert result["score"] is None
+
+    def test_status_completed_for_score_only_no_explicit_status(self):
+        """Score-only evaluator without explicit status or passed should infer 'completed'."""
+        result = self._call({"score": 3.5})
+        assert result["status"] == "completed"
+
 
 @pytest.mark.unittest
 class TestCalculateAoaiEvaluationSummary:
@@ -2368,3 +2387,49 @@ class TestCalculateAoaiEvaluationSummary:
         assert c["failed"] == 1
         assert c["skipped"] == 1
         assert c["errored"] == 1
+
+    def test_score_only_row_classified_as_passed(self):
+        """Score-only evaluator (passed=None, status='completed') falls into else → passed."""
+        rows = [
+            self._make_row(
+                [self._make_result(name="similarity", passed=None, status="completed", score=0.85)]
+            )
+        ]
+        summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
+        c = summary["result_counts"]
+        assert c["total"] == 1
+        assert c["passed"] == 1
+        assert c["failed"] == 0
+        assert c["errored"] == 0
+        assert c["skipped"] == 0
+
+
+@pytest.mark.unittest
+class TestGetMetricFromCriteria:
+    """Tests for suffix-stripping metric resolution in _get_metric_from_criteria."""
+
+    def test_direct_match(self):
+        assert _get_metric_from_criteria("tc", "f1_score", ["f1_score"]) == "f1_score"
+
+    def test_suffix_strip_result(self):
+        """f1_result should resolve to f1_score via suffix stripping."""
+        assert _get_metric_from_criteria("tc", "f1_result", ["f1_score"]) == "f1_score"
+
+    def test_suffix_strip_threshold(self):
+        assert _get_metric_from_criteria("tc", "f1_threshold", ["f1_score"]) == "f1_score"
+
+    def test_suffix_strip_status(self):
+        assert _get_metric_from_criteria("tc", "f1_status", ["f1_score"]) == "f1_score"
+
+    def test_suffix_strip_reason(self):
+        assert _get_metric_from_criteria("tc", "coherence_reason", ["coherence"]) == "coherence"
+
+    def test_xpia_prefix_match(self):
+        """XPIA metrics match via prefix fallback."""
+        assert _get_metric_from_criteria("tc", "xpia_manipulated_content_result", ["xpia_manipulated_content"]) == "xpia_manipulated_content"
+
+    def test_fallback_to_criteria_name(self):
+        assert _get_metric_from_criteria("my_criteria", "unknown_key", ["f1_score"]) == "my_criteria"
+
+    def test_suffix_strip_properties(self):
+        assert _get_metric_from_criteria("tc", "f1_properties", ["f1_score"]) == "f1_score"

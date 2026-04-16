@@ -2778,6 +2778,11 @@ def _update_metric_value(
         if isinstance(metric_value, dict):
             metric_dict["properties"] = metric_value
             result_name = "properties"
+        else:
+            logger.info(
+                "Evaluator returned 'properties' as %s instead of dict; ignoring.",
+                type(metric_value).__name__,
+            )
     elif not any(
         metric_key.endswith(suffix)
         for suffix in [
@@ -2922,7 +2927,7 @@ def _create_result_object(
     properties = metric_values.get("properties")
     status = metric_values.get("status") 
     if status not in ("completed", "error", "skipped"):
-        status = "completed" if passed is not None else "error"
+        status = "completed" if (passed is not None or not _is_none_or_nan(score)) else "error"
 
     # Handle decrease boolean metrics
     if is_inverse:
@@ -3316,6 +3321,9 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     """
     Get the metric name from the testing criteria and metric key.
 
+    Uses suffix-stripping to resolve metric keys that include known suffixes
+    (e.g. ``f1_result`` → ``f1_score``, ``coherence_reason`` → ``coherence``).
+
     :param testing_criteria_name: The name of the testing criteria
     :type testing_criteria_name: str
     :param metric_key: The metric key to look for
@@ -3325,32 +3333,45 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     :return: The metric name if found, otherwise the testing criteria name
     :rtype: str
     """
-    metric = None
+    _KNOWN_SUFFIXES = [
+        "_result",
+        "_threshold",
+        "_score",
+        "_status",
+        "_properties",
+        "_reason",
+        "_label",
+        "_model",
+        "_finish_reason",
+        "_sample_input",
+        "_sample_output",
+        "_total_tokens",
+        "_prompt_tokens",
+        "_completion_tokens",
+    ]
 
-    if metric_key == "xpia_manipulated_content":
-        metric = "xpia_manipulated_content"
-        return metric
-    elif metric_key == "xpia_intrusion":
-        metric = "xpia_intrusion"
-        return metric
-    elif metric_key == "xpia_information_gathering":
-        metric = "xpia_information_gathering"
-        return metric
-    elif (
-        metric_key == "f1_result"
-        or metric_key == "f1_threshold"
-        or metric_key == "f1_score"
-        or metric_key == "f1_status"
-    ):
-        metric = "f1_score"
-        return metric
+    # Direct match against metric list
+    if metric_key in metric_list:
+        return metric_key
+
+    # Try stripping known suffixes and matching
+    for suffix in _KNOWN_SUFFIXES:
+        if metric_key.endswith(suffix):
+            base = metric_key[: -len(suffix)]
+            # Check if the base (with _score appended) is in the list (e.g. f1_result → f1_score)
+            base_score = base + "_score"
+            if base_score in metric_list:
+                return base_score
+            if base in metric_list:
+                return base
+            break  # Only strip one suffix
+
+    # Prefix-based fallback (existing behavior)
     for expected_metric in metric_list:
         if metric_key.startswith(expected_metric):
-            metric = expected_metric
-            break
-    if metric is None:
-        metric = testing_criteria_name
-    return metric
+            return expected_metric
+
+    return testing_criteria_name
 
 
 def _is_primary_metric(metric_name: str, evaluator_name: str) -> bool:
@@ -3491,6 +3512,9 @@ def _calculate_aoai_evaluation_summary(
             result_counts["errored"] += 1
         elif skipped_count > 0:
             result_counts["skipped"] += 1
+        else:
+            # Score-only evaluators with status="completed" but passed=None
+            result_counts["passed"] += 1
 
         # Extract usage statistics from aoai_result.sample
         sample_data_list = []
