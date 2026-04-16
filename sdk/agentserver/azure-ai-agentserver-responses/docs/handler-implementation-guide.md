@@ -43,7 +43,7 @@
 
 The library handles all protocol concerns — routing, serialization, SSE framing,
 `stream`/`background` mode negotiation, status lifecycle, and error shapes. You
-register one handler function via the `@app.create_handler` decorator. Your handler
+register one handler function via the `@app.response_handler` decorator. Your handler
 receives a `CreateResponse` request and produces response events. The library wraps
 these events into the correct HTTP response format based on the client's requested
 mode.
@@ -81,7 +81,7 @@ from azure.ai.agentserver.responses import (
 app = ResponsesAgentServerHost()
 
 
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
     text = await context.get_input_text()
     return TextResponse(context, request, text=f"Echo: {text}")
@@ -116,7 +116,7 @@ message. `TextResponse` handles the full event lifecycle internally
 When you have the full text available at once:
 
 ```python
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
     text = await context.get_input_text()
     return TextResponse(context, request, text=f"Echo: {text}")
@@ -125,7 +125,7 @@ async def handler(request: CreateResponse, context: ResponseContext, cancellatio
 `text` can also be a sync or async callable — useful when the answer requires I/O:
 
 ```python
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
     async def _build():
         text = await context.get_input_text()
@@ -143,7 +143,7 @@ When an LLM produces tokens incrementally, pass an `AsyncIterable[str]` to
 ```python
 import asyncio
 
-@app.create_handler
+@app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal):
     async def generate_tokens():
         tokens = ["Hello", ", ", "world", "!"]
@@ -186,12 +186,12 @@ return TextResponse(
 
 ### Default: Decorator Pattern
 
-The primary way to register a handler is the `@app.create_handler` decorator:
+The primary way to register a handler is the `@app.response_handler` decorator:
 
 ```python
 app = ResponsesAgentServerHost()
 
-@app.create_handler
+@app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     return TextResponse(context, request, text="Hello!")
 
@@ -239,7 +239,7 @@ from starlette.routing import Mount
 
 responses_app = ResponsesAgentServerHost()
 
-@responses_app.create_handler
+@responses_app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     return TextResponse(context, request, text="Hello!")
 
@@ -283,7 +283,7 @@ no custom provider registration is needed.
 ## Handler Signature
 
 ```python
-@app.create_handler
+@app.response_handler
 def handler(
     request: CreateResponse,
     context: ResponseContext,
@@ -311,7 +311,7 @@ lifecycle, and delivers them to the client.
 Use `return` — no generator yield needed:
 
 ```python
-@app.create_handler
+@app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     return TextResponse(context, request, text="Hello!")
 ```
@@ -322,18 +322,18 @@ Use `yield` for full control. Can be **sync** or **async**:
 
 ```python
 # Sync handler
-@app.create_handler
+@app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
     yield from stream.output_item_message("Hello!")
     yield stream.emit_completed()
 
 # Async handler
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
     yield stream.emit_created()
     yield stream.emit_in_progress()
     async for event in stream.aoutput_item_message(token_stream()):
@@ -350,7 +350,7 @@ properties, streaming deltas — use `ResponseEventStream`. This is the lower-le
 counterpart to `TextResponse`:
 
 ```python
-stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+stream = ResponseEventStream(response_id=context.response_id, request=request)
 
 # 1. Signal response creation
 yield stream.emit_created()
@@ -375,7 +375,7 @@ yield stream.emit_completed()
 Create a `ResponseEventStream` at the start of your handler:
 
 ```python
-stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+stream = ResponseEventStream(response_id=context.response_id, request=request)
 ```
 
 It provides:
@@ -395,8 +395,8 @@ prefixes tells you what any method does at a glance:
 #### Stream-level methods
 
 | Prefix | Example | Returns | Purpose |
-|--------|---------|---------|---------|
-| `emit_*` | `emit_created()`, `emit_completed()` | A single event | Produce one response-lifecycle event |
+|--------|---------|---------|----------|
+| `emit_*` | `emit_created()`, `emit_completed()` | A specific event subtype | Produce one response-lifecycle event |
 | `add_*` | `add_output_item_message()` | A builder object | Create a builder for step-by-step event emission |
 | `output_item_*` | `output_item_message(text)` | Generator of events | Convenience — yields the complete output-item lifecycle |
 | `aoutput_item_*` | `aoutput_item_message(stream)` | Async generator | Async convenience for streaming `AsyncIterable[str]` |
@@ -404,9 +404,14 @@ prefixes tells you what any method does at a glance:
 #### Builder-level methods
 
 | Prefix | Example | Returns | Purpose |
-|--------|---------|---------|---------|
-| `emit_*` | `emit_added()`, `emit_done()`, `emit_delta(chunk)` | A single event | Produce one event in the builder's lifecycle |
+|--------|---------|---------|----------|
+| `emit_*` | `emit_added()`, `emit_done()`, `emit_delta(chunk)` | A specific event subtype | Produce one event in the builder's lifecycle |
 | `add_*` | `add_text_content()`, `add_summary_part()` | A child builder | Create a nested content builder |
+
+> **Typed returns:** Every `emit_*` method returns its specific event model
+> subtype — for example, `emit_created()` returns `ResponseCreatedEvent` and
+> `emit_delta(chunk)` returns `ResponseTextDeltaEvent`. This enables type-safe
+> downstream processing and IDE autocompletion without manual casts.
 
 **Rule of thumb:** If a method returns a single event, it starts with `emit_`. If
 it returns a builder, it starts with `add_`. If it returns a generator of events,
@@ -429,9 +434,9 @@ Use the `response` property to set custom metadata or instructions before emitti
 the created event:
 
 ```python
-stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+stream = ResponseEventStream(response_id=context.response_id, request=request)
 
-# Set custom metadata (preserved in all response.* events)
+# Set custom metadata (overrides what was copied from the request) (preserved in all response.* events)
 stream.response.metadata = {"handler_version": "2.0", "region": "us-west-2"}
 
 # Set custom instructions
@@ -583,7 +588,7 @@ approach.
 #### Using TextResponse (simplest)
 
 ```python
-@app.create_handler
+@app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     return TextResponse(context, request, text="Hello, world!")
 ```
@@ -591,7 +596,7 @@ def handler(request: CreateResponse, context: ResponseContext, cancellation_sign
 #### Using convenience generators
 
 ```python
-stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+stream = ResponseEventStream(response_id=context.response_id, request=request)
 yield stream.emit_created()
 yield stream.emit_in_progress()
 
@@ -669,9 +674,9 @@ next turn.
 #### Multi-Turn Function Calling
 
 ```python
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
-    stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+    stream = ResponseEventStream(response_id=context.response_id, request=request)
     tool_output = await _find_function_call_output(context)
 
     if tool_output is not None:
@@ -863,7 +868,7 @@ suppressed and the library handles the winddown.
 For streaming, check cancellation between chunks:
 
 ```python
-@app.create_handler
+@app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     async def stream_tokens():
         async for token in model.stream(prompt):
@@ -879,7 +884,7 @@ def handler(request: CreateResponse, context: ResponseContext, cancellation_sign
 Check the signal between iterations:
 
 ```python
-@app.create_handler
+@app.response_handler
 def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     stream = ResponseEventStream(...)
     yield stream.emit_created()
@@ -896,7 +901,7 @@ def handler(request: CreateResponse, context: ResponseContext, cancellation_sign
 ### ResponseEventStream Handlers — Async
 
 ```python
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     stream = ResponseEventStream(...)
     yield stream.emit_created()
@@ -931,7 +936,7 @@ When the host shuts down (e.g., SIGTERM), `context.is_shutdown_requested` is set
 from explicit cancel:
 
 ```python
-@app.create_handler
+@app.response_handler
 async def handler(request: CreateResponse, context: ResponseContext, cancellation_signal: asyncio.Event):
     stream = ResponseEventStream(...)
     yield stream.emit_created()
@@ -979,7 +984,7 @@ yield stream.emit_in_progress()
 # ... some work ...
 
 # Something went wrong — signal failure explicitly
-yield stream.emit_failed("server_error", "Custom error message")
+yield stream.emit_failed(code="server_error", message="Custom error message")
 # Do NOT yield any more events after a terminal event
 ```
 
@@ -1035,7 +1040,7 @@ message = stream.add_output_item_message()
 # ... partial output ...
 yield message.emit_done()
 
-yield stream.emit_incomplete("max_output_tokens")
+yield stream.emit_incomplete(reason="max_output_tokens")
 ```
 
 ### Token Usage Reporting
@@ -1044,16 +1049,18 @@ Terminal methods accept an optional `usage` parameter for reporting token
 consumption:
 
 ```python
-usage = {"input_tokens": 150, "output_tokens": 42, "total_tokens": 192}
+from azure.ai.agentserver.responses.models import ResponseUsage
+
+usage = ResponseUsage(input_tokens=150, output_tokens=42, total_tokens=192)
 
 # Completed with usage
 yield stream.emit_completed(usage=usage)
 
 # Failed with usage
-yield stream.emit_failed("server_error", "Error message", usage=usage)
+yield stream.emit_failed(code="server_error", message="Error message", usage=usage)
 
 # Incomplete with usage
-yield stream.emit_incomplete("max_output_tokens", usage=usage)
+yield stream.emit_incomplete(reason="max_output_tokens", usage=usage)
 ```
 
 Handlers that proxy to an LLM and receive token counts should pass them through.
@@ -1201,7 +1208,7 @@ yield stream.emit_completed()
 
 ```python
 # ❌ Unnecessary boilerplate for a simple text response
-stream = ResponseEventStream(response_id=context.response_id, model=request.model)
+stream = ResponseEventStream(response_id=context.response_id, request=request)
 yield stream.emit_created()
 yield stream.emit_in_progress()
 yield from stream.output_item_message("Hello!")
@@ -1247,7 +1254,7 @@ yield message.emit_done()
 try:
     ...
 except asyncio.CancelledError:
-    yield stream.emit_failed("server_error", "Cancelled")
+    yield stream.emit_failed(code="server_error", message="Cancelled")
 
 # ✅ Let it propagate — the library handles it
 # Just check cancellation_signal.is_set() and exit cleanly

@@ -4,7 +4,8 @@
 
 from __future__ import annotations
 
-import uuid
+import hashlib
+import os
 from copy import deepcopy
 from typing import Any, Mapping
 
@@ -15,6 +16,11 @@ from ..models.errors import RequestValidationError
 _X_AGENT_RESPONSE_ID_HEADER = "x-agent-response-id"
 
 _DEFAULT_AGENT_REFERENCE_NAME = "server-default-agent"
+
+# Intentionally capped at 63 hex characters per spec. A full SHA-256 hex digest
+# is 64 characters, but the session ID contract uses 63. Do not change this
+# without reviewing the cross-language contract.
+_SESSION_ID_LENGTH = 63
 
 
 def _extract_input_items(raw_payload: dict[str, Any]) -> list[dict[str, Any]]:
@@ -289,7 +295,13 @@ def _resolve_conversation_id(parsed: CreateResponse) -> str | None:
     return None
 
 
-def _resolve_session_id(parsed: CreateResponse, payload: dict[str, Any], *, env_session_id: str = "") -> str:
+def _resolve_session_id(
+    parsed: CreateResponse,
+    payload: dict[str, Any],
+    *,
+    env_session_id: str = "",
+    agent_reference: AgentReference | dict[str, Any] | None = None,
+) -> str:
     """Resolve the session ID for a create-response request.
 
     **B39 — Session ID Resolution**: The library resolves ``agent_session_id``
@@ -297,7 +309,9 @@ def _resolve_session_id(parsed: CreateResponse, payload: dict[str, Any], *, env_
 
     1. ``request.agent_session_id`` — payload field (client-supplied session affinity)
     2. ``env_session_id`` — platform-supplied (from ``AgentConfig.session_id``)
-    3. Generated UUID (freshly generated as a string)
+    3. **Deterministic derivation** — SHA-256 hash of ``agent_name:agent_version:partition_hint``
+       where *partition_hint* is extracted from ``conversation_id`` or ``previous_response_id``.
+    4. Random 63-char lowercase hex (one-shot, no conversational context)
 
     :param parsed: Parsed ``CreateResponse`` model instance.
     :type parsed: CreateResponse
@@ -306,6 +320,9 @@ def _resolve_session_id(parsed: CreateResponse, payload: dict[str, Any], *, env_
     :keyword env_session_id: Platform-supplied session ID from ``AgentConfig``
         (sourced from ``FOUNDRY_AGENT_SESSION_ID`` env var).  Defaults to ``""``.
     :keyword type env_session_id: str
+    :keyword agent_reference: Agent reference containing name/version for
+        deterministic session derivation.
+    :keyword type agent_reference: AgentReference | dict[str, Any] | None
     :returns: The resolved session ID string.
     :rtype: str
     """
@@ -322,5 +339,99 @@ def _resolve_session_id(parsed: CreateResponse, payload: dict[str, Any], *, env_
     if env_session_id.strip():
         return env_session_id.strip()
 
-    # Priority 3: generated UUID
-    return str(uuid.uuid4())
+    # Priority 3: deterministic derivation from conversation context
+    conversation_id = _resolve_conversation_id(parsed)
+    previous_response_id: str | None = None
+    raw_prev = getattr(parsed, "previous_response_id", None)
+    if isinstance(raw_prev, str) and raw_prev.strip():
+        previous_response_id = raw_prev.strip()
+
+    return derive_session_id(
+        conversation_id=conversation_id,
+        previous_response_id=previous_response_id,
+        agent_reference=agent_reference,
+    )
+
+
+def derive_session_id(
+    *,
+    conversation_id: str | None = None,
+    previous_response_id: str | None = None,
+    agent_reference: AgentReference | dict[str, Any] | None = None,
+) -> str:
+    """Derive a deterministic session ID from conversational context.
+
+    Mirrors the ``SessionIdDerivation.Derive`` logic per spec (minus the
+    explicit session ID and env fallbacks which are handled by the caller):
+
+    - If *conversation_id* or *previous_response_id* is available, extract
+      the partition hint via :meth:`IdGenerator.extract_partition_key` and
+      SHA-256 hash it with the agent identity.
+    - Otherwise, generate a random 63-char lowercase hex string.
+
+    :keyword conversation_id: Conversation ID from the request, if any.
+    :keyword type conversation_id: str | None
+    :keyword previous_response_id: Previous response ID, if any.
+    :keyword type previous_response_id: str | None
+    :keyword agent_reference: Agent reference containing name/version.
+    :keyword type agent_reference: AgentReference | dict[str, Any] | None
+    :returns: A 63-char lowercase hex session ID.
+    :rtype: str
+    """
+    # Select partition source: conversation_id first, then previous_response_id
+    partition_source = conversation_id or previous_response_id
+
+    if partition_source:
+        try:
+            partition_hint = IdGenerator.extract_partition_key(partition_source)
+        except (ValueError, TypeError):
+            partition_hint = partition_source
+
+        agent_name, agent_version = _extract_agent_identity(agent_reference)
+        seed = f"{agent_name}:{agent_version}:{partition_hint}"
+        return _compute_hex_hash(seed)
+
+    # One-shot: no conversational context → random session
+    return _generate_random_hex()
+
+
+def _extract_agent_identity(
+    agent_reference: AgentReference | dict[str, Any] | None,
+) -> tuple[str, str]:
+    """Extract (agent_name, agent_version) from an agent reference.
+
+    :param agent_reference: Agent reference mapping or model instance.
+    :type agent_reference: AgentReference | dict[str, Any] | None
+    :returns: Tuple of (name, version) with fallback defaults.
+    :rtype: tuple[str, str]
+    """
+    if agent_reference is None:
+        return _DEFAULT_AGENT_REFERENCE_NAME, ""
+    if isinstance(agent_reference, dict):
+        name = agent_reference.get("name") or _DEFAULT_AGENT_REFERENCE_NAME
+        version = agent_reference.get("version") or ""
+        return str(name), str(version)
+    name = getattr(agent_reference, "name", None) or _DEFAULT_AGENT_REFERENCE_NAME
+    version = getattr(agent_reference, "version", None) or ""
+    return str(name), str(version)
+
+
+def _compute_hex_hash(value: str) -> str:
+    """SHA-256 hash a string and return the first 63 lowercase hex chars.
+
+    :param value: Input string to hash.
+    :type value: str
+    :returns: 63-char lowercase hex digest.
+    :rtype: str
+    """
+    digest = hashlib.sha256(value.encode("utf-8")).hexdigest()
+    return digest[:_SESSION_ID_LENGTH]
+
+
+def _generate_random_hex() -> str:
+    """Generate a random 63-char lowercase hex string.
+
+    :returns: 63-char lowercase hex string.
+    :rtype: str
+    """
+    return os.urandom(32).hex()[:_SESSION_ID_LENGTH]
