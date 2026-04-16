@@ -3321,8 +3321,13 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     """
     Get the metric name from the testing criteria and metric key.
 
-    Uses suffix-stripping to resolve metric keys that include known suffixes
-    (e.g. ``f1_result`` → ``f1_score``, ``coherence_reason`` → ``coherence``).
+    Resolution order:
+    1. Direct match against metric_list.
+    2. Legacy f1 special case — the f1 evaluator emits ``f1_result``, ``f1_threshold``
+       (not ``f1_score_result``), so we match the first segment to handle this.
+    3. Prefix-based fallback — sorted longest-first so more-specific metrics
+       match before shorter ones (e.g. ``xpia_manipulated_content`` before ``xpia``).
+    4. Falls back to the testing criteria name.
 
     :param testing_criteria_name: The name of the testing criteria
     :type testing_criteria_name: str
@@ -3333,41 +3338,17 @@ def _get_metric_from_criteria(testing_criteria_name: str, metric_key: str, metri
     :return: The metric name if found, otherwise the testing criteria name
     :rtype: str
     """
-    _KNOWN_SUFFIXES = [
-        "_result",
-        "_threshold",
-        "_score",
-        "_status",
-        "_properties",
-        "_reason",
-        "_label",
-        "_model",
-        "_finish_reason",
-        "_sample_input",
-        "_sample_output",
-        "_total_tokens",
-        "_prompt_tokens",
-        "_completion_tokens",
-    ]
-
     # Direct match against metric list
     if metric_key in metric_list:
         return metric_key
 
-    # Try stripping known suffixes and matching
-    for suffix in _KNOWN_SUFFIXES:
-        if metric_key.endswith(suffix):
-            base = metric_key[: -len(suffix)]
-            # Check if the base (with _score appended) is in the list (e.g. f1_result → f1_score)
-            base_score = base + "_score"
-            if base_score in metric_list:
-                return base_score
-            if base in metric_list:
-                return base
-            break  # Only strip one suffix
+    # Legacy: f1 evaluator uses non-standard naming (f1_result instead of f1_score_result)
+    if metric_key.split("_", 1)[0] == "f1":
+        return "f1_score"
 
-    # Prefix-based fallback (existing behavior)
-    for expected_metric in metric_list:
+    # Prefix-based fallback — sort by length descending so longer (more-specific)
+    # metric names match first (e.g. xpia_manipulated_content before xpia)
+    for expected_metric in sorted(metric_list, key=len, reverse=True):
         if metric_key.startswith(expected_metric):
             return expected_metric
 

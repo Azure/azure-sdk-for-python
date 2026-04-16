@@ -2406,30 +2406,43 @@ class TestCalculateAoaiEvaluationSummary:
 
 @pytest.mark.unittest
 class TestGetMetricFromCriteria:
-    """Tests for suffix-stripping metric resolution in _get_metric_from_criteria."""
+    """Tests for metric resolution in _get_metric_from_criteria."""
 
     def test_direct_match(self):
         assert _get_metric_from_criteria("tc", "f1_score", ["f1_score"]) == "f1_score"
 
-    def test_suffix_strip_result(self):
-        """f1_result should resolve to f1_score via suffix stripping."""
+    def test_f1_result_resolves_to_f1_score(self):
+        """f1_result should resolve to f1_score via f1 special case."""
         assert _get_metric_from_criteria("tc", "f1_result", ["f1_score"]) == "f1_score"
 
-    def test_suffix_strip_threshold(self):
+    def test_f1_threshold_resolves_to_f1_score(self):
         assert _get_metric_from_criteria("tc", "f1_threshold", ["f1_score"]) == "f1_score"
 
-    def test_suffix_strip_status(self):
+    def test_f1_status_resolves_to_f1_score(self):
         assert _get_metric_from_criteria("tc", "f1_status", ["f1_score"]) == "f1_score"
 
-    def test_suffix_strip_reason(self):
+    def test_f1_properties_resolves_to_f1_score(self):
+        assert _get_metric_from_criteria("tc", "f1_properties", ["f1_score"]) == "f1_score"
+
+    def test_coherence_reason_prefix_match(self):
         assert _get_metric_from_criteria("tc", "coherence_reason", ["coherence"]) == "coherence"
 
-    def test_xpia_prefix_match(self):
-        """XPIA metrics match via prefix fallback."""
+    def test_xpia_prefix_match_single_metric(self):
+        """XPIA sub-metric variants match via prefix fallback."""
         assert _get_metric_from_criteria("tc", "xpia_manipulated_content_result", ["xpia_manipulated_content"]) == "xpia_manipulated_content"
+
+    def test_xpia_prefix_ordering_uses_longest_match(self):
+        """With full indirect_attack metric list, longer metric names match before shorter ones."""
+        full_list = ["xpia", "xpia_manipulated_content", "xpia_intrusion", "xpia_information_gathering"]
+        assert _get_metric_from_criteria("indirect_attack", "xpia_manipulated_content_result", full_list) == "xpia_manipulated_content"
+        assert _get_metric_from_criteria("indirect_attack", "xpia_intrusion_reason", full_list) == "xpia_intrusion"
+        assert _get_metric_from_criteria("indirect_attack", "xpia_result", full_list) == "xpia"
+
+    def test_xpia_direct_match_in_full_list(self):
+        """XPIA sub-metric names that are in the list should direct-match."""
+        full_list = ["xpia", "xpia_manipulated_content", "xpia_intrusion", "xpia_information_gathering"]
+        assert _get_metric_from_criteria("indirect_attack", "xpia_manipulated_content", full_list) == "xpia_manipulated_content"
+        assert _get_metric_from_criteria("indirect_attack", "xpia", full_list) == "xpia"
 
     def test_fallback_to_criteria_name(self):
         assert _get_metric_from_criteria("my_criteria", "unknown_key", ["f1_score"]) == "my_criteria"
-
-    def test_suffix_strip_properties(self):
-        assert _get_metric_from_criteria("tc", "f1_properties", ["f1_score"]) == "f1_score"
