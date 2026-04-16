@@ -227,7 +227,11 @@ class McpBridge:
                 logger.warning("MCP tools/list error: %s", data["error"])
             tools = data.get("result", {}).get("tools", [])
             if not tools:
-                logger.debug("MCP tools/list raw response: %s", json.dumps(data)[:2000])
+                logger.warning(
+                    "MCP tools/list returned 0 tools. Response keys: %s, result keys: %s",
+                    list(data.keys()),
+                    list(data.get("result", {}).keys()),
+                )
             return tools
 
     async def call_tool(self, name: str, arguments: Dict[str, Any]) -> str:
