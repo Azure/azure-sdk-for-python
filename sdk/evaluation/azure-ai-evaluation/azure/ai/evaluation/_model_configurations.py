@@ -85,8 +85,8 @@ class OpenAIModelConfiguration(TypedDict):
 class AnthropicModelConfiguration(TypedDict):
     """Model configuration for Anthropic models
 
-    :param type: The type of the model configuration. Must be set to 'anthropic' for
-        AnthropicModelConfiguration to be recognized correctly.
+    :param type: The type of the model configuration. Must be set to ``"anthropic"`` to route the
+        configuration correctly, as Anthropic configurations cannot be automatically inferred.
     :type type: Literal["anthropic"]
     :param api_key: API key needed to make requests to the Anthropic model
     :type api_key: str
@@ -96,10 +96,6 @@ class AnthropicModelConfiguration(TypedDict):
     :type base_url: NotRequired[str]
     :param max_tokens: Maximum number of tokens to generate. Optional, defaults to 4096.
     :type max_tokens: NotRequired[int]
-
-    .. note::
-        The ``type`` field must be explicitly set to ``"anthropic"`` when using this configuration,
-        as it is required to distinguish Anthropic configurations from OpenAI configurations.
 
     .. admonition:: Example:
 
@@ -112,7 +108,7 @@ class AnthropicModelConfiguration(TypedDict):
 
     """
 
-    type: NotRequired[Literal["anthropic"]]
+    type: Literal["anthropic"]
     api_key: str
     model: str
     base_url: NotRequired[str]

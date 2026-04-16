@@ -178,8 +178,10 @@ class TestAnthropicModelConfigUtils(unittest.TestCase):
         }
         result = construct_prompty_model_config(config, "2024-02-01", "my-user-agent")
         assert result["configuration"]["type"] == "anthropic"
+        assert result["configuration"]["api_key"] == "my-api-key"
+        assert result["configuration"]["model"] == "claude-3-5-sonnet-20241022"
         assert "extra_headers" in result["parameters"]
-        # Anthropic config should not have api_version added
+        # Anthropic config should not have api_version added (unlike Azure OpenAI)
         assert "api_version" not in result["configuration"]
 
 
