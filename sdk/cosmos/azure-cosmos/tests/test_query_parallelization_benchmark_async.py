@@ -126,33 +126,6 @@ class TestParallelQueryBenchmarks:
 
     @pytest.mark.asyncio(loop_scope="module")
     @pytest.mark.parametrize("max_degree", [0, 1, 2, 4, 8])
-    async def test_cross_partition_scan_benchmark(self, cosmos_container, max_degree):
-        """Benchmark: cross-partition ORDER BY with varying parallelism."""
-        total_ru = 0.0
-        item_count = 0
-
-        def hook(headers, _body):
-            nonlocal total_ru
-            total_ru += float(headers.get("x-ms-request-charge", "0"))
-
-        start = time.perf_counter()
-        items = cosmos_container.query_items(
-            query="SELECT * FROM c ORDER BY c.numValue",
-            max_concurrency=max_degree,
-            response_hook=hook,
-        )
-        async for _ in items:
-            item_count += 1
-        elapsed = time.perf_counter() - start
-
-        items_per_sec = item_count / elapsed if elapsed > 0 else 0
-        logger.info(
-            f"scan degree={max_degree}: {elapsed:.3f}s, {total_ru:.1f} RU, "
-            f"{item_count} items, {items_per_sec:.1f} items/s"
-        )
-
-    @pytest.mark.asyncio(loop_scope="module")
-    @pytest.mark.parametrize("max_degree", [0, 1, 2, 4, 8])
     async def test_cross_partition_order_by_benchmark(self, cosmos_container, max_degree):
         """Benchmark: cross-partition ORDER BY with varying parallelism."""
         total_ru = 0.0
