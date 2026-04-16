@@ -899,6 +899,11 @@
       "caseSensitive": false
     },
     {
+      "filename": "sdk/cognitivelanguage/azure-ai-language-documents/**",
+      "words": [ "BRCPF", "IDRG", "EUGPS", "PLREGON", "REGON", "ESDNI", "USUK", "BRCPF", "IDRG", "EUGPS", "PLREGON" ],
+      "caseSensitive": false
+    },
+    {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/doc/*.rst",
       "words": [ "undoc" ]
     },
