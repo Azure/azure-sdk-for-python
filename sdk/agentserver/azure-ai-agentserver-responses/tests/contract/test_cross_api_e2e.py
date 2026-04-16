@@ -261,7 +261,7 @@ def _make_two_item_gated_handler(
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(handler or _noop_handler)
+    app.response_handler(handler or _noop_handler)
     return TestClient(app)
 
 
@@ -523,7 +523,7 @@ class TestC1SyncStored:
 
         app = ResponsesAgentServerHost()
 
-        @app.create_handler
+        @app.response_handler
         def _handler(request: Any, context: Any, cancellation_signal: Any):
             async def _events():
                 handler_started.set()
@@ -628,7 +628,7 @@ class TestC2StreamStored:
 
         app = ResponsesAgentServerHost()
 
-        @app.create_handler
+        @app.response_handler
         def _handler(request: Any, context: Any, cancellation_signal: Any):
             async def _events():
                 stream = ResponseEventStream(

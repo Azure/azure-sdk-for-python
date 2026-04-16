@@ -4,7 +4,7 @@ dynamic = ["version", "readme"]
 description = "GitHub Copilot SDK adapter for Azure AI Agent Server"
 requires-python = ">=3.11"
 authors = [
-  { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
+    { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
 license = "MIT"
 classifiers = [
@@ -32,13 +32,7 @@ requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
-exclude = [
-    "tests*",
-    "samples*",
-    "doc*",
-    "azure",
-    "azure.ai",
-]
+exclude = ["tests*", "samples*", "doc*", "azure", "azure.ai"]
 
 [tool.setuptools.dynamic]
 version = { attr = "azure.ai.agentserver.githubcopilot._version.VERSION" }
@@ -63,6 +57,7 @@ analyze_python_version = "3.11"
 breaking = false
 pyright = false
 verifytypes = false
+latestdependency = false
 verify_keywords = false
 mindependency = false
 whl_no_aio = false
