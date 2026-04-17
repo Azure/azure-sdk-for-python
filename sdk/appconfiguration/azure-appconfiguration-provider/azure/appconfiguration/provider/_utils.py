@@ -45,6 +45,24 @@ def delay_failure(start_time: datetime.datetime) -> None:
         time.sleep((min_time - (current_time - start_time)).total_seconds())
 
 
+def get_startup_backoff(elapsed_seconds: float, attempts: int) -> Tuple[float, bool]:
+    """
+    Get a backoff duration based on elapsed startup time.
+
+    :param elapsed_seconds: The time elapsed since startup began, in seconds.
+    :type elapsed_seconds: float
+    :param attempts: The number of retry attempts made (1-based).
+    :type attempts: int
+    :return: A tuple where the first element is the backoff duration in seconds,
+             and the second element indicates if the fixed backoff window has been exceeded.
+    :rtype: Tuple[float, bool]
+    """
+    for threshold, backoff in STARTUP_BACKOFF_INTERVALS:
+        if elapsed_seconds < threshold:
+            return backoff, False
+    return _calculate_backoff_duration(attempts), True
+
+
 def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
     """
     Process and validate all load function parameters in one place.
@@ -167,24 +185,6 @@ def _jitter(duration: float, ratio: float = JITTER_RATIO) -> float:
         return duration
     jitter = ratio * (random.random() * 2 - 1)
     return duration * (1 + jitter)
-
-
-def _get_startup_backoff(elapsed_seconds: float, attempts: int) -> Tuple[float, bool]:
-    """
-    Get a backoff duration based on elapsed startup time.
-
-    :param elapsed_seconds: The time elapsed since startup began, in seconds.
-    :type elapsed_seconds: float
-    :param attempts: The number of retry attempts made (1-based).
-    :type attempts: int
-    :return: A tuple where the first element is the backoff duration in seconds,
-             and the second element indicates if the fixed backoff window has been exceeded.
-    :rtype: Tuple[float, bool]
-    """
-    for threshold, backoff in STARTUP_BACKOFF_INTERVALS:
-        if elapsed_seconds < threshold:
-            return backoff, False
-    return _calculate_backoff_duration(attempts), True
 
 
 def _calculate_backoff_duration(attempts: int) -> float:

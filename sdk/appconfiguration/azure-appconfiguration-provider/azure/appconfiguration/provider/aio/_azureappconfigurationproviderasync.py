@@ -39,7 +39,7 @@ from ._async_client_manager import (
     _AsyncConfigurationClientWrapper as ConfigurationClient,
 )
 from .._user_agent import USER_AGENT
-from .._utils import _get_startup_backoff
+from .._utils import get_startup_backoff
 
 JSON = Mapping[str, Any]
 logger = logging.getLogger(__name__)
@@ -232,7 +232,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
             # Calculate delay before next retry attempt
             elapsed_seconds = (datetime.datetime.now() - startup_start_time).total_seconds()
-            delay, is_exponential_backoff = _get_startup_backoff(elapsed_seconds, exponential_backoff_attempts)
+            delay, is_exponential_backoff = get_startup_backoff(elapsed_seconds, exponential_backoff_attempts)
 
             if is_exponential_backoff:
                 exponential_backoff_attempts += 1
