@@ -5,9 +5,9 @@ Azure AI Language Documents lets you submit documents stored in Azure Blob Stora
 [Source code][documents_client_src]
 | [Package (PyPI)][documents_pypi_package]
 | [Package (Conda)](https://anaconda.org/microsoft/azure-ai-language-documents/)
-| [API reference][documents_refdocs]
+| <!-- [API reference][documents_refdocs] -->
 | [Product documentation][documents_docs]
-| [Samples][documents_samples]
+| <!-- [Samples][documents_samples] -->
 | [Documents REST API][documents_rest_docs]
 
 > _Python 2.7 is not supported. For details see the Azure SDK for Python end-of-support notice._
@@ -432,8 +432,8 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [documents_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-documents/
 [documents_docs]: https://learn.microsoft.com/azure/ai-services/language-service/
 [documents_pypi_package]: https://pypi.org/project/azure-ai-language-documents/
-[documents_refdocs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-documents/latest/azure.ai.language.documents.html
-[documents_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-documents/samples/
+<!-- [documents_refdocs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-documents/latest/azure.ai.language.documents.html -->
+<!-- [documents_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-documents/samples/ -->
 [documents_rest_docs]: https://learn.microsoft.com/rest/api/language/
 [azure_identity_credentials]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#credentials
 [install_azure_identity]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#install-the-package
