@@ -43,7 +43,7 @@ def _make_app(handler=None):
         return _events()
 
     if handler is not None:
-        app._create_fn = handler  # noqa: SLF001
+        app.response_handler(handler)
     return app
 
 
