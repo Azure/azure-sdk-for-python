@@ -29,8 +29,10 @@ azure-sdk-for-python/
 ├── eng/                    # Engineering system tools and configurations
 ├── doc/                    # Developer documentation and guides
 ├── scripts/                # Automation scripts
-├── .github/                # GitHub workflows and Copilot instructions
-│   └── copilot-instructions.md  # Detailed Copilot-specific guidance
+├── .github/                # GitHub workflows, Copilot instructions, skills, and prompts
+│   ├── copilot-instructions.md  # Detailed Copilot-specific guidance
+│   ├── skills/             # Reusable Copilot skills (e.g., find-package, fix-pylint)
+│   └── prompts/            # Copilot prompt files for common tasks
 └── tools/                  # Development tools
 ```
 
@@ -76,6 +78,10 @@ AI agents can assist with the following activities:
 - **Issue Analysis**: Review and categorize issues
 - **Service Labels**: Validate and create service labels (e.g., `Azure.AI.Projects`)
 - **CODEOWNERS**: Validate and update CODEOWNERS entries
+
+### Relationship to Copilot Instructions
+
+This `AGENTS.md` file is the primary reference for AI agents working in this repository. It follows the [AGENTS.md standard](https://github.com/anthropics/agents-md) that most AI coding tools recognize automatically. For additional Copilot-specific guidance (e.g., TypeSpec generation details, MCP tool usage), see [`.github/copilot-instructions.md`](.github/copilot-instructions.md). Reusable skills are available in [`.github/skills/`](.github/skills/) and prompt templates in [`.github/prompts/`](.github/prompts/).
 
 ### Key Workflows
 
@@ -167,7 +173,7 @@ azpysdk mypy .
 ### Environment Requirements
 
 **Required Tools**:
-- Python 3.9 or later
+- Python 3.10 or later
 - Node.js (for TypeSpec generation)
 - azpysdk (test runner and automation)
 - GitHub CLI (for PR operations)
