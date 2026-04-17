@@ -1,6 +1,7 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT license.
-"""Inbound request logging middleware for the Responses server.
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+"""Inbound request logging middleware for Azure AI Agent Server hosts.
 
 A pure-ASGI middleware that logs every inbound HTTP request at INFO level
 (start) and at INFO or WARNING level (completion, depending on status code).
@@ -66,6 +67,9 @@ class InboundRequestLoggingMiddleware:
     Unlike ``BaseHTTPMiddleware``, this passes the ``receive`` callable
     through to the inner application untouched, preserving
     ``request.is_disconnected()`` behaviour.
+
+    Wired automatically by :class:`AgentServerHost` so that all protocol
+    hosts (responses, invocations, etc.) get consistent inbound logging.
 
     :param app: The inner ASGI application.
     :type app: ASGIApp

@@ -17,6 +17,7 @@ from starlette.routing import Route
 from starlette.types import ASGIApp, Receive, Scope, Send
 
 from . import _config, _tracing
+from ._middleware import InboundRequestLoggingMiddleware
 from ._server_version import build_server_version
 from ._version import VERSION as _CORE_VERSION
 
@@ -210,6 +211,7 @@ class AgentServerHost(Starlette):
             routes=all_routes,
             lifespan=_lifespan,
             middleware=[
+                Middleware(InboundRequestLoggingMiddleware),
                 Middleware(_PlatformHeaderMiddleware, get_server_version=self._build_server_version),
             ],
             **kwargs,
