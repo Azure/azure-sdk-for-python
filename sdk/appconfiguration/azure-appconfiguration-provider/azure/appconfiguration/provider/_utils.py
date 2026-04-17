@@ -6,14 +6,12 @@
 import time
 import datetime
 import random
-import logging
 from typing import (
     Any,
     Dict,
     Mapping,
     Optional,
     Tuple,
-    TypeVar,
 )
 from ._constants import (
     DEFAULT_STARTUP_TIMEOUT,
@@ -25,8 +23,6 @@ from ._constants import (
 
 
 JSON = Mapping[str, Any]
-_T = TypeVar("_T")
-logger = logging.getLogger(__name__)
 
 min_uptime = 5
 
@@ -134,7 +130,7 @@ def process_load_parameters(*args, **kwargs: Any) -> Dict[str, Any]:
     }
 
 
-def sdk_allowed_kwargs(kwargs):
+def sdk_allowed_kwargs(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     allowed_kwargs = [
         "audience",
         "headers",
@@ -191,7 +187,7 @@ def _calculate_backoff_duration(attempts: int) -> float:
     """
     Calculate the jittered exponential backoff duration.
 
-    :param attempts: The number of retry attempts made (1-based).
+    :param attempts: The number of retry attempts made, using a 0-based counter.
     :type attempts: int
     :return: The calculated backoff duration with jitter applied.
     :rtype: float

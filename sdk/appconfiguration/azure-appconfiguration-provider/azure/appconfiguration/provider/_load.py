@@ -194,7 +194,7 @@ def load(*args, **kwargs) -> "AzureAppConfigurationProvider":
 
     try:
         provider._load_all(**kwargs)  # pylint:disable=protected-access
-    except Exception as e:
+    except Exception:
         delay_failure(start_time)
-        raise e
+        raise
     return provider
