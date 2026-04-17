@@ -69,7 +69,7 @@ with (
             "name": "Similarity",
             "evaluator_name": "builtin.similarity",
             "data_mapping": {"response": "{{item.response}}", "ground_truth": "{{item.ground_truth}}"},
-            "initialization_parameters": {"deployment_name": f"{model_deployment_name}", "threshold": 3},
+            "initialization_parameters": {"model": f"{model_deployment_name}", "threshold": 3},
         },
         {
             "type": "azure_ai_evaluator",

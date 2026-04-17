@@ -71,7 +71,7 @@ def main() -> None:
                 "type": "azure_ai_evaluator",
                 "name": "response_completeness",
                 "evaluator_name": "builtin.response_completeness",
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+                "initialization_parameters": {"model": f"{model_deployment_name}"},
                 "data_mapping": {"ground_truth": "{{item.ground_truth}}", "response": "{{item.response}}"},
             }
         ]

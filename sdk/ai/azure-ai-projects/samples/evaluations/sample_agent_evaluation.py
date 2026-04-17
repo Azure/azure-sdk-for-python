@@ -76,14 +76,14 @@ with (
             "type": "azure_ai_evaluator",
             "name": "fluency",
             "evaluator_name": "builtin.fluency",
-            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+            "initialization_parameters": {"model": f"{model_deployment_name}"},
             "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_text}}"},
         },
         {
             "type": "azure_ai_evaluator",
             "name": "task_adherence",
             "evaluator_name": "builtin.task_adherence",
-            "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+            "initialization_parameters": {"model": f"{model_deployment_name}"},
             "data_mapping": {"query": "{{item.query}}", "response": "{{sample.output_items}}"},
         },
     ]

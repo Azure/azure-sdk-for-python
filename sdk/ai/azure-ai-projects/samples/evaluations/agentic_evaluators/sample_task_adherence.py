@@ -77,7 +77,7 @@ def main() -> None:
                 "type": "azure_ai_evaluator",
                 "name": "task_adherence",
                 "evaluator_name": "builtin.task_adherence",
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+                "initialization_parameters": {"model": f"{model_deployment_name}"},
                 "data_mapping": {
                     "query": "{{item.query}}",
                     "response": "{{item.response}}",

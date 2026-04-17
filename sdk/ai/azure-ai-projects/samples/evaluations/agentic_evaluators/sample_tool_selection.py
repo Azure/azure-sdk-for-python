@@ -78,7 +78,7 @@ def main() -> None:
                 "type": "azure_ai_evaluator",
                 "name": "tool_selection",
                 "evaluator_name": "builtin.tool_selection",
-                "initialization_parameters": {"deployment_name": f"{model_deployment_name}"},
+                "initialization_parameters": {"model": f"{model_deployment_name}"},
                 "data_mapping": {
                     "query": "{{item.query}}",
                     "response": "{{item.response}}",
