@@ -36,15 +36,16 @@ def _mask_storage_url(url: str) -> str:
     Everything before ``/storage`` (scheme, host, project path) is replaced
     with ``"***"`` because it contains the project endpoint and project
     name.  Only the ``/storage/...`` resource path is kept for debugging.
-    Query parameters are stripped.
+    The ``api-version`` query parameter is preserved; all other query
+    parameters are stripped.
 
     Example::
 
         >>> _mask_storage_url(
         ...     "https://acct.services.ai.azure.com/api/projects/myproj"
-        ...     "/storage/responses/resp_123?api-version=1"
+        ...     "/storage/responses/resp_123?api-version=2025-01-01"
         ... )
-        '***/storage/responses/resp_123'
+        '***/storage/responses/resp_123?api-version=2025-01-01'
 
     :param url: The full storage URL.
     :type url: str
@@ -58,10 +59,15 @@ def _mask_storage_url(url: str) -> str:
         path = parsed.path or ""
         # Find the /storage segment and keep only from there.
         idx = path.find("/storage")
-        if idx >= 0:
-            return f"***{path[idx:]}"
-        # Fallback: no /storage segment — redact the whole URL.
-        return "(redacted)"
+        if idx < 0:
+            return "(redacted)"
+        masked = f"***{path[idx:]}"
+        # Preserve api-version query param if present (safe and useful for debugging).
+        qs = urllib.parse.parse_qs(parsed.query)
+        api_version = qs.get("api-version")
+        if api_version:
+            masked += f"?api-version={api_version[0]}"
+        return masked
     except Exception:  # pylint: disable=broad-exception-caught
         return "(redacted)"
 

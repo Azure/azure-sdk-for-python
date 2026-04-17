@@ -180,26 +180,26 @@ class TestMaskStorageUrl:
     def test_masks_host_and_project_path(self) -> None:
         result = _mask_storage_url(
             "https://acct.services.ai.azure.com/api/projects/myproj"
-            "/storage/responses/resp_123?api-version=1"
+            "/storage/responses/resp_123?api-version=2025-01-01"
         )
-        assert result == "***/storage/responses/resp_123"
+        assert result == "***/storage/responses/resp_123?api-version=2025-01-01"
         assert "acct.services.ai.azure.com" not in result
         assert "myproj" not in result
 
-    def test_strips_query_params(self) -> None:
+    def test_strips_non_api_version_query_params(self) -> None:
         result = _mask_storage_url(
             "https://myproject.foundry.azure.com/api/projects/p1"
-            "/storage/responses?api-version=1&conversation_id=abc"
+            "/storage/responses?api-version=1&conversation_id=abc&previous_response_id=xyz"
         )
-        assert "api-version" not in result
         assert "conversation_id" not in result
-        assert result == "***/storage/responses"
+        assert "previous_response_id" not in result
+        assert result == "***/storage/responses?api-version=1"
 
     def test_preserves_storage_relative_path(self) -> None:
         result = _mask_storage_url(
             "https://myhost.com/api/projects/proj/storage/responses/resp_abc/input_items?api-version=1"
         )
-        assert result == "***/storage/responses/resp_abc/input_items"
+        assert result == "***/storage/responses/resp_abc/input_items?api-version=1"
         assert "myhost.com" not in result
         assert "proj" not in result
 
