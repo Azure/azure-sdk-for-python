@@ -64,9 +64,6 @@ parameters:
   - name: EnvVars
     type: object
     default: {}
-  - name: PythonVersionForAnalyze
-    type: string
-    default: ''
 
 jobs:
   - job: 'Build_Linux'
@@ -212,10 +209,16 @@ jobs:
 
     steps:
     - task: UsePythonVersion@0
-      displayName: "Use Python ${{ coalesce(parameters.PythonVersionForAnalyze, '$(PythonVersion)') }}"
+      displayName: "Use Python $(PythonVersion)"
       condition: succeededOrFailed()
       inputs:
-        versionSpec: ${{ coalesce(parameters.PythonVersionForAnalyze, '$(PythonVersion)') }}
+        versionSpec: $(PythonVersion)
+
+    - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+      parameters:
+        DevFeedName: ${{ parameters.DevFeedName }}
+        EnableTwineAuth: false
+
     - template: /eng/pipelines/templates/steps/use-venv.yml
 
     - template: /eng/common/pipelines/templates/steps/check-spelling.yml
@@ -284,7 +287,14 @@ jobs:
           - task: UsePythonVersion@0
             inputs:
               versionSpec: '3.12'
+
+          - template: ../steps/auth-dev-feed.yml
+            parameters:
+              DevFeedName: ${{ parameters.DevFeedName }}
+              EnableTwineAuth: false
+
           - template: /eng/pipelines/templates/steps/use-venv.yml
+
           - template: /eng/common/pipelines/templates/steps/save-package-properties.yml
             parameters:
               ServiceDirectory: ${{parameters.ServiceDirectory}}
@@ -322,7 +332,14 @@ jobs:
           - task: UsePythonVersion@0
             inputs:
               versionSpec: '3.12'
+
+          - template: ../steps/auth-dev-feed.yml
+            parameters:
+              DevFeedName: ${{ parameters.DevFeedName }}
+              EnableTwineAuth: false
+
           - template: /eng/pipelines/templates/steps/use-venv.yml
+
           - pwsh: |
               $ErrorActionPreference = 'Stop'
               $PSNativeCommandUseErrorActionPreference = $true

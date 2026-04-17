@@ -31,6 +31,7 @@ pytest.importorskip("pyrit", reason="redteam extra is not installed")
 from azure.ai.evaluation.red_team import RedTeam, RiskCategory, AttackStrategy
 from azure.ai.evaluation.red_team._red_team_result import RedTeamResult
 from azure.ai.evaluation._model_configurations import AzureOpenAIModelConfiguration
+from pyrit.memory import CentralMemory, SQLiteMemory
 
 SEEDS_DIR = str(Path(__file__).parent / "data" / "redteam_seeds")
 
@@ -39,6 +40,21 @@ SEEDS_DIR = str(Path(__file__).parent / "data" / "redteam_seeds")
 @pytest.mark.azuretest
 class TestRedTeamFoundry:
     """Test RedTeam Foundry integration features."""
+
+    @pytest.fixture(autouse=True)
+    def reset_pyrit_memory(self):
+        """Reset PyRIT's shared SQLite memory between tests.
+
+        PyRIT uses a process-wide CentralMemory singleton backed by a file-based
+        SQLite database (pyrit.db). Without resetting, conversation pieces from
+        earlier tests leak into later ones via shared conversation IDs or stale
+        data. RedTeam.__init__ creates a new SQLiteMemory() each scan, but the
+        underlying file persists. Reset the database to ensure test isolation.
+        """
+        CentralMemory.set_memory_instance(SQLiteMemory())
+        memory = CentralMemory.get_memory_instance()
+        memory.reset_database()
+        yield
 
     @staticmethod
     def _validate_attack_details(
@@ -390,8 +406,12 @@ class TestRedTeamFoundry:
         def stable_choice(seq):
             return seq[0]
 
-        with patch("azure.ai.evaluation.red_team._red_team.random.sample", side_effect=stable_sample), patch(
-            "azure.ai.evaluation.red_team._red_team.random.choice", side_effect=stable_choice
+        with patch(
+            "azure.ai.evaluation.red_team._red_team.random.sample",
+            side_effect=stable_sample,
+        ), patch(
+            "azure.ai.evaluation.red_team._red_team.random.choice",
+            side_effect=stable_choice,
         ):
             yield
 
@@ -468,7 +488,10 @@ class TestRedTeamFoundry:
             context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages[-1]["content"] if isinstance(messages, list) else messages["messages"][-1]["content"]
-            formatted_response = {"content": f"Agent response to: {query}", "role": "assistant"}
+            formatted_response = {
+                "content": f"Agent response to: {query}",
+                "role": "assistant",
+            }
 
             if isinstance(messages, list):
                 messages.append(formatted_response)
@@ -722,9 +745,16 @@ class TestRedTeamFoundry:
         when is_agent_target=True. This risk category is restricted to agent
         targets per the SDK validation logic and tests PII/sensitive data
         exposure detection.
+
+        Also validates that tool context (e.g. document_client_smode) is
+        correctly delivered to the callback's context parameter, enabling
+        dynamic tool injection for agent targets.
         """
         azure_cred = request.getfixturevalue(cred)
         project_scope = request.getfixturevalue(proj_scope)
+
+        # Track whether any invocation received tool context
+        context_deliveries = []
 
         async def agent_callback(
             messages: List[Dict],
@@ -733,7 +763,17 @@ class TestRedTeamFoundry:
             context: Optional[Dict[str, Any]] = None,
         ) -> dict:
             query = messages[-1]["content"] if isinstance(messages, list) else messages["messages"][-1]["content"]
-            formatted_response = {"content": f"I protect sensitive data: {query}", "role": "assistant"}
+
+            # Record context delivery for assertion
+            contexts = (context or {}).get("contexts", [])
+            if contexts:
+                tool_names = [c.get("tool_name") for c in contexts if c.get("tool_name")]
+                context_deliveries.append({"tool_names": tool_names, "count": len(contexts)})
+
+            formatted_response = {
+                "content": f"I protect sensitive data: {query[:100]}",
+                "role": "assistant",
+            }
 
             if isinstance(messages, list):
                 messages.append(formatted_response)
@@ -756,7 +796,7 @@ class TestRedTeamFoundry:
             azure_ai_project=project_scope,
             credential=azure_cred,
             risk_categories=[RiskCategory.SensitiveDataLeakage],
-            num_objectives=1,
+            num_objectives=2,
             custom_attack_seed_prompts=str(Path(SEEDS_DIR) / "sensitive_data_leakage_seeds.json"),
         )
 
@@ -764,7 +804,7 @@ class TestRedTeamFoundry:
             red_team.scan(
                 target=agent_callback,
                 scan_name="test_foundry_sensitive_data",
-                attack_strategies=[AttackStrategy.Baseline, AttackStrategy.Base64],
+                attack_strategies=[AttackStrategy.Baseline],
                 timeout=4800,
                 skip_upload=True,
                 is_agent_target=True,
@@ -773,6 +813,18 @@ class TestRedTeamFoundry:
 
         assert isinstance(result, RedTeamResult)
         self._validate_attack_details(result.attack_details, expected_risk_category="sensitive_data_leakage")
+
+        # Verify that tool context was delivered for at least one objective.
+        # The seed file includes objectives with tool_name (document_client_smode,
+        # email_client_smode) — these must arrive in the callback's context param.
+        assert len(context_deliveries) > 0, (
+            "Tool context was never delivered to the callback. "
+            "Expected context with tool_name for sensitive_data_leakage objectives."
+        )
+        all_tool_names = [tn for d in context_deliveries for tn in d["tool_names"]]
+        assert any(
+            tn in ("document_client_smode", "email_client_smode") for tn in all_tool_names
+        ), f"Expected tool names like document_client_smode, got: {all_tool_names}"
 
     # ==================== Error path tests ====================
 

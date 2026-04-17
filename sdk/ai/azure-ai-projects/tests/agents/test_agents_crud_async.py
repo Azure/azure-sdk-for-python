@@ -9,7 +9,6 @@ import io
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import PromptAgentDefinition, AgentDetails, AgentVersionDetails
-import pytest
 
 
 class TestAgentCrudAsync(TestBase):
@@ -24,7 +23,7 @@ class TestAgentCrudAsync(TestBase):
         It then gets, lists, and deletes them, validating at each step.
         It uses different ways of creating agents: strongly typed, dictionary, and IO[bytes].
         """
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         project_client = self.create_async_client(operation_group="agents", **kwargs)
         first_agent_name = "MyAgent1"
         second_agent_name = "MyAgent2"

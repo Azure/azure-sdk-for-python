@@ -683,9 +683,13 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=R0911
 
     # is it optional?
     try:
-        if any(a for a in annotation.__args__ if a == type(None)):  # pyright: ignore
+        if any(
+            a for a in annotation.__args__ if a == type(None)
+        ):  # pyright: ignore  # pylint: disable=unidiomatic-typecheck
             if_obj_deserializer = _get_deserialize_callable_from_annotation(
-                next(a for a in annotation.__args__ if a != type(None)), module, rf  # pyright: ignore
+                next(a for a in annotation.__args__ if a != type(None)),
+                module,
+                rf,  # pyright: ignore  # pylint: disable=unidiomatic-typecheck
             )
 
             return functools.partial(_deserialize_with_optional, if_obj_deserializer)

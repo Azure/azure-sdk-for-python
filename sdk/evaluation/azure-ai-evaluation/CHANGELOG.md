@@ -1,6 +1,29 @@
 # Release History
 
-## 1.16.3 (Unreleased)
+## 1.16.5 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed `sensitive_data_leakage` risk category producing 0% attack success rate (false negatives) in the Foundry execution path. Agent-specific tool context (e.g., `document_client_smode`, `email_client_smode`) was stored in `SeedObjective.metadata` but never propagated to the target callback, so the agent could not access the sensitive data it was supposed to leak. Context is now delivered via `prepended_conversation` SeedPrompts and extracted from conversation history metadata, enabling the ACA runtime to build FunctionTool injections.
+- Fixed multi-turn and crescendo red team strategies producing output items identical to their baseline counterparts. The Foundry execution path was writing all strategies' conversations to a single shared JSONL file, causing each strategy to read all conversations and mislabel them. Now writes per-strategy JSONL files using PyRIT's scenario result grouping.
+
+### Other Changes
+
+## 1.16.4 (2026-04-03)
+
+### Features Added
+
+- Added support for evaluator `properties` passthrough in AOAI evaluation results. When an evaluator returns a `properties` dict, it is included alongside `score`, `label`, `reason`, `threshold`, and `passed` in the result object.
+
+### Bugs Fixed
+
+- Fixed stray space in `_eval_metric.value` attribute access in `_base_rai_svc_eval.py`.
+
+## 1.16.3 (2026-04-01)
 
 ### Features Added
 
@@ -12,6 +35,8 @@
 - Fixed attack success rate (ASR) always reporting 0% because the sync eval API's `passed` field indicates task completion, not content safety. Replaced `passed`-based logic with score-based threshold comparison matching `_evaluation_processor.py`.
 
 - Fixed partial red team results being discarded when some objectives fail. Previously, if PyRIT raised due to incomplete objectives (e.g., evaluator model refuses to score), all completed results were lost. Now recovers partial results from PyRIT's memory database.
+
+- Fixed evaluator token metrics (`promptTokens`, `completionTokens`) not persisted in red teaming output items. The sync eval API returns camelCase keys but the extraction code only checked for snake_case, silently dropping all evaluator token usage data.
 
 ### Other Changes
 
