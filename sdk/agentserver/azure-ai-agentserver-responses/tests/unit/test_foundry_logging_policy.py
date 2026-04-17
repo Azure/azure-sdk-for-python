@@ -109,3 +109,66 @@ async def test_logging_policy_handles_missing_correlation_headers(caplog: pytest
     assert len(caplog.records) == 1
     assert "DELETE" in caplog.records[0].message
     assert "200" in caplog.records[0].message
+
+
+@pytest.mark.asyncio
+async def test_logging_policy_logs_isolation_header_presence(caplog: pytest.LogCaptureFixture) -> None:
+    """Isolation header *presence* is logged but actual values are NOT."""
+    policy = FoundryStorageLoggingPolicy()
+    next_policy = AsyncMock()
+    next_policy.send = AsyncMock(return_value=_make_response(200))
+    policy.next = next_policy
+
+    request = _make_request("GET", "https://storage.example.com/responses/r1")
+    request.http_request.headers["x-agent-user-isolation-key"] = "secret-user-key"
+    request.http_request.headers["x-agent-chat-isolation-key"] = "secret-chat-key"
+
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        await policy.send(request)
+
+    msg = caplog.records[0].message
+    assert "has_user_isolation_key=True" in msg
+    assert "has_chat_isolation_key=True" in msg
+    # Values must never appear
+    assert "secret-user-key" not in msg
+    assert "secret-chat-key" not in msg
+
+
+@pytest.mark.asyncio
+async def test_logging_policy_logs_isolation_header_absence(caplog: pytest.LogCaptureFixture) -> None:
+    """When isolation headers are absent both flags are False."""
+    policy = FoundryStorageLoggingPolicy()
+    next_policy = AsyncMock()
+    next_policy.send = AsyncMock(return_value=_make_response(200))
+    policy.next = next_policy
+
+    request = _make_request("GET", "https://storage.example.com/responses/r1")
+    # Default _make_request has no isolation headers
+
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        await policy.send(request)
+
+    msg = caplog.records[0].message
+    assert "has_user_isolation_key=False" in msg
+    assert "has_chat_isolation_key=False" in msg
+
+
+@pytest.mark.asyncio
+async def test_logging_policy_failure_logs_isolation_header_presence(caplog: pytest.LogCaptureFixture) -> None:
+    """Isolation presence is also logged on transport failure."""
+    policy = FoundryStorageLoggingPolicy()
+    next_policy = AsyncMock()
+    next_policy.send = AsyncMock(side_effect=ConnectionError("oops"))
+    policy.next = next_policy
+
+    request = _make_request("POST", "https://storage.example.com/responses")
+    request.http_request.headers["x-agent-chat-isolation-key"] = "secret"
+
+    with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver"):
+        with pytest.raises(ConnectionError):
+            await policy.send(request)
+
+    msg = caplog.records[0].message
+    assert "has_user_isolation_key=False" in msg
+    assert "has_chat_isolation_key=True" in msg
+    assert "secret" not in msg

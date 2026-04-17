@@ -24,6 +24,10 @@ logger = logging.getLogger("azure.ai.agentserver")
 _CLIENT_REQUEST_ID_HEADER = "x-ms-client-request-id"
 _SERVER_REQUEST_ID_HEADER = "x-ms-request-id"
 
+# Isolation headers — log presence only, never values
+_USER_ISOLATION_HEADER = "x-agent-user-isolation-key"
+_CHAT_ISOLATION_HEADER = "x-agent-chat-isolation-key"
+
 
 class FoundryStorageLoggingPolicy(AsyncHTTPPolicy[PipelineRequest, PipelineResponse]):
     """Azure Core per-retry pipeline policy that logs Foundry storage calls.
@@ -46,6 +50,8 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy[PipelineRequest, PipelineRespo
         url = http_request.url
 
         client_request_id = http_request.headers.get(_CLIENT_REQUEST_ID_HEADER, "")
+        has_user_isolation_key = _USER_ISOLATION_HEADER in http_request.headers
+        has_chat_isolation_key = _CHAT_ISOLATION_HEADER in http_request.headers
 
         start = time.monotonic()
         try:
@@ -53,11 +59,14 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy[PipelineRequest, PipelineRespo
         except Exception:
             elapsed_ms = (time.monotonic() - start) * 1000
             logger.warning(
-                "Foundry storage %s %s failed after %.1fms (client-request-id=%s)",
+                "Foundry storage %s %s failed after %.1fms "
+                "(client-request-id=%s, has_user_isolation_key=%s, has_chat_isolation_key=%s)",
                 method,
                 url,
                 elapsed_ms,
                 client_request_id,
+                has_user_isolation_key,
+                has_chat_isolation_key,
             )
             raise
 
@@ -69,13 +78,16 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy[PipelineRequest, PipelineRespo
         log_level = logging.INFO if 200 <= status_code < 400 else logging.WARNING
         logger.log(
             log_level,
-            "Foundry storage %s %s -> %d (%.1fms, client-request-id=%s, request-id=%s)",
+            "Foundry storage %s %s -> %d (%.1fms, client-request-id=%s, request-id=%s, "
+            "has_user_isolation_key=%s, has_chat_isolation_key=%s)",
             method,
             url,
             status_code,
             elapsed_ms,
             client_request_id,
             server_request_id,
+            has_user_isolation_key,
+            has_chat_isolation_key,
         )
 
         return response
