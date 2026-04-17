@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-07-01",
+  "apiVersions": {
+    "KeyVault": "2025-07-01"
+  },
+  "commit": "f6bd06be22baf3a18504ffef0f590230850953e5",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/keyvault/data-plane/Administration",
+  "emitterVersion": "0.61.3"
+}
