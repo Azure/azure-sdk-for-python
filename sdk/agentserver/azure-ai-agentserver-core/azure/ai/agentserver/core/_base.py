@@ -7,7 +7,13 @@ import logging
 import os
 import signal
 import urllib.parse
-from collections.abc import AsyncGenerator, AsyncIterable, AsyncIterator, Awaitable, Callable  # pylint: disable=import-error
+from collections.abc import (  # pylint: disable=import-error
+    AsyncGenerator,
+    AsyncIterable,
+    AsyncIterator,
+    Awaitable,
+    Callable,
+)
 from typing import Any, MutableMapping, Optional, Union
 
 from starlette.applications import Starlette

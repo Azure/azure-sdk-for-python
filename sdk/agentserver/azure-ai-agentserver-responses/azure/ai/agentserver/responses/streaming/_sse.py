@@ -7,7 +7,7 @@ from __future__ import annotations
 import itertools
 import json
 from contextvars import ContextVar
-from datetime import datetime, date, time, timedelta
+from datetime import date, datetime, time, timedelta
 from typing import Any, Mapping
 
 from ..models._generated import ResponseStreamEvent

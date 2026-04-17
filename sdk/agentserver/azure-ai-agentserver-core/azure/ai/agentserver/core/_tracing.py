@@ -549,6 +549,7 @@ def _setup_trace_export(provider: Any, connection_string: str) -> None:
         return
     try:
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
         from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter  # type: ignore[import-untyped]
     except ImportError:
         logger.warning("Trace export requires azure-monitor-opentelemetry-exporter.")
@@ -567,6 +568,7 @@ def _setup_log_export(resource: Any, connection_string: str) -> None:
         from opentelemetry._logs import set_logger_provider
         from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
         from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+
         from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter  # type: ignore[import-untyped]
     except ImportError:
         logger.warning("Log export requires azure-monitor-opentelemetry-exporter.")
