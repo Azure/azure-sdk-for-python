@@ -19,7 +19,13 @@ from azure.mgmt.core.tools import get_arm_endpoints
 
 from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ComputeLimitMgmtClientConfiguration
-from .operations import GuestSubscriptionsOperations, Operations, SharedLimitsOperations
+from .operations import (
+    FeaturesOperations,
+    GuestSubscriptionsOperations,
+    Operations,
+    SharedLimitsOperations,
+    VmFamiliesOperations,
+)
 
 if TYPE_CHECKING:
     from azure.core import AzureClouds
@@ -36,6 +42,10 @@ class ComputeLimitMgmtClient:
      azure.mgmt.computelimit.aio.operations.GuestSubscriptionsOperations
     :ivar shared_limits: SharedLimitsOperations operations
     :vartype shared_limits: azure.mgmt.computelimit.aio.operations.SharedLimitsOperations
+    :ivar features: FeaturesOperations operations
+    :vartype features: azure.mgmt.computelimit.aio.operations.FeaturesOperations
+    :ivar vm_families: VmFamiliesOperations operations
+    :vartype vm_families: azure.mgmt.computelimit.aio.operations.VmFamiliesOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -45,9 +55,12 @@ class ComputeLimitMgmtClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is "2025-08-15".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2026-04-30".
+     Default value is "2026-04-30". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
+    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+     Retry-After header is present.
     """
 
     def __init__(
@@ -104,6 +117,8 @@ class ComputeLimitMgmtClient:
             self._client, self._config, self._serialize, self._deserialize
         )
         self.shared_limits = SharedLimitsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.features = FeaturesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.vm_families = VmFamiliesOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any
