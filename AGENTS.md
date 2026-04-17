@@ -56,7 +56,7 @@ AI agents can assist with the following activities:
   - Include version information and release dates
 
 #### Testing & Validation
-- **Run Tests**: Execute tox-based test suites
+- **Run Tests**: Execute test suites using the `azpysdk` test runner
   - Unit tests, integration tests, samples
   - Support both local and CI environments
   
@@ -105,19 +105,19 @@ AI agents can assist with the following activities:
 
 **Running Validation**:
 ```bash
-# Use tox with appropriate environment
-tox -e <environment> -c eng/tox/tox.ini --root .
+# Use azpysdk with appropriate environment from the package directory
+azpysdk <environment> .
 
 # Examples:
-tox -e pylint -c eng/tox/tox.ini --root .
-tox -e mypy -c eng/tox/tox.ini --root .
+azpysdk pylint .
+azpysdk mypy .
 ```
 
 **Fixing Issues**:
 - Reference official guidelines:
   - [Pylint Guidelines](https://github.com/Azure/azure-sdk-tools/blob/main/tools/pylint-extensions/azure-pylint-guidelines-checker/README.md)
   - [MyPy Type Checking Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
-  - [Tox Usage Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+  - [azpysdk Test Runner Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md)
 - Make minimal changes that address specific warnings
 - Avoid adding new dependencies or large refactoring
 - Rerun validation after each fix
@@ -169,7 +169,7 @@ tox -e mypy -c eng/tox/tox.ini --root .
 **Required Tools**:
 - Python 3.9 or later
 - Node.js (for TypeSpec generation)
-- Tox (test automation)
+- azpysdk (test runner and automation)
 - GitHub CLI (for PR operations)
 - PowerShell (for MCP server on Windows)
 
@@ -240,7 +240,7 @@ source .venv/bin/activate  # Linux/macOS
 **Developer Documentation**: See [doc/dev/](https://github.com/Azure/azure-sdk-for-python/tree/main/doc/dev) for:
 - [TypeSpec Generation Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/ai/typespec_generation.md)
 - [Testing Guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md)
-- [Tox Usage](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+- [Test Runner (azpysdk)](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md)
 - [Pylint Checking](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)
 - [Type Checking Cheat Sheet](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
 
