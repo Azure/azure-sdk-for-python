@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import logging
 import time
+import urllib.parse
 from typing import cast
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
@@ -29,12 +30,49 @@ _USER_ISOLATION_HEADER = "x-agent-user-isolation-key"
 _CHAT_ISOLATION_HEADER = "x-agent-chat-isolation-key"
 
 
+def _mask_storage_url(url: str) -> str:
+    """Mask the sensitive portions of a Foundry storage URL.
+
+    Everything before ``/storage`` (scheme, host, project path) is replaced
+    with ``"***"`` because it contains the project endpoint and project
+    name.  Only the ``/storage/...`` resource path is kept for debugging.
+    Query parameters are stripped.
+
+    Example::
+
+        >>> _mask_storage_url(
+        ...     "https://acct.services.ai.azure.com/api/projects/myproj"
+        ...     "/storage/responses/resp_123?api-version=1"
+        ... )
+        '***/storage/responses/resp_123'
+
+    :param url: The full storage URL.
+    :type url: str
+    :return: The masked URL with everything before ``/storage`` redacted.
+    :rtype: str
+    """
+    try:
+        if not url:
+            return "(redacted)"
+        parsed = urllib.parse.urlparse(url)
+        path = parsed.path or ""
+        # Find the /storage segment and keep only from there.
+        idx = path.find("/storage")
+        if idx >= 0:
+            return f"***{path[idx:]}"
+        # Fallback: no /storage segment — redact the whole URL.
+        return "(redacted)"
+    except Exception:  # pylint: disable=broad-exception-caught
+        return "(redacted)"
+
+
 class FoundryStorageLoggingPolicy(AsyncHTTPPolicy[PipelineRequest, PipelineResponse]):
     """Azure Core per-retry pipeline policy that logs Foundry storage calls.
 
-    Logs the HTTP method, URI, response status code, duration in milliseconds,
-    and correlation headers (``x-ms-client-request-id``, ``x-ms-request-id``)
-    for observability of storage operations.
+    Logs the HTTP method, masked URI (host redacted, path preserved, query
+    stripped), response status code, duration in milliseconds, and correlation
+    headers (``x-ms-client-request-id``, ``x-ms-request-id``) for
+    observability of storage operations.
     """
 
     async def send(self, request: PipelineRequest) -> PipelineResponse:  # type: ignore[override]
@@ -47,7 +85,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy[PipelineRequest, PipelineRespo
         """
         http_request = request.http_request
         method = http_request.method
-        url = http_request.url
+        url = _mask_storage_url(str(http_request.url))
 
         client_request_id = http_request.headers.get(_CLIENT_REQUEST_ID_HEADER, "")
         has_user_isolation_key = _USER_ISOLATION_HEADER in http_request.headers

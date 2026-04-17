@@ -9,7 +9,7 @@ from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 
-from azure.ai.agentserver.responses.store._foundry_logging_policy import FoundryStorageLoggingPolicy
+from azure.ai.agentserver.responses.store._foundry_logging_policy import FoundryStorageLoggingPolicy, _mask_storage_url
 
 
 def _make_request(method: str = "GET", url: str = "https://storage.example.com/responses/r1") -> MagicMock:
@@ -172,3 +172,43 @@ async def test_logging_policy_failure_logs_isolation_header_presence(caplog: pyt
     assert "has_user_isolation_key=False" in msg
     assert "has_chat_isolation_key=True" in msg
     assert "secret" not in msg
+
+
+class TestMaskStorageUrl:
+    """Tests for the _mask_storage_url helper."""
+
+    def test_masks_host_and_project_path(self) -> None:
+        result = _mask_storage_url(
+            "https://acct.services.ai.azure.com/api/projects/myproj"
+            "/storage/responses/resp_123?api-version=1"
+        )
+        assert result == "***/storage/responses/resp_123"
+        assert "acct.services.ai.azure.com" not in result
+        assert "myproj" not in result
+
+    def test_strips_query_params(self) -> None:
+        result = _mask_storage_url(
+            "https://myproject.foundry.azure.com/api/projects/p1"
+            "/storage/responses?api-version=1&conversation_id=abc"
+        )
+        assert "api-version" not in result
+        assert "conversation_id" not in result
+        assert result == "***/storage/responses"
+
+    def test_preserves_storage_relative_path(self) -> None:
+        result = _mask_storage_url(
+            "https://myhost.com/api/projects/proj/storage/responses/resp_abc/input_items?api-version=1"
+        )
+        assert result == "***/storage/responses/resp_abc/input_items"
+        assert "myhost.com" not in result
+        assert "proj" not in result
+
+    def test_simple_storage_url(self) -> None:
+        result = _mask_storage_url("https://myhost.com/storage/items/batch/retrieve")
+        assert result == "***/storage/items/batch/retrieve"
+
+    def test_no_storage_segment_returns_redacted(self) -> None:
+        assert _mask_storage_url("https://example.com/other/path") == "(redacted)"
+
+    def test_empty_returns_redacted(self) -> None:
+        assert _mask_storage_url("") == "(redacted)"

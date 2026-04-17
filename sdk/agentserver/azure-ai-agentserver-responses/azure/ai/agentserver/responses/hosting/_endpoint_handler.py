@@ -785,12 +785,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             else:
                 # Validate starting_after cursor early — invalid cursors must
                 # always get param=starting_after regardless of stream availability.
-                parsed_cursor = self._parse_starting_after(request)
+                parsed_cursor = self._parse_starting_after(request, _hdrs)
                 if isinstance(parsed_cursor, Response):
                     return parsed_cursor
 
                 # Stream provider fallback: replay persisted SSE events when runtime state is gone.
-                replay_response = await self._try_replay_persisted_stream(request, response_id, isolation=_isolation)
+                replay_response = await self._try_replay_persisted_stream(
+                    request, response_id, isolation=_isolation, headers=_hdrs,
+                )
                 if replay_response is not None:
                     return replay_response
 
@@ -859,11 +861,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     param="stream",
                 )
 
-            parsed_cursor = self._parse_starting_after(request)
+            parsed_cursor = self._parse_starting_after(request, _hdrs)
             if isinstance(parsed_cursor, Response):
                 return parsed_cursor
 
-            return self._build_live_stream_response(record, parsed_cursor)
+            return self._build_live_stream_response(record, parsed_cursor, _hdrs)
 
         if not record.visible_via_get:
             return _not_found(response_id, _hdrs)
@@ -878,7 +880,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         return JSONResponse(snapshot, status_code=200, headers=_hdrs)
 
     @staticmethod
-    def _parse_starting_after(request: Request) -> int | Response:
+    def _parse_starting_after(request: Request, headers: dict[str, str] | None = None) -> int | Response:
         """Parse the ``starting_after`` query parameter.
 
         Returns the integer cursor value (defaulting to ``-1``) or an
@@ -886,6 +888,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         :param request: The incoming Starlette HTTP request.
         :type request: Request
+        :param headers: Optional response headers to include on error responses.
+        :type headers: dict[str, str] | None
         :return: The parsed cursor value or an error response.
         :rtype: int | Response
         """
@@ -897,30 +901,43 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         except ValueError:
             return _invalid_request(
                 "starting_after must be an integer",
-                {},
+                headers or {},
                 param="starting_after",
             )
 
-    def _build_live_stream_response(self, record: ResponseExecution, starting_after: int) -> StreamingResponse:
+    def _build_live_stream_response(
+        self,
+        record: ResponseExecution,
+        starting_after: int,
+        headers: dict[str, str] | None = None,
+    ) -> StreamingResponse:
         """Build a live SSE subscription response for an in-flight record.
 
         :param record: The in-flight response execution record.
         :type record: ResponseExecution
         :param starting_after: The cursor position to start streaming from.
         :type starting_after: int
+        :param headers: Optional extra headers (e.g. session headers) to merge with SSE headers.
+        :type headers: dict[str, str] | None
         :return: A streaming response with live SSE events.
         :rtype: StreamingResponse
         """
         _cursor = starting_after
+        merged_headers = {**self._sse_headers, **(headers or {})}
 
         async def _stream_from_subject():
             async for event in record.subject.subscribe(cursor=_cursor):  # type: ignore[union-attr]
                 yield encode_sse_any_event(event)
 
-        return StreamingResponse(_stream_from_subject(), media_type="text/event-stream", headers=self._sse_headers)
+        return StreamingResponse(_stream_from_subject(), media_type="text/event-stream", headers=merged_headers)
 
     async def _try_replay_persisted_stream(
-        self, request: Request, response_id: str, *, isolation: IsolationContext | None = None
+        self,
+        request: Request,
+        response_id: str,
+        *,
+        isolation: IsolationContext | None = None,
+        headers: dict[str, str] | None = None,
     ) -> Response | None:
         """Try to replay persisted SSE events from the stream provider.
 
@@ -934,6 +951,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :type response_id: str
         :keyword isolation: Optional isolation context for multi-tenant filtering.
         :paramtype isolation: IsolationContext | None
+        :keyword headers: Optional extra headers (e.g. session headers) to merge with SSE headers.
+        :paramtype headers: dict[str, str] | None
         :return: A streaming replay response, an error response, or ``None``.
         :rtype: Response | None
         """
@@ -943,14 +962,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             replay_events = await self._stream_provider.get_stream_events(response_id, isolation=isolation)
             if replay_events is None:
                 return None
-            parsed_cursor = self._parse_starting_after(request)
+            parsed_cursor = self._parse_starting_after(request, headers)
             if isinstance(parsed_cursor, Response):
                 return parsed_cursor
             filtered = [e for e in replay_events if e["sequence_number"] > parsed_cursor]
+            merged_headers = {**self._sse_headers, **(headers or {})}
             return StreamingResponse(
                 _encode_sse(filtered),
                 media_type="text/event-stream",
-                headers=self._sse_headers,
+                headers=merged_headers,
             )
         except Exception:  # pylint: disable=broad-exception-caught
             logger.warning("Failed to replay persisted stream for response_id=%s", response_id, exc_info=True)

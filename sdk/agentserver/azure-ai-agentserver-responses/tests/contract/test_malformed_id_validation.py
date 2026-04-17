@@ -114,8 +114,9 @@ class TestMalformedPreviousResponseId:
         assert r.status_code == 400
 
     def test_valid_format_nonexistent_previous_response_id_not_rejected_by_format(self) -> None:
-        """A valid-format previous_response_id that doesn't exist should pass validation
-        and fail later (at provider lookup), NOT at format validation."""
+        """A valid-format previous_response_id that doesn't exist should pass
+        format validation — it must NOT be rejected with the format-validation
+        error shape (code=invalid_parameters, Malformed message)."""
         client = _make_client()
         valid_id = IdGenerator.new_response_id()
         r = client.post("/responses", json={
@@ -123,5 +124,12 @@ class TestMalformedPreviousResponseId:
             "input": [{"role": "user", "content": "hi"}],
             "previous_response_id": valid_id,
         })
-        # Should NOT be 400 from format validation — likely 200 or a different error
-        assert r.status_code != 400 or "Malformed" not in r.json().get("error", {}).get("message", "")
+        # If the server returns 400, it must NOT be the format-validation shape.
+        if r.status_code == 400:
+            error = r.json().get("error", {})
+            assert error.get("code") != "invalid_parameters", (
+                "Valid-format previous_response_id was rejected by format validation"
+            )
+            assert "Malformed" not in error.get("message", ""), (
+                "Valid-format previous_response_id was rejected with Malformed message"
+            )

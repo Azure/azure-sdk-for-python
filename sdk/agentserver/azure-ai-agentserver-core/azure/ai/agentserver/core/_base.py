@@ -39,11 +39,12 @@ _NOT_SET = "(not set)"
 def _mask_uri(uri: str) -> str:
     """Return only the scheme and host of a URI, hiding path/query/credentials.
 
-    Returns ``"(not set)"`` for empty or whitespace-only values.
+    Returns ``"(not set)"`` for empty or whitespace-only values, or
+    ``"(redacted)"`` when the URI cannot be parsed into scheme + host.
 
     :param uri: The URI to mask.
     :type uri: str
-    :return: ``"scheme://host"`` or ``"(not set)"``.
+    :return: ``"scheme://host[:port]"``, ``"(not set)"``, or ``"(redacted)"``.
     :rtype: str
     """
     stripped = uri.strip() if uri else ""
