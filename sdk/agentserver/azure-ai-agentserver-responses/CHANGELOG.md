@@ -4,6 +4,7 @@
 
 ### Features Added
 
+- Startup configuration logging — `ResponsesAgentServerHost` logs storage provider type, default model, default fetch history count, and shutdown grace period at INFO level during construction.
 - `InboundRequestLoggingMiddleware` moved to `azure-ai-agentserver-core` — pure-ASGI middleware that logs every inbound HTTP request at INFO level (start) and at INFO or WARNING level (completion). Now wired automatically by `AgentServerHost` so all protocol hosts get consistent inbound logging. Includes method, path (no query string), status code, duration in milliseconds, and correlation headers (`x-request-id`, `x-ms-client-request-id`). Status codes >= 400 are logged at WARNING; unhandled exceptions are logged as status 500 at WARNING. OpenTelemetry trace ID is included when an active trace exists.
 - Handler-level diagnostic logging — all five endpoint handlers (`POST /responses`, `GET /responses/{id}`, `DELETE /responses/{id}`, `POST /responses/{id}/cancel`, `GET /responses/{id}/input_items`) now emit INFO-level logs at entry and on success, including response ID, status, and output count where applicable.
 - Orchestrator handler invocation logging — logs the handler function name and response ID at INFO level before each handler invocation.

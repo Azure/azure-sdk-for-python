@@ -223,6 +223,16 @@ class ResponsesAgentServerHost(AgentServerHost):
         # Register shutdown handler on self (inherited from AgentServerHost)
         self.shutdown_handler(endpoint.handle_shutdown)
 
+        # --- Responses startup configuration logging ---
+        logger.info(
+            "Responses protocol: storage_provider=%s, default_model=%s, "
+            "default_fetch_history_count=%s, shutdown_grace_period=%ss",
+            type(resolved_provider).__name__,
+            runtime_options.default_model or "(not set)",
+            runtime_options.default_fetch_history_count,
+            runtime_options.shutdown_grace_period_seconds,
+        )
+
     # ------------------------------------------------------------------
     # Handler decorator
     # ------------------------------------------------------------------
