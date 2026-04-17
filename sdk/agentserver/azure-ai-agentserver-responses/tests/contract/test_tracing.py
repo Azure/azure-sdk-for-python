@@ -27,7 +27,7 @@ def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
 def _build_client(hook: InMemoryCreateSpanHook | None = None) -> TestClient:
     options = ResponsesServerOptions(create_span_hook=hook)
     app = ResponsesAgentServerHost(options=options)
-    app.create_handler(_noop_handler)
+    app.response_handler(_noop_handler)
     return TestClient(app)
 
 

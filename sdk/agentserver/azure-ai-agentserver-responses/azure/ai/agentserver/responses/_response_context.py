@@ -238,6 +238,11 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
             self._history_cache = ()
             return self._history_cache
 
+        # No conversation context — nothing to look up.
+        if not self._previous_response_id and not self.conversation_id:
+            self._history_cache = ()
+            return self._history_cache
+
         item_ids = await self._provider.get_history_item_ids(
             self._previous_response_id,
             self.conversation_id,
