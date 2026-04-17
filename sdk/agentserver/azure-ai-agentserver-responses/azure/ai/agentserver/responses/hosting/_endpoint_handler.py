@@ -544,7 +544,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         logger.info(
             "Creating response %s: streaming=%s background=%s store=%s model=%s "
-            "conversation_id=%s previous_response_id=%s",
+            "conversation_id=%s previous_response_id=%s "
+            "has_user_isolation_key=%s has_chat_isolation_key=%s",
             ctx.response_id,
             ctx.stream,
             ctx.background,
@@ -552,6 +553,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             ctx.model,
             ctx.conversation_id,
             ctx.previous_response_id,
+            ctx.user_isolation_key is not None,
+            ctx.chat_isolation_key is not None,
         )
 
         # Extract X-Request-Id header for request ID propagation (truncated to 256 chars).
@@ -732,12 +735,21 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return format_error
 
         stream_replay_param = request.query_params.get("stream", "false").lower() == "true"
-        if stream_replay_param:
-            logger.info("Getting response %s with SSE replay", response_id)
-        else:
-            logger.info("Getting response %s", response_id)
-
         _isolation = _extract_isolation(request)
+        if stream_replay_param:
+            logger.info(
+                "Getting response %s with SSE replay, has_user_isolation_key=%s has_chat_isolation_key=%s",
+                response_id,
+                _isolation.user_key is not None,
+                _isolation.chat_key is not None,
+            )
+        else:
+            logger.info(
+                "Getting response %s, has_user_isolation_key=%s has_chat_isolation_key=%s",
+                response_id,
+                _isolation.user_key is not None,
+                _isolation.chat_key is not None,
+            )
         record = await self._runtime_state.get(response_id)
         if record is None:
             if await self._runtime_state.is_deleted(response_id):
@@ -958,9 +970,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if format_error is not None:
             return format_error
 
-        logger.info("Deleting response %s", response_id)
-
         _isolation = _extract_isolation(request)
+        logger.info(
+            "Deleting response %s, has_user_isolation_key=%s has_chat_isolation_key=%s",
+            response_id,
+            _isolation.user_key is not None,
+            _isolation.chat_key is not None,
+        )
         record = await self._runtime_state.get(response_id)
         if record is None:
             # Provider fallback: response may have been evicted from memory after
@@ -1069,9 +1085,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if format_error is not None:
             return format_error
 
-        logger.info("Cancelling response %s", response_id)
-
         _isolation = _extract_isolation(request)
+        logger.info(
+            "Cancelling response %s, has_user_isolation_key=%s has_chat_isolation_key=%s",
+            response_id,
+            _isolation.user_key is not None,
+            _isolation.chat_key is not None,
+        )
         record = await self._runtime_state.get(response_id)
         if record is None:
             # Provider fallback: after a restart, stored terminal responses lose
@@ -1229,10 +1249,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if format_error is not None:
             return format_error
 
-        logger.info("Getting input items for response %s", response_id)
+        _isolation = _extract_isolation(request)
+        logger.info(
+            "Getting input items for response %s, has_user_isolation_key=%s has_chat_isolation_key=%s",
+            response_id,
+            _isolation.user_key is not None,
+            _isolation.chat_key is not None,
+        )
 
         # Chat isolation enforcement
-        _isolation = _extract_isolation(request)
         if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
             return _not_found(response_id, _hdrs)
 
