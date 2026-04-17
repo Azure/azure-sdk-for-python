@@ -965,6 +965,7 @@ class AISearchIndexResource(_Model):
     :vartype index_name: str
     :ivar query_type: Type of query in an AIIndexResource attached to this agent. Known values are:
      "simple", "semantic", "vector", "vector_simple_hybrid", and "vector_semantic_hybrid".
+        For vector query types, ensure the target Azure AI Search index is configured with a vectorizer.
     :vartype query_type: str or ~azure.ai.projects.models.AzureAISearchQueryType
     :ivar top_k: Number of documents to retrieve from search and present to the model.
     :vartype top_k: int
@@ -983,7 +984,8 @@ class AISearchIndexResource(_Model):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """Type of query in an AIIndexResource attached to this agent. Known values are: \"simple\",
-     \"semantic\", \"vector\", \"vector_simple_hybrid\", and \"vector_semantic_hybrid\"."""
+        \"semantic\", \"vector\", \"vector_simple_hybrid\", and \"vector_semantic_hybrid\".
+        For vector query types, ensure the target Azure AI Search index is configured with a vectorizer."""
     top_k: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Number of documents to retrieve from search and present to the model."""
     filter: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
