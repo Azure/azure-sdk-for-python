@@ -31,6 +31,7 @@ from azure.ai.agentserver.responses.models._generated import (
 from .._options import ResponsesServerOptions
 from .._response_context import IsolationContext, ResponseContext
 from ..models._helpers import get_input_expanded, to_output_item
+from .._id_generator import IdGenerator
 from ..models.errors import RequestValidationError
 from ..models.runtime import ResponseExecution, ResponseModeFlags, build_cancelled_response, build_failed_response
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
@@ -119,6 +120,26 @@ def _extract_isolation(request: Request) -> IsolationContext:
         user_key=request.headers.get("x-agent-user-isolation-key"),
         chat_key=request.headers.get("x-agent-chat-isolation-key"),
     )
+
+
+def _validate_response_id_format(response_id: str) -> Response | None:
+    """Validate that a response_id path parameter has the expected ID format.
+
+    Returns a 400 error response if the ID is malformed, or ``None`` if valid.
+
+    :param response_id: The response ID from the URL path.
+    :type response_id: str
+    :return: A 400 error response if invalid, or ``None`` if valid.
+    :rtype: Response | None
+    """
+    is_valid, _ = IdGenerator.is_valid(response_id, allowed_prefixes=["caresp"])
+    if not is_valid:
+        return _invalid_request(
+            "Malformed identifier.",
+            {},
+            param="response_id",
+        )
+    return None
 
 
 # Structured log scope context variables (spec §7.4)
@@ -636,7 +657,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 except ValueError:
                     pass
 
-    async def handle_get(self, request: Request) -> Response:
+    async def handle_get(self, request: Request) -> Response:  # pylint: disable=too-many-branches
         """Route handler for ``GET /responses/{response_id}``.
 
         Returns the response snapshot or replays SSE events if
@@ -648,12 +669,16 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: Response
         """
         response_id = request.path_params["response_id"]
+        format_error = _validate_response_id_format(response_id)
+        if format_error is not None:
+            return format_error
+
+        _isolation = _extract_isolation(request)
         record = await self._runtime_state.get(response_id)
         if record is None:
             if await self._runtime_state.is_deleted(response_id):
                 return _deleted_response(response_id, {})
 
-            _isolation = _extract_isolation(request)
             stream_replay = request.query_params.get("stream", "false").lower() == "true"
             if not stream_replay:
                 # Provider fallback: serve completed responses that are no longer in runtime state
@@ -699,6 +724,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 except Exception:  # pylint: disable=broad-exception-caught
                     pass  # Response doesn't exist in provider either — fall through to 404
 
+            return _not_found(response_id, {})
+
+        # Chat isolation enforcement on in-flight response
+        if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
             return _not_found(response_id, {})
 
         _refresh_background_status(record)
@@ -820,8 +849,17 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: Response
         """
         response_id = request.path_params["response_id"]
+        format_error = _validate_response_id_format(response_id)
+        if format_error is not None:
+            return format_error
+
+        _isolation = _extract_isolation(request)
         record = await self._runtime_state.get(response_id)
         if record is None:
+            return _not_found(response_id, {})
+
+        # Chat isolation enforcement
+        if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
             return _not_found(response_id, {})
 
         # store=false responses are not deletable (FR-014)
@@ -874,13 +912,18 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: Response
         """
         response_id = request.path_params["response_id"]
+        format_error = _validate_response_id_format(response_id)
+        if format_error is not None:
+            return format_error
+
+        _isolation = _extract_isolation(request)
         record = await self._runtime_state.get(response_id)
         if record is None:
             # Provider fallback: after a restart, stored terminal responses lose
             # their runtime records.  Check the provider so we return the correct
             # 400 error instead of a misleading 404.
             try:
-                response_obj = await self._provider.get_response(response_id, isolation=_extract_isolation(request))
+                response_obj = await self._provider.get_response(response_id, isolation=_isolation)
                 stored_status = response_obj.as_dict().get("status")
                 if stored_status == "completed":
                     return _invalid_request(
@@ -919,6 +962,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     response_id,
                     exc_info=True,
                 )
+            return _not_found(response_id, {})
+
+        # Chat isolation enforcement on in-flight response
+        if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
             return _not_found(response_id, {})
 
         _refresh_background_status(record)
@@ -994,6 +1041,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: Response
         """
         response_id = request.path_params["response_id"]
+        format_error = _validate_response_id_format(response_id)
+        if format_error is not None:
+            return format_error
+
+        # Chat isolation enforcement
+        _isolation = _extract_isolation(request)
+        if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
+            return _not_found(response_id, {})
 
         limit_raw = request.query_params.get("limit", "20")
         try:
@@ -1013,7 +1068,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         try:
             items = await self._provider.get_input_items(
-                response_id, limit=100, ascending=True, isolation=_extract_isolation(request)
+                response_id, limit=100, ascending=True, isolation=_isolation
             )
         except ValueError:
             return _deleted_response(response_id, {})

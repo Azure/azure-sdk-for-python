@@ -140,9 +140,12 @@ def test_delete__returns_400_for_background_in_flight_response() -> None:
 
 
 def test_delete__returns_404_for_unknown_response_id() -> None:
-    client = _build_client()
+    from azure.ai.agentserver.responses._id_generator import IdGenerator
 
-    delete_response = client.delete("/responses/resp_does_not_exist")
+    client = _build_client()
+    unknown_id = IdGenerator.new_response_id()
+
+    delete_response = client.delete(f"/responses/{unknown_id}")
     assert delete_response.status_code == 404
     payload = delete_response.json()
     assert payload["error"].get("type") == "invalid_request_error"

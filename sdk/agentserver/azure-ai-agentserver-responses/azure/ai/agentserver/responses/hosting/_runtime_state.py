@@ -20,6 +20,7 @@ class _RuntimeState:
         """Initialize the runtime state with empty record and deletion sets."""
         self._records: dict[str, ResponseExecution] = {}
         self._deleted_response_ids: set[str] = set()
+        self._chat_isolation_keys: dict[str, str] = {}
         self._lock = asyncio.Lock()
 
     async def add(self, record: ResponseExecution) -> None:
@@ -33,6 +34,8 @@ class _RuntimeState:
         async with self._lock:
             self._records[record.response_id] = record
             self._deleted_response_ids.discard(record.response_id)
+            if record.chat_isolation_key is not None:
+                self._chat_isolation_keys[record.response_id] = record.chat_isolation_key
 
     async def get(self, response_id: str) -> ResponseExecution | None:
         """Look up an execution record by response ID.
@@ -69,7 +72,28 @@ class _RuntimeState:
             if record is None:
                 return False
             self._deleted_response_ids.add(response_id)
+            self._chat_isolation_keys.pop(response_id, None)
             return True
+
+    def check_chat_isolation(self, response_id: str, request_chat_key: str | None) -> bool:
+        """Check whether the request chat key matches the creation-time key.
+
+        Returns ``True`` if the request is allowed, ``False`` if it should be
+        rejected as not-found to prevent cross-chat information leakage.
+
+        No enforcement when the response was created without a key (backward compat).
+
+        :param response_id: The response ID to check.
+        :type response_id: str
+        :param request_chat_key: The chat key from the incoming request, or ``None``.
+        :type request_chat_key: str | None
+        :return: ``True`` if allowed, ``False`` if isolation mismatch.
+        :rtype: bool
+        """
+        stored_key = self._chat_isolation_keys.get(response_id)
+        if stored_key is None:
+            return True  # No enforcement when created without a key
+        return stored_key == request_chat_key
 
     async def get_input_items(self, response_id: str) -> list[OutputItem]:
         """Retrieve the full input item chain for a response, including ancestors.

@@ -687,6 +687,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             cancel_signal=ctx.cancellation_signal,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
+            chat_isolation_key=ctx.chat_isolation_key,
         )
         execution.set_response_snapshot(generated_models.ResponseObject(initial_payload))
         execution.subject = _ResponseEventSubject()
@@ -1109,6 +1110,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             cancel_signal=ctx.cancellation_signal if ctx.background else None,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
+            chat_isolation_key=ctx.chat_isolation_key,
         )
         execution.set_response_snapshot(generated_models.ResponseObject(response_payload))
         await self._runtime_state.add(execution)
@@ -1387,6 +1389,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             response_context=ctx.context,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
+            chat_isolation_key=ctx.chat_isolation_key,
         )
         record.set_response_snapshot(generated_models.ResponseObject(response_payload))
 
@@ -1452,6 +1455,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             initial_agent_reference=ctx.agent_reference,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
+            chat_isolation_key=ctx.chat_isolation_key,
         )
 
         # Register so GET can observe in-flight state

@@ -161,9 +161,12 @@ def test_input_items_returns_404_for_deleted_response() -> None:
 
 
 def test_input_items_returns_404_for_missing_or_non_stored_response() -> None:
-    client = _build_client()
+    from azure.ai.agentserver.responses._id_generator import IdGenerator
 
-    missing_response = client.get("/responses/resp_does_not_exist/input_items")
+    client = _build_client()
+    unknown_id = IdGenerator.new_response_id()
+
+    missing_response = client.get(f"/responses/{unknown_id}/input_items")
     missing_payload = _assert_error_envelope(missing_response, 404)
     assert missing_payload["error"].get("type") == "invalid_request_error"
     assert missing_payload["error"].get("code") == "invalid_request_error"

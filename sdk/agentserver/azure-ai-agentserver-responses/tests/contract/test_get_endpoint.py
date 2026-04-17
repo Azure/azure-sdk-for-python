@@ -129,9 +129,12 @@ def test_get__returns_latest_snapshot_for_existing_response() -> None:
 
 
 def test_get__returns_404_for_unknown_response_id() -> None:
-    client = _build_client()
+    from azure.ai.agentserver.responses._id_generator import IdGenerator
 
-    get_response = client.get("/responses/resp_does_not_exist")
+    client = _build_client()
+    unknown_id = IdGenerator.new_response_id()
+
+    get_response = client.get(f"/responses/{unknown_id}")
     assert get_response.status_code == 404
     payload = get_response.json()
     assert isinstance(payload.get("error"), dict)
@@ -139,7 +142,7 @@ def test_get__returns_404_for_unknown_response_id() -> None:
     assert payload["error"].get("code") == "invalid_request_error"
     # 404 message must reference the requested response ID
     error_message = payload["error"].get("message", "")
-    assert "resp_does_not_exist" in error_message, (
+    assert unknown_id in error_message, (
         f"404 error message should reference the response ID, got: {error_message!r}"
     )
 
@@ -578,7 +581,10 @@ def test_get__sse_replay_unknown_id_returns_404_with_error_shape() -> None:
     """SSE replay on a completely unknown response ID returns 404 with proper error envelope."""
     client = _build_client()
 
-    replay_response = client.get("/responses/resp_does_not_exist?stream=true")
+    from azure.ai.agentserver.responses._id_generator import IdGenerator
+
+    unknown_id = IdGenerator.new_response_id()
+    replay_response = client.get(f"/responses/{unknown_id}?stream=true")
     assert replay_response.status_code == 404
     payload = replay_response.json()
     assert isinstance(payload.get("error"), dict)

@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Chat isolation key enforcement — when a response is created with an `x-agent-chat-isolation-key` header, subsequent GET, DELETE, Cancel, and InputItems requests must include the same key. Mismatched or missing keys return an indistinguishable 404 to prevent cross-chat information leakage. Backward-compatible: no enforcement when the response was created without a key.
+- Malformed response ID validation — all endpoints that accept a `response_id` path parameter now reject malformed IDs (wrong prefix, too short) with HTTP 400 (`invalid_request_error`, `param: "response_id"`) before touching storage. The `previous_response_id` field in POST body is also validated.
 - `FoundryStorageLoggingPolicy` — Azure Core per-retry pipeline policy that logs Foundry storage HTTP calls (method, URI, status code, duration, correlation headers) at the `azure.ai.agentserver` logger. Replaces the built-in `HttpLoggingPolicy` in the Foundry pipeline to provide single-line summaries with duration timing and log-level escalation (WARNING for 4xx/5xx).
 
 ### Bugs Fixed

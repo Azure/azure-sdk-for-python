@@ -507,9 +507,12 @@ def test_cancel__returns_404_for_in_flight_synchronous_response() -> None:
 
 
 def test_cancel__returns_404_for_unknown_response_id() -> None:
-    client = _build_client()
+    from azure.ai.agentserver.responses._id_generator import IdGenerator
 
-    cancel_response = client.post("/responses/resp_does_not_exist/cancel")
+    client = _build_client()
+    unknown_id = IdGenerator.new_response_id()
+
+    cancel_response = client.post(f"/responses/{unknown_id}/cancel")
     _assert_error(
         cancel_response,
         expected_status=404,

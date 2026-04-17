@@ -8,6 +8,7 @@ from typing import Any, Mapping
 
 from starlette.responses import JSONResponse
 
+from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from azure.ai.agentserver.responses.models._generated import ApiErrorResponse, CreateResponse, Error
 from azure.ai.agentserver.responses.models._generated._validators import validate_CreateResponse
@@ -123,6 +124,17 @@ def validate_create_response(request: CreateResponse) -> None:
                     code="invalid_request",
                     param="metadata",
                 )
+
+    # Validate previous_response_id format (must be a valid caresp ID)
+    prev_id = getattr(request, "previous_response_id", None)
+    if isinstance(prev_id, str) and prev_id:
+        is_valid, _ = IdGenerator.is_valid(prev_id, allowed_prefixes=["caresp"])
+        if not is_valid:
+            raise RequestValidationError(
+                "Malformed identifier.",
+                code="invalid_request_error",
+                param="previous_response_id",
+            )
 
 
 def parse_and_validate_create_response(
