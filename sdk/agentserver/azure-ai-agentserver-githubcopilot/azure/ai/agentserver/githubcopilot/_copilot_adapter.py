@@ -680,6 +680,19 @@ class GitHubCopilotAdapter(CopilotAdapter):
         # Track MCP bridges for cleanup
         self._toolbox_bridges: list = []
 
+        # AGENTS.md persona injection — load the project's AGENTS.md and use it
+        # as an appended system message so the agent fully embodies its persona
+        # instead of defaulting to the generic Copilot CLI identity.
+        agents_md = self._load_agents_md(root)
+        if agents_md:
+            existing = self._session_config.get("system_message")
+            if existing is None:
+                self._session_config["system_message"] = {
+                    "mode": "append",
+                    "content": agents_md,
+                }
+                logger.info("Injected AGENTS.md as system_message (append mode, %d chars)", len(agents_md))
+
         # Skill discovery
         if skill_directories:
             self._session_config["skill_directories"] = skill_directories
@@ -720,6 +733,27 @@ class GitHubCopilotAdapter(CopilotAdapter):
                     logger.info("Created credential for MCP server auto-auth")
                 except Exception:
                     logger.warning("Failed to create credential for MCP auto-auth", exc_info=True)
+
+    @staticmethod
+    def _load_agents_md(project_root: pathlib.Path) -> Optional[str]:
+        """Load AGENTS.md from the project root if it exists.
+
+        Returns the file content as a string, or *None* if the file is
+        missing or unreadable.  The content is injected into the Copilot
+        session as an appended system message so that the agent adopts the
+        persona defined in AGENTS.md rather than the default CLI identity.
+        """
+        agents_path = project_root / "AGENTS.md"
+        if not agents_path.is_file():
+            return None
+        try:
+            content = agents_path.read_text(encoding="utf-8").strip()
+            if content:
+                logger.info("Loaded AGENTS.md from %s (%d chars)", agents_path, len(content))
+                return content
+        except Exception:
+            logger.warning("Failed to read AGENTS.md at %s", agents_path, exc_info=True)
+        return None
 
     @staticmethod
     def _discover_skill_directories(project_root: pathlib.Path) -> list[str]:
