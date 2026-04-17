@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 (2026-04-06)
+## 1.0.0 (2026-04-17)
 
 ### Features Added
 
@@ -9,7 +9,7 @@
   - Added model `FeatureProperties`
   - Added enum `FeatureState`
   - Added model `OperationStatusResult`
-  - Added operation group `FeaturesOperations`
+  - Added model `FeaturesOperations`
 
 ## 1.0.0b1 (2025-11-14)
 
