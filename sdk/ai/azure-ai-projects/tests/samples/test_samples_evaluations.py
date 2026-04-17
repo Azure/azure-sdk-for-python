@@ -19,9 +19,9 @@ from test_samples_helpers import get_sample_env_vars
 evaluationsPreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
-    azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_model_deployment_name="sanitized-model-deployment-name",
-    azure_ai_agent_name="sanitized-agent-name",
+    foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    foundry_model_name="sanitized-model-deployment-name",
+    foundry_agent_name="sanitized-agent-name",
 )
 
 evaluations_instructions = """
@@ -170,6 +170,12 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_scheduled_evaluations.py",  # Missing dependency azure.mgmt.resource (ModuleNotFoundError)
                 "sample_evaluations_builtin_with_dataset_id.py",  # Requires dataset upload / Blob Storage prerequisite
                 "sample_continuous_evaluation_rule.py",  # Requires manual RBAC assignment in Azure Portal
+                "sample_evaluations_builtin_with_csv.py",  # Requires CSV file upload prerequisite
+                "sample_synthetic_data_agent_evaluation.py",  # Synthetic data gen is long-running preview feature
+                "sample_synthetic_data_model_evaluation.py",  # Synthetic data gen is long-running preview feature
+                "sample_eval_catalog_prompt_based_evaluators.py",  # For some reason fails with 500 (Internal server error)
+                "sample_eval_upload_custom_evaluator.py",  # TODO: Need to add recordings
+                "sample_eval_upload_friendly_evaluator.py",  # TODO: Need to add recordings
             ],
         ),
     )
@@ -187,8 +193,6 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=evaluations_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     # To run this test with a specific sample, use:
@@ -219,8 +223,6 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=evaluations_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
         )
 
     # To run this test, use:
@@ -250,6 +252,4 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=evaluations_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
         )

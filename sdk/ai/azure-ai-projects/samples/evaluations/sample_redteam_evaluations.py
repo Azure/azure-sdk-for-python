@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,wrong-import-order
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -17,9 +17,9 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) AZURE_AI_AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
+    2) FOUNDRY_AGENT_NAME - Required. The name of the Agent to perform red teaming evaluation on.
 """
 
 import os
@@ -38,15 +38,14 @@ from azure.ai.projects.models import (
 )
 import json
 import time
-from azure.ai.projects.models import EvaluationTaxonomy
 from typing import Union
 
 
-def main() -> None:
+def main() -> None:  # pylint: disable=too-many-statements
     load_dotenv()
     #
-    endpoint = os.environ.get("AZURE_AI_PROJECT_ENDPOINT", "")
-    agent_name = os.environ.get("AZURE_AI_AGENT_NAME", "")
+    endpoint = os.environ.get("FOUNDRY_PROJECT_ENDPOINT", "")
+    agent_name = os.environ.get("FOUNDRY_AGENT_NAME", "")
 
     with (
         DefaultAzureCredential() as credential,
@@ -56,7 +55,7 @@ def main() -> None:
         agent_version = project_client.agents.create_version(
             agent_name=agent_name,
             definition=PromptAgentDefinition(
-                model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+                model=os.environ["FOUNDRY_MODEL_NAME"],
                 instructions="You are a helpful assistant that answers general questions",
             ),
         )
@@ -67,7 +66,7 @@ def main() -> None:
         data_source_config = {"type": "azure_ai_source", "scenario": "red_team"}
 
         testing_criteria = _get_agent_safety_evaluation_criteria()
-        print(f"Defining testing criteria for red teaming for agent target")
+        print("Defining testing criteria for red teaming for agent target")
         pprint(testing_criteria)
 
         print("Creating red teaming evaluation")
@@ -95,7 +94,7 @@ def main() -> None:
 
         taxonomy = project_client.beta.evaluation_taxonomies.create(name=agent_name, body=eval_taxonomy_input)
         taxonomy_path = os.path.join(tempfile.gettempdir(), f"taxonomy_{agent_name}.json")
-        with open(taxonomy_path, "w") as f:
+        with open(taxonomy_path, "w", encoding="utf-8") as f:
             f.write(json.dumps(_to_json_primitive(taxonomy), indent=2))
         print(f"Red teaming Taxonomy created for agent: {agent_name}. Taxonomy written to {taxonomy_path}")
 
@@ -125,10 +124,10 @@ def main() -> None:
 
         while True:
             run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-            if run.status == "completed" or run.status == "failed":
+            if run.status in ("completed", "failed"):
                 output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
                 output_items_path = os.path.join(tempfile.gettempdir(), f"redteam_eval_output_items_{agent_name}.json")
-                with open(output_items_path, "w") as f:
+                with open(output_items_path, "w", encoding="utf-8") as f:
                     f.write(json.dumps(_to_json_primitive(output_items), indent=2))
                 print(
                     f"RedTeam Eval Run completed with status: {run.status}. Output items written to {output_items_path}"
@@ -223,7 +222,7 @@ def _to_json_primitive(obj):
         if hasattr(obj, method):
             try:
                 return _to_json_primitive(getattr(obj, method)())
-            except Exception:
+            except Exception:  # pylint: disable=broad-exception-caught
                 pass
     if hasattr(obj, "__dict__"):
         return _to_json_primitive({k: v for k, v in vars(obj).items() if not k.startswith("_")})

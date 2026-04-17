@@ -11,8 +11,8 @@ pip install "azure-ai-projects>=2.0.0" python-dotenv
 ```
 
 Set these environment variables:
-- `AZURE_AI_PROJECT_ENDPOINT` - Your Azure AI Project endpoint (e.g., `https://<account>.services.ai.azure.com/api/projects/<project>`)
-- `AZURE_AI_MODEL_DEPLOYMENT_NAME` - The model deployment name (e.g., `gpt-4o-mini`)
+- `FOUNDRY_PROJECT_ENDPOINT` - Your Azure AI Project endpoint (e.g., `https://<account>.services.ai.azure.com/api/projects/<project>`)
+- `FOUNDRY_MODEL_NAME` - The model deployment name (e.g., `gpt-4o-mini`)
 
 ## Sample Index
 
@@ -21,7 +21,8 @@ Set these environment variables:
 | Sample | Description |
 |--------|-------------|
 | [sample_evaluations_builtin_with_inline_data.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_inline_data.py) | Basic evaluation with built-in evaluators using inline data |
-| [sample_evaluations_builtin_with_dataset_id.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_dataset_id.py) | Evaluate using an uploaded dataset |
+| [sample_evaluations_builtin_with_dataset_id.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_dataset_id.py) | Evaluate using an uploaded JSONL dataset |
+| [sample_evaluations_builtin_with_csv.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_evaluations_builtin_with_csv.py) | Evaluate using an uploaded CSV dataset |
 | [sample_eval_catalog.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_eval_catalog.py) | Browse and use evaluators from the evaluation catalog |
 
 ### Agent / Model Evaluation
@@ -32,6 +33,8 @@ Set these environment variables:
 | [sample_agent_response_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_agent_response_evaluation.py) | Evaluate given agent responses |
 | [sample_agent_response_evaluation_with_function_tool.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_agent_response_evaluation_with_function_tool.py) | Evaluate agent responses with function tools |
 | [sample_model_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_model_evaluation.py) | Create response from model and evaluate |
+| [sample_synthetic_data_agent_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_synthetic_data_agent_evaluation.py) | Generate synthetic test data, evaluate a Foundry agent |
+| [sample_synthetic_data_model_evaluation.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/ai/azure-ai-projects/samples/evaluations/sample_synthetic_data_model_evaluation.py) | Generate synthetic test data, evaluate a model |
 
 ### Red Team Evaluations
 
@@ -97,8 +100,8 @@ Located in the [agentic_evaluators](https://github.com/Azure/azure-sdk-for-pytho
 
 ```bash
 # Set environment variables
-export AZURE_AI_PROJECT_ENDPOINT="https://<your-account>.services.ai.azure.com/api/projects/<your-project>"
-export AZURE_AI_MODEL_DEPLOYMENT_NAME="gpt-4o-mini" # Replace with your model
+export FOUNDRY_PROJECT_ENDPOINT="https://<your-account>.services.ai.azure.com/api/projects/<your-project>"
+export FOUNDRY_MODEL_NAME="gpt-4o-mini" # Replace with your model
 
 # Run a sample
 python sample_evaluations_builtin_with_inline_data.py

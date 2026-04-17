@@ -54,8 +54,9 @@ To report an issue with the client library, or request additional features, plea
 * Python 3.9 or later.
 * An [Azure subscription][azure_sub].
 * A [project in Microsoft Foundry](https://learn.microsoft.com/azure/foundry/how-to/create-projects).
-* A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project home page. Below we will assume the environment variable `AZURE_AI_PROJECT_ENDPOINT` was defined to hold this value.
-* An Entra ID token for authentication. Your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
+* A Foundry project endpoint URL of the form `https://your-ai-services-account-name.services.ai.azure.com/api/projects/your-project-name`. It can be found in your Microsoft Foundry Project home page. Below we will assume the environment variable `FOUNDRY_PROJECT_ENDPOINT` was defined to hold this value.
+* To authenticate using API key, you will need the "Project API key" as shown in your Microsoft Foundry Project home page.
+* To authenticate using Entra ID, your application needs an object that implements the [TokenCredential](https://learn.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential) interface. Code samples here use [DefaultAzureCredential](https://learn.microsoft.com/python/api/azure-identity/azure.identity.defaultazurecredential). To get that working, you will need:
   * An appropriate role assignment. See [Role-based access control in Microsoft Foundry portal](https://learn.microsoft.com/azure/foundry/concepts/rbac-foundry). Role assignment can be done via the "Access Control (IAM)" tab of your Azure AI Project resource in the Azure portal.
   * [Azure CLI](https://learn.microsoft.com/cli/azure/install-azure-cli) installed.
   * You are logged into your Azure account by running `az login`.
@@ -74,9 +75,46 @@ pip show azure-ai-projects
 
 ## Key concepts
 
-### Create and authenticate the client with Entra ID
+### Create and authenticate the client with API key
 
-Entra ID is the only authentication method supported at the moment by the client.
+To construct a synchronous client using a context manager:
+
+```python
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.projects import AIProjectClient
+
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+api_key = os.environ["FOUNDRY_PROJECT_API_KEY"]
+
+with (
+    AIProjectClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as project_client
+):
+```
+
+To construct an asynchronous client, install the additional package [aiohttp](https://pypi.org/project/aiohttp/):
+
+```bash
+pip install aiohttp
+```
+
+and run:
+
+```python
+import os
+import asyncio
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.projects.aio import AIProjectClient
+
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+api_key = os.environ["FOUNDRY_PROJECT_API_KEY"]
+
+async with (
+    AIProjectClient(endpoint=endpoint, credential=AzureKeyCredential(api_key)) as project_client
+):
+```
+
+### Create and authenticate the client with Entra ID
 
 To construct a synchronous client using a context manager:
 
@@ -85,9 +123,11 @@ import os
 from azure.ai.projects import AIProjectClient
 from azure.identity import DefaultAzureCredential
 
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+
 with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
 ```
 
@@ -105,9 +145,11 @@ import asyncio
 from azure.ai.projects.aio import AIProjectClient
 from azure.identity.aio import DefaultAzureCredential
 
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+
 async with (
     DefaultAzureCredential() as credential,
-    AIProjectClient(endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"], credential=credential) as project_client,
+    AIProjectClient(endpoint=endpoint, credential=credential) as project_client,
 ):
 ```
 
@@ -117,20 +159,20 @@ async with (
 
 Your Microsoft Foundry project may have one or more AI models deployed. These could be OpenAI models, Microsoft models, or models from other providers. Use the code below to get an authenticated [OpenAI](https://github.com/openai/openai-python?tab=readme-ov-file#usage) client from the [openai](https://pypi.org/project/openai/) package, and execute an example multi-turn "Responses" calls.
 
-The code below assumes the environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project. See "Build" menu, under "Models" (First column of the "Deployments" table).
+The code below assumes the environment variable `FOUNDRY_MODEL_NAME` is defined. It's the deployment name of an AI model in your Foundry Project. See "Build" menu, under "Models" (First column of the "Deployments" table).
 
 <!-- SNIPPET:sample_responses_basic.responses -->
 
 ```python
 with project_client.get_openai_client() as openai_client:
     response = openai_client.responses.create(
-        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+        model=os.environ["FOUNDRY_MODEL_NAME"],
         input="What is the size of France in square miles?",
     )
     print(f"Response output: {response.output_text}")
 
     response = openai_client.responses.create(
-        model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+        model=os.environ["FOUNDRY_MODEL_NAME"],
         input="And what is the capital city?",
         previous_response_id=response.id,
     )
@@ -145,7 +187,7 @@ See the "responses" folder in the [package samples][samples] for additional samp
 
 The `.agents` property on the `AIProjectClient` gives you access to all Agent operations. Agents use an extension of the OpenAI Responses protocol, so you will need to get an `OpenAI` client to do Agent operations, as shown in the example below.
 
-The code below assumes environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` is defined. It's the deployment name of an AI model in your Foundry Project. See "Build" menu, under "Models" (First column of the "Deployments" table).
+The code below assumes environment variable `FOUNDRY_MODEL_NAME` is defined. It's the deployment name of an AI model in your Foundry Project. See "Build" menu, under "Models" (First column of the "Deployments" table).
 
 See the "agents" folder in the [package samples][samples] for an extensive set of samples, including streaming, tool usage and memory store usage.
 
@@ -156,7 +198,7 @@ with project_client.get_openai_client() as openai_client:
     agent = project_client.agents.create_version(
         agent_name="MyAgent",
         definition=PromptAgentDefinition(
-            model=os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+            model=os.environ["FOUNDRY_MODEL_NAME"],
             instructions="You are a helpful assistant that answers general questions",
         ),
     )
@@ -177,7 +219,7 @@ with project_client.get_openai_client() as openai_client:
         conversation_id=conversation.id,
         items=[{"type": "message", "role": "user", "content": "And what is the capital city?"}],
     )
-    print(f"Added a second user message to the conversation")
+    print("Added a second user message to the conversation")
 
     response = openai_client.responses.create(
         conversation=conversation.id,
@@ -229,7 +271,7 @@ the `code_interpreter_call` output item:
 
 ```python
 code = next((output.code for output in response.output if output.type == "code_interpreter_call"), "")
-print(f"Code Interpreter code:")
+print("Code Interpreter code:")
 print(code)
 ```
 
@@ -246,7 +288,9 @@ asset_file_path = os.path.abspath(
 )
 
 # Upload the CSV file for the code interpreter
-file = openai_client.files.create(purpose="assistants", file=open(asset_file_path, "rb"))
+with open(asset_file_path, "rb") as f:
+    file = openai_client.files.create(purpose="assistants", file=f)
+
 tool = CodeInterpreterTool(container=AutoCodeInterpreterToolParam(file_ids=[file.id]))
 ```
 
@@ -273,9 +317,8 @@ print(f"Vector store created (id: {vector_store.id})")
 asset_file_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../assets/product_info.md"))
 
 # Upload file to vector store
-file = openai_client.vector_stores.files.upload_and_poll(
-    vector_store_id=vector_store.id, file=open(asset_file_path, "rb")
-)
+with open(asset_file_path, "rb") as f:
+    file = openai_client.vector_stores.files.upload_and_poll(vector_store_id=vector_store.id, file=f)
 print(f"File uploaded to vector store (id: {file.id})")
 
 tool = FileSearchTool(vector_store_ids=[vector_store.id])
@@ -415,7 +458,7 @@ Call external APIs defined by OpenAPI specifications without additional client-s
 <!-- SNIPPET:sample_agent_openapi.tool_declaration-->
 
 ```python
-with open(weather_asset_file_path, "r") as f:
+with open(weather_asset_file_path, "r", encoding="utf-8") as f:
     openapi_weather = cast(dict[str, Any], jsonref.loads(f.read()))
 
 tool = OpenApiTool(
@@ -765,7 +808,7 @@ with (
     project_client.get_openai_client() as openai_client,
 ):
     agent = project_client.agents.create_version(
-        agent_name=os.environ["AZURE_AI_AGENT_NAME"],
+        agent_name=os.environ["FOUNDRY_AGENT_NAME"],
         definition=PromptAgentDefinition(
             model=model_deployment_name,
             instructions="You are a helpful assistant that answers general questions",
@@ -1175,23 +1218,23 @@ Trace context propagation allows client-side spans generated by the Projects SDK
 
 This feature ensures that all operations within a distributed trace share the same trace ID, providing end-to-end visibility across your application and Azure services in your observability backend (such as Azure Monitor).
 
-To enable trace context propagation, set the `AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION` environment variable to `true`:
+Trace context propagation is **enabled by default** when tracing is enabled (for example through `configure_azure_monitor` or the `AIProjectInstrumentor().instrument()` call). To disable it, set the `AZURE_TRACING_GEN_AI_ENABLE_TRACE_CONTEXT_PROPAGATION` environment variable to `false`, or pass `enable_trace_context_propagation=False` to the `AIProjectInstrumentor().instrument()` call.
 
-If no value is provided for the `enable_trace_context_propagation` parameter with the AIProjectInstrumentor.instrument()` call and the environment variable is not set, trace context propagation defaults to `false` (opt-in).
+**When does the change take effect?**
+- Changes to `enable_trace_context_propagation` (whether via `instrument()` or the environment variable) only affect OpenAI clients obtained via `get_openai_client()` **after** the change is applied. Previously acquired clients are unaffected.
+- To apply the new setting to all clients, call `AIProjectInstrumentor().instrument(enable_trace_context_propagation=<value>)` before acquiring your OpenAI clients, or re-acquire the clients after making the change.
 
-**Important Security and Privacy Considerations:**
-
-- **Trace IDs**: When trace context propagation is enabled, trace IDs are sent to Azure OpenAI and other external services.
-- **Request Correlation**: Trace IDs allow Azure services to correlate requests from the same session or user across multiple API calls, which may have privacy implications depending on your use case.
-- **Opt-in by Design**: This feature is disabled by default to give you explicit control over when trace context is propagated to external services.
-
-Only enable trace context propagation after carefully reviewing your observability, privacy and security requirements.
+**Security and Privacy Considerations:**
+- **Trace IDs are sent to external services**: The `traceparent` and `tracestate` headers from your client-side originating spans are injected into requests sent to service. This enables end-to-end distributed tracing, but note that the trace identifier may be shared beyond the initial API call.
+- **Enabled by Default**: If you have privacy or compliance requirements that prohibit sharing trace identifiers with services, disable trace context propagation by setting `enable_trace_context_propagation=False` or the environment variable to `false`.
 
 #### Controlling baggage propagation
 
 When trace context propagation is enabled, you can separately control whether the baggage header is included. By default, only `traceparent` and `tracestate` headers are propagated. To also include the `baggage` header, set the `AZURE_TRACING_GEN_AI_TRACE_CONTEXT_PROPAGATION_INCLUDE_BAGGAGE` environment variable to `true`:
 
 If no value is provided for the `enable_baggage_propagation` parameter with the `AIProjectInstrumentor.instrument()` call and the environment variable is not set, the value defaults to `false` and baggage is not included.
+
+**Note:** The `enable_baggage_propagation` flag is evaluated dynamically on each request, so changes take effect **immediately** for all clients that have the trace context propagation hook registered. However, the hook is only registered on clients acquired via `get_openai_client()` **while trace context propagation was enabled**. Clients acquired when trace context propagation was disabled will never propagate baggage, regardless of the `enable_baggage_propagation` value.
 
 **Why is baggage propagation separate?**
 
@@ -1357,7 +1400,7 @@ By default logs redact the values of URL query strings, the values of some HTTP 
 ```python
 project_client = AIProjectClient(
     credential=DefaultAzureCredential(),
-    endpoint=os.environ["AZURE_AI_PROJECT_ENDPOINT"],
+    endpoint=os.environ["FOUNDRY_PROJECT_ENDPOINT"],
     logging_enable=True
 )
 ```

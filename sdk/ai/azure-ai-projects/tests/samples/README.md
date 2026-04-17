@@ -67,7 +67,7 @@ class TestSamples(AzureRecordedTestCase):
         executor.execute()
         executor.validate_print_calls_by_llm(
             instructions=agent_tools_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            project_endpoint=kwargs["foundry_project_endpoint"],
         )        
 ```
 
@@ -106,7 +106,7 @@ class TestSamplesAsync(AzureRecordedTestCase):
         await executor.execute_async()
         await executor.validate_print_calls_by_llm_async(
             instructions=agent_tools_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
+            project_endpoint=kwargs["foundry_project_endpoint"],
         )
 ```
 
@@ -122,8 +122,8 @@ from devtools_testutils import EnvironmentVariableLoader
 servicePreparer = functools.partial(
     EnvironmentVariableLoader,
         "",
-        azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-        azure_ai_model_deployment_name="gpt-4o",
+        foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+        foundry_model_name="gpt-4o",
     # add other sanitized vars here
 )
 ```
@@ -154,8 +154,8 @@ If you need to remap the values provided by your fixtures to the environment-var
 
 ```python
 env_vars = {
-    "AZURE_AI_PROJECT_ENDPOINT": kwargs["TEST_AZURE_AI_PROJECT_ENDPOINT"],
-    "AZURE_AI_MODEL_DEPLOYMENT_NAME": kwargs["TEST_AZURE_AI_MODEL_DEPLOYMENT_NAME"],
+    "FOUNDRY_PROJECT_ENDPOINT": kwargs["TEST_FOUNDRY_PROJECT_ENDPOINT"],
+    "FOUNDRY_MODEL_NAME": kwargs["TEST_FOUNDRY_MODEL_NAME"],
 }
 executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
 ```

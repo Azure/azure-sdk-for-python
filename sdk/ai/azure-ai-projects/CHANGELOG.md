@@ -1,5 +1,40 @@
 # Release History
 
+## 2.1.0 (2026-03-26)
+
+skip changelog generation for data-plane package and please add changelog manually.
+
+## 2.0.2 (Unreleased)
+
+### Features Added
+
+* Placeholder
+
+### Breaking Changes
+
+* Tracing: trace context propagation is enabled by default when tracing is enabled.
+
+### Bugs Fixed
+
+* Placeholder
+
+### Sample updates
+
+* Renamed environment variable `AZURE_AI_PROJECT_ENDPOINT` to `FOUNDRY_PROJECT_ENDPOINT` in all samples.
+* Renamed environment variable `AZURE_AI_MODEL_DEPLOYMENT_NAME` to `FOUNDRY_MODEL_NAME` in all samples.
+* Renamed environment variable `AZURE_AI_MODEL_AGENT_NAME` to `FOUNDRY_AGENT_NAME` in all samples.
+* Added structured inputs + file upload sample (`sample_agent_structured_inputs_file_upload.py`) demonstrating passing an uploaded file ID to an agent at runtime.
+* Added structured inputs + File Search sample (`sample_agent_file_search_structured_inputs.py`) demonstrating configuring File Search tool resources via structured inputs.
+* Added structured inputs + Code Interpreter sample (`sample_agent_code_interpreter_structured_inputs.py`) demonstrating passing an uploaded file ID to Code Interpreter via structured inputs.
+* Added CSV evaluation sample (`sample_evaluations_builtin_with_csv.py`) demonstrating evaluation with an uploaded CSV dataset.
+* Added synthetic data evaluation samples (`sample_synthetic_data_agent_evaluation.py`) and (`sample_synthetic_data_model_evaluation.py`).
+* Added Chat Completions basic samples (`sample_chat_completions_basic.py`, `sample_chat_completions_basic_async.py`) demonstrating chat completions calls using `AIProjectClient` + the OpenAI-compatible client.
+* Added Toolsets CRUD samples (`sample_toolsets_crud.py`, `sample_toolsets_crud_async.py`) demonstrating `project_client.beta.toolsets` create/get/update/list/delete.
+
+### Other Changes
+
+* Placeholder
+
 ## 2.0.1 (2026-03-12)
 
 ### Bugs Fixed

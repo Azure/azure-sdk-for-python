@@ -35,11 +35,7 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.serialization import Deserializer, Serializer
-from ...models._enums import _AgentDefinitionOptInKeys, _FoundryFeaturesOptInKeys
 from ...operations._operations import (
-    _get_agent_definition_opt_in_keys,
-    build_agents_create_agent_from_manifest_request,
-    build_agents_create_agent_request,
     build_agents_create_version_from_manifest_request,
     build_agents_create_version_request,
     build_agents_delete_request,
@@ -48,8 +44,6 @@ from ...operations._operations import (
     build_agents_get_version_request,
     build_agents_list_request,
     build_agents_list_versions_request,
-    build_agents_update_agent_from_manifest_request,
-    build_agents_update_agent_request,
     build_beta_evaluation_taxonomies_create_request,
     build_beta_evaluation_taxonomies_delete_request,
     build_beta_evaluation_taxonomies_get_request,
@@ -57,9 +51,11 @@ from ...operations._operations import (
     build_beta_evaluation_taxonomies_update_request,
     build_beta_evaluators_create_version_request,
     build_beta_evaluators_delete_version_request,
+    build_beta_evaluators_get_credentials_request,
     build_beta_evaluators_get_version_request,
     build_beta_evaluators_list_request,
     build_beta_evaluators_list_versions_request,
+    build_beta_evaluators_pending_upload_request,
     build_beta_evaluators_update_version_request,
     build_beta_insights_generate_request,
     build_beta_insights_get_request,
@@ -81,6 +77,11 @@ from ...operations._operations import (
     build_beta_schedules_get_run_request,
     build_beta_schedules_list_request,
     build_beta_schedules_list_runs_request,
+    build_beta_toolsets_create_request,
+    build_beta_toolsets_delete_request,
+    build_beta_toolsets_get_request,
+    build_beta_toolsets_list_request,
+    build_beta_toolsets_update_request,
     build_connections_get_request,
     build_connections_get_with_credentials_request,
     build_connections_list_request,
@@ -110,11 +111,9 @@ _Unset: Any = object()
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
 List = list
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
 
 
-class BetaOperations:
+class BetaOperations:  # pylint: disable=too-many-instance-attributes
     """
     .. warning::
         **DO NOT** instantiate this class directly.
@@ -139,6 +138,7 @@ class BetaOperations:
         self.memory_stores = BetaMemoryStoresOperations(self._client, self._config, self._serialize, self._deserialize)
         self.red_teams = BetaRedTeamsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.schedules = BetaSchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.toolsets = BetaToolsetsOperations(self._client, self._config, self._serialize, self._deserialize)
 
 
 class AgentsOperations:
@@ -184,539 +184,6 @@ class AgentsOperations:
         _request = build_agents_get_request(
             agent_name=agent_name,
             api_version=self._config.api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentDetails, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def _create_agent(
-        self,
-        *,
-        name: str,
-        definition: _models.AgentDefinition,
-        content_type: str = "application/json",
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.AgentDetails: ...
-    @overload
-    async def _create_agent(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentDetails: ...
-    @overload
-    async def _create_agent(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentDetails: ...
-
-    @distributed_trace_async
-    async def _create_agent(
-        self,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        name: str = _Unset,
-        definition: _models.AgentDefinition = _Unset,
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Creates the agent.
-
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :paramtype name: str
-        :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
-         agent definition. Required.
-        :paramtype definition: ~azure.ai.projects.models.AgentDefinition
-        :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword description: A human-readable description of the agent. Default value is None.
-        :paramtype description: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config.allow_preview else None  # type: ignore
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if name is _Unset:
-                raise TypeError("missing required argument: name")
-            if definition is _Unset:
-                raise TypeError("missing required argument: definition")
-            body = {"definition": definition, "description": description, "metadata": metadata, "name": name}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_create_agent_request(
-            foundry_features=_foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentDetails, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def _update_agent(
-        self,
-        agent_name: str,
-        *,
-        definition: _models.AgentDefinition,
-        content_type: str = "application/json",
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.AgentDetails: ...
-    @overload
-    async def _update_agent(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentDetails: ...
-    @overload
-    async def _update_agent(
-        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentDetails: ...
-
-    @distributed_trace_async
-    async def _update_agent(
-        self,
-        agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        definition: _models.AgentDefinition = _Unset,
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates the agent by adding a new version if there are any changes to the agent definition. If
-        no changes, returns the existing agent version.
-
-        :param agent_name: The name of the agent to retrieve. Required.
-        :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword definition: The agent definition. This can be a workflow, hosted agent, or a simple
-         agent definition. Required.
-        :paramtype definition: ~azure.ai.projects.models.AgentDefinition
-        :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword description: A human-readable description of the agent. Default value is None.
-        :paramtype description: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config.allow_preview else None  # type: ignore
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if definition is _Unset:
-                raise TypeError("missing required argument: definition")
-            body = {"definition": definition, "description": description, "metadata": metadata}
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_update_agent_request(
-            agent_name=agent_name,
-            foundry_features=_foundry_features,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentDetails, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def _create_agent_from_manifest(
-        self,
-        *,
-        name: str,
-        manifest_id: str,
-        parameter_values: dict[str, Any],
-        content_type: str = "application/json",
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.AgentDetails: ...
-    @overload
-    async def _create_agent_from_manifest(
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentDetails: ...
-    @overload
-    async def _create_agent_from_manifest(
-        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentDetails: ...
-
-    @distributed_trace_async
-    async def _create_agent_from_manifest(
-        self,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        name: str = _Unset,
-        manifest_id: str = _Unset,
-        parameter_values: dict[str, Any] = _Unset,
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Creates an agent from a manifest.
-
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword name: The unique name that identifies the agent. Name can be used to
-         retrieve/update/delete the agent.
-
-         * Must start and end with alphanumeric characters,
-         * Can contain hyphens in the middle
-         * Must not exceed 63 characters. Required.
-        :paramtype name: str
-        :keyword manifest_id: The manifest ID to import the agent version from. Required.
-        :paramtype manifest_id: str
-        :keyword parameter_values: The inputs to the manifest that will result in a fully materialized
-         Agent. Required.
-        :paramtype parameter_values: dict[str, any]
-        :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword description: A human-readable description of the agent. Default value is None.
-        :paramtype description: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if name is _Unset:
-                raise TypeError("missing required argument: name")
-            if manifest_id is _Unset:
-                raise TypeError("missing required argument: manifest_id")
-            if parameter_values is _Unset:
-                raise TypeError("missing required argument: parameter_values")
-            body = {
-                "description": description,
-                "manifest_id": manifest_id,
-                "metadata": metadata,
-                "name": name,
-                "parameter_values": parameter_values,
-            }
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_create_agent_from_manifest_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        _request.url = self._client.format_url(_request.url, **path_format_arguments)
-
-        _decompress = kwargs.pop("decompress", True)
-        _stream = kwargs.pop("stream", False)
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            if _stream:
-                try:
-                    await response.read()  # Load the body in memory and close the socket
-                except (StreamConsumedError, StreamClosedError):
-                    pass
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = _failsafe_deserialize(
-                _models.ApiErrorResponse,
-                response,
-            )
-            raise HttpResponseError(response=response, model=error)
-
-        if _stream:
-            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
-        else:
-            deserialized = _deserialize(_models.AgentDetails, response.json())
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @overload
-    async def _update_agent_from_manifest(
-        self,
-        agent_name: str,
-        *,
-        manifest_id: str,
-        parameter_values: dict[str, Any],
-        content_type: str = "application/json",
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.AgentDetails: ...
-    @overload
-    async def _update_agent_from_manifest(
-        self, agent_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentDetails: ...
-    @overload
-    async def _update_agent_from_manifest(
-        self, agent_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.AgentDetails: ...
-
-    @distributed_trace_async
-    async def _update_agent_from_manifest(
-        self,
-        agent_name: str,
-        body: Union[JSON, IO[bytes]] = _Unset,
-        *,
-        manifest_id: str = _Unset,
-        parameter_values: dict[str, Any] = _Unset,
-        metadata: Optional[dict[str, str]] = None,
-        description: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.AgentDetails:
-        """Updates the agent from a manifest by adding a new version if there are any changes to the agent
-        definition. If no changes, returns the existing agent version.
-
-        :param agent_name: The name of the agent to update. Required.
-        :type agent_name: str
-        :param body: Is either a JSON type or a IO[bytes] type. Required.
-        :type body: JSON or IO[bytes]
-        :keyword manifest_id: The manifest ID to import the agent version from. Required.
-        :paramtype manifest_id: str
-        :keyword parameter_values: The inputs to the manifest that will result in a fully materialized
-         Agent. Required.
-        :paramtype parameter_values: dict[str, any]
-        :keyword metadata: Set of 16 key-value pairs that can be attached to an object. This can be
-         useful for storing additional information about the object in a structured
-         format, and querying for objects via API or the dashboard.
-
-         Keys are strings with a maximum length of 64 characters. Values are strings
-         with a maximum length of 512 characters. Default value is None.
-        :paramtype metadata: dict[str, str]
-        :keyword description: A human-readable description of the agent. Default value is None.
-        :paramtype description: str
-        :return: AgentDetails. The AgentDetails is compatible with MutableMapping
-        :rtype: ~azure.ai.projects.models.AgentDetails
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AgentDetails] = kwargs.pop("cls", None)
-
-        if body is _Unset:
-            if manifest_id is _Unset:
-                raise TypeError("missing required argument: manifest_id")
-            if parameter_values is _Unset:
-                raise TypeError("missing required argument: parameter_values")
-            body = {
-                "description": description,
-                "manifest_id": manifest_id,
-                "metadata": metadata,
-                "parameter_values": parameter_values,
-            }
-            body = {k: v for k, v in body.items() if v is not None}
-        content_type = content_type or "application/json"
-        _content = None
-        if isinstance(body, (IOBase, bytes)):
-            _content = body
-        else:
-            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
-
-        _request = build_agents_update_agent_from_manifest_request(
-            agent_name=agent_name,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -1040,7 +507,6 @@ class AgentsOperations:
         :rtype: ~azure.ai.projects.models.AgentVersionDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Optional[str] = _get_agent_definition_opt_in_keys if self._config.allow_preview else None  # type: ignore
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1069,7 +535,6 @@ class AgentsOperations:
 
         _request = build_agents_create_version_request(
             agent_name=agent_name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1748,7 +1213,6 @@ class EvaluationRulesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationRule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Optional[Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW]] = _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW if self._config.allow_preview else None  # type: ignore
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1772,7 +1236,6 @@ class EvaluationRulesOperations:
 
         _request = build_evaluation_rules_create_or_update_request(
             id=id,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3528,9 +2991,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3546,7 +3006,6 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_get_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3597,9 +3056,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluationTaxonomy]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -3617,7 +3073,6 @@ class BetaEvaluationTaxonomiesOperations:
             if not next_link:
 
                 _request = build_beta_evaluation_taxonomies_list_request(
-                    foundry_features=_foundry_features,
                     input_name=input_name,
                     input_type=input_type,
                     api_version=self._config.api_version,
@@ -3642,10 +3097,7 @@ class BetaEvaluationTaxonomiesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -3693,9 +3145,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3711,7 +3160,6 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_delete_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -3804,9 +3252,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3830,7 +3275,6 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_create_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -3938,9 +3382,6 @@ class BetaEvaluationTaxonomiesOperations:
         :rtype: ~azure.ai.projects.models.EvaluationTaxonomy
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -3964,7 +3405,6 @@ class BetaEvaluationTaxonomiesOperations:
 
         _request = build_beta_evaluation_taxonomies_update_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4045,9 +3485,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -4066,7 +3503,6 @@ class BetaEvaluatorsOperations:
 
                 _request = build_beta_evaluators_list_versions_request(
                     name=name,
-                    foundry_features=_foundry_features,
                     type=type,
                     limit=limit,
                     api_version=self._config.api_version,
@@ -4091,10 +3527,7 @@ class BetaEvaluatorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4153,9 +3586,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.EvaluatorVersion]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -4173,7 +3603,6 @@ class BetaEvaluatorsOperations:
             if not next_link:
 
                 _request = build_beta_evaluators_list_request(
-                    foundry_features=_foundry_features,
                     type=type,
                     limit=limit,
                     api_version=self._config.api_version,
@@ -4198,10 +3627,7 @@ class BetaEvaluatorsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4252,9 +3678,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4271,7 +3694,6 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_get_version_request(
             name=name,
             version=version,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4321,9 +3743,6 @@ class BetaEvaluatorsOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4340,7 +3759,6 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_delete_version_request(
             name=name,
             version=version,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4438,9 +3856,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4464,7 +3879,6 @@ class BetaEvaluatorsOperations:
 
         _request = build_beta_evaluators_create_version_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4596,9 +4010,6 @@ class BetaEvaluatorsOperations:
         :rtype: ~azure.ai.projects.models.EvaluatorVersion
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4623,7 +4034,6 @@ class BetaEvaluatorsOperations:
         _request = build_beta_evaluators_update_version_request(
             name=name,
             version=version,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4656,6 +4066,330 @@ class BetaEvaluatorsOperations:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
             deserialized = _deserialize(_models.EvaluatorVersion, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def pending_upload(
+        self,
+        name: str,
+        version: str,
+        pending_upload_request: _models.PendingUploadRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PendingUploadResponse:
+        """Start a new or get an existing pending upload of an evaluator for a specific version.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the EvaluatorVersion to operate on. Required.
+        :type version: str
+        :param pending_upload_request: The pending upload request parameters. Required.
+        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def pending_upload(
+        self,
+        name: str,
+        version: str,
+        pending_upload_request: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PendingUploadResponse:
+        """Start a new or get an existing pending upload of an evaluator for a specific version.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the EvaluatorVersion to operate on. Required.
+        :type version: str
+        :param pending_upload_request: The pending upload request parameters. Required.
+        :type pending_upload_request: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def pending_upload(
+        self,
+        name: str,
+        version: str,
+        pending_upload_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.PendingUploadResponse:
+        """Start a new or get an existing pending upload of an evaluator for a specific version.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the EvaluatorVersion to operate on. Required.
+        :type version: str
+        :param pending_upload_request: The pending upload request parameters. Required.
+        :type pending_upload_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def pending_upload(
+        self,
+        name: str,
+        version: str,
+        pending_upload_request: Union[_models.PendingUploadRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.PendingUploadResponse:
+        """Start a new or get an existing pending upload of an evaluator for a specific version.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the EvaluatorVersion to operate on. Required.
+        :type version: str
+        :param pending_upload_request: The pending upload request parameters. Is one of the following
+         types: PendingUploadRequest, JSON, IO[bytes] Required.
+        :type pending_upload_request: ~azure.ai.projects.models.PendingUploadRequest or JSON or
+         IO[bytes]
+        :return: PendingUploadResponse. The PendingUploadResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.PendingUploadResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PendingUploadResponse] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(pending_upload_request, (IOBase, bytes)):
+            _content = pending_upload_request
+        else:
+            _content = json.dumps(pending_upload_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_evaluators_pending_upload_request(
+            name=name,
+            version=version,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PendingUploadResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def get_credentials(
+        self,
+        name: str,
+        version: str,
+        credential_request: _models.EvaluatorCredentialRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DatasetCredential:
+        """Get the SAS credential to access the storage account associated with an Evaluator version.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the EvaluatorVersion to operate on. Required.
+        :type version: str
+        :param credential_request: The credential request parameters. Required.
+        :type credential_request: ~azure.ai.projects.models.EvaluatorCredentialRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DatasetCredential
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def get_credentials(
+        self,
+        name: str,
+        version: str,
+        credential_request: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DatasetCredential:
+        """Get the SAS credential to access the storage account associated with an Evaluator version.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the EvaluatorVersion to operate on. Required.
+        :type version: str
+        :param credential_request: The credential request parameters. Required.
+        :type credential_request: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DatasetCredential
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def get_credentials(
+        self,
+        name: str,
+        version: str,
+        credential_request: IO[bytes],
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.DatasetCredential:
+        """Get the SAS credential to access the storage account associated with an Evaluator version.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the EvaluatorVersion to operate on. Required.
+        :type version: str
+        :param credential_request: The credential request parameters. Required.
+        :type credential_request: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DatasetCredential
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def get_credentials(
+        self,
+        name: str,
+        version: str,
+        credential_request: Union[_models.EvaluatorCredentialRequest, JSON, IO[bytes]],
+        **kwargs: Any
+    ) -> _models.DatasetCredential:
+        """Get the SAS credential to access the storage account associated with an Evaluator version.
+
+        :param name: The name of the resource. Required.
+        :type name: str
+        :param version: The specific version id of the EvaluatorVersion to operate on. Required.
+        :type version: str
+        :param credential_request: The credential request parameters. Is one of the following types:
+         EvaluatorCredentialRequest, JSON, IO[bytes] Required.
+        :type credential_request: ~azure.ai.projects.models.EvaluatorCredentialRequest or JSON or
+         IO[bytes]
+        :return: DatasetCredential. The DatasetCredential is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DatasetCredential
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DatasetCredential] = kwargs.pop("cls", None)
+
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(credential_request, (IOBase, bytes)):
+            _content = credential_request
+        else:
+            _content = json.dumps(credential_request, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_evaluators_get_credentials_request(
+            name=name,
+            version=version,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DatasetCredential, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -4742,9 +4476,6 @@ class BetaInsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4767,7 +4498,6 @@ class BetaInsightsOperations:
             _content = json.dumps(insight, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_insights_generate_request(
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -4794,7 +4524,11 @@ class BetaInsightsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -4821,9 +4555,6 @@ class BetaInsightsOperations:
         :rtype: ~azure.ai.projects.models.Insight
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -4839,7 +4570,6 @@ class BetaInsightsOperations:
 
         _request = build_beta_insights_get_request(
             insight_id=insight_id,
-            foundry_features=_foundry_features,
             include_coordinates=include_coordinates,
             api_version=self._config.api_version,
             headers=_headers,
@@ -4865,7 +4595,11 @@ class BetaInsightsOperations:
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -4906,9 +4640,6 @@ class BetaInsightsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Insight]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -4926,7 +4657,6 @@ class BetaInsightsOperations:
             if not next_link:
 
                 _request = build_beta_insights_list_request(
-                    foundry_features=_foundry_features,
                     type=type,
                     eval_id=eval_id,
                     run_id=run_id,
@@ -4954,10 +4684,7 @@ class BetaInsightsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -4989,7 +4716,11 @@ class BetaInsightsOperations:
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -5103,9 +4834,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5135,7 +4863,6 @@ class BetaMemoryStoresOperations:
             _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_memory_stores_create_request(
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5266,9 +4993,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5295,7 +5019,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_update_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5348,9 +5071,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDetails
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5366,7 +5086,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_get_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5436,9 +5155,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.MemoryStoreDetails]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -5455,7 +5171,6 @@ class BetaMemoryStoresOperations:
         def prepare_request(_continuation_token=None):
 
             _request = build_beta_memory_stores_list_request(
-                foundry_features=_foundry_features,
                 limit=limit,
                 order=order,
                 after=_continuation_token,
@@ -5511,9 +5226,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.DeleteMemoryStoreResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5529,7 +5241,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_delete_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -5623,9 +5334,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreSearchResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5644,7 +5352,7 @@ class BetaMemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items": items,
+                "items_property": items,
                 "options": options,
                 "previous_search_id": previous_search_id,
                 "scope": scope,
@@ -5659,7 +5367,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_search_memories_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5713,9 +5420,6 @@ class BetaMemoryStoresOperations:
         update_delay: Optional[int] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -5734,7 +5438,7 @@ class BetaMemoryStoresOperations:
             if scope is _Unset:
                 raise TypeError("missing required argument: scope")
             body = {
-                "items": items,
+                "items_property": items,
                 "previous_update_id": previous_update_id,
                 "scope": scope,
                 "update_delay": update_delay,
@@ -5749,7 +5453,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_update_memories_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -5850,9 +5553,6 @@ class BetaMemoryStoresOperations:
          ~azure.core.polling.AsyncLROPoller[~azure.ai.projects.models.MemoryStoreUpdateCompletedResult]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
@@ -5865,7 +5565,6 @@ class BetaMemoryStoresOperations:
             raw_result = await self._update_memories_initial(
                 name=name,
                 body=body,
-                foundry_features=_foundry_features,
                 scope=scope,
                 items=items,
                 previous_update_id=previous_update_id,
@@ -5991,9 +5690,6 @@ class BetaMemoryStoresOperations:
         :rtype: ~azure.ai.projects.models.MemoryStoreDeleteScopeResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6022,7 +5718,6 @@ class BetaMemoryStoresOperations:
 
         _request = build_beta_memory_stores_delete_scope_request(
             name=name,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6093,9 +5788,6 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6111,7 +5803,6 @@ class BetaRedTeamsOperations:
 
         _request = build_beta_red_teams_get_request(
             name=name,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6156,9 +5847,6 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.RedTeam]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -6176,7 +5864,6 @@ class BetaRedTeamsOperations:
             if not next_link:
 
                 _request = build_beta_red_teams_list_request(
-                    foundry_features=_foundry_features,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -6199,10 +5886,7 @@ class BetaRedTeamsOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6297,9 +5981,6 @@ class BetaRedTeamsOperations:
         :rtype: ~azure.ai.projects.models.RedTeam
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6322,7 +6003,6 @@ class BetaRedTeamsOperations:
             _content = json.dumps(red_team, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
         _request = build_beta_red_teams_create_request(
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6393,9 +6073,6 @@ class BetaSchedulesOperations:
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6411,7 +6088,6 @@ class BetaSchedulesOperations:
 
         _request = build_beta_schedules_delete_request(
             schedule_id=schedule_id,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6445,9 +6121,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6463,7 +6136,6 @@ class BetaSchedulesOperations:
 
         _request = build_beta_schedules_get_request(
             schedule_id=schedule_id,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6519,9 +6191,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.Schedule]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -6539,7 +6208,6 @@ class BetaSchedulesOperations:
             if not next_link:
 
                 _request = build_beta_schedules_list_request(
-                    foundry_features=_foundry_features,
                     type=type,
                     enabled=enabled,
                     api_version=self._config.api_version,
@@ -6564,10 +6232,7 @@ class BetaSchedulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6674,9 +6339,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.Schedule
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6700,7 +6362,6 @@ class BetaSchedulesOperations:
 
         _request = build_beta_schedules_create_or_update_request(
             schedule_id=schedule_id,
-            foundry_features=_foundry_features,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -6751,9 +6412,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.ai.projects.models.ScheduleRun
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -6770,7 +6428,6 @@ class BetaSchedulesOperations:
         _request = build_beta_schedules_get_run_request(
             schedule_id=schedule_id,
             run_id=run_id,
-            foundry_features=_foundry_features,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -6833,9 +6490,6 @@ class BetaSchedulesOperations:
         :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ScheduleRun]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _foundry_features: Literal[_FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW] = (
-            _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW
-        )
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
@@ -6854,7 +6508,6 @@ class BetaSchedulesOperations:
 
                 _request = build_beta_schedules_list_runs_request(
                     schedule_id=schedule_id,
-                    foundry_features=_foundry_features,
                     type=type,
                     enabled=enabled,
                     api_version=self._config.api_version,
@@ -6879,10 +6532,7 @@ class BetaSchedulesOperations:
                 )
                 _next_request_params["api-version"] = self._config.api_version
                 _request = HttpRequest(
-                    "GET",
-                    urllib.parse.urljoin(next_link, _parsed_next_link.path),
-                    params=_next_request_params,
-                    headers={"Foundry-Features": _SERIALIZER.header("foundry_features", _foundry_features, "str")},
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
                     "endpoint": self._serialize.url(
@@ -6919,3 +6569,566 @@ class BetaSchedulesOperations:
             return pipeline_response
 
         return AsyncItemPaged(get_next, extract_data)
+
+
+class BetaToolsetsOperations:
+    """
+    .. warning::
+        **DO NOT** instantiate this class directly.
+
+        Instead, you should access the following operations through
+        :class:`~azure.ai.projects.aio.AIProjectClient`'s
+        :attr:`toolsets` attribute.
+    """
+
+    def __init__(self, *args, **kwargs) -> None:
+        input_args = list(args)
+        self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
+        self._config: AIProjectClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
+        self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+
+    @overload
+    async def create(
+        self,
+        *,
+        name: str,
+        tools: List[_models.Tool],
+        content_type: str = "application/json",
+        description: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.ToolsetObject:
+        """Create a toolset.
+
+        :keyword name: The name of the toolset. Required.
+        :paramtype name: str
+        :keyword tools: The list of tools to include in the toolset. Required.
+        :paramtype tools: list[~azure.ai.projects.models.Tool]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword description: A human-readable description of the toolset. Default value is None.
+        :paramtype description: str
+        :keyword metadata: Arbitrary key-value metadata to associate with the toolset. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolsetObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ToolsetObject:
+        """Create a toolset.
+
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolsetObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def create(
+        self, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ToolsetObject:
+        """Create a toolset.
+
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolsetObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def create(
+        self,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        name: str = _Unset,
+        tools: List[_models.Tool] = _Unset,
+        description: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.ToolsetObject:
+        """Create a toolset.
+
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword name: The name of the toolset. Required.
+        :paramtype name: str
+        :keyword tools: The list of tools to include in the toolset. Required.
+        :paramtype tools: list[~azure.ai.projects.models.Tool]
+        :keyword description: A human-readable description of the toolset. Default value is None.
+        :paramtype description: str
+        :keyword metadata: Arbitrary key-value metadata to associate with the toolset. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolsetObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ToolsetObject] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if name is _Unset:
+                raise TypeError("missing required argument: name")
+            if tools is _Unset:
+                raise TypeError("missing required argument: tools")
+            body = {"description": description, "metadata": metadata, "name": name, "tools": tools}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_toolsets_create_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ToolsetObject, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @overload
+    async def update(
+        self,
+        tool_set_name: str,
+        *,
+        tools: List[_models.Tool],
+        content_type: str = "application/json",
+        description: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.ToolsetObject:
+        """Update a toolset.
+
+        :param tool_set_name: The name of the toolset to update. Required.
+        :type tool_set_name: str
+        :keyword tools: The list of tools to include in the toolset. Required.
+        :paramtype tools: list[~azure.ai.projects.models.Tool]
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword description: A human-readable description of the toolset. Default value is None.
+        :paramtype description: str
+        :keyword metadata: Arbitrary key-value metadata to associate with the toolset. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolsetObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self, tool_set_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ToolsetObject:
+        """Update a toolset.
+
+        :param tool_set_name: The name of the toolset to update. Required.
+        :type tool_set_name: str
+        :param body: Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolsetObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def update(
+        self, tool_set_name: str, body: IO[bytes], *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.ToolsetObject:
+        """Update a toolset.
+
+        :param tool_set_name: The name of the toolset to update. Required.
+        :type tool_set_name: str
+        :param body: Required.
+        :type body: IO[bytes]
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolsetObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def update(
+        self,
+        tool_set_name: str,
+        body: Union[JSON, IO[bytes]] = _Unset,
+        *,
+        tools: List[_models.Tool] = _Unset,
+        description: Optional[str] = None,
+        metadata: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> _models.ToolsetObject:
+        """Update a toolset.
+
+        :param tool_set_name: The name of the toolset to update. Required.
+        :type tool_set_name: str
+        :param body: Is either a JSON type or a IO[bytes] type. Required.
+        :type body: JSON or IO[bytes]
+        :keyword tools: The list of tools to include in the toolset. Required.
+        :paramtype tools: list[~azure.ai.projects.models.Tool]
+        :keyword description: A human-readable description of the toolset. Default value is None.
+        :paramtype description: str
+        :keyword metadata: Arbitrary key-value metadata to associate with the toolset. Default value is
+         None.
+        :paramtype metadata: dict[str, str]
+        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolsetObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ToolsetObject] = kwargs.pop("cls", None)
+
+        if body is _Unset:
+            if tools is _Unset:
+                raise TypeError("missing required argument: tools")
+            body = {"description": description, "metadata": metadata, "tools": tools}
+            body = {k: v for k, v in body.items() if v is not None}
+        content_type = content_type or "application/json"
+        _content = None
+        if isinstance(body, (IOBase, bytes)):
+            _content = body
+        else:
+            _content = json.dumps(body, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
+
+        _request = build_beta_toolsets_update_request(
+            tool_set_name=tool_set_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ToolsetObject, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def get(self, tool_set_name: str, **kwargs: Any) -> _models.ToolsetObject:
+        """Retrieve a toolset.
+
+        :param tool_set_name: The name of the toolset to retrieve. Required.
+        :type tool_set_name: str
+        :return: ToolsetObject. The ToolsetObject is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.ToolsetObject
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.ToolsetObject] = kwargs.pop("cls", None)
+
+        _request = build_beta_toolsets_get_request(
+            tool_set_name=tool_set_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ToolsetObject, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace
+    def list(
+        self,
+        *,
+        limit: Optional[int] = None,
+        order: Optional[Union[str, _models.PageOrder]] = None,
+        before: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncItemPaged["_models.ToolsetObject"]:
+        """List all toolsets.
+
+        :keyword limit: A limit on the number of objects to be returned. Limit can range between 1 and
+         100, and the
+         default is 20. Default value is None.
+        :paramtype limit: int
+        :keyword order: Sort order by the ``created_at`` timestamp of the objects. ``asc`` for
+         ascending order and``desc``
+         for descending order. Known values are: "asc" and "desc". Default value is None.
+        :paramtype order: str or ~azure.ai.projects.models.PageOrder
+        :keyword before: A cursor for use in pagination. ``before`` is an object ID that defines your
+         place in the list.
+         For instance, if you make a list request and receive 100 objects, ending with obj_foo, your
+         subsequent call can include before=obj_foo in order to fetch the previous page of the list.
+         Default value is None.
+        :paramtype before: str
+        :return: An iterator like instance of ToolsetObject
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.ai.projects.models.ToolsetObject]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[List[_models.ToolsetObject]] = kwargs.pop("cls", None)
+
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(_continuation_token=None):
+
+            _request = build_beta_toolsets_list_request(
+                limit=limit,
+                order=order,
+                after=_continuation_token,
+                before=before,
+                api_version=self._config.api_version,
+                headers=_headers,
+                params=_params,
+            )
+            path_format_arguments = {
+                "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            }
+            _request.url = self._client.format_url(_request.url, **path_format_arguments)
+            return _request
+
+        async def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = _deserialize(
+                List[_models.ToolsetObject],
+                deserialized.get("data", []),
+            )
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.get("last_id") or None, AsyncList(list_of_elem)
+
+        async def get_next(_continuation_token=None):
+            _request = prepare_request(_continuation_token)
+
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = _failsafe_deserialize(
+                    _models.ApiErrorResponse,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace_async
+    async def delete(self, tool_set_name: str, **kwargs: Any) -> _models.DeleteToolsetResponse:
+        """Delete a toolset.
+
+        :param tool_set_name: The name of the toolset to delete. Required.
+        :type tool_set_name: str
+        :return: DeleteToolsetResponse. The DeleteToolsetResponse is compatible with MutableMapping
+        :rtype: ~azure.ai.projects.models.DeleteToolsetResponse
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models.DeleteToolsetResponse] = kwargs.pop("cls", None)
+
+        _request = build_beta_toolsets_delete_request(
+            tool_set_name=tool_set_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
+
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.ApiErrorResponse,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
+
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.DeleteToolsetResponse, response.json())
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
