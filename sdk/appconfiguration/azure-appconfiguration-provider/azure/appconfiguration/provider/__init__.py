@@ -10,6 +10,7 @@ from ._models import (
     SettingSelector,
     WatchKey,
 )
+from ._constants import NULL_LABEL
 
 from ._version import VERSION
 
@@ -20,4 +21,5 @@ __all__ = [
     "AzureAppConfigurationKeyVaultOptions",
     "SettingSelector",
     "WatchKey",
+    "NULL_LABEL",
 ]

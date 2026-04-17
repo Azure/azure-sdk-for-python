@@ -69,3 +69,11 @@ SNAPSHOT_NAME_FIELD = "snapshot_name"
 # Miscellaneous Constants
 # ------------------------------------------------------------------------
 NULL_CHAR = "\0"
+
+# ------------------------------------------------------------------------
+# Label Constants
+# ------------------------------------------------------------------------
+NULL_LABEL = NULL_CHAR
+"""Represents the null label (No Label) in Azure App Configuration. Use this constant
+with :class:`~azure.appconfiguration.provider.SettingSelector` to select configuration
+settings that have no label assigned."""

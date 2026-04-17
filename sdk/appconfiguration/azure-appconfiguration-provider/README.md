@@ -63,10 +63,10 @@ List of features we are going to add to the Python Provider in the future.
 You can refine or expand the configurations loaded from your store by using `SettingSelector`s. Setting selectors provide a way to pass a key filter and label filter into the provider.
 
 ```python
-from azure.appconfiguration.provider import load, SettingSelector
+from azure.appconfiguration.provider import load, SettingSelector, NULL_LABEL
 from azure.identity import DefaultAzureCredential
 
-selects = {SettingSelector(key_filter="*", label_filter="\0"), SettingSelector(key_filter="*", label_filter="dev")}
+selects = {SettingSelector(key_filter="*", label_filter=NULL_LABEL), SettingSelector(key_filter="*", label_filter="dev")}
 config = load(endpoint=endpoint, credential=DefaultAzureCredential(), selects=selects)
 ```
 

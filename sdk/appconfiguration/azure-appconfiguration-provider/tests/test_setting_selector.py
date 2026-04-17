@@ -7,6 +7,7 @@
 import pytest
 from azure.appconfiguration.provider._models import SettingSelector
 from azure.appconfiguration.provider._constants import NULL_CHAR
+from azure.appconfiguration.provider import NULL_LABEL
 
 
 class TestSettingSelector:
@@ -91,3 +92,11 @@ class TestSettingSelector:
 
         selector = SettingSelector(key_filter="*", tag_filters=["tag=value"])
         assert selector.label_filter == NULL_CHAR
+
+    def test_null_label_constant(self):
+        """Test that NULL_LABEL constant is exported and equals the null character."""
+        assert NULL_LABEL == "\0"
+        assert NULL_LABEL == NULL_CHAR
+
+        selector = SettingSelector(key_filter="*", label_filter=NULL_LABEL)
+        assert selector.label_filter == NULL_LABEL
