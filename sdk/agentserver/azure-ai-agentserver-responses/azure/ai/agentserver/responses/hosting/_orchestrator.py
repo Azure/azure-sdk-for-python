@@ -404,10 +404,9 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
             agent_session_id=agent_session_id,
             conversation_id=conversation_id,
         )
-        # Stamp mode flags so the provider fallback can enforce B1/B2 checks
+        # Stamp background so the provider fallback can enforce B1 checks
         # after eager eviction removes the in-memory record.
         response_payload["background"] = record.mode_flags.background
-        response_payload["stream"] = record.mode_flags.stream
 
         resolved_status = response_payload.get("status")
         if record.status != "cancelled":
@@ -427,7 +426,6 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
         # all code paths (normal completion, handler failure, cancellation).
         if record.response is not None:
             record.response.background = record.mode_flags.background
-            record.response.stream = record.mode_flags.stream  # pyright: ignore[reportAttributeAccessIssue]
         # Persist terminal state update via provider (bg non-stream: update after runner completes)
         if store and provider is not None and record.status not in {"cancelled"} and record.response is not None:
             try:
@@ -694,7 +692,6 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # Stamp mode flags so the provider fallback can enforce B1/B2 checks
         # after eager eviction removes the in-memory record.
         initial_payload["background"] = True
-        initial_payload["stream"] = True
         initial_status = initial_payload.get("status")
         if not isinstance(initial_status, str):
             initial_status = "in_progress"
@@ -1049,7 +1046,6 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 # Stamp mode flags so the provider fallback can enforce B1/B2 checks
                 # after eager eviction removes the in-memory record.
                 record.response.background = record.mode_flags.background
-                record.response.stream = record.mode_flags.stream  # pyright: ignore[reportAttributeAccessIssue]
                 _isolation = ctx.context.isolation if ctx.context else None
                 try:
                     await self._provider.update_response(record.response, isolation=_isolation)
@@ -1117,10 +1113,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
         )
-        # Stamp mode flags so the provider fallback can enforce B1/B2 checks
+        # Stamp background so the provider fallback can enforce B1 checks
         # after eager eviction removes the in-memory record.
         response_payload["background"] = ctx.background
-        response_payload["stream"] = ctx.stream
         resolved_status = response_payload.get("status")
         final_status: ResponseStatus = (
             cast(ResponseStatus, resolved_status) if isinstance(resolved_status, str) else "completed"
@@ -1428,10 +1423,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
         )
-        # Stamp mode flags so the provider fallback can enforce B1/B2 checks
+        # Stamp background so the provider fallback can enforce B1 checks
         # after eager eviction removes the in-memory record.
         response_payload["background"] = ctx.background
-        response_payload["stream"] = ctx.stream
         resolved_status = response_payload.get("status")
         status = cast(ResponseStatus, resolved_status) if isinstance(resolved_status, str) else "completed"
 

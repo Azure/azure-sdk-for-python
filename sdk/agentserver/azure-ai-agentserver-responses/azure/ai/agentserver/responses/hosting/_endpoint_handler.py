@@ -713,7 +713,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     return replay_response
 
                 # No stream events available.  Check the persisted response's
-                # mode flags to return the correct error (matching .NET's B2 check).
+                # background flag; if not bg, give the clear non-bg error.
+                # Otherwise, we can't distinguish bg+non-stream from
+                # bg+stream-with-expired-TTL (we don't persist the stream flag),
+                # so use a combined message matching .NET's SseReplayResult.
                 try:
                     persisted = await self._provider.get_response(response_id, isolation=_isolation)
                     persisted_dict = persisted.as_dict()
@@ -724,17 +727,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                             {},
                             param="stream",
                         )
-                    # B2 continued: bg+non-stream → different message.
-                    if persisted_dict.get("stream") is not True:
-                        return _invalid_mode(
-                            "This response cannot be streamed because it was not created with stream=true.",
-                            {},
-                            param="stream",
-                        )
-                    # Response is background+stream but stream events not available
-                    # (e.g. cancelled response — stream events are not persisted).
+                    # TODO: The container spec prescribes distinct error messages for
+                    # "not created with stream=true" vs "stream TTL expired", but after
+                    # eager eviction the persisted response does not carry the stream
+                    # mode flag — we cannot distinguish the two cases.  Until the
+                    # provider surfaces the reason, we use a combined message (matching
+                    # .NET's SseReplayResult).
                     return _invalid_mode(
-                        "Event stream is not available for this response.",
+                        "This response cannot be streamed because it was not created "
+                        "with stream=true or the stream TTL has expired.",
                         {},
                         param="stream",
                     )
@@ -1108,7 +1109,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # after eager eviction removes the in-memory record.
         if record.response is not None:
             record.response.background = record.mode_flags.background
-            record.response.stream = record.mode_flags.stream  # pyright: ignore[reportAttributeAccessIssue]
         record.transition_to("cancelled")
 
         # Persist cancelled state to durable store (B11: cancellation always wins)

@@ -212,7 +212,12 @@ def test_get_replay__starting_after_returns_events_after_cursor() -> None:
 
 
 def test_get_replay__rejects_bg_non_stream_response() -> None:
-    """B2 — SSE replay requires stream=true at creation. background=true, stream=false → 400."""
+    """B2 — SSE replay on bg+non-stream after eviction → 400 with combined message.
+
+    After eager eviction the persisted response doesn't carry the stream mode
+    flag, so the server cannot distinguish bg+non-stream from bg+stream with
+    expired TTL.  The error uses a combined message matching .NET's SseReplayResult.
+    """
     client = _build_client()
 
     create_response = client.post(
@@ -235,7 +240,7 @@ def test_get_replay__rejects_bg_non_stream_response() -> None:
     assert payload["error"].get("code") == "invalid_request_error"
     error_message = payload["error"].get("message", "")
     assert "stream=true" in error_message, (
-        f"SSE replay rejection for bg+non-stream must mention 'stream=true', got: {error_message!r}"
+        f"SSE replay rejection must mention 'stream=true', got: {error_message!r}"
     )
     assert payload["error"].get("param") == "stream"
 

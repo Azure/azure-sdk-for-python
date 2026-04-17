@@ -723,7 +723,9 @@ class TestC4BgStreamStoredAsync:
 
         # SSE replay after cancel: with eager eviction, the in-memory SSE subject
         # is gone and cancelled responses don't persist stream events.
-        # The provider fallback returns 400 "Event stream is not available".
+        # The provider fallback returns 400 with the combined "stream=true or TTL"
+        # message (we cannot distinguish bg+non-stream from bg+stream-cancelled
+        # after eviction — see TODO in _endpoint_handler.py).
         replay_resp = await client.get(f"/responses/{response_id}?stream=true")
         assert replay_resp.status_code == 400
 
