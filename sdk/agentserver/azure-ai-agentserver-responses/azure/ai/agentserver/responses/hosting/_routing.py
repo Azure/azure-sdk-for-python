@@ -215,7 +215,7 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         # Inbound request logging middleware.
         # Must be added AFTER super().__init__() so it wraps the full app.
-        self.add_middleware(InboundRequestLoggingMiddleware)
+        self.add_middleware(InboundRequestLoggingMiddleware)  # type: ignore[arg-type]
 
         # Register the responses protocol version on the host so the
         # x-platform-server header includes this package's version.
