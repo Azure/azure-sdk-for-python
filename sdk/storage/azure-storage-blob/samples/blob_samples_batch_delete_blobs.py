@@ -29,7 +29,9 @@ def batch_delete_blobs_sample(local_path):
         )
         sys.exit(1)
 
-    blob_service_client = BlobServiceClient.from_connection_string(conn_str=connection_string)
+    blob_service_client = BlobServiceClient.from_connection_string(
+        conn_str=connection_string
+    )
     # Create a ContainerClient to use the batch_delete function on a Blob Container
     container_client = blob_service_client.get_container_client("mycontainername")
     try:
@@ -39,7 +41,9 @@ def batch_delete_blobs_sample(local_path):
     # Upload blobs
     for filename in os.listdir(local_path):
         with open(local_path + filename, "rb") as data:
-            container_client.upload_blob(name=filename, data=data, blob_type="BlockBlob")
+            container_client.upload_blob(
+                name=filename, data=data, blob_type="BlockBlob"
+            )
 
     # List blobs in storage account
     blob_list = [b.name for b in list(container_client.list_blobs())]

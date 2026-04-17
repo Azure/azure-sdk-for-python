@@ -10,11 +10,20 @@ from urllib.parse import unquote
 from azure.core.async_paging import AsyncItemPaged, AsyncPageIterator
 from azure.core.exceptions import HttpResponseError
 
-from .._deserialize import get_blob_properties_from_generated_code, load_many_xml_nodes, load_xml_int, load_xml_string
+from .._deserialize import (
+    get_blob_properties_from_generated_code,
+    load_many_xml_nodes,
+    load_xml_int,
+    load_xml_string,
+)
 from .._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
 from .._models import BlobProperties
 from .._shared.models import DictMixin
-from .._shared.response_handlers import process_storage_error, return_context_and_deserialized, return_raw_deserialized
+from .._shared.response_handlers import (
+    process_storage_error,
+    return_context_and_deserialized,
+    return_raw_deserialized,
+)
 
 
 class BlobPropertiesPaged(AsyncPageIterator):
@@ -53,7 +62,9 @@ class BlobPropertiesPaged(AsyncPageIterator):
         location_mode: Optional[str] = None,
     ) -> None:
         super(BlobPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or "",
         )
         self._command = command
         self.service_endpoint = None
@@ -84,7 +95,9 @@ class BlobPropertiesPaged(AsyncPageIterator):
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.container = self._response.container_name
-        self.current_page = [self._build_item(item) for item in self._response.segment.blob_items]
+        self.current_page = [
+            self._build_item(item) for item in self._response.segment.blob_items
+        ]
 
         return self._response.next_marker or None, self.current_page
 
@@ -133,7 +146,9 @@ class BlobNamesPaged(AsyncPageIterator):
         location_mode: Optional[str] = None,
     ) -> None:
         super(BlobNamesPaged, self).__init__(
-            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or "",
         )
         self._command = command
         self.service_endpoint = None
@@ -202,7 +217,9 @@ class BlobPrefix(AsyncItemPaged, DictMixin):
     """The name of the container."""
 
     def __init__(self, *args, **kwargs):
-        super(BlobPrefix, self).__init__(*args, page_iterator_class=BlobPrefixPaged, **kwargs)
+        super(BlobPrefix, self).__init__(
+            *args, page_iterator_class=BlobPrefixPaged, **kwargs
+        )
         self.name = kwargs.get("prefix")
         self.prefix = kwargs.get("prefix")
         self.results_per_page = kwargs.get("results_per_page")
@@ -217,8 +234,12 @@ class BlobPrefixPaged(BlobPropertiesPaged):
         self.name = self.prefix
 
     async def _extract_data_cb(self, get_next_return):
-        continuation_token, _ = await super(BlobPrefixPaged, self)._extract_data_cb(get_next_return)
-        self.current_page = self._response.segment.blob_prefixes + self._response.segment.blob_items
+        continuation_token, _ = await super(BlobPrefixPaged, self)._extract_data_cb(
+            get_next_return
+        )
+        self.current_page = (
+            self._response.segment.blob_prefixes + self._response.segment.blob_items
+        )
         self.current_page = [self._build_item(item) for item in self.current_page]
         self.delimiter = self._response.delimiter
 

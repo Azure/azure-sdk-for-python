@@ -17,8 +17,9 @@ from cryptography.hazmat.primitives.keywrap import (
     aes_key_unwrap,
 )
 
-
-_ERROR_UNKNOWN_KEY_WRAP_ALGORITHM = "Unknown keywrap algorithm specified. Supported algorithm: A256KW."
+_ERROR_UNKNOWN_KEY_WRAP_ALGORITHM = (
+    "Unknown keywrap algorithm specified. Supported algorithm: A256KW."
+)
 
 
 class KeyWrapper:
@@ -60,14 +61,19 @@ class KeyResolver:
 
 class RSAKeyWrapper:
     def __init__(self, kid="local:key2"):
-        self.private_key = generate_private_key(public_exponent=65537, key_size=2048, backend=default_backend())
+        self.private_key = generate_private_key(
+            public_exponent=65537, key_size=2048, backend=default_backend()
+        )
         self.public_key = self.private_key.public_key()
         self.kid = kid
 
     def wrap_key(self, key, algorithm="RSA"):
         if algorithm == "RSA":
             return self.public_key.encrypt(
-                key, OAEP(mgf=MGF1(algorithm=SHA1()), algorithm=SHA1(), label=None)  # nosec  # nosec
+                key,
+                OAEP(
+                    mgf=MGF1(algorithm=SHA1()), algorithm=SHA1(), label=None
+                ),  # nosec  # nosec
             )
 
         raise ValueError(_ERROR_UNKNOWN_KEY_WRAP_ALGORITHM)
@@ -75,7 +81,10 @@ class RSAKeyWrapper:
     def unwrap_key(self, key, algorithm):
         if algorithm == "RSA":
             return self.private_key.decrypt(
-                key, OAEP(mgf=MGF1(algorithm=SHA1()), algorithm=SHA1(), label=None)  # nosec  # nosec
+                key,
+                OAEP(
+                    mgf=MGF1(algorithm=SHA1()), algorithm=SHA1(), label=None
+                ),  # nosec  # nosec
             )
 
         raise ValueError(_ERROR_UNKNOWN_KEY_WRAP_ALGORITHM)

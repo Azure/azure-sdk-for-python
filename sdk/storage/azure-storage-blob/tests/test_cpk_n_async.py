@@ -32,7 +32,9 @@ from settings.testcase import BlobPreparer
 # For Live pipeline, these are created by ARM template.
 TEST_ENCRYPTION_SCOPE = "testscope1"
 TEST_ENCRYPTION_SCOPE_2 = "testscope2"
-TEST_CONTAINER_ENCRYPTION_SCOPE = ContainerEncryptionScope(default_encryption_scope="testscope1")
+TEST_CONTAINER_ENCRYPTION_SCOPE = ContainerEncryptionScope(
+    default_encryption_scope="testscope1"
+)
 TEST_CONTAINER_ENCRYPTION_SCOPE_DENY_OVERRIDE = ContainerEncryptionScope(
     default_encryption_scope="testscope1", prevent_encryption_scope_override=True
 )
@@ -64,13 +66,22 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         return self.get_resource_name("cpk")
 
     async def _create_block_blob(
-        self, bsc, blob_name=None, data=None, encryption_scope=None, max_concurrency=1, overwrite=False
+        self,
+        bsc,
+        blob_name=None,
+        data=None,
+        encryption_scope=None,
+        max_concurrency=1,
+        overwrite=False,
     ):
         blob_name = blob_name if blob_name else self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         data = data if data else b""
         resp = await blob_client.upload_blob(
-            data, encryption_scope=encryption_scope, max_concurrency=max_concurrency, overwrite=overwrite
+            data,
+            encryption_scope=encryption_scope,
+            max_concurrency=max_concurrency,
+            overwrite=overwrite,
         )
         return blob_client, resp
 
@@ -106,13 +117,25 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         self.container_name = self.get_resource_name("utcontainer")
         blob_client, _ = await self._create_block_blob(bsc)
-        await blob_client.stage_block("1", b"AAA", encryption_scope=TEST_ENCRYPTION_SCOPE)
-        await blob_client.stage_block("2", b"BBB", encryption_scope=TEST_ENCRYPTION_SCOPE)
-        await blob_client.stage_block("3", b"CCC", encryption_scope=TEST_ENCRYPTION_SCOPE)
+        await blob_client.stage_block(
+            "1", b"AAA", encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
+        await blob_client.stage_block(
+            "2", b"BBB", encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
+        await blob_client.stage_block(
+            "3", b"CCC", encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
 
         # Act
-        block_list = [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")]
-        put_block_list_resp = await blob_client.commit_block_list(block_list, encryption_scope=TEST_ENCRYPTION_SCOPE)
+        block_list = [
+            BlobBlock(block_id="1"),
+            BlobBlock(block_id="2"),
+            BlobBlock(block_id="3"),
+        ]
+        put_block_list_resp = await blob_client.commit_block_list(
+            block_list, encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
 
         # Assert
         assert put_block_list_resp["etag"] is not None
@@ -158,16 +181,20 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
             encryption_scope=TEST_ENCRYPTION_SCOPE,
         )
-        blob_client = BlobServiceClient(self.account_url(storage_account_name, "blob"), token1).get_blob_client(
-            self.container_name, blob_name
-        )
+        blob_client = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), token1
+        ).get_blob_client(self.container_name, blob_name)
 
         await blob_client.stage_block("1", b"AAA")
         await blob_client.stage_block("2", b"BBB")
         await blob_client.stage_block("3", b"CCC")
 
         # Act
-        block_list = [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")]
+        block_list = [
+            BlobBlock(block_id="1"),
+            BlobBlock(block_id="2"),
+            BlobBlock(block_id="3"),
+        ]
         put_block_list_resp = await blob_client.commit_block_list(block_list)
 
         # Assert
@@ -215,25 +242,33 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
             encryption_scope=TEST_ENCRYPTION_SCOPE,
         )
-        blob_client = BlobServiceClient(self.account_url(storage_account_name, "blob"), token1).get_blob_client(
-            self.container_name, blob_name
-        )
+        blob_client = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), token1
+        ).get_blob_client(self.container_name, blob_name)
 
         # both ses in SAS and encryption_scopes are both set and have DIFFERENT values will throw exception
         with pytest.raises(HttpResponseError):
-            await blob_client.stage_block("1", b"AAA", encryption_scope=TEST_ENCRYPTION_SCOPE_2)
+            await blob_client.stage_block(
+                "1", b"AAA", encryption_scope=TEST_ENCRYPTION_SCOPE_2
+            )
 
         # both ses in SAS and encryption_scopes are both set and have SAME values will succeed
-        await blob_client.stage_block("1", b"AAA", encryption_scope=TEST_ENCRYPTION_SCOPE)
+        await blob_client.stage_block(
+            "1", b"AAA", encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
 
         # Act
         block_list = [BlobBlock(block_id="1")]
         # both ses in SAS and encryption_scopes are both set and have DIFFERENT values will throw exception
         with pytest.raises(HttpResponseError):
-            await blob_client.commit_block_list(block_list, encryption_scope=TEST_ENCRYPTION_SCOPE_2)
+            await blob_client.commit_block_list(
+                block_list, encryption_scope=TEST_ENCRYPTION_SCOPE_2
+            )
 
         # both ses in SAS and encryption_scopes are both set and have SAME values will succeed
-        put_block_list_resp = await blob_client.commit_block_list(block_list, encryption_scope=TEST_ENCRYPTION_SCOPE)
+        put_block_list_resp = await blob_client.commit_block_list(
+            block_list, encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
 
         # Assert
         assert put_block_list_resp["etag"] is not None
@@ -291,7 +326,10 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         # Act
         # create_blob_from_bytes forces the in-memory chunks to be used
         blob_client, upload_response = await self._create_block_blob(
-            bsc, data=self.byte_data, encryption_scope=TEST_ENCRYPTION_SCOPE, max_concurrency=2
+            bsc,
+            data=self.byte_data,
+            encryption_scope=TEST_ENCRYPTION_SCOPE,
+            max_concurrency=2,
         )
 
         # Assert
@@ -331,7 +369,10 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         self.config.use_byte_buffer = True
 
         blob_client, upload_response = await self._create_block_blob(
-            bsc, data=self.byte_data, encryption_scope=TEST_ENCRYPTION_SCOPE, max_concurrency=2
+            bsc,
+            data=self.byte_data,
+            encryption_scope=TEST_ENCRYPTION_SCOPE,
+            max_concurrency=2,
         )
 
         # Assert
@@ -405,8 +446,12 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         # create source blob and get source blob url
         source_blob_name = self.get_resource_name("sourceblob")
-        self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
-        source_blob_client, _ = await self._create_block_blob(bsc, blob_name=source_blob_name, data=self.byte_data)
+        self.config.use_byte_buffer = (
+            True  # Make sure using chunk upload, then we can record the request
+        )
+        source_blob_client, _ = await self._create_block_blob(
+            bsc, blob_name=source_blob_name, data=self.byte_data
+        )
         source_blob_sas = self.generate_sas(
             generate_blob_sas,
             source_blob_client.account_name,
@@ -421,7 +466,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         # create destination blob
         self.config.use_byte_buffer = False
-        destination_blob_client, _ = await self._create_block_blob(bsc, encryption_scope=TEST_ENCRYPTION_SCOPE)
+        destination_blob_client, _ = await self._create_block_blob(
+            bsc, encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
 
         # Act part 1: make put block from url calls
         await destination_blob_client.stage_block_from_url(
@@ -485,11 +532,15 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             max_page_size=1024,
         )
         await self._setup(bsc)
-        blob_client = await self._create_append_blob(bsc, encryption_scope=TEST_ENCRYPTION_SCOPE)
+        blob_client = await self._create_append_blob(
+            bsc, encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
 
         # Act
         for content in [b"AAA", b"BBB", b"CCC"]:
-            append_blob_prop = await blob_client.append_block(content, encryption_scope=TEST_ENCRYPTION_SCOPE)
+            append_blob_prop = await blob_client.append_block(
+                content, encryption_scope=TEST_ENCRYPTION_SCOPE
+            )
 
             # Assert
             assert append_blob_prop["etag"] is not None
@@ -523,7 +574,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         source_blob_name = self.get_resource_name("sourceblob")
         self.config.use_byte_buffer = True  # chunk upload
-        source_blob_client, _ = await self._create_block_blob(bsc, blob_name=source_blob_name, data=self.byte_data)
+        source_blob_client, _ = await self._create_block_blob(
+            bsc, blob_name=source_blob_name, data=self.byte_data
+        )
         source_blob_sas = self.generate_sas(
             generate_blob_sas,
             source_blob_client.account_name,
@@ -537,11 +590,16 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
 
         self.config.use_byte_buffer = False
-        destination_blob_client = await self._create_append_blob(bsc, encryption_scope=TEST_ENCRYPTION_SCOPE)
+        destination_blob_client = await self._create_append_blob(
+            bsc, encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
 
         # Act
         append_blob_prop = await destination_blob_client.append_block_from_url(
-            source_blob_url, source_offset=0, source_length=4 * 1024, encryption_scope=TEST_ENCRYPTION_SCOPE
+            source_blob_url,
+            source_offset=0,
+            source_length=4 * 1024,
+            encryption_scope=TEST_ENCRYPTION_SCOPE,
         )
 
         # Assert
@@ -573,11 +631,15 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             max_page_size=1024,
         )
         await self._setup(bsc)
-        blob_client = await self._create_append_blob(bsc, encryption_scope=TEST_ENCRYPTION_SCOPE)
+        blob_client = await self._create_append_blob(
+            bsc, encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
 
         # Act
         append_blob_prop = await blob_client.upload_blob(
-            self.byte_data, blob_type=BlobType.AppendBlob, encryption_scope=TEST_ENCRYPTION_SCOPE
+            self.byte_data,
+            blob_type=BlobType.AppendBlob,
+            encryption_scope=TEST_ENCRYPTION_SCOPE,
         )
 
         # Assert
@@ -609,11 +671,16 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             max_page_size=1024,
         )
         await self._setup(bsc)
-        blob_client = await self._create_page_blob(bsc, encryption_scope=TEST_ENCRYPTION_SCOPE)
+        blob_client = await self._create_page_blob(
+            bsc, encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
 
         # Act
         page_blob_prop = await blob_client.upload_page(
-            self.byte_data, offset=0, length=len(self.byte_data), encryption_scope=TEST_ENCRYPTION_SCOPE
+            self.byte_data,
+            offset=0,
+            length=len(self.byte_data),
+            encryption_scope=TEST_ENCRYPTION_SCOPE,
         )
 
         # Assert
@@ -647,8 +714,12 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
 
         source_blob_name = self.get_resource_name("sourceblob")
-        self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
-        source_blob_client, _ = await self._create_block_blob(bsc, blob_name=source_blob_name, data=self.byte_data)
+        self.config.use_byte_buffer = (
+            True  # Make sure using chunk upload, then we can record the request
+        )
+        source_blob_client, _ = await self._create_block_blob(
+            bsc, blob_name=source_blob_name, data=self.byte_data
+        )
         source_blob_sas = self.generate_sas(
             generate_blob_sas,
             source_blob_client.account_name,
@@ -662,7 +733,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
 
         self.config.use_byte_buffer = False
-        blob_client = await self._create_page_blob(bsc, encryption_scope=TEST_ENCRYPTION_SCOPE)
+        blob_client = await self._create_page_blob(
+            bsc, encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
 
         # Act
         page_blob_prop = await blob_client.upload_pages_from_url(
@@ -703,9 +776,14 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
 
         # Act
-        blob_client = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob_client = bsc.get_blob_client(
+            self.container_name, self._get_blob_reference()
+        )
         page_blob_prop = await blob_client.upload_blob(
-            self.byte_data, blob_type=BlobType.PageBlob, max_concurrency=2, encryption_scope=TEST_ENCRYPTION_SCOPE
+            self.byte_data,
+            blob_type=BlobType.PageBlob,
+            max_concurrency=2,
+            encryption_scope=TEST_ENCRYPTION_SCOPE,
         )
 
         # Assert
@@ -737,7 +815,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             max_page_size=1024,
         )
         await self._setup(bsc)
-        blob_client, _ = await self._create_block_blob(bsc, data=b"AAABBBCCC", encryption_scope=TEST_ENCRYPTION_SCOPE)
+        blob_client, _ = await self._create_block_blob(
+            bsc, data=b"AAABBBCCC", encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
 
         # Act
         blob_props = await blob_client.get_blob_properties()
@@ -753,7 +833,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
                 metadata=metadata,
             )
 
-        await blob_client.set_blob_metadata(metadata=metadata, encryption_scope=TEST_ENCRYPTION_SCOPE)
+        await blob_client.set_blob_metadata(
+            metadata=metadata, encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
 
         # Assert
         blob_props = await blob_client.get_blob_properties()
@@ -780,14 +862,18 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             max_page_size=1024,
         )
         await self._setup(bsc)
-        blob_client, _ = await self._create_block_blob(bsc, data=b"AAABBBCCC", encryption_scope=TEST_ENCRYPTION_SCOPE)
+        blob_client, _ = await self._create_block_blob(
+            bsc, data=b"AAABBBCCC", encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
 
         # Act without cpk should not work
         with pytest.raises(HttpResponseError):
             await blob_client.create_snapshot()
 
         # Act with cpk should work
-        blob_snapshot = await blob_client.create_snapshot(encryption_scope=TEST_ENCRYPTION_SCOPE)
+        blob_snapshot = await blob_client.create_snapshot(
+            encryption_scope=TEST_ENCRYPTION_SCOPE
+        )
 
         # Assert
         assert blob_snapshot is not None
@@ -809,7 +895,10 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         )
         await self._setup(bsc)
         await self._create_block_blob(
-            bsc, blob_name="blockblob", data=b"AAABBBCCC", encryption_scope=TEST_ENCRYPTION_SCOPE
+            bsc,
+            blob_name="blockblob",
+            data=b"AAABBBCCC",
+            encryption_scope=TEST_ENCRYPTION_SCOPE,
         )
         await self._create_append_blob(bsc, encryption_scope=TEST_ENCRYPTION_SCOPE)
 
@@ -845,7 +934,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             storage_account_name,
             self.container_name,
             storage_account_key.secret,
-            permission=ContainerSasPermissions(read=True, write=True, list=True, delete=True),
+            permission=ContainerSasPermissions(
+                read=True, write=True, list=True, delete=True
+            ),
             expiry=datetime.utcnow() + timedelta(hours=1),
             encryption_scope=TEST_ENCRYPTION_SCOPE,
         )
@@ -858,7 +949,12 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             max_page_size=1024,
         )
         # blob is encrypted using TEST_ENCRYPTION_SCOPE
-        await self._create_block_blob(bsc_with_sas_credential, blob_name="blockblob", data=b"AAABBBCCC", overwrite=True)
+        await self._create_block_blob(
+            bsc_with_sas_credential,
+            blob_name="blockblob",
+            data=b"AAABBBCCC",
+            overwrite=True,
+        )
         await self._create_append_blob(bsc_with_sas_credential)
 
         # generate a token with TEST_ENCRYPTION_SCOPE_2
@@ -867,7 +963,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             storage_account_name,
             self.container_name,
             storage_account_key.secret,
-            permission=ContainerSasPermissions(read=True, write=True, list=True, delete=True),
+            permission=ContainerSasPermissions(
+                read=True, write=True, list=True, delete=True
+            ),
             expiry=datetime.utcnow() + timedelta(hours=1),
             encryption_scope=TEST_ENCRYPTION_SCOPE_2,
         )
@@ -879,7 +977,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             max_block_size=1024,
             max_page_size=1024,
         )
-        container_client = bsc_with_diff_sas_credential.get_container_client(self.container_name)
+        container_client = bsc_with_diff_sas_credential.get_container_client(
+            self.container_name
+        )
 
         # The ses field in SAS token when list blobs is different from the encryption scope used on creating blob, while
         # list blobs should also succeed
@@ -904,7 +1004,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             storage_account_name,
             account_key=storage_account_key.secret,
             resource_types=ResourceTypes(object=True, container=True),
-            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            permission=AccountSasPermissions(
+                read=True, write=True, delete=True, list=True
+            ),
             expiry=datetime.utcnow() + timedelta(hours=1),
             encryption_scope=TEST_ENCRYPTION_SCOPE_2,
         )
@@ -920,7 +1022,10 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc_with_sas_credential)
         # blob is encrypted using TEST_ENCRYPTION_SCOPE_2
         blob_client, _ = await self._create_block_blob(
-            bsc_with_sas_credential, blob_name="blockblob", data=b"AAABBBCCC", overwrite=True
+            bsc_with_sas_credential,
+            blob_name="blockblob",
+            data=b"AAABBBCCC",
+            overwrite=True,
         )
 
         sas_token2 = self.generate_sas(
@@ -928,7 +1033,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             storage_account_name,
             account_key=storage_account_key.secret,
             resource_types=ResourceTypes(object=True, container=True),
-            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            permission=AccountSasPermissions(
+                read=True, write=True, delete=True, list=True
+            ),
             expiry=datetime.utcnow() + timedelta(hours=1),
             encryption_scope=TEST_ENCRYPTION_SCOPE,
         )
@@ -941,11 +1048,15 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             max_page_size=1024,
         )
         copied_blob = self.get_resource_name("copiedblob")
-        copied_blob_client = bsc_with_account_key_credential.get_blob_client(self.container_name, copied_blob)
+        copied_blob_client = bsc_with_account_key_credential.get_blob_client(
+            self.container_name, copied_blob
+        )
 
         # TODO: to confirm with Sean/Heidi ses in SAS cannot be set for async copy.
         #  The test failed for async copy (without requires_sync=True)
-        await copied_blob_client.start_copy_from_url(blob_client.url, requires_sync=True)
+        await copied_blob_client.start_copy_from_url(
+            blob_client.url, requires_sync=True
+        )
 
         props = await copied_blob_client.get_blob_properties()
 
@@ -967,7 +1078,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             storage_account_name,
             account_key=storage_account_key.secret,
             resource_types=ResourceTypes(object=True, container=True),
-            permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
+            permission=AccountSasPermissions(
+                read=True, write=True, delete=True, list=True
+            ),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         bsc_with_sas_credential = BlobServiceClient(
@@ -981,7 +1094,10 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         await self._setup(bsc_with_sas_credential)
         blob_client, _ = await self._create_block_blob(
-            bsc_with_sas_credential, blob_name="blockblob", data=b"AAABBBCCC", overwrite=True
+            bsc_with_sas_credential,
+            blob_name="blockblob",
+            data=b"AAABBBCCC",
+            overwrite=True,
         )
 
         bsc = BlobServiceClient(
@@ -1036,7 +1152,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             self.container_name,
             blob_name,
             account_key=user_delegation_key,
-            permission=BlobSasPermissions(read=True, write=True, create=True, delete=True),
+            permission=BlobSasPermissions(
+                read=True, write=True, create=True, delete=True
+            ),
             expiry=datetime.utcnow() + timedelta(hours=1),
             encryption_scope=TEST_ENCRYPTION_SCOPE,
         )
@@ -1051,7 +1169,10 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         # blob is encrypted using TEST_ENCRYPTION_SCOPE
         blob_client, _ = await self._create_block_blob(
-            bsc_with_delegation_sas, blob_name=blob_name, data=b"AAABBBCCC", overwrite=True
+            bsc_with_delegation_sas,
+            blob_name=blob_name,
+            data=b"AAABBBCCC",
+            overwrite=True,
         )
         props = await blob_client.get_blob_properties()
 
@@ -1075,7 +1196,8 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             max_page_size=1024,
         )
         container_client = await bsc.create_container(
-            "asynccpkcontainer", container_encryption_scope=TEST_CONTAINER_ENCRYPTION_SCOPE
+            "asynccpkcontainer",
+            container_encryption_scope=TEST_CONTAINER_ENCRYPTION_SCOPE,
         )
 
         container_props = await container_client.get_container_properties()
@@ -1083,19 +1205,28 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             container_props.encryption_scope.default_encryption_scope
             == TEST_CONTAINER_ENCRYPTION_SCOPE.default_encryption_scope
         )
-        assert container_props.encryption_scope.prevent_encryption_scope_override == False
+        assert (
+            container_props.encryption_scope.prevent_encryption_scope_override == False
+        )
 
-        async for container in bsc.list_containers(name_starts_with="asynccpkcontainer"):
+        async for container in bsc.list_containers(
+            name_starts_with="asynccpkcontainer"
+        ):
             assert (
                 container.encryption_scope.default_encryption_scope
                 == TEST_CONTAINER_ENCRYPTION_SCOPE.default_encryption_scope
             )
-            assert container_props.encryption_scope.prevent_encryption_scope_override == False
+            assert (
+                container_props.encryption_scope.prevent_encryption_scope_override
+                == False
+            )
 
         blob_client = container_client.get_blob_client("appendblob")
 
         # providing encryption scope when upload the blob
-        resp = await blob_client.upload_blob(b"aaaa", BlobType.AppendBlob, encryption_scope=TEST_ENCRYPTION_SCOPE_2)
+        resp = await blob_client.upload_blob(
+            b"aaaa", BlobType.AppendBlob, encryption_scope=TEST_ENCRYPTION_SCOPE_2
+        )
         # Use the provided encryption scope on the blob
         assert resp["encryption_scope"] == TEST_ENCRYPTION_SCOPE_2
 
@@ -1117,7 +1248,8 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             max_page_size=1024,
         )
         container_client = await bsc.create_container(
-            "asyncdenyoverridecpkcontainer", container_encryption_scope=TEST_CONTAINER_ENCRYPTION_SCOPE_DENY_OVERRIDE
+            "asyncdenyoverridecpkcontainer",
+            container_encryption_scope=TEST_CONTAINER_ENCRYPTION_SCOPE_DENY_OVERRIDE,
         )
 
         container_props = await container_client.get_container_properties()
@@ -1125,22 +1257,34 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             container_props.encryption_scope.default_encryption_scope
             == TEST_CONTAINER_ENCRYPTION_SCOPE_DENY_OVERRIDE.default_encryption_scope
         )
-        assert container_props.encryption_scope.prevent_encryption_scope_override == True
+        assert (
+            container_props.encryption_scope.prevent_encryption_scope_override == True
+        )
 
-        async for container in bsc.list_containers(name_starts_with="asyncdenyoverridecpkcontainer"):
+        async for container in bsc.list_containers(
+            name_starts_with="asyncdenyoverridecpkcontainer"
+        ):
             assert (
                 container.encryption_scope.default_encryption_scope
                 == TEST_CONTAINER_ENCRYPTION_SCOPE_DENY_OVERRIDE.default_encryption_scope
             )
-            assert container_props.encryption_scope.prevent_encryption_scope_override == True
+            assert (
+                container_props.encryption_scope.prevent_encryption_scope_override
+                == True
+            )
         blob_client = container_client.get_blob_client("appendblob")
 
         # It's not allowed to set encryption scope on the blob when the container denies encryption scope override.
         with pytest.raises(HttpResponseError):
-            await blob_client.upload_blob(b"aaaa", BlobType.AppendBlob, encryption_scope=TEST_ENCRYPTION_SCOPE_2)
+            await blob_client.upload_blob(
+                b"aaaa", BlobType.AppendBlob, encryption_scope=TEST_ENCRYPTION_SCOPE_2
+            )
 
         resp = await blob_client.upload_blob(b"aaaa", BlobType.AppendBlob)
 
-        assert resp["encryption_scope"] == TEST_CONTAINER_ENCRYPTION_SCOPE_DENY_OVERRIDE.default_encryption_scope
+        assert (
+            resp["encryption_scope"]
+            == TEST_CONTAINER_ENCRYPTION_SCOPE_DENY_OVERRIDE.default_encryption_scope
+        )
 
         await container_client.delete_container()

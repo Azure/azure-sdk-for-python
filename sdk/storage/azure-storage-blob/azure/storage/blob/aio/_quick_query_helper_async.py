@@ -5,7 +5,16 @@
 # --------------------------------------------------------------------------
 
 from io import BytesIO
-from typing import Any, AsyncGenerator, AsyncIterable, Dict, IO, Optional, Type, TYPE_CHECKING
+from typing import (
+    Any,
+    AsyncGenerator,
+    AsyncIterable,
+    Dict,
+    IO,
+    Optional,
+    Type,
+    TYPE_CHECKING,
+)
 
 from .._shared.avro.avro_io_async import AsyncDatumReader
 from .._shared.avro.datafile_async import AsyncDataFileReader
@@ -46,13 +55,17 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
         self._bytes_processed = 0
         self._errors = errors
         self._encoding = encoding
-        self._parsed_results = AsyncDataFileReader(QuickQueryStreamer(response), AsyncDatumReader())
+        self._parsed_results = AsyncDataFileReader(
+            QuickQueryStreamer(response), AsyncDatumReader()
+        )
         self._error_cls = error_cls
 
     async def _setup(self):
         self._parsed_results = await self._parsed_results.init()
         first_result = await self._parsed_results.__anext__()
-        self._first_result = self._process_record(first_result)  # pylint: disable=attribute-defined-outside-init
+        self._first_result = self._process_record(
+            first_result
+        )  # pylint: disable=attribute-defined-outside-init
 
     def __len__(self) -> int:
         return self._size

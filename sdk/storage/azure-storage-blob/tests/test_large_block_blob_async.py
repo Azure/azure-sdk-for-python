@@ -78,7 +78,11 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Act
         futures = []
         for i in range(5):
-            futures.append(blob.stage_block("block {0}".format(i).encode("utf-8"), urandom(LARGE_BLOCK_SIZE)))
+            futures.append(
+                blob.stage_block(
+                    "block {0}".format(i).encode("utf-8"), urandom(LARGE_BLOCK_SIZE)
+                )
+            )
 
         await asyncio.gather(*futures)
 
@@ -95,7 +99,9 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Act
         for i in range(5):
             resp = await blob.stage_block(
-                "block {0}".format(i).encode("utf-8"), urandom(LARGE_BLOCK_SIZE), validate_content=True
+                "block {0}".format(i).encode("utf-8"),
+                urandom(LARGE_BLOCK_SIZE),
+                validate_content=True,
             )
             assert resp is not None
             assert "content_md5" in resp
@@ -115,7 +121,9 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Act
         for i in range(5):
             stream = BytesIO(bytearray(LARGE_BLOCK_SIZE))
-            resp = await blob.stage_block("block {0}".format(i).encode("utf-8"), stream, length=LARGE_BLOCK_SIZE)
+            resp = await blob.stage_block(
+                "block {0}".format(i).encode("utf-8"), stream, length=LARGE_BLOCK_SIZE
+            )
             assert resp is not None
             assert "content_md5" in resp
             assert "content_crc64" in resp
@@ -135,7 +143,10 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         for i in range(5):
             stream = BytesIO(bytearray(LARGE_BLOCK_SIZE))
             resp = resp = await blob.stage_block(
-                "block {0}".format(i).encode("utf-8"), stream, length=LARGE_BLOCK_SIZE, validate_content=True
+                "block {0}".format(i).encode("utf-8"),
+                stream,
+                length=LARGE_BLOCK_SIZE,
+                validate_content=True,
             )
             assert resp is not None
             assert "content_md5" in resp
@@ -234,7 +245,9 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            await blob.upload_blob(temp_file, max_concurrency=2, raw_response_hook=callback)
+            await blob.upload_blob(
+                temp_file, max_concurrency=2, raw_response_hook=callback
+            )
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
@@ -253,17 +266,24 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         data = bytearray(urandom(LARGE_BLOB_SIZE))
 
         # Act
-        content_settings = ContentSettings(content_type="image/png", content_language="spanish")
+        content_settings = ContentSettings(
+            content_type="image/png", content_language="spanish"
+        )
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            await blob.upload_blob(temp_file, content_settings=content_settings, max_concurrency=2)
+            await blob.upload_blob(
+                temp_file, content_settings=content_settings, max_concurrency=2
+            )
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
         properties = await blob.get_blob_properties()
         assert properties.content_settings.content_type == content_settings.content_type
-        assert properties.content_settings.content_language == content_settings.content_language
+        assert (
+            properties.content_settings.content_language
+            == content_settings.content_language
+        )
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -310,7 +330,9 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            await blob.upload_blob(temp_file, max_concurrency=2, raw_response_hook=callback)
+            await blob.upload_blob(
+                temp_file, max_concurrency=2, raw_response_hook=callback
+            )
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
@@ -351,18 +373,28 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         data = bytearray(urandom(LARGE_BLOB_SIZE))
 
         # Act
-        content_settings = ContentSettings(content_type="image/png", content_language="spanish")
+        content_settings = ContentSettings(
+            content_type="image/png", content_language="spanish"
+        )
         blob_size = len(data) - 301
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            await blob.upload_blob(temp_file, length=blob_size, content_settings=content_settings, max_concurrency=2)
+            await blob.upload_blob(
+                temp_file,
+                length=blob_size,
+                content_settings=content_settings,
+                max_concurrency=2,
+            )
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
         properties = await blob.get_blob_properties()
         assert properties.content_settings.content_type == content_settings.content_type
-        assert properties.content_settings.content_language == content_settings.content_language
+        assert (
+            properties.content_settings.content_language
+            == content_settings.content_language
+        )
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -377,17 +409,24 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         data = bytearray(urandom(LARGE_BLOB_SIZE))
 
         # Act
-        content_settings = ContentSettings(content_type="image/png", content_language="spanish")
+        content_settings = ContentSettings(
+            content_type="image/png", content_language="spanish"
+        )
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            await blob.upload_blob(temp_file, content_settings=content_settings, max_concurrency=2)
+            await blob.upload_blob(
+                temp_file, content_settings=content_settings, max_concurrency=2
+            )
 
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
         properties = await blob.get_blob_properties()
         assert properties.content_settings.content_type == content_settings.content_type
-        assert properties.content_settings.content_language == content_settings.content_language
+        assert (
+            properties.content_settings.content_language
+            == content_settings.content_language
+        )
 
 
 # ------------------------------------------------------------------------------

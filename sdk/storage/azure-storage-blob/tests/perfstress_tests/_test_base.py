@@ -10,7 +10,9 @@ from devtools_testutils.perfstress_tests import PerfStressTest
 from azure.storage.blob import BlobServiceClient as SyncBlobServiceClient
 from azure.storage.blob.aio import BlobServiceClient as AsyncBlobServiceClient
 from azure.identity import ManagedIdentityCredential as SyncManagedIdentityCredential
-from azure.identity.aio import ManagedIdentityCredential as AsyncManagedIdentityCredential
+from azure.identity.aio import (
+    ManagedIdentityCredential as AsyncManagedIdentityCredential,
+)
 
 from .key_wrapper import KeyWrapper
 
@@ -24,7 +26,9 @@ class _ServiceTest(PerfStressTest):
     def __init__(self, arguments):
         super().__init__(arguments)
         if self.args.test_proxies:
-            self._client_kwargs["_additional_pipeline_policies"] = self._client_kwargs["per_retry_policies"]
+            self._client_kwargs["_additional_pipeline_policies"] = self._client_kwargs[
+                "per_retry_policies"
+            ]
         if self.args.max_put_size is not None:
             self._client_kwargs["max_single_put_size"] = self.args.max_put_size
         if self.args.max_block_size is not None:
@@ -32,9 +36,13 @@ class _ServiceTest(PerfStressTest):
         if self.args.max_get_size is not None:
             self._client_kwargs["max_single_get_size"] = self.args.max_get_size
         if self.args.buffer_threshold is not None:
-            self._client_kwargs["min_large_block_upload_threshold"] = self.args.buffer_threshold
+            self._client_kwargs["min_large_block_upload_threshold"] = (
+                self.args.buffer_threshold
+            )
         if self.args.data_block_size is not None:
-            self._client_kwargs["connection_data_block_size"] = self.args.data_block_size
+            self._client_kwargs["connection_data_block_size"] = (
+                self.args.data_block_size
+            )
         if self.args.client_encryption:
             self.key_encryption_key = KeyWrapper()
             self._client_kwargs["require_encryption"] = True
@@ -43,31 +51,46 @@ class _ServiceTest(PerfStressTest):
         # self._client_kwargs['api_version'] = '2019-02-02'  # Used only for comparison with T1 legacy tests
 
         if not _ServiceTest.service_client or self.args.no_client_share:
-            use_managed_identity = os.environ.get("AZURE_STORAGE_USE_MANAGED_IDENTITY", "false").lower() == "true"
+            use_managed_identity = (
+                os.environ.get("AZURE_STORAGE_USE_MANAGED_IDENTITY", "false").lower()
+                == "true"
+            )
             if self.args.use_entra_id or use_managed_identity:
                 account_name = self.get_from_env("AZURE_STORAGE_ACCOUNT_NAME")
                 _ServiceTest.sync_token_credential = (
-                    SyncManagedIdentityCredential() if use_managed_identity else self.get_credential(is_async=False)
+                    SyncManagedIdentityCredential()
+                    if use_managed_identity
+                    else self.get_credential(is_async=False)
                 )
                 _ServiceTest.async_token_credential = (
-                    AsyncManagedIdentityCredential() if use_managed_identity else self.get_credential(is_async=True)
+                    AsyncManagedIdentityCredential()
+                    if use_managed_identity
+                    else self.get_credential(is_async=True)
                 )
 
                 # We assume these tests will only be run on the Azure public cloud for now.
                 url = f"https://{account_name}.blob.core.windows.net"
                 _ServiceTest.service_client = SyncBlobServiceClient(
-                    account_url=url, credential=_ServiceTest.sync_token_credential, **self._client_kwargs
+                    account_url=url,
+                    credential=_ServiceTest.sync_token_credential,
+                    **self._client_kwargs,
                 )
                 _ServiceTest.async_service_client = AsyncBlobServiceClient(
-                    account_url=url, credential=_ServiceTest.async_token_credential, **self._client_kwargs
+                    account_url=url,
+                    credential=_ServiceTest.async_token_credential,
+                    **self._client_kwargs,
                 )
             else:
                 connection_string = self.get_from_env("AZURE_STORAGE_CONNECTION_STRING")
-                _ServiceTest.service_client = SyncBlobServiceClient.from_connection_string(
-                    conn_str=connection_string, **self._client_kwargs
+                _ServiceTest.service_client = (
+                    SyncBlobServiceClient.from_connection_string(
+                        conn_str=connection_string, **self._client_kwargs
+                    )
                 )
-                _ServiceTest.async_service_client = AsyncBlobServiceClient.from_connection_string(
-                    conn_str=connection_string, **self._client_kwargs
+                _ServiceTest.async_service_client = (
+                    AsyncBlobServiceClient.from_connection_string(
+                        conn_str=connection_string, **self._client_kwargs
+                    )
                 )
         self.service_client = _ServiceTest.service_client
         self.async_service_client = _ServiceTest.async_service_client
@@ -131,7 +154,12 @@ class _ServiceTest(PerfStressTest):
             default=1,
         )
         parser.add_argument(
-            "-s", "--size", nargs="?", type=int, help="Size of data to transfer.  Default is 10240.", default=10240
+            "-s",
+            "--size",
+            nargs="?",
+            type=int,
+            help="Size of data to transfer.  Default is 10240.",
+            default=10240,
         )
         parser.add_argument(
             "--no-client-share",
@@ -151,8 +179,12 @@ class _ContainerTest(_ServiceTest):
 
     def __init__(self, arguments):
         super().__init__(arguments)
-        self.container_client = self.service_client.get_container_client(self.container_name)
-        self.async_container_client = self.async_service_client.get_container_client(self.container_name)
+        self.container_client = self.service_client.get_container_client(
+            self.container_name
+        )
+        self.async_container_client = self.async_service_client.get_container_client(
+            self.container_name
+        )
 
     async def global_setup(self):
         await super().global_setup()

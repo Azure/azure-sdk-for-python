@@ -10,7 +10,11 @@ from enum import Enum
 from time import sleep
 
 from azure.core import MatchConditions
-from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
+from azure.core.exceptions import (
+    ResourceExistsError,
+    ResourceModifiedError,
+    HttpResponseError,
+)
 from azure.storage.blob import (
     AccountSasPermissions,
     BlobBlock,
@@ -35,7 +39,9 @@ TEST_BLOB_PREFIX = "blob"
 class TestStorageBlobTags(StorageRecordedTestCase):
 
     def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key)
+        self.bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=key
+        )
         self.container_name = self.get_resource_name("container")
         if self.is_live:
             container = self.bsc.get_container_client(self.container_name)
@@ -58,8 +64,12 @@ class TestStorageBlobTags(StorageRecordedTestCase):
 
     def _create_block_blob(self, tags=None, container_name=None, blob_name=None):
         blob_name = blob_name or self._get_blob_reference()
-        blob_client = self.bsc.get_blob_client(container_name or self.container_name, blob_name)
-        resp = blob_client.upload_blob(self.byte_data, length=len(self.byte_data), overwrite=True, tags=tags)
+        blob_client = self.bsc.get_blob_client(
+            container_name or self.container_name, blob_name
+        )
+        resp = blob_client.upload_blob(
+            self.byte_data, length=len(self.byte_data), overwrite=True, tags=tags
+        )
         return blob_client, resp
 
     def _create_empty_block_blob(self, tags=None):
@@ -114,7 +124,9 @@ class TestStorageBlobTags(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key.secret)
         blob_client, _ = self._create_block_blob()
-        lease = blob_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
+        lease = blob_client.acquire_lease(
+            lease_id="00000000-1111-2222-3333-444444444444"
+        )
 
         # Act
         blob_tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
@@ -138,7 +150,9 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        self._setup(versioned_storage_account_name, versioned_storage_account_key.secret)
+        self._setup(
+            versioned_storage_account_name, versioned_storage_account_key.secret
+        )
         # use this version to set tag
         blob_client, resp = self._create_block_blob()
         self._create_block_blob()
@@ -182,7 +196,9 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         blob_client, resp = self._create_block_blob(tags=tags)
 
         snapshot = blob_client.create_snapshot()
-        snapshot_client = self.bsc.get_blob_client(self.container_name, blob_client.blob_name, snapshot=snapshot)
+        snapshot_client = self.bsc.get_blob_client(
+            self.container_name, blob_client.blob_name, snapshot=snapshot
+        )
 
         resp = snapshot_client.get_blob_tags()
 
@@ -266,19 +282,31 @@ class TestStorageBlobTags(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key.secret)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        blob_client, resp = self._create_empty_block_blob(tags={"condition tag": "test tag"})
+        blob_client, resp = self._create_empty_block_blob(
+            tags={"condition tag": "test tag"}
+        )
 
         blob_client.stage_block("1", b"AAA")
         blob_client.stage_block("2", b"BBB")
         blob_client.stage_block("3", b"CCC")
 
         # Act
-        block_list = [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")]
+        block_list = [
+            BlobBlock(block_id="1"),
+            BlobBlock(block_id="2"),
+            BlobBlock(block_id="3"),
+        ]
         with pytest.raises(ResourceModifiedError):
             blob_client.commit_block_list(
-                block_list, tags=tags, if_tags_match_condition="\"condition tag\"='wrong tag'"
+                block_list,
+                tags=tags,
+                if_tags_match_condition="\"condition tag\"='wrong tag'",
             )
-        blob_client.commit_block_list(block_list, tags=tags, if_tags_match_condition="\"condition tag\"='test tag'")
+        blob_client.commit_block_list(
+            block_list,
+            tags=tags,
+            if_tags_match_condition="\"condition tag\"='test tag'",
+        )
 
         resp = blob_client.get_blob_tags()
 
@@ -298,7 +326,9 @@ class TestStorageBlobTags(StorageRecordedTestCase):
 
         # Act
         sourceblob = "{0}/{1}/{2}".format(
-            self.account_url(storage_account_name, "blob"), self.container_name, blob_client.blob_name
+            self.account_url(storage_account_name, "blob"),
+            self.container_name,
+            blob_client.blob_name,
         )
 
         copyblob = self.bsc.get_blob_client(self.container_name, "blob1copy")
@@ -327,7 +357,9 @@ class TestStorageBlobTags(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key.secret)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
-        source_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        source_blob = self.bsc.get_blob_client(
+            self.container_name, self._get_blob_reference()
+        )
         source_blob.upload_blob(b"Hello World", overwrite=True, tags=tags)
 
         source_sas = self.generate_sas(
@@ -346,7 +378,9 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         with pytest.raises(ValueError):
             dest_blob.start_copy_from_url(source_url, tags="COPY")
 
-        copy = dest_blob.start_copy_from_url(source_url, tags="COPY", requires_sync=True)
+        copy = dest_blob.start_copy_from_url(
+            source_url, tags="COPY", requires_sync=True
+        )
 
         # Assert
         assert copy is not None
@@ -369,7 +403,9 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key.secret)
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         tags2 = {"hello": "world"}
-        source_blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        source_blob = self.bsc.get_blob_client(
+            self.container_name, self._get_blob_reference()
+        )
         source_blob.upload_blob(b"Hello World", overwrite=True, tags=tags)
 
         source_sas = self.generate_sas(
@@ -430,14 +466,22 @@ class TestStorageBlobTags(StorageRecordedTestCase):
 
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
         self._create_block_blob(tags=tags, blob_name="blob1")
-        self._create_block_blob(tags=tags, blob_name="blob2", container_name=container_name1)
-        self._create_block_blob(tags=tags, blob_name="blob3", container_name=container_name2)
-        self._create_block_blob(tags=tags, blob_name="blob4", container_name=container_name3)
+        self._create_block_blob(
+            tags=tags, blob_name="blob2", container_name=container_name1
+        )
+        self._create_block_blob(
+            tags=tags, blob_name="blob3", container_name=container_name2
+        )
+        self._create_block_blob(
+            tags=tags, blob_name="blob4", container_name=container_name3
+        )
 
         if self.is_live:
             sleep(10)
         where = "tag1='firsttag' and tag2='secondtag'"
-        blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=2).by_page()
+        blob_list = self.bsc.find_blobs_by_tags(
+            filter_expression=where, results_per_page=2
+        ).by_page()
         first_page = next(blob_list)
         items_on_page1 = list(first_page)
         second_page = next(blob_list)
@@ -460,14 +504,26 @@ class TestStorageBlobTags(StorageRecordedTestCase):
             storage_account_key.secret,
             ResourceTypes(service=True, container=True, object=True),
             AccountSasPermissions(
-                write=True, list=True, read=True, delete_previous_version=True, tag=True, filter_by_tags=True
+                write=True,
+                list=True,
+                read=True,
+                delete_previous_version=True,
+                tag=True,
+                filter_by_tags=True,
             ),
             datetime.utcnow() + timedelta(hours=1),
         )
         self._setup(storage_account_name, token)
 
-        tags = {"year": "1000", "tag2": "secondtag", "tag3": "thirdtag", "habitat_type": "Shallow Lowland Billabongs"}
-        blob_client, _ = self._create_block_blob(tags=tags, container_name=self.container_name)
+        tags = {
+            "year": "1000",
+            "tag2": "secondtag",
+            "tag3": "thirdtag",
+            "habitat_type": "Shallow Lowland Billabongs",
+        }
+        blob_client, _ = self._create_block_blob(
+            tags=tags, container_name=self.container_name
+        )
         blob_client.set_blob_tags(tags=tags)
         tags_on_blob = blob_client.get_blob_tags()
         assert len(tags_on_blob) == len(tags)
@@ -479,7 +535,9 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         # where = "@container='{}' and tag1='1000' and tag2 = 'secondtag'".format(container_name1)
         where = "\"year\"='1000' and tag2 = 'secondtag' and tag3='thirdtag'"
 
-        blob_list = self.bsc.find_blobs_by_tags(filter_expression=where, results_per_page=3).by_page()
+        blob_list = self.bsc.find_blobs_by_tags(
+            filter_expression=where, results_per_page=3
+        ).by_page()
         first_page = next(blob_list)
         items_on_page1 = list(first_page)
         assert 1 == len(items_on_page1)
@@ -495,14 +553,26 @@ class TestStorageBlobTags(StorageRecordedTestCase):
             storage_account_key.secret,
             ResourceTypes(service=True, container=True, object=True),
             AccountSasPermissions(
-                write=True, list=True, read=True, delete_previous_version=True, tag=True, filter_by_tags=True
+                write=True,
+                list=True,
+                read=True,
+                delete_previous_version=True,
+                tag=True,
+                filter_by_tags=True,
             ),
             datetime.utcnow() + timedelta(hours=1),
         )
         self._setup(storage_account_name, token)
 
-        tags = {"year": "2000", "tag2": "tagtwo", "tag3": "tagthree", "habitat_type": "Shallow Lowland Billabongs"}
-        blob_client, _ = self._create_block_blob(tags=tags, container_name=self.container_name)
+        tags = {
+            "year": "2000",
+            "tag2": "tagtwo",
+            "tag3": "tagthree",
+            "habitat_type": "Shallow Lowland Billabongs",
+        }
+        blob_client, _ = self._create_block_blob(
+            tags=tags, container_name=self.container_name
+        )
         token1 = generate_blob_sas(
             storage_account_name,
             self.container_name,
@@ -524,7 +594,9 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         where = "\"year\"='2000' and tag2 = 'tagtwo' and tag3='tagthree'"
 
         container_client = self.bsc.get_container_client(self.container_name)
-        blob_list = container_client.find_blobs_by_tags(filter_expression=where, results_per_page=3).by_page()
+        blob_list = container_client.find_blobs_by_tags(
+            filter_expression=where, results_per_page=3
+        ).by_page()
         first_page = next(blob_list)
         items_on_page1 = list(first_page)
         assert 1 == len(items_on_page1)
@@ -552,14 +624,24 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         with pytest.raises(ResourceModifiedError):
             blob.get_blob_tags(if_modified_since=early)
         with pytest.raises(ResourceModifiedError):
-            blob.set_blob_tags(first_tags, etag=first_resp["etag"], match_condition=MatchConditions.IfModified)
+            blob.set_blob_tags(
+                first_tags,
+                etag=first_resp["etag"],
+                match_condition=MatchConditions.IfModified,
+            )
 
         blob.set_blob_tags(first_tags, if_unmodified_since=early)
         tags = blob.get_blob_tags(if_unmodified_since=early)
         assert tags == first_tags
 
-        blob.set_blob_tags(second_tags, etag=first_resp["etag"], match_condition=MatchConditions.IfNotModified)
-        tags = blob.get_blob_tags(etag=first_resp["etag"], match_condition=MatchConditions.IfNotModified)
+        blob.set_blob_tags(
+            second_tags,
+            etag=first_resp["etag"],
+            match_condition=MatchConditions.IfNotModified,
+        )
+        tags = blob.get_blob_tags(
+            etag=first_resp["etag"], match_condition=MatchConditions.IfNotModified
+        )
         assert tags == second_tags
 
         blob.upload_blob(b"def456", overwrite=True)
@@ -569,14 +651,24 @@ class TestStorageBlobTags(StorageRecordedTestCase):
         with pytest.raises(ResourceModifiedError):
             blob.get_blob_tags(if_unmodified_since=early)
         with pytest.raises(ResourceModifiedError):
-            blob.set_blob_tags(first_tags, etag=first_resp["etag"], match_condition=MatchConditions.IfNotModified)
+            blob.set_blob_tags(
+                first_tags,
+                etag=first_resp["etag"],
+                match_condition=MatchConditions.IfNotModified,
+            )
 
         blob.set_blob_tags(first_tags, if_modified_since=early)
         tags = blob.get_blob_tags(if_modified_since=early)
         assert tags == first_tags
 
-        blob.set_blob_tags(second_tags, etag=first_resp["etag"], match_condition=MatchConditions.IfModified)
-        tags = blob.get_blob_tags(etag=first_resp["etag"], match_condition=MatchConditions.IfModified)
+        blob.set_blob_tags(
+            second_tags,
+            etag=first_resp["etag"],
+            match_condition=MatchConditions.IfModified,
+        )
+        tags = blob.get_blob_tags(
+            etag=first_resp["etag"], match_condition=MatchConditions.IfModified
+        )
         assert tags == second_tags
 
 

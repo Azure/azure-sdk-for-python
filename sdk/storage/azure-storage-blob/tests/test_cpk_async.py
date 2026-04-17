@@ -20,12 +20,21 @@ from azure.storage.blob.aio import BlobServiceClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE, NEW_CPK_KEY_HASH, NEW_CPK_KEY_VALUE
+from fake_credentials import (
+    CPK_KEY_HASH,
+    CPK_KEY_VALUE,
+    NEW_CPK_KEY_HASH,
+    NEW_CPK_KEY_VALUE,
+)
 from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
-TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
-NEW_TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=NEW_CPK_KEY_VALUE, key_hash=NEW_CPK_KEY_HASH)
+TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(
+    key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH
+)
+NEW_TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(
+    key_value=NEW_CPK_KEY_VALUE, key_hash=NEW_CPK_KEY_HASH
+)
 # ------------------------------------------------------------------------------
 
 
@@ -50,11 +59,15 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name("cpk")
 
-    async def _create_block_blob(self, bsc, blob_name=None, data=None, cpk=None, max_concurrency=1):
+    async def _create_block_blob(
+        self, bsc, blob_name=None, data=None, cpk=None, max_concurrency=1
+    ):
         blob_name = blob_name if blob_name else self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         data = data if data else b""
-        resp = await blob_client.upload_blob(data, cpk=cpk, max_concurrency=max_concurrency)
+        resp = await blob_client.upload_blob(
+            data, cpk=cpk, max_concurrency=max_concurrency
+        )
         return blob_client, resp
 
     async def _create_append_blob(self, bsc, cpk=None):
@@ -94,8 +107,14 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         await blob_client.stage_block("3", b"CCC", cpk=TEST_ENCRYPTION_KEY)
 
         # Act
-        block_list = [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")]
-        put_block_list_resp = await blob_client.commit_block_list(block_list, cpk=TEST_ENCRYPTION_KEY)
+        block_list = [
+            BlobBlock(block_id="1"),
+            BlobBlock(block_id="2"),
+            BlobBlock(block_id="3"),
+        ]
+        put_block_list_resp = await blob_client.commit_block_list(
+            block_list, cpk=TEST_ENCRYPTION_KEY
+        )
 
         # Assert
         assert put_block_list_resp["etag"] is not None
@@ -222,7 +241,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         data = b"AAABBBCCC"
         # create_blob_from_bytes forces the in-memory chunks to be used
-        blob_client, upload_response = await self._create_block_blob(bsc, data=data, cpk=TEST_ENCRYPTION_KEY)
+        blob_client, upload_response = await self._create_block_blob(
+            bsc, data=data, cpk=TEST_ENCRYPTION_KEY
+        )
 
         # Assert
         assert upload_response["etag"] is not None
@@ -262,8 +283,12 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         # create source blob and get source blob url
         source_blob_name = self.get_resource_name("sourceblob")
-        self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
-        source_blob_client, _ = await self._create_block_blob(bsc, blob_name=source_blob_name, data=self.byte_data)
+        self.config.use_byte_buffer = (
+            True  # Make sure using chunk upload, then we can record the request
+        )
+        source_blob_client, _ = await self._create_block_blob(
+            bsc, blob_name=source_blob_name, data=self.byte_data
+        )
         source_blob_sas = self.generate_sas(
             generate_blob_sas,
             source_blob_client.account_name,
@@ -278,11 +303,17 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         # create destination blob
         self.config.use_byte_buffer = False
-        destination_blob_client, _ = await self._create_block_blob(bsc, cpk=TEST_ENCRYPTION_KEY)
+        destination_blob_client, _ = await self._create_block_blob(
+            bsc, cpk=TEST_ENCRYPTION_KEY
+        )
 
         # Act part 1: make put block from url calls
         await destination_blob_client.stage_block_from_url(
-            block_id=1, source_url=source_blob_url, source_offset=0, source_length=4 * 1024, cpk=TEST_ENCRYPTION_KEY
+            block_id=1,
+            source_url=source_blob_url,
+            source_offset=0,
+            source_length=4 * 1024,
+            cpk=TEST_ENCRYPTION_KEY,
         )
         await destination_blob_client.stage_block_from_url(
             block_id=2,
@@ -303,7 +334,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             await destination_blob_client.commit_block_list(block_list)
 
         # Act commit the blocks with cpk should succeed
-        put_block_list_resp = await destination_blob_client.commit_block_list(block_list, cpk=TEST_ENCRYPTION_KEY)
+        put_block_list_resp = await destination_blob_client.commit_block_list(
+            block_list, cpk=TEST_ENCRYPTION_KEY
+        )
 
         # Assert
         assert put_block_list_resp["etag"] is not None
@@ -340,7 +373,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         # Act
         for content in [b"AAA", b"BBB", b"CCC"]:
-            append_blob_prop = await blob_client.append_block(content, cpk=TEST_ENCRYPTION_KEY)
+            append_blob_prop = await blob_client.append_block(
+                content, cpk=TEST_ENCRYPTION_KEY
+            )
 
             # Assert
             assert append_blob_prop["etag"] is not None
@@ -378,7 +413,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
         source_blob_name = self.get_resource_name("sourceblob")
         self.config.use_byte_buffer = True  # chunk upload
-        source_blob_client, _ = await self._create_block_blob(bsc, blob_name=source_blob_name, data=self.byte_data)
+        source_blob_client, _ = await self._create_block_blob(
+            bsc, blob_name=source_blob_name, data=self.byte_data
+        )
         source_blob_sas = self.generate_sas(
             generate_blob_sas,
             source_blob_client.account_name,
@@ -392,11 +429,16 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
 
         self.config.use_byte_buffer = False
-        destination_blob_client = await self._create_append_blob(bsc, cpk=TEST_ENCRYPTION_KEY)
+        destination_blob_client = await self._create_append_blob(
+            bsc, cpk=TEST_ENCRYPTION_KEY
+        )
 
         # Act
         append_blob_prop = await destination_blob_client.append_block_from_url(
-            source_blob_url, source_offset=0, source_length=4 * 1024, cpk=TEST_ENCRYPTION_KEY
+            source_blob_url,
+            source_offset=0,
+            source_length=4 * 1024,
+            cpk=TEST_ENCRYPTION_KEY,
         )
 
         # Assert
@@ -476,7 +518,10 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         # Act
         page_blob_prop = await blob_client.upload_page(
-            self.byte_data, offset=0, length=len(self.byte_data), cpk=TEST_ENCRYPTION_KEY
+            self.byte_data,
+            offset=0,
+            length=len(self.byte_data),
+            cpk=TEST_ENCRYPTION_KEY,
         )
 
         # Assert
@@ -518,8 +563,12 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         await self._setup(bsc)
         source_blob_name = self.get_resource_name("sourceblob")
-        self.config.use_byte_buffer = True  # Make sure using chunk upload, then we can record the request
-        source_blob_client, _ = await self._create_block_blob(bsc, blob_name=source_blob_name, data=self.byte_data)
+        self.config.use_byte_buffer = (
+            True  # Make sure using chunk upload, then we can record the request
+        )
+        source_blob_client, _ = await self._create_block_blob(
+            bsc, blob_name=source_blob_name, data=self.byte_data
+        )
         source_blob_sas = self.generate_sas(
             generate_blob_sas,
             source_blob_client.account_name,
@@ -537,7 +586,11 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
 
         # Act
         page_blob_prop = await blob_client.upload_pages_from_url(
-            source_blob_url, offset=0, length=len(self.byte_data), source_offset=0, cpk=TEST_ENCRYPTION_KEY
+            source_blob_url,
+            offset=0,
+            length=len(self.byte_data),
+            source_offset=0,
+            cpk=TEST_ENCRYPTION_KEY,
         )
 
         # Assert
@@ -578,9 +631,14 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         await self._setup(bsc)
 
         # Act
-        blob_client = bsc.get_blob_client(self.container_name, self._get_blob_reference())
+        blob_client = bsc.get_blob_client(
+            self.container_name, self._get_blob_reference()
+        )
         page_blob_prop = await blob_client.upload_blob(
-            self.byte_data, blob_type=BlobType.PageBlob, max_concurrency=2, cpk=TEST_ENCRYPTION_KEY
+            self.byte_data,
+            blob_type=BlobType.PageBlob,
+            max_concurrency=2,
+            cpk=TEST_ENCRYPTION_KEY,
         )
 
         # Assert
@@ -616,7 +674,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             max_page_size=1024,
         )
         await self._setup(bsc)
-        blob_client, _ = await self._create_block_blob(bsc, data=b"AAABBBCCC", cpk=TEST_ENCRYPTION_KEY)
+        blob_client, _ = await self._create_block_blob(
+            bsc, data=b"AAABBBCCC", cpk=TEST_ENCRYPTION_KEY
+        )
 
         # Act without the encryption key should fail
         with pytest.raises(HttpResponseError):
@@ -663,7 +723,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             max_page_size=1024,
         )
         await self._setup(bsc)
-        blob_client, _ = await self._create_block_blob(bsc, data=b"AAABBBCCC", cpk=TEST_ENCRYPTION_KEY)
+        blob_client, _ = await self._create_block_blob(
+            bsc, data=b"AAABBBCCC", cpk=TEST_ENCRYPTION_KEY
+        )
 
         # Act without cpk should not work
         with pytest.raises(HttpResponseError):
@@ -682,11 +744,18 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
-        source_blob_client = bsc.get_blob_client(self.container_name, self.get_resource_name("sourceblob"))
-        await source_blob_client.upload_blob(self.byte_data, blob_type=BlobType.APPENDBLOB, cpk=TEST_ENCRYPTION_KEY)
+        source_blob_client = bsc.get_blob_client(
+            self.container_name, self.get_resource_name("sourceblob")
+        )
+        await source_blob_client.upload_blob(
+            self.byte_data, blob_type=BlobType.APPENDBLOB, cpk=TEST_ENCRYPTION_KEY
+        )
         source_blob_sas = self.generate_sas(
             generate_blob_sas,
             source_blob_client.account_name,
@@ -698,7 +767,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         )
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
 
-        destination_blob_client = await self._create_append_blob(bsc, cpk=NEW_TEST_ENCRYPTION_KEY)
+        destination_blob_client = await self._create_append_blob(
+            bsc, cpk=NEW_TEST_ENCRYPTION_KEY
+        )
 
         # Act
         props = await destination_blob_client.append_block_from_url(
@@ -727,10 +798,15 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
-        source_blob_client = bsc.get_blob_client(self.container_name, self.get_resource_name("sourceblob"))
+        source_blob_client = bsc.get_blob_client(
+            self.container_name, self.get_resource_name("sourceblob")
+        )
         await source_blob_client.upload_blob(self.byte_data, cpk=TEST_ENCRYPTION_KEY)
         source_blob_sas = self.generate_sas(
             generate_blob_sas,
@@ -743,11 +819,16 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         )
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
 
-        destination_blob_client, _ = await self._create_block_blob(bsc, cpk=NEW_TEST_ENCRYPTION_KEY)
+        destination_blob_client, _ = await self._create_block_blob(
+            bsc, cpk=NEW_TEST_ENCRYPTION_KEY
+        )
 
         # Act
         props = await destination_blob_client.upload_blob_from_url(
-            source_blob_url, overwrite=True, cpk=NEW_TEST_ENCRYPTION_KEY, source_cpk=TEST_ENCRYPTION_KEY
+            source_blob_url,
+            overwrite=True,
+            cpk=NEW_TEST_ENCRYPTION_KEY,
+            source_cpk=TEST_ENCRYPTION_KEY,
         )
 
         # Assert
@@ -768,10 +849,15 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
-        source_blob_client = bsc.get_blob_client(self.container_name, self.get_resource_name("sourceblob"))
+        source_blob_client = bsc.get_blob_client(
+            self.container_name, self.get_resource_name("sourceblob")
+        )
         await source_blob_client.upload_blob(self.byte_data, cpk=TEST_ENCRYPTION_KEY)
         source_blob_sas = self.generate_sas(
             generate_blob_sas,
@@ -784,7 +870,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         )
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
 
-        destination_blob_client, _ = await self._create_block_blob(bsc, cpk=NEW_TEST_ENCRYPTION_KEY)
+        destination_blob_client, _ = await self._create_block_blob(
+            bsc, cpk=NEW_TEST_ENCRYPTION_KEY
+        )
 
         # Act
         block_id = "1"
@@ -813,11 +901,18 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
-        source_blob_client = bsc.get_blob_client(self.container_name, self.get_resource_name("sourceblob"))
-        await source_blob_client.upload_blob(self.byte_data, blob_type=BlobType.PAGEBLOB, cpk=TEST_ENCRYPTION_KEY)
+        source_blob_client = bsc.get_blob_client(
+            self.container_name, self.get_resource_name("sourceblob")
+        )
+        await source_blob_client.upload_blob(
+            self.byte_data, blob_type=BlobType.PAGEBLOB, cpk=TEST_ENCRYPTION_KEY
+        )
         source_blob_sas = self.generate_sas(
             generate_blob_sas,
             source_blob_client.account_name,
@@ -829,7 +924,9 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         )
         source_blob_url = source_blob_client.url + "?" + source_blob_sas
 
-        destination_blob_client = await self._create_page_blob(bsc, cpk=NEW_TEST_ENCRYPTION_KEY)
+        destination_blob_client = await self._create_page_blob(
+            bsc, cpk=NEW_TEST_ENCRYPTION_KEY
+        )
 
         # Act
         props = await destination_blob_client.upload_pages_from_url(

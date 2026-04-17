@@ -11,7 +11,11 @@ import pytest
 from devtools_testutils import recorded_by_proxy
 from settings.testcase import BlobPreparer
 from devtools_testutils.storage import StorageRecordedTestCase
-from azure.storage.blob import BlobServiceClient, DelimitedJsonDialect, DelimitedTextDialect
+from azure.storage.blob import (
+    BlobServiceClient,
+    DelimitedJsonDialect,
+    DelimitedTextDialect,
+)
 
 # ------------------------------------------------------------------------------
 from azure.storage.blob._models import ArrowDialect, ArrowType, QuickQueryDialect
@@ -112,7 +116,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         # upload the csv file
@@ -141,7 +148,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         # upload the csv file
@@ -171,7 +181,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         # upload the csv file
@@ -184,7 +197,9 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         def on_error(error):
             errors.append(error)
 
-        reader = blob_client.query_blob("SELECT * from BlobStorage", on_error=on_error, encoding="utf-8")
+        reader = blob_client.query_blob(
+            "SELECT * from BlobStorage", on_error=on_error, encoding="utf-8"
+        )
         data = reader.readall()
 
         assert len(errors) == 0
@@ -200,7 +215,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         # upload the csv file
@@ -225,7 +243,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         # upload the csv file
@@ -236,13 +257,18 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         input_format = DelimitedTextDialect(has_header=True)
         output_format = DelimitedTextDialect(has_header=False)
         reader = blob_client.query_blob(
-            "SELECT * from BlobStorage", blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
         )
         read_records = reader.records()
 
         # Assert first line does not include header
         data = next(read_records)
-        assert data == b"App Configuration,azure-data-appconfiguration,1,appconfiguration,FALSE"
+        assert (
+            data
+            == b"App Configuration,azure-data-appconfiguration,1,appconfiguration,FALSE"
+        )
 
         for record in read_records:
             data += record
@@ -259,7 +285,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         # upload the csv file
@@ -268,7 +297,9 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         blob_client.upload_blob(CSV_DATA, overwrite=True)
 
         input_format = DelimitedTextDialect(has_header=True)
-        reader = blob_client.query_blob("SELECT * from BlobStorage", blob_format=input_format)
+        reader = blob_client.query_blob(
+            "SELECT * from BlobStorage", blob_format=input_format
+        )
         read_records = reader.records()
 
         # Assert first line does not include header
@@ -290,7 +321,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         # upload the csv file
@@ -318,7 +352,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         # upload the csv file
@@ -332,11 +369,20 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             errors.append(error)
 
         input_format = DelimitedTextDialect(
-            delimiter=",", quotechar='"', lineterminator="\n", escapechar="", has_header=False
+            delimiter=",",
+            quotechar='"',
+            lineterminator="\n",
+            escapechar="",
+            has_header=False,
         )
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator=".", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator=".", escapechar="\\"
+        )
         resp = blob_client.query_blob(
-            "SELECT * from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
         query_result = resp.readall()
 
@@ -352,7 +398,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         # upload the csv file
@@ -361,12 +410,20 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         blob_client.upload_blob(CSV_DATA, overwrite=True)
 
         input_format = DelimitedTextDialect(
-            delimiter=",", quotechar='"', lineterminator="\n", escapechar="", has_header=False
+            delimiter=",",
+            quotechar='"',
+            lineterminator="\n",
+            escapechar="",
+            has_header=False,
         )
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator="%", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator="%", escapechar="\\"
+        )
 
         reader = blob_client.query_blob(
-            "SELECT * from BlobStorage", blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
         )
         data = []
         for record in reader.records():
@@ -385,7 +442,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         data1 = b"{name: owner}"
@@ -410,9 +470,14 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             errors.append(error)
 
         input_format = DelimitedJsonDialect()
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator=".", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator=".", escapechar="\\"
+        )
         resp = blob_client.query_blob(
-            "SELECT * from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
         query_result = resp.readall()
 
@@ -428,7 +493,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         data1 = b"{name: owner}"
@@ -453,9 +521,14 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             errors.append(error)
 
         input_format = DelimitedJsonDialect()
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator=".", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator=".", escapechar="\\"
+        )
         resp = blob_client.query_blob(
-            "SELECT * from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
         data = []
         for record in resp.records():
@@ -473,7 +546,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         data1 = b"{name: owner}"
@@ -498,9 +574,14 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             raise Exception(error.description)
 
         input_format = DelimitedJsonDialect()
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator=".", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator=".", escapechar="\\"
+        )
         resp = blob_client.query_blob(
-            "SELECT * from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
         with pytest.raises(Exception):
             query_result = resp.readall()
@@ -513,7 +594,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         data1 = b"{name: owner}"
@@ -538,9 +622,14 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             raise Exception(error.description)
 
         input_format = DelimitedJsonDialect()
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator=".", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator=".", escapechar="\\"
+        )
         resp = blob_client.query_blob(
-            "SELECT * from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
 
         with pytest.raises(Exception):
@@ -555,7 +644,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         data1 = b"{name: owner}"
@@ -568,9 +660,13 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         blob_client.upload_blob(data, overwrite=True)
 
         input_format = DelimitedJsonDialect()
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator=".", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator=".", escapechar="\\"
+        )
         resp = blob_client.query_blob(
-            "SELECT * from BlobStorage", blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
         )
         query_result = resp.readall()
         self._teardown(bsc)
@@ -582,7 +678,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         data1 = b"{name: owner}"
@@ -602,9 +701,13 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         blob_client.upload_blob(data, overwrite=True)
 
         input_format = DelimitedJsonDialect()
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator=".", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator=".", escapechar="\\"
+        )
         resp = blob_client.query_blob(
-            "SELECT * from BlobStorage", blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
         )
 
         for record in resp.records():
@@ -618,7 +721,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         # upload the csv file
@@ -632,7 +738,11 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             errors.append(error)
 
         input_format = DelimitedTextDialect(
-            delimiter=",", quotechar='"', lineterminator="\n", escapechar="", has_header=True
+            delimiter=",",
+            quotechar='"',
+            lineterminator="\n",
+            escapechar="",
+            has_header=True,
         )
         output_format = DelimitedTextDialect(
             delimiter=";",
@@ -641,7 +751,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             escapechar="\\",
         )
         resp = blob_client.query_blob(
-            "SELECT RepoPath from BlobStorage", blob_format=input_format, output_format=output_format, on_error=on_error
+            "SELECT RepoPath from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
+            on_error=on_error,
         )
         query_result = resp.readall()
 
@@ -658,7 +771,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         # upload the csv file
@@ -672,7 +788,11 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             errors.append(error)
 
         input_format = DelimitedTextDialect(
-            delimiter=",", quotechar='"', lineterminator="\n", escapechar="", has_header=True
+            delimiter=",",
+            quotechar='"',
+            lineterminator="\n",
+            escapechar="",
+            has_header=True,
         )
         output_format = DelimitedTextDialect(
             delimiter=";",
@@ -681,7 +801,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             escapechar="\\",
         )
         resp = blob_client.query_blob(
-            "SELECT RepoPath from BlobStorage", blob_format=input_format, output_format=output_format, on_error=on_error
+            "SELECT RepoPath from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
+            on_error=on_error,
         )
         data = list(resp.records())
 
@@ -698,7 +821,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         # upload the csv file
@@ -707,7 +833,11 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         blob_client.upload_blob(CSV_DATA, overwrite=True)
 
         input_format = DelimitedTextDialect(
-            delimiter=",", quotechar='"', lineterminator="\n", escapechar="", has_header=True
+            delimiter=",",
+            quotechar='"',
+            lineterminator="\n",
+            escapechar="",
+            has_header=True,
         )
         output_format = DelimitedTextDialect(
             delimiter=";",
@@ -716,7 +846,9 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             escapechar="\\",
         )
         resp = blob_client.query_blob(
-            "SELECT RepoPath from BlobStorage", blob_format=input_format, output_format=output_format
+            "SELECT RepoPath from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
         )
         query_result = resp.readall()
         assert resp._size == len(CSV_DATA)
@@ -730,7 +862,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         # upload the csv file
@@ -739,7 +874,11 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         blob_client.upload_blob(CSV_DATA, overwrite=True)
 
         input_format = DelimitedTextDialect(
-            delimiter=",", quotechar='"', lineterminator="\n", escapechar="", has_header=True
+            delimiter=",",
+            quotechar='"',
+            lineterminator="\n",
+            escapechar="",
+            has_header=True,
         )
         output_format = DelimitedTextDialect(
             delimiter=";",
@@ -748,7 +887,9 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
             escapechar="\\",
         )
         resp = blob_client.query_blob(
-            "SELECT RepoPath from BlobStorage", blob_format=input_format, output_format=output_format
+            "SELECT RepoPath from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
         )
         data = list(resp.records())
         assert resp._size == len(CSV_DATA)
@@ -762,7 +903,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         data1 = b'{"name": "owner", "id": 1}'
@@ -783,7 +927,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         output_format = DelimitedJsonDialect(delimiter=";")
 
         resp = blob_client.query_blob(
-            "SELECT name from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT name from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
         query_result = resp.readall()
 
@@ -799,7 +946,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         data1 = b'{"name": "owner", "id": 1}'
@@ -820,7 +970,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         output_format = DelimitedJsonDialect(delimiter=";")
 
         resp = blob_client.query_blob(
-            "SELECT name from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT name from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
         listdata = list(resp.records())
 
@@ -836,7 +989,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         data1 = b'{"name": "owner", "id": 1}'
@@ -857,7 +1013,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         output_format = None
 
         resp = blob_client.query_blob(
-            "SELECT name from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT name from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
         query_result = resp.readall()
 
@@ -873,7 +1032,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         data = b"100,200,300,400\n300,400,500,600\n"
@@ -888,10 +1050,14 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         def on_error(error):
             errors.append(error)
 
-        output_format = [ArrowDialect(ArrowType.DECIMAL, name="abc", precision=4, scale=2)]
+        output_format = [
+            ArrowDialect(ArrowType.DECIMAL, name="abc", precision=4, scale=2)
+        ]
 
         resp = blob_client.query_blob(
-            "SELECT _2 from BlobStorage WHERE _1 > 250", on_error=on_error, output_format=output_format
+            "SELECT _2 from BlobStorage WHERE _1 > 250",
+            on_error=on_error,
+            output_format=output_format,
         )
         expected_result = (
             b"/////3gAAAAQAAAAAAAKAAwABgAFAAgACgAAAAABBAAMAAAACAAIAAAABAAIAAAABAAAAAEAAAAU"
@@ -916,7 +1082,10 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
 
         # upload the json file
@@ -928,10 +1097,14 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         def on_error(error):
             errors.append(error)
 
-        input_format = [ArrowDialect(ArrowType.DECIMAL, name="abc", precision=4, scale=2)]
+        input_format = [
+            ArrowDialect(ArrowType.DECIMAL, name="abc", precision=4, scale=2)
+        ]
 
         with pytest.raises(ValueError):
-            blob_client.query_blob("SELECT * from BlobStorage", on_error=on_error, blob_format=input_format)
+            blob_client.query_blob(
+                "SELECT * from BlobStorage", on_error=on_error, blob_format=input_format
+            )
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -940,18 +1113,25 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
         expression = "select * from blobstorage where id < 1;"
         expected_data = b"0,mdifjt55.ea3,mdifjt55.ea3\n"
 
         blob_name = self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
+        parquet_path = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet")
+        )
         with open(parquet_path, "rb") as parquet_data:
             blob_client.upload_blob(parquet_data, overwrite=True)
 
-        reader = blob_client.query_blob(expression, blob_format=QuickQueryDialect.Parquet)
+        reader = blob_client.query_blob(
+            expression, blob_format=QuickQueryDialect.Parquet
+        )
         real_data = reader.readall()
 
         assert real_data == expected_data
@@ -963,18 +1143,25 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
         expression = "SELECT * from BlobStorage"
 
         blob_name = self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
+        parquet_path = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet")
+        )
         with open(parquet_path, "rb") as parquet_data:
             blob_client.upload_blob(parquet_data, overwrite=True)
 
         with pytest.raises(ValueError):
-            blob_client.query_blob(expression, blob_format="ParquetDialect", output_format="ParquetDialect")
+            blob_client.query_blob(
+                expression, blob_format="ParquetDialect", output_format="ParquetDialect"
+            )
 
 
 # ------------------------------------------------------------------------------

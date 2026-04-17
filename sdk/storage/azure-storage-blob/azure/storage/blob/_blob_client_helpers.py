@@ -24,7 +24,10 @@ from typing import (
 from urllib.parse import quote, unquote, urlparse
 
 from ._deserialize import deserialize_blob_stream
-from ._encryption import modify_user_agent_for_encryption, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
+from ._encryption import (
+    modify_user_agent_for_encryption,
+    _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION,
+)
 from ._generated.models import (
     AppendPositionAccessConditions,
     BlobHTTPHeaders,
@@ -59,8 +62,16 @@ from ._serialize import (
 from ._shared import encode_base64
 from ._shared.base_client import parse_query
 from ._shared.constants import DEFAULT_MAX_CONCURRENCY
-from ._shared.request_handlers import add_metadata_headers, get_length, read_length, validate_and_format_range_headers
-from ._shared.response_handlers import return_headers_and_deserialized, return_response_headers
+from ._shared.request_handlers import (
+    add_metadata_headers,
+    get_length,
+    read_length,
+    validate_and_format_range_headers,
+)
+from ._shared.response_handlers import (
+    return_headers_and_deserialized,
+    return_response_headers,
+)
 from ._shared.uploads import IterStreamer
 from ._shared.uploads_async import AsyncIterStreamer
 from ._upload_helpers import _any_conditions
@@ -92,7 +103,13 @@ def _parse_url(
     return parsed_url, sas_token, path_snapshot
 
 
-def _format_url(container_name: Union[bytes, str], scheme: str, blob_name: str, query_str: str, hostname: str) -> str:
+def _format_url(
+    container_name: Union[bytes, str],
+    scheme: str,
+    blob_name: str,
+    query_str: str,
+    hostname: str,
+) -> str:
     if isinstance(container_name, str):
         container_name = container_name.encode("UTF-8")
     return f"{scheme}://{hostname}/{quote(container_name)}/{quote(blob_name, safe='~/')}{query_str}"
@@ -151,7 +168,9 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
     kwargs["cpk_info"] = cpk_info
 
@@ -181,7 +200,10 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
     # Add feature flag to user agent for encryption
     if encryption_options["key"]:
         modify_user_agent_for_encryption(
-            config.user_agent_policy.user_agent, sdk_moniker, encryption_options["version"], kwargs
+            config.user_agent_policy.user_agent,
+            sdk_moniker,
+            encryption_options["version"],
+            kwargs,
         )
 
     if blob_type == BlobType.BlockBlob:
@@ -190,7 +212,9 @@ def _upload_blob_options(  # pylint:disable=too-many-statements
         if encryption_options["version"] == "2.0" and (
             encryption_options["required"] or encryption_options["key"] is not None
         ):
-            raise ValueError("Encryption version 2.0 does not currently support page blobs.")
+            raise ValueError(
+                "Encryption version 2.0 does not currently support page blobs."
+            )
         kwargs["client"] = client.page_blob
     elif blob_type == BlobType.AppendBlob:
         if encryption_options["required"] or (encryption_options["key"] is not None):
@@ -224,7 +248,9 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
     source_cpk = kwargs.pop("source_cpk", None)
     source_cpk_info = None
@@ -239,13 +265,17 @@ def _upload_blob_from_url_options(source_url: str, **kwargs: Any) -> Dict[str, A
         "copy_source_authorization": source_authorization,
         "file_request_intent": source_token_intent,
         "content_length": 0,
-        "copy_source_blob_properties": kwargs.pop("include_source_blob_properties", True),
+        "copy_source_blob_properties": kwargs.pop(
+            "include_source_blob_properties", True
+        ),
         "source_content_md5": kwargs.pop("source_content_md5", None),
         "copy_source": source_url,
         "modified_access_conditions": get_modify_conditions(kwargs),
         "blob_tags_string": serialize_blob_tags_header(kwargs.pop("tags", None)),
         "cls": return_response_headers,
-        "lease_access_conditions": get_access_conditions(kwargs.pop("destination_lease", None)),
+        "lease_access_conditions": get_access_conditions(
+            kwargs.pop("destination_lease", None)
+        ),
         "tier": tier.value if tier else None,
         "source_modified_access_conditions": get_source_conditions(kwargs),
         "cpk_info": cpk_info,
@@ -300,7 +330,9 @@ def _download_blob_options(
     if length is not None:
         if offset is None:
             raise ValueError("Offset must be provided if length is provided.")
-        length = offset + length - 1  # Service actually uses an end-range inclusive index
+        length = (
+            offset + length - 1
+        )  # Service actually uses an end-range inclusive index
 
     validate_content = kwargs.pop("validate_content", False)
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
@@ -310,13 +342,18 @@ def _download_blob_options(
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
 
     # Add feature flag to user agent for encryption
     if encryption_options["key"] or encryption_options["resolver"]:
         modify_user_agent_for_encryption(
-            config.user_agent_policy.user_agent, sdk_moniker, encryption_options["version"], kwargs
+            config.user_agent_policy.user_agent,
+            sdk_moniker,
+            encryption_options["version"],
+            kwargs,
         )
 
     options = {
@@ -335,7 +372,8 @@ def _download_blob_options(
         "modified_access_conditions": mod_conditions,
         "cpk_info": cpk_info,
         "download_cls": kwargs.pop("cls", None) or deserialize_blob_stream,
-        "max_concurrency": kwargs.pop("max_concurrency", None) or DEFAULT_MAX_CONCURRENCY,
+        "max_concurrency": kwargs.pop("max_concurrency", None)
+        or DEFAULT_MAX_CONCURRENCY,
         "encoding": encoding,
         "timeout": kwargs.pop("timeout", None),
         "name": blob_name,
@@ -345,7 +383,9 @@ def _download_blob_options(
     return options
 
 
-def _quick_query_options(snapshot: Optional[str], query_expression: str, **kwargs: Any) -> Tuple[Dict[str, Any], str]:
+def _quick_query_options(
+    snapshot: Optional[str], query_expression: str, **kwargs: Any
+) -> Tuple[Dict[str, Any], str]:
     delimiter = "\n"
     input_format = kwargs.pop("blob_format", None)
     if input_format == QuickQueryDialect.DelimitedJson:
@@ -393,7 +433,9 @@ def _quick_query_options(snapshot: Optional[str], query_expression: str, **kwarg
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
     options = {
         "query_request": query_request,
@@ -408,7 +450,9 @@ def _quick_query_options(snapshot: Optional[str], query_expression: str, **kwarg
     return options, delimiter
 
 
-def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwargs: Any) -> Dict[str, Any]:
+def _generic_delete_blob_options(
+    delete_snapshots: Optional[str] = None, **kwargs: Any
+) -> Dict[str, Any]:
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
     if delete_snapshots:
@@ -425,10 +469,15 @@ def _generic_delete_blob_options(delete_snapshots: Optional[str] = None, **kwarg
 
 
 def _delete_blob_options(
-    snapshot: Optional[str], version_id: Optional[str], delete_snapshots: Optional[str] = None, **kwargs: Any
+    snapshot: Optional[str],
+    version_id: Optional[str],
+    delete_snapshots: Optional[str] = None,
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     if snapshot and delete_snapshots:
-        raise ValueError("The delete_snapshots option cannot be used with a specific snapshot.")
+        raise ValueError(
+            "The delete_snapshots option cannot be used with a specific snapshot."
+        )
     options = _generic_delete_blob_options(delete_snapshots, **kwargs)
     options["snapshot"] = snapshot
     options["version_id"] = version_id
@@ -436,7 +485,9 @@ def _delete_blob_options(
     return options
 
 
-def _set_http_headers_options(content_settings: Optional["ContentSettings"] = None, **kwargs: Any) -> Dict[str, Any]:
+def _set_http_headers_options(
+    content_settings: Optional["ContentSettings"] = None, **kwargs: Any
+) -> Dict[str, Any]:
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
     blob_headers = None
@@ -460,7 +511,9 @@ def _set_http_headers_options(content_settings: Optional["ContentSettings"] = No
     return options
 
 
-def _set_blob_metadata_options(metadata: Optional[Dict[str, str]] = None, **kwargs: Any):
+def _set_blob_metadata_options(
+    metadata: Optional[Dict[str, str]] = None, **kwargs: Any
+):
     headers = kwargs.pop("headers", {})
     headers.update(add_metadata_headers(metadata))
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
@@ -471,7 +524,9 @@ def _set_blob_metadata_options(metadata: Optional[Dict[str, str]] = None, **kwar
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
     options = {
         "timeout": kwargs.pop("timeout", None),
@@ -514,7 +569,9 @@ def _create_page_blob_options(
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
 
     immutability_policy = kwargs.pop("immutability_policy", None)
@@ -551,7 +608,9 @@ def _create_page_blob_options(
 
 
 def _create_append_blob_options(
-    content_settings: Optional["ContentSettings"] = None, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
+    content_settings: Optional["ContentSettings"] = None,
+    metadata: Optional[Dict[str, str]] = None,
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     headers = kwargs.pop("headers", {})
     headers.update(add_metadata_headers(metadata))
@@ -573,7 +632,9 @@ def _create_append_blob_options(
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
 
     immutability_policy = kwargs.pop("immutability_policy", None)
@@ -599,7 +660,9 @@ def _create_append_blob_options(
     return options
 
 
-def _create_snapshot_options(metadata: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]:
+def _create_snapshot_options(
+    metadata: Optional[Dict[str, str]] = None, **kwargs: Any
+) -> Dict[str, Any]:
     headers = kwargs.pop("headers", {})
     headers.update(add_metadata_headers(metadata))
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
@@ -609,7 +672,9 @@ def _create_snapshot_options(metadata: Optional[Dict[str, str]] = None, **kwargs
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
 
     options = {
@@ -626,7 +691,10 @@ def _create_snapshot_options(metadata: Optional[Dict[str, str]] = None, **kwargs
 
 
 def _start_copy_from_url_options(  # pylint:disable=too-many-statements
-    source_url: str, metadata: Optional[Dict[str, str]] = None, incremental_copy: bool = False, **kwargs: Any
+    source_url: str,
+    metadata: Optional[Dict[str, str]] = None,
+    incremental_copy: bool = False,
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     source_url = _encode_source_url(source_url=source_url)
     headers = kwargs.pop("headers", {})
@@ -638,7 +706,9 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
         except AttributeError:
             headers["x-ms-source-lease-id"] = source_lease
 
-    tier = kwargs.pop("premium_page_blob_tier", None) or kwargs.pop("standard_blob_tier", None)
+    tier = kwargs.pop("premium_page_blob_tier", None) or kwargs.pop(
+        "standard_blob_tier", None
+    )
     tags = kwargs.pop("tags", None)
 
     # Options only available for sync copy
@@ -651,9 +721,13 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
 
     if incremental_copy:
         if source_authorization:
-            raise ValueError("Source authorization tokens are not applicable for incremental copying.")
+            raise ValueError(
+                "Source authorization tokens are not applicable for incremental copying."
+            )
         if copy_source_tags:
-            raise ValueError("Copying source tags is not applicable for incremental copying.")
+            raise ValueError(
+                "Copying source tags is not applicable for incremental copying."
+            )
 
     # TODO: refactor start_copy_from_url api in _blob_client.py. Call _generated/_blob_operations.py copy_from_url
     #  when requires_sync=True is set.
@@ -671,19 +745,27 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
             headers["x-ms-copy-source-tag-option"] = tags
     else:
         if encryption_scope_str:
-            raise ValueError("Encryption_scope is only supported for sync copy, please specify requires_sync=True")
+            raise ValueError(
+                "Encryption_scope is only supported for sync copy, please specify requires_sync=True"
+            )
         if source_authorization:
             raise ValueError(
                 "Source authorization tokens are only supported for sync copy, please specify requires_sync=True"
             )
         if source_token_intent:
-            raise ValueError("Source token intent is only supported for sync copy, please specify requires_sync=True")
+            raise ValueError(
+                "Source token intent is only supported for sync copy, please specify requires_sync=True"
+            )
         if copy_source_tags:
-            raise ValueError("Copying source tags is only supported for sync copy, please specify requires_sync=True")
+            raise ValueError(
+                "Copying source tags is only supported for sync copy, please specify requires_sync=True"
+            )
 
     timeout = kwargs.pop("timeout", None)
     dest_mod_conditions = get_modify_conditions(kwargs)
-    blob_tags_string = serialize_blob_tags_header(tags) if not copy_source_tags else None
+    blob_tags_string = (
+        serialize_blob_tags_header(tags) if not copy_source_tags else None
+    )
 
     immutability_policy = kwargs.pop("immutability_policy", None)
     if immutability_policy:
@@ -700,7 +782,9 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
 
     if not incremental_copy:
         source_mod_conditions = get_source_conditions(kwargs)
-        dest_access_conditions = get_access_conditions(kwargs.pop("destination_lease", None))
+        dest_access_conditions = get_access_conditions(
+            kwargs.pop("destination_lease", None)
+        )
         options["source_modified_access_conditions"] = source_mod_conditions
         options["lease_access_conditions"] = dest_access_conditions
         options["tier"] = tier.value if tier else None
@@ -710,19 +794,28 @@ def _start_copy_from_url_options(  # pylint:disable=too-many-statements
     return options
 
 
-def _abort_copy_options(copy_id: Union[str, Dict[str, Any], BlobProperties], **kwargs: Any) -> Dict[str, Any]:
+def _abort_copy_options(
+    copy_id: Union[str, Dict[str, Any], BlobProperties], **kwargs: Any
+) -> Dict[str, Any]:
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
     if isinstance(copy_id, BlobProperties):
         copy_id = copy_id.copy.id  # type: ignore [assignment]
     elif isinstance(copy_id, dict):
         copy_id = copy_id["copy_id"]
-    options = {"copy_id": copy_id, "lease_access_conditions": access_conditions, "timeout": kwargs.pop("timeout", None)}
+    options = {
+        "copy_id": copy_id,
+        "lease_access_conditions": access_conditions,
+        "timeout": kwargs.pop("timeout", None),
+    }
     options.update(kwargs)
     return options
 
 
 def _stage_block_options(
-    block_id: str, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]], length: Optional[int] = None, **kwargs: Any
+    block_id: str,
+    data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+    length: Optional[int] = None,
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     block_id = encode_base64(str(block_id))
     if isinstance(data, str):
@@ -741,7 +834,9 @@ def _stage_block_options(
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
 
     options = {
@@ -779,14 +874,18 @@ def _stage_block_from_url_options(
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
     range_header = None
     if source_offset is not None:
-        range_header, _ = validate_and_format_range_headers(source_offset, source_length)
+        range_header, _ = validate_and_format_range_headers(
+            source_offset, source_length
+        )
 
     cpk_scope_info = get_cpk_scope_info(kwargs)
     cpk = kwargs.pop("cpk", None)
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
     source_cpk = kwargs.pop("source_cpk", None)
     source_cpk_info = None
@@ -804,7 +903,9 @@ def _stage_block_from_url_options(
         "content_length": 0,
         "source_url": source_url,
         "source_range": range_header,
-        "source_content_md5": bytearray(source_content_md5) if source_content_md5 else None,
+        "source_content_md5": (
+            bytearray(source_content_md5) if source_content_md5 else None
+        ),
         "timeout": kwargs.pop("timeout", None),
         "lease_access_conditions": access_conditions,
         "cpk_scope_info": cpk_scope_info,
@@ -816,11 +917,15 @@ def _stage_block_from_url_options(
     return options
 
 
-def _get_block_list_result(blocks: BlockList) -> Tuple[List[BlobBlock], List[BlobBlock]]:
+def _get_block_list_result(
+    blocks: BlockList,
+) -> Tuple[List[BlobBlock], List[BlobBlock]]:
     committed = []
     uncommitted = []
     if blocks.committed_blocks:
-        committed = [BlobBlock._from_generated(b) for b in blocks.committed_blocks]  # pylint: disable=protected-access
+        committed = [
+            BlobBlock._from_generated(b) for b in blocks.committed_blocks
+        ]  # pylint: disable=protected-access
     if blocks.uncommitted_blocks:
         uncommitted = [
             BlobBlock._from_generated(b) for b in blocks.uncommitted_blocks
@@ -838,9 +943,13 @@ def _commit_block_list_options(
     for block in block_list:
         if isinstance(block, BlobBlock):
             if block.state.value == "committed":
-                cast(List[str], block_lookup.committed).append(encode_base64(str(block.id)))
+                cast(List[str], block_lookup.committed).append(
+                    encode_base64(str(block.id))
+                )
             elif block.state.value == "uncommitted":
-                cast(List[str], block_lookup.uncommitted).append(encode_base64(str(block.id)))
+                cast(List[str], block_lookup.uncommitted).append(
+                    encode_base64(str(block.id))
+                )
             elif block_lookup.latest is not None:
                 block_lookup.latest.append(encode_base64(str(block.id)))
         else:
@@ -866,7 +975,9 @@ def _commit_block_list_options(
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
 
     immutability_policy = kwargs.pop("immutability_policy", None)
@@ -900,7 +1011,9 @@ def _set_blob_tags_options(
 ) -> Dict[str, Any]:
     serialized_tags = serialize_blob_tags(tags)
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
-    mod_conditions = ModifiedAccessConditions(if_tags=kwargs.pop("if_tags_match_condition", None))
+    mod_conditions = ModifiedAccessConditions(
+        if_tags=kwargs.pop("if_tags_match_condition", None)
+    )
     blob_mod_conditions = get_blob_modify_conditions(kwargs)
 
     options = {
@@ -915,9 +1028,13 @@ def _set_blob_tags_options(
     return options
 
 
-def _get_blob_tags_options(version_id: Optional[str], snapshot: Optional[str], **kwargs: Any) -> Dict[str, Any]:
+def _get_blob_tags_options(
+    version_id: Optional[str], snapshot: Optional[str], **kwargs: Any
+) -> Dict[str, Any]:
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
-    mod_conditions = ModifiedAccessConditions(if_tags=kwargs.pop("if_tags_match_condition", None))
+    mod_conditions = ModifiedAccessConditions(
+        if_tags=kwargs.pop("if_tags_match_condition", None)
+    )
     blob_mod_conditions = get_blob_modify_conditions(kwargs)
 
     options = {
@@ -946,7 +1063,11 @@ def _get_page_ranges_options(
     if length is not None and offset is not None:
         length = offset + length - 1  # Reformat to an inclusive range index
     page_range, _ = validate_and_format_range_headers(
-        offset, length, start_range_required=False, end_range_required=False, align_to_page=True
+        offset,
+        length,
+        start_range_required=False,
+        end_range_required=False,
+        align_to_page=True,
     )
     options = {
         "snapshot": snapshot,
@@ -996,7 +1117,9 @@ def _resize_blob_options(size: int, **kwargs: Any) -> Dict[str, Any]:
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
     options = {
         "blob_content_length": size,
@@ -1010,7 +1133,9 @@ def _resize_blob_options(size: int, **kwargs: Any) -> Dict[str, Any]:
     return options
 
 
-def _upload_page_options(page: bytes, offset: int, length: int, **kwargs: Any) -> Dict[str, Any]:
+def _upload_page_options(
+    page: bytes, offset: int, length: int, **kwargs: Any
+) -> Dict[str, Any]:
     if isinstance(page, str):
         page = page.encode(kwargs.pop("encoding", "UTF-8"))
     if offset is None or offset % 512 != 0:
@@ -1021,7 +1146,9 @@ def _upload_page_options(page: bytes, offset: int, length: int, **kwargs: Any) -
     content_range = f"bytes={offset}-{end_range}"  # type: ignore
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
     seq_conditions = SequenceNumberAccessConditions(
-        if_sequence_number_less_than_or_equal_to=kwargs.pop("if_sequence_number_lte", None),
+        if_sequence_number_less_than_or_equal_to=kwargs.pop(
+            "if_sequence_number_lte", None
+        ),
         if_sequence_number_less_than=kwargs.pop("if_sequence_number_lt", None),
         if_sequence_number_equal_to=kwargs.pop("if_sequence_number_eq", None),
     )
@@ -1032,7 +1159,9 @@ def _upload_page_options(page: bytes, offset: int, length: int, **kwargs: Any) -
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
     options = {
         "body": page[:length],
@@ -1062,15 +1191,21 @@ def _upload_pages_from_url_options(
     if length is None or length % 512 != 0:
         raise ValueError("length must be an integer that aligns with 512 page size")
     if source_offset is None or offset % 512 != 0:
-        raise ValueError("source_offset must be an integer that aligns with 512 page size")
+        raise ValueError(
+            "source_offset must be an integer that aligns with 512 page size"
+        )
 
     # Format range
     end_range = offset + length - 1
     destination_range = f"bytes={offset}-{end_range}"
-    source_range = f"bytes={source_offset}-{source_offset + length - 1}"  # should subtract 1 here?
+    source_range = (
+        f"bytes={source_offset}-{source_offset + length - 1}"  # should subtract 1 here?
+    )
 
     seq_conditions = SequenceNumberAccessConditions(
-        if_sequence_number_less_than_or_equal_to=kwargs.pop("if_sequence_number_lte", None),
+        if_sequence_number_less_than_or_equal_to=kwargs.pop(
+            "if_sequence_number_lte", None
+        ),
         if_sequence_number_less_than=kwargs.pop("if_sequence_number_lt", None),
         if_sequence_number_equal_to=kwargs.pop("if_sequence_number_eq", None),
     )
@@ -1085,7 +1220,9 @@ def _upload_pages_from_url_options(
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
     source_cpk = kwargs.pop("source_cpk", None)
     source_cpk_info = None
@@ -1103,7 +1240,9 @@ def _upload_pages_from_url_options(
         "content_length": 0,
         "source_range": source_range,
         "range": destination_range,
-        "source_content_md5": bytearray(source_content_md5) if source_content_md5 else None,
+        "source_content_md5": (
+            bytearray(source_content_md5) if source_content_md5 else None
+        ),
         "timeout": kwargs.pop("timeout", None),
         "lease_access_conditions": access_conditions,
         "sequence_number_access_conditions": seq_conditions,
@@ -1121,7 +1260,9 @@ def _upload_pages_from_url_options(
 def _clear_page_options(offset: int, length: int, **kwargs: Any) -> Dict[str, Any]:
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
     seq_conditions = SequenceNumberAccessConditions(
-        if_sequence_number_less_than_or_equal_to=kwargs.pop("if_sequence_number_lte", None),
+        if_sequence_number_less_than_or_equal_to=kwargs.pop(
+            "if_sequence_number_lte", None
+        ),
         if_sequence_number_less_than=kwargs.pop("if_sequence_number_lt", None),
         if_sequence_number_equal_to=kwargs.pop("if_sequence_number_eq", None),
     )
@@ -1137,7 +1278,9 @@ def _clear_page_options(offset: int, length: int, **kwargs: Any) -> Dict[str, An
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
 
     options = {
@@ -1155,7 +1298,9 @@ def _clear_page_options(offset: int, length: int, **kwargs: Any) -> Dict[str, An
 
 
 def _append_block_options(
-    data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]], length: Optional[int] = None, **kwargs: Any
+    data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+    length: Optional[int] = None,
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     if isinstance(data, str):
         data = data.encode(kwargs.pop("encoding", "UTF-8"))
@@ -1183,7 +1328,9 @@ def _append_block_options(
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
     options = {
         "body": data,
@@ -1203,12 +1350,17 @@ def _append_block_options(
 
 
 def _append_block_from_url_options(
-    copy_source_url: str, source_offset: Optional[int] = None, source_length: Optional[int] = None, **kwargs: Any
+    copy_source_url: str,
+    source_offset: Optional[int] = None,
+    source_length: Optional[int] = None,
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     copy_source_url = _encode_source_url(source_url=copy_source_url)
     # If end range is provided, start range must be provided
     if source_length is not None and source_offset is None:
-        raise ValueError("source_offset should also be specified if source_length is specified")
+        raise ValueError(
+            "source_offset should also be specified if source_length is specified"
+        )
     # Format based on whether length is present
     source_range = None
     if source_length is not None and source_offset is not None:
@@ -1235,7 +1387,9 @@ def _append_block_from_url_options(
     cpk_info = None
     if cpk:
         cpk_info = CpkInfo(
-            encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+            encryption_key=cpk.key_value,
+            encryption_key_sha256=cpk.key_hash,
+            encryption_algorithm=cpk.algorithm,
         )
     source_cpk = kwargs.pop("source_cpk", None)
     source_cpk_info = None
@@ -1272,7 +1426,9 @@ def _seal_append_blob_options(**kwargs: Any) -> Dict[str, Any]:
     appendpos_condition = kwargs.pop("appendpos_condition", None)
     append_conditions = None
     if appendpos_condition is not None:
-        append_conditions = AppendPositionAccessConditions(append_position=appendpos_condition)
+        append_conditions = AppendPositionAccessConditions(
+            append_position=appendpos_condition
+        )
     access_conditions = get_access_conditions(kwargs.pop("lease", None))
     mod_conditions = get_modify_conditions(kwargs)
 
@@ -1315,7 +1471,9 @@ def _from_blob_url(
 
     account_url = f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}{account_path}?{parsed_url.query}"
 
-    msg_invalid_url = "Invalid URL. Provide a blob_url with a valid blob and container name."
+    msg_invalid_url = (
+        "Invalid URL. Provide a blob_url with a valid blob and container name."
+    )
     if len(path_blob) <= 1:
         raise ValueError(msg_invalid_url)
     container_name, blob_name = unquote(path_blob[-2]), unquote(path_blob[-1])

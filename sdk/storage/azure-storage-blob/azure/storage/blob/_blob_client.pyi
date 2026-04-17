@@ -24,7 +24,11 @@ from typing import (
 from typing_extensions import Self
 
 from azure.core import MatchConditions
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+from azure.core.credentials import (
+    AzureNamedKeyCredential,
+    AzureSasCredential,
+    TokenCredential,
+)
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._container_client import ContainerClient
@@ -64,7 +68,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         blob_name: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                TokenCredential,
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -82,7 +92,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     ) -> None: ...
     def __enter__(self) -> Self: ...
     def __exit__(
-        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
     ) -> None: ...
     def close(self) -> None: ...
     @classmethod
@@ -90,7 +103,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         cls,
         blob_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                TokenCredential,
+            ]
         ] = None,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         *,
@@ -115,7 +134,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         blob_name: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                TokenCredential,
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -265,9 +290,17 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         query_expression: str,
         *,
         on_error: Optional[Callable[[BlobQueryError], None]] = None,
-        blob_format: Optional[Union[DelimitedTextDialect, DelimitedJsonDialect, QuickQueryDialect, str]] = None,
+        blob_format: Optional[
+            Union[DelimitedTextDialect, DelimitedJsonDialect, QuickQueryDialect, str]
+        ] = None,
         output_format: Optional[
-            Union[DelimitedTextDialect, DelimitedJsonDialect, QuickQueryDialect, List[ArrowDialect], str]
+            Union[
+                DelimitedTextDialect,
+                DelimitedJsonDialect,
+                QuickQueryDialect,
+                List[ArrowDialect],
+                str,
+            ]
         ] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
@@ -297,9 +330,17 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         **kwargs: Any
     ) -> None: ...
     @distributed_trace
-    def undelete_blob(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None: ...
+    def undelete_blob(
+        self, *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> None: ...
     @distributed_trace
-    def exists(self, *, version_id: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any) -> bool: ...
+    def exists(
+        self,
+        *,
+        version_id: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
+    ) -> bool: ...
     @distributed_trace
     def get_blob_properties(
         self,
@@ -356,11 +397,20 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     ) -> Dict[str, str]: ...
     @distributed_trace
     def delete_immutability_policy(
-        self, *, version_id: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        version_id: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> None: ...
     @distributed_trace
     def set_legal_hold(
-        self, legal_hold: bool, *, version_id: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        legal_hold: bool,
+        *,
+        version_id: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> Dict[str, Union[str, datetime, bool]]: ...
     @distributed_trace
     def create_page_blob(
@@ -452,7 +502,9 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
     @distributed_trace
-    def abort_copy(self, copy_id: Union[str, Dict[str, Any], BlobProperties], **kwargs: Any) -> None: ...
+    def abort_copy(
+        self, copy_id: Union[str, Dict[str, Any], BlobProperties], **kwargs: Any
+    ) -> None: ...
     @distributed_trace
     def acquire_lease(
         self,

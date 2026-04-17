@@ -117,7 +117,16 @@ class SharedAccessSignature(object):
         self.x_ms_version = x_ms_version
 
     def generate_account(
-        self, services, resource_types, permission, expiry, start=None, ip=None, protocol=None, sts_hook=None, **kwargs
+        self,
+        services,
+        resource_types,
+        permission,
+        expiry,
+        start=None,
+        ip=None,
+        protocol=None,
+        sts_hook=None,
+        **kwargs,
     ) -> str:
         """
         Generates a shared access signature for the account.
@@ -195,7 +204,10 @@ class _SharedAccessHelper(object):
             self.query_dict[name] = str(val) if val is not None else None
 
     def add_encryption_scope(self, **kwargs):
-        self._add_query(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE, kwargs.pop("encryption_scope", None))
+        self._add_query(
+            QueryStringConstants.SIGNED_ENCRYPTION_SCOPE,
+            kwargs.pop("encryption_scope", None),
+        )
 
     def add_base(self, permission, expiry, start, ip, protocol, x_ms_version):
         if isinstance(start, date):
@@ -218,17 +230,26 @@ class _SharedAccessHelper(object):
         self._add_query(QueryStringConstants.SIGNED_IDENTIFIER, policy_id)
 
     def add_user_delegation_oid(self, user_delegation_oid):
-        self._add_query(QueryStringConstants.SIGNED_DELEGATED_USER_OID, user_delegation_oid)
+        self._add_query(
+            QueryStringConstants.SIGNED_DELEGATED_USER_OID, user_delegation_oid
+        )
 
     def add_account(self, services, resource_types):
         self._add_query(QueryStringConstants.SIGNED_SERVICES, services)
         self._add_query(QueryStringConstants.SIGNED_RESOURCE_TYPES, resource_types)
 
     def add_override_response_headers(
-        self, cache_control, content_disposition, content_encoding, content_language, content_type
+        self,
+        cache_control,
+        content_disposition,
+        content_encoding,
+        content_language,
+        content_type,
     ):
         self._add_query(QueryStringConstants.SIGNED_CACHE_CONTROL, cache_control)
-        self._add_query(QueryStringConstants.SIGNED_CONTENT_DISPOSITION, content_disposition)
+        self._add_query(
+            QueryStringConstants.SIGNED_CONTENT_DISPOSITION, content_disposition
+        )
         self._add_query(QueryStringConstants.SIGNED_CONTENT_ENCODING, content_encoding)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_LANGUAGE, content_language)
         self._add_query(QueryStringConstants.SIGNED_CONTENT_TYPE, content_type)
@@ -238,7 +259,9 @@ class _SharedAccessHelper(object):
             return
 
         # String-to-Sign (not encoded): "k1:v1\nk2:v2\n...kn:vn\n"
-        self._sts_srh = "\n".join([f"{k}:{v}" for k, v in request_headers.items()]) + "\n"
+        self._sts_srh = (
+            "\n".join([f"{k}:{v}" for k, v in request_headers.items()]) + "\n"
+        )
 
         # SAS query param: comma-separated list of encoded header keys only
         srh_keys = ",".join([url_quote(k) for k in request_headers.keys()])
@@ -249,7 +272,9 @@ class _SharedAccessHelper(object):
             return
 
         # String-to-Sign (not encoded): "k1:v1\nk2:v2\n...kn:vn\n"
-        self._sts_srq = "\n" + "\n".join([f"{k}:{v}" for k, v in request_query_params.items()])
+        self._sts_srq = "\n" + "\n".join(
+            [f"{k}:{v}" for k, v in request_query_params.items()]
+        )
 
         # SAS query param: comma-separated list of encoded query-param keys only
         srq_keys = ",".join([url_quote(k) for k in request_query_params.keys()])
@@ -274,8 +299,13 @@ class _SharedAccessHelper(object):
             + get_value_to_append(QueryStringConstants.SIGNED_ENCRYPTION_SCOPE)
         )
 
-        self._add_query(QueryStringConstants.SIGNED_SIGNATURE, sign_string(account_key, string_to_sign))
+        self._add_query(
+            QueryStringConstants.SIGNED_SIGNATURE,
+            sign_string(account_key, string_to_sign),
+        )
         self.string_to_sign = string_to_sign
 
     def get_token(self) -> str:
-        return "&".join([f"{n}={url_quote(v)}" for n, v in self.query_dict.items() if v is not None])
+        return "&".join(
+            [f"{n}={url_quote(v)}" for n, v in self.query_dict.items() if v is not None]
+        )

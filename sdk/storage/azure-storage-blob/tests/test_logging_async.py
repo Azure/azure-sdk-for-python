@@ -8,7 +8,12 @@ import sys
 from datetime import datetime, timedelta
 
 import pytest
-from azure.storage.blob import BlobSasPermissions, ContainerSasPermissions, generate_blob_sas, generate_container_sas
+from azure.storage.blob import (
+    BlobSasPermissions,
+    ContainerSasPermissions,
+    generate_blob_sas,
+    generate_container_sas,
+)
 from azure.storage.blob.aio import BlobClient, BlobServiceClient, ContainerClient
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
@@ -63,7 +68,9 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, logging_enable=True
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            logging_enable=True,
         )
         await self._setup(bsc)
         # Arrange
@@ -79,7 +86,9 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
             assert not request_body in log_as_str
 
         with LogCaptured(self) as log_captured:
-            await blob_client.upload_blob(request_body, overwrite=True, logging_body=True)
+            await blob_client.upload_blob(
+                request_body, overwrite=True, logging_body=True
+            )
             log_as_str = log_captured.getvalue()
             assert request_body in log_as_str
             assert log_as_str.count(request_body) == 1
@@ -90,7 +99,9 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), storage_account_key.secret
+        )
         await self._setup(bsc)
         # Arrange
         container = bsc.get_container_client(self.container_name)
@@ -112,7 +123,9 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
 
         # Test can only run live
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), storage_account_key.secret
+        )
         await self._setup(bsc)
         # Arrange
         container = bsc.get_container_client(self.container_name)
@@ -126,9 +139,13 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
         )
         # parse out the signed signature
         token_components = parse_qs(token)
-        signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
+        signed_signature = quote(
+            token_components[QueryStringConstants.SIGNED_SIGNATURE][0]
+        )
 
-        sas_service = ContainerClient.from_container_url(container.url, credential=token)
+        sas_service = ContainerClient.from_container_url(
+            container.url, credential=token
+        )
 
         # Act
         with LogCaptured(self) as log_captured:
@@ -147,7 +164,9 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Test can only run live
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), storage_account_key.secret
+        )
         await self._setup(bsc)
         # Arrange
         dest_blob_name = self.get_resource_name("destblob")
@@ -159,14 +178,20 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
         if QueryStringConstants.SIGNED_SIGNATURE not in token_components:
             pytest.fail(
                 "Blob URL {} doesn't contain {}, parsed query params: {}".format(
-                    self.source_blob_url, QueryStringConstants.SIGNED_SIGNATURE, list(token_components.keys())
+                    self.source_blob_url,
+                    QueryStringConstants.SIGNED_SIGNATURE,
+                    list(token_components.keys()),
                 )
             )
-        signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
+        signed_signature = quote(
+            token_components[QueryStringConstants.SIGNED_SIGNATURE][0]
+        )
 
         # Act
         with LogCaptured(self) as log_captured:
-            await dest_blob.start_copy_from_url(self.source_blob_url, requires_sync=True, logging_enable=True)
+            await dest_blob.start_copy_from_url(
+                self.source_blob_url, requires_sync=True, logging_enable=True
+            )
             log_as_str = log_captured.getvalue()
 
             # Assert
@@ -221,14 +246,18 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
 
         # Act - Upload with logging_body=False (test request logging override)
         with LogCaptured(self) as log_captured:
-            await blob_client.upload_blob("uploadtest", overwrite=True, logging_body=False)
+            await blob_client.upload_blob(
+                "uploadtest", overwrite=True, logging_body=False
+            )
             log_as_str = log_captured.getvalue()
             # Assert - Request body should NOT be logged
             assert "uploadtest" not in log_as_str
 
         # Act - Upload/Download with logging_enable=False (should override constructor and disable logging entirely)
         with LogCaptured(self) as log_captured:
-            await blob_client.upload_blob("uploadtest", overwrite=True, logging_enable=False)
+            await blob_client.upload_blob(
+                "uploadtest", overwrite=True, logging_enable=False
+            )
             await blob_client.download_blob(logging_enable=False)
             log_as_str = log_captured.getvalue()
             # Assert - No logging should occur
@@ -351,11 +380,15 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
             nonlocal call_count
             call_count += 1
             if call_count == 1:
-                response.http_response.status_code = 408  # Request Timeout - triggers retry
+                response.http_response.status_code = (
+                    408  # Request Timeout - triggers retry
+                )
 
         with LogCaptured(self) as log_captured:
             call_count = 0
-            await blob_client.download_blob(raw_response_hook=response_hook_fail_once, logging_body=False)
+            await blob_client.download_blob(
+                raw_response_hook=response_hook_fail_once, logging_body=False
+            )
             log_as_str = log_captured.getvalue()
             # Assert - Body should NOT be logged on either attempt
             assert "Body is streamable" not in log_as_str
@@ -364,11 +397,15 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
         # Test 2: logging_body=True should log on both original and retry attempts
         with LogCaptured(self) as log_captured:
             call_count = 0
-            await blob_client.download_blob(raw_response_hook=response_hook_fail_once, logging_body=True)
+            await blob_client.download_blob(
+                raw_response_hook=response_hook_fail_once, logging_body=True
+            )
             log_as_str = log_captured.getvalue()
             # Assert - Body should be logged on both attempts (async shows "Body is streamable")
             assert "Body is streamable" in log_as_str
-            assert log_as_str.count("Body is streamable") == 2  # Should appear twice (original + retry)
+            assert (
+                log_as_str.count("Body is streamable") == 2
+            )  # Should appear twice (original + retry)
             assert call_count == 2  # Verify retry happened
 
         # Test 3: Verify that logging_body override persists correctly across retries
@@ -387,7 +424,9 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
 
         with LogCaptured(self) as log_captured:
             call_count = 0
-            await blob_client_with_body.download_blob(raw_response_hook=response_hook_fail_once, logging_body=False)
+            await blob_client_with_body.download_blob(
+                raw_response_hook=response_hook_fail_once, logging_body=False
+            )
             log_as_str = log_captured.getvalue()
             # Assert - logging_body=False should override constructor setting on both attempts
             assert "Body is streamable" not in log_as_str

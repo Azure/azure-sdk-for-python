@@ -65,7 +65,13 @@ class ContainerClient(  # type: ignore[misc]
         account_url: str,
         container_name: str,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                AsyncTokenCredential,
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -82,7 +88,10 @@ class ContainerClient(  # type: ignore[misc]
     ) -> None: ...
     async def __aenter__(self) -> Self: ...
     async def __aexit__(
-        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
     ) -> None: ...
     async def close(self) -> None: ...
     @classmethod
@@ -90,7 +99,13 @@ class ContainerClient(  # type: ignore[misc]
         cls,
         container_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                AsyncTokenCredential,
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -111,7 +126,13 @@ class ContainerClient(  # type: ignore[misc]
         conn_str: str,
         container_name: str,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                AsyncTokenCredential,
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -132,7 +153,9 @@ class ContainerClient(  # type: ignore[misc]
         metadata: Optional[Dict[str, str]] = None,
         public_access: Optional[Union[PublicAccess, str]] = None,
         *,
-        container_encryption_scope: Optional[Union[Dict[str, Any], ContainerEncryptionScope]] = None,
+        container_encryption_scope: Optional[
+            Union[Dict[str, Any], ContainerEncryptionScope]
+        ] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
@@ -170,7 +193,11 @@ class ContainerClient(  # type: ignore[misc]
     async def get_account_information(self, **kwargs: Any) -> Dict[str, str]: ...
     @distributed_trace_async
     async def get_container_properties(
-        self, *, lease: Optional[Union[BlobLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> ContainerProperties: ...
     @distributed_trace_async
     async def exists(self, *, timeout: Optional[int] = None, **kwargs: Any) -> bool: ...
@@ -188,7 +215,11 @@ class ContainerClient(  # type: ignore[misc]
     def _get_blob_service_client(self) -> BlobServiceClient: ...
     @distributed_trace_async
     async def get_container_access_policy(
-        self, *, lease: Optional[Union[BlobLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> Dict[str, Any]: ...
     @distributed_trace_async
     async def set_container_access_policy(
@@ -387,5 +418,9 @@ class ContainerClient(  # type: ignore[misc]
         **kwargs: Any
     ) -> AsyncIterator[AsyncHttpResponse]: ...
     def get_blob_client(
-        self, blob: str, snapshot: Optional[str] = None, *, version_id: Optional[str] = None
+        self,
+        blob: str,
+        snapshot: Optional[str] = None,
+        *,
+        version_id: Optional[str] = None
     ) -> BlobClient: ...

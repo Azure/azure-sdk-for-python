@@ -74,12 +74,15 @@ class AvroReaderTestsAsync(unittest.TestCase):
         for iexample, (writer_schema, datum) in enumerate(SCHEMAS_TO_VALIDATE):
             for codec in CODECS_TO_VALIDATE:
                 file_path = os.path.join(
-                    AvroReaderTestsAsync._samples_dir_root, "test_" + codec + "_" + str(iexample) + ".avro"
+                    AvroReaderTestsAsync._samples_dir_root,
+                    "test_" + codec + "_" + str(iexample) + ".avro",
                 )
                 with open(file_path, "rb") as reader:
                     datum_reader = AsyncDatumReader()
                     async_reader = AsyncBufferedReaderWrapper(reader)
-                    async with await AsyncDataFileReader(async_reader, datum_reader).init() as dfr:
+                    async with await AsyncDataFileReader(
+                        async_reader, datum_reader
+                    ).init() as dfr:
                         round_trip_data = []
                         async for x in dfr:
                             round_trip_data.append(x)
@@ -89,11 +92,15 @@ class AvroReaderTestsAsync(unittest.TestCase):
 
     @pytest.mark.asyncio
     async def test_change_feed(self):
-        file_path = os.path.join(AvroReaderTestsAsync._samples_dir_root, "changeFeed.avro")
+        file_path = os.path.join(
+            AvroReaderTestsAsync._samples_dir_root, "changeFeed.avro"
+        )
         with open(file_path, "rb") as reader:
             datum_reader = AsyncDatumReader()
             async_reader = AsyncBufferedReaderWrapper(reader)
-            async with await AsyncDataFileReader(async_reader, datum_reader).init() as dfr:
+            async with await AsyncDataFileReader(
+                async_reader, datum_reader
+            ).init() as dfr:
                 data = []
                 async for x in dfr:
                     data.append(x)
@@ -104,14 +111,18 @@ class AvroReaderTestsAsync(unittest.TestCase):
     @pytest.mark.asyncio
     async def test_with_header_reader(self):
         # Note: only when the data stream doesn't have header, we need header stream to help
-        file_path = os.path.join(AvroReaderTestsAsync._samples_dir_root, "changeFeed.avro")
+        file_path = os.path.join(
+            AvroReaderTestsAsync._samples_dir_root, "changeFeed.avro"
+        )
         # this data stream has header
         full_data_stream = _HeaderStream()
         with open(file_path, "rb") as reader:
             full_data = reader.read()
             await full_data_stream.write(full_data)
         # This initialization helps find the position after the first sync_marker
-        async with await AsyncDataFileReader(full_data_stream, AsyncDatumReader()).init():
+        async with await AsyncDataFileReader(
+            full_data_stream, AsyncDatumReader()
+        ).init():
             position_after_sync_marker = await full_data_stream.tell()
 
         # construct the partial data stream which doesn't have header
@@ -126,7 +137,9 @@ class AvroReaderTestsAsync(unittest.TestCase):
             await header_stream.write(header_data)
 
         records = []
-        df_reader = AsyncDataFileReader(partial_data_stream, AsyncDatumReader(), header_reader=header_stream)
+        df_reader = AsyncDataFileReader(
+            partial_data_stream, AsyncDatumReader(), header_reader=header_stream
+        )
         df_reader = await df_reader.init()
         async for record in df_reader:
             records.append(record)

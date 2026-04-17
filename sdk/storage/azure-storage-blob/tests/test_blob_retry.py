@@ -38,7 +38,9 @@ class TestStorageBlobRetry(StorageRecordedTestCase):
         # Arrange
         retry = ExponentialRetry(initial_backoff=1, increment_base=2, retry_total=3)
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, retry_policy=retry
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+            retry_policy=retry,
         )
 
         self._setup(bsc)
@@ -51,11 +53,14 @@ class TestStorageBlobRetry(StorageRecordedTestCase):
 
         # Act
         blob = bsc.get_blob_client(self.container_name, blob_name)
-        blob.stage_block(1, data_stream, raw_response_hook=responder.override_first_status)
+        blob.stage_block(
+            1, data_stream, raw_response_hook=responder.override_first_status
+        )
 
         # Assert
         _, uncommitted_blocks = blob.get_block_list(
-            block_list_type="uncommitted", raw_response_hook=responder.override_first_status
+            block_list_type="uncommitted",
+            raw_response_hook=responder.override_first_status,
         )
         assert len(uncommitted_blocks) == 1
         assert uncommitted_blocks[0].size == PUT_BLOCK_SIZE
@@ -76,7 +81,9 @@ class TestStorageBlobRetry(StorageRecordedTestCase):
         # Arrange
         retry = ExponentialRetry(initial_backoff=1, increment_base=2, retry_total=3)
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, retry_policy=retry
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+            retry_policy=retry,
         )
 
         self._setup(bsc)
@@ -90,11 +97,14 @@ class TestStorageBlobRetry(StorageRecordedTestCase):
         # Act
         blob = bsc.get_blob_client(self.container_name, blob_name)
         # Note: put_block transforms non-seekable streams into byte arrays before handing it off to the executor
-        blob.stage_block(1, data_stream, raw_response_hook=responder.override_first_status)
+        blob.stage_block(
+            1, data_stream, raw_response_hook=responder.override_first_status
+        )
 
         # Assert
         _, uncommitted_blocks = blob.get_block_list(
-            block_list_type="uncommitted", raw_response_hook=responder.override_first_status
+            block_list_type="uncommitted",
+            raw_response_hook=responder.override_first_status,
         )
         assert len(uncommitted_blocks) == 1
         assert uncommitted_blocks[0].size == PUT_BLOCK_SIZE

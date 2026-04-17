@@ -36,7 +36,9 @@ MiB = 1024 * 1024
 class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
     def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
+        self.bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=key.secret
+        )
         self.container_name = self.get_resource_name("utcontainer")
 
         if self.is_live:
@@ -65,7 +67,8 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self.bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
         )
         kek = KeyWrapper("key1")
         self.enable_encryption_v2(kek)
@@ -213,7 +216,9 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         content_settings = ContentSettings(content_encoding="gzip")
 
         # Act / Assert
-        blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
+        blob.upload_blob(
+            data=compressed_data, overwrite=True, content_settings=content_settings
+        )
 
         result = blob.download_blob(decompress=False).readall()
         assert result == compressed_data
@@ -313,13 +318,22 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         etag = resp["etag"]
 
         # Act
-        resp = blob.upload_blob(content, overwrite=True, etag=etag, match_condition=MatchConditions.IfNotModified)
+        resp = blob.upload_blob(
+            content,
+            overwrite=True,
+            etag=etag,
+            match_condition=MatchConditions.IfNotModified,
+        )
         etag = resp["etag"]
 
         with pytest.raises(HttpResponseError):
-            blob.download_blob(etag="0x111111111111111", match_condition=MatchConditions.IfNotModified)
+            blob.download_blob(
+                etag="0x111111111111111", match_condition=MatchConditions.IfNotModified
+            )
 
-        data = blob.download_blob(etag=etag, match_condition=MatchConditions.IfNotModified).readall()
+        data = blob.download_blob(
+            etag=etag, match_condition=MatchConditions.IfNotModified
+        ).readall()
 
         # Assert
         assert content == data
@@ -402,7 +416,9 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         # Modify cek to not include the version
         metadata = blob.get_blob_properties().metadata
         encryption_data = loads(metadata["encryptiondata"])
-        encrypted_key = base64.b64decode(encryption_data["WrappedContentKey"]["EncryptedKey"])
+        encrypted_key = base64.b64decode(
+            encryption_data["WrappedContentKey"]["EncryptedKey"]
+        )
         cek = kek.unwrap_key(encrypted_key, "A256KW")
         encrypted_key = kek.wrap_key(cek[8:])
         encrypted_key = base64.b64encode(encrypted_key).decode()
@@ -807,7 +823,9 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
 
         # Act
         blob.upload_blob(content, overwrite=True)
-        data = blob.download_blob(offset=3 * 1024 * 1024, length=2 * 1024 * 1024).readall()
+        data = blob.download_blob(
+            offset=3 * 1024 * 1024, length=2 * 1024 * 1024
+        ).readall()
 
         # Assert
         assert content[3 * 1024 * 1024 : 5 * 1024 * 1024] == data
@@ -1204,7 +1222,9 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         self.enable_encryption_v2(kek)
 
         def assert_user_agent(request):
-            assert request.http_request.headers["User-Agent"].startswith("azstorage-clientsideencryption/2.0 ")
+            assert request.http_request.headers["User-Agent"].startswith(
+                "azstorage-clientsideencryption/2.0 "
+            )
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         content = b"Hello World Encrypted!"
@@ -1234,8 +1254,15 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         # Test method level keyword
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
 
-        blob.upload_blob(content, overwrite=True, raw_request_hook=assert_user_agent, user_agent=app_id)
-        blob.download_blob(raw_request_hook=assert_user_agent, user_agent=app_id).readall()
+        blob.upload_blob(
+            content,
+            overwrite=True,
+            raw_request_hook=assert_user_agent,
+            user_agent=app_id,
+        )
+        blob.download_blob(
+            raw_request_hook=assert_user_agent, user_agent=app_id
+        ).readall()
 
         # Test client constructor level keyword
         bsc = BlobServiceClient(

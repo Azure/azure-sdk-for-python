@@ -56,7 +56,9 @@ def main():
         if copy_id is not None:
             copied_blob.abort_copy(copy_id)
         else:
-            print("copy_id was unexpectedly None, check if the operation completed successfully.")
+            print(
+                "copy_id was unexpectedly None, check if the operation completed successfully."
+            )
             sys.exit(1)
         props = copied_blob.get_blob_properties()
         print(props.copy.status)

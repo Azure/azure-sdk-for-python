@@ -35,7 +35,9 @@ async def main():
     async with blob_service_client:
         source_blob = "https://www.gutenberg.org/files/59466/59466-0.txt"
         await blob_service_client.create_container("mycontainerasync")
-        copied_blob = blob_service_client.get_blob_client("mycontainerasync", "59466-0.txt")
+        copied_blob = blob_service_client.get_blob_client(
+            "mycontainerasync", "59466-0.txt"
+        )
         # Copy started"
         await copied_blob.start_copy_from_url(source_blob)
         for i in range(10):
@@ -58,7 +60,9 @@ async def main():
             if copy_id is not None:
                 await copied_blob.abort_copy(copy_id)
             else:
-                print("copy_id was unexpectedly None, check if the operation completed successfully.")
+                print(
+                    "copy_id was unexpectedly None, check if the operation completed successfully."
+                )
                 sys.exit(1)
             props = await copied_blob.get_blob_properties()
             print(props.copy.status)

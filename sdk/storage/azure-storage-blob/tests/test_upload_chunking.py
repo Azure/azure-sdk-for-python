@@ -26,7 +26,12 @@ class StorageBlobUploadChunkingTest(unittest.TestCase):
         expected_data = data[0 : 6 * 1024 * 1024]
         wrapped_stream = BytesIO(data)  # simulate stream given by user
         lockObj = Lock()  # simulate multi-threaded environment
-        substream = SubStream(wrapped_stream, stream_begin_index=0, length=6 * 1024 * 1024, lockObj=lockObj)
+        substream = SubStream(
+            wrapped_stream,
+            stream_begin_index=0,
+            length=6 * 1024 * 1024,
+            lockObj=lockObj,
+        )
 
         try:
             # substream should start with position at 0
@@ -78,7 +83,12 @@ class StorageBlobUploadChunkingTest(unittest.TestCase):
         expected_data = data[0 : 2 * 1024 * 1024]
         wrapped_stream = BytesIO(expected_data)  # simulate stream given by user
         lockObj = Lock()  # simulate multi-threaded environment
-        substream = SubStream(wrapped_stream, stream_begin_index=0, length=2 * 1024 * 1024, lockObj=lockObj)
+        substream = SubStream(
+            wrapped_stream,
+            stream_begin_index=0,
+            length=2 * 1024 * 1024,
+            lockObj=lockObj,
+        )
 
         try:
             # substream should start with position at 0

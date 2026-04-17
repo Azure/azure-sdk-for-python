@@ -16,7 +16,9 @@ from test_helpers import MockLegacyTransport
 
 class TestStorageTransports(StorageRecordedTestCase):
     def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
+        self.bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=key.secret
+        )
         self.container_name = self.get_resource_name("utcontainer")
         if self.is_live:
             try:

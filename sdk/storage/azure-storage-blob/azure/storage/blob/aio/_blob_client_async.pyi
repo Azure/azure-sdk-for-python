@@ -67,7 +67,13 @@ class BlobClient(  # type: ignore[misc]
         blob_name: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                AsyncTokenCredential,
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -85,7 +91,10 @@ class BlobClient(  # type: ignore[misc]
     ) -> None: ...
     async def __aenter__(self) -> Self: ...
     async def __aexit__(
-        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
     ) -> None: ...
     async def close(self) -> None: ...
     @classmethod
@@ -93,7 +102,13 @@ class BlobClient(  # type: ignore[misc]
         cls,
         blob_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                AsyncTokenCredential,
+            ]
         ] = None,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         *,
@@ -118,7 +133,13 @@ class BlobClient(  # type: ignore[misc]
         blob_name: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                AsyncTokenCredential,
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -279,10 +300,16 @@ class BlobClient(  # type: ignore[misc]
         **kwargs: Any
     ) -> None: ...
     @distributed_trace_async
-    async def undelete_blob(self, *, timeout: Optional[int] = None, **kwargs: Any) -> None: ...
+    async def undelete_blob(
+        self, *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> None: ...
     @distributed_trace_async
     async def exists(
-        self, *, version_id: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        version_id: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> bool: ...
     @distributed_trace_async
     async def get_blob_properties(
@@ -340,11 +367,20 @@ class BlobClient(  # type: ignore[misc]
     ) -> Dict[str, str]: ...
     @distributed_trace_async
     async def delete_immutability_policy(
-        self, *, version_id: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        version_id: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> None: ...
     @distributed_trace_async
     async def set_legal_hold(
-        self, legal_hold: bool, *, version_id: Optional[str] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        legal_hold: bool,
+        *,
+        version_id: Optional[str] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any
     ) -> Dict[str, Union[str, datetime, bool]]: ...
     @distributed_trace_async
     async def create_page_blob(
@@ -436,7 +472,9 @@ class BlobClient(  # type: ignore[misc]
         **kwargs: Any
     ) -> Dict[str, Union[str, datetime]]: ...
     @distributed_trace_async
-    async def abort_copy(self, copy_id: Union[str, Dict[str, Any], BlobProperties], **kwargs: Any) -> None: ...
+    async def abort_copy(
+        self, copy_id: Union[str, Dict[str, Any], BlobProperties], **kwargs: Any
+    ) -> None: ...
     @distributed_trace_async
     async def acquire_lease(
         self,

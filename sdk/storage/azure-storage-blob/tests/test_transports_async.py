@@ -18,7 +18,9 @@ from test_helpers_async import AsyncStream, MockLegacyTransport
 
 class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
     async def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
+        self.bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=key.secret
+        )
         self.container_name = self.get_resource_name("utcontainer")
         self.byte_data = self.get_random_bytes(1024)
         if self.is_live:
@@ -70,10 +72,14 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
 
         data = b"Hello Async World!"
         stream = AsyncStream(data)
-        resp = await blob_client.upload_blob(stream, overwrite=True, validate_content=True)
+        resp = await blob_client.upload_blob(
+            stream, overwrite=True, validate_content=True
+        )
         assert resp is not None
 
-        blob_data = await (await blob_client.download_blob(validate_content=True)).read()
+        blob_data = await (
+            await blob_client.download_blob(validate_content=True)
+        ).read()
         assert blob_data == b"Hello Async World!"  # data is fixed by mock transport
 
         resp = await blob_client.delete_blob()
@@ -126,10 +132,14 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
 
         data = b"Hello Async World!"
         stream = AsyncStream(data)
-        resp = await blob_client.upload_blob(stream, overwrite=True, validate_content=True)
+        resp = await blob_client.upload_blob(
+            stream, overwrite=True, validate_content=True
+        )
         assert resp is not None
 
-        blob_data = await (await blob_client.download_blob(validate_content=True)).read()
+        blob_data = await (
+            await blob_client.download_blob(validate_content=True)
+        ).read()
         assert blob_data == b"Hello Async World!"
 
         resp = await blob_client.delete_blob()
@@ -182,10 +192,14 @@ class TestStorageTransportsAsync(AsyncStorageRecordedTestCase):
 
         data = b"Hello Async World!"
         stream = AsyncStream(data)
-        resp = await blob_client.upload_blob(stream, overwrite=True, validate_content=True)
+        resp = await blob_client.upload_blob(
+            stream, overwrite=True, validate_content=True
+        )
         assert resp is not None
 
-        blob_data = await (await blob_client.download_blob(validate_content=True)).read()
+        blob_data = await (
+            await blob_client.download_blob(validate_content=True)
+        ).read()
         assert blob_data == b"Hello Async World!"
 
         resp = await blob_client.delete_blob()

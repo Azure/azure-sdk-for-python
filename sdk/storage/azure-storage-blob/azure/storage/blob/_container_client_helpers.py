@@ -38,7 +38,9 @@ def _parse_url(account_url: str, container_name: str) -> Tuple["ParseResult", An
     return parsed_url, sas_token
 
 
-def _format_url(container_name: Union[bytes, str], hostname: str, scheme: str, query_str: str) -> str:
+def _format_url(
+    container_name: Union[bytes, str], hostname: str, scheme: str, query_str: str
+) -> str:
     if isinstance(container_name, str):
         container_name = container_name.encode("UTF-8")
     return f"{scheme}://{hostname}/{quote(container_name)}{query_str}"
@@ -93,28 +95,40 @@ def _generate_delete_blobs_subrequest_options(
     # Construct headers
     header_parameters = {}
     if delete_snapshots is not None:
-        header_parameters["x-ms-delete-snapshots"] = client._serialize.header(  # pylint: disable=protected-access
-            "delete_snapshots", delete_snapshots, "DeleteSnapshotsOptionType"
+        header_parameters["x-ms-delete-snapshots"] = (
+            client._serialize.header(  # pylint: disable=protected-access
+                "delete_snapshots", delete_snapshots, "DeleteSnapshotsOptionType"
+            )
         )
     if lease_id is not None:
-        header_parameters["x-ms-lease-id"] = client._serialize.header(  # pylint: disable=protected-access
-            "lease_id", lease_id, "str"
+        header_parameters["x-ms-lease-id"] = (
+            client._serialize.header(  # pylint: disable=protected-access
+                "lease_id", lease_id, "str"
+            )
         )
     if if_modified_since is not None:
-        header_parameters["If-Modified-Since"] = client._serialize.header(  # pylint: disable=protected-access
-            "if_modified_since", if_modified_since, "rfc-1123"
+        header_parameters["If-Modified-Since"] = (
+            client._serialize.header(  # pylint: disable=protected-access
+                "if_modified_since", if_modified_since, "rfc-1123"
+            )
         )
     if if_unmodified_since is not None:
-        header_parameters["If-Unmodified-Since"] = client._serialize.header(  # pylint: disable=protected-access
-            "if_unmodified_since", if_unmodified_since, "rfc-1123"
+        header_parameters["If-Unmodified-Since"] = (
+            client._serialize.header(  # pylint: disable=protected-access
+                "if_unmodified_since", if_unmodified_since, "rfc-1123"
+            )
         )
     if if_match is not None:
-        header_parameters["If-Match"] = client._serialize.header(  # pylint: disable=protected-access
-            "if_match", if_match, "str"
+        header_parameters["If-Match"] = (
+            client._serialize.header(  # pylint: disable=protected-access
+                "if_match", if_match, "str"
+            )
         )
     if if_none_match is not None:
-        header_parameters["If-None-Match"] = client._serialize.header(  # pylint: disable=protected-access
-            "if_none_match", if_none_match, "str"
+        header_parameters["If-None-Match"] = (
+            client._serialize.header(  # pylint: disable=protected-access
+                "if_none_match", if_none_match, "str"
+            )
         )
     if if_tags is not None:
         header_parameters["x-ms-if-tags"] = client._serialize.header(
@@ -158,11 +172,15 @@ def _generate_delete_blobs_options(
                 delete_snapshots=delete_snapshots or blob.get("delete_snapshots"),
                 lease=blob.get("lease_id"),
                 if_modified_since=if_modified_since or blob.get("if_modified_since"),
-                if_unmodified_since=if_unmodified_since or blob.get("if_unmodified_since"),
+                if_unmodified_since=if_unmodified_since
+                or blob.get("if_unmodified_since"),
                 etag=blob.get("etag"),
-                if_tags_match_condition=if_tags_match_condition or blob.get("if_tags_match_condition"),
+                if_tags_match_condition=if_tags_match_condition
+                or blob.get("if_tags_match_condition"),
                 match_condition=(
-                    blob.get("match_condition") or MatchConditions.IfNotModified if blob.get("etag") else None
+                    blob.get("match_condition") or MatchConditions.IfNotModified
+                    if blob.get("etag")
+                    else None
                 ),
                 timeout=blob.get("timeout"),
             )
@@ -175,7 +193,9 @@ def _generate_delete_blobs_options(
                 if_tags_match_condition=if_tags_match_condition,
             )
 
-        query_parameters, header_parameters = _generate_delete_blobs_subrequest_options(client, **options)
+        query_parameters, header_parameters = _generate_delete_blobs_subrequest_options(
+            client, **options
+        )
 
         req = HttpRequest(
             "DELETE",
@@ -229,7 +249,9 @@ def _generate_set_tiers_subrequest_options(
         query_parameters["timeout"] = client._serialize.query(
             "timeout", timeout, "int", minimum=0
         )  # pylint: disable=protected-access
-    query_parameters["comp"] = client._serialize.query("comp", comp, "str")  # pylint: disable=protected-access
+    query_parameters["comp"] = client._serialize.query(
+        "comp", comp, "str"
+    )  # pylint: disable=protected-access
 
     # Construct headers
     header_parameters = {}
@@ -237,8 +259,10 @@ def _generate_set_tiers_subrequest_options(
         "tier", tier, "str"
     )  # pylint: disable=protected-access
     if rehydrate_priority is not None:
-        header_parameters["x-ms-rehydrate-priority"] = client._serialize.header(  # pylint: disable=protected-access
-            "rehydrate_priority", rehydrate_priority, "str"
+        header_parameters["x-ms-rehydrate-priority"] = (
+            client._serialize.header(  # pylint: disable=protected-access
+                "rehydrate_priority", rehydrate_priority, "str"
+            )
         )
     if lease_id is not None:
         header_parameters["x-ms-lease-id"] = client._serialize.header(
@@ -280,20 +304,28 @@ def _generate_set_tiers_options(
         if not isinstance(blob, str):
             blob_name = blob.get("name")
             tier = blob_tier or blob.get("blob_tier")
-            query_parameters, header_parameters = _generate_set_tiers_subrequest_options(
-                client=client,
-                tier=tier,
-                snapshot=blob.get("snapshot"),
-                version_id=blob.get("version_id"),
-                rehydrate_priority=rehydrate_priority or blob.get("rehydrate_priority"),
-                lease_access_conditions=blob.get("lease_id"),
-                if_tags=if_tags or blob.get("if_tags_match_condition"),
-                timeout=timeout or blob.get("timeout"),
+            query_parameters, header_parameters = (
+                _generate_set_tiers_subrequest_options(
+                    client=client,
+                    tier=tier,
+                    snapshot=blob.get("snapshot"),
+                    version_id=blob.get("version_id"),
+                    rehydrate_priority=rehydrate_priority
+                    or blob.get("rehydrate_priority"),
+                    lease_access_conditions=blob.get("lease_id"),
+                    if_tags=if_tags or blob.get("if_tags_match_condition"),
+                    timeout=timeout or blob.get("timeout"),
+                )
             )
         else:
             blob_name = blob
-            query_parameters, header_parameters = _generate_set_tiers_subrequest_options(
-                client, blob_tier, rehydrate_priority=rehydrate_priority, if_tags=if_tags
+            query_parameters, header_parameters = (
+                _generate_set_tiers_subrequest_options(
+                    client,
+                    blob_tier,
+                    rehydrate_priority=rehydrate_priority,
+                    if_tags=if_tags,
+                )
             )
 
         req = HttpRequest(

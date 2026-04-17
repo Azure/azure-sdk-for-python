@@ -44,11 +44,15 @@ class BlobSamplesAsync(object):
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         async with blob_service_client:
             # Instantiate a new ContainerClient
-            container_client = blob_service_client.get_container_client("mycontainerasync11")
+            container_client = blob_service_client.get_container_client(
+                "mycontainerasync11"
+            )
 
             try:
                 # Create new container in the service
@@ -74,11 +78,15 @@ class BlobSamplesAsync(object):
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         async with blob_service_client:
             # Instantiate a new ContainerClient
-            container_client = blob_service_client.get_container_client("myblockcontainerasync1")
+            container_client = blob_service_client.get_container_client(
+                "myblockcontainerasync1"
+            )
 
             try:
                 # Create new Container in the service
@@ -124,12 +132,16 @@ class BlobSamplesAsync(object):
         from azure.storage.blob.aio import BlobServiceClient
 
         blob_service_client = BlobServiceClient.from_connection_string(
-            self.connection_string, max_single_get_size=1024 * 1024, max_chunk_get_size=1024 * 1024
+            self.connection_string,
+            max_single_get_size=1024 * 1024,
+            max_chunk_get_size=1024 * 1024,
         )
 
         async with blob_service_client:
             # Instantiate a new ContainerClient
-            container_client = blob_service_client.get_container_client("containerasync1")
+            container_client = blob_service_client.get_container_client(
+                "containerasync1"
+            )
             # Generate 4MB of data
             data = b"a" * 4 * 1024 * 1024
 
@@ -142,7 +154,9 @@ class BlobSamplesAsync(object):
                 # Upload content to block blob
                 await source_blob_client.upload_blob(data, blob_type="BlockBlob")
 
-                destination_blob_client = container_client.get_blob_client("destination_blob")
+                destination_blob_client = container_client.get_blob_client(
+                    "destination_blob"
+                )
 
                 # [START download_a_blob_in_chunk]
                 # This returns a StorageStreamDownloader.
@@ -153,7 +167,9 @@ class BlobSamplesAsync(object):
                 async for chunk in stream.chunks():
                     # process your data (anything can be done here really. `chunk` is a byte array).
                     block_id = str(uuid.uuid4())
-                    await destination_blob_client.stage_block(block_id=block_id, data=chunk)
+                    await destination_blob_client.stage_block(
+                        block_id=block_id, data=chunk
+                    )
                     block_list.append(BlobBlock(block_id=block_id))
                 # [END download_a_blob_in_chunk]
 
@@ -176,11 +192,15 @@ class BlobSamplesAsync(object):
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         async with blob_service_client:
             # Instantiate a new ContainerClient
-            container_client = blob_service_client.get_container_client("mypagecontainerasync1")
+            container_client = blob_service_client.get_container_client(
+                "mypagecontainerasync1"
+            )
 
             try:
                 # Create new Container in the Service
@@ -218,11 +238,15 @@ class BlobSamplesAsync(object):
         # Instantiate a new BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         async with blob_service_client:
             # Instantiate a new ContainerClient
-            container_client = blob_service_client.get_container_client("myappendcontainerasync1")
+            container_client = blob_service_client.get_container_client(
+                "myappendcontainerasync1"
+            )
 
             try:
                 # Create new Container in the Service

@@ -49,7 +49,13 @@ class BlobServiceClient(  # type: ignore [misc]
         self,
         account_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                AsyncTokenCredential,
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -66,7 +72,10 @@ class BlobServiceClient(  # type: ignore [misc]
     ) -> None: ...
     async def __aenter__(self) -> Self: ...
     async def __aexit__(
-        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
     ) -> None: ...
     async def close(self) -> None: ...
     @classmethod
@@ -74,7 +83,13 @@ class BlobServiceClient(  # type: ignore [misc]
         cls,
         conn_str: str,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, AsyncTokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                AsyncTokenCredential,
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -102,9 +117,13 @@ class BlobServiceClient(  # type: ignore [misc]
     @distributed_trace_async
     async def get_account_information(self, **kwargs: Any) -> Dict[str, str]: ...
     @distributed_trace_async
-    async def get_service_stats(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
+    async def get_service_stats(
+        self, *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> Dict[str, Any]: ...
     @distributed_trace_async
-    async def get_service_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
+    async def get_service_properties(
+        self, *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> Dict[str, Any]: ...
     @distributed_trace_async
     async def set_service_properties(
         self,
@@ -145,7 +164,9 @@ class BlobServiceClient(  # type: ignore [misc]
         metadata: Optional[Dict[str, str]] = None,
         public_access: Optional[Union[PublicAccess, str]] = None,
         *,
-        container_encryption_scope: Optional[Union[dict, ContainerEncryptionScope]] = None,
+        container_encryption_scope: Optional[
+            Union[dict, ContainerEncryptionScope]
+        ] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerClient: ...
@@ -181,7 +202,9 @@ class BlobServiceClient(  # type: ignore [misc]
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerClient: ...
-    def get_container_client(self, container: Union[ContainerProperties, str]) -> ContainerClient: ...
+    def get_container_client(
+        self, container: Union[ContainerProperties, str]
+    ) -> ContainerClient: ...
     def get_blob_client(
         self,
         container: Union[ContainerProperties, str],

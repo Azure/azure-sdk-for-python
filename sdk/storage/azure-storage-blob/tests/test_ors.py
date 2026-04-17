@@ -39,10 +39,26 @@ class TestStorageObjectReplication(StorageRecordedTestCase):
         assert len(result[1].rules) == 2  # 2 rules for policy 222
 
         # check individual result
-        assert result[0].rules[0].status == "Completed" if result[0].rules[0].rule_id == "111" else "Failed"
-        assert result[0].rules[1].status == "Failed" if result[0].rules[1].rule_id == "222" else "Completed"
-        assert result[1].rules[0].status == "Completed" if result[1].rules[0].rule_id == "111" else "Failed"
-        assert result[1].rules[1].status == "Failed" if result[1].rules[1].rule_id == "222" else "Completed"
+        assert (
+            result[0].rules[0].status == "Completed"
+            if result[0].rules[0].rule_id == "111"
+            else "Failed"
+        )
+        assert (
+            result[0].rules[1].status == "Failed"
+            if result[0].rules[1].rule_id == "222"
+            else "Completed"
+        )
+        assert (
+            result[1].rules[0].status == "Completed"
+            if result[1].rules[0].rule_id == "111"
+            else "Failed"
+        )
+        assert (
+            result[1].rules[1].status == "Failed"
+            if result[1].rules[1].rule_id == "222"
+            else "Completed"
+        )
 
     @pytest.mark.playback_test_only
     @BlobPreparer()
@@ -52,7 +68,10 @@ class TestStorageObjectReplication(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         blob = bsc.get_blob_client(container=self.SRC_CONTAINER, blob=self.BLOB_NAME)
 
         # Act
@@ -72,7 +91,10 @@ class TestStorageObjectReplication(StorageRecordedTestCase):
 
         # Check that the download function gives back the same result
         stream = blob.download_blob()
-        assert stream.properties.object_replication_source_properties == props.object_replication_source_properties
+        assert (
+            stream.properties.object_replication_source_properties
+            == props.object_replication_source_properties
+        )
 
     @pytest.mark.playback_test_only
     @BlobPreparer()
@@ -82,7 +104,10 @@ class TestStorageObjectReplication(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         blob = bsc.get_blob_client(container=self.DST_CONTAINER, blob=self.BLOB_NAME)
 
         # Act
@@ -94,7 +119,10 @@ class TestStorageObjectReplication(StorageRecordedTestCase):
 
         # Check that the download function gives back the same result
         stream = blob.download_blob()
-        assert stream.properties.object_replication_destination_policy == props.object_replication_destination_policy
+        assert (
+            stream.properties.object_replication_destination_policy
+            == props.object_replication_destination_policy
+        )
 
 
 # ------------------------------------------------------------------------------

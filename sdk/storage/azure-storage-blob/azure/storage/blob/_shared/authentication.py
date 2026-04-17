@@ -16,7 +16,9 @@ except ImportError:
     pass
 
 try:
-    from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=non-abstract-transport-import
+    from azure.core.pipeline.transport import (
+        AioHttpTransport,
+    )  # pylint: disable=non-abstract-transport-import
 except ImportError:
     AioHttpTransport = None
 
@@ -138,7 +140,11 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
 
     @staticmethod
     def _get_headers(request, headers_to_sign):
-        headers = dict((name.lower(), value) for name, value in request.http_request.headers.items() if value)
+        headers = dict(
+            (name.lower(), value)
+            for name, value in request.http_request.headers.items()
+            if value
+        )
         if "content-length" in headers and headers["content-length"] == "0":
             del headers["content-length"]
         return "\n".join(headers.get(x, "") for x in headers_to_sign) + "\n"
@@ -152,9 +158,16 @@ class SharedKeyCredentialPolicy(SansIOHTTPPolicy):
         try:
             if (
                 isinstance(request.context.transport, AioHttpTransport)
-                or isinstance(getattr(request.context.transport, "_transport", None), AioHttpTransport)
                 or isinstance(
-                    getattr(getattr(request.context.transport, "_transport", None), "_transport", None),
+                    getattr(request.context.transport, "_transport", None),
+                    AioHttpTransport,
+                )
+                or isinstance(
+                    getattr(
+                        getattr(request.context.transport, "_transport", None),
+                        "_transport",
+                        None,
+                    ),
                     AioHttpTransport,
                 )
             ):

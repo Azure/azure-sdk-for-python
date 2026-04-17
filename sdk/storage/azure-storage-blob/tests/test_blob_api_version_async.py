@@ -47,7 +47,9 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
 
     def test_service_client_api_version_property(self):
         self._setup()
-        service_client = BlobServiceClient("https://foo.blob.core.windows.net/account", credential="fake_key")
+        service_client = BlobServiceClient(
+            "https://foo.blob.core.windows.net/account", credential="fake_key"
+        )
         assert service_client.api_version == self.api_version_2
         assert service_client._client._config.version == self.api_version_2
 
@@ -55,7 +57,9 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
             service_client.api_version = "foo"
 
         service_client = BlobServiceClient(
-            "https://foo.blob.core.windows.net/account", credential="fake_key", api_version=self.api_version_1
+            "https://foo.blob.core.windows.net/account",
+            credential="fake_key",
+            api_version=self.api_version_1,
         )
         assert service_client.api_version == self.api_version_1
         assert service_client._client._config.version == self.api_version_1
@@ -71,7 +75,9 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
     def test_container_client_api_version_property(self):
         self._setup()
         container_client = ContainerClient(
-            "https://foo.blob.core.windows.net/account", self.container_name, credential="fake_key"
+            "https://foo.blob.core.windows.net/account",
+            self.container_name,
+            credential="fake_key",
         )
         assert container_client.api_version == self.api_version_2
         assert container_client._client._config.version == self.api_version_2
@@ -113,7 +119,11 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
     def test_invalid_api_version(self):
         self._setup()
         with pytest.raises(ValueError) as error:
-            BlobServiceClient("https://foo.blob.core.windows.net/account", credential="fake_key", api_version="foo")
+            BlobServiceClient(
+                "https://foo.blob.core.windows.net/account",
+                credential="fake_key",
+                api_version="foo",
+            )
         assert str(error.value).startswith("Unsupported API version 'foo'.")
 
         with pytest.raises(ValueError) as error:
@@ -163,7 +173,9 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
 
         # Act
         ranges1, cleared1 = await blob.get_page_ranges(previous_snapshot_diff=snapshot1)
-        ranges2, cleared2 = await blob.get_page_ranges(previous_snapshot_diff=snapshot2["snapshot"])
+        ranges2, cleared2 = await blob.get_page_ranges(
+            previous_snapshot_diff=snapshot2["snapshot"]
+        )
 
         # Assert
         assert ranges1 is not None
@@ -192,7 +204,10 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        with mock.patch("azure.storage.blob._serialize._SUPPORTED_API_VERSIONS", [INVALID_X_MS_VERSION]):
+        with mock.patch(
+            "azure.storage.blob._serialize._SUPPORTED_API_VERSIONS",
+            [INVALID_X_MS_VERSION],
+        ):
             bsc = BlobServiceClient(
                 self.account_url(storage_account_name, "blob"),
                 credential=storage_account_key.secret,
@@ -202,8 +217,14 @@ class TestStorageBlobApiVersionAsync(AsyncStorageRecordedTestCase):
             with pytest.raises(HttpResponseError) as e:
                 await bsc.create_container(self.get_resource_name("utcontainer"))
 
-            assert "The provided service version is not enabled on this storage account." in e.value.message
-            assert f"Please see {SV_DOCS_URL} for additional information." in e.value.message
+            assert (
+                "The provided service version is not enabled on this storage account."
+                in e.value.message
+            )
+            assert (
+                f"Please see {SV_DOCS_URL} for additional information."
+                in e.value.message
+            )
 
 
 # ------------------------------------------------------------------------------

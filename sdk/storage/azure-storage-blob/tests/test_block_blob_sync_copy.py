@@ -47,9 +47,13 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # create source blob to be copied from
         self.source_blob_name = self.get_resource_name("srcblob")
-        self.source_blob_name_with_special_chars = "भारत¥test/testsubÐirÍ/" + self.get_resource_name("srcÆblob")
+        self.source_blob_name_with_special_chars = (
+            "भारत¥test/testsubÐirÍ/" + self.get_resource_name("srcÆblob")
+        )
         self.source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
-        self.source_blob_with_special_chars_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
+        self.source_blob_with_special_chars_data = self.get_random_bytes(
+            SOURCE_BLOB_SIZE
+        )
 
         blob = self.bsc.get_blob_client(self.container_name, self.source_blob_name)
         blob_with_special_chars = self.bsc.get_blob_client(
@@ -59,7 +63,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         if self.is_live:
             self.bsc.create_container(self.container_name)
             blob.upload_blob(self.source_blob_data)
-            blob_with_special_chars.upload_blob(self.source_blob_with_special_chars_data)
+            blob_with_special_chars.upload_blob(
+                self.source_blob_with_special_chars_data
+            )
 
         # generate a SAS so that it is accessible with a URL
         sas_token = self.generate_sas(
@@ -84,7 +90,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         self.source_blob_url_without_sas = blob.url
-        self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
+        self.source_blob_url = BlobClient.from_blob_url(
+            blob.url, credential=sas_token
+        ).url
         self.source_blob_url_with_special_chars = BlobClient.from_blob_url(
             blob_with_special_chars.url, credential=sas_token_for_special_chars
         ).url
@@ -96,18 +104,27 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        self._setup(storage_account_name, storage_account_key, container_prefix="container1")
+        self._setup(
+            storage_account_name, storage_account_key, container_prefix="container1"
+        )
         split = 4 * 1024
         destination_blob_name = self.get_resource_name("destblob")
-        destination_blob_client = self.bsc.get_blob_client(self.container_name, destination_blob_name)
+        destination_blob_client = self.bsc.get_blob_client(
+            self.container_name, destination_blob_name
+        )
         token = "Bearer {}".format(
-            self.get_credential(BlobServiceClient).get_token("https://storage.azure.com/.default").token
+            self.get_credential(BlobServiceClient)
+            .get_token("https://storage.azure.com/.default")
+            .token
         )
 
         # Assert this operation fails without a credential
         with pytest.raises(HttpResponseError):
             destination_blob_client.stage_block_from_url(
-                block_id=1, source_url=self.source_blob_url_without_sas, source_offset=0, source_length=split
+                block_id=1,
+                source_url=self.source_blob_url_without_sas,
+                source_offset=0,
+                source_length=split,
             )
         # Assert it passes after passing an oauth credential
         destination_blob_client.stage_block_from_url(
@@ -151,10 +168,16 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         # Act part 1: make put block from url calls
         split = 4 * 1024
         dest_blob.stage_block_from_url(
-            block_id=1, source_url=self.source_blob_url, source_offset=0, source_length=split
+            block_id=1,
+            source_url=self.source_blob_url,
+            source_offset=0,
+            source_length=split,
         )
         dest_blob.stage_block_from_url(
-            block_id=2, source_url=self.source_blob_url, source_offset=split, source_length=split
+            block_id=2,
+            source_url=self.source_blob_url,
+            source_offset=split,
+            source_length=split,
         )
 
         # Assert blocks
@@ -171,10 +194,16 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         assert content == self.source_blob_data
 
         dest_blob.stage_block_from_url(
-            block_id=3, source_url=self.source_blob_url_with_special_chars, source_offset=0, source_length=split
+            block_id=3,
+            source_url=self.source_blob_url_with_special_chars,
+            source_offset=0,
+            source_length=split,
         )
         dest_blob.stage_block_from_url(
-            block_id=4, source_url=self.source_blob_url_with_special_chars, source_offset=split, source_length=split
+            block_id=4,
+            source_url=self.source_blob_url_with_special_chars,
+            source_offset=split,
+            source_length=split,
         )
 
         # Assert blocks
@@ -243,7 +272,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # Act
-        copy_props = dest_blob.start_copy_from_url(self.source_blob_url, requires_sync=True)
+        copy_props = dest_blob.start_copy_from_url(
+            self.source_blob_url, requires_sync=True
+        )
 
         # Assert
         assert copy_props is not None
@@ -279,7 +310,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         blob_tier = StandardBlobTier.Cold
 
         # Act
-        dest_blob.start_copy_from_url(self.source_blob_url, standard_blob_tier=blob_tier, requires_sync=True)
+        dest_blob.start_copy_from_url(
+            self.source_blob_url, standard_blob_tier=blob_tier, requires_sync=True
+        )
         copy_blob_properties = dest_blob.get_blob_properties()
 
         # Assert
@@ -296,7 +329,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # Act
-        copy_props = dest_blob.start_copy_from_url(self.source_blob_url, requires_sync=True)
+        copy_props = dest_blob.start_copy_from_url(
+            self.source_blob_url, requires_sync=True
+        )
 
         # Assert
         assert copy_props["version_id"] is not None

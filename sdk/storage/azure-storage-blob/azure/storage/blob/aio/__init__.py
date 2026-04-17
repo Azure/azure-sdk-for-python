@@ -26,7 +26,13 @@ async def upload_blob_to_url(
     blob_url: str,
     data: Union[Iterable[AnyStr], IO[AnyStr]],
     credential: Optional[
-        Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+        Union[
+            str,
+            Dict[str, str],
+            "AzureNamedKeyCredential",
+            "AzureSasCredential",
+            "AsyncTokenCredential",
+        ]
     ] = None,  # pylint: disable=line-too-long
     **kwargs: Any,
 ) -> Dict[str, Any]:
@@ -81,7 +87,9 @@ async def upload_blob_to_url(
     async with BlobClient.from_blob_url(
         blob_url, credential=credential
     ) as client:  # pylint: disable=not-async-context-manager
-        return await client.upload_blob(data=data, blob_type=BlobType.BLOCKBLOB, **kwargs)
+        return await client.upload_blob(
+            data=data, blob_type=BlobType.BLOCKBLOB, **kwargs
+        )
 
 
 # Download data to specified open file-handle.
@@ -94,7 +102,13 @@ async def download_blob_from_url(
     blob_url: str,
     output: str,
     credential: Optional[
-        Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+        Union[
+            str,
+            Dict[str, str],
+            "AzureNamedKeyCredential",
+            "AzureSasCredential",
+            "AsyncTokenCredential",
+        ]
     ] = None,  # pylint: disable=line-too-long
     **kwargs: Any,
 ) -> None:

@@ -67,7 +67,9 @@ TEST_BLOB_PREFIX = "blob"
 
 class TestStorageCommonBlob(StorageRecordedTestCase):
     def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
+        self.bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=key.secret
+        )
         self.container_name = self.get_resource_name("utcontainer")
         self.source_container_name = self.get_resource_name("utcontainersource")
         if self.is_live:
@@ -88,12 +90,16 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         return blob
 
     def _create_source_blob(self, data):
-        blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX))
+        blob_client = self.bsc.get_blob_client(
+            self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX)
+        )
         blob_client.upload_blob(data, overwrite=True)
         return blob_client
 
     def _setup_remote(self, storage_account_name, key):
-        self.bsc2 = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
+        self.bsc2 = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=key.secret
+        )
         self.remote_container_name = "rmt"
 
     def _teardown(self, file_path):
@@ -110,8 +116,13 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
-    def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
-        return "Bearer " + f"{self.get_credential(BlobServiceClient).get_token(resource).token}"
+    def _get_bearer_token_string(
+        self, resource: str = "https://storage.azure.com/.default"
+    ) -> str:
+        return (
+            "Bearer "
+            + f"{self.get_credential(BlobServiceClient).get_token(resource).token}"
+        )
 
     def _create_block_blob(self, standard_blob_tier=None, overwrite=False, tags=None):
         blob_name = self._get_blob_reference()
@@ -143,7 +154,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         if not blob_data:
             blob_data = b"12345678" * 1024
         source_blob_name = self._get_blob_reference()
-        source_blob = self.bsc2.get_blob_client(self.remote_container_name, source_blob_name)
+        source_blob = self.bsc2.get_blob_client(
+            self.remote_container_name, source_blob_name
+        )
         source_blob.upload_blob(blob_data, overwrite=True)
         return source_blob
 
@@ -192,10 +205,12 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Set up destination blob without data
         blob_service_client = BlobServiceClient(
-            account_url=self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret
+            account_url=self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
         )
         destination_blob_client = blob_service_client.get_blob_client(
-            container=self.source_container_name, blob=self.get_resource_name(TEST_BLOB_PREFIX + "1")
+            container=self.source_container_name,
+            blob=self.get_resource_name(TEST_BLOB_PREFIX + "1"),
         )
 
         try:
@@ -258,7 +273,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         with pytest.raises(ResourceModifiedError):
             blob.get_blob_properties(if_tags_match_condition="\"tag1\"='first tag'")
-        blob.get_blob_properties(if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+        blob.get_blob_properties(
+            if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'"
+        )
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -286,7 +303,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         snapshot = blob.create_snapshot()
 
         # Act
-        blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=snapshot)
+        blob = self.bsc.get_blob_client(
+            self.container_name, blob_name, snapshot=snapshot
+        )
         prop = blob.get_blob_properties()
 
         # Assert
@@ -303,7 +322,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob_name = self._create_block_blob()
 
         # Act
-        blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot="1988-08-18T07:52:31.6690068Z")
+        blob = self.bsc.get_blob_client(
+            self.container_name, blob_name, snapshot="1988-08-18T07:52:31.6690068Z"
+        )
         with pytest.raises(ResourceNotFoundError):
             blob.get_blob_properties()
 
@@ -355,9 +376,15 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         with pytest.raises(ResourceModifiedError):
-            blob.upload_blob(blob_data, overwrite=True, if_tags_match_condition="\"tag1\"='first tag'")
+            blob.upload_blob(
+                blob_data,
+                overwrite=True,
+                if_tags_match_condition="\"tag1\"='first tag'",
+            )
         blob.upload_blob(
-            blob_data, overwrite=True, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'"
+            blob_data,
+            overwrite=True,
+            if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'",
         )
 
         # Assert
@@ -399,7 +426,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             resp = blob.upload_blob(blob_data, length=len(blob_data), overwrite=True)
             assert resp.get("version_id") is not None
 
-            data = blob.download_blob(encoding="utf-8", version_id=resp.get("version_id"))
+            data = blob.download_blob(
+                encoding="utf-8", version_id=resp.get("version_id")
+            )
             assert data.readall() == blob_data
             assert data.properties.get("version_id") is not None
 
@@ -587,7 +616,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        snapshot = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=blob.create_snapshot())
+        snapshot = self.bsc.get_blob_client(
+            self.container_name, blob_name, snapshot=blob.create_snapshot()
+        )
 
         # Act
         data = snapshot.download_blob()
@@ -605,7 +636,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        snapshot = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=blob.create_snapshot())
+        snapshot = self.bsc.get_blob_client(
+            self.container_name, blob_name, snapshot=blob.create_snapshot()
+        )
 
         upload_data = b"hello world again"
         blob.upload_blob(upload_data, length=len(upload_data), overwrite=True)
@@ -680,7 +713,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.set_http_headers(
-            content_settings=ContentSettings(content_language="spanish", content_disposition="inline"),
+            content_settings=ContentSettings(
+                content_language="spanish", content_disposition="inline"
+            ),
         )
 
         # Assert
@@ -702,11 +737,15 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         with pytest.raises(ResourceModifiedError):
             blob.set_http_headers(
-                content_settings=ContentSettings(content_language="spanish", content_disposition="inline"),
+                content_settings=ContentSettings(
+                    content_language="spanish", content_disposition="inline"
+                ),
                 if_tags_match_condition="\"tag1\"='first tag'",
             )
         blob.set_http_headers(
-            content_settings=ContentSettings(content_language="spanish", content_disposition="inline"),
+            content_settings=ContentSettings(
+                content_language="spanish", content_disposition="inline"
+            ),
             if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'",
         )
 
@@ -763,9 +802,13 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        blob_name = self._create_block_blob(standard_blob_tier=StandardBlobTier.Archive, overwrite=True)
+        blob_name = self._create_block_blob(
+            standard_blob_tier=StandardBlobTier.Archive, overwrite=True
+        )
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.set_standard_blob_tier(StandardBlobTier.Hot, rehydrate_priority=RehydratePriority.high)
+        blob.set_standard_blob_tier(
+            StandardBlobTier.Hot, rehydrate_priority=RehydratePriority.high
+        )
 
         # Act
         props = blob.get_blob_properties()
@@ -900,7 +943,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert len(blobs) == 2
 
         # Act
-        snapshot = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=res)
+        snapshot = self.bsc.get_blob_client(
+            self.container_name, blob_name, snapshot=res
+        )
         props = snapshot.get_blob_properties()
 
         # Assert
@@ -982,8 +1027,13 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         with pytest.raises(ResourceModifiedError):
-            blob.set_blob_metadata(metadata, if_tags_match_condition="\"tag1\"='first tag'")
-        blob.set_blob_metadata(metadata, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            blob.set_blob_metadata(
+                metadata, if_tags_match_condition="\"tag1\"='first tag'"
+            )
+        blob.set_blob_metadata(
+            metadata,
+            if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'",
+        )
 
         # Assert
         md = blob.get_blob_properties().metadata
@@ -1076,7 +1126,11 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Act
         resp = blob_client.delete_blob(version_id=resp["version_id"])
 
-        blob_list = list(self.bsc.get_container_client(self.container_name).list_blobs(include="versions"))
+        blob_list = list(
+            self.bsc.get_container_client(self.container_name).list_blobs(
+                include="versions"
+            )
+        )
 
         # Assert
         assert resp is None
@@ -1109,13 +1163,19 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         )
 
         # Act
-        blob_client_using_sas = BlobClient.from_blob_url(blob_client.url, credential=token)
+        blob_client_using_sas = BlobClient.from_blob_url(
+            blob_client.url, credential=token
+        )
         resp = blob_client_using_sas.delete_blob(version_id=version_id)
 
         # Assert
         assert resp is None
 
-        blob_list = list(self.bsc.get_container_client(self.container_name).list_blobs(include="versions"))
+        blob_list = list(
+            self.bsc.get_container_client(self.container_name).list_blobs(
+                include="versions"
+            )
+        )
         # make sure the deleted version is not in the blob version list
         for blob in blob_list:
             assert blob.version_id != version_id
@@ -1145,7 +1205,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        snapshot = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=blob.create_snapshot())
+        snapshot = self.bsc.get_blob_client(
+            self.container_name, blob_name, snapshot=blob.create_snapshot()
+        )
 
         # Act
         snapshot.delete_blob()
@@ -1273,7 +1335,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob_snapshot_2 = blob.create_snapshot()
 
         # Soft delete blob_snapshot_1
-        snapshot_1 = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=blob_snapshot_1)
+        snapshot_1 = self.bsc.get_blob_client(
+            self.container_name, blob_name, snapshot=blob_snapshot_1
+        )
         snapshot_1.delete_blob()
 
         with pytest.raises(ValueError):
@@ -1438,7 +1502,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         token = self._get_bearer_token_string()
 
         with pytest.raises(HttpResponseError):
-            destination_blob_client.start_copy_from_url(source_blob_client.url, requires_sync=True)
+            destination_blob_client.start_copy_from_url(
+                source_blob_client.url, requires_sync=True
+            )
         with pytest.raises(ValueError):
             destination_blob_client.start_copy_from_url(
                 source_blob_client.url, source_authorization=token, requires_sync=False
@@ -1462,7 +1528,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         sourceblob = "{0}/{1}/{2}".format(
-            self.account_url(storage_account_name, "blob"), self.container_name, blob_name
+            self.account_url(storage_account_name, "blob"),
+            self.container_name,
+            blob_name,
         )
 
         copyblob = self.bsc.get_blob_client(self.container_name, "blob1copy")
@@ -1492,33 +1560,50 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         if self.is_live:
             token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
-            mgmt_client = StorageManagementClient(token_credential, subscription_id, "2021-04-01")
+            mgmt_client = StorageManagementClient(
+                token_credential, subscription_id, "2021-04-01"
+            )
             property = mgmt_client.models().BlobContainer(
-                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True)
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(
+                    enabled=True
+                )
             )
             mgmt_client.blob_containers.create(
-                storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
+                blob_container=property,
             )
 
         blob_name = self._create_block_blob()
         # Act
         sourceblob = "{0}/{1}/{2}".format(
-            self.account_url(versioned_storage_account_name, "blob"), self.container_name, blob_name
+            self.account_url(versioned_storage_account_name, "blob"),
+            self.container_name,
+            blob_name,
         )
 
         copyblob = self.bsc.get_blob_client(container_name, "blob1copy")
-        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
+        expiry_time = self.get_datetime_variable(
+            variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5)
+        )
         immutability_policy = ImmutabilityPolicy(
             expiry_time=expiry_time, policy_mode=BlobImmutabilityPolicyMode.Unlocked
         )
-        copy = copyblob.start_copy_from_url(sourceblob, immutability_policy=immutability_policy, legal_hold=True)
+        copy = copyblob.start_copy_from_url(
+            sourceblob, immutability_policy=immutability_policy, legal_hold=True
+        )
 
         download_resp = copyblob.download_blob()
         assert download_resp.readall() == self.byte_data
 
         assert download_resp.properties["has_legal_hold"]
-        assert download_resp.properties["immutability_policy"]["expiry_time"] is not None
-        assert download_resp.properties["immutability_policy"]["policy_mode"] is not None
+        assert (
+            download_resp.properties["immutability_policy"]["expiry_time"] is not None
+        )
+        assert (
+            download_resp.properties["immutability_policy"]["policy_mode"] is not None
+        )
         assert copy is not None
         assert copy["copy_status"] == "success"
         assert not isinstance(copy["copy_status"], Enum)
@@ -1528,7 +1613,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             copyblob.set_legal_hold(False)
             copyblob.delete_blob()
             mgmt_client.blob_containers.delete(
-                storage_resource_group_name, versioned_storage_account_name, container_name
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
             )
 
         return variables
@@ -1547,7 +1634,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         sourceblob = "{0}/{1}/{2}".format(
-            self.account_url(storage_account_name, "blob"), self.container_name, blob_name
+            self.account_url(storage_account_name, "blob"),
+            self.container_name,
+            blob_name,
         )
 
         copyblob = self.bsc.get_blob_client(self.container_name, "blob1copy")
@@ -1557,22 +1646,41 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         tags = {"tag1": "first tag", "tag2": "secondtag", "tag3": "thirdtag"}
         with pytest.raises(ResourceModifiedError):
             copyblob.set_blob_tags(tags, if_tags_match_condition="\"tag1\"='first tag'")
-        copyblob.set_blob_tags(tags, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+        copyblob.set_blob_tags(
+            tags,
+            if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'",
+        )
 
         with pytest.raises(ResourceModifiedError):
             copyblob.get_blob_tags(if_tags_match_condition="\"tag1\"='first taga'")
-        dest_tags = copyblob.get_blob_tags(if_tags_match_condition="\"tag1\"='first tag'")
+        dest_tags = copyblob.get_blob_tags(
+            if_tags_match_condition="\"tag1\"='first tag'"
+        )
 
         assert len(dest_tags) == len(tags)
 
         with pytest.raises(ResourceModifiedError):
-            copyblob.start_copy_from_url(sourceblob, tags=tags, source_if_tags_match_condition="\"source\"='sourcetag'")
-        copyblob.start_copy_from_url(sourceblob, tags=tags, source_if_tags_match_condition="\"source\"='source tag'")
+            copyblob.start_copy_from_url(
+                sourceblob,
+                tags=tags,
+                source_if_tags_match_condition="\"source\"='sourcetag'",
+            )
+        copyblob.start_copy_from_url(
+            sourceblob,
+            tags=tags,
+            source_if_tags_match_condition="\"source\"='source tag'",
+        )
 
         with pytest.raises(ResourceModifiedError):
-            copyblob.start_copy_from_url(sourceblob, tags={"tag1": "abc"}, if_tags_match_condition="\"tag1\"='abc'")
+            copyblob.start_copy_from_url(
+                sourceblob,
+                tags={"tag1": "abc"},
+                if_tags_match_condition="\"tag1\"='abc'",
+            )
         copy = copyblob.start_copy_from_url(
-            sourceblob, tags={"tag1": "abc"}, if_tags_match_condition="\"tag1\"='first tag'"
+            sourceblob,
+            tags={"tag1": "abc"},
+            if_tags_match_condition="\"tag1\"='first tag'",
         )
 
         # Assert
@@ -1583,7 +1691,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         with pytest.raises(ResourceModifiedError):
             copyblob.download_blob(if_tags_match_condition="\"tag1\"='abc1'").readall()
-        copy_content = copyblob.download_blob(if_tags_match_condition="\"tag1\"='abc'").readall()
+        copy_content = copyblob.download_blob(
+            if_tags_match_condition="\"tag1\"='abc'"
+        ).readall()
         assert copy_content == self.byte_data
 
     @BlobPreparer()
@@ -1598,7 +1708,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         sourceblob = "{0}/{1}/{2}".format(
-            self.account_url(versioned_storage_account_name, "blob"), self.container_name, blob_name
+            self.account_url(versioned_storage_account_name, "blob"),
+            self.container_name,
+            blob_name,
         )
 
         copyblob = self.bsc.get_blob_client(self.container_name, "blob1copy")
@@ -1627,7 +1739,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         sourceblob = "{0}/{1}/{2}".format(
-            self.account_url(storage_account_name, "blob"), self.container_name, blob_name
+            self.account_url(storage_account_name, "blob"),
+            self.container_name,
+            blob_name,
         )
 
         copyblob = self.bsc.get_blob_client(self.container_name, "blob1copy")
@@ -1651,14 +1765,18 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         sourceblob = "{0}/{1}/{2}".format(
-            self.account_url(storage_account_name, "blob"), self.container_name, blob_name
+            self.account_url(storage_account_name, "blob"),
+            self.container_name,
+            blob_name,
         )
 
         blob_tier = StandardBlobTier.Archive
         rehydrate_priority = RehydratePriority.high
         copyblob = self.bsc.get_blob_client(self.container_name, "blob1copy")
         copy = copyblob.start_copy_from_url(
-            sourceblob, standard_blob_tier=blob_tier, rehydrate_priority=rehydrate_priority
+            sourceblob,
+            standard_blob_tier=blob_tier,
+            rehydrate_priority=rehydrate_priority,
         )
         copy_blob_properties = copyblob.get_blob_properties()
         copyblob.set_standard_blob_tier(StandardBlobTier.Hot)
@@ -1679,7 +1797,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        self._setup_remote(secondary_storage_account_name, secondary_storage_account_key)
+        self._setup_remote(
+            secondary_storage_account_name, secondary_storage_account_key
+        )
         self._create_remote_container()
         source_blob = self._create_remote_block_blob()
 
@@ -1701,7 +1821,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         data = b"12345678" * 1024
-        self._setup_remote(secondary_storage_account_name, secondary_storage_account_key)
+        self._setup_remote(
+            secondary_storage_account_name, secondary_storage_account_key
+        )
         self._create_remote_container()
         source_blob = self._create_remote_block_blob(blob_data=data)
         sas_token = self.generate_sas(
@@ -1824,7 +1946,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        lease = blob.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444", lease_duration=15)
+        lease = blob.acquire_lease(
+            lease_id="00000000-1111-2222-3333-444444444444", lease_duration=15
+        )
         resp = blob.upload_blob(b"hello 2", length=7, lease=lease)
         self.sleep(20)
 
@@ -1881,7 +2005,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        lease = blob.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444", lease_duration=15)
+        lease = blob.acquire_lease(
+            lease_id="00000000-1111-2222-3333-444444444444", lease_duration=15
+        )
         lease_time = lease.break_lease(lease_break_period=5)
 
         resp = blob.upload_blob(b"hello 2", length=7, lease=lease)
@@ -2004,7 +2130,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob_name = self._create_block_blob()
         blob_client = self.bsc.get_blob_client(self.container_name, blob_name)
         blob_snapshot = blob_client.create_snapshot()
-        blob_snapshot_client = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=blob_snapshot)
+        blob_snapshot_client = self.bsc.get_blob_client(
+            self.container_name, blob_name, snapshot=blob_snapshot
+        )
 
         permission = BlobSasPermissions(
             read=True,
@@ -2056,8 +2184,12 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         container = self.bsc.get_container_client(self.container_name)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
-        start = self.get_datetime_variable(variables, "start", datetime.utcnow() - timedelta(hours=1))
-        expiry = self.get_datetime_variable(variables, "expiry", datetime.utcnow() + timedelta(hours=1))
+        start = self.get_datetime_variable(
+            variables, "start", datetime.utcnow() - timedelta(hours=1)
+        )
+        expiry = self.get_datetime_variable(
+            variables, "expiry", datetime.utcnow() + timedelta(hours=1)
+        )
 
         access_policy = AccessPolicy()
         access_policy.start = start
@@ -2106,8 +2238,15 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         )
 
         # Act
-        blob = BlobClient(self.bsc.url, container_name=self.container_name, blob_name=blob_name, credential=token)
-        container = ContainerClient(self.bsc.url, container_name=self.container_name, credential=token)
+        blob = BlobClient(
+            self.bsc.url,
+            container_name=self.container_name,
+            blob_name=blob_name,
+            credential=token,
+        )
+        container = ContainerClient(
+            self.bsc.url, container_name=self.container_name, credential=token
+        )
 
         container_props = container.get_container_properties()
         blob_props = blob.get_blob_properties()
@@ -2176,7 +2315,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         )
 
         # Act
-        container_client = ContainerClient.from_container_url(container.url, credential=container_sas)
+        container_client = ContainerClient.from_container_url(
+            container.url, credential=container_sas
+        )
         blob_list = list(container_client.list_blobs())
 
         blob_client = BlobClient.from_blob_url(blob.url, credential=blob_sas)
@@ -2205,7 +2346,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert
         assert "ss=bf" in token
 
-    @pytest.mark.skip(reason="Temporarily skipping immutability test due to service bug")
+    @pytest.mark.skip(
+        reason="Temporarily skipping immutability test due to service bug"
+    )
     @BlobPreparer()
     def test_set_immutability_policy_using_sas(self, **kwargs):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
@@ -2219,12 +2362,19 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         if self.is_live:
             token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
-            mgmt_client = StorageManagementClient(token_credential, subscription_id, "2021-04-01")
+            mgmt_client = StorageManagementClient(
+                token_credential, subscription_id, "2021-04-01"
+            )
             property = mgmt_client.models().BlobContainer(
-                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True)
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(
+                    enabled=True
+                )
             )
             mgmt_client.blob_containers.create(
-                storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
+                blob_container=property,
             )
 
         blob_name = self.get_resource_name("vlwblob")
@@ -2241,13 +2391,20 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             datetime.utcnow() + timedelta(hours=1),
         )
         blob = BlobClient(
-            self.bsc.url, container_name=container_name, blob_name=blob_name, credential=account_sas_token
+            self.bsc.url,
+            container_name=container_name,
+            blob_name=blob_name,
+            credential=account_sas_token,
         )
-        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
+        expiry_time = self.get_datetime_variable(
+            variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5)
+        )
         immutability_policy = ImmutabilityPolicy(
             expiry_time=expiry_time, policy_mode=BlobImmutabilityPolicyMode.Unlocked
         )
-        resp_with_account_sas = blob.set_immutability_policy(immutability_policy=immutability_policy)
+        resp_with_account_sas = blob.set_immutability_policy(
+            immutability_policy=immutability_policy
+        )
         blob_response = requests.get(blob.url)
 
         # Assert response using account sas
@@ -2265,14 +2422,21 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
         blob1 = BlobClient(
-            self.bsc.url, container_name=container_name, blob_name=blob_name, credential=container_sas_token
+            self.bsc.url,
+            container_name=container_name,
+            blob_name=blob_name,
+            credential=container_sas_token,
         )
 
-        expiry_time2 = self.get_datetime_variable(variables, "expiry_time2", datetime.utcnow() + timedelta(seconds=5))
+        expiry_time2 = self.get_datetime_variable(
+            variables, "expiry_time2", datetime.utcnow() + timedelta(seconds=5)
+        )
         immutability_policy = ImmutabilityPolicy(
             expiry_time=expiry_time2, policy_mode=BlobImmutabilityPolicyMode.Unlocked
         )
-        resp_with_container_sas = blob1.set_immutability_policy(immutability_policy=immutability_policy)
+        resp_with_container_sas = blob1.set_immutability_policy(
+            immutability_policy=immutability_policy
+        )
         # Assert response using container sas
         assert resp_with_container_sas["immutability_policy_until_date"] is not None
         assert resp_with_container_sas["immutability_policy_mode"] is not None
@@ -2287,13 +2451,22 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             permission=BlobSasPermissions(read=True, set_immutability_policy=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        blob2 = BlobClient(self.bsc.url, container_name=container_name, blob_name=blob_name, credential=blob_sas_token)
+        blob2 = BlobClient(
+            self.bsc.url,
+            container_name=container_name,
+            blob_name=blob_name,
+            credential=blob_sas_token,
+        )
 
-        expiry_time3 = self.get_datetime_variable(variables, "expiry_time3", datetime.utcnow() + timedelta(seconds=5))
+        expiry_time3 = self.get_datetime_variable(
+            variables, "expiry_time3", datetime.utcnow() + timedelta(seconds=5)
+        )
         immutability_policy = ImmutabilityPolicy(
             expiry_time=expiry_time3, policy_mode=BlobImmutabilityPolicyMode.Unlocked
         )
-        resp_with_blob_sas = blob2.set_immutability_policy(immutability_policy=immutability_policy)
+        resp_with_blob_sas = blob2.set_immutability_policy(
+            immutability_policy=immutability_policy
+        )
 
         # Assert response using blob sas
         assert resp_with_blob_sas["immutability_policy_until_date"] is not None
@@ -2304,7 +2477,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             blob_client.set_legal_hold(False)
             blob_client.delete_blob()
             mgmt_client.blob_containers.delete(
-                storage_resource_group_name, versioned_storage_account_name, container_name
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
             )
 
         return variables
@@ -2319,7 +2494,12 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob_name = self._create_block_blob()
 
         account_sas_permission = AccountSasPermissions(
-            read=True, write=True, delete=True, add=True, permanent_delete=True, list=True
+            read=True,
+            write=True,
+            delete=True,
+            add=True,
+            permanent_delete=True,
+            list=True,
         )
         assert "y" in str(account_sas_permission)
 
@@ -2334,10 +2514,15 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         blob = BlobClient(
-            self.bsc.url, container_name=self.container_name, blob_name=blob_name, credential=AzureSasCredential(token)
+            self.bsc.url,
+            container_name=self.container_name,
+            blob_name=blob_name,
+            credential=AzureSasCredential(token),
         )
         container = ContainerClient(
-            self.bsc.url, container_name=self.container_name, credential=AzureSasCredential(token)
+            self.bsc.url,
+            container_name=self.container_name,
+            credential=AzureSasCredential(token),
         )
         blob_properties = blob.get_blob_properties()
         container_properties = container.get_container_properties()
@@ -2352,8 +2537,12 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        named_key = AzureNamedKeyCredential(storage_account_name, storage_account_key.secret)
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), named_key)
+        named_key = AzureNamedKeyCredential(
+            storage_account_name, storage_account_key.secret
+        )
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), named_key
+        )
         container_name = self._get_container_reference()
 
         # Act
@@ -2375,12 +2564,20 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         token_credential = self.get_credential(BlobServiceClient)
 
         # Action 1: make sure token works
-        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=token_credential
+        )
 
         start = self.get_datetime_variable(variables, "start", datetime.utcnow())
-        expiry = self.get_datetime_variable(variables, "expiry", datetime.utcnow() + timedelta(hours=1))
-        user_delegation_key_1 = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
-        user_delegation_key_2 = service.get_user_delegation_key(key_start_time=start, key_expiry_time=expiry)
+        expiry = self.get_datetime_variable(
+            variables, "expiry", datetime.utcnow() + timedelta(hours=1)
+        )
+        user_delegation_key_1 = service.get_user_delegation_key(
+            key_start_time=start, key_expiry_time=expiry
+        )
+        user_delegation_key_2 = service.get_user_delegation_key(
+            key_start_time=start, key_expiry_time=expiry
+        )
 
         # Assert key1 is valid
         assert user_delegation_key_1.signed_oid is not None
@@ -2395,9 +2592,15 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert user_delegation_key_1.signed_oid == user_delegation_key_2.signed_oid
         assert user_delegation_key_1.signed_tid == user_delegation_key_2.signed_tid
         assert user_delegation_key_1.signed_start == user_delegation_key_2.signed_start
-        assert user_delegation_key_1.signed_expiry == user_delegation_key_2.signed_expiry
-        assert user_delegation_key_1.signed_version == user_delegation_key_2.signed_version
-        assert user_delegation_key_1.signed_service == user_delegation_key_2.signed_service
+        assert (
+            user_delegation_key_1.signed_expiry == user_delegation_key_2.signed_expiry
+        )
+        assert (
+            user_delegation_key_1.signed_version == user_delegation_key_2.signed_version
+        )
+        assert (
+            user_delegation_key_1.signed_service == user_delegation_key_2.signed_service
+        )
         assert user_delegation_key_1.value == user_delegation_key_2.value
 
         return variables
@@ -2410,14 +2613,22 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         byte_data = self.get_random_bytes(1024)
         # Arrange
         token_credential = self.get_credential(BlobServiceClient)
-        service_client = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        service_client = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=token_credential
+        )
 
         start = self.get_datetime_variable(variables, "start", datetime.utcnow())
-        expiry = self.get_datetime_variable(variables, "expiry", datetime.utcnow() + timedelta(hours=1))
+        expiry = self.get_datetime_variable(
+            variables, "expiry", datetime.utcnow() + timedelta(hours=1)
+        )
         user_delegation_key = service_client.get_user_delegation_key(start, expiry)
 
-        container_client = service_client.create_container(self.get_resource_name("oauthcontainer"))
-        blob_client = container_client.get_blob_client(self.get_resource_name("oauthblob"))
+        container_client = service_client.create_container(
+            self.get_resource_name("oauthcontainer")
+        )
+        blob_client = container_client.get_blob_client(
+            self.get_resource_name("oauthblob")
+        )
         blob_client.upload_blob(byte_data, length=len(byte_data))
 
         token = self.generate_sas(
@@ -2451,18 +2662,24 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         token_credential = self.get_credential(BlobServiceClient)
 
         # Action 1: make sure token works
-        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=token_credential
+        )
         result = service.get_service_properties()
         assert result is not None
 
         # Action 2: change token value to make request fail
         fake_credential = FakeTokenCredential()
-        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=fake_credential)
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=fake_credential
+        )
         with pytest.raises(ClientAuthenticationError):
             service.get_service_properties()
 
         # Action 3: update token to make it working again
-        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=token_credential
+        )
         result = service.get_service_properties()
         assert result is not None
 
@@ -2477,7 +2694,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob_data = b"Helloworld"
         token_credential = self.get_credential(BlobServiceClient)
 
-        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=token_credential
+        )
         container = service.get_container_client(container_name)
 
         # Act / Assert
@@ -2501,7 +2720,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         container_name = self._get_container_reference()
         blob_name = self._get_blob_reference()
         token_credential = self.get_credential(BlobServiceClient)
-        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=token_credential
+        )
         container = service.get_container_client(container_name)
         try:
             container.create_container()
@@ -2712,10 +2933,14 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         )
 
         # Act
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=account_token)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=account_token
+        )
         bsc_info = bsc.get_account_information()
         container_client = ContainerClient(
-            self.account_url(storage_account_name, "blob"), self.container_name, credential=container_token
+            self.account_url(storage_account_name, "blob"),
+            self.container_name,
+            credential=container_token,
         )
         cc_info = container_client.get_account_information()
         blob_client = BlobClient(
@@ -2769,7 +2994,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert info.get("sku_name") is not None
         assert info.get("account_kind") is not None
 
-    @pytest.mark.skip(reason="Temporarily skipping immutability test due to service bug")
+    @pytest.mark.skip(
+        reason="Temporarily skipping immutability test due to service bug"
+    )
     @BlobPreparer()
     def test_get_account_information_with_container_sas(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
@@ -2796,7 +3023,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             permission=permission,
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        sas_container = ContainerClient.from_container_url(container.url, credential=token)
+        sas_container = ContainerClient.from_container_url(
+            container.url, credential=token
+        )
 
         # Act
         info = sas_container.get_account_information()
@@ -2876,7 +3105,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key.secret)
+            download_blob_from_url(
+                source_blob.url, temp_file, credential=storage_account_key.secret
+            )
             temp_file.seek(0)
             # Assert
             actual = temp_file.read()
@@ -2894,7 +3125,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            download_blob_from_url(source_blob.url, temp_file, credential=storage_account_key.secret)
+            download_blob_from_url(
+                source_blob.url, temp_file, credential=storage_account_key.secret
+            )
             temp_file.seek(0)
             # Assert
             actual = temp_file.read()
@@ -2913,7 +3146,10 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Act
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             download_blob_from_url(
-                source_blob.url, temp_file.name, credential=storage_account_key.secret, overwrite=True
+                source_blob.url,
+                temp_file.name,
+                credential=storage_account_key.secret,
+                overwrite=True,
             )
 
             with pytest.raises(ValueError):
@@ -2936,14 +3172,23 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         data = b"123" * 1024
         source_blob = self._create_blob(data=data)
-        file_path = "file_with_existing_file_overwrite.temp.{}.dat".format(str(uuid.uuid4()))
+        file_path = "file_with_existing_file_overwrite.temp.{}.dat".format(
+            str(uuid.uuid4())
+        )
 
         # Act
-        download_blob_from_url(source_blob.url, file_path, credential=storage_account_key.secret)
+        download_blob_from_url(
+            source_blob.url, file_path, credential=storage_account_key.secret
+        )
 
         data2 = b"ABC" * 1024
         source_blob = self._create_blob(data=data2)
-        download_blob_from_url(source_blob.url, file_path, overwrite=True, credential=storage_account_key.secret)
+        download_blob_from_url(
+            source_blob.url,
+            file_path,
+            overwrite=True,
+            credential=storage_account_key.secret,
+        )
 
         # Assert
         with open(file_path, "rb") as stream:
@@ -2994,7 +3239,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        uploaded = upload_blob_to_url(blob.url, data, credential=storage_account_key.secret)
+        uploaded = upload_blob_to_url(
+            blob.url, data, credential=storage_account_key.secret
+        )
 
         # Assert
         assert uploaded is not None
@@ -3034,7 +3281,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob.upload_blob(b"existing_data")
 
         # Act
-        uploaded = upload_blob_to_url(blob.url, data, overwrite=True, credential=storage_account_key.secret)
+        uploaded = upload_blob_to_url(
+            blob.url, data, overwrite=True, credential=storage_account_key.secret
+        )
 
         # Assert
         assert uploaded is not None
@@ -3053,7 +3302,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        uploaded = upload_blob_to_url(blob.url, data, credential=storage_account_key.secret)
+        uploaded = upload_blob_to_url(
+            blob.url, data, credential=storage_account_key.secret
+        )
 
         # Assert
         assert uploaded is not None
@@ -3077,7 +3328,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            uploaded = upload_blob_to_url(blob.url, data, credential=storage_account_key.secret)
+            uploaded = upload_blob_to_url(
+                blob.url, data, credential=storage_account_key.secret
+            )
 
             # Assert
             assert uploaded is not None
@@ -3108,7 +3361,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         container_name = self.get_resource_name("utcontainersync")
         transport = RequestsTransport()
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, transport=transport
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+            transport=transport,
         )
         blob_name = self._get_blob_reference()
         with bsc:
@@ -3135,7 +3390,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob.upload_blob(data_for_the_second_version, overwrite=True)
         blob.set_standard_blob_tier(StandardBlobTier.Cool)
         blob.set_standard_blob_tier(
-            StandardBlobTier.Cool, rehydrate_priority=RehydratePriority.high, version_id=resp["version_id"]
+            StandardBlobTier.Cool,
+            rehydrate_priority=RehydratePriority.high,
+            version_id=resp["version_id"],
         )
         blob.set_standard_blob_tier(StandardBlobTier.Hot, version_id=resp["version_id"])
         # Act
@@ -3161,7 +3418,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         retry = LinearRetry(backoff=2, random_jitter_range=1, retry_total=4)
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), credential=token_credential, retry_policy=retry
+            self.account_url(storage_account_name, "blob"),
+            credential=token_credential,
+            retry_policy=retry,
         )
         self.container_name = self.get_resource_name("retrytest")
         container = bsc.get_container_client(self.container_name)
@@ -3185,12 +3444,19 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         if self.is_live:
             token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
-            mgmt_client = StorageManagementClient(token_credential, subscription_id, "2021-04-01")
+            mgmt_client = StorageManagementClient(
+                token_credential, subscription_id, "2021-04-01"
+            )
             property = mgmt_client.models().BlobContainer(
-                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True)
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(
+                    enabled=True
+                )
             )
             mgmt_client.blob_containers.create(
-                storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
+                blob_container=property,
             )
 
         # Act
@@ -3198,7 +3464,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         blob.upload_blob(b"abc", overwrite=True)
 
-        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
+        expiry_time = self.get_datetime_variable(
+            variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5)
+        )
         immutability_policy = ImmutabilityPolicy(
             expiry_time=expiry_time, policy_mode=BlobImmutabilityPolicyMode.Unlocked
         )
@@ -3224,7 +3492,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             blob.set_legal_hold(False)
             blob.delete_blob()
             mgmt_client.blob_containers.delete(
-                storage_resource_group_name, versioned_storage_account_name, container_name
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
             )
 
         return variables
@@ -3243,12 +3513,19 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         if self.is_live:
             token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
-            mgmt_client = StorageManagementClient(token_credential, subscription_id, "2021-04-01")
+            mgmt_client = StorageManagementClient(
+                token_credential, subscription_id, "2021-04-01"
+            )
             property = mgmt_client.models().BlobContainer(
-                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True)
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(
+                    enabled=True
+                )
             )
             mgmt_client.blob_containers.create(
-                storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
+                blob_container=property,
             )
 
         # Act
@@ -3275,7 +3552,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             blob.set_legal_hold(False)
             blob.delete_blob()
             mgmt_client.blob_containers.delete(
-                storage_resource_group_name, versioned_storage_account_name, container_name
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
             )
 
     @pytest.mark.playback_test_only
@@ -3292,12 +3571,19 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         if self.is_live:
             token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
-            mgmt_client = StorageManagementClient(token_credential, subscription_id, "2021-04-01")
+            mgmt_client = StorageManagementClient(
+                token_credential, subscription_id, "2021-04-01"
+            )
             property = mgmt_client.models().BlobContainer(
-                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True)
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(
+                    enabled=True
+                )
             )
             mgmt_client.blob_containers.create(
-                storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
+                blob_container=property,
             )
 
         # Act
@@ -3305,11 +3591,18 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         content = b"abcedfg"
 
-        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
+        expiry_time = self.get_datetime_variable(
+            variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5)
+        )
         immutability_policy = ImmutabilityPolicy(
             expiry_time=expiry_time, policy_mode=BlobImmutabilityPolicyMode.Unlocked
         )
-        blob.upload_blob(content, immutability_policy=immutability_policy, legal_hold=True, overwrite=True)
+        blob.upload_blob(
+            content,
+            immutability_policy=immutability_policy,
+            legal_hold=True,
+            overwrite=True,
+        )
 
         download_resp = blob.download_blob()
 
@@ -3317,8 +3610,12 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             blob.delete_blob()
 
         assert download_resp.properties["has_legal_hold"]
-        assert download_resp.properties["immutability_policy"]["expiry_time"] is not None
-        assert download_resp.properties["immutability_policy"]["policy_mode"] is not None
+        assert (
+            download_resp.properties["immutability_policy"]["expiry_time"] is not None
+        )
+        assert (
+            download_resp.properties["immutability_policy"]["policy_mode"] is not None
+        )
 
         # Cleanup
         if self.is_live:
@@ -3326,7 +3623,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             blob.set_legal_hold(False)
             blob.delete_blob()
             mgmt_client.blob_containers.delete(
-                storage_resource_group_name, versioned_storage_account_name, container_name
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
             )
 
         return variables
@@ -3345,12 +3644,19 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         if self.is_live:
             token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
-            mgmt_client = StorageManagementClient(token_credential, subscription_id, "2021-04-01")
+            mgmt_client = StorageManagementClient(
+                token_credential, subscription_id, "2021-04-01"
+            )
             property = mgmt_client.models().BlobContainer(
-                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True)
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(
+                    enabled=True
+                )
             )
             mgmt_client.blob_containers.create(
-                storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
+                blob_container=property,
             )
 
         # Act
@@ -3359,13 +3665,22 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         content = b"abcedfg"
 
-        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
+        expiry_time = self.get_datetime_variable(
+            variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5)
+        )
         immutability_policy = ImmutabilityPolicy(
             expiry_time=expiry_time, policy_mode=BlobImmutabilityPolicyMode.Unlocked
         )
-        blob.upload_blob(content, immutability_policy=immutability_policy, legal_hold=True, overwrite=True)
+        blob.upload_blob(
+            content,
+            immutability_policy=immutability_policy,
+            legal_hold=True,
+            overwrite=True,
+        )
 
-        blob_list = list(container_client.list_blobs(include=["immutabilitypolicy", "legalhold"]))
+        blob_list = list(
+            container_client.list_blobs(include=["immutabilitypolicy", "legalhold"])
+        )
 
         assert blob_list[0]["has_legal_hold"]
         assert blob_list[0]["immutability_policy"]["expiry_time"] is not None
@@ -3376,7 +3691,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             blob.set_legal_hold(False)
             blob.delete_blob()
             mgmt_client.blob_containers.delete(
-                storage_resource_group_name, versioned_storage_account_name, container_name
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
             )
 
         return variables
@@ -3395,26 +3712,39 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         if self.is_live:
             token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
-            mgmt_client = StorageManagementClient(token_credential, subscription_id, "2021-04-01")
+            mgmt_client = StorageManagementClient(
+                token_credential, subscription_id, "2021-04-01"
+            )
             property = mgmt_client.models().BlobContainer(
-                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True)
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(
+                    enabled=True
+                )
             )
             mgmt_client.blob_containers.create(
-                storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
+                blob_container=property,
             )
 
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(container_name, blob_name)
         blob.upload_blob(self.byte_data, length=len(self.byte_data), overwrite=True)
-        snapshot_blob = self.bsc.get_blob_client(container_name, blob_name, snapshot=blob.create_snapshot())
+        snapshot_blob = self.bsc.get_blob_client(
+            container_name, blob_name, snapshot=blob.create_snapshot()
+        )
 
         try:
-            expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
+            expiry_time = self.get_datetime_variable(
+                variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5)
+            )
             immutability_policy = ImmutabilityPolicy(
                 expiry_time=expiry_time, policy_mode=BlobImmutabilityPolicyMode.Unlocked
             )
 
-            snapshot_blob.set_immutability_policy(immutability_policy=immutability_policy)
+            snapshot_blob.set_immutability_policy(
+                immutability_policy=immutability_policy
+            )
             props = snapshot_blob.get_blob_properties()
             assert props["immutability_policy"]["expiry_time"] is not None
             assert props["immutability_policy"]["policy_mode"] == "unlocked"
@@ -3447,12 +3777,19 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         if self.is_live:
             token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
-            mgmt_client = StorageManagementClient(token_credential, subscription_id, "2021-04-01")
+            mgmt_client = StorageManagementClient(
+                token_credential, subscription_id, "2021-04-01"
+            )
             property = mgmt_client.models().BlobContainer(
-                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True)
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(
+                    enabled=True
+                )
             )
             mgmt_client.blob_containers.create(
-                storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
+                blob_container=property,
             )
 
         blob_name = self._get_blob_reference()
@@ -3461,7 +3798,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         root_blob.upload_blob(b"abcdef", overwrite=True)
 
         try:
-            expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
+            expiry_time = self.get_datetime_variable(
+                variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5)
+            )
             immutability_policy = ImmutabilityPolicy(
                 expiry_time=expiry_time, policy_mode=BlobImmutabilityPolicyMode.Unlocked
             )
@@ -3469,7 +3808,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
                 container_name, blob_name, version_id=old_version_dict["version_id"]
             )
 
-            old_version_blob.set_immutability_policy(immutability_policy=immutability_policy)
+            old_version_blob.set_immutability_policy(
+                immutability_policy=immutability_policy
+            )
             props = old_version_blob.get_blob_properties()
             assert props["immutability_policy"]["expiry_time"] is not None
             assert props["immutability_policy"]["policy_mode"] == "unlocked"
@@ -3564,7 +3905,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         v1_blob.set_standard_blob_tier(StandardBlobTier.Cool)
         v1_blob.set_blob_tags(tags_a)
-        v2_blob.set_standard_blob_tier(StandardBlobTier.Cool, version_id=v3_props["version_id"])
+        v2_blob.set_standard_blob_tier(
+            StandardBlobTier.Cool, version_id=v3_props["version_id"]
+        )
         v1_blob.set_blob_tags(tags_c, version_id=v3_props["version_id"])
         v2_blob.set_standard_blob_tier(StandardBlobTier.Hot)
         v2_blob.set_blob_tags(tags_b)
@@ -3572,7 +3915,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Assert
         assert (v1_blob.download_blob()).readall() == blob_data
         assert (v2_blob.download_blob()).readall() == blob_data * 2
-        assert (v1_blob.download_blob(version_id=v3_props["version_id"])).readall() == blob_data * 3
+        assert (
+            v1_blob.download_blob(version_id=v3_props["version_id"])
+        ).readall() == blob_data * 3
         assert v1_blob.get_blob_tags() == tags_a
         assert v2_blob.get_blob_tags() == tags_b
         assert v2_blob.get_blob_tags(version_id=v3_props["version_id"]) == tags_c
@@ -3644,7 +3989,11 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
             "00000000-0000-0000-0000-000000000000" + "a",
         )
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=creds, retry_total=0)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=creds,
+            retry_total=0,
+        )
         container = bsc.get_container_client("testing")
 
         # Act
@@ -3659,7 +4008,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Arrange
         self._setup(storage_account_name, storage_account_key)
-        blob = self.bsc.get_container_client(self.container_name).get_blob_client(self._get_blob_reference())
+        blob = self.bsc.get_container_client(self.container_name).get_blob_client(
+            self._get_blob_reference()
+        )
         data = b"abcde" * 100
         stream = BytesIO(data)
         read_length = 207
@@ -3682,7 +4033,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self.bsc._config.max_single_put_size = 1024
         self.bsc._config.max_block_size = 1024
 
-        blob = self.bsc.get_container_client(self.container_name).get_blob_client(self._get_blob_reference())
+        blob = self.bsc.get_container_client(self.container_name).get_blob_client(
+            self._get_blob_reference()
+        )
         data = b"abcde" * 1024
         stream = BytesIO(data)
         length = 3000
@@ -3713,12 +4066,17 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob2_name = self._get_blob_reference() + "2"
         blob2 = self.bsc.get_blob_client(self.container_name, blob2_name)
         blob2.upload_blob(
-            self.byte_data, length=len(self.byte_data), standard_blob_tier=StandardBlobTier.COOL, overwrite=True
+            self.byte_data,
+            length=len(self.byte_data),
+            standard_blob_tier=StandardBlobTier.COOL,
+            overwrite=True,
         )
         blob1.set_standard_blob_tier("Cool")
         blob2.set_standard_blob_tier("Hot")
 
-        late = self.get_datetime_variable(variables, "late", datetime.utcnow() + timedelta(hours=1))
+        late = self.get_datetime_variable(
+            variables, "late", datetime.utcnow() + timedelta(hours=1)
+        )
 
         with pytest.raises(HttpResponseError):
             blob1.delete_blob(access_tier_if_modified_since=late)
@@ -3747,7 +4105,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         content_settings = ContentSettings(content_encoding="gzip")
 
         # Act / Assert
-        blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
+        blob.upload_blob(
+            data=compressed_data, overwrite=True, content_settings=content_settings
+        )
 
         result = blob.download_blob(decompress=True).readall()
         assert result == decompressed_data
@@ -3776,7 +4136,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         content_settings = ContentSettings(content_encoding="gzip")
 
         # Act / Assert
-        blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
+        blob.upload_blob(
+            data=compressed_data, overwrite=True, content_settings=content_settings
+        )
 
         result = blob.download_blob(decompress=False).readall()
         assert result == compressed_data
@@ -3787,8 +4149,12 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
 
         token_credential = self.get_credential(BlobServiceClient)
-        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
-        container_name, blob_name = self.get_resource_name("oauthcontainer"), self.get_resource_name("oauthblob")
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=token_credential
+        )
+        container_name, blob_name = self.get_resource_name(
+            "oauthcontainer"
+        ), self.get_resource_name("oauthblob")
         container = service.create_container(container_name)
         blob = container.get_blob_client(blob_name)
         blob.upload_blob(b"abc")
@@ -3839,7 +4205,8 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         token_credential = self.get_credential(BlobServiceClient)
         service = BlobServiceClient(
-            account_url=self.account_url(storage_account_name, "blob"), credential=token_credential
+            account_url=self.account_url(storage_account_name, "blob"),
+            credential=token_credential,
         )
         start = datetime.utcnow()
         expiry = datetime.utcnow() + timedelta(hours=1)
@@ -3848,7 +4215,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         user_delegation_oid = decoded.get("oid")
         delegated_user_tid = decoded.get("tid")
         user_delegation_key = service.get_user_delegation_key(
-            key_start_time=start, key_expiry_time=expiry, delegated_user_tid=delegated_user_tid
+            key_start_time=start,
+            key_expiry_time=expiry,
+            delegated_user_tid=delegated_user_tid,
         )
 
         assert user_delegation_key is not None
@@ -3893,7 +4262,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         assert "sduoid=" + user_delegation_oid in blob_token
         assert "skdutid=" + delegated_user_tid in blob_token
 
-        identity_blob = BlobClient.from_blob_url(f"{blob.url}?{blob_token}", credential=token_credential)
+        identity_blob = BlobClient.from_blob_url(
+            f"{blob.url}?{blob_token}", credential=token_credential
+        )
         content = identity_blob.download_blob().readall()
         assert content == data
 
@@ -3908,7 +4279,8 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob.upload_blob(b"abc123", overwrite=True)
         blob.set_standard_blob_tier(standard_blob_tier=StandardBlobTier.ARCHIVE)
         blob.set_standard_blob_tier(
-            standard_blob_tier=StandardBlobTier.SMART, rehydrate_priority=RehydratePriority.HIGH
+            standard_blob_tier=StandardBlobTier.SMART,
+            rehydrate_priority=RehydratePriority.HIGH,
         )
 
         props = blob.get_blob_properties()
@@ -3922,14 +4294,18 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         variables = kwargs.pop("variables", {})
 
         token_credential = self.get_credential(BlobServiceClient)
-        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=token_credential
+        )
         container_name = self.get_resource_name("directorysascontainer")
 
         try:
             service.create_container(container_name)
 
             start = self.get_datetime_variable(variables, "start", datetime.utcnow())
-            expiry = self.get_datetime_variable(variables, "expiry", datetime.utcnow() + timedelta(hours=1))
+            expiry = self.get_datetime_variable(
+                variables, "expiry", datetime.utcnow() + timedelta(hours=1)
+            )
             user_delegation_key = service.get_user_delegation_key(start, expiry)
 
             for blob_name in ["foo", "foo/bar", "foo/bar/hello"]:
@@ -3939,17 +4315,30 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
                     container_name=container_name,
                     blob_name=blob_name,
                     user_delegation_key=user_delegation_key,
-                    permission=BlobSasPermissions(read=True, write=True, delete=True, list=True, add=True, create=True),
+                    permission=BlobSasPermissions(
+                        read=True,
+                        write=True,
+                        delete=True,
+                        list=True,
+                        add=True,
+                        create=True,
+                    ),
                     expiry=expiry,
                     is_directory=True,
                 )
 
                 exact_blob = service.get_blob_client(container_name, blob_name)
-                BlobClient.from_blob_url(exact_blob.url, credential=token).upload_blob(b"data", overwrite=True)
+                BlobClient.from_blob_url(exact_blob.url, credential=token).upload_blob(
+                    b"data", overwrite=True
+                )
 
                 # Blob whose name has the SAS directory name as a prefix should also succeed
-                child_blob = service.get_blob_client(container_name, blob_name + "/test")
-                BlobClient.from_blob_url(child_blob.url, credential=token).upload_blob(b"data", overwrite=True)
+                child_blob = service.get_blob_client(
+                    container_name, blob_name + "/test"
+                )
+                BlobClient.from_blob_url(child_blob.url, credential=token).upload_blob(
+                    b"data", overwrite=True
+                )
         finally:
             service.delete_container(container_name)
 
@@ -3962,14 +4351,18 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         variables = kwargs.pop("variables", {})
 
         token_credential = self.get_credential(BlobServiceClient)
-        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential)
+        service = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=token_credential
+        )
         container_name = self.get_resource_name("directorysascontainer")
 
         try:
             service.create_container(container_name)
 
             start = self.get_datetime_variable(variables, "start", datetime.utcnow())
-            expiry = self.get_datetime_variable(variables, "expiry", datetime.utcnow() + timedelta(hours=1))
+            expiry = self.get_datetime_variable(
+                variables, "expiry", datetime.utcnow() + timedelta(hours=1)
+            )
             user_delegation_key = service.get_user_delegation_key(start, expiry)
 
             blob_name = "foo/bar/baz/"
@@ -3979,13 +4372,17 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
                 container_name=container_name,
                 blob_name=blob_name,
                 user_delegation_key=user_delegation_key,
-                permission=BlobSasPermissions(read=True, write=True, delete=True, list=True, add=True, create=True),
+                permission=BlobSasPermissions(
+                    read=True, write=True, delete=True, list=True, add=True, create=True
+                ),
                 expiry=expiry,
                 is_directory=True,
             )
 
             non_prefix_blob = service.get_blob_client(container_name, "foo/bar")
-            non_prefix_blob_with_sas = BlobClient.from_blob_url(non_prefix_blob.url, credential=token)
+            non_prefix_blob_with_sas = BlobClient.from_blob_url(
+                non_prefix_blob.url, credential=token
+            )
             with pytest.raises(HttpResponseError):
                 non_prefix_blob_with_sas.upload_blob(b"data", overwrite=True)
         finally:

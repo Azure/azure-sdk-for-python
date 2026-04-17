@@ -42,7 +42,9 @@ class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
     This will be `None` if no lease has yet been acquired or modified."""
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential, missing-client-constructor-parameter-kwargs
-        self, client: Union["BlobClient", "ContainerClient"], lease_id: Optional[str] = None
+        self,
+        client: Union["BlobClient", "ContainerClient"],
+        lease_id: Optional[str] = None,
     ) -> None:
         self.id = lease_id or str(uuid.uuid4())
         self.last_modified = None
@@ -285,7 +287,9 @@ class BlobLeaseClient:  # pylint: disable=client-accepts-api-version-keyword
         self.last_modified = response.get("last_modified")
 
     @distributed_trace
-    def break_lease(self, lease_break_period: Optional[int] = None, **kwargs: Any) -> int:
+    def break_lease(
+        self, lease_break_period: Optional[int] = None, **kwargs: Any
+    ) -> int:
         """Break the lease, if the container or blob has an active lease.
 
         Once a lease is broken, it cannot be renewed. Any authorized request can break the lease;

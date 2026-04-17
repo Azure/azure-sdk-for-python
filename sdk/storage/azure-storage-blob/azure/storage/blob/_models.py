@@ -14,7 +14,10 @@ from azure.core.paging import PageIterator
 from azure.core.exceptions import HttpResponseError
 
 from ._shared import decode_base64_to_bytes
-from ._shared.response_handlers import return_context_and_deserialized, process_storage_error
+from ._shared.response_handlers import (
+    return_context_and_deserialized,
+    process_storage_error,
+)
 from ._shared.models import DictMixin, get_enum_value
 from ._generated.models import AccessPolicy as GenAccessPolicy
 from ._generated.models import ArrowField
@@ -55,8 +58,12 @@ def parse_page_list(page_list: "PageList") -> List["PageRange"]:
             c_i += 1
 
     # Grab remaining elements in either list
-    ranges += [PageRange(start=r.start, end=r.end, cleared=False) for r in page_ranges[p_i:]]
-    ranges += [PageRange(start=r.start, end=r.end, cleared=True) for r in clear_ranges[c_i:]]
+    ranges += [
+        PageRange(start=r.start, end=r.end, cleared=False) for r in page_ranges[p_i:]
+    ]
+    ranges += [
+        PageRange(start=r.start, end=r.end, cleared=True) for r in clear_ranges[c_i:]
+    ]
 
     return ranges
 
@@ -189,7 +196,9 @@ class RetentionPolicy(GeneratedRetentionPolicy):
     days: Optional[int] = None
 
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
-        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
+        super(RetentionPolicy, self).__init__(
+            enabled=enabled, days=days, allow_permanent_delete=None
+        )
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
@@ -385,7 +394,9 @@ class CorsRule(GeneratedCorsRule):
     max_age_in_seconds: int
     """The number of seconds that the client/browser should cache a pre-flight response."""
 
-    def __init__(self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any) -> None:
+    def __init__(
+        self, allowed_origins: List[str], allowed_methods: List[str], **kwargs: Any
+    ) -> None:
         self.allowed_origins = ",".join(allowed_origins)
         self.allowed_methods = ",".join(allowed_methods)
         self.allowed_headers = ",".join(kwargs.get("allowed_headers", []))
@@ -393,7 +404,9 @@ class CorsRule(GeneratedCorsRule):
         self.max_age_in_seconds = kwargs.get("max_age_in_seconds", 0)
 
     @staticmethod
-    def _to_generated(rules: Optional[List["CorsRule"]]) -> Optional[List[GeneratedCorsRule]]:
+    def _to_generated(
+        rules: Optional[List["CorsRule"]],
+    ) -> Optional[List[GeneratedCorsRule]]:
         if rules is None:
             return rules
 
@@ -470,7 +483,9 @@ class ContainerProperties(DictMixin):
         if default_encryption_scope:
             self.encryption_scope = ContainerEncryptionScope(
                 default_encryption_scope=default_encryption_scope,
-                prevent_encryption_scope_override=kwargs.get("x-ms-deny-encryption-scope-override", False),
+                prevent_encryption_scope_override=kwargs.get(
+                    "x-ms-deny-encryption-scope-override", False
+                ),
             )
 
     @classmethod
@@ -479,7 +494,9 @@ class ContainerProperties(DictMixin):
         props.name = generated.name
         props.last_modified = generated.properties.last_modified
         props.etag = generated.properties.etag
-        props.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
+        props.lease = LeaseProperties._from_generated(
+            generated
+        )  # pylint: disable=protected-access
         props.public_access = generated.properties.public_access
         props.has_immutability_policy = generated.properties.has_immutability_policy
         props.immutable_storage_with_versioning_enabled = (
@@ -489,7 +506,9 @@ class ContainerProperties(DictMixin):
         props.version = generated.version
         props.has_legal_hold = generated.properties.has_legal_hold
         props.metadata = generated.metadata
-        props.encryption_scope = ContainerEncryptionScope._from_generated(generated)  # pylint: disable=protected-access
+        props.encryption_scope = ContainerEncryptionScope._from_generated(
+            generated
+        )  # pylint: disable=protected-access
         return props
 
 
@@ -526,7 +545,9 @@ class ContainerPropertiesPaged(PageIterator):
         continuation_token: Optional[str] = None,
     ) -> None:
         super(ContainerPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or "",
         )
         self._command = command
         self.service_endpoint = None
@@ -553,13 +574,17 @@ class ContainerPropertiesPaged(PageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = [self._build_item(item) for item in self._response.container_items]
+        self.current_page = [
+            self._build_item(item) for item in self._response.container_items
+        ]
 
         return self._response.next_marker or None, self.current_page
 
     @staticmethod
     def _build_item(item):
-        return ContainerProperties._from_generated(item)  # pylint: disable=protected-access
+        return ContainerProperties._from_generated(
+            item
+        )  # pylint: disable=protected-access
 
 
 class ImmutabilityPolicy(DictMixin):
@@ -588,7 +613,9 @@ class ImmutabilityPolicy(DictMixin):
     @classmethod
     def _from_generated(cls, generated):
         immutability_policy = cls()
-        immutability_policy.expiry_time = generated.properties.immutability_policy_expires_on
+        immutability_policy.expiry_time = (
+            generated.properties.immutability_policy_expires_on
+        )
         immutability_policy.policy_mode = generated.properties.immutability_policy_mode
         return immutability_policy
 
@@ -687,7 +714,9 @@ class ContentSettings(DictMixin):
         self.content_encoding = content_encoding or kwargs.get("Content-Encoding")
         self.content_language = content_language or kwargs.get("Content-Language")
         self.content_md5 = content_md5 or kwargs.get("Content-MD5")
-        self.content_disposition = content_disposition or kwargs.get("Content-Disposition")
+        self.content_disposition = content_disposition or kwargs.get(
+            "Content-Disposition"
+        )
         self.cache_control = cache_control or kwargs.get("Cache-Control")
 
     @classmethod
@@ -819,7 +848,13 @@ class PageRange(DictMixin):
     cleared: bool
     """Whether the range has been cleared."""
 
-    def __init__(self, start: Optional[int] = None, end: Optional[int] = None, *, cleared: bool = False) -> None:
+    def __init__(
+        self,
+        start: Optional[int] = None,
+        end: Optional[int] = None,
+        *,
+        cleared: bool = False
+    ) -> None:
         self.start = start
         self.end = end
         self.cleared = cleared
@@ -828,7 +863,9 @@ class PageRange(DictMixin):
 class PageRangePaged(PageIterator):
     def __init__(self, command, results_per_page=None, continuation_token=None):
         super(PageRangePaged, self).__init__(
-            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or "",
         )
         self._command = command
         self.results_per_page = results_per_page
@@ -1278,14 +1315,17 @@ class ContainerEncryptionScope(object):
 
     def __init__(self, default_encryption_scope: str, **kwargs: Any) -> None:
         self.default_encryption_scope = default_encryption_scope
-        self.prevent_encryption_scope_override = kwargs.get("prevent_encryption_scope_override", False)
+        self.prevent_encryption_scope_override = kwargs.get(
+            "prevent_encryption_scope_override", False
+        )
 
     @classmethod
     def _from_generated(cls, generated):
         if generated.properties.default_encryption_scope:
             scope = cls(
                 generated.properties.default_encryption_scope,
-                prevent_encryption_scope_override=generated.properties.prevent_encryption_scope_override or False,
+                prevent_encryption_scope_override=generated.properties.prevent_encryption_scope_override
+                or False,
             )
             return scope
         return None
@@ -1337,7 +1377,9 @@ class ArrowDialect(ArrowField):
     :keyword int scale: The scale of the field.
     """
 
-    def __init__(self, type, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+    def __init__(
+        self, type, **kwargs: Any
+    ) -> None:  # pylint: disable=redefined-builtin
         super(ArrowDialect, self).__init__(type=type, **kwargs)
 
 
@@ -1480,7 +1522,9 @@ class BlobProperties(DictMixin):
         self.version_id = kwargs.get("x-ms-version-id")
         self.is_current_version = kwargs.get("x-ms-is-current-version")
         self.blob_type = (
-            BlobType(kwargs["x-ms-blob-type"]) if (kwargs.get("x-ms-blob-type")) else None
+            BlobType(kwargs["x-ms-blob-type"])
+            if (kwargs.get("x-ms-blob-type"))
+            else None
         )  # type: ignore [assignment]
         self.metadata = kwargs.get("metadata")  # type: ignore [assignment]
         self.encrypted_metadata = kwargs.get("encrypted_metadata")
@@ -1488,7 +1532,9 @@ class BlobProperties(DictMixin):
         self.etag = kwargs.get("ETag")  # type: ignore [assignment]
         self.size = kwargs.get("Content-Length")  # type: ignore [assignment]
         self.content_range = kwargs.get("Content-Range")
-        self.append_blob_committed_block_count = kwargs.get("x-ms-blob-committed-block-count")
+        self.append_blob_committed_block_count = kwargs.get(
+            "x-ms-blob-committed-block-count"
+        )
         self.is_append_blob_sealed = kwargs.get("x-ms-blob-sealed")
         self.page_blob_sequence_number = kwargs.get("x-ms-blob-sequence-number")
         self.server_encrypted = kwargs.get("x-ms-server-encrypted")  # type: ignore [assignment]
@@ -1508,7 +1554,9 @@ class BlobProperties(DictMixin):
         self.encryption_key_sha256 = kwargs.get("x-ms-encryption-key-sha256")
         self.encryption_scope = kwargs.get("x-ms-encryption-scope")
         self.request_server_encrypted = kwargs.get("x-ms-server-encrypted")
-        self.object_replication_source_properties = kwargs.get("object_replication_source_properties")
+        self.object_replication_source_properties = kwargs.get(
+            "object_replication_source_properties"
+        )
         self.object_replication_destination_policy = kwargs.get("x-ms-or-policy-id")
         self.last_accessed_on = kwargs.get("x-ms-last-access-time")
         self.tag_count = kwargs.get("x-ms-tag-count")

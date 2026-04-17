@@ -15,7 +15,11 @@ from ._blob_service_client import BlobServiceClient
 from ._lease import BlobLeaseClient
 from ._download import StorageStreamDownloader
 from ._quick_query_helper import BlobQueryReader
-from ._shared_access_signature import generate_account_sas, generate_container_sas, generate_blob_sas
+from ._shared_access_signature import (
+    generate_account_sas,
+    generate_container_sas,
+    generate_blob_sas,
+)
 from ._shared.policies import ExponentialRetry, LinearRetry
 from ._shared.response_handlers import PartialBatchErrorException
 from ._shared.models import (
@@ -66,7 +70,11 @@ from ._models import (
 from ._list_blobs_helper import BlobPrefix
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+    from azure.core.credentials import (
+        AzureNamedKeyCredential,
+        AzureSasCredential,
+        TokenCredential,
+    )
 
 __version__ = VERSION
 
@@ -75,7 +83,13 @@ def upload_blob_to_url(
     blob_url: str,
     data: Union[Iterable[AnyStr], IO[AnyStr]],
     credential: Optional[
-        Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+        Union[
+            str,
+            Dict[str, str],
+            "AzureNamedKeyCredential",
+            "AzureSasCredential",
+            "TokenCredential",
+        ]
     ] = None,  # pylint: disable=line-too-long
     **kwargs: Any,
 ) -> Dict[str, Any]:
@@ -127,7 +141,9 @@ def upload_blob_to_url(
     :return: Blob-updated property dict (Etag and last modified)
     :rtype: dict(str, Any)
     """
-    with BlobClient.from_blob_url(blob_url, credential=credential) as client:  # pylint: disable=not-context-manager
+    with BlobClient.from_blob_url(
+        blob_url, credential=credential
+    ) as client:  # pylint: disable=not-context-manager
         return client.upload_blob(data=data, blob_type=BlobType.BLOCKBLOB, **kwargs)
 
 
@@ -146,7 +162,13 @@ def download_blob_from_url(
     blob_url: str,
     output: Union[str, IO[bytes]],
     credential: Optional[
-        Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
+        Union[
+            str,
+            Dict[str, str],
+            "AzureNamedKeyCredential",
+            "AzureSasCredential",
+            "TokenCredential",
+        ]
     ] = None,  # pylint: disable=line-too-long
     **kwargs: Any,
 ) -> None:
@@ -198,7 +220,9 @@ def download_blob_from_url(
     :rtype: None
     """
     overwrite = kwargs.pop("overwrite", False)
-    with BlobClient.from_blob_url(blob_url, credential=credential) as client:  # pylint: disable=not-context-manager
+    with BlobClient.from_blob_url(
+        blob_url, credential=credential
+    ) as client:  # pylint: disable=not-context-manager
         if hasattr(output, "write"):
             _download_to_stream(client, cast(IO[bytes], output), **kwargs)
         else:

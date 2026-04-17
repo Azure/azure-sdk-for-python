@@ -69,7 +69,9 @@ async def walk_container(client, container):
             else:
                 message = "B: " + separator * depth + short_name
                 snapshots = []
-                async for snapshot in container_client.list_blobs(name_starts_with=item.name, include=["snapshots"]):
+                async for snapshot in container_client.list_blobs(
+                    name_starts_with=item.name, include=["snapshots"]
+                ):
                     snapshots.append(snapshot)
                 num_snapshots = len(snapshots) - 1
                 if num_snapshots:
@@ -81,7 +83,9 @@ async def walk_container(client, container):
 
 async def main():
     try:
-        async with BlobServiceClient.from_connection_string(CONNECTION_STRING) as service_client:
+        async with BlobServiceClient.from_connection_string(
+            CONNECTION_STRING
+        ) as service_client:
             containers = service_client.list_containers()
             async for container in containers:
                 await walk_container(service_client, container)

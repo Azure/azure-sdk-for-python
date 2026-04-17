@@ -48,10 +48,18 @@ class TestBlobStorageAccount(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
 
         self._setup(bsc)
-        tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot, StandardBlobTier.SMART]
+        tiers = [
+            StandardBlobTier.Archive,
+            StandardBlobTier.Cool,
+            StandardBlobTier.Hot,
+            StandardBlobTier.SMART,
+        ]
 
         for tier in tiers:
             blob_name = self.get_resource_name(tier.value)
@@ -81,7 +89,10 @@ class TestBlobStorageAccount(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
         blob_client = self._create_blob(bsc)
         blob_tier = StandardBlobTier.Archive
@@ -89,7 +100,9 @@ class TestBlobStorageAccount(StorageRecordedTestCase):
         rehydrate_priority = RehydratePriority.standard
 
         # Act
-        blob_client.set_standard_blob_tier(blob_tier, rehydrate_priority=rehydrate_priority)
+        blob_client.set_standard_blob_tier(
+            blob_tier, rehydrate_priority=rehydrate_priority
+        )
         blob_client.set_standard_blob_tier(rehydrate_tier)
         blob_props = blob_client.get_blob_properties()
 
@@ -102,7 +115,10 @@ class TestBlobStorageAccount(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         self._setup(bsc)
         blob_name = "rehydration_test_blob_1"
         blob_name2 = "rehydration_test_blob_2"

@@ -29,10 +29,13 @@ from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import BlobPreparer
 
-
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = "encryption_container"
-TEST_BLOB_PREFIXES = {"BlockBlob": "encryption_block_blob", "PageBlob": "encryption_page_blob", "AppendBlob": "foo"}
+TEST_BLOB_PREFIXES = {
+    "BlockBlob": "encryption_block_blob",
+    "PageBlob": "encryption_page_blob",
+    "AppendBlob": "foo",
+}
 # ------------------------------------------------------------------------------
 
 
@@ -84,13 +87,16 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self.bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
         )
         self.bsc.require_encryption = True
         valid_key = KeyWrapper("key1")
 
         # Act
-        invalid_key_1 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_1 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_1.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_1.get_kid = valid_key.get_kid
         # No attribute wrap_key
@@ -98,7 +104,9 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(AttributeError):
             await self._create_small_blob(BlobType.BlockBlob)
 
-        invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_2 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_2.wrap_key = valid_key.wrap_key
         invalid_key_2.get_kid = valid_key.get_kid
         # No attribute get_key_wrap_algorithm
@@ -106,7 +114,9 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(AttributeError):
             await self._create_small_blob(BlobType.BlockBlob)
 
-        invalid_key_3 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_3 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_3.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_3.wrap_key = valid_key.wrap_key
         # No attribute get_kid
@@ -120,7 +130,8 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self.bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
         )
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper("key1")
@@ -130,7 +141,9 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
             await self._create_small_blob(BlobType.BlockBlob)
             self.fail()
         except AttributeError as e:
-            assert str(e), _ERROR_OBJECT_INVALID.format("key encryption key" == "get_key_wrap_algorithm")
+            assert str(e), _ERROR_OBJECT_INVALID.format(
+                "key encryption key" == "get_key_wrap_algorithm"
+            )
 
         self.bsc.key_encryption_key = KeyWrapper("key1")
         self.bsc.key_encryption_key.get_kid = None
@@ -157,14 +170,18 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         # Act
         # Note that KeyWrapper has a default value for key_id, so these Exceptions
         # are not due to non_matching kids.
-        invalid_key_1 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_1 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_1.get_kid = valid_key.get_kid
         # No attribute unwrap_key
         blob.key_encryption_key = invalid_key_1
         with pytest.raises(HttpResponseError):
             await (await blob.download_blob()).readall()
 
-        invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
+        invalid_key_2 = (
+            lambda: None
+        )  # functions are objects, so this effectively creates an empty object
         invalid_key_2.unwrap_key = valid_key.unwrap_key
         blob.key_encryption_key = invalid_key_2
         # No attribute get_kid
@@ -304,7 +321,9 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper("key1")
         self.bsc.require_encryption = True
-        content = self.get_random_bytes(self.config.max_single_put_size + self.config.max_block_size)
+        content = self.get_random_bytes(
+            self.config.max_single_put_size + self.config.max_block_size
+        )
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -351,7 +370,9 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        await blob.upload_blob(content, length=self.config.max_single_put_size + 53, max_concurrency=3)
+        await blob.upload_blob(
+            content, length=self.config.max_single_put_size + 53, max_concurrency=3
+        )
         blob_content = await (await blob.download_blob(max_concurrency=3)).readall()
 
         # Assert
@@ -394,7 +415,9 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        await blob.upload_blob(content[2:], length=self.config.max_single_put_size + 5, max_concurrency=1)
+        await blob.upload_blob(
+            content[2:], length=self.config.max_single_put_size + 5, max_concurrency=1
+        )
         blob_content = await (await blob.download_blob()).readall()
 
         # Assert
@@ -579,7 +602,9 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
 
         # Act
         offset, length = 501, 2500
-        blob_content = await (await blob.download_blob(offset=offset, length=length)).readall()
+        blob_content = await (
+            await blob.download_blob(offset=offset, length=length)
+        ).readall()
 
         # Assert
         assert data[offset : offset + length] == blob_content
@@ -707,7 +732,9 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         with pytest.raises(ValueError) as e:
-            await blob.upload_page(b"a" * 512, offset=0, length=512, blob_type=BlobType.PageBlob)
+            await blob.upload_page(
+                b"a" * 512, offset=0, length=512, blob_type=BlobType.PageBlob
+            )
         assert str(e.value) == _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 
         with pytest.raises(ValueError) as e:
@@ -732,7 +759,9 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         content = await blob.download_blob()
         data = await content.readall()
 
-        encryption_data = _dict_to_encryption_data(loads(content.properties.metadata["encryptiondata"]))
+        encryption_data = _dict_to_encryption_data(
+            loads(content.properties.metadata["encryptiondata"])
+        )
         iv = encryption_data.content_encryption_IV
         content_encryption_key = _validate_and_unwrap_cek(encryption_data, kek, None)
         cipher = _generate_AES_CBC_cipher(content_encryption_key, iv)
@@ -751,16 +780,24 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         await self._setup(storage_account_name, storage_account_key)
-        await self._create_blob_from_star(BlobType.BlockBlob, "blob1", self.bytes, self.bytes)
+        await self._create_blob_from_star(
+            BlobType.BlockBlob, "blob1", self.bytes, self.bytes
+        )
 
         stream = BytesIO(self.bytes)
-        await self._create_blob_from_star(BlobType.BlockBlob, "blob2", self.bytes, stream)
+        await self._create_blob_from_star(
+            BlobType.BlockBlob, "blob2", self.bytes, stream
+        )
 
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(self.bytes)
             temp_file.seek(0)
-            await self._create_blob_from_star(BlobType.BlockBlob, "blob3", self.bytes, temp_file)
-            await self._create_blob_from_star(BlobType.BlockBlob, "blob4", b"To encrypt", "To encrypt")
+            await self._create_blob_from_star(
+                BlobType.BlockBlob, "blob3", self.bytes, temp_file
+            )
+            await self._create_blob_from_star(
+                BlobType.BlockBlob, "blob4", b"To encrypt", "To encrypt"
+            )
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -773,14 +810,20 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         await self._create_blob_from_star(BlobType.PageBlob, "blob1", content, content)
 
         stream = BytesIO(content)
-        await self._create_blob_from_star(BlobType.PageBlob, "blob2", content, stream, length=512)
+        await self._create_blob_from_star(
+            BlobType.PageBlob, "blob2", content, stream, length=512
+        )
 
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(content)
             temp_file.seek(0)
-            await self._create_blob_from_star(BlobType.PageBlob, "blob3", content, temp_file)
+            await self._create_blob_from_star(
+                BlobType.PageBlob, "blob3", content, temp_file
+            )
 
-    async def _create_blob_from_star(self, blob_type, blob_name, content, data, **kwargs):
+    async def _create_blob_from_star(
+        self, blob_type, blob_name, content, data, **kwargs
+    ):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.key_encryption_key = KeyWrapper("key1")
         blob.require_encryption = True
@@ -828,7 +871,9 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         self.bsc.key_encryption_key = KeyWrapper("key1")
 
         data = b"12345" * 205 * 25  # 25625 bytes
-        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference(BlobType.BLOCKBLOB))
+        blob = self.bsc.get_blob_client(
+            self.container_name, self._get_blob_reference(BlobType.BLOCKBLOB)
+        )
         await blob.upload_blob(data, overwrite=True)
         stream = await blob.download_blob(max_concurrency=3)
 
@@ -859,7 +904,9 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         self.bsc._config.max_chunk_get_size = 1024
 
         data = b"12345" * 205 * 10  # 10250 bytes
-        blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference(BlobType.BLOCKBLOB))
+        blob = self.bsc.get_blob_client(
+            self.container_name, self._get_blob_reference(BlobType.BLOCKBLOB)
+        )
         await blob.upload_blob(data, overwrite=True)
         offset, length = 501, 5000
 

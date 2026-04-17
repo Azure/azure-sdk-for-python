@@ -44,10 +44,14 @@ class ContainerSamplesAsync(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # Instantiate a ContainerClient
-        container_client = blob_service_client.get_container_client("mynewcontainerasync")
+        container_client = blob_service_client.get_container_client(
+            "mynewcontainerasync"
+        )
         # [END create_container_client_from_service]
 
         async with blob_service_client:
@@ -86,11 +90,15 @@ class ContainerSamplesAsync(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         async with blob_service_client:
             # Instantiate a ContainerClient
-            container_client = blob_service_client.get_container_client("myleasecontainerasync")
+            container_client = blob_service_client.get_container_client(
+                "myleasecontainerasync"
+            )
 
             # Create new Container
             await container_client.create_container()
@@ -115,11 +123,15 @@ class ContainerSamplesAsync(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         async with blob_service_client:
             # Instantiate a ContainerClient
-            container_client = blob_service_client.get_container_client("mymetadatacontainerasync")
+            container_client = blob_service_client.get_container_client(
+                "mymetadatacontainerasync"
+            )
 
             try:
                 # Create new Container
@@ -134,7 +146,9 @@ class ContainerSamplesAsync(object):
                 # [END set_container_metadata]
 
                 # Get container properties
-                properties = (await container_client.get_container_properties()).metadata
+                properties = (
+                    await container_client.get_container_properties()
+                ).metadata
 
             finally:
                 # Delete container
@@ -151,14 +165,20 @@ class ContainerSamplesAsync(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         async with blob_service_client:
             # Instantiate a ContainerClient
-            container_client = blob_service_client.get_container_client("myaccesscontainerasync")
+            container_client = blob_service_client.get_container_client(
+                "myaccesscontainerasync"
+            )
             if container_client.account_name is None:
                 print(
-                    "Connection string did not provide an account name." + "\n" + "Test: container_access_policy_async"
+                    "Connection string did not provide an account name."
+                    + "\n"
+                    + "Test: container_access_policy_async"
                 )
                 sys.exit(1)
 
@@ -179,7 +199,9 @@ class ContainerSamplesAsync(object):
                 identifiers = {"my-access-policy-id": access_policy}
 
                 # Set the access policy on the container
-                await container_client.set_container_access_policy(signed_identifiers=identifiers)
+                await container_client.set_container_access_policy(
+                    signed_identifiers=identifiers
+                )
                 # [END set_container_access_policy]
 
                 # [START get_container_access_policy]
@@ -224,18 +246,24 @@ class ContainerSamplesAsync(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         async with blob_service_client:
             # Instantiate a ContainerClient
-            container_client = blob_service_client.get_container_client("myblobscontainerasync")
+            container_client = blob_service_client.get_container_client(
+                "myblobscontainerasync"
+            )
 
             # Create new Container
             await container_client.create_container()
 
             # [START upload_blob_to_container]
             with open(SOURCE_FILE, "rb") as data:
-                blob_client = await container_client.upload_blob(name="myblob", data=data)
+                blob_client = await container_client.upload_blob(
+                    name="myblob", data=data
+                )
 
             properties = await blob_client.get_blob_properties()
             # [END upload_blob_to_container]
@@ -261,11 +289,15 @@ class ContainerSamplesAsync(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         async with blob_service_client:
             # Instantiate a ContainerClient
-            container_client = blob_service_client.get_container_client("blobcontainerasync")
+            container_client = blob_service_client.get_container_client(
+                "blobcontainerasync"
+            )
 
             # Create new Container
             await container_client.create_container()
@@ -289,11 +321,15 @@ class ContainerSamplesAsync(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         async with blob_service_client:
             # [START get_container_client_from_blob_client]
-            container_client1 = blob_service_client.get_container_client("blobcontainer1async")
+            container_client1 = blob_service_client.get_container_client(
+                "blobcontainer1async"
+            )
             await container_client1.create_container()
             print(await container_client1.get_container_properties())
             blob_client1 = container_client1.get_blob_client("blob1")

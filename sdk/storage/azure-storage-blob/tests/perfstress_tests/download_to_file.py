@@ -29,10 +29,14 @@ class DownloadToFileTest(_BlobTest):
 
     def run_sync(self):
         with open(self._temp_file, "wb") as f:
-            stream = self.blob_client.download_blob(max_concurrency=self.args.max_concurrency)
+            stream = self.blob_client.download_blob(
+                max_concurrency=self.args.max_concurrency
+            )
             stream.readinto(f)
 
     async def run_async(self):
         with open(self._temp_file, "wb") as f:
-            stream = await self.async_blob_client.download_blob(max_concurrency=self.args.max_concurrency)
+            stream = await self.async_blob_client.download_blob(
+                max_concurrency=self.args.max_concurrency
+            )
             await stream.readinto(f)

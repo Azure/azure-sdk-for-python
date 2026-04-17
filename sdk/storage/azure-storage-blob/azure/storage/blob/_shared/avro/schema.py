@@ -240,7 +240,9 @@ class Name(object):
 
             match = _RE_FULL_NAME.match(self._fullname)
             if match is None:
-                raise SchemaParseException(f"Invalid absolute schema name: {self._fullname!r}.")
+                raise SchemaParseException(
+                    f"Invalid absolute schema name: {self._fullname!r}."
+                )
 
             self._name = match.group(1)
             self._namespace = self._fullname[: -(len(self._name) + 1)]
@@ -249,7 +251,11 @@ class Name(object):
             # name is relative, combine with explicit namespace:
             self._name = name
             self._namespace = namespace
-            self._fullname = self._name if (not self._namespace) else f"{self._namespace}.{self._name}"
+            self._fullname = (
+                self._name
+                if (not self._namespace)
+                else f"{self._namespace}.{self._name}"
+            )
 
             # Validate the fullname:
             if _RE_FULL_NAME.match(self._fullname) is None:
@@ -452,7 +458,15 @@ class Field(object):
     """Representation of the schema of a field in a record."""
 
     def __init__(
-        self, data_type, name, index, has_default, default=_NO_DEFAULT, order=None, doc=None, other_props=None
+        self,
+        data_type,
+        name,
+        index,
+        has_default,
+        default=_NO_DEFAULT,
+        order=None,
+        doc=None,
+        other_props=None,
     ):
         """Initializes a new Field object.
 
@@ -655,7 +669,9 @@ class EnumSchema(NamedSchema):
         """
         symbols = tuple(symbols)
         symbol_set = frozenset(symbols)
-        if len(symbol_set) != len(symbols) or not all(map(lambda symbol: isinstance(symbol, str), symbols)):
+        if len(symbol_set) != len(symbols) or not all(
+            map(lambda symbol: isinstance(symbol, str), symbols)
+        ):
             raise AvroException(f"Invalid symbols for enum schema: {symbols!r}.")
 
         super(EnumSchema, self).__init__(
@@ -781,18 +797,26 @@ class UnionSchema(Schema):
         # Validate the schema branches:
 
         # All named schema names are unique:
-        named_branches = tuple(filter(lambda schema: schema.type in NAMED_TYPES, self._schemas))
+        named_branches = tuple(
+            filter(lambda schema: schema.type in NAMED_TYPES, self._schemas)
+        )
         unique_names = frozenset(map(lambda schema: schema.fullname, named_branches))
         if len(unique_names) != len(named_branches):
             schemas = "".join(map(lambda schema: (f"\n\t - {schema}"), self._schemas))
-            raise AvroException(f"Invalid union branches with duplicate schema name:{schemas}")
+            raise AvroException(
+                f"Invalid union branches with duplicate schema name:{schemas}"
+            )
 
         # Types are unique within unnamed schemas, and union is not allowed:
-        unnamed_branches = tuple(filter(lambda schema: schema.type not in NAMED_TYPES, self._schemas))
+        unnamed_branches = tuple(
+            filter(lambda schema: schema.type not in NAMED_TYPES, self._schemas)
+        )
         unique_types = frozenset(map(lambda schema: schema.type, unnamed_branches))
         if UNION in unique_types:
             schemas = "".join(map(lambda schema: (f"\n\t - {schema}"), self._schemas))
-            raise AvroException(f"Invalid union branches contain other unions:{schemas}")
+            raise AvroException(
+                f"Invalid union branches contain other unions:{schemas}"
+            )
         if len(unique_types) != len(unnamed_branches):
             schemas = "".join(map(lambda schema: (f"\n\t - {schema}"), self._schemas))
             raise AvroException(f"Invalid union branches with duplicate type:{schemas}")
@@ -900,12 +924,22 @@ class RecordSchema(NamedSchema):
         field_map = {}
         for field in fields:
             if field.name in field_map:
-                raise SchemaParseException(f"Duplicate record field name {field.name!r}.")
+                raise SchemaParseException(
+                    f"Duplicate record field name {field.name!r}."
+                )
             field_map[field.name] = field
         return field_map
 
     def __init__(
-        self, name, namespace, fields=None, make_fields=None, names=None, record_type=RECORD, doc=None, other_props=None
+        self,
+        name,
+        namespace,
+        fields=None,
+        make_fields=None,
+        names=None,
+        record_type=RECORD,
+        doc=None,
+        other_props=None,
     ):
         """Initializes a new record schema object.
 
@@ -944,7 +978,9 @@ class RecordSchema(NamedSchema):
         nested_names = []
         if record_type in [RECORD, ERROR]:
             avro_name = names.get_name(name=name, namespace=namespace)
-            nested_names = names.new_with_default_namespace(namespace=avro_name.namespace)
+            nested_names = names.new_with_default_namespace(
+                namespace=avro_name.namespace
+            )
         elif record_type == REQUEST:
             # Protocol request has no name: no need to change default namespace:
             nested_names = names
@@ -1020,7 +1056,9 @@ def _schema_from_json_string(json_string, names):
     # Look for a known named schema:
     schema = names.get_schema(name=json_string)
     if schema is None:
-        raise SchemaParseException(f"Unknown named schema {json_string!r}, known names: {sorted(names.names)!r}.")
+        raise SchemaParseException(
+            f"Unknown named schema {json_string!r}, known names: {sorted(names.names)!r}."
+        )
     return schema
 
 
@@ -1034,7 +1072,9 @@ def _schema_from_json_array(json_array, names):
 def _schema_from_json_object(json_object, names):
     data_type = json_object.get("type")
     if data_type is None:
-        raise SchemaParseException(f'Avro schema JSON descriptor has no "type" property: {json_object!r}')
+        raise SchemaParseException(
+            f'Avro schema JSON descriptor has no "type" property: {json_object!r}'
+        )
 
     other_props = dict(filter_keys_out(items=json_object, keys=SCHEMA_RESERVED_PROPS))
 
@@ -1077,7 +1117,9 @@ def _schema_from_json_object(json_object, names):
         if data_type == ARRAY:
             items_desc = json_object.get("items")
             if items_desc is None:
-                raise SchemaParseException(f'Invalid array schema descriptor with no "items" : {json_object!r}.')
+                raise SchemaParseException(
+                    f'Invalid array schema descriptor with no "items" : {json_object!r}.'
+                )
             result = ArraySchema(
                 items=schema_from_json_data(items_desc, names),
                 other_props=other_props,
@@ -1086,7 +1128,9 @@ def _schema_from_json_object(json_object, names):
         elif data_type == MAP:
             values_desc = json_object.get("values")
             if values_desc is None:
-                raise SchemaParseException(f'Invalid map schema descriptor with no "values" : {json_object!r}.')
+                raise SchemaParseException(
+                    f'Invalid map schema descriptor with no "values" : {json_object!r}.'
+                )
             result = MapSchema(
                 values=schema_from_json_data(values_desc, names=names),
                 other_props=other_props,
@@ -1095,13 +1139,17 @@ def _schema_from_json_object(json_object, names):
         elif data_type == ERROR_UNION:
             error_desc_list = json_object.get("declared_errors")
             assert error_desc_list is not None
-            error_schemas = map(lambda desc: schema_from_json_data(desc, names=names), error_desc_list)
+            error_schemas = map(
+                lambda desc: schema_from_json_data(desc, names=names), error_desc_list
+            )
             result = ErrorUnionSchema(schemas=error_schemas)
 
         else:
             raise ValueError(f"Internal error: unknown type {data_type!r}.")
     else:
-        raise SchemaParseException(f"Invalid JSON descriptor for an Avro schema: {json_object!r}")
+        raise SchemaParseException(
+            f"Invalid JSON descriptor for an Avro schema: {json_object!r}"
+        )
     return result
 
 
@@ -1128,7 +1176,9 @@ def schema_from_json_data(json_data, names=None):
     # Select the appropriate parser based on the JSON data type:
     parser = _JSONDataParserTypeMap.get(type(json_data))
     if parser is None:
-        raise SchemaParseException(f"Invalid JSON descriptor for an Avro schema: {json_data!r}.")
+        raise SchemaParseException(
+            f"Invalid JSON descriptor for an Avro schema: {json_data!r}."
+        )
     return parser(json_data, names=names)
 
 
@@ -1147,7 +1197,8 @@ def parse(json_string):
         json_data = json.loads(json_string)
     except Exception as exn:
         raise SchemaParseException(
-            f"Error parsing schema from JSON: {json_string!r}. " f"Error message: {exn!r}."
+            f"Error parsing schema from JSON: {json_string!r}. "
+            f"Error message: {exn!r}."
         ) from exn
 
     # Initialize the names object

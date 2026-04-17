@@ -94,7 +94,9 @@ def _get_match_headers(
     return if_match, if_none_match
 
 
-def get_access_conditions(lease: Optional[Union["BlobLeaseClient", str]]) -> Optional[LeaseAccessConditions]:
+def get_access_conditions(
+    lease: Optional[Union["BlobLeaseClient", str]],
+) -> Optional[LeaseAccessConditions]:
     try:
         lease_id = lease.id  # type: ignore
     except AttributeError:
@@ -124,7 +126,9 @@ def get_blob_modify_conditions(kwargs: Dict[str, Any]) -> BlobModifiedAccessCond
 
 
 def get_source_conditions(kwargs: Dict[str, Any]) -> SourceModifiedAccessConditions:
-    if_match, if_none_match = _get_match_headers(kwargs, "source_match_condition", "source_etag")
+    if_match, if_none_match = _get_match_headers(
+        kwargs, "source_match_condition", "source_etag"
+    )
     return SourceModifiedAccessConditions(
         source_if_modified_since=kwargs.pop("source_if_modified_since", None),
         source_if_unmodified_since=kwargs.pop("source_if_unmodified_since", None),
@@ -140,7 +144,9 @@ def get_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[CpkScopeInfo]:
     return None
 
 
-def get_container_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[ContainerCpkScopeInfo]:
+def get_container_cpk_scope_info(
+    kwargs: Dict[str, Any],
+) -> Optional[ContainerCpkScopeInfo]:
     encryption_scope = kwargs.pop("container_encryption_scope", None)
     if encryption_scope:
         if isinstance(encryption_scope, ContainerEncryptionScope):
@@ -151,9 +157,13 @@ def get_container_cpk_scope_info(kwargs: Dict[str, Any]) -> Optional[ContainerCp
         if isinstance(encryption_scope, dict):
             return ContainerCpkScopeInfo(
                 default_encryption_scope=encryption_scope["default_encryption_scope"],
-                prevent_encryption_scope_override=encryption_scope.get("prevent_encryption_scope_override"),
+                prevent_encryption_scope_override=encryption_scope.get(
+                    "prevent_encryption_scope_override"
+                ),
             )
-        raise TypeError("Container encryption scope must be dict or type ContainerEncryptionScope.")
+        raise TypeError(
+            "Container encryption scope must be dict or type ContainerEncryptionScope."
+        )
     return None
 
 
@@ -161,7 +171,9 @@ def get_api_version(kwargs: Dict[str, Any]) -> str:
     api_version = kwargs.get("api_version", None)
     if api_version and api_version not in _SUPPORTED_API_VERSIONS:
         versions = "\n".join(_SUPPORTED_API_VERSIONS)
-        raise ValueError(f"Unsupported API version '{api_version}'. Please select from:\n{versions}")
+        raise ValueError(
+            f"Unsupported API version '{api_version}'. Please select from:\n{versions}"
+        )
     return api_version or _SUPPORTED_API_VERSIONS[-1]
 
 
@@ -196,19 +208,28 @@ def serialize_blob_tags(tags: Optional[Dict[str, str]] = None) -> BlobTags:
     return BlobTags(blob_tag_set=tag_list)
 
 
-def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Optional[QuerySerialization]:
+def serialize_query_format(
+    formater: Union[str, DelimitedJsonDialect],
+) -> Optional[QuerySerialization]:
     if formater == "ParquetDialect":
         qq_format = QueryFormat(type=QueryFormatType.PARQUET, parquet_text_configuration=" ")  # type: ignore [arg-type]
     elif isinstance(formater, DelimitedJsonDialect):
-        json_serialization_settings = JsonTextConfiguration(record_separator=formater.delimiter)
-        qq_format = QueryFormat(type=QueryFormatType.JSON, json_text_configuration=json_serialization_settings)
+        json_serialization_settings = JsonTextConfiguration(
+            record_separator=formater.delimiter
+        )
+        qq_format = QueryFormat(
+            type=QueryFormatType.JSON,
+            json_text_configuration=json_serialization_settings,
+        )
     elif hasattr(formater, "quotechar"):  # This supports a csv.Dialect as well
         try:
             headers = formater.has_header  # type: ignore
         except AttributeError:
             headers = False
         if isinstance(formater, str):
-            raise ValueError("Unknown string value provided. Accepted values: ParquetDialect")
+            raise ValueError(
+                "Unknown string value provided. Accepted values: ParquetDialect"
+            )
         csv_serialization_settings = DelimitedTextConfiguration(
             column_separator=formater.delimiter,
             field_quote=formater.quotechar,
@@ -216,12 +237,19 @@ def serialize_query_format(formater: Union[str, DelimitedJsonDialect]) -> Option
             escape_char=formater.escapechar,
             headers_present=headers,
         )
-        qq_format = QueryFormat(type=QueryFormatType.DELIMITED, delimited_text_configuration=csv_serialization_settings)
+        qq_format = QueryFormat(
+            type=QueryFormatType.DELIMITED,
+            delimited_text_configuration=csv_serialization_settings,
+        )
     elif isinstance(formater, list):
         arrow_serialization_settings = ArrowConfiguration(schema=formater)
-        qq_format = QueryFormat(type=QueryFormatType.arrow, arrow_configuration=arrow_serialization_settings)
+        qq_format = QueryFormat(
+            type=QueryFormatType.arrow, arrow_configuration=arrow_serialization_settings
+        )
     elif not formater:
         return None
     else:
-        raise TypeError("Format must be DelimitedTextDialect or DelimitedJsonDialect or ParquetDialect.")
+        raise TypeError(
+            "Format must be DelimitedTextDialect or DelimitedJsonDialect or ParquetDialect."
+        )
     return QuerySerialization(format=qq_format)

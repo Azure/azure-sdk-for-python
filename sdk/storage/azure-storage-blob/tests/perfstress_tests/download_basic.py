@@ -12,7 +12,6 @@ from devtools_testutils.perfstress_tests import RandomStream
 
 from ._test_base import _BlobTest
 
-
 TOKEN_SCOPE = "https://storage.azure.com/.default"
 
 
@@ -30,20 +29,28 @@ class DownloadBasicTest(_BlobTest):
             token = await self.async_token_credential.get_token(TOKEN_SCOPE)
             self.auth_header = "Bearer " + token.token
         else:
-            raise NotImplementedError("DownloadBasicTest requires Entra ID authentication.")
+            raise NotImplementedError(
+                "DownloadBasicTest requires Entra ID authentication."
+            )
 
     def run_sync(self):
         chunk_ranges = self._get_chunk_ranges()
         with ThreadPoolExecutor(self.args.max_concurrency) as executor:
             with requests.sessions.Session() as session:
-                executor.map(lambda r: self.download_chunk_requests(session, r[0], r[1]), chunk_ranges)
+                executor.map(
+                    lambda r: self.download_chunk_requests(session, r[0], r[1]),
+                    chunk_ranges,
+                )
 
     async def run_async(self):
         chunk_ranges = self._get_chunk_ranges()
         semaphore = asyncio.Semaphore(self.args.max_concurrency)
 
         async with aiohttp.ClientSession() as session:
-            tasks = [self.download_chunk_aiohttp(session, offset, end, semaphore) for offset, end in chunk_ranges]
+            tasks = [
+                self.download_chunk_aiohttp(session, offset, end, semaphore)
+                for offset, end in chunk_ranges
+            ]
             await asyncio.gather(*tasks)
 
     def _get_chunk_ranges(self):
@@ -55,7 +62,9 @@ class DownloadBasicTest(_BlobTest):
             offset = end + 1
         return chunk_ranges
 
-    def download_chunk_requests(self, session: requests.sessions.Session, offset: int, end: int):
+    def download_chunk_requests(
+        self, session: requests.sessions.Session, offset: int, end: int
+    ):
         headers = {
             "x-ms-version": self.blob_client.api_version,
             "Range": f"bytes={offset}-{end}",
@@ -69,7 +78,11 @@ class DownloadBasicTest(_BlobTest):
             raise Exception(f"Download failed with status code {response.status_code}")
 
     async def download_chunk_aiohttp(
-        self, session: aiohttp.ClientSession, offset: int, end: int, semaphore: asyncio.Semaphore
+        self,
+        session: aiohttp.ClientSession,
+        offset: int,
+        end: int,
+        semaphore: asyncio.Semaphore,
     ):
         async with semaphore:
             headers = {
@@ -81,4 +94,6 @@ class DownloadBasicTest(_BlobTest):
                 if response.status in (200, 206):
                     await response.read()
                 else:
-                    raise Exception(f"Download failed with status code {response.status}")
+                    raise Exception(
+                        f"Download failed with status code {response.status}"
+                    )

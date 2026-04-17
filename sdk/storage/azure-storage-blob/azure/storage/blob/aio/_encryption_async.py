@@ -67,7 +67,9 @@ class GCMBlobEncryptionStream:
                     # No more data to read
                     break
 
-                self.current = encrypt_data_v2(data, self.nonce_counter, self.content_encryption_key)
+                self.current = encrypt_data_v2(
+                    data, self.nonce_counter, self.content_encryption_key
+                )
                 # IMPORTANT: Must increment the nonce each time.
                 self.nonce_counter += 1
 

@@ -23,7 +23,11 @@ from typing import (
 from typing_extensions import Self
 
 from azure.core import MatchConditions
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+from azure.core.credentials import (
+    AzureNamedKeyCredential,
+    AzureSasCredential,
+    TokenCredential,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline.transport import HttpResponse
 from azure.core.tracing.decorator import distributed_trace
@@ -57,7 +61,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         account_url: str,
         container_name: str,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                TokenCredential,
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -74,7 +84,10 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     ) -> None: ...
     def __enter__(self) -> Self: ...
     def __exit__(
-        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
     ) -> None: ...
     def close(self) -> None: ...
     @classmethod
@@ -82,7 +95,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         cls,
         container_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                TokenCredential,
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -103,7 +122,13 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         conn_str: str,
         container_name: str,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                TokenCredential,
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -124,7 +149,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         metadata: Optional[Dict[str, str]] = None,
         public_access: Optional[Union[PublicAccess, str]] = None,
         *,
-        container_encryption_scope: Optional[Union[Dict[str, Any], ContainerEncryptionScope]] = None,
+        container_encryption_scope: Optional[
+            Union[Dict[str, Any], ContainerEncryptionScope]
+        ] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> Dict[str, Union[str, datetime]]: ...
@@ -162,7 +189,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def get_account_information(self, **kwargs: Any) -> Dict[str, str]: ...
     @distributed_trace
     def get_container_properties(
-        self, *, lease: Optional[Union[BlobLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> ContainerProperties: ...
     @distributed_trace
     def exists(self, *, timeout: Optional[int] = None, **kwargs: Any) -> bool: ...
@@ -180,7 +211,11 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     def _get_blob_service_client(self) -> BlobServiceClient: ...
     @distributed_trace
     def get_container_access_policy(
-        self, *, lease: Optional[Union[BlobLeaseClient, str]] = None, timeout: Optional[int] = None, **kwargs: Any
+        self,
+        *,
+        lease: Optional[Union[BlobLeaseClient, str]] = None,
+        timeout: Optional[int] = None,
+        **kwargs: Any,
     ) -> Dict[str, Any]: ...
     @distributed_trace
     def set_container_access_policy(
@@ -378,5 +413,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         **kwargs: Any,
     ) -> Iterator[HttpResponse]: ...
     def get_blob_client(
-        self, blob: str, snapshot: Optional[str] = None, *, version_id: Optional[str] = None
+        self,
+        blob: str,
+        snapshot: Optional[str] = None,
+        *,
+        version_id: Optional[str] = None,
     ) -> BlobClient: ...

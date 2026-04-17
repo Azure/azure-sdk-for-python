@@ -206,9 +206,13 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob = self.bsc.get_blob_client(self.container_name, self.byte_blob)
         snapshot_ref = blob.create_snapshot()
-        snapshot = self.bsc.get_blob_client(self.container_name, self.byte_blob, snapshot=snapshot_ref)
+        snapshot = self.bsc.get_blob_client(
+            self.container_name, self.byte_blob, snapshot=snapshot_ref
+        )
 
-        blob.upload_blob(self.byte_data, overwrite=True)  # Modify the blob so the Etag no longer matches
+        blob.upload_blob(
+            self.byte_data, overwrite=True
+        )  # Modify the blob so the Etag no longer matches
 
         # Act
         content = snapshot.download_blob(max_concurrency=2).readall()
@@ -234,12 +238,17 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             progress.append((current, total))
 
         # Act
-        content = blob.download_blob(raw_response_hook=callback, max_concurrency=2).readall()
+        content = blob.download_blob(
+            raw_response_hook=callback, max_concurrency=2
+        ).readall()
 
         # Assert
         assert self.byte_data == content
         self.assert_download_progress(
-            len(self.byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
+            len(self.byte_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress,
         )
 
     @BlobPreparer()
@@ -258,12 +267,17 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             progress.append((current, total))
 
         # Act
-        content = blob.download_blob(raw_response_hook=callback, max_concurrency=1).readall()
+        content = blob.download_blob(
+            raw_response_hook=callback, max_concurrency=1
+        ).readall()
 
         # Assert
         assert self.byte_data == content
         self.assert_download_progress(
-            len(self.byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
+            len(self.byte_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress,
         )
 
     @BlobPreparer()
@@ -291,7 +305,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Assert
         assert blob_data == content
         self.assert_download_progress(
-            len(blob_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
+            len(blob_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress,
         )
 
     @pytest.mark.live_test_only
@@ -334,7 +351,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=2)
+            downloader = blob.download_blob(
+                raw_response_hook=callback, max_concurrency=2
+            )
             read_bytes = downloader.readinto(temp_file)
             # Assert
             assert read_bytes == len(self.byte_data)
@@ -342,7 +361,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             actual = temp_file.read()
             assert self.byte_data == actual
         self.assert_download_progress(
-            len(self.byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
+            len(self.byte_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress,
         )
 
     @BlobPreparer()
@@ -362,7 +384,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=1)
+            downloader = blob.download_blob(
+                raw_response_hook=callback, max_concurrency=1
+            )
             read_bytes = downloader.readinto(temp_file)
             # Assert
             assert read_bytes == len(self.byte_data)
@@ -370,7 +394,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             actual = temp_file.read()
             assert self.byte_data == actual
         self.assert_download_progress(
-            len(self.byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
+            len(self.byte_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress,
         )
 
     @BlobPreparer()
@@ -394,7 +421,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=2)
+            downloader = blob.download_blob(
+                raw_response_hook=callback, max_concurrency=2
+            )
             read_bytes = downloader.readinto(temp_file)
             # Assert
             assert read_bytes == 1024
@@ -402,7 +431,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             actual = temp_file.read()
             assert blob_data == actual
         self.assert_download_progress(
-            len(blob_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
+            len(blob_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress,
         )
 
     @pytest.mark.live_test_only
@@ -419,7 +451,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Act
         end_range = self.config.max_single_get_size
         with tempfile.TemporaryFile() as temp_file:
-            downloader = blob.download_blob(offset=1, length=end_range - 1, max_concurrency=2)
+            downloader = blob.download_blob(
+                offset=1, length=end_range - 1, max_concurrency=2
+            )
             read_bytes = downloader.readinto(temp_file)
             # Assert
             assert read_bytes == end_range - 1
@@ -449,7 +483,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         end_range = self.config.max_single_get_size + 1024
         with tempfile.TemporaryFile() as temp_file:
             downloader = blob.download_blob(
-                offset=start_range, length=end_range, raw_response_hook=callback, max_concurrency=2
+                offset=start_range,
+                length=end_range,
+                raw_response_hook=callback,
+                max_concurrency=2,
             )
             read_bytes = downloader.readinto(temp_file)
 
@@ -459,7 +496,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             actual = temp_file.read()
             assert self.byte_data[start_range : end_range + start_range] == actual
         self.assert_download_progress(
-            end_range, self.config.max_chunk_get_size, self.config.max_single_get_size, progress
+            end_range,
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress,
         )
 
     @BlobPreparer()
@@ -520,7 +560,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Act
         end_range = 2 * self.config.max_single_get_size
         with tempfile.TemporaryFile() as temp_file:
-            downloader = blob.download_blob(offset=1, length=end_range, max_concurrency=2)
+            downloader = blob.download_blob(
+                offset=1, length=end_range, max_concurrency=2
+            )
             read_bytes = downloader.readinto(temp_file)
 
             # Assert
@@ -547,7 +589,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Act
         end_range = 2 * self.config.max_single_get_size
         with tempfile.TemporaryFile() as temp_file:
-            downloader = blob.download_blob(offset=1, length=end_range, max_concurrency=2)
+            downloader = blob.download_blob(
+                offset=1, length=end_range, max_concurrency=2
+            )
             read_bytes = downloader.readinto(temp_file)
 
             # Assert
@@ -599,13 +643,18 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             progress.append((current, total))
 
         # Act
-        stream = blob.download_blob(raw_response_hook=callback, max_concurrency=2, encoding="UTF-8")
+        stream = blob.download_blob(
+            raw_response_hook=callback, max_concurrency=2, encoding="UTF-8"
+        )
         content = stream.readall()
 
         # Assert
         assert text_data == content
         self.assert_download_progress(
-            len(text_data.encode("utf-8")), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
+            len(text_data.encode("utf-8")),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress,
         )
 
     @BlobPreparer()
@@ -628,13 +677,18 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             progress.append((current, total))
 
         # Act
-        stream = blob.download_blob(raw_response_hook=callback, max_concurrency=1, encoding="UTF-8")
+        stream = blob.download_blob(
+            raw_response_hook=callback, max_concurrency=1, encoding="UTF-8"
+        )
         content = stream.readall()
 
         # Assert
         assert text_data == content
         self.assert_download_progress(
-            len(text_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
+            len(text_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress,
         )
 
     @BlobPreparer()
@@ -663,7 +717,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Assert
         assert blob_data == content
         self.assert_download_progress(
-            len(blob_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
+            len(blob_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress,
         )
 
     @BlobPreparer()
@@ -711,7 +768,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Assert
         assert text == content
         self.assert_download_progress(
-            len(text.encode("utf-8")), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
+            len(text.encode("utf-8")),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress,
         )
 
     @BlobPreparer()
@@ -775,7 +835,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=2)
+            downloader = blob.download_blob(
+                raw_response_hook=callback, max_concurrency=2
+            )
             properties = downloader.readinto(temp_file)
 
             # Assert
@@ -783,7 +845,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             actual = temp_file.read()
             assert byte_data == actual
         self.assert_download_progress(
-            len(byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
+            len(byte_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress,
         )
 
     @BlobPreparer()
@@ -811,7 +876,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Assert
         assert byte_data == content
         self.assert_download_progress(
-            len(byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
+            len(byte_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress,
         )
 
     @BlobPreparer()
@@ -822,7 +890,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
-        byte_data = self.get_random_bytes(self.config.max_single_get_size + self.config.max_chunk_get_size)
+        byte_data = self.get_random_bytes(
+            self.config.max_single_get_size + self.config.max_chunk_get_size
+        )
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(byte_data)
 
@@ -839,7 +909,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Assert
         assert byte_data == content
         self.assert_download_progress(
-            len(byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress
+            len(byte_data),
+            self.config.max_chunk_get_size,
+            self.config.max_single_get_size,
+            progress,
         )
 
     @pytest.mark.live_test_only
@@ -897,7 +970,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
-            downloader = blob.download_blob(offset=0, length=1024, validate_content=True, max_concurrency=2)
+            downloader = blob.download_blob(
+                offset=0, length=1024, validate_content=True, max_concurrency=2
+            )
             read_bytes = downloader.readinto(temp_file)
 
         # Assert
@@ -984,7 +1059,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         progress = ProgressTracker(len(data), 1024)
 
         # Act
-        blob.download_blob(max_concurrency=1, progress_hook=progress.assert_progress).readall()
+        blob.download_blob(
+            max_concurrency=1, progress_hook=progress.assert_progress
+        ).readall()
 
         # Assert
         progress.assert_complete()
@@ -1005,7 +1082,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         progress = ProgressTracker(len(data), 1024)
 
         # Act
-        blob.download_blob(max_concurrency=3, progress_hook=progress.assert_progress).readall()
+        blob.download_blob(
+            max_concurrency=3, progress_hook=progress.assert_progress
+        ).readall()
 
         # Assert
         progress.assert_complete()
@@ -1028,7 +1107,10 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
         # Act
         blob.download_blob(
-            offset=512, length=length, max_concurrency=3, progress_hook=progress.assert_progress
+            offset=512,
+            length=length,
+            max_concurrency=3,
+            progress_hook=progress.assert_progress,
         ).readall()
 
         # Assert
@@ -1051,7 +1133,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         result = BytesIO()
 
         # Act
-        stream = blob.download_blob(max_concurrency=3, progress_hook=progress.assert_progress)
+        stream = blob.download_blob(
+            max_concurrency=3, progress_hook=progress.assert_progress
+        )
         read = stream.readinto(result)
 
         # Assert
@@ -1269,7 +1353,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         stream = blob.download_blob()
 
         # Act
-        blob2 = self.bsc.get_blob_client(self.container_name, self._get_blob_reference() + "-copy")
+        blob2 = self.bsc.get_blob_client(
+            self.container_name, self._get_blob_reference() + "-copy"
+        )
         blob2.upload_blob(stream, overwrite=True)
         result = blob2.download_blob().readall()
 
@@ -1496,7 +1582,9 @@ class TestStorageGetBlob(StorageRecordedTestCase):
                 self.num_read += 1
 
         progress = CustomProgressTracker()
-        stream = blob.download_blob(encoding="utf-8", progress_hook=progress.assert_progress)
+        stream = blob.download_blob(
+            encoding="utf-8", progress_hook=progress.assert_progress
+        )
 
         # Act / Assert
         for _ in range(4):

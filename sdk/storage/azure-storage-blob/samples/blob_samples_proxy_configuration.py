@@ -45,7 +45,9 @@ https_proxy = "http://user:password@10.10.1.10:1180/"
 
 proxies = {"http": http_proxy, "https": https_proxy}
 # Construct the BlobServiceClient, including the customized configuation.
-service_client = BlobServiceClient.from_connection_string(connection_string, proxies=proxies)
+service_client = BlobServiceClient.from_connection_string(
+    connection_string, proxies=proxies
+)
 containers = list(service_client.list_containers(logging_enable=True))
 print("{} containers.".format(len(containers)))
 

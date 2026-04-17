@@ -14,9 +14,14 @@ USAGE: python blob_samples_query.py
     Set the environment variables with your own values before running the sample.
     1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
+
 import os
 import sys
-from azure.storage.blob import BlobServiceClient, DelimitedJsonDialect, DelimitedTextDialect
+from azure.storage.blob import (
+    BlobServiceClient,
+    DelimitedJsonDialect,
+    DelimitedTextDialect,
+)
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 BASE_FILE = os.path.join(current_dir, "./sample-blobs/quick_query.csv")
@@ -51,11 +56,18 @@ def main():
     # select the second column of the csv file
     query_expression = "SELECT _2 from BlobStorage"
     input_format = DelimitedTextDialect(
-        delimiter=",", quotechar='"', lineterminator="\n", escapechar="", has_header=False
+        delimiter=",",
+        quotechar='"',
+        lineterminator="\n",
+        escapechar="",
+        has_header=False,
     )
     output_format = DelimitedJsonDialect(delimiter="\n")
     reader = blob_client.query_blob(
-        query_expression, on_error=on_error, blob_format=input_format, output_format=output_format
+        query_expression,
+        on_error=on_error,
+        blob_format=input_format,
+        output_format=output_format,
     )
     content = reader.readall()
     # [END query]

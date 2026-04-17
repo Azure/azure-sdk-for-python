@@ -43,11 +43,15 @@ class CommonBlobSamplesAsync(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # Instantiate a ContainerClient
         async with blob_service_client:
-            container_client = blob_service_client.get_container_client("containerformyblobsasync")
+            container_client = blob_service_client.get_container_client(
+                "containerformyblobsasync"
+            )
 
             # Create new Container
             try:
@@ -60,7 +64,9 @@ class CommonBlobSamplesAsync(object):
                 await container_client.upload_blob(name="my_blob", data=data)
 
             # Get a BlobClient for a specific blob
-            blob_client = blob_service_client.get_blob_client(container="containerformyblobsasync", blob="my_blob")
+            blob_client = blob_service_client.get_blob_client(
+                container="containerformyblobsasync", blob="my_blob"
+            )
 
             # [START create_blob_snapshot]
             # Create a read-only snapshot of the blob at this point in time
@@ -87,7 +93,9 @@ class CommonBlobSamplesAsync(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         async with blob_service_client:
             # Create a retention policy to retain deleted blobs
@@ -96,10 +104,14 @@ class CommonBlobSamplesAsync(object):
             delete_retention_policy = RetentionPolicy(enabled=True, days=1)
 
             # Set the retention policy on the service
-            await blob_service_client.set_service_properties(delete_retention_policy=delete_retention_policy)
+            await blob_service_client.set_service_properties(
+                delete_retention_policy=delete_retention_policy
+            )
 
             # Instantiate a ContainerClient
-            container_client = blob_service_client.get_container_client("containerfordeletedblobsasync")
+            container_client = blob_service_client.get_container_client(
+                "containerfordeletedblobsasync"
+            )
 
             # Create new Container
             try:
@@ -110,7 +122,9 @@ class CommonBlobSamplesAsync(object):
 
             # Upload a blob to the container
             with open(SOURCE_FILE, "rb") as data:
-                blob_client = await container_client.upload_blob(name="my_blob", data=data)
+                blob_client = await container_client.upload_blob(
+                    name="my_blob", data=data
+                )
 
             # Soft delete blob in the container (blob can be recovered with undelete)
             await blob_client.delete_blob()
@@ -138,11 +152,15 @@ class CommonBlobSamplesAsync(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         async with blob_service_client:
             # Instantiate a ContainerClient
-            container_client = blob_service_client.get_container_client("containerforbatchblobdeletesasync")
+            container_client = blob_service_client.get_container_client(
+                "containerforbatchblobdeletesasync"
+            )
 
             # Create new Container
             try:
@@ -169,7 +187,9 @@ class CommonBlobSamplesAsync(object):
             # [END delete_multiple_blobs]
 
             # Delete container
-            await blob_service_client.delete_container("containerforbatchblobdeletesasync")
+            await blob_service_client.delete_container(
+                "containerforbatchblobdeletesasync"
+            )
 
     async def acquire_lease_on_blob_async(self):
         if self.connection_string is None:
@@ -182,11 +202,15 @@ class CommonBlobSamplesAsync(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         async with blob_service_client:
             # Instantiate a ContainerClient
-            container_client = blob_service_client.get_container_client("leasemyblobscontainerasync")
+            container_client = blob_service_client.get_container_client(
+                "leasemyblobscontainerasync"
+            )
 
             # Create new Container
             try:
@@ -200,7 +224,9 @@ class CommonBlobSamplesAsync(object):
 
             # [START acquire_lease_on_blob]
             # Get the blob client
-            blob_client = blob_service_client.get_blob_client("leasemyblobscontainerasync", "my_blob")
+            blob_client = blob_service_client.get_blob_client(
+                "leasemyblobscontainerasync", "my_blob"
+            )
 
             # Acquire a lease on the blob
             lease = await blob_client.acquire_lease()
@@ -223,11 +249,15 @@ class CommonBlobSamplesAsync(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob.aio import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         async with blob_service_client:
             # Instantiate a ContainerClient
-            container_client = blob_service_client.get_container_client("copyblobcontainerasync")
+            container_client = blob_service_client.get_container_client(
+                "copyblobcontainerasync"
+            )
 
             # Create new Container
             try:
@@ -239,7 +269,9 @@ class CommonBlobSamplesAsync(object):
                 # [START copy_blob_from_url]
                 # Get the blob client with the source blob
                 source_blob = "https://www.gutenberg.org/files/59466/59466-0.txt"
-                copied_blob = blob_service_client.get_blob_client("copyblobcontainerasync", "59466-0.txt")
+                copied_blob = blob_service_client.get_blob_client(
+                    "copyblobcontainerasync", "59466-0.txt"
+                )
 
                 # start copy and check copy status
                 copy = await copied_blob.start_copy_from_url(source_blob)
@@ -254,7 +286,9 @@ class CommonBlobSamplesAsync(object):
                     if copy_id is not None:
                         await copied_blob.abort_copy(copy_id)
                     else:
-                        print("copy_id was unexpectedly None, check if the operation completed successfully.")
+                        print(
+                            "copy_id was unexpectedly None, check if the operation completed successfully."
+                        )
 
                 # check copy status
                 props = await copied_blob.get_blob_properties()

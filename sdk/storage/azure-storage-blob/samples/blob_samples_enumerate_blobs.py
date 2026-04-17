@@ -28,7 +28,9 @@ def main():
         print("STORAGE_CONNECTION_STRING must be set.")
         sys.exit(1)
 
-    container = ContainerClient.from_connection_string(CONNECTION_STRING, container_name="mycontainerenumerate")
+    container = ContainerClient.from_connection_string(
+        CONNECTION_STRING, container_name="mycontainerenumerate"
+    )
     container.create_container()
     blob_list = container.list_blobs()
     for blob in blob_list:

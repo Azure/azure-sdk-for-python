@@ -70,7 +70,9 @@ class TestStorageLogging(StorageRecordedTestCase):
 
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, logging_enable=True
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            logging_enable=True,
         )
         self._setup(bsc)
         container = bsc.get_container_client(self.container_name)
@@ -97,7 +99,9 @@ class TestStorageLogging(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), storage_account_key.secret
+        )
         self._setup(bsc)
         container = bsc.get_container_client(self.container_name)
         # Act
@@ -117,7 +121,9 @@ class TestStorageLogging(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # SAS URL is calculated from storage key, so this test runs live only
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), storage_account_key.secret
+        )
         self._setup(bsc)
         # Arrange
         container = bsc.get_container_client(self.container_name)
@@ -131,9 +137,13 @@ class TestStorageLogging(StorageRecordedTestCase):
         )
         # parse out the signed signature
         token_components = parse_qs(token)
-        signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
+        signed_signature = quote(
+            token_components[QueryStringConstants.SIGNED_SIGNATURE][0]
+        )
 
-        sas_service = ContainerClient.from_container_url(container.url, credential=token)
+        sas_service = ContainerClient.from_container_url(
+            container.url, credential=token
+        )
 
         # Act
         with LogCaptured(self) as log_captured:
@@ -152,7 +162,9 @@ class TestStorageLogging(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # SAS URL is calculated from storage key, so this test runs live only
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), storage_account_key.secret
+        )
         self._setup(bsc)
         # Arrange
         dest_blob_name = self.get_resource_name("destblob")
@@ -164,14 +176,20 @@ class TestStorageLogging(StorageRecordedTestCase):
         if QueryStringConstants.SIGNED_SIGNATURE not in token_components:
             pytest.fail(
                 "Blob URL {} doesn't contain {}, parsed query params: {}".format(
-                    self.source_blob_url, QueryStringConstants.SIGNED_SIGNATURE, list(token_components.keys())
+                    self.source_blob_url,
+                    QueryStringConstants.SIGNED_SIGNATURE,
+                    list(token_components.keys()),
                 )
             )
-        signed_signature = quote(token_components[QueryStringConstants.SIGNED_SIGNATURE][0])
+        signed_signature = quote(
+            token_components[QueryStringConstants.SIGNED_SIGNATURE][0]
+        )
 
         # Act
         with LogCaptured(self) as log_captured:
-            dest_blob.start_copy_from_url(self.source_blob_url, requires_sync=True, logging_enable=True)
+            dest_blob.start_copy_from_url(
+                self.source_blob_url, requires_sync=True, logging_enable=True
+            )
             log_as_str = log_captured.getvalue()
 
             # Assert
@@ -356,11 +374,15 @@ class TestStorageLogging(StorageRecordedTestCase):
             nonlocal call_count
             call_count += 1
             if call_count == 1:
-                response.http_response.status_code = 408  # Request Timeout - triggers retry
+                response.http_response.status_code = (
+                    408  # Request Timeout - triggers retry
+                )
 
         with LogCaptured(self) as log_captured:
             call_count = 0
-            blob_client.download_blob(raw_response_hook=response_hook_fail_once, logging_body=False)
+            blob_client.download_blob(
+                raw_response_hook=response_hook_fail_once, logging_body=False
+            )
             log_as_str = log_captured.getvalue()
             # Assert - Body should NOT be logged on either attempt
             assert request_body not in log_as_str
@@ -369,11 +391,15 @@ class TestStorageLogging(StorageRecordedTestCase):
         # Test 2: logging_body=True should log on both original and retry attempts
         with LogCaptured(self) as log_captured:
             call_count = 0
-            blob_client.download_blob(raw_response_hook=response_hook_fail_once, logging_body=True)
+            blob_client.download_blob(
+                raw_response_hook=response_hook_fail_once, logging_body=True
+            )
             log_as_str = log_captured.getvalue()
             # Assert - Body should be logged on both attempts
             assert request_body in log_as_str
-            assert log_as_str.count(request_body) == 2  # Should appear twice (original + retry)
+            assert (
+                log_as_str.count(request_body) == 2
+            )  # Should appear twice (original + retry)
             assert call_count == 2  # Verify retry happened
 
         # Test 3: Verify that logging_body override persists correctly across retries
@@ -392,7 +418,9 @@ class TestStorageLogging(StorageRecordedTestCase):
 
         with LogCaptured(self) as log_captured:
             call_count = 0
-            blob_client_with_body.download_blob(raw_response_hook=response_hook_fail_once, logging_body=False)
+            blob_client_with_body.download_blob(
+                raw_response_hook=response_hook_fail_once, logging_body=False
+            )
             log_as_str = log_captured.getvalue()
             # Assert - logging_body=False should override constructor setting on both attempts
             assert request_body not in log_as_str

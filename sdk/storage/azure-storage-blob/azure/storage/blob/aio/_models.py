@@ -13,7 +13,10 @@ from azure.core.exceptions import HttpResponseError
 from .._deserialize import parse_tags
 from .._generated.models import FilterBlobItem
 from .._models import ContainerProperties, FilteredBlob, parse_page_list
-from .._shared.response_handlers import process_storage_error, return_context_and_deserialized
+from .._shared.response_handlers import (
+    process_storage_error,
+    return_context_and_deserialized,
+)
 
 if TYPE_CHECKING:
     from .._models import BlobProperties
@@ -46,9 +49,13 @@ class ContainerPropertiesPaged(AsyncPageIterator):
     current_page: List[ContainerProperties]
     """The current page of listed results."""
 
-    def __init__(self, command, prefix=None, results_per_page=None, continuation_token=None):
+    def __init__(
+        self, command, prefix=None, results_per_page=None, continuation_token=None
+    ):
         super(ContainerPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or "",
         )
         self._command = command
         self.service_endpoint = None
@@ -75,13 +82,17 @@ class ContainerPropertiesPaged(AsyncPageIterator):
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
-        self.current_page = [self._build_item(item) for item in self._response.container_items]
+        self.current_page = [
+            self._build_item(item) for item in self._response.container_items
+        ]
 
         return self._response.next_marker or None, self.current_page
 
     @staticmethod
     def _build_item(item):
-        return ContainerProperties._from_generated(item)  # pylint: disable=protected-access
+        return ContainerProperties._from_generated(
+            item
+        )  # pylint: disable=protected-access
 
 
 class FilteredBlobPaged(AsyncPageIterator):
@@ -124,7 +135,9 @@ class FilteredBlobPaged(AsyncPageIterator):
         location_mode: Optional[str] = None,
     ) -> None:
         super(FilteredBlobPaged, self).__init__(
-            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or "",
         )
         self._command = command
         self.service_endpoint = None
@@ -157,7 +170,9 @@ class FilteredBlobPaged(AsyncPageIterator):
     def _build_item(item):
         if isinstance(item, FilterBlobItem):
             tags = parse_tags(item.tags)
-            blob = FilteredBlob(name=item.name, container_name=item.container_name, tags=tags)
+            blob = FilteredBlob(
+                name=item.name, container_name=item.container_name, tags=tags
+            )
             return blob
         return item
 
@@ -165,7 +180,9 @@ class FilteredBlobPaged(AsyncPageIterator):
 class PageRangePaged(AsyncPageIterator):
     def __init__(self, command, results_per_page=None, continuation_token=None):
         super(PageRangePaged, self).__init__(
-            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or "",
         )
         self._command = command
         self.results_per_page = results_per_page

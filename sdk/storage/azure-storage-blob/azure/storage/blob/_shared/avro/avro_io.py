@@ -163,7 +163,9 @@ class BinaryDecoder(object):
             try:
                 return input_bytes.decode("utf-8")
             except UnicodeDecodeError as exn:
-                logger.error("Invalid UTF-8 input bytes: %r", input_bytes)  # pylint: disable=do-not-log-raised-errors
+                logger.error(
+                    "Invalid UTF-8 input bytes: %r", input_bytes
+                )  # pylint: disable=do-not-log-raised-errors
                 raise exn
         else:
             # PY2
@@ -390,7 +392,8 @@ class DatumReader(object):
         index_of_schema = int(decoder.read_long())
         if index_of_schema >= len(writer_schema.schemas):
             fail_msg = (
-                f"Can't access branch index {index_of_schema} " f"for union with {len(writer_schema.schemas)} branches"
+                f"Can't access branch index {index_of_schema} "
+                f"for union with {len(writer_schema.schemas)} branches"
             )
             raise SchemaResolutionException(fail_msg, writer_schema)
         selected_writer_schema = writer_schema.schemas[index_of_schema]
@@ -402,7 +405,8 @@ class DatumReader(object):
         index_of_schema = int(decoder.read_long())
         if index_of_schema >= len(writer_schema.schemas):
             fail_msg = (
-                f"Can't access branch index {index_of_schema} " f"for union with {len(writer_schema.schemas)} branches"
+                f"Can't access branch index {index_of_schema} "
+                f"for union with {len(writer_schema.schemas)} branches"
             )
             raise SchemaResolutionException(fail_msg, writer_schema)
         return self.skip_data(writer_schema.schemas[index_of_schema], decoder)

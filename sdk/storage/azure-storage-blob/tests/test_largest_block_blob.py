@@ -99,8 +99,14 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key.secret)
-        self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy])
+        credential_policy = _format_shared_key_credential(
+            storage_account_name, storage_account_key.secret
+        )
+        self._setup(
+            storage_account_name,
+            storage_account_key,
+            [payload_dropping_policy, credential_policy],
+        )
         blob = self._create_blob()
 
         # Act
@@ -136,7 +142,9 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
         stream = LargeStream(LARGEST_BLOCK_SIZE)
         blockId = str(uuid.uuid4())
         requestId = str(uuid.uuid4())
-        resp = blob.stage_block(blockId, stream, length=LARGEST_BLOCK_SIZE, client_request_id=requestId)
+        resp = blob.stage_block(
+            blockId, stream, length=LARGEST_BLOCK_SIZE, client_request_id=requestId
+        )
         blob.commit_block_list([BlobBlock(blockId)])
         block_list = blob.get_block_list()
 
@@ -158,15 +166,23 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key.secret)
-        self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy])
+        credential_policy = _format_shared_key_credential(
+            storage_account_name, storage_account_key.secret
+        )
+        self._setup(
+            storage_account_name,
+            storage_account_key,
+            [payload_dropping_policy, credential_policy],
+        )
         blob = self._create_blob()
 
         # Act
         stream = LargeStream(LARGEST_BLOCK_SIZE)
         blockId = str(uuid.uuid4())
         requestId = str(uuid.uuid4())
-        resp = blob.stage_block(blockId, stream, length=LARGEST_BLOCK_SIZE, client_request_id=requestId)
+        resp = blob.stage_block(
+            blockId, stream, length=LARGEST_BLOCK_SIZE, client_request_id=requestId
+        )
         blob.commit_block_list([BlobBlock(blockId)])
         block_list = blob.get_block_list()
 
@@ -233,8 +249,14 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key.secret)
-        self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy])
+        credential_policy = _format_shared_key_credential(
+            storage_account_name, storage_account_key.secret
+        )
+        self._setup(
+            storage_account_name,
+            storage_account_key,
+            [payload_dropping_policy, credential_policy],
+        )
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         with tempfile.TemporaryFile() as temp_file:
@@ -260,8 +282,14 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key.secret)
-        self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy])
+        credential_policy = _format_shared_key_credential(
+            storage_account_name, storage_account_key.secret
+        )
+        self._setup(
+            storage_account_name,
+            storage_account_key,
+            [payload_dropping_policy, credential_policy],
+        )
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -278,12 +306,16 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_create_largest_blob_from_stream_single_upload_without_network(self, **kwargs):
+    def test_create_largest_blob_from_stream_single_upload_without_network(
+        self, **kwargs
+    ):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         payload_dropping_policy = PayloadDroppingPolicy()
-        credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key.secret)
+        credential_policy = _format_shared_key_credential(
+            storage_account_name, storage_account_key.secret
+        )
         self._setup(
             storage_account_name,
             storage_account_key,

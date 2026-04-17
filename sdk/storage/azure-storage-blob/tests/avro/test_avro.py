@@ -103,7 +103,8 @@ class AvroReaderTests(unittest.TestCase):
         for iexample, (writer_schema, datum) in enumerate(SCHEMAS_TO_VALIDATE):
             for codec in CODECS_TO_VALIDATE:
                 file_path = os.path.join(
-                    AvroReaderTests._samples_dir_root, "test_" + codec + "_" + str(iexample) + ".avro"
+                    AvroReaderTests._samples_dir_root,
+                    "test_" + codec + "_" + str(iexample) + ".avro",
                 )
                 with open(file_path, "rb") as reader:
                     datum_reader = DatumReader()
@@ -119,7 +120,8 @@ class AvroReaderTests(unittest.TestCase):
         for iexample, (writer_schema, datum) in enumerate(SCHEMAS_TO_VALIDATE):
             for codec in CODECS_TO_VALIDATE:
                 file_path = os.path.join(
-                    AvroReaderTests._samples_dir_root, "test_" + codec + "_" + str(iexample) + ".avro"
+                    AvroReaderTests._samples_dir_root,
+                    "test_" + codec + "_" + str(iexample) + ".avro",
                 )
                 with open(file_path, "rb") as reader:
                     data = BytesIO(reader.read())
@@ -163,7 +165,9 @@ class AvroReaderTests(unittest.TestCase):
             header_data = reader.read()
             header_stream.write(header_data)
 
-        df_reader = DataFileReader(partial_data_stream, DatumReader(), header_reader=header_stream)
+        df_reader = DataFileReader(
+            partial_data_stream, DatumReader(), header_reader=header_stream
+        )
         records = list(df_reader)
         self.assertEqual(CHANGE_FEED_RECORD, records[0])
         self.assertIsNot(partial_data_stream.object_position, 0)

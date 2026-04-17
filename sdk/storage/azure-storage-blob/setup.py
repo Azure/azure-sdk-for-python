@@ -12,7 +12,6 @@ import re
 
 from setuptools import setup, find_packages
 
-
 # Change the PACKAGE_NAME only to change folder and different name
 PACKAGE_NAME = "azure-storage-blob"
 PACKAGE_PPRINT_NAME = "Azure Blob Storage"
@@ -37,7 +36,9 @@ except ImportError:
 
 # Version extraction inspired from 'requests'
 with open(os.path.join(package_folder_path, "_version.py"), "r") as fd:
-    version = re.search(r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE).group(1)
+    version = re.search(
+        r'^VERSION\s*=\s*[\'"]([^\'"]*)[\'"]', fd.read(), re.MULTILINE
+    ).group(1)
 
 if not version:
     raise RuntimeError("Cannot find version information")
@@ -79,7 +80,12 @@ setup(
         ]
     ),
     python_requires=">=3.9",
-    install_requires=["azure-core>=1.37.0", "cryptography>=2.1.4", "typing-extensions>=4.6.0", "isodate>=0.6.1"],
+    install_requires=[
+        "azure-core>=1.37.0",
+        "cryptography>=2.1.4",
+        "typing-extensions>=4.6.0",
+        "isodate>=0.6.1",
+    ],
     extras_require={
         "aio": [
             "azure-core[aio]>=1.37.0",

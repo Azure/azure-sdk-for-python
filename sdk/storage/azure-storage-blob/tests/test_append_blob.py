@@ -12,7 +12,11 @@ from os import path, remove
 
 import pytest
 from azure.core import MatchConditions
-from azure.core.exceptions import ResourceNotFoundError, ResourceModifiedError, HttpResponseError
+from azure.core.exceptions import (
+    ResourceNotFoundError,
+    ResourceModifiedError,
+    HttpResponseError,
+)
 from azure.mgmt.storage import StorageManagementClient
 from azure.storage.blob import (
     generate_blob_sas,
@@ -28,7 +32,12 @@ from azure.storage.blob._shared.policies import StorageContentValidation
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from test_helpers import NonSeekableStream, ProgressTracker, _build_base_file_share_headers, _create_file_share_oauth
+from test_helpers import (
+    NonSeekableStream,
+    ProgressTracker,
+    _build_base_file_share_headers,
+    _create_file_share_oauth,
+)
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = "blob"
@@ -56,8 +65,13 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
     def _get_blob_reference(self, prefix=TEST_BLOB_PREFIX):
         return self.get_resource_name(prefix)
 
-    def _get_bearer_token_string(self, resource: str = "https://storage.azure.com/.default") -> str:
-        return "Bearer " + f"{self.get_credential(BlobServiceClient).get_token(resource).token}"
+    def _get_bearer_token_string(
+        self, resource: str = "https://storage.azure.com/.default"
+    ) -> str:
+        return (
+            "Bearer "
+            + f"{self.get_credential(BlobServiceClient).get_token(resource).token}"
+        )
 
     def _create_blob(self, bsc, tags=None):
         blob_name = self._get_blob_reference()
@@ -66,7 +80,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         return blob
 
     def _create_source_blob(self, data, bsc):
-        blob_client = bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX))
+        blob_client = bsc.get_blob_client(
+            self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX)
+        )
         blob_client.create_append_blob()
         blob_client.append_block(data)
         return blob_client
@@ -86,7 +102,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob_name = self._get_blob_reference()
@@ -138,7 +156,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -160,7 +180,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         metadata = {"hello": "world", "number": "42"}
@@ -181,7 +203,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -204,7 +228,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=100 * 1024 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=100 * 1024 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -224,7 +250,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -245,15 +273,23 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob = self._create_blob(bsc, tags=tags)
         with pytest.raises(ResourceModifiedError):
-            blob.append_block("啊齄丂狛狜", encoding="utf-16", if_tags_match_condition="\"tag1\"='first tag'")
+            blob.append_block(
+                "啊齄丂狛狜",
+                encoding="utf-16",
+                if_tags_match_condition="\"tag1\"='first tag'",
+            )
         resp = blob.append_block(
-            "啊齄丂狛狜", encoding="utf-16", if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'"
+            "啊齄丂狛狜",
+            encoding="utf-16",
+            if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'",
         )
 
         assert int(resp["blob_append_offset"]) == 0
@@ -268,7 +304,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -289,20 +327,26 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), storage_account_key.secret
+        )
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = self._create_source_blob(source_blob_data, bsc)
         destination_blob_client = self._create_blob(bsc)
         token = "Bearer {}".format(
-            self.get_credential(BlobServiceClient).get_token("https://storage.azure.com/.default").token
+            self.get_credential(BlobServiceClient)
+            .get_token("https://storage.azure.com/.default")
+            .token
         )
 
         # Assert this operation fails without a credential
         with pytest.raises(HttpResponseError):
             destination_blob_client.append_block_from_url(source_blob_client.url)
         # Assert it passes after passing an oauth credential
-        destination_blob_client.append_block_from_url(source_blob_client.url, source_authorization=token)
+        destination_blob_client.append_block_from_url(
+            source_blob_client.url, source_authorization=token
+        )
         destination_blob_data = destination_blob_client.download_blob().readall()
         assert source_blob_data == destination_blob_data
 
@@ -314,7 +358,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -366,7 +412,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         assert destination_blob_properties.get("etag") == resp.get("etag")
-        assert destination_blob_properties.get("last_modified") == resp.get("last_modified")
+        assert destination_blob_properties.get("last_modified") == resp.get(
+            "last_modified"
+        )
         assert destination_blob_properties.get("size") == LARGE_BLOB_SIZE
 
         # Missing start range shouldn't pass the validation
@@ -383,7 +431,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -415,7 +465,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         assert destination_blob_properties.get("etag") == resp.get("etag")
-        assert destination_blob_properties.get("last_modified") == resp.get("last_modified")
+        assert destination_blob_properties.get("last_modified") == resp.get(
+            "last_modified"
+        )
 
         # Act part 2: put block from url with wrong md5
         with pytest.raises(HttpResponseError):
@@ -432,7 +484,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -456,7 +510,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
             source_blob_client.url + "?" + sas,
             source_offset=0,
             source_length=LARGE_BLOB_SIZE,
-            source_if_modified_since=source_blob_properties.get("last_modified") - timedelta(hours=15),
+            source_if_modified_since=source_blob_properties.get("last_modified")
+            - timedelta(hours=15),
         )
         assert resp.get("blob_append_offset") == "0"
         assert resp.get("blob_committed_block_count") == 1
@@ -467,7 +522,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         assert destination_blob_properties.get("etag") == resp.get("etag")
-        assert destination_blob_properties.get("last_modified") == resp.get("last_modified")
+        assert destination_blob_properties.get("last_modified") == resp.get(
+            "last_modified"
+        )
         assert destination_blob_properties.get("size") == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
@@ -487,7 +544,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -522,7 +581,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         assert destination_blob_properties.get("etag") == resp.get("etag")
-        assert destination_blob_properties.get("last_modified") == resp.get("last_modified")
+        assert destination_blob_properties.get("last_modified") == resp.get(
+            "last_modified"
+        )
         assert destination_blob_properties.get("size") == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
@@ -531,7 +592,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
                 source_blob_client.url + "?" + sas,
                 source_offset=0,
                 source_length=LARGE_BLOB_SIZE,
-                if_unmodified_since=source_blob_properties.get("last_modified") - timedelta(hours=15),
+                if_unmodified_since=source_blob_properties.get("last_modified")
+                - timedelta(hours=15),
             )
 
     @BlobPreparer()
@@ -542,7 +604,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -578,7 +642,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         assert destination_blob_properties.get("etag") == resp.get("etag")
-        assert destination_blob_properties.get("last_modified") == resp.get("last_modified")
+        assert destination_blob_properties.get("last_modified") == resp.get(
+            "last_modified"
+        )
         assert destination_blob_properties.get("size") == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
@@ -599,7 +665,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -635,7 +703,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         assert destination_blob_properties.get("etag") == resp.get("etag")
-        assert destination_blob_properties.get("last_modified") == resp.get("last_modified")
+        assert destination_blob_properties.get("last_modified") == resp.get(
+            "last_modified"
+        )
         assert destination_blob_properties.get("size") == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
@@ -656,7 +726,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -673,8 +745,12 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         )
 
         destination_blob_name = self._get_blob_reference()
-        destination_blob_client = bsc.get_blob_client(self.container_name, destination_blob_name)
-        destination_blob_properties_on_creation = destination_blob_client.create_append_blob()
+        destination_blob_client = bsc.get_blob_client(
+            self.container_name, destination_blob_name
+        )
+        destination_blob_properties_on_creation = (
+            destination_blob_client.create_append_blob()
+        )
 
         # Act part 1: make append block from url calls
         resp = destination_blob_client.append_block_from_url(
@@ -693,7 +769,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         assert destination_blob_properties.get("etag") == resp.get("etag")
-        assert destination_blob_properties.get("last_modified") == resp.get("last_modified")
+        assert destination_blob_properties.get("last_modified") == resp.get(
+            "last_modified"
+        )
         assert destination_blob_properties.get("size") == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
@@ -714,7 +792,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -749,7 +829,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         assert destination_blob_properties.get("etag") == resp.get("etag")
-        assert destination_blob_properties.get("last_modified") == resp.get("last_modified")
+        assert destination_blob_properties.get("last_modified") == resp.get(
+            "last_modified"
+        )
         assert destination_blob_properties.get("size") == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
@@ -770,7 +852,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -804,7 +888,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         assert destination_blob_properties.get("etag") == resp.get("etag")
-        assert destination_blob_properties.get("last_modified") == resp.get("last_modified")
+        assert destination_blob_properties.get("last_modified") == resp.get(
+            "last_modified"
+        )
         assert destination_blob_properties.get("size") == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
@@ -824,7 +910,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -844,7 +932,10 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Act part 1: make append block from url calls
         resp = destination_blob_client.append_block_from_url(
-            source_blob_client.url + "?" + sas, source_offset=0, source_length=LARGE_BLOB_SIZE, appendpos_condition=0
+            source_blob_client.url + "?" + sas,
+            source_offset=0,
+            source_length=LARGE_BLOB_SIZE,
+            appendpos_condition=0,
         )
         assert resp.get("blob_append_offset") == "0"
         assert resp.get("blob_committed_block_count") == 1
@@ -855,7 +946,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         assert destination_blob_properties.get("etag") == resp.get("etag")
-        assert destination_blob_properties.get("last_modified") == resp.get("last_modified")
+        assert destination_blob_properties.get("last_modified") == resp.get(
+            "last_modified"
+        )
         assert destination_blob_properties.get("size") == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
@@ -875,7 +968,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -899,7 +994,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
             source_blob_client.url + "?" + sas,
             source_offset=0,
             source_length=LARGE_BLOB_SIZE,
-            if_modified_since=source_properties.get("last_modified") - timedelta(minutes=15),
+            if_modified_since=source_properties.get("last_modified")
+            - timedelta(minutes=15),
         )
         assert resp.get("blob_append_offset") == "0"
         assert resp.get("blob_committed_block_count") == 1
@@ -910,7 +1006,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         assert destination_blob_properties.get("etag") == resp.get("etag")
-        assert destination_blob_properties.get("last_modified") == resp.get("last_modified")
+        assert destination_blob_properties.get("last_modified") == resp.get(
+            "last_modified"
+        )
         assert destination_blob_properties.get("size") == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
@@ -930,7 +1028,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Arrange
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -954,7 +1054,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
             source_blob_client.url + "?" + sas,
             source_offset=0,
             source_length=LARGE_BLOB_SIZE,
-            if_unmodified_since=source_properties.get("last_modified") + timedelta(minutes=15),
+            if_unmodified_since=source_properties.get("last_modified")
+            + timedelta(minutes=15),
         )
         assert resp.get("blob_append_offset") == "0"
         assert resp.get("blob_committed_block_count") == 1
@@ -965,7 +1066,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         destination_blob_properties = destination_blob_client.get_blob_properties()
         self.assertBlobEqual(destination_blob_client, source_blob_data)
         assert destination_blob_properties.get("etag") == resp.get("etag")
-        assert destination_blob_properties.get("last_modified") == resp.get("last_modified")
+        assert destination_blob_properties.get("last_modified") == resp.get(
+            "last_modified"
+        )
         assert destination_blob_properties.get("size") == LARGE_BLOB_SIZE
 
         # Act part 2: put block from url with failing condition
@@ -974,7 +1077,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
                 source_blob_client.url + "?" + sas,
                 source_offset=0,
                 source_length=LARGE_BLOB_SIZE,
-                if_unmodified_since=source_properties.get("last_modified") - timedelta(minutes=15),
+                if_unmodified_since=source_properties.get("last_modified")
+                - timedelta(minutes=15),
             )
 
     @BlobPreparer()
@@ -984,7 +1088,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob_name = self._get_blob_reference()
@@ -994,11 +1100,17 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Act
         create_resp = blob.upload_blob(
-            data1, overwrite=True, blob_type=BlobType.AppendBlob, metadata={"blobdata": "Data1"}
+            data1,
+            overwrite=True,
+            blob_type=BlobType.AppendBlob,
+            metadata={"blobdata": "Data1"},
         )
 
         update_resp = blob.upload_blob(
-            data2, overwrite=False, blob_type=BlobType.AppendBlob, metadata={"blobdata": "Data2"}
+            data2,
+            overwrite=False,
+            blob_type=BlobType.AppendBlob,
+            metadata={"blobdata": "Data2"},
         )
 
         props = blob.get_blob_properties()
@@ -1019,7 +1131,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob_name = self._get_blob_reference()
@@ -1029,10 +1143,16 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # Act
         create_resp = blob.upload_blob(
-            data1, overwrite=True, blob_type=BlobType.AppendBlob, metadata={"blobdata": "Data1"}
+            data1,
+            overwrite=True,
+            blob_type=BlobType.AppendBlob,
+            metadata={"blobdata": "Data1"},
         )
         update_resp = blob.upload_blob(
-            data2, overwrite=True, blob_type=BlobType.AppendBlob, metadata={"blobdata": "Data2"}
+            data2,
+            overwrite=True,
+            blob_type=BlobType.AppendBlob,
+            metadata={"blobdata": "Data2"},
         )
 
         props = blob.get_blob_properties()
@@ -1052,7 +1172,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1074,7 +1196,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1096,7 +1220,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1123,7 +1249,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1142,7 +1270,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1161,7 +1291,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1183,7 +1315,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1216,7 +1350,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1237,7 +1373,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1263,7 +1401,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1301,7 +1441,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1326,7 +1468,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1338,7 +1482,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
             temp_file.write(data)
             temp_file.seek(0)
             non_seekable_file = NonSeekableStream(temp_file)
-            blob.upload_blob(non_seekable_file, length=blob_size, blob_type=BlobType.AppendBlob)
+            blob.upload_blob(
+                non_seekable_file, length=blob_size, blob_type=BlobType.AppendBlob
+            )
 
         # Assert
         self.assertBlobEqual(blob, data[:blob_size])
@@ -1350,7 +1496,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1373,7 +1521,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1400,7 +1550,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1424,7 +1576,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
 
         # parallel tests introduce random order of requests, can only run live
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1435,7 +1589,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            append_resp = blob.upload_blob(temp_file, length=blob_size, blob_type=BlobType.AppendBlob)
+            append_resp = blob.upload_blob(
+                temp_file, length=blob_size, blob_type=BlobType.AppendBlob
+            )
         blob_properties = blob.get_blob_properties()
 
         # Assert
@@ -1450,7 +1606,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1473,7 +1631,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1493,7 +1653,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1520,7 +1682,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1540,7 +1704,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1558,7 +1724,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1580,7 +1748,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1597,7 +1767,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1619,7 +1791,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1645,7 +1819,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024,
         )
         self._setup(bsc)
         blob = self._create_blob(bsc)
@@ -1679,23 +1855,34 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         if self.is_live:
             token_credential = self.get_credential(BlobServiceClient)
             subscription_id = self.get_settings_value("SUBSCRIPTION_ID")
-            mgmt_client = StorageManagementClient(token_credential, subscription_id, "2021-04-01")
+            mgmt_client = StorageManagementClient(
+                token_credential, subscription_id, "2021-04-01"
+            )
             property = mgmt_client.models().BlobContainer(
-                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True)
+                immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(
+                    enabled=True
+                )
             )
             mgmt_client.blob_containers.create(
-                storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
+                blob_container=property,
             )
 
         # Act
         blob_name = self.get_resource_name("vlwblob")
         blob = bsc.get_blob_client(container_name, blob_name)
 
-        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=10))
+        expiry_time = self.get_datetime_variable(
+            variables, "expiry_time", datetime.utcnow() + timedelta(seconds=10)
+        )
         immutability_policy = ImmutabilityPolicy(
             expiry_time=expiry_time, policy_mode=BlobImmutabilityPolicyMode.Unlocked
         )
-        blob.create_append_blob(immutability_policy=immutability_policy, legal_hold=True)
+        blob.create_append_blob(
+            immutability_policy=immutability_policy, legal_hold=True
+        )
 
         props = blob.get_blob_properties()
 
@@ -1711,7 +1898,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
             blob.set_legal_hold(False)
             blob.delete_blob()
             mgmt_client.blob_containers.delete(
-                storage_resource_group_name, versioned_storage_account_name, container_name
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
             )
 
         return variables
@@ -1722,7 +1911,9 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), storage_account_key.secret
+        )
         self._setup(bsc)
 
         blob_name = self._get_blob_reference()

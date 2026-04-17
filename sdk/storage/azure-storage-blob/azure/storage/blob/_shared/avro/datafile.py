@@ -89,7 +89,11 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
         self._reader = reader
         self._raw_decoder = avro_io.BinaryDecoder(reader)
         self._header_reader = kwargs.pop("header_reader", None)
-        self._header_decoder = None if self._header_reader is None else avro_io.BinaryDecoder(self._header_reader)
+        self._header_decoder = (
+            None
+            if self._header_reader is None
+            else avro_io.BinaryDecoder(self._header_reader)
+        )
         self._datum_decoder = None  # Maybe reset at every block.
         self._datum_reader = datum_reader
 
@@ -124,7 +128,9 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
         if self._header_reader is not None:
             self._datum_decoder = self._raw_decoder
 
-        self.datum_reader.writer_schema = schema.parse(self.get_meta(SCHEMA_KEY).decode("utf-8"))
+        self.datum_reader.writer_schema = schema.parse(
+            self.get_meta(SCHEMA_KEY).decode("utf-8")
+        )
 
     def __enter__(self):
         return self
@@ -178,7 +184,9 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
 
     def _read_header(self):
         header_reader = self._header_reader if self._header_reader else self._reader
-        header_decoder = self._header_decoder if self._header_decoder else self._raw_decoder
+        header_decoder = (
+            self._header_decoder if self._header_decoder else self._raw_decoder
+        )
 
         # seek to the beginning of the file to get magic block
         header_reader.seek(0, 0)
@@ -188,7 +196,9 @@ class DataFileReader(object):  # pylint: disable=too-many-instance-attributes
 
         # check magic number
         if header.get("magic") != MAGIC:
-            fail_msg = f"Not an Avro data file: {header.get('magic')} doesn't match {MAGIC!r}."
+            fail_msg = (
+                f"Not an Avro data file: {header.get('magic')} doesn't match {MAGIC!r}."
+            )
             raise schema.AvroException(fail_msg)
 
         # set metadata

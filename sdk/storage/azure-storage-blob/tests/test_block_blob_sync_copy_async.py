@@ -8,7 +8,12 @@ from datetime import datetime, timedelta
 
 import pytest
 from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import BlobSasPermissions, StandardBlobTier, StorageErrorCode, generate_blob_sas
+from azure.storage.blob import (
+    BlobSasPermissions,
+    StandardBlobTier,
+    StorageErrorCode,
+    generate_blob_sas,
+)
 from azure.storage.blob.aio import BlobClient, BlobServiceClient
 from azure.storage.blob._shared.policies import StorageContentValidation
 
@@ -61,7 +66,9 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
             permission=BlobSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        self.source_blob_url = BlobClient.from_blob_url(blob.url, credential=sas_token).url
+        self.source_blob_url = BlobClient.from_blob_url(
+            blob.url, credential=sas_token
+        ).url
         self.source_blob_url_without_sas = blob.url
 
     @BlobPreparer()
@@ -74,16 +81,21 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         split = 4 * 1024
         destination_blob_name = self.get_resource_name("destblob")
-        destination_blob_client = self.bsc.get_blob_client(self.container_name, destination_blob_name)
-        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token(
-            "https://storage.azure.com/.default"
+        destination_blob_client = self.bsc.get_blob_client(
+            self.container_name, destination_blob_name
         )
+        access_token = await self.get_credential(
+            BlobServiceClient, is_async=True
+        ).get_token("https://storage.azure.com/.default")
         token = "Bearer {}".format(access_token.token)
 
         # Assert this operation fails without a credential
         with pytest.raises(HttpResponseError):
             await destination_blob_client.stage_block_from_url(
-                block_id=1, source_url=self.source_blob_url_without_sas, source_offset=0, source_length=split
+                block_id=1,
+                source_url=self.source_blob_url_without_sas,
+                source_offset=0,
+                source_length=split,
             )
         # Assert it passes after passing an oauth credential
         await destination_blob_client.stage_block_from_url(
@@ -130,10 +142,16 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         split = 4 * 1024
         futures = [
             dest_blob.stage_block_from_url(
-                block_id=1, source_url=self.source_blob_url, source_offset=0, source_length=split
+                block_id=1,
+                source_url=self.source_blob_url,
+                source_offset=0,
+                source_length=split,
             ),
             dest_blob.stage_block_from_url(
-                block_id=2, source_url=self.source_blob_url, source_offset=split, source_length=split
+                block_id=2,
+                source_url=self.source_blob_url,
+                source_offset=split,
+                source_length=split,
             ),
         ]
         await asyncio.gather(*futures)
@@ -206,7 +224,9 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # Act
-        copy_props = await dest_blob.start_copy_from_url(self.source_blob_url, requires_sync=True)
+        copy_props = await dest_blob.start_copy_from_url(
+            self.source_blob_url, requires_sync=True
+        )
 
         # Assert
         assert copy_props is not None
@@ -229,7 +249,9 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob_tier = StandardBlobTier.Cold
 
         # Act
-        await dest_blob.start_copy_from_url(self.source_blob_url, standard_blob_tier=blob_tier, requires_sync=True)
+        await dest_blob.start_copy_from_url(
+            self.source_blob_url, standard_blob_tier=blob_tier, requires_sync=True
+        )
         copy_blob_properties = await dest_blob.get_blob_properties()
 
         # Assert
@@ -247,7 +269,9 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
 
         # Act
-        copy_props = await dest_blob.start_copy_from_url(self.source_blob_url, requires_sync=True)
+        copy_props = await dest_blob.start_copy_from_url(
+            self.source_blob_url, requires_sync=True
+        )
 
         # Assert
         assert copy_props["version_id"] is not None

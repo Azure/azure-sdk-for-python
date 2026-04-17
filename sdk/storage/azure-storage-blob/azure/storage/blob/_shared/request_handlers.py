@@ -12,7 +12,6 @@ from typing import Dict, Optional
 
 import isodate
 
-
 _LOGGER = logging.getLogger(__name__)
 
 _REQUEST_DELIMITER_PREFIX = "batch_"
@@ -118,11 +117,13 @@ def validate_and_format_range_headers(
     if align_to_page:
         if start_range is not None and start_range % 512 != 0:
             raise ValueError(
-                f"Invalid page blob start_range: {start_range}. " "The size must be aligned to a 512-byte boundary."
+                f"Invalid page blob start_range: {start_range}. "
+                "The size must be aligned to a 512-byte boundary."
             )
         if end_range is not None and end_range % 512 != 511:
             raise ValueError(
-                f"Invalid page blob end_range: {end_range}. " "The size must be aligned to a 512-byte boundary."
+                f"Invalid page blob end_range: {end_range}. "
+                "The size must be aligned to a 512-byte boundary."
             )
 
     # Format based on whether end_range is present
@@ -136,9 +137,13 @@ def validate_and_format_range_headers(
     range_validation = None
     if check_content_md5:
         if start_range is None or end_range is None:
-            raise ValueError("Both start and end range required for MD5 content validation.")
+            raise ValueError(
+                "Both start and end range required for MD5 content validation."
+            )
         if end_range - start_range > 4 * 1024 * 1024:
-            raise ValueError("Getting content MD5 for a range greater than 4MB is not supported.")
+            raise ValueError(
+                "Getting content MD5 for a range greater than 4MB is not supported."
+            )
         range_validation = "true"
 
     return range_header, range_validation
@@ -173,26 +178,34 @@ def serialize_batch_body(requests, batch_id):
     if requests is None or len(requests) == 0:
         raise ValueError("Please provide sub-request(s) for this batch request")
 
-    delimiter_bytes = (_get_batch_request_delimiter(batch_id, True, False) + _HTTP_LINE_ENDING).encode("utf-8")
+    delimiter_bytes = (
+        _get_batch_request_delimiter(batch_id, True, False) + _HTTP_LINE_ENDING
+    ).encode("utf-8")
     newline_bytes = _HTTP_LINE_ENDING.encode("utf-8")
     batch_body = []
 
     content_index = 0
     for request in requests:
-        request.headers.update({"Content-ID": str(content_index), "Content-Length": str(0)})
+        request.headers.update(
+            {"Content-ID": str(content_index), "Content-Length": str(0)}
+        )
         batch_body.append(delimiter_bytes)
         batch_body.append(_make_body_from_sub_request(request))
         batch_body.append(newline_bytes)
         content_index += 1
 
-    batch_body.append(_get_batch_request_delimiter(batch_id, True, True).encode("utf-8"))
+    batch_body.append(
+        _get_batch_request_delimiter(batch_id, True, True).encode("utf-8")
+    )
     # final line of body MUST have \r\n at the end, or it will not be properly read by the service
     batch_body.append(newline_bytes)
 
     return b"".join(batch_body)
 
 
-def _get_batch_request_delimiter(batch_id, is_prepend_dashes=False, is_append_dashes=False):
+def _get_batch_request_delimiter(
+    batch_id, is_prepend_dashes=False, is_append_dashes=False
+):
     """
     Gets the delimiter used for this batch request's mixed/multipart HTTP format.
 

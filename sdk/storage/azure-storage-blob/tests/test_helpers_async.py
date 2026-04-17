@@ -19,7 +19,9 @@ from aiohttp.streams import StreamReader
 from aiohttp.client_proto import ResponseHandler
 
 
-def _build_base_file_share_headers(bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:
+def _build_base_file_share_headers(
+    bearer_token_string: str, content_length: int = 0
+) -> Dict[str, Any]:
     return {
         "Authorization": bearer_token_string,
         "Content-Length": str(content_length),
@@ -30,7 +32,12 @@ def _build_base_file_share_headers(bearer_token_string: str, content_length: int
 
 
 async def _create_file_share_oauth(
-    share_name: str, file_name: str, bearer_token_string: str, storage_account_name: str, data: bytes, is_live: bool
+    share_name: str,
+    file_name: str,
+    bearer_token_string: str,
+    storage_account_name: str,
+    data: bytes,
+    is_live: bool,
 ) -> Tuple[str, str]:
     base_url = f"https://{storage_account_name}.file.core.windows.net/{share_name}"
 
@@ -40,7 +47,9 @@ async def _create_file_share_oauth(
     async with aiohttp.ClientSession() as session:
         # Creates file share
         await session.put(
-            url=base_url, headers=_build_base_file_share_headers(bearer_token_string), params={"restype": "share"}
+            url=base_url,
+            headers=_build_base_file_share_headers(bearer_token_string),
+            params={"restype": "share"},
         )
 
         # Creates the file itself
@@ -51,7 +60,12 @@ async def _create_file_share_oauth(
         # Upload the supplied data to the file
         headers = _build_base_file_share_headers(bearer_token_string, 1024)
         headers.update({"x-ms-range": "bytes=0-1023", "x-ms-write": "update"})
-        await session.put(url=base_url + "/" + file_name, headers=headers, data=data, params={"comp": "range"})
+        await session.put(
+            url=base_url + "/" + file_name,
+            headers=headers,
+            data=data,
+            params={"comp": "range"},
+        )
 
     return file_name, base_url
 
@@ -113,7 +127,12 @@ class AsyncStream:
 
 class MockAioHttpClientResponse(ClientResponse):
     def __init__(
-        self, url: str, body_bytes: bytes, headers: Dict[str, Any], status: int = 200, reason: str = "OK"
+        self,
+        url: str,
+        body_bytes: bytes,
+        headers: Dict[str, Any],
+        status: int = 200,
+        reason: str = "OK",
     ) -> None:
         super(MockAioHttpClientResponse).__init__()
         self._url = url
@@ -135,7 +154,9 @@ class MockLegacyTransport(AsyncHttpTransport):
     intended only to test our backwards compatibility support.
     """
 
-    async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
+    async def send(
+        self, request: HttpRequest, **kwargs: Any
+    ) -> AioHttpTransportResponse:
         if request.method == "GET":
             # download_blob
             headers = {
@@ -201,7 +222,9 @@ class MockLegacyTransport(AsyncHttpTransport):
                 decompress=False,
             )
         else:
-            raise ValueError("The request is not accepted as part of MockLegacyTransport.")
+            raise ValueError(
+                "The request is not accepted as part of MockLegacyTransport."
+            )
 
         await rest_response.load_body()
         return rest_response

@@ -33,7 +33,12 @@ import os
 import sys
 from datetime import datetime, timedelta
 
-from azure.storage.blob import AccessPolicy, BlobServiceClient, ContainerSasPermissions, PublicAccess
+from azure.storage.blob import (
+    AccessPolicy,
+    BlobServiceClient,
+    ContainerSasPermissions,
+    PublicAccess,
+)
 
 try:
     CONNECTION_STRING = os.environ["STORAGE_CONNECTION_STRING"]
@@ -61,12 +66,17 @@ def get_and_set_container_access_policy():
     public_access = PublicAccess.CONTAINER
 
     # Set the access policy on the container
-    container_client.set_container_access_policy(signed_identifiers=identifiers, public_access=public_access)
+    container_client.set_container_access_policy(
+        signed_identifiers=identifiers, public_access=public_access
+    )
 
     for identifier_name, access_policy in identifiers.items():
         print(
             "Created container has identifier '{}' with permissions '{}', start date '{}', and expiry date '{}'.".format(
-                identifier_name, access_policy.permission, access_policy.start, access_policy.expiry
+                identifier_name,
+                access_policy.permission,
+                access_policy.start,
+                access_policy.expiry,
             )
         )
 
@@ -75,7 +85,9 @@ def get_and_set_container_access_policy():
     access_policy_dict = container_client.get_container_access_policy()
     print(f"Blob Access Type: {access_policy_dict['public_access']}")
     for identifier in access_policy_dict["signed_identifiers"]:
-        print(f"Identifier '{identifier.id}' has permissions '{identifier.access_policy.permission}''")
+        print(
+            f"Identifier '{identifier.id}' has permissions '{identifier.access_policy.permission}''"
+        )
 
 
 try:

@@ -35,14 +35,20 @@ class ContainerSamples(object):
 
     def container_sample(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + "\n" + "Test: container_sample")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: container_sample"
+            )
             sys.exit(1)
 
         # [START create_container_client_from_service]
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("mynewcontainer")
@@ -81,7 +87,9 @@ class ContainerSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("myleasecontainer")
@@ -112,10 +120,14 @@ class ContainerSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # Instantiate a ContainerClient
-        container_client = blob_service_client.get_container_client("mymetadatacontainersync")
+        container_client = blob_service_client.get_container_client(
+            "mymetadatacontainersync"
+        )
 
         try:
             # Create new Container
@@ -147,12 +159,18 @@ class ContainerSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("myaccesscontainer")
         if container_client.account_name is None:
-            print("Connection string did not provide an account name." + "\n" + "Test: container_access_policy")
+            print(
+                "Connection string did not provide an account name."
+                + "\n"
+                + "Test: container_access_policy"
+            )
             sys.exit(1)
 
         try:
@@ -196,7 +214,8 @@ class ContainerSamples(object):
             from azure.storage.blob import ContainerClient
 
             container = ContainerClient.from_container_url(
-                container_url="https://account.blob.core.windows.net/mycontainer", credential=sas_token
+                container_url="https://account.blob.core.windows.net/mycontainer",
+                credential=sas_token,
             )
             # [END create_container_client_sastoken]
 
@@ -216,7 +235,9 @@ class ContainerSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("myblobscontainer")
@@ -252,7 +273,9 @@ class ContainerSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("blobcontainer")
@@ -282,7 +305,9 @@ class ContainerSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # [START get_container_client_from_blob_client]
         container_client1 = blob_service_client.get_container_client("blobcontainer1")

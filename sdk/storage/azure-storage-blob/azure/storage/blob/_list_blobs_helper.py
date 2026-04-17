@@ -17,15 +17,25 @@ from ._deserialize import (
     load_xml_string,
     parse_tags,
 )
-from ._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix, FilterBlobItem
+from ._generated.models import (
+    BlobItemInternal,
+    BlobPrefix as GenBlobPrefix,
+    FilterBlobItem,
+)
 from ._generated._utils.serialization import Deserializer
 from ._models import BlobProperties, FilteredBlob
 from ._shared.models import DictMixin
-from ._shared.response_handlers import process_storage_error, return_context_and_deserialized, return_raw_deserialized
+from ._shared.response_handlers import (
+    process_storage_error,
+    return_context_and_deserialized,
+    return_raw_deserialized,
+)
 
 
 class IgnoreListBlobsDeserializer(Deserializer):
-    def __call__(self, target_obj, response_data, content_type=None):  # pylint: disable=inconsistent-return-statements
+    def __call__(
+        self, target_obj, response_data, content_type=None
+    ):  # pylint: disable=inconsistent-return-statements
         if target_obj == "ListBlobsFlatSegmentResponse":
             return None
         super().__call__(target_obj, response_data, content_type)
@@ -67,7 +77,9 @@ class BlobPropertiesPaged(PageIterator):
         location_mode: Optional[str] = None,
     ) -> None:
         super(BlobPropertiesPaged, self).__init__(
-            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or "",
         )
         self._command = command
         self.service_endpoint = None
@@ -92,17 +104,23 @@ class BlobPropertiesPaged(PageIterator):
             process_storage_error(error)
 
     def _extract_data_cb(self, get_next_return):
-        self.location_mode, self._response = cast(Tuple[Optional[str], Any], get_next_return)
+        self.location_mode, self._response = cast(
+            Tuple[Optional[str], Any], get_next_return
+        )
         self.service_endpoint = self._response.service_endpoint
         self.prefix = self._response.prefix
         self.marker = self._response.marker
         self.results_per_page = self._response.max_results
         self.container = self._response.container_name
-        self.current_page = [self._build_item(item) for item in self._response.segment.blob_items]
+        self.current_page = [
+            self._build_item(item) for item in self._response.segment.blob_items
+        ]
 
         return self._response.next_marker or None, self.current_page
 
-    def _build_item(self, item: Union[BlobItemInternal, BlobProperties]) -> BlobProperties:
+    def _build_item(
+        self, item: Union[BlobItemInternal, BlobProperties]
+    ) -> BlobProperties:
         if isinstance(item, BlobProperties):
             return item
         if isinstance(item, BlobItemInternal):
@@ -147,7 +165,9 @@ class BlobNamesPaged(PageIterator):
         location_mode: Optional[str] = None,
     ) -> None:
         super(BlobNamesPaged, self).__init__(
-            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or "",
         )
         self._command = command
         self.service_endpoint = None
@@ -191,8 +211,12 @@ class BlobPrefixPaged(BlobPropertiesPaged):
         self.name = self.prefix
 
     def _extract_data_cb(self, get_next_return):
-        continuation_token, _ = super(BlobPrefixPaged, self)._extract_data_cb(get_next_return)
-        self.current_page = self._response.segment.blob_prefixes + self._response.segment.blob_items
+        continuation_token, _ = super(BlobPrefixPaged, self)._extract_data_cb(
+            get_next_return
+        )
+        self.current_page = (
+            self._response.segment.blob_prefixes + self._response.segment.blob_items
+        )
         self.current_page = [self._build_item(item) for item in self.current_page]
         self.delimiter = self._response.delimiter
 
@@ -246,7 +270,9 @@ class BlobPrefix(ItemPaged, DictMixin):
     """The name of the container."""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super(BlobPrefix, self).__init__(*args, page_iterator_class=BlobPrefixPaged, **kwargs)
+        super(BlobPrefix, self).__init__(
+            *args, page_iterator_class=BlobPrefixPaged, **kwargs
+        )
         self.name = kwargs.get("prefix")  # type: ignore [assignment]
         self.prefix = kwargs.get("prefix")  # type: ignore [assignment]
         self.results_per_page = kwargs.get("results_per_page")
@@ -287,7 +313,9 @@ class FilteredBlobPaged(PageIterator):
         location_mode: Optional[str] = None,
     ) -> None:
         super(FilteredBlobPaged, self).__init__(
-            get_next=self._get_next_cb, extract_data=self._extract_data_cb, continuation_token=continuation_token or ""
+            get_next=self._get_next_cb,
+            extract_data=self._extract_data_cb,
+            continuation_token=continuation_token or "",
         )
         self._command = command
         self.service_endpoint = None
@@ -320,6 +348,8 @@ class FilteredBlobPaged(PageIterator):
     def _build_item(item):
         if isinstance(item, FilterBlobItem):
             tags = parse_tags(item.tags)
-            blob = FilteredBlob(name=item.name, container_name=item.container_name, tags=tags)
+            blob = FilteredBlob(
+                name=item.name, container_name=item.container_name, tags=tags
+            )
             return blob
         return item

@@ -28,7 +28,10 @@ from .._models import BlobProperties, ContainerProperties, CorsRule
 from .._serialize import get_api_version
 from .._shared.base_client import parse_query, StorageAccountHostsMixin
 from .._shared.base_client_async import parse_connection_str
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
+from .._shared.base_client_async import (
+    AsyncStorageAccountHostsMixin,
+    AsyncTransportWrapper,
+)
 from .._shared.response_handlers import (
     parse_to_internal_user_delegation_key,
     process_storage_error,
@@ -44,7 +47,14 @@ if TYPE_CHECKING:
     from azure.core.pipeline.policies import AsyncHTTPPolicy
     from datetime import datetime
     from ._lease_async import BlobLeaseClient
-    from .._models import BlobAnalyticsLogging, FilteredBlob, Metrics, PublicAccess, RetentionPolicy, StaticWebsite
+    from .._models import (
+        BlobAnalyticsLogging,
+        FilteredBlob,
+        Metrics,
+        PublicAccess,
+        RetentionPolicy,
+        StaticWebsite,
+    )
     from .._shared.models import UserDelegationKey
 
 
@@ -117,16 +127,31 @@ class BlobServiceClient(  # type: ignore [misc]
         self,
         account_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,  # pylint: disable=line-too-long
         **kwargs: Any,
     ) -> None:
-        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
+        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(
+            **kwargs
+        )
         parsed_url, sas_token = _parse_url(account_url=account_url)
         _, sas_token = parse_query(parsed_url.query)
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(BlobServiceClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, get_api_version(kwargs), base_url=self.url, pipeline=self._pipeline)
+        super(BlobServiceClient, self).__init__(
+            parsed_url, service="blob", credential=credential, **kwargs
+        )
+        self._client = AzureBlobStorage(
+            self.url,
+            get_api_version(kwargs),
+            base_url=self.url,
+            pipeline=self._pipeline,
+        )
         self._configure_encryption(kwargs)
 
     async def __aenter__(self) -> Self:
@@ -161,7 +186,13 @@ class BlobServiceClient(  # type: ignore [misc]
         cls,
         conn_str: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,  # pylint: disable=line-too-long
         **kwargs: Any,
     ) -> Self:
@@ -219,7 +250,9 @@ class BlobServiceClient(  # type: ignore [misc]
                 :dedent: 8
                 :caption: Creating the BlobServiceClient from a connection string.
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, "blob")
+        account_url, secondary, credential = parse_connection_str(
+            conn_str, credential, "blob"
+        )
         if "secondary_hostname" not in kwargs:
             kwargs["secondary_hostname"] = secondary
         return cls(account_url, credential=credential, **kwargs)
@@ -363,7 +396,9 @@ class BlobServiceClient(  # type: ignore [misc]
         """
         timeout = kwargs.pop("timeout", None)
         try:
-            service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)
+            service_props = await self._client.service.get_properties(
+                timeout=timeout, **kwargs
+            )
             return service_properties_deserialize(service_props)
         except HttpResponseError as error:
             process_storage_error(error)
@@ -443,7 +478,9 @@ class BlobServiceClient(  # type: ignore [misc]
                 static_website,
             ]
         ):
-            raise ValueError("set_service_properties should be called with at least one parameter")
+            raise ValueError(
+                "set_service_properties should be called with at least one parameter"
+            )
 
         props = StorageServiceProperties(
             logging=analytics_logging,
@@ -462,7 +499,10 @@ class BlobServiceClient(  # type: ignore [misc]
 
     @distributed_trace
     def list_containers(
-        self, name_starts_with: Optional[str] = None, include_metadata: bool = False, **kwargs: Any
+        self,
+        name_starts_with: Optional[str] = None,
+        include_metadata: bool = False,
+        **kwargs: Any,
     ) -> AsyncItemPaged[ContainerProperties]:
         """Returns a generator to list the containers under the specified account.
 
@@ -527,7 +567,9 @@ class BlobServiceClient(  # type: ignore [misc]
         )
 
     @distributed_trace
-    def find_blobs_by_tags(self, filter_expression: str, **kwargs: Any) -> AsyncItemPaged["FilteredBlob"]:
+    def find_blobs_by_tags(
+        self, filter_expression: str, **kwargs: Any
+    ) -> AsyncItemPaged["FilteredBlob"]:
         """The Filter Blobs operation enables callers to list blobs across all
         containers whose tags match a given search expression.  Filter blobs
         searches across all containers within a storage account but can be
@@ -552,9 +594,16 @@ class BlobServiceClient(  # type: ignore [misc]
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
         command = functools.partial(
-            self._client.service.filter_blobs, where=filter_expression, timeout=timeout, **kwargs
+            self._client.service.filter_blobs,
+            where=filter_expression,
+            timeout=timeout,
+            **kwargs,
         )
-        return AsyncItemPaged(command, results_per_page=results_per_page, page_iterator_class=FilteredBlobPaged)
+        return AsyncItemPaged(
+            command,
+            results_per_page=results_per_page,
+            page_iterator_class=FilteredBlobPaged,
+        )
 
     @distributed_trace_async
     async def create_container(
@@ -606,7 +655,9 @@ class BlobServiceClient(  # type: ignore [misc]
         container = self.get_container_client(name)
         timeout = kwargs.pop("timeout", None)
         kwargs.setdefault("merge_span", True)
-        await container.create_container(metadata=metadata, public_access=public_access, timeout=timeout, **kwargs)
+        await container.create_container(
+            metadata=metadata, public_access=public_access, timeout=timeout, **kwargs
+        )
         return container
 
     @distributed_trace_async
@@ -671,7 +722,9 @@ class BlobServiceClient(  # type: ignore [misc]
         await container_client.delete_container(lease=lease, timeout=timeout, **kwargs)
 
     @distributed_trace_async
-    async def _rename_container(self, name: str, new_name: str, **kwargs: Any) -> ContainerClient:
+    async def _rename_container(
+        self, name: str, new_name: str, **kwargs: Any
+    ) -> ContainerClient:
         """Renames a container.
 
         Operation is successful only if the source container exists.
@@ -700,7 +753,9 @@ class BlobServiceClient(  # type: ignore [misc]
         except AttributeError:
             kwargs["source_lease_id"] = lease
         try:
-            await renamed_container._client.container.rename(name, **kwargs)  # pylint: disable = protected-access
+            await renamed_container._client.container.rename(
+                name, **kwargs
+            )  # pylint: disable = protected-access
             return renamed_container
         except HttpResponseError as error:
             process_storage_error(error)
@@ -745,7 +800,9 @@ class BlobServiceClient(  # type: ignore [misc]
         except HttpResponseError as error:
             process_storage_error(error)
 
-    def get_container_client(self, container: Union[ContainerProperties, str]) -> ContainerClient:
+    def get_container_client(
+        self, container: Union[ContainerProperties, str]
+    ) -> ContainerClient:
         """Get a client to interact with the specified container.
 
         The container need not already exist.
@@ -771,7 +828,9 @@ class BlobServiceClient(  # type: ignore [misc]
         else:
             container_name = container
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(
+                self._pipeline._transport
+            ),  # pylint: disable = protected-access
             policies=self._pipeline._impl_policies,  # type: ignore [arg-type] # pylint: disable = protected-access
         )
         return ContainerClient(
@@ -840,7 +899,9 @@ class BlobServiceClient(  # type: ignore [misc]
         else:
             container_name = container
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(
+                self._pipeline._transport
+            ),  # pylint: disable = protected-access
             policies=cast(
                 Iterable["AsyncHTTPPolicy"], self._pipeline._impl_policies
             ),  # pylint: disable = protected-access

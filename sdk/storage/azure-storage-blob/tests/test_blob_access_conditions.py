@@ -8,7 +8,11 @@ from datetime import datetime, timedelta
 
 import pytest
 from azure.core import MatchConditions
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
+from azure.core.exceptions import (
+    HttpResponseError,
+    ResourceNotFoundError,
+    ResourceModifiedError,
+)
 from azure.storage.blob import (
     AccessPolicy,
     BlobBlock,
@@ -44,14 +48,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         container.create_container()
         return container
 
-    def _create_container_and_block_blob(self, container_name, blob_name, blob_data, bsc):
+    def _create_container_and_block_blob(
+        self, container_name, blob_name, blob_data, bsc
+    ):
         container = self._create_container(container_name, bsc)
         blob = bsc.get_blob_client(container_name, blob_name)
         resp = blob.upload_blob(blob_data, length=len(blob_data))
         assert resp.get("etag") is not None
         return container, blob
 
-    def _create_container_and_page_blob(self, container_name, blob_name, content_length, bsc):
+    def _create_container_and_page_blob(
+        self, container_name, blob_name, content_length, bsc
+    ):
         container = self._create_container(container_name, bsc)
         blob = bsc.get_blob_client(container_name, blob_name)
         resp = blob.create_page_blob(str(content_length))
@@ -152,7 +160,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         metadata = {"hello": "world", "number": "43"}
@@ -178,7 +188,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -204,16 +216,26 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
-        start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow())
-        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
+        start_time = self.get_datetime_variable(
+            variables, "start_time", datetime.utcnow()
+        )
+        expiry_time = self.get_datetime_variable(
+            variables, "expiry_time", datetime.utcnow() + timedelta(hours=1)
+        )
 
         # Act
         access_policy = AccessPolicy(
-            permission=ContainerSasPermissions(read=True), expiry=expiry_time, start=start_time
+            permission=ContainerSasPermissions(read=True),
+            expiry=expiry_time,
+            start=start_time,
         )
         signed_identifiers = {"testid": access_policy}
-        container.set_container_access_policy(signed_identifiers, if_modified_since=test_datetime)
+        container.set_container_access_policy(
+            signed_identifiers, if_modified_since=test_datetime
+        )
 
         # Assert
         acl = container.get_container_access_policy()
@@ -235,17 +257,27 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
-        start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow())
-        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
+        start_time = self.get_datetime_variable(
+            variables, "start_time", datetime.utcnow()
+        )
+        expiry_time = self.get_datetime_variable(
+            variables, "expiry_time", datetime.utcnow() + timedelta(hours=1)
+        )
 
         # Act
         access_policy = AccessPolicy(
-            permission=ContainerSasPermissions(read=True), expiry=expiry_time, start=start_time
+            permission=ContainerSasPermissions(read=True),
+            expiry=expiry_time,
+            start=start_time,
         )
         signed_identifiers = {"testid": access_policy}
         with pytest.raises(ResourceModifiedError) as e:
-            container.set_container_access_policy(signed_identifiers, if_modified_since=test_datetime)
+            container.set_container_access_policy(
+                signed_identifiers, if_modified_since=test_datetime
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -266,16 +298,26 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
-        start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow())
-        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
+        start_time = self.get_datetime_variable(
+            variables, "start_time", datetime.utcnow()
+        )
+        expiry_time = self.get_datetime_variable(
+            variables, "expiry_time", datetime.utcnow() + timedelta(hours=1)
+        )
 
         # Act
         access_policy = AccessPolicy(
-            permission=ContainerSasPermissions(read=True), expiry=expiry_time, start=start_time
+            permission=ContainerSasPermissions(read=True),
+            expiry=expiry_time,
+            start=start_time,
         )
         signed_identifiers = {"testid": access_policy}
-        container.set_container_access_policy(signed_identifiers, if_unmodified_since=test_datetime)
+        container.set_container_access_policy(
+            signed_identifiers, if_unmodified_since=test_datetime
+        )
 
         # Assert
         acl = container.get_container_access_policy()
@@ -297,17 +339,27 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
-        start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow())
-        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
+        start_time = self.get_datetime_variable(
+            variables, "start_time", datetime.utcnow()
+        )
+        expiry_time = self.get_datetime_variable(
+            variables, "expiry_time", datetime.utcnow() + timedelta(hours=1)
+        )
 
         # Act
         access_policy = AccessPolicy(
-            permission=ContainerSasPermissions(read=True), expiry=expiry_time, start=start_time
+            permission=ContainerSasPermissions(read=True),
+            expiry=expiry_time,
+            start=start_time,
         )
         signed_identifiers = {"testid": access_policy}
         with pytest.raises(ResourceModifiedError) as e:
-            container.set_container_access_policy(signed_identifiers, if_unmodified_since=test_datetime)
+            container.set_container_access_policy(
+                signed_identifiers, if_unmodified_since=test_datetime
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -328,11 +380,15 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
         test_lease_id = "00000000-1111-2222-3333-444444444444"
 
         # Act
-        lease = container.acquire_lease(lease_id=test_lease_id, if_modified_since=test_datetime)
+        lease = container.acquire_lease(
+            lease_id=test_lease_id, if_modified_since=test_datetime
+        )
         lease.break_lease()
 
         return variables
@@ -351,12 +407,16 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
         test_lease_id = "00000000-1111-2222-3333-444444444444"
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            container.acquire_lease(lease_id=test_lease_id, if_modified_since=test_datetime)
+            container.acquire_lease(
+                lease_id=test_lease_id, if_modified_since=test_datetime
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -377,11 +437,15 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
         test_lease_id = "00000000-1111-2222-3333-444444444444"
 
         # Act
-        lease = container.acquire_lease(lease_id=test_lease_id, if_unmodified_since=test_datetime)
+        lease = container.acquire_lease(
+            lease_id=test_lease_id, if_unmodified_since=test_datetime
+        )
         lease.break_lease()
 
         return variables
@@ -400,12 +464,16 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
         test_lease_id = "00000000-1111-2222-3333-444444444444"
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            container.acquire_lease(lease_id=test_lease_id, if_unmodified_since=test_datetime)
+            container.acquire_lease(
+                lease_id=test_lease_id, if_unmodified_since=test_datetime
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -426,7 +494,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         deleted = container.delete_container(if_modified_since=test_datetime)
@@ -452,7 +522,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -477,7 +549,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         container.delete_container(if_unmodified_since=test_datetime)
@@ -502,7 +576,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -535,7 +611,11 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         data = self.get_random_bytes(2 * 100)
         self._create_container(self.container_name, bsc)
         blob = bsc.get_blob_client(self.container_name, "blob1")
-        blob.upload_blob(data, headers={"x-custom-header": "test_value"}, raw_request_hook=_validate_headers)
+        blob.upload_blob(
+            data,
+            headers={"x-custom-header": "test_value"},
+            raw_request_hook=_validate_headers,
+        )
         assert len(counter) == 5
 
     @BlobPreparer()
@@ -552,8 +632,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         data = b"hello world"
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", data, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", data, bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         resp = blob.upload_blob(data, length=len(data), if_modified_since=test_datetime)
@@ -577,12 +661,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         data = b"hello world"
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", data, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", data, bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            blob.upload_blob(data, length=len(data), if_modified_since=test_datetime, overwrite=True)
+            blob.upload_blob(
+                data, length=len(data), if_modified_since=test_datetime, overwrite=True
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -603,11 +693,17 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         data = b"hello world"
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", data, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", data, bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
-        resp = blob.upload_blob(data, length=len(data), if_unmodified_since=test_datetime)
+        resp = blob.upload_blob(
+            data, length=len(data), if_unmodified_since=test_datetime
+        )
 
         # Assert
         assert resp.get("etag") is not None
@@ -628,12 +724,21 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         data = b"hello world"
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", data, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", data, bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            blob.upload_blob(data, length=len(data), if_unmodified_since=test_datetime, overwrite=True)
+            blob.upload_blob(
+                data,
+                length=len(data),
+                if_unmodified_since=test_datetime,
+                overwrite=True,
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -653,11 +758,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         data = b"hello world"
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", data, bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", data, bsc
+        )
         etag = blob.get_blob_properties().etag
 
         # Act
-        resp = blob.upload_blob(data, length=len(data), etag=etag, match_condition=MatchConditions.IfNotModified)
+        resp = blob.upload_blob(
+            data,
+            length=len(data),
+            etag=etag,
+            match_condition=MatchConditions.IfNotModified,
+        )
 
         # Assert
         assert resp.get("etag") is not None
@@ -665,7 +777,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         with pytest.raises(ValueError):
             blob.upload_blob(data, length=len(data), etag=etag)
         with pytest.raises(ValueError):
-            blob.upload_blob(data, length=len(data), match_condition=MatchConditions.IfNotModified)
+            blob.upload_blob(
+                data, length=len(data), match_condition=MatchConditions.IfNotModified
+            )
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -680,7 +794,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         data = b"hello world"
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", data, bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", data, bsc
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -708,11 +824,16 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         data = b"hello world"
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", data, bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", data, bsc
+        )
 
         # Act
         resp = blob.upload_blob(
-            data, length=len(data), etag="0x111111111111111", match_condition=MatchConditions.IfModified
+            data,
+            length=len(data),
+            etag="0x111111111111111",
+            match_condition=MatchConditions.IfModified,
         )
 
         # Assert
@@ -720,7 +841,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         with pytest.raises(ValueError):
             blob.upload_blob(data, length=len(data), etag="0x111111111111111")
         with pytest.raises(ValueError):
-            blob.upload_blob(data, length=len(data), match_condition=MatchConditions.IfModified)
+            blob.upload_blob(
+                data, length=len(data), match_condition=MatchConditions.IfModified
+            )
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -735,13 +858,19 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         data = b"hello world"
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", data, bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", data, bsc
+        )
         etag = blob.get_blob_properties().etag
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob.upload_blob(
-                data, length=len(data), etag=etag, match_condition=MatchConditions.IfModified, overwrite=True
+                data,
+                length=len(data),
+                etag=etag,
+                match_condition=MatchConditions.IfModified,
+                overwrite=True,
             )
 
         # Assert
@@ -760,8 +889,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         content = blob.download_blob(if_modified_since=test_datetime).readall()
@@ -784,8 +917,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -809,8 +946,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         content = blob.download_blob(if_unmodified_since=test_datetime).readall()
@@ -833,8 +974,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -857,11 +1002,15 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         etag = blob.get_blob_properties().etag
 
         # Act
-        content = blob.download_blob(etag=etag, match_condition=MatchConditions.IfNotModified).readall()
+        content = blob.download_blob(
+            etag=etag, match_condition=MatchConditions.IfNotModified
+        ).readall()
 
         # Assert
         assert content == b"hello world"
@@ -878,11 +1027,15 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            blob.download_blob(etag="0x111111111111111", match_condition=MatchConditions.IfNotModified)
+            blob.download_blob(
+                etag="0x111111111111111", match_condition=MatchConditions.IfNotModified
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -899,10 +1052,14 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
-        content = blob.download_blob(etag="0x111111111111111", match_condition=MatchConditions.IfModified).readall()
+        content = blob.download_blob(
+            etag="0x111111111111111", match_condition=MatchConditions.IfModified
+        ).readall()
 
         # Assert
         assert content == b"hello world"
@@ -919,7 +1076,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         etag = blob.get_blob_properties().etag
 
         # Act
@@ -942,17 +1101,29 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
         # Act
-        content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
+        content_settings = ContentSettings(
+            content_language="spanish", content_disposition="inline"
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         blob.set_http_headers(content_settings, if_modified_since=test_datetime)
 
         # Assert
         properties = blob.get_blob_properties()
-        assert content_settings.content_language == properties.content_settings.content_language
-        assert content_settings.content_disposition == properties.content_settings.content_disposition
+        assert (
+            content_settings.content_language
+            == properties.content_settings.content_language
+        )
+        assert (
+            content_settings.content_disposition
+            == properties.content_settings.content_disposition
+        )
 
         return variables
 
@@ -969,11 +1140,17 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
+            content_settings = ContentSettings(
+                content_language="spanish", content_disposition="inline"
+            )
             blob = bsc.get_blob_client(self.container_name, "blob1")
             blob.set_http_headers(content_settings, if_modified_since=test_datetime)
 
@@ -995,17 +1172,29 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
         # Act
-        content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
+        content_settings = ContentSettings(
+            content_language="spanish", content_disposition="inline"
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         blob.set_http_headers(content_settings, if_unmodified_since=test_datetime)
 
         # Assert
         properties = blob.get_blob_properties()
-        assert content_settings.content_language == properties.content_settings.content_language
-        assert content_settings.content_disposition == properties.content_settings.content_disposition
+        assert (
+            content_settings.content_language
+            == properties.content_settings.content_language
+        )
+        assert (
+            content_settings.content_disposition
+            == properties.content_settings.content_disposition
+        )
 
         return variables
 
@@ -1022,11 +1211,17 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
+            content_settings = ContentSettings(
+                content_language="spanish", content_disposition="inline"
+            )
             blob = bsc.get_blob_client(self.container_name, "blob1")
             blob.set_http_headers(content_settings, if_unmodified_since=test_datetime)
 
@@ -1048,7 +1243,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         lat = blob.get_blob_properties().last_accessed_on
         self.sleep(5)
@@ -1076,18 +1273,30 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         etag = blob.get_blob_properties().etag
 
         # Act
-        content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
-        blob.set_http_headers(content_settings, etag=etag, match_condition=MatchConditions.IfNotModified)
+        content_settings = ContentSettings(
+            content_language="spanish", content_disposition="inline"
+        )
+        blob.set_http_headers(
+            content_settings, etag=etag, match_condition=MatchConditions.IfNotModified
+        )
 
         # Assert
         properties = blob.get_blob_properties()
-        assert content_settings.content_language == properties.content_settings.content_language
-        assert content_settings.content_disposition == properties.content_settings.content_disposition
+        assert (
+            content_settings.content_language
+            == properties.content_settings.content_language
+        )
+        assert (
+            content_settings.content_disposition
+            == properties.content_settings.content_disposition
+        )
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1101,14 +1310,20 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
+            content_settings = ContentSettings(
+                content_language="spanish", content_disposition="inline"
+            )
             blob = bsc.get_blob_client(self.container_name, "blob1")
             blob.set_http_headers(
-                content_settings, etag="0x111111111111111", match_condition=MatchConditions.IfNotModified
+                content_settings,
+                etag="0x111111111111111",
+                match_condition=MatchConditions.IfNotModified,
             )
 
         # Assert
@@ -1126,17 +1341,31 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
-        content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
+        content_settings = ContentSettings(
+            content_language="spanish", content_disposition="inline"
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
-        blob.set_http_headers(content_settings, etag="0x111111111111111", match_condition=MatchConditions.IfModified)
+        blob.set_http_headers(
+            content_settings,
+            etag="0x111111111111111",
+            match_condition=MatchConditions.IfModified,
+        )
 
         # Assert
         properties = blob.get_blob_properties()
-        assert content_settings.content_language == properties.content_settings.content_language
-        assert content_settings.content_disposition == properties.content_settings.content_disposition
+        assert (
+            content_settings.content_language
+            == properties.content_settings.content_language
+        )
+        assert (
+            content_settings.content_disposition
+            == properties.content_settings.content_disposition
+        )
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1150,14 +1379,20 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         etag = blob.get_blob_properties().etag
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
-            blob.set_http_headers(content_settings, etag=etag, match_condition=MatchConditions.IfModified)
+            content_settings = ContentSettings(
+                content_language="spanish", content_disposition="inline"
+            )
+            blob.set_http_headers(
+                content_settings, etag=etag, match_condition=MatchConditions.IfModified
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -1175,8 +1410,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
         properties = blob.get_blob_properties(if_modified_since=test_datetime)
@@ -1201,7 +1440,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
         old_blob_version_id = blob.get_blob_properties().get("version_id")
@@ -1217,7 +1458,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
         # Act
         test_snapshot = blob.create_snapshot()
-        blob_snapshot = bsc.get_blob_client(self.container_name, "blob1", snapshot=test_snapshot)
+        blob_snapshot = bsc.get_blob_client(
+            self.container_name, "blob1", snapshot=test_snapshot
+        )
         assert blob_snapshot.exists()
         blob.stage_block(block_id="1", data="this is additional test content")
         blob.commit_block_list(["1"])
@@ -1241,7 +1484,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         cc.create_container()
         self._setup()
-        test_cpk = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
+        test_cpk = CustomerProvidedEncryptionKey(
+            key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH
+        )
         blob_client = cc.get_blob_client("test_blob")
         blob_client.upload_blob(b"hello world", cpk=test_cpk)
         # Act
@@ -1260,8 +1505,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, "blob1")
@@ -1285,8 +1534,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
         properties = blob.get_blob_properties(if_unmodified_since=test_datetime)
@@ -1312,8 +1565,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, "blob1")
@@ -1336,12 +1593,16 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         etag = blob.get_blob_properties().etag
 
         # Act
-        properties = blob.get_blob_properties(etag=etag, match_condition=MatchConditions.IfNotModified)
+        properties = blob.get_blob_properties(
+            etag=etag, match_condition=MatchConditions.IfNotModified
+        )
 
         # Assert
         assert properties is not None
@@ -1361,12 +1622,16 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, "blob1")
-            blob.get_blob_properties(etag="0x111111111111111", match_condition=MatchConditions.IfNotModified)
+            blob.get_blob_properties(
+                etag="0x111111111111111", match_condition=MatchConditions.IfNotModified
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -1383,11 +1648,15 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
-        properties = blob.get_blob_properties(etag="0x111111111111111", match_condition=MatchConditions.IfModified)
+        properties = blob.get_blob_properties(
+            etag="0x111111111111111", match_condition=MatchConditions.IfModified
+        )
 
         # Assert
         assert properties is not None
@@ -1407,13 +1676,17 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         etag = blob.get_blob_properties().etag
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            blob.get_blob_properties(etag=etag, match_condition=MatchConditions.IfModified)
+            blob.get_blob_properties(
+                etag=etag, match_condition=MatchConditions.IfModified
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -1431,8 +1704,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
@@ -1456,8 +1733,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1482,8 +1763,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
@@ -1507,8 +1792,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1532,12 +1821,16 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         etag = blob.get_blob_properties().etag
 
         # Act
-        md = blob.get_blob_properties(etag=etag, match_condition=MatchConditions.IfNotModified).metadata
+        md = blob.get_blob_properties(
+            etag=etag, match_condition=MatchConditions.IfNotModified
+        ).metadata
 
         # Assert
         assert md is not None
@@ -1554,12 +1847,16 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, "blob1")
-            blob.get_blob_properties(etag="0x111111111111111", match_condition=MatchConditions.IfNotModified).metadata
+            blob.get_blob_properties(
+                etag="0x111111111111111", match_condition=MatchConditions.IfNotModified
+            ).metadata
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -1576,11 +1873,15 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
-        md = blob.get_blob_properties(etag="0x111111111111111", match_condition=MatchConditions.IfModified).metadata
+        md = blob.get_blob_properties(
+            etag="0x111111111111111", match_condition=MatchConditions.IfModified
+        ).metadata
 
         # Assert
         assert md is not None
@@ -1597,13 +1898,17 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         etag = blob.get_blob_properties().etag
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            blob.get_blob_properties(etag=etag, match_condition=MatchConditions.IfModified).metadata
+            blob.get_blob_properties(
+                etag=etag, match_condition=MatchConditions.IfModified
+            ).metadata
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -1621,8 +1926,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         metadata = {"hello": "world", "number": "42"}
@@ -1648,8 +1957,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1675,8 +1988,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         metadata = {"hello": "world", "number": "42"}
@@ -1702,8 +2019,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1728,13 +2049,17 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         etag = blob.get_blob_properties().etag
 
         # Act
         metadata = {"hello": "world", "number": "42"}
-        blob.set_blob_metadata(metadata, etag=etag, match_condition=MatchConditions.IfNotModified)
+        blob.set_blob_metadata(
+            metadata, etag=etag, match_condition=MatchConditions.IfNotModified
+        )
 
         # Assert
         md = blob.get_blob_properties().metadata
@@ -1752,13 +2077,19 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             metadata = {"hello": "world", "number": "42"}
             blob = bsc.get_blob_client(self.container_name, "blob1")
-            blob.set_blob_metadata(metadata, etag="0x111111111111111", match_condition=MatchConditions.IfNotModified)
+            blob.set_blob_metadata(
+                metadata,
+                etag="0x111111111111111",
+                match_condition=MatchConditions.IfNotModified,
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -1775,12 +2106,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         metadata = {"hello": "world", "number": "42"}
         blob = bsc.get_blob_client(self.container_name, "blob1")
-        blob.set_blob_metadata(metadata, etag="0x111111111111111", match_condition=MatchConditions.IfModified)
+        blob.set_blob_metadata(
+            metadata,
+            etag="0x111111111111111",
+            match_condition=MatchConditions.IfModified,
+        )
 
         # Assert
         md = blob.get_blob_properties().metadata
@@ -1798,14 +2135,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         etag = blob.get_blob_properties().etag
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             metadata = {"hello": "world", "number": "42"}
-            blob.set_blob_metadata(metadata, etag=etag, match_condition=MatchConditions.IfModified)
+            blob.set_blob_metadata(
+                metadata, etag=etag, match_condition=MatchConditions.IfModified
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -1823,8 +2164,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
@@ -1848,8 +2193,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
@@ -1874,8 +2223,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
@@ -1899,8 +2252,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
@@ -1924,13 +2281,17 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         etag = blob.get_blob_properties().etag
 
         # Act
 
-        resp = blob.delete_blob(etag=etag, match_condition=MatchConditions.IfNotModified)
+        resp = blob.delete_blob(
+            etag=etag, match_condition=MatchConditions.IfNotModified
+        )
 
         # Assert
         assert resp is None
@@ -1947,12 +2308,16 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
         with pytest.raises(ResourceModifiedError) as e:
-            blob.delete_blob(etag="0x111111111111111", match_condition=MatchConditions.IfNotModified)
+            blob.delete_blob(
+                etag="0x111111111111111", match_condition=MatchConditions.IfNotModified
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -1969,11 +2334,15 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
-        resp = blob.delete_blob(etag="0x111111111111111", match_condition=MatchConditions.IfModified)
+        resp = blob.delete_blob(
+            etag="0x111111111111111", match_condition=MatchConditions.IfModified
+        )
 
         # Assert
         assert resp is None
@@ -1990,7 +2359,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         etag = blob.get_blob_properties().etag
 
@@ -2014,8 +2385,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
@@ -2040,8 +2415,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -2066,8 +2445,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
@@ -2092,8 +2475,12 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -2117,12 +2504,16 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         etag = blob.get_blob_properties().etag
 
         # Act
-        resp = blob.create_snapshot(etag=etag, match_condition=MatchConditions.IfNotModified)
+        resp = blob.create_snapshot(
+            etag=etag, match_condition=MatchConditions.IfNotModified
+        )
 
         # Assert
         assert resp is not None
@@ -2140,12 +2531,16 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, "blob1")
-            blob.create_snapshot(etag="0x111111111111111", match_condition=MatchConditions.IfNotModified)
+            blob.create_snapshot(
+                etag="0x111111111111111", match_condition=MatchConditions.IfNotModified
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -2162,11 +2557,15 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
-        resp = blob.create_snapshot(etag="0x111111111111111", match_condition=MatchConditions.IfModified)
+        resp = blob.create_snapshot(
+            etag="0x111111111111111", match_condition=MatchConditions.IfModified
+        )
 
         # Assert
         assert resp is not None
@@ -2184,7 +2583,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         etag = blob.get_blob_properties().etag
 
@@ -2208,13 +2609,19 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         test_lease_id = "00000000-1111-2222-3333-444444444444"
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
-        lease = blob.acquire_lease(if_modified_since=test_datetime, lease_id=test_lease_id)
+        lease = blob.acquire_lease(
+            if_modified_since=test_datetime, lease_id=test_lease_id
+        )
 
         lease.break_lease()
 
@@ -2237,9 +2644,13 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         test_lease_id = "00000000-1111-2222-3333-444444444444"
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -2264,13 +2675,19 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         test_lease_id = "00000000-1111-2222-3333-444444444444"
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
-        lease = blob.acquire_lease(if_unmodified_since=test_datetime, lease_id=test_lease_id)
+        lease = blob.acquire_lease(
+            if_unmodified_since=test_datetime, lease_id=test_lease_id
+        )
 
         lease.break_lease()
 
@@ -2293,14 +2710,20 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         test_lease_id = "00000000-1111-2222-3333-444444444444"
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
         with pytest.raises(ResourceModifiedError) as e:
-            blob.acquire_lease(lease_id=test_lease_id, if_unmodified_since=test_datetime)
+            blob.acquire_lease(
+                lease_id=test_lease_id, if_unmodified_since=test_datetime
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -2319,13 +2742,19 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         etag = blob.get_blob_properties().etag
         test_lease_id = "00000000-1111-2222-3333-444444444444"
 
         # Act
-        lease = blob.acquire_lease(lease_id=test_lease_id, etag=etag, match_condition=MatchConditions.IfNotModified)
+        lease = blob.acquire_lease(
+            lease_id=test_lease_id,
+            etag=etag,
+            match_condition=MatchConditions.IfNotModified,
+        )
 
         lease.break_lease()
 
@@ -2347,14 +2776,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         test_lease_id = "00000000-1111-2222-3333-444444444444"
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
         with pytest.raises(ResourceModifiedError) as e:
             blob.acquire_lease(
-                lease_id=test_lease_id, etag="0x111111111111111", match_condition=MatchConditions.IfNotModified
+                lease_id=test_lease_id,
+                etag="0x111111111111111",
+                match_condition=MatchConditions.IfNotModified,
             )
 
         # Assert
@@ -2372,13 +2805,17 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         test_lease_id = "00000000-1111-2222-3333-444444444444"
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
         lease = blob.acquire_lease(
-            lease_id=test_lease_id, etag="0x111111111111111", match_condition=MatchConditions.IfModified
+            lease_id=test_lease_id,
+            etag="0x111111111111111",
+            match_condition=MatchConditions.IfModified,
         )
 
         lease.break_lease()
@@ -2399,14 +2836,20 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        self._create_container_and_block_blob(self.container_name, "blob1", b"hello world", bsc)
+        self._create_container_and_block_blob(
+            self.container_name, "blob1", b"hello world", bsc
+        )
         blob = bsc.get_blob_client(self.container_name, "blob1")
         etag = blob.get_blob_properties().etag
         test_lease_id = "00000000-1111-2222-3333-444444444444"
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            blob.acquire_lease(lease_id=test_lease_id, etag=etag, match_condition=MatchConditions.IfModified)
+            blob.acquire_lease(
+                lease_id=test_lease_id,
+                etag=etag,
+                match_condition=MatchConditions.IfModified,
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -2424,14 +2867,22 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"", bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"", bsc
+        )
         blob.stage_block("1", b"AAA")
         blob.stage_block("2", b"BBB")
         blob.stage_block("3", b"CCC")
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
-        block_list = [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")]
+        block_list = [
+            BlobBlock(block_id="1"),
+            BlobBlock(block_id="2"),
+            BlobBlock(block_id="3"),
+        ]
         blob.commit_block_list(block_list, if_modified_since=test_datetime)
 
         # Assert
@@ -2452,13 +2903,19 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"", bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"", bsc
+        )
         blob.stage_block("1", b"AAA")
         blob.stage_block("2", b"BBB")
         blob.stage_block("3", b"CCC")
 
         # Act
-        block_list = [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")]
+        block_list = [
+            BlobBlock(block_id="1"),
+            BlobBlock(block_id="2"),
+            BlobBlock(block_id="3"),
+        ]
         resp = blob.commit_block_list(block_list)
 
         # Assert
@@ -2478,14 +2935,20 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"", bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"", bsc
+        )
         blob.stage_block("1", b"AAA")
         blob.stage_block("2", b"BBB")
         blob.stage_block("3", b"CCC")
 
         # Act
         metadata = {"hello": "world", "number": "43"}
-        block_list = [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")]
+        block_list = [
+            BlobBlock(block_id="1"),
+            BlobBlock(block_id="2"),
+            BlobBlock(block_id="3"),
+        ]
         blob.commit_block_list(block_list, metadata=metadata)
 
         # Assert
@@ -2507,16 +2970,24 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"", bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"", bsc
+        )
         blob.stage_block("1", b"AAA")
         blob.stage_block("2", b"BBB")
         blob.stage_block("3", b"CCC")
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob.commit_block_list(
-                [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")],
+                [
+                    BlobBlock(block_id="1"),
+                    BlobBlock(block_id="2"),
+                    BlobBlock(block_id="3"),
+                ],
                 if_modified_since=test_datetime,
             )
 
@@ -2538,14 +3009,22 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"", bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"", bsc
+        )
         blob.stage_block("1", b"AAA")
         blob.stage_block("2", b"BBB")
         blob.stage_block("3", b"CCC")
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
-        block_list = [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")]
+        block_list = [
+            BlobBlock(block_id="1"),
+            BlobBlock(block_id="2"),
+            BlobBlock(block_id="3"),
+        ]
         blob.commit_block_list(block_list, if_unmodified_since=test_datetime)
 
         # Assert
@@ -2567,16 +3046,24 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"", bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"", bsc
+        )
         blob.stage_block("1", b"AAA")
         blob.stage_block("2", b"BBB")
         blob.stage_block("3", b"CCC")
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob.commit_block_list(
-                [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")],
+                [
+                    BlobBlock(block_id="1"),
+                    BlobBlock(block_id="2"),
+                    BlobBlock(block_id="3"),
+                ],
                 if_unmodified_since=test_datetime,
             )
 
@@ -2597,15 +3084,23 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"", bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"", bsc
+        )
         blob.stage_block("1", b"AAA")
         blob.stage_block("2", b"BBB")
         blob.stage_block("3", b"CCC")
         etag = blob.get_blob_properties().etag
 
         # Act
-        block_list = [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")]
-        blob.commit_block_list(block_list, etag=etag, match_condition=MatchConditions.IfNotModified)
+        block_list = [
+            BlobBlock(block_id="1"),
+            BlobBlock(block_id="2"),
+            BlobBlock(block_id="3"),
+        ]
+        blob.commit_block_list(
+            block_list, etag=etag, match_condition=MatchConditions.IfNotModified
+        )
 
         # Assert
         content = blob.download_blob()
@@ -2623,7 +3118,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"", bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"", bsc
+        )
         blob.stage_block("1", b"AAA")
         blob.stage_block("2", b"BBB")
         blob.stage_block("3", b"CCC")
@@ -2631,7 +3128,11 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob.commit_block_list(
-                [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")],
+                [
+                    BlobBlock(block_id="1"),
+                    BlobBlock(block_id="2"),
+                    BlobBlock(block_id="3"),
+                ],
                 etag="0x111111111111111",
                 match_condition=MatchConditions.IfNotModified,
             )
@@ -2651,14 +3152,24 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"", bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"", bsc
+        )
         blob.stage_block("1", b"AAA")
         blob.stage_block("2", b"BBB")
         blob.stage_block("3", b"CCC")
 
         # Act
-        block_list = [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")]
-        blob.commit_block_list(block_list, etag="0x111111111111111", match_condition=MatchConditions.IfModified)
+        block_list = [
+            BlobBlock(block_id="1"),
+            BlobBlock(block_id="2"),
+            BlobBlock(block_id="3"),
+        ]
+        blob.commit_block_list(
+            block_list,
+            etag="0x111111111111111",
+            match_condition=MatchConditions.IfModified,
+        )
 
         # Assert
         content = blob.download_blob()
@@ -2676,7 +3187,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_block_blob(self.container_name, "blob1", b"", bsc)
+        container, blob = self._create_container_and_block_blob(
+            self.container_name, "blob1", b"", bsc
+        )
         blob.stage_block("1", b"AAA")
         blob.stage_block("2", b"BBB")
         blob.stage_block("3", b"CCC")
@@ -2684,8 +3197,14 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            block_list = [BlobBlock(block_id="1"), BlobBlock(block_id="2"), BlobBlock(block_id="3")]
-            blob.commit_block_list(block_list, etag=etag, match_condition=MatchConditions.IfModified)
+            block_list = [
+                BlobBlock(block_id="1"),
+                BlobBlock(block_id="2"),
+                BlobBlock(block_id="3"),
+            ]
+            blob.commit_block_list(
+                block_list, etag=etag, match_condition=MatchConditions.IfModified
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -2704,7 +3223,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         self._create_container_and_page_blob(self.container_name, "blob1", 1024, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
         data = b"abcdefghijklmnop" * 32
 
         # Act
@@ -2727,13 +3248,17 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         self._create_container_and_page_blob(self.container_name, "blob1", 1024, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
         data = b"abcdefghijklmnop" * 32
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
         with pytest.raises(ResourceModifiedError) as e:
-            blob.upload_page(data, offset=0, length=512, if_modified_since=test_datetime)
+            blob.upload_page(
+                data, offset=0, length=512, if_modified_since=test_datetime
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -2754,7 +3279,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         self._create_container_and_page_blob(self.container_name, "blob1", 1024, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
         data = b"abcdefghijklmnop" * 32
 
         # Act
@@ -2777,13 +3304,17 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         self._create_container_and_page_blob(self.container_name, "blob1", 1024, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
         data = b"abcdefghijklmnop" * 32
 
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
         with pytest.raises(ResourceModifiedError) as e:
-            blob.upload_page(data, offset=0, length=512, if_unmodified_since=test_datetime)
+            blob.upload_page(
+                data, offset=0, length=512, if_unmodified_since=test_datetime
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -2808,7 +3339,13 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         etag = blob.get_blob_properties().etag
 
         # Act
-        blob.upload_page(data, offset=0, length=512, etag=etag, match_condition=MatchConditions.IfNotModified)
+        blob.upload_page(
+            data,
+            offset=0,
+            length=512,
+            etag=etag,
+            match_condition=MatchConditions.IfNotModified,
+        )
 
         # Assert
 
@@ -2831,7 +3368,11 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         blob = bsc.get_blob_client(self.container_name, "blob1")
         with pytest.raises(ResourceModifiedError) as e:
             blob.upload_page(
-                data, offset=0, length=512, etag="0x111111111111111", match_condition=MatchConditions.IfNotModified
+                data,
+                offset=0,
+                length=512,
+                etag="0x111111111111111",
+                match_condition=MatchConditions.IfNotModified,
             )
 
         # Assert
@@ -2855,7 +3396,11 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         # Act
         blob = bsc.get_blob_client(self.container_name, "blob1")
         blob.upload_page(
-            data, offset=0, length=512, etag="0x111111111111111", match_condition=MatchConditions.IfModified
+            data,
+            offset=0,
+            length=512,
+            etag="0x111111111111111",
+            match_condition=MatchConditions.IfModified,
         )
 
         # Assert
@@ -2879,7 +3424,13 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            blob.upload_page(data, offset=0, length=512, etag=etag, match_condition=MatchConditions.IfModified)
+            blob.upload_page(
+                data,
+                offset=0,
+                length=512,
+                etag=etag,
+                match_condition=MatchConditions.IfModified,
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -2897,9 +3448,13 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_page_blob(self.container_name, "blob1", 2048, bsc)
+        container, blob = self._create_container_and_page_blob(
+            self.container_name, "blob1", 2048, bsc
+        )
         data = b"abcdefghijklmnop" * 32
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
 
@@ -2926,9 +3481,13 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_page_blob(self.container_name, "blob1", 2048, bsc)
+        container, blob = self._create_container_and_page_blob(
+            self.container_name, "blob1", 2048, bsc
+        )
         data = b"abcdefghijklmnop" * 32
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
 
@@ -2954,9 +3513,13 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_page_blob(self.container_name, "blob1", 2048, bsc)
+        container, blob = self._create_container_and_page_blob(
+            self.container_name, "blob1", 2048, bsc
+        )
         data = b"abcdefghijklmnop" * 32
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
 
@@ -2983,9 +3546,13 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_page_blob(self.container_name, "blob1", 2048, bsc)
+        container, blob = self._create_container_and_page_blob(
+            self.container_name, "blob1", 2048, bsc
+        )
         data = b"abcdefghijklmnop" * 32
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
 
@@ -3010,14 +3577,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_page_blob(self.container_name, "blob1", 2048, bsc)
+        container, blob = self._create_container_and_page_blob(
+            self.container_name, "blob1", 2048, bsc
+        )
         data = b"abcdefghijklmnop" * 32
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
         etag = blob.get_blob_properties().etag
 
         # Act
-        ranges = blob.get_page_ranges(etag=etag, match_condition=MatchConditions.IfNotModified)
+        ranges = blob.get_page_ranges(
+            etag=etag, match_condition=MatchConditions.IfNotModified
+        )
 
         # Assert
         assert len(ranges[0]) == 2
@@ -3036,14 +3607,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_page_blob(self.container_name, "blob1", 2048, bsc)
+        container, blob = self._create_container_and_page_blob(
+            self.container_name, "blob1", 2048, bsc
+        )
         data = b"abcdefghijklmnop" * 32
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            blob.get_page_ranges(etag="0x111111111111111", match_condition=MatchConditions.IfNotModified)
+            blob.get_page_ranges(
+                etag="0x111111111111111", match_condition=MatchConditions.IfNotModified
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -3060,13 +3635,17 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_page_blob(self.container_name, "blob1", 2048, bsc)
+        container, blob = self._create_container_and_page_blob(
+            self.container_name, "blob1", 2048, bsc
+        )
         data = b"abcdefghijklmnop" * 32
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
 
         # Act
-        ranges = blob.get_page_ranges(etag="0x111111111111111", match_condition=MatchConditions.IfModified)
+        ranges = blob.get_page_ranges(
+            etag="0x111111111111111", match_condition=MatchConditions.IfModified
+        )
 
         # Assert
         assert len(ranges[0]) == 2
@@ -3085,7 +3664,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_page_blob(self.container_name, "blob1", 2048, bsc)
+        container, blob = self._create_container_and_page_blob(
+            self.container_name, "blob1", 2048, bsc
+        )
         data = b"abcdefghijklmnop" * 32
 
         blob.upload_page(data, offset=0, length=512)
@@ -3112,11 +3693,17 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_append_blob(self.container_name, "blob1", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, "blob1", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
         # Act
         for i in range(5):
-            resp = blob.append_block("block {0}".format(i), if_modified_since=test_datetime)
+            resp = blob.append_block(
+                "block {0}".format(i), if_modified_since=test_datetime
+            )
             assert resp is not None
 
         # Assert
@@ -3138,12 +3725,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_append_blob(self.container_name, "blob1", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, "blob1", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
-                resp = blob.append_block("block {0}".format(i), if_modified_since=test_datetime)
+                resp = blob.append_block(
+                    "block {0}".format(i), if_modified_since=test_datetime
+                )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -3163,11 +3756,17 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_append_blob(self.container_name, "blob1", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, "blob1", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
         # Act
         for i in range(5):
-            resp = blob.append_block("block {0}".format(i), if_unmodified_since=test_datetime)
+            resp = blob.append_block(
+                "block {0}".format(i), if_unmodified_since=test_datetime
+            )
             assert resp is not None
 
         # Assert
@@ -3189,12 +3788,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_append_blob(self.container_name, "blob1", bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, "blob1", bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
-                resp = blob.append_block("block {0}".format(i), if_unmodified_since=test_datetime)
+                resp = blob.append_block(
+                    "block {0}".format(i), if_unmodified_since=test_datetime
+                )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -3213,12 +3818,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_append_blob(self.container_name, "blob1", bsc)
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, "blob1", bsc
+        )
 
         # Act
         for i in range(5):
             etag = blob.get_blob_properties().etag
-            resp = blob.append_block("block {0}".format(i), etag=etag, match_condition=MatchConditions.IfNotModified)
+            resp = blob.append_block(
+                "block {0}".format(i),
+                etag=etag,
+                match_condition=MatchConditions.IfNotModified,
+            )
             assert resp is not None
 
         # Assert
@@ -3237,13 +3848,17 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_append_blob(self.container_name, "blob1", bsc)
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, "blob1", bsc
+        )
 
         # Act
         with pytest.raises(HttpResponseError) as e:
             for i in range(5):
                 resp = blob.append_block(
-                    "block {0}".format(i), etag="0x111111111111111", match_condition=MatchConditions.IfNotModified
+                    "block {0}".format(i),
+                    etag="0x111111111111111",
+                    match_condition=MatchConditions.IfNotModified,
                 )
 
     @BlobPreparer()
@@ -3258,12 +3873,16 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_append_blob(self.container_name, "blob1", bsc)
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, "blob1", bsc
+        )
 
         # Act
         for i in range(5):
             resp = blob.append_block(
-                "block {0}".format(i), etag="0x8D2C9167D53FC2C", match_condition=MatchConditions.IfModified
+                "block {0}".format(i),
+                etag="0x8D2C9167D53FC2C",
+                match_condition=MatchConditions.IfModified,
             )
             assert resp is not None
 
@@ -3283,13 +3902,19 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
         )
         self._setup()
-        container, blob = self._create_container_and_append_blob(self.container_name, "blob1", bsc)
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, "blob1", bsc
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
                 etag = blob.get_blob_properties().etag
-                resp = blob.append_block("block {0}".format(i), etag=etag, match_condition=MatchConditions.IfModified)
+                resp = blob.append_block(
+                    "block {0}".format(i),
+                    etag=etag,
+                    match_condition=MatchConditions.IfModified,
+                )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -3308,12 +3933,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, blob_name, bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-        blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_modified_since=test_datetime)
+        blob.upload_blob(
+            data, blob_type=BlobType.AppendBlob, if_modified_since=test_datetime
+        )
 
         # Assert
         content = blob.download_blob().readall()
@@ -3335,13 +3966,19 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, blob_name, bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-            blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_modified_since=test_datetime)
+            blob.upload_blob(
+                data, blob_type=BlobType.AppendBlob, if_modified_since=test_datetime
+            )
 
         assert StorageErrorCode.condition_not_met == e.value.error_code
 
@@ -3361,12 +3998,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() + timedelta(minutes=15))
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, blob_name, bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() + timedelta(minutes=15)
+        )
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-        blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_unmodified_since=test_datetime)
+        blob.upload_blob(
+            data, blob_type=BlobType.AppendBlob, if_unmodified_since=test_datetime
+        )
 
         # Assert
         content = blob.download_blob().readall()
@@ -3388,13 +4031,19 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = self.get_datetime_variable(variables, "if_modified", datetime.utcnow() - timedelta(minutes=15))
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, blob_name, bsc
+        )
+        test_datetime = self.get_datetime_variable(
+            variables, "if_modified", datetime.utcnow() - timedelta(minutes=15)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-            blob.upload_blob(data, blob_type=BlobType.AppendBlob, if_unmodified_since=test_datetime)
+            blob.upload_blob(
+                data, blob_type=BlobType.AppendBlob, if_unmodified_since=test_datetime
+            )
 
         assert StorageErrorCode.condition_not_met == e.value.error_code
 
@@ -3413,13 +4062,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, blob_name, bsc
+        )
         test_etag = blob.get_blob_properties().etag
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
         blob.upload_blob(
-            data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfNotModified
+            data,
+            blob_type=BlobType.AppendBlob,
+            etag=test_etag,
+            match_condition=MatchConditions.IfNotModified,
         )
 
         # Assert
@@ -3439,14 +4093,19 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, blob_name, bsc
+        )
         test_etag = "0x8D2C9167D53FC2C"
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
             blob.upload_blob(
-                data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfNotModified
+                data,
+                blob_type=BlobType.AppendBlob,
+                etag=test_etag,
+                match_condition=MatchConditions.IfNotModified,
             )
 
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -3464,13 +4123,18 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, blob_name, bsc
+        )
         test_etag = "0x8D2C9167D53FC2C"
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
         blob.upload_blob(
-            data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfModified
+            data,
+            blob_type=BlobType.AppendBlob,
+            etag=test_etag,
+            match_condition=MatchConditions.IfModified,
         )
 
         # Assert
@@ -3490,14 +4154,19 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         )
         self._setup()
         blob_name = self.get_resource_name("blob")
-        container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
+        container, blob = self._create_container_and_append_blob(
+            self.container_name, blob_name, bsc
+        )
         test_etag = blob.get_blob_properties().etag
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
             blob.upload_blob(
-                data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfModified
+                data,
+                blob_type=BlobType.AppendBlob,
+                etag=test_etag,
+                match_condition=MatchConditions.IfModified,
             )
 
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -3510,7 +4179,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
         self._setup()
         data = b"hello world"
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), storage_account_key.secret
+        )
         try:
             container_client = bsc.create_container(self.container_name)
         except:
@@ -3541,7 +4212,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
         self._setup()
         data = b"hello world"
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), storage_account_key.secret
+        )
         try:
             container_client = bsc.create_container(self.container_name)
         except:
@@ -3590,7 +4263,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
         self._setup()
         data = b"hello world"
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), storage_account_key.secret
+        )
         try:
             container_client = bsc.create_container(self.container_name)
         except:

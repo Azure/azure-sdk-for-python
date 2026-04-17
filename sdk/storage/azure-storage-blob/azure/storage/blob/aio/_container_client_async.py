@@ -50,18 +50,36 @@ from .._generated.aio import AzureBlobStorage
 from .._generated.models import SignedIdentifier
 from .._list_blobs_helper import IgnoreListBlobsDeserializer
 from .._models import ContainerProperties, BlobType, BlobProperties, FilteredBlob
-from .._serialize import get_modify_conditions, get_container_cpk_scope_info, get_api_version, get_access_conditions
+from .._serialize import (
+    get_modify_conditions,
+    get_container_cpk_scope_info,
+    get_api_version,
+    get_access_conditions,
+)
 from .._shared.base_client import StorageAccountHostsMixin
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
+from .._shared.base_client_async import (
+    AsyncStorageAccountHostsMixin,
+    AsyncTransportWrapper,
+    parse_connection_str,
+)
 from .._shared.policies_async import ExponentialRetry
 from .._shared.request_handlers import add_metadata_headers, serialize_iso
-from .._shared.response_handlers import process_storage_error, return_headers_and_deserialized, return_response_headers
+from .._shared.response_handlers import (
+    process_storage_error,
+    return_headers_and_deserialized,
+    return_response_headers,
+)
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
     from azure.core.credentials_async import AsyncTokenCredential
     from ._blob_service_client_async import BlobServiceClient
-    from .._models import AccessPolicy, StandardBlobTier, PremiumPageBlobTier, PublicAccess
+    from .._models import (
+        AccessPolicy,
+        StandardBlobTier,
+        PremiumPageBlobTier,
+        PublicAccess,
+    )
 
 
 class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public-methods
@@ -135,18 +153,30 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         account_url: str,
         container_name: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,  # pylint: disable=line-too-long
         **kwargs: Any,
     ) -> None:
-        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
-        parsed_url, sas_token = _parse_url(account_url=account_url, container_name=container_name)
+        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(
+            **kwargs
+        )
+        parsed_url, sas_token = _parse_url(
+            account_url=account_url, container_name=container_name
+        )
 
         self.container_name = container_name
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
         self._raw_credential = credential if credential else sas_token
         self._query_str, credential = self._format_query_string(sas_token, credential)
-        super(ContainerClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
+        super(ContainerClient, self).__init__(
+            parsed_url, service="blob", credential=credential, **kwargs
+        )
         self._api_version = get_api_version(kwargs)
         self._client = self._build_generated_client()
         self._configure_encryption(kwargs)
@@ -168,11 +198,16 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         await self._client.close()
 
     def _build_generated_client(self) -> AzureBlobStorage:
-        return AzureBlobStorage(self.url, self._api_version, base_url=self.url, pipeline=self._pipeline)
+        return AzureBlobStorage(
+            self.url, self._api_version, base_url=self.url, pipeline=self._pipeline
+        )
 
     def _format_url(self, hostname):
         return _format_url(
-            container_name=self.container_name, hostname=hostname, scheme=self.scheme, query_str=self._query_str
+            container_name=self.container_name,
+            hostname=hostname,
+            scheme=self.scheme,
+            query_str=self._query_str,
         )
 
     @classmethod
@@ -180,7 +215,13 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         cls,
         container_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,  # pylint: disable=line-too-long
         **kwargs: Any,
     ) -> Self:
@@ -227,8 +268,12 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         account_url = f"{parsed_url.scheme}://{parsed_url.netloc.rstrip('/')}{account_path}?{parsed_url.query}"
         container_name = unquote(container_path[-1])
         if not container_name:
-            raise ValueError("Invalid URL. Please provide a URL with a valid container name")
-        return cls(account_url, container_name=container_name, credential=credential, **kwargs)
+            raise ValueError(
+                "Invalid URL. Please provide a URL with a valid container name"
+            )
+        return cls(
+            account_url, container_name=container_name, credential=credential, **kwargs
+        )
 
     @classmethod
     def from_connection_string(
@@ -236,7 +281,13 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         conn_str: str,
         container_name: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,  # pylint: disable=line-too-long
         **kwargs: Any,
     ) -> Self:
@@ -276,10 +327,14 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
                 :dedent: 8
                 :caption: Creating the ContainerClient from a connection string.
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, "blob")
+        account_url, secondary, credential = parse_connection_str(
+            conn_str, credential, "blob"
+        )
         if "secondary_hostname" not in kwargs:
             kwargs["secondary_hostname"] = secondary
-        return cls(account_url, container_name=container_name, credential=credential, **kwargs)
+        return cls(
+            account_url, container_name=container_name, credential=credential, **kwargs
+        )
 
     @distributed_trace_async
     async def create_container(
@@ -340,7 +395,9 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             process_storage_error(error)
 
     @distributed_trace_async
-    async def _rename_container(self, new_name: str, **kwargs: Any) -> "ContainerClient":
+    async def _rename_container(
+        self, new_name: str, **kwargs: Any
+    ) -> "ContainerClient":
         """Renames a container.
 
         Operation is successful only if the source container exists.
@@ -654,9 +711,13 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         """
         from ._blob_service_client_async import BlobServiceClient
 
-        if not isinstance(self._pipeline._transport, AsyncTransportWrapper):  # pylint: disable = protected-access
+        if not isinstance(
+            self._pipeline._transport, AsyncTransportWrapper
+        ):  # pylint: disable = protected-access
             _pipeline = AsyncPipeline(
-                transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
+                transport=AsyncTransportWrapper(
+                    self._pipeline._transport
+                ),  # pylint: disable = protected-access
                 policies=self._pipeline._impl_policies,  # type: ignore [arg-type] # pylint: disable = protected-access
             )
         else:
@@ -714,7 +775,10 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             )
         except HttpResponseError as error:
             process_storage_error(error)
-        return {"public_access": response.get("blob_public_access"), "signed_identifiers": identifiers or []}
+        return {
+            "public_access": response.get("blob_public_access"),
+            "signed_identifiers": identifiers or [],
+        }
 
     @distributed_trace_async
     async def set_container_access_policy(
@@ -803,7 +867,10 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
 
     @distributed_trace
     def list_blobs(
-        self, name_starts_with: Optional[str] = None, include: Optional[Union[str, List[str]]] = None, **kwargs: Any
+        self,
+        name_starts_with: Optional[str] = None,
+        include: Optional[Union[str, List[str]]] = None,
+        **kwargs: Any,
     ) -> AsyncItemPaged[BlobProperties]:
         """Returns a generator to list the blobs under the specified container.
         The generator will lazily follow the continuation tokens returned by
@@ -843,7 +910,8 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, "
+                + "please use the 'name_starts_with' parameter instead."
             )
 
         if include and not isinstance(include, list):
@@ -852,7 +920,10 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
         command = functools.partial(
-            self._client.container.list_blob_flat_segment, include=include, timeout=timeout, **kwargs
+            self._client.container.list_blob_flat_segment,
+            include=include,
+            timeout=timeout,
+            **kwargs,
         )
         return AsyncItemPaged(
             command,
@@ -892,7 +963,8 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, "
+                + "please use the 'name_starts_with' parameter instead."
             )
 
         name_starts_with = kwargs.pop("name_starts_with", None)
@@ -902,9 +974,13 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         # For listing only names we need to create a one-off generated client and
         # override its deserializer to prevent deserialization of the full response.
         client = self._build_generated_client()
-        client.container._deserialize = IgnoreListBlobsDeserializer()  # pylint: disable=protected-access
+        client.container._deserialize = (
+            IgnoreListBlobsDeserializer()
+        )  # pylint: disable=protected-access
 
-        command = functools.partial(client.container.list_blob_flat_segment, timeout=timeout, **kwargs)
+        command = functools.partial(
+            client.container.list_blob_flat_segment, timeout=timeout, **kwargs
+        )
         return AsyncItemPaged(
             command,
             prefix=name_starts_with,
@@ -953,7 +1029,8 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, "
+                + "please use the 'name_starts_with' parameter instead."
             )
 
         if include and not isinstance(include, list):
@@ -977,7 +1054,9 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         )
 
     @distributed_trace
-    def find_blobs_by_tags(self, filter_expression: str, **kwargs: Any) -> AsyncItemPaged[FilteredBlob]:
+    def find_blobs_by_tags(
+        self, filter_expression: str, **kwargs: Any
+    ) -> AsyncItemPaged[FilteredBlob]:
         """Returns a generator to list the blobs under the specified container whose tags
         match the given search expression.
         The generator will lazily follow the continuation tokens returned by
@@ -1000,7 +1079,10 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         results_per_page = kwargs.pop("results_per_page", None)
         timeout = kwargs.pop("timeout", None)
         command = functools.partial(
-            self._client.container.filter_blobs, timeout=timeout, where=filter_expression, **kwargs
+            self._client.container.filter_blobs,
+            timeout=timeout,
+            where=filter_expression,
+            **kwargs,
         )
         return AsyncItemPaged(
             command,
@@ -1145,12 +1227,20 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         timeout = kwargs.pop("timeout", None)
         encoding = kwargs.pop("encoding", "UTF-8")
         await blob.upload_blob(
-            data, blob_type=blob_type, length=length, metadata=metadata, timeout=timeout, encoding=encoding, **kwargs
+            data,
+            blob_type=blob_type,
+            length=length,
+            metadata=metadata,
+            timeout=timeout,
+            encoding=encoding,
+            **kwargs,
         )
         return blob
 
     @distributed_trace_async
-    async def delete_blob(self, blob: str, delete_snapshots: Optional[str] = None, **kwargs: Any) -> None:
+    async def delete_blob(
+        self, blob: str, delete_snapshots: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """Marks the specified blob or snapshot for deletion.
 
         The blob is later deleted during garbage collection.
@@ -1226,7 +1316,13 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
 
     @overload
     async def download_blob(
-        self, blob: str, offset: Optional[int] = None, length: Optional[int] = None, *, encoding: str, **kwargs: Any
+        self,
+        blob: str,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        encoding: str,
+        **kwargs: Any,
     ) -> StorageStreamDownloader[str]: ...
 
     @overload
@@ -1340,7 +1436,9 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             )
         blob_client = self.get_blob_client(blob)  # type: ignore
         kwargs.setdefault("merge_span", True)
-        return await blob_client.download_blob(offset=offset, length=length, encoding=encoding, **kwargs)
+        return await blob_client.download_blob(
+            offset=offset, length=length, encoding=encoding, **kwargs
+        )
 
     @distributed_trace_async
     async def delete_blobs(
@@ -1442,7 +1540,9 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             self._query_str, self.container_name, self._client, *blobs, **kwargs
         )
 
-        return cast(AsyncIterator[AsyncHttpResponse], await self._batch_send(*reqs, **options))
+        return cast(
+            AsyncIterator[AsyncHttpResponse], await self._batch_send(*reqs, **options)
+        )
 
     @distributed_trace_async
     async def set_standard_blob_tier_blobs(
@@ -1516,10 +1616,17 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         if self._is_localhost:
             kwargs["url_prepend"] = self.account_name
         reqs, options = _generate_set_tiers_options(
-            self._query_str, self.container_name, standard_blob_tier, self._client, *blobs, **kwargs
+            self._query_str,
+            self.container_name,
+            standard_blob_tier,
+            self._client,
+            *blobs,
+            **kwargs,
         )
 
-        return cast(AsyncIterator[AsyncHttpResponse], await self._batch_send(*reqs, **options))
+        return cast(
+            AsyncIterator[AsyncHttpResponse], await self._batch_send(*reqs, **options)
+        )
 
     @distributed_trace_async
     async def set_premium_page_blob_tier_blobs(
@@ -1574,13 +1681,24 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         if self._is_localhost:
             kwargs["url_prepend"] = self.account_name
         reqs, options = _generate_set_tiers_options(
-            self._query_str, self.container_name, premium_page_blob_tier, self._client, *blobs, **kwargs
+            self._query_str,
+            self.container_name,
+            premium_page_blob_tier,
+            self._client,
+            *blobs,
+            **kwargs,
         )
 
-        return cast(AsyncIterator[AsyncHttpResponse], await self._batch_send(*reqs, **options))
+        return cast(
+            AsyncIterator[AsyncHttpResponse], await self._batch_send(*reqs, **options)
+        )
 
     def get_blob_client(
-        self, blob: str, snapshot: Optional[str] = None, *, version_id: Optional[str] = None
+        self,
+        blob: str,
+        snapshot: Optional[str] = None,
+        *,
+        version_id: Optional[str] = None,
     ) -> BlobClient:
         """Get a client to interact with the specified blob.
 
@@ -1615,7 +1733,9 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         else:
             blob_name = blob
         _pipeline = AsyncPipeline(
-            transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
+            transport=AsyncTransportWrapper(
+                self._pipeline._transport
+            ),  # pylint: disable = protected-access
             policies=self._pipeline._impl_policies,  # type: ignore [arg-type] # pylint: disable = protected-access
         )
         return BlobClient(

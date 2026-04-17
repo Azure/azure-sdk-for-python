@@ -46,7 +46,9 @@ class BlobQueryReader:  # pylint: disable=too-many-instance-attributes
         self._bytes_processed = 0
         self._errors = errors
         self._encoding = encoding
-        self._parsed_results = DataFileReader(QuickQueryStreamer(response), DatumReader())
+        self._parsed_results = DataFileReader(
+            QuickQueryStreamer(response), DatumReader()
+        )
         self._first_result = self._process_record(next(self._parsed_results))
         self._error_cls = error_cls
 

@@ -69,7 +69,11 @@ def walk_container(client, container):
                 depth -= 1
             else:
                 message = "B: " + separator * depth + short_name
-                results = list(container_client.list_blobs(name_starts_with=item.name, include=["snapshots"]))
+                results = list(
+                    container_client.list_blobs(
+                        name_starts_with=item.name, include=["snapshots"]
+                    )
+                )
                 num_snapshots = len(results) - 1
                 if num_snapshots:
                     message += " ({} snapshots)".format(num_snapshots)

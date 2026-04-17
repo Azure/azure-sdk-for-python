@@ -38,7 +38,9 @@ MiB = 1024 * 1024
 class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
     async def _setup(self, storage_account_name, key):
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=key.secret)
+        self.bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), credential=key.secret
+        )
         self.container_name = self.get_resource_name("utcontainer")
 
         if self.is_live:
@@ -67,7 +69,8 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self.bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
         )
         kek = KeyWrapper("key1")
         self.enable_encryption_v2(kek)
@@ -156,7 +159,9 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
             metadata = (await blob.get_blob_properties()).metadata
             encrypted_data = await (await blob.download_blob()).readall()
 
-            encryption_data = _dict_to_encryption_data(loads(metadata["encryptiondata"]))
+            encryption_data = _dict_to_encryption_data(
+                loads(metadata["encryptiondata"])
+            )
 
             encryption_agent = encryption_data.encryption_agent
             assert "2.0" == encryption_agent.protocol
@@ -166,7 +171,9 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
             assert _GCM_NONCE_LENGTH == encrypted_region_info.nonce_length
             assert _GCM_TAG_LENGTH == encrypted_region_info.tag_length
 
-            content_encryption_key = _validate_and_unwrap_cek(encryption_data, kek, None)
+            content_encryption_key = _validate_and_unwrap_cek(
+                encryption_data, kek, None
+            )
 
             nonce_length = encrypted_region_info.nonce_length
 
@@ -216,7 +223,9 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         content_settings = ContentSettings(content_encoding="gzip")
 
         # Act / Assert
-        await blob.upload_blob(data=compressed_data, overwrite=True, content_settings=content_settings)
+        await blob.upload_blob(
+            data=compressed_data, overwrite=True, content_settings=content_settings
+        )
 
         result = await (await blob.download_blob(decompress=False)).readall()
         assert result == compressed_data
@@ -286,7 +295,9 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
         with mock.patch("os.urandom", mock_urandom):
             await blob.upload_blob(b"", overwrite=True)
-            lease = await blob.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
+            lease = await blob.acquire_lease(
+                lease_id="00000000-1111-2222-3333-444444444444"
+            )
 
             # Act
             await blob.upload_blob(content, overwrite=True, lease=lease)
@@ -318,14 +329,23 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
             # Act
             resp = await blob.upload_blob(
-                content, overwrite=True, etag=etag, match_condition=MatchConditions.IfNotModified
+                content,
+                overwrite=True,
+                etag=etag,
+                match_condition=MatchConditions.IfNotModified,
             )
             etag = resp["etag"]
 
         with pytest.raises(HttpResponseError):
-            await blob.download_blob(etag="0x111111111111111", match_condition=MatchConditions.IfNotModified)
+            await blob.download_blob(
+                etag="0x111111111111111", match_condition=MatchConditions.IfNotModified
+            )
 
-        data = await (await blob.download_blob(etag=etag, match_condition=MatchConditions.IfNotModified)).readall()
+        data = await (
+            await blob.download_blob(
+                etag=etag, match_condition=MatchConditions.IfNotModified
+            )
+        ).readall()
 
         # Assert
         assert content == data
@@ -407,7 +427,9 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         # Modify cek to not include the version
         metadata = (await blob.get_blob_properties()).metadata
         encryption_data = loads(metadata["encryptiondata"])
-        encrypted_key = base64.b64decode(encryption_data["WrappedContentKey"]["EncryptedKey"])
+        encrypted_key = base64.b64decode(
+            encryption_data["WrappedContentKey"]["EncryptedKey"]
+        )
         cek = kek.unwrap_key(encrypted_key, "A256KW")
         encrypted_key = kek.wrap_key(cek[8:])
         encrypted_key = base64.b64encode(encrypted_key).decode()
@@ -530,7 +552,9 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    async def test_put_blob_multi_region_chunked_size_equal_region_concurrent(self, **kwargs):
+    async def test_put_blob_multi_region_chunked_size_equal_region_concurrent(
+        self, **kwargs
+    ):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -650,7 +674,13 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
             yield b"World "
             yield b"Encrypted!"
 
-        data_list = [byte_io, generator(), text_generator(), async_generator(), async_stream]
+        data_list = [
+            byte_io,
+            generator(),
+            text_generator(),
+            async_generator(),
+            async_stream,
+        ]
 
         # Act
         for data in data_list:
@@ -695,7 +725,13 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
             for i in range(0, len(content), 500):
                 yield content[i : i + 500]
 
-        data_list = [byte_io, generator(), text_generator(), async_generator(), async_stream]
+        data_list = [
+            byte_io,
+            generator(),
+            text_generator(),
+            async_generator(),
+            async_stream,
+        ]
 
         # Act
         for data in data_list:
@@ -801,7 +837,9 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
         # Act
         await blob.upload_blob(content, overwrite=True)
-        data = await (await blob.download_blob(offset=length - 1000000, length=1000000)).readall()
+        data = await (
+            await blob.download_blob(offset=length - 1000000, length=1000000)
+        ).readall()
 
         # Assert
         assert content[length - 1000000 :] == data
@@ -821,7 +859,9 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
         # Act
         await blob.upload_blob(content, overwrite=True)
-        data = await (await blob.download_blob(offset=3 * 1024 * 1024, length=2 * 1024 * 1024)).readall()
+        data = await (
+            await blob.download_blob(offset=3 * 1024 * 1024, length=2 * 1024 * 1024)
+        ).readall()
 
         # Assert
         assert content[3 * 1024 * 1024 : 5 * 1024 * 1024] == data
@@ -861,7 +901,9 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
         # Act
         await blob.upload_blob(content, overwrite=True)
-        data = await (await blob.download_blob(offset=1 * MiB, length=7 * MiB)).readall()
+        data = await (
+            await blob.download_blob(offset=1 * MiB, length=7 * MiB)
+        ).readall()
 
         # Assert
         assert content[1 * MiB :] == data
@@ -881,7 +923,9 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
 
         # Act
         await blob.upload_blob(content, overwrite=True)
-        data = await (await blob.download_blob(offset=4 * MiB - 1, length=4 * MiB + 2)).readall()
+        data = await (
+            await blob.download_blob(offset=4 * MiB - 1, length=4 * MiB + 2)
+        ).readall()
 
         # Assert
         assert content[4 * MiB - 1 :] == data
@@ -1217,14 +1261,18 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         self.enable_encryption_v2(kek)
 
         def assert_user_agent(request):
-            assert request.http_request.headers["User-Agent"].startswith("azstorage-clientsideencryption/2.0 ")
+            assert request.http_request.headers["User-Agent"].startswith(
+                "azstorage-clientsideencryption/2.0 "
+            )
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
         content = b"Hello World Encrypted!"
 
         # Act
         with mock.patch("os.urandom", mock_urandom):
-            await blob.upload_blob(content, overwrite=True, raw_request_hook=assert_user_agent)
+            await blob.upload_blob(
+                content, overwrite=True, raw_request_hook=assert_user_agent
+            )
         await (await blob.download_blob(raw_request_hook=assert_user_agent)).readall()
 
     @BlobPreparer()
@@ -1248,8 +1296,17 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
 
         with mock.patch("os.urandom", mock_urandom):
-            await blob.upload_blob(content, overwrite=True, raw_request_hook=assert_user_agent, user_agent=app_id)
-        await (await blob.download_blob(raw_request_hook=assert_user_agent, user_agent=app_id)).readall()
+            await blob.upload_blob(
+                content,
+                overwrite=True,
+                raw_request_hook=assert_user_agent,
+                user_agent=app_id,
+            )
+        await (
+            await blob.download_blob(
+                raw_request_hook=assert_user_agent, user_agent=app_id
+            )
+        ).readall()
 
         # Test client constructor level keyword
         bsc = BlobServiceClient(
@@ -1264,5 +1321,7 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         blob = bsc.get_blob_client(self.container_name, self._get_blob_reference())
 
         with mock.patch("os.urandom", mock_urandom):
-            await blob.upload_blob(content, overwrite=True, raw_request_hook=assert_user_agent)
+            await blob.upload_blob(
+                content, overwrite=True, raw_request_hook=assert_user_agent
+            )
         await (await blob.download_blob(raw_request_hook=assert_user_agent)).readall()

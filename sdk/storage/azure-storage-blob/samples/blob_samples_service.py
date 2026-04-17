@@ -14,6 +14,7 @@ USAGE: python blob_samples_service.py
     Set the environment variables with your own values before running the sample:
     1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
+
 import os
 import sys
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
@@ -35,7 +36,9 @@ class BlobServiceSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # [START get_blob_service_account_info]
         account_info = blob_service_client.get_account_information()
@@ -54,21 +57,37 @@ class BlobServiceSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # [START set_blob_service_properties]
         # Create service properties
-        from azure.storage.blob import BlobAnalyticsLogging, Metrics, CorsRule, RetentionPolicy
+        from azure.storage.blob import (
+            BlobAnalyticsLogging,
+            Metrics,
+            CorsRule,
+            RetentionPolicy,
+        )
 
         # Create logging settings
         logging = BlobAnalyticsLogging(
-            read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+            read=True,
+            write=True,
+            delete=True,
+            retention_policy=RetentionPolicy(enabled=True, days=5),
         )
 
         # Create metrics for requests statistics
-        hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        hour_metrics = Metrics(
+            enabled=True,
+            include_apis=True,
+            retention_policy=RetentionPolicy(enabled=True, days=5),
+        )
         minute_metrics = Metrics(
-            enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5)
+            enabled=True,
+            include_apis=True,
+            retention_policy=RetentionPolicy(enabled=True, days=5),
         )
 
         # Create CORS rules
@@ -76,7 +95,9 @@ class BlobServiceSamples(object):
         cors = [cors_rule]
 
         # Set the service properties
-        blob_service_client.set_service_properties(logging, hour_metrics, minute_metrics, cors)
+        blob_service_client.set_service_properties(
+            logging, hour_metrics, minute_metrics, cors
+        )
         # [END set_blob_service_properties]
 
         # [START get_blob_service_properties]
@@ -86,14 +107,18 @@ class BlobServiceSamples(object):
     def blob_service_stats(self):
         if self.connection_string is None:
             print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING." + "\n" + "Test: blob_service_stats"
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: blob_service_stats"
             )
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # [START get_blob_service_stats]
         stats = blob_service_client.get_service_stats()
@@ -111,12 +136,16 @@ class BlobServiceSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         try:
             # [START bsc_create_container]
             try:
-                new_container = blob_service_client.create_container("containerfromblobservice")
+                new_container = blob_service_client.create_container(
+                    "containerfromblobservice"
+                )
                 properties = new_container.get_container_properties()
             except ResourceExistsError:
                 print("Container already exists.")
@@ -129,7 +158,9 @@ class BlobServiceSamples(object):
                 print(container["name"], container["metadata"])
 
             # Filter results with name prefix
-            test_containers = blob_service_client.list_containers(name_starts_with="test-")
+            test_containers = blob_service_client.list_containers(
+                name_starts_with="test-"
+            )
             for container in test_containers:
                 print(container["name"], container["metadata"])
             # [END bsc_list_containers]
@@ -155,7 +186,9 @@ class BlobServiceSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # [START bsc_get_container_client]
         # Get a client to interact with a specific container - though it may not yet exist
@@ -171,7 +204,9 @@ class BlobServiceSamples(object):
             container_client.create_container()
 
             # [START bsc_get_blob_client]
-            blob_client = blob_service_client.get_blob_client(container="containertest", blob="my_blob")
+            blob_client = blob_service_client.get_blob_client(
+                container="containertest", blob="my_blob"
+            )
             try:
                 stream = blob_client.download_blob()
             except ResourceNotFoundError:
@@ -194,7 +229,9 @@ class BlobServiceSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import ContainerClient
 
-        container_client1 = ContainerClient.from_connection_string(self.connection_string, "container")
+        container_client1 = ContainerClient.from_connection_string(
+            self.connection_string, "container"
+        )
         container_client1.create_container()
 
         # [START get_blob_service_client_from_container_client]

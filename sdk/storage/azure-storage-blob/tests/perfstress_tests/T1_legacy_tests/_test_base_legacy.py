@@ -44,14 +44,20 @@ class _LegacyServiceTest(PerfStressTest):
             _LegacyServiceTest.service_client = BlockBlobService(
                 connection_string=connection_string, request_session=session
             )
-            _LegacyServiceTest.service_client.MAX_SINGLE_PUT_SIZE = self.args.max_put_size
+            _LegacyServiceTest.service_client.MAX_SINGLE_PUT_SIZE = (
+                self.args.max_put_size
+            )
             _LegacyServiceTest.service_client.MAX_BLOCK_SIZE = self.args.max_block_size
-            _LegacyServiceTest.service_client.MIN_LARGE_BLOCK_UPLOAD_THRESHOLD = self.args.buffer_threshold
+            _LegacyServiceTest.service_client.MIN_LARGE_BLOCK_UPLOAD_THRESHOLD = (
+                self.args.buffer_threshold
+            )
         self.async_service_client = None
         self.service_client = _LegacyServiceTest.service_client
 
         if self.args.test_proxies:
-            self.service_client.request_callback = functools.partial(test_proxy_callback, self._test_proxy_policy)
+            self.service_client.request_callback = functools.partial(
+                test_proxy_callback, self._test_proxy_policy
+            )
 
     @staticmethod
     def add_arguments(parser):
@@ -85,7 +91,12 @@ class _LegacyServiceTest(PerfStressTest):
             default=1,
         )
         parser.add_argument(
-            "-s", "--size", nargs="?", type=int, help="Size of data to transfer.  Default is 10240.", default=10240
+            "-s",
+            "--size",
+            nargs="?",
+            type=int,
+            help="Size of data to transfer.  Default is 10240.",
+            default=10240,
         )
         parser.add_argument(
             "--no-client-share",

@@ -14,7 +14,6 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
-
 # ------------------------------------------------------------------------------
 from azure.storage.blob._models import ArrowDialect, ArrowType, QuickQueryDialect
 
@@ -114,7 +113,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -127,7 +129,9 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         def on_error(error):
             errors.append(error)
 
-        reader = await blob_client.query_blob("SELECT * from BlobStorage", on_error=on_error)
+        reader = await blob_client.query_blob(
+            "SELECT * from BlobStorage", on_error=on_error
+        )
         data = await reader.readall()
         assert len(errors) == 0
         assert len(reader) == len(CSV_DATA)
@@ -142,7 +146,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -172,7 +179,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -185,7 +195,9 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         def on_error(error):
             errors.append(error)
 
-        reader = await blob_client.query_blob("SELECT * from BlobStorage", on_error=on_error, encoding="utf-8")
+        reader = await blob_client.query_blob(
+            "SELECT * from BlobStorage", on_error=on_error, encoding="utf-8"
+        )
         data = await reader.readall()
 
         assert len(errors) == 0
@@ -201,7 +213,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -209,7 +224,9 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         await blob_client.upload_blob(CSV_DATA, overwrite=True)
 
-        reader = await blob_client.query_blob("SELECT * from BlobStorage", encoding="utf-8")
+        reader = await blob_client.query_blob(
+            "SELECT * from BlobStorage", encoding="utf-8"
+        )
         data = ""
         async for record in reader.records():
             data += record
@@ -226,7 +243,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -237,13 +257,18 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         input_format = DelimitedTextDialect(has_header=True)
         output_format = DelimitedTextDialect(has_header=False)
         reader = await blob_client.query_blob(
-            "SELECT * from BlobStorage", blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
         )
         read_records = reader.records()
 
         # Assert first line does not include header
         data = await read_records.__anext__()
-        assert data == b"App Configuration,azure-data-appconfiguration,1,appconfiguration,FALSE"
+        assert (
+            data
+            == b"App Configuration,azure-data-appconfiguration,1,appconfiguration,FALSE"
+        )
 
         async for record in read_records:
             data += record
@@ -260,7 +285,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -269,7 +297,9 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(CSV_DATA, overwrite=True)
 
         input_format = DelimitedTextDialect(has_header=True)
-        reader = await blob_client.query_blob("SELECT * from BlobStorage", blob_format=input_format)
+        reader = await blob_client.query_blob(
+            "SELECT * from BlobStorage", blob_format=input_format
+        )
         read_records = reader.records()
 
         # Assert first line does not include header
@@ -291,7 +321,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -320,7 +353,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -334,11 +370,20 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             errors.append(error)
 
         input_format = DelimitedTextDialect(
-            delimiter=",", quotechar='"', lineterminator="\n", escapechar="", has_header=False
+            delimiter=",",
+            quotechar='"',
+            lineterminator="\n",
+            escapechar="",
+            has_header=False,
         )
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator=".", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator=".", escapechar="\\"
+        )
         resp = await blob_client.query_blob(
-            "SELECT * from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
         query_result = await resp.readall()
 
@@ -354,7 +399,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -363,12 +411,20 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(CSV_DATA, overwrite=True)
 
         input_format = DelimitedTextDialect(
-            delimiter=",", quotechar='"', lineterminator="\n", escapechar="", has_header=False
+            delimiter=",",
+            quotechar='"',
+            lineterminator="\n",
+            escapechar="",
+            has_header=False,
         )
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator="%", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator="%", escapechar="\\"
+        )
 
         reader = await blob_client.query_blob(
-            "SELECT * from BlobStorage", blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
         )
         data = []
         async for record in reader.records():
@@ -387,7 +443,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         data1 = b"{name: owner}"
@@ -412,9 +471,14 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             errors.append(error)
 
         input_format = DelimitedJsonDialect()
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator=".", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator=".", escapechar="\\"
+        )
         resp = await blob_client.query_blob(
-            "SELECT * from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
         query_result = await resp.readall()
 
@@ -430,7 +494,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         data1 = b"{name: owner}"
@@ -455,9 +522,14 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             errors.append(error)
 
         input_format = DelimitedJsonDialect()
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator=".", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator=".", escapechar="\\"
+        )
         resp = await blob_client.query_blob(
-            "SELECT * from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
         data = []
         async for record in resp.records():
@@ -475,7 +547,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         data1 = b"{name: owner}"
@@ -500,9 +575,14 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             raise Exception(error.description)
 
         input_format = DelimitedJsonDialect()
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator=".", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator=".", escapechar="\\"
+        )
         resp = await blob_client.query_blob(
-            "SELECT * from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
         with pytest.raises(Exception):
             query_result = await resp.readall()
@@ -510,12 +590,17 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_quick_query_iter_records_with_fatal_error_handler_raise(self, **kwargs):
+    async def test_quick_query_iter_records_with_fatal_error_handler_raise(
+        self, **kwargs
+    ):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         data1 = b"{name: owner}"
@@ -540,9 +625,14 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             raise Exception(error.description)
 
         input_format = DelimitedJsonDialect()
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator=".", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator=".", escapechar="\\"
+        )
         resp = await blob_client.query_blob(
-            "SELECT * from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
 
         with pytest.raises(Exception):
@@ -557,7 +647,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         data1 = b"{name: owner}"
@@ -570,9 +663,13 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(data, overwrite=True)
 
         input_format = DelimitedJsonDialect()
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator=".", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator=".", escapechar="\\"
+        )
         resp = await blob_client.query_blob(
-            "SELECT * from BlobStorage", blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
         )
         query_result = await resp.readall()
         await self._teardown(bsc)
@@ -584,7 +681,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         data1 = b"{name: owner}"
@@ -604,9 +704,13 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(data, overwrite=True)
 
         input_format = DelimitedJsonDialect()
-        output_format = DelimitedTextDialect(delimiter=";", quotechar="'", lineterminator=".", escapechar="\\")
+        output_format = DelimitedTextDialect(
+            delimiter=";", quotechar="'", lineterminator=".", escapechar="\\"
+        )
         resp = await blob_client.query_blob(
-            "SELECT * from BlobStorage", blob_format=input_format, output_format=output_format
+            "SELECT * from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
         )
 
         async for record in resp.records():
@@ -620,7 +724,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -634,7 +741,11 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             errors.append(error)
 
         input_format = DelimitedTextDialect(
-            delimiter=",", quotechar='"', lineterminator="\n", escapechar="", has_header=True
+            delimiter=",",
+            quotechar='"',
+            lineterminator="\n",
+            escapechar="",
+            has_header=True,
         )
         output_format = DelimitedTextDialect(
             delimiter=";",
@@ -643,7 +754,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             escapechar="\\",
         )
         resp = await blob_client.query_blob(
-            "SELECT RepoPath from BlobStorage", blob_format=input_format, output_format=output_format, on_error=on_error
+            "SELECT RepoPath from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
+            on_error=on_error,
         )
         query_result = await resp.readall()
 
@@ -660,7 +774,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -674,7 +791,11 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             errors.append(error)
 
         input_format = DelimitedTextDialect(
-            delimiter=",", quotechar='"', lineterminator="\n", escapechar="", has_header=True
+            delimiter=",",
+            quotechar='"',
+            lineterminator="\n",
+            escapechar="",
+            has_header=True,
         )
         output_format = DelimitedTextDialect(
             delimiter=";",
@@ -683,7 +804,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             escapechar="\\",
         )
         resp = await blob_client.query_blob(
-            "SELECT RepoPath from BlobStorage", blob_format=input_format, output_format=output_format, on_error=on_error
+            "SELECT RepoPath from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
+            on_error=on_error,
         )
 
         data = []
@@ -703,7 +827,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -712,7 +839,11 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(CSV_DATA, overwrite=True)
 
         input_format = DelimitedTextDialect(
-            delimiter=",", quotechar='"', lineterminator="\n", escapechar="", has_header=True
+            delimiter=",",
+            quotechar='"',
+            lineterminator="\n",
+            escapechar="",
+            has_header=True,
         )
         output_format = DelimitedTextDialect(
             delimiter=";",
@@ -721,7 +852,9 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             escapechar="\\",
         )
         resp = await blob_client.query_blob(
-            "SELECT RepoPath from BlobStorage", blob_format=input_format, output_format=output_format
+            "SELECT RepoPath from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
         )
         query_result = await resp.readall()
         assert resp._size == len(CSV_DATA)
@@ -735,7 +868,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         # upload the csv file
@@ -744,7 +880,11 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(CSV_DATA, overwrite=True)
 
         input_format = DelimitedTextDialect(
-            delimiter=",", quotechar='"', lineterminator="\n", escapechar="", has_header=True
+            delimiter=",",
+            quotechar='"',
+            lineterminator="\n",
+            escapechar="",
+            has_header=True,
         )
         output_format = DelimitedTextDialect(
             delimiter=";",
@@ -753,7 +893,9 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             escapechar="\\",
         )
         resp = await blob_client.query_blob(
-            "SELECT RepoPath from BlobStorage", blob_format=input_format, output_format=output_format
+            "SELECT RepoPath from BlobStorage",
+            blob_format=input_format,
+            output_format=output_format,
         )
 
         data = []
@@ -771,7 +913,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         data1 = b'{"name": "owner", "id": 1}'
@@ -792,7 +937,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         output_format = DelimitedJsonDialect(delimiter=";")
 
         resp = await blob_client.query_blob(
-            "SELECT name from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT name from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
         query_result = await resp.readall()
 
@@ -803,12 +951,17 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_quick_query_iter_records_with_json_serialization_setting(self, **kwargs):
+    async def test_quick_query_iter_records_with_json_serialization_setting(
+        self, **kwargs
+    ):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         data1 = b'{"name": "owner", "id": 1}'
@@ -829,7 +982,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         output_format = DelimitedJsonDialect(delimiter=";")
 
         resp = await blob_client.query_blob(
-            "SELECT name from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT name from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
 
         listdata = []
@@ -843,12 +999,17 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_quick_query_with_only_input_json_serialization_setting(self, **kwargs):
+    async def test_quick_query_with_only_input_json_serialization_setting(
+        self, **kwargs
+    ):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         data1 = b'{"name": "owner", "id": 1}'
@@ -869,7 +1030,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         output_format = None
 
         resp = await blob_client.query_blob(
-            "SELECT name from BlobStorage", on_error=on_error, blob_format=input_format, output_format=output_format
+            "SELECT name from BlobStorage",
+            on_error=on_error,
+            blob_format=input_format,
+            output_format=output_format,
         )
         query_result = await resp.readall()
 
@@ -885,7 +1049,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         data = b"100,200,300,400\n300,400,500,600\n"
@@ -900,10 +1067,14 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         def on_error(error):
             errors.append(error)
 
-        output_format = [ArrowDialect(ArrowType.DECIMAL, name="abc", precision=4, scale=2)]
+        output_format = [
+            ArrowDialect(ArrowType.DECIMAL, name="abc", precision=4, scale=2)
+        ]
 
         resp = await blob_client.query_blob(
-            "SELECT _2 from BlobStorage WHERE _1 > 250", on_error=on_error, output_format=output_format
+            "SELECT _2 from BlobStorage WHERE _1 > 250",
+            on_error=on_error,
+            output_format=output_format,
         )
         data = await resp.readall()
         expected_result = (
@@ -929,7 +1100,10 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
 
         # upload the json file
@@ -941,10 +1115,14 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         def on_error(error):
             errors.append(error)
 
-        input_format = [ArrowDialect(ArrowType.DECIMAL, name="abc", precision=4, scale=2)]
+        input_format = [
+            ArrowDialect(ArrowType.DECIMAL, name="abc", precision=4, scale=2)
+        ]
 
         with pytest.raises(ValueError):
-            await blob_client.query_blob("SELECT * from BlobStorage", on_error=on_error, blob_format=input_format)
+            await blob_client.query_blob(
+                "SELECT * from BlobStorage", on_error=on_error, blob_format=input_format
+            )
 
         await self._teardown(bsc)
 
@@ -955,18 +1133,25 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
         expression = "select * from blobstorage where id < 1;"
         expected_data = b"0,mdifjt55.ea3,mdifjt55.ea3\n"
 
         blob_name = self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
+        parquet_path = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet")
+        )
         with open(parquet_path, "rb") as parquet_data:
             await blob_client.upload_blob(parquet_data, overwrite=True)
 
-        reader = await blob_client.query_blob(expression, blob_format=QuickQueryDialect.Parquet)
+        reader = await blob_client.query_blob(
+            expression, blob_format=QuickQueryDialect.Parquet
+        )
         real_data = await reader.readall()
 
         assert real_data == expected_data
@@ -979,15 +1164,22 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+        )
         await self._setup(bsc)
         expression = "SELECT * from BlobStorage"
 
         blob_name = self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
-        parquet_path = os.path.abspath(os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet"))
+        parquet_path = os.path.abspath(
+            os.path.join(os.path.abspath(__file__), "..", "./resources/parquet.parquet")
+        )
         with open(parquet_path, "rb") as parquet_data:
             await blob_client.upload_blob(parquet_data, overwrite=True)
 
         with pytest.raises(ValueError):
-            await blob_client.query_blob(expression, blob_format="ParquetDialect", output_format="ParquetDialect")
+            await blob_client.query_blob(
+                expression, blob_format="ParquetDialect", output_format="ParquetDialect"
+            )

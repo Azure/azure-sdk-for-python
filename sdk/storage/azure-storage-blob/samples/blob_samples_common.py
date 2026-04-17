@@ -35,16 +35,24 @@ class CommonBlobSamples(object):
 
     def blob_snapshots(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + "\n" + "Test: blob_snapshots")
+            print(
+                "Missing required environment variable: STORAGE_CONNECTION_STRING."
+                + "\n"
+                + "Test: blob_snapshots"
+            )
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # Instantiate a ContainerClient
-        container_client = blob_service_client.get_container_client("containerformyblobs")
+        container_client = blob_service_client.get_container_client(
+            "containerformyblobs"
+        )
 
         # Create new Container
         try:
@@ -57,7 +65,9 @@ class CommonBlobSamples(object):
             container_client.upload_blob(name="my_blob", data=data)
 
         # Get a BlobClient for a specific blob
-        blob_client = blob_service_client.get_blob_client(container="containerformyblobs", blob="my_blob")
+        blob_client = blob_service_client.get_blob_client(
+            container="containerformyblobs", blob="my_blob"
+        )
 
         # [START create_blob_snapshot]
         # Create a read-only snapshot of the blob at this point in time
@@ -85,7 +95,9 @@ class CommonBlobSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # Create a retention policy to retain deleted blobs
         from azure.storage.blob import RetentionPolicy
@@ -93,10 +105,14 @@ class CommonBlobSamples(object):
         delete_retention_policy = RetentionPolicy(enabled=True, days=1)
 
         # Set the retention policy on the service
-        blob_service_client.set_service_properties(delete_retention_policy=delete_retention_policy)
+        blob_service_client.set_service_properties(
+            delete_retention_policy=delete_retention_policy
+        )
 
         # Instantiate a ContainerClient
-        container_client = blob_service_client.get_container_client("containerfordeletedblobs")
+        container_client = blob_service_client.get_container_client(
+            "containerfordeletedblobs"
+        )
 
         # Create new Container
         try:
@@ -135,10 +151,14 @@ class CommonBlobSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # Instantiate a ContainerClient
-        container_client = blob_service_client.get_container_client("containerforbatchblobdelete")
+        container_client = blob_service_client.get_container_client(
+            "containerforbatchblobdelete"
+        )
 
         # Create new Container
         try:
@@ -177,10 +197,14 @@ class CommonBlobSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # Instantiate a ContainerClient
-        container_client = blob_service_client.get_container_client("leasemyblobscontainer")
+        container_client = blob_service_client.get_container_client(
+            "leasemyblobscontainer"
+        )
 
         # Create new Container
         try:
@@ -193,7 +217,9 @@ class CommonBlobSamples(object):
             container_client.upload_blob(name="my_blob", data=data)
 
         # Get the blob client
-        blob_client = blob_service_client.get_blob_client("leasemyblobscontainer", "my_blob")
+        blob_client = blob_service_client.get_blob_client(
+            "leasemyblobscontainer", "my_blob"
+        )
 
         # [START acquire_lease_on_blob]
         # Acquire a lease on the blob
@@ -217,7 +243,9 @@ class CommonBlobSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
 
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("copyblobcontainer")
@@ -232,7 +260,9 @@ class CommonBlobSamples(object):
             # [START copy_blob_from_url]
             # Get the blob client with the source blob
             source_blob = "https://www.gutenberg.org/files/59466/59466-0.txt"
-            copied_blob = blob_service_client.get_blob_client("copyblobcontainer", "59466-0.txt")
+            copied_blob = blob_service_client.get_blob_client(
+                "copyblobcontainer", "59466-0.txt"
+            )
 
             # start copy and check copy status
             copy = copied_blob.start_copy_from_url(source_blob)
@@ -247,7 +277,9 @@ class CommonBlobSamples(object):
                 if copy_id is not None:
                     copied_blob.abort_copy(copy_id)
                 else:
-                    print("copy_id was unexpectedly None, check if the operation completed successfully.")
+                    print(
+                        "copy_id was unexpectedly None, check if the operation completed successfully."
+                    )
 
             # check copy status
             props = copied_blob.get_blob_properties()

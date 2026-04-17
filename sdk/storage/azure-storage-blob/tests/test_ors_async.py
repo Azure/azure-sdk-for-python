@@ -12,7 +12,6 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
-
 # ------------------------------------------------------------------------------
 
 
@@ -56,7 +55,10 @@ class TestStorageObjectReplicationAsync(AsyncStorageRecordedTestCase):
 
         # Check that the download function gives back the same result
         stream = await blob.download_blob()
-        assert stream.properties.object_replication_source_properties == props.object_replication_source_properties
+        assert (
+            stream.properties.object_replication_source_properties
+            == props.object_replication_source_properties
+        )
 
     @pytest.mark.playback_test_only
     @BlobPreparer()
@@ -81,7 +83,10 @@ class TestStorageObjectReplicationAsync(AsyncStorageRecordedTestCase):
 
         # Check that the download function gives back the same result
         stream = await blob.download_blob()
-        assert stream.properties.object_replication_destination_policy == props.object_replication_destination_policy
+        assert (
+            stream.properties.object_replication_destination_policy
+            == props.object_replication_destination_policy
+        )
 
 
 # ------------------------------------------------------------------------------

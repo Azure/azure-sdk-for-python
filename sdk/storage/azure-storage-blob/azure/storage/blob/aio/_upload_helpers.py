@@ -19,7 +19,11 @@ from .._encryption import (
     _ENCRYPTION_PROTOCOL_V1,
     _ENCRYPTION_PROTOCOL_V2,
 )
-from .._generated.models import AppendPositionAccessConditions, BlockLookupList, ModifiedAccessConditions
+from .._generated.models import (
+    AppendPositionAccessConditions,
+    BlockLookupList,
+    ModifiedAccessConditions,
+)
 from .._shared.response_handlers import process_storage_error, return_response_headers
 from .._shared.uploads_async import (
     AppendBlobChunkUploader,
@@ -31,7 +35,11 @@ from .._shared.uploads_async import (
 from .._upload_helpers import _any_conditions, _convert_mod_error
 
 if TYPE_CHECKING:
-    from .._generated.aio.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations
+    from .._generated.aio.operations import (
+        AppendBlobOperations,
+        BlockBlobOperations,
+        PageBlobOperations,
+    )
     from .._shared.models import StorageConfiguration
 
     BlobLeaseClient = TypeVar("BlobLeaseClient")
@@ -54,19 +62,27 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
             kwargs["modified_access_conditions"].if_none_match = "*"
         adjusted_count = length
         if (encryption_options.get("key") is not None) and (adjusted_count is not None):
-            adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options["version"])
+            adjusted_count = get_adjusted_upload_size(
+                adjusted_count, encryption_options["version"]
+            )
         blob_headers = kwargs.pop("blob_headers", None)
         tier = kwargs.pop("standard_blob_tier", None)
         blob_tags_string = kwargs.pop("blob_tags_string", None)
 
         immutability_policy = kwargs.pop("immutability_policy", None)
-        immutability_policy_expiry = None if immutability_policy is None else immutability_policy.expiry_time
-        immutability_policy_mode = None if immutability_policy is None else immutability_policy.policy_mode
+        immutability_policy_expiry = (
+            None if immutability_policy is None else immutability_policy.expiry_time
+        )
+        immutability_policy_mode = (
+            None if immutability_policy is None else immutability_policy.policy_mode
+        )
         legal_hold = kwargs.pop("legal_hold", None)
         progress_hook = kwargs.pop("progress_hook", None)
 
         # Do single put if the size is smaller than config.max_single_put_size
-        if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
+        if adjusted_count is not None and (
+            adjusted_count <= blob_settings.max_single_put_size
+        ):
             data = stream.read(length or -1)
             if inspect.isawaitable(data):
                 data = await data
@@ -76,7 +92,9 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
             if encryption_options.get("key"):
                 if not isinstance(data, bytes):
                     raise TypeError("Blob data should be of type bytes.")
-                encryption_data, data = encrypt_blob(data, encryption_options["key"], encryption_options["version"])
+                encryption_data, data = encrypt_blob(
+                    data, encryption_options["key"], encryption_options["version"]
+                )
                 headers["x-ms-meta-encryptiondata"] = encryption_data
 
             response = cast(
@@ -108,7 +126,8 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
             blob_settings.use_byte_buffer
             or validate_content
             or encryption_options.get("required")
-            or blob_settings.max_block_size < blob_settings.min_large_block_upload_threshold
+            or blob_settings.max_block_size
+            < blob_settings.min_large_block_upload_threshold
             or hasattr(stream, "seekable")
             and not stream.seekable()
             or not hasattr(stream, "seek")
@@ -133,7 +152,9 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
                     total_size = adjusted_count
                     # V2 wraps the data stream with an encryption stream
                     if cek is None:
-                        raise ValueError("Generate encryption metadata failed. 'cek' is None.")
+                        raise ValueError(
+                            "Generate encryption metadata failed. 'cek' is None."
+                        )
                     stream = GCMBlobEncryptionStream(cek, stream)  # type: ignore [assignment]
 
             block_ids = await upload_data_chunks(
@@ -209,7 +230,10 @@ async def upload_page_blob(
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")
         if length % 512 != 0:
-            raise ValueError(f"Invalid page blob size: {length}. " "The size must be aligned to a 512-byte boundary.")
+            raise ValueError(
+                f"Invalid page blob size: {length}. "
+                "The size must be aligned to a 512-byte boundary."
+            )
         tier = None
         if kwargs.get("premium_page_blob_tier"):
             premium_page_blob_tier = kwargs.pop("premium_page_blob_tier")
@@ -250,7 +274,9 @@ async def upload_page_blob(
                 kwargs["encryptor"] = encryptor
                 kwargs["padder"] = padder
 
-        kwargs["modified_access_conditions"] = ModifiedAccessConditions(if_match=response["etag"])
+        kwargs["modified_access_conditions"] = ModifiedAccessConditions(
+            if_match=response["etag"]
+        )
         return cast(
             Dict[str, Any],
             await upload_data_chunks(

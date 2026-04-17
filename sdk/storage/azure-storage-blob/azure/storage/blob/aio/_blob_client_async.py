@@ -27,7 +27,11 @@ from typing import (
 from typing_extensions import Self
 
 from azure.core.async_paging import AsyncItemPaged
-from azure.core.exceptions import ResourceNotFoundError, HttpResponseError, ResourceExistsError
+from azure.core.exceptions import (
+    ResourceNotFoundError,
+    HttpResponseError,
+    ResourceExistsError,
+)
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -75,13 +79,25 @@ from .._deserialize import (
     get_page_ranges_result,
     parse_tags,
 )
-from .._encryption import StorageEncryptionMixin, _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
+from .._encryption import (
+    StorageEncryptionMixin,
+    _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION,
+)
 from .._generated.aio import AzureBlobStorage
 from .._generated.models import CpkInfo
 from .._models import BlobType, BlobBlock, BlobProperties, BlobQueryError, PageRange
-from .._serialize import get_access_conditions, get_api_version, get_modify_conditions, get_version_id
+from .._serialize import (
+    get_access_conditions,
+    get_api_version,
+    get_modify_conditions,
+    get_version_id,
+)
 from .._shared.base_client import StorageAccountHostsMixin
-from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper, parse_connection_str
+from .._shared.base_client_async import (
+    AsyncStorageAccountHostsMixin,
+    AsyncTransportWrapper,
+    parse_connection_str,
+)
 from .._shared.policies_async import ExponentialRetry
 from .._shared.response_handlers import process_storage_error, return_response_headers
 
@@ -181,11 +197,19 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         blob_name: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,  # pylint: disable=line-too-long
         **kwargs: Any,
     ) -> None:
-        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
+        kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(
+            **kwargs
+        )
         parsed_url, sas_token, path_snapshot = _parse_url(
             account_url=account_url, container_name=container_name, blob_name=blob_name
         )
@@ -202,9 +226,18 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
 
         # This parameter is used for the hierarchy traversal. Give precedence to credential.
         self._raw_credential = credential if credential else sas_token
-        self._query_str, credential = self._format_query_string(sas_token, credential, snapshot=self.snapshot)
-        super(BlobClient, self).__init__(parsed_url, service="blob", credential=credential, **kwargs)
-        self._client = AzureBlobStorage(self.url, get_api_version(kwargs), base_url=self.url, pipeline=self._pipeline)
+        self._query_str, credential = self._format_query_string(
+            sas_token, credential, snapshot=self.snapshot
+        )
+        super(BlobClient, self).__init__(
+            parsed_url, service="blob", credential=credential, **kwargs
+        )
+        self._client = AzureBlobStorage(
+            self.url,
+            get_api_version(kwargs),
+            base_url=self.url,
+            pipeline=self._pipeline,
+        )
         self._configure_encryption(kwargs)
 
     async def __aenter__(self) -> Self:
@@ -237,7 +270,13 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         cls,
         blob_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,  # pylint: disable=line-too-long
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         **kwargs: Any,
@@ -275,7 +314,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :return: A Blob client.
         :rtype: ~azure.storage.blob.BlobClient
         """
-        account_url, container_name, blob_name, path_snapshot = _from_blob_url(blob_url=blob_url, snapshot=snapshot)
+        account_url, container_name, blob_name, path_snapshot = _from_blob_url(
+            blob_url=blob_url, snapshot=snapshot
+        )
         return cls(
             account_url,
             container_name=container_name,
@@ -293,7 +334,13 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         blob_name: str,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
-            Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
+            Union[
+                str,
+                Dict[str, str],
+                "AzureNamedKeyCredential",
+                "AzureSasCredential",
+                "AsyncTokenCredential",
+            ]
         ] = None,  # pylint: disable=line-too-long
         **kwargs: Any,
     ) -> Self:
@@ -339,7 +386,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 :dedent: 8
                 :caption: Creating the BlobClient from a connection string.
         """
-        account_url, secondary, credential = parse_connection_str(conn_str, credential, "blob")
+        account_url, secondary, credential = parse_connection_str(
+            conn_str, credential, "blob"
+        )
         if "secondary_hostname" not in kwargs:
             kwargs["secondary_hostname"] = secondary
         return cls(
@@ -362,13 +411,22 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :rtype: dict(str, str)
         """
         try:
-            return cast(Dict[str, str], await self._client.blob.get_account_info(cls=return_response_headers, **kwargs))
+            return cast(
+                Dict[str, str],
+                await self._client.blob.get_account_info(
+                    cls=return_response_headers, **kwargs
+                ),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
     async def upload_blob_from_url(
-        self, source_url: str, *, metadata: Optional[Dict[str, str]] = None, **kwargs: Any
+        self,
+        source_url: str,
+        *,
+        metadata: Optional[Dict[str, str]] = None,
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """
         Creates a new Block Blob where the content of the blob is read from a given URL.
@@ -484,10 +542,17 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
         if self.scheme.lower() != "https":
             if kwargs.get("cpk") or kwargs.get("source_cpk"):
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        options = _upload_blob_from_url_options(source_url=source_url, metadata=metadata, **kwargs)
+                raise ValueError(
+                    "Customer provided encryption key must be used over HTTPS."
+                )
+        options = _upload_blob_from_url_options(
+            source_url=source_url, metadata=metadata, **kwargs
+        )
         try:
-            return cast(Dict[str, Any], await self._client.block_blob.put_blob_from_url(**options))
+            return cast(
+                Dict[str, Any],
+                await self._client.block_blob.put_blob_from_url(**options),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -643,7 +708,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
         if kwargs.get("cpk") and self.scheme.lower() != "https":
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            raise ValueError(
+                "Customer provided encryption key must be used over HTTPS."
+            )
         options = _upload_blob_options(
             data=data,
             blob_type=blob_type,
@@ -668,12 +735,22 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
 
     @overload
     async def download_blob(
-        self, offset: Optional[int] = None, length: Optional[int] = None, *, encoding: str, **kwargs: Any
+        self,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        encoding: str,
+        **kwargs: Any,
     ) -> StorageStreamDownloader[str]: ...
 
     @overload
     async def download_blob(
-        self, offset: Optional[int] = None, length: Optional[int] = None, *, encoding: None = None, **kwargs: Any
+        self,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        *,
+        encoding: None = None,
+        **kwargs: Any,
     ) -> StorageStreamDownloader[bytes]: ...
 
     @distributed_trace_async
@@ -779,12 +856,16 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 :dedent: 16
                 :caption: Download a blob.
         """
-        if self.require_encryption and not (self.key_encryption_key or self.key_resolver_function):
+        if self.require_encryption and not (
+            self.key_encryption_key or self.key_resolver_function
+        ):
             raise ValueError("Encryption required but no key was provided.")
         if length is not None and offset is None:
             raise ValueError("Offset value must not be None if length is set.")
         if kwargs.get("cpk") and self.scheme.lower() != "https":
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            raise ValueError(
+                "Customer provided encryption key must be used over HTTPS."
+            )
         options = _download_blob_options(
             blob_name=self.blob_name,
             container_name=self.container_name,
@@ -813,9 +894,19 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         query_expression: str,
         *,
         on_error: Optional[Callable[[BlobQueryError], None]] = None,
-        blob_format: Optional[Union["DelimitedTextDialect", "DelimitedJsonDialect", "QuickQueryDialect", str]] = None,
+        blob_format: Optional[
+            Union[
+                "DelimitedTextDialect", "DelimitedJsonDialect", "QuickQueryDialect", str
+            ]
+        ] = None,
         output_format: Optional[
-            Union["DelimitedTextDialect", "DelimitedJsonDialect", "QuickQueryDialect", List["ArrowDialect"], str]
+            Union[
+                "DelimitedTextDialect",
+                "DelimitedJsonDialect",
+                "QuickQueryDialect",
+                List["ArrowDialect"],
+                str,
+            ]
         ] = None,  # pylint: disable=line-too-long
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
@@ -904,7 +995,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         error_cls = kwargs.pop("error_cls", BlobQueryError)
         encoding = kwargs.pop("encoding", None)
         if cpk and self.scheme.lower() != "https":
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            raise ValueError(
+                "Customer provided encryption key must be used over HTTPS."
+            )
         options, delimiter = _quick_query_options(
             self.snapshot,
             query_expression,
@@ -938,7 +1031,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         return blob_query_reader
 
     @distributed_trace_async
-    async def delete_blob(self, delete_snapshots: Optional[str] = None, **kwargs: Any) -> None:
+    async def delete_blob(
+        self, delete_snapshots: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """Marks the specified blob for deletion.
 
         The blob is later deleted during garbage collection.
@@ -1063,7 +1158,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 :caption: Undeleting a blob.
         """
         try:
-            await self._client.blob.undelete(timeout=kwargs.pop("timeout", None), **kwargs)
+            await self._client.blob.undelete(
+                timeout=kwargs.pop("timeout", None), **kwargs
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1087,7 +1184,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
         version_id = get_version_id(self.version_id, kwargs)
         try:
-            await self._client.blob.get_properties(snapshot=self.snapshot, version_id=version_id, **kwargs)
+            await self._client.blob.get_properties(
+                snapshot=self.snapshot, version_id=version_id, **kwargs
+            )
             return True
         # Encrypted with CPK
         except ResourceExistsError:
@@ -1168,14 +1267,20 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         cpk_info = None
         if cpk:
             if self.scheme.lower() != "https":
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+                raise ValueError(
+                    "Customer provided encryption key must be used over HTTPS."
+                )
             cpk_info = CpkInfo(
-                encryption_key=cpk.key_value, encryption_key_sha256=cpk.key_hash, encryption_algorithm=cpk.algorithm
+                encryption_key=cpk.key_value,
+                encryption_key_sha256=cpk.key_hash,
+                encryption_algorithm=cpk.algorithm,
             )
         try:
             cls_method = kwargs.pop("cls", None)
             if cls_method:
-                kwargs["cls"] = partial(deserialize_pipeline_response_into_cls, cls_method)
+                kwargs["cls"] = partial(
+                    deserialize_pipeline_response_into_cls, cls_method
+                )
             blob_props = await self._client.blob.get_properties(
                 timeout=kwargs.pop("timeout", None),
                 version_id=version_id,
@@ -1243,7 +1348,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
         options = _set_http_headers_options(content_settings=content_settings, **kwargs)
         try:
-            return cast(Dict[str, Any], await self._client.blob.set_http_headers(**options))
+            return cast(
+                Dict[str, Any], await self._client.blob.set_http_headers(**options)
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1308,15 +1415,22 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :rtype: Dict[str, Union[str, datetime]]
         """
         if kwargs.get("cpk") and self.scheme.lower() != "https":
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            raise ValueError(
+                "Customer provided encryption key must be used over HTTPS."
+            )
         options = _set_blob_metadata_options(metadata=metadata, **kwargs)
         try:
-            return cast(Dict[str, Union[str, datetime]], await self._client.blob.set_metadata(**options))
+            return cast(
+                Dict[str, Union[str, datetime]],
+                await self._client.blob.set_metadata(**options),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_immutability_policy(self, immutability_policy: "ImmutabilityPolicy", **kwargs: Any) -> Dict[str, str]:
+    async def set_immutability_policy(
+        self, immutability_policy: "ImmutabilityPolicy", **kwargs: Any
+    ) -> Dict[str, str]:
         """The Set Immutability Policy operation sets the immutability policy on the blob.
 
         .. versionadded:: 12.10.0
@@ -1372,10 +1486,14 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
 
         version_id = get_version_id(self.version_id, kwargs)
-        await self._client.blob.delete_immutability_policy(version_id=version_id, **kwargs)
+        await self._client.blob.delete_immutability_policy(
+            version_id=version_id, **kwargs
+        )
 
     @distributed_trace_async
-    async def set_legal_hold(self, legal_hold: bool, **kwargs: Any) -> Dict[str, Union[str, datetime, bool]]:
+    async def set_legal_hold(
+        self, legal_hold: bool, **kwargs: Any
+    ) -> Dict[str, Union[str, datetime, bool]]:
         """The Set Legal Hold operation sets a legal hold on the blob.
 
         .. versionadded:: 12.10.0
@@ -1500,7 +1618,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get("cpk") and self.scheme.lower() != "https":
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            raise ValueError(
+                "Customer provided encryption key must be used over HTTPS."
+            )
         options = _create_page_blob_options(
             size=size,
             content_settings=content_settings,
@@ -1598,10 +1718,17 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get("cpk") and self.scheme.lower() != "https":
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        options = _create_append_blob_options(content_settings=content_settings, metadata=metadata, **kwargs)
+            raise ValueError(
+                "Customer provided encryption key must be used over HTTPS."
+            )
+        options = _create_append_blob_options(
+            content_settings=content_settings, metadata=metadata, **kwargs
+        )
         try:
-            return cast(Dict[str, Union[str, datetime]], await self._client.append_blob.create(**options))
+            return cast(
+                Dict[str, Union[str, datetime]],
+                await self._client.append_blob.create(**options),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -1681,16 +1808,24 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 :caption: Create a snapshot of the blob.
         """
         if kwargs.get("cpk") and self.scheme.lower() != "https":
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            raise ValueError(
+                "Customer provided encryption key must be used over HTTPS."
+            )
         options = _create_snapshot_options(metadata=metadata, **kwargs)
         try:
-            return cast(Dict[str, Any], await self._client.blob.create_snapshot(**options))
+            return cast(
+                Dict[str, Any], await self._client.blob.create_snapshot(**options)
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
     async def start_copy_from_url(
-        self, source_url: str, metadata: Optional[Dict[str, str]] = None, incremental_copy: bool = False, **kwargs: Any
+        self,
+        source_url: str,
+        metadata: Optional[Dict[str, str]] = None,
+        incremental_copy: bool = False,
+        **kwargs: Any,
     ) -> Dict[str, Union[str, datetime]]:
         """Copies a blob from the given URL.
 
@@ -1884,17 +2019,28 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
                 :caption: Copy a blob from a URL.
         """
         options = _start_copy_from_url_options(
-            source_url=source_url, metadata=metadata, incremental_copy=incremental_copy, **kwargs
+            source_url=source_url,
+            metadata=metadata,
+            incremental_copy=incremental_copy,
+            **kwargs,
         )
         try:
             if incremental_copy:
-                return cast(Dict[str, Union[str, datetime]], await self._client.page_blob.copy_incremental(**options))
-            return cast(Dict[str, Union[str, datetime]], await self._client.blob.start_copy_from_url(**options))
+                return cast(
+                    Dict[str, Union[str, datetime]],
+                    await self._client.page_blob.copy_incremental(**options),
+                )
+            return cast(
+                Dict[str, Union[str, datetime]],
+                await self._client.blob.start_copy_from_url(**options),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def abort_copy(self, copy_id: Union[str, Dict[str, Any], BlobProperties], **kwargs: Any) -> None:
+    async def abort_copy(
+        self, copy_id: Union[str, Dict[str, Any], BlobProperties], **kwargs: Any
+    ) -> None:
         """Abort an ongoing copy operation.
 
         This will leave a destination blob with zero length and full metadata.
@@ -1986,7 +2132,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         return lease
 
     @distributed_trace_async
-    async def set_standard_blob_tier(self, standard_blob_tier: Union[str, "StandardBlobTier"], **kwargs: Any) -> None:
+    async def set_standard_blob_tier(
+        self, standard_blob_tier: Union[str, "StandardBlobTier"], **kwargs: Any
+    ) -> None:
         """This operation sets the tier on a block blob.
 
         A block blob's tier determines Hot/Cool/Archive storage type.
@@ -2040,7 +2188,11 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
 
     @distributed_trace_async
     async def stage_block(
-        self, block_id: str, data: Union[bytes, Iterable[bytes], IO[bytes]], length: Optional[int] = None, **kwargs: Any
+        self,
+        block_id: str,
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
+        length: Optional[int] = None,
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """Creates a new block to be committed as part of a blob.
 
@@ -2092,10 +2244,16 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get("cpk") and self.scheme.lower() != "https":
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        options = _stage_block_options(block_id=block_id, data=data, length=length, **kwargs)
+            raise ValueError(
+                "Customer provided encryption key must be used over HTTPS."
+            )
+        options = _stage_block_options(
+            block_id=block_id, data=data, length=length, **kwargs
+        )
         try:
-            return cast(Dict[str, Any], await self._client.block_blob.stage_block(**options))
+            return cast(
+                Dict[str, Any], await self._client.block_blob.stage_block(**options)
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -2167,7 +2325,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
         if self.scheme.lower() != "https":
             if kwargs.get("cpk") or kwargs.get("source_cpk"):
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+                raise ValueError(
+                    "Customer provided encryption key must be used over HTTPS."
+                )
         options = _stage_block_from_url_options(
             block_id=block_id,
             source_url=source_url,
@@ -2177,7 +2337,10 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             **kwargs,
         )
         try:
-            return cast(Dict[str, Any], await self._client.block_blob.stage_block_from_url(**options))
+            return cast(
+                Dict[str, Any],
+                await self._client.block_blob.stage_block_from_url(**options),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -2329,17 +2492,27 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get("cpk") and self.scheme.lower() != "https":
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            raise ValueError(
+                "Customer provided encryption key must be used over HTTPS."
+            )
         options = _commit_block_list_options(
-            block_list=block_list, content_settings=content_settings, metadata=metadata, **kwargs
+            block_list=block_list,
+            content_settings=content_settings,
+            metadata=metadata,
+            **kwargs,
         )
         try:
-            return cast(Dict[str, Any], await self._client.block_blob.commit_block_list(**options))
+            return cast(
+                Dict[str, Any],
+                await self._client.block_blob.commit_block_list(**options),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_premium_page_blob_tier(self, premium_page_blob_tier: "PremiumPageBlobTier", **kwargs: Any) -> None:
+    async def set_premium_page_blob_tier(
+        self, premium_page_blob_tier: "PremiumPageBlobTier", **kwargs: Any
+    ) -> None:
         """Sets the page blob tiers on the blob. This API is only supported for page blobs on premium accounts.
 
         :param premium_page_blob_tier:
@@ -2382,7 +2555,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             process_storage_error(error)
 
     @distributed_trace_async
-    async def set_blob_tags(self, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> Dict[str, Any]:
+    async def set_blob_tags(
+        self, tags: Optional[Dict[str, str]] = None, **kwargs: Any
+    ) -> Dict[str, Any]:
         """The Set Tags operation enables users to set tags on a blob or specific blob version, but not snapshot.
             Each call to this operation replaces all existing tags attached to the blob. To remove all
             tags from the blob, call this operation with no tags set.
@@ -2491,7 +2666,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :rtype: Dict[str, str]
         """
         version_id = get_version_id(self.version_id, kwargs)
-        options = _get_blob_tags_options(version_id=version_id, snapshot=self.snapshot, **kwargs)
+        options = _get_blob_tags_options(
+            version_id=version_id, snapshot=self.snapshot, **kwargs
+        )
         try:
             _, tags = await self._client.blob.get_tags(**options)
             return cast(Dict[str, str], parse_tags(tags))
@@ -2565,7 +2742,10 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             The first element are filled page ranges, the 2nd element is cleared page ranges.
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
-        warnings.warn("get_page_ranges is deprecated, use list_page_ranges instead", DeprecationWarning)
+        warnings.warn(
+            "get_page_ranges is deprecated, use list_page_ranges instead",
+            DeprecationWarning,
+        )
 
         options = _get_page_ranges_options(
             snapshot=self.snapshot,
@@ -2656,18 +2836,30 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
         results_per_page = kwargs.pop("results_per_page", None)
         options = _get_page_ranges_options(
-            snapshot=self.snapshot, offset=offset, length=length, previous_snapshot_diff=previous_snapshot, **kwargs
+            snapshot=self.snapshot,
+            offset=offset,
+            length=length,
+            previous_snapshot_diff=previous_snapshot,
+            **kwargs,
         )
 
         if previous_snapshot:
             command = partial(self._client.page_blob.get_page_ranges_diff, **options)
         else:
             command = partial(self._client.page_blob.get_page_ranges, **options)
-        return AsyncItemPaged(command, results_per_page=results_per_page, page_iterator_class=PageRangePaged)
+        return AsyncItemPaged(
+            command,
+            results_per_page=results_per_page,
+            page_iterator_class=PageRangePaged,
+        )
 
     @distributed_trace_async
     async def get_page_range_diff_for_managed_disk(
-        self, previous_snapshot_url: str, offset: Optional[int] = None, length: Optional[int] = None, **kwargs: Any
+        self,
+        previous_snapshot_url: str,
+        offset: Optional[int] = None,
+        length: Optional[int] = None,
+        **kwargs: Any,
     ) -> Tuple[List[Dict[str, int]], List[Dict[str, int]]]:
         """Returns the list of valid page ranges for a managed disk or snapshot.
 
@@ -2728,7 +2920,11 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :rtype: tuple(list(dict(str, str), list(dict(str, str))
         """
         options = _get_page_ranges_options(
-            snapshot=self.snapshot, offset=offset, length=length, prev_snapshot_url=previous_snapshot_url, **kwargs
+            snapshot=self.snapshot,
+            offset=offset,
+            length=length,
+            prev_snapshot_url=previous_snapshot_url,
+            **kwargs,
         )
         try:
             ranges = await self._client.page_blob.get_page_ranges_diff(**options)
@@ -2788,14 +2984,21 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :return: Blob-updated property dict (Etag and last modified).
         :rtype: dict(str, Any)
         """
-        options = _set_sequence_number_options(sequence_number_action, sequence_number=sequence_number, **kwargs)
+        options = _set_sequence_number_options(
+            sequence_number_action, sequence_number=sequence_number, **kwargs
+        )
         try:
-            return cast(Dict[str, Any], await self._client.page_blob.update_sequence_number(**options))
+            return cast(
+                Dict[str, Any],
+                await self._client.page_blob.update_sequence_number(**options),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def resize_blob(self, size: int, **kwargs: Any) -> Dict[str, Union[str, datetime]]:
+    async def resize_blob(
+        self, size: int, **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Resizes a page blob to the specified size.
 
         If the specified value is less than the current size of the blob,
@@ -2845,7 +3048,9 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         :rtype: dict(str, Any)
         """
         if kwargs.get("cpk") and self.scheme.lower() != "https":
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            raise ValueError(
+                "Customer provided encryption key must be used over HTTPS."
+            )
         options = _resize_blob_options(size=size, **kwargs)
         try:
             return cast(Dict[str, Any], await self._client.page_blob.resize(**options))
@@ -2940,16 +3145,27 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get("cpk") and self.scheme.lower() != "https":
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
-        options = _upload_page_options(page=page, offset=offset, length=length, **kwargs)
+            raise ValueError(
+                "Customer provided encryption key must be used over HTTPS."
+            )
+        options = _upload_page_options(
+            page=page, offset=offset, length=length, **kwargs
+        )
         try:
-            return cast(Dict[str, Any], await self._client.page_blob.upload_pages(**options))
+            return cast(
+                Dict[str, Any], await self._client.page_blob.upload_pages(**options)
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
     async def upload_pages_from_url(
-        self, source_url: str, offset: int, length: int, source_offset: int, **kwargs: Any
+        self,
+        source_url: str,
+        offset: int,
+        length: int,
+        source_offset: int,
+        **kwargs: Any,
     ) -> Dict[str, Any]:
         """
         The Upload Pages operation writes a range of pages to a page blob where
@@ -3069,17 +3285,28 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if self.scheme.lower() != "https":
             if kwargs.get("cpk") or kwargs.get("source_cpk"):
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+                raise ValueError(
+                    "Customer provided encryption key must be used over HTTPS."
+                )
         options = _upload_pages_from_url_options(
-            source_url=source_url, offset=offset, length=length, source_offset=source_offset, **kwargs
+            source_url=source_url,
+            offset=offset,
+            length=length,
+            source_offset=source_offset,
+            **kwargs,
         )
         try:
-            return cast(Dict[str, Any], await self._client.page_blob.upload_pages_from_url(**options))
+            return cast(
+                Dict[str, Any],
+                await self._client.page_blob.upload_pages_from_url(**options),
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def clear_page(self, offset: int, length: int, **kwargs: Any) -> Dict[str, Union[str, datetime]]:
+    async def clear_page(
+        self, offset: int, length: int, **kwargs: Any
+    ) -> Dict[str, Union[str, datetime]]:
         """Clears a range of pages.
 
         :param int offset:
@@ -3145,16 +3372,23 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get("cpk") and self.scheme.lower() != "https":
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            raise ValueError(
+                "Customer provided encryption key must be used over HTTPS."
+            )
         options = _clear_page_options(offset=offset, length=length, **kwargs)
         try:
-            return cast(Dict[str, Any], await self._client.page_blob.clear_pages(**options))
+            return cast(
+                Dict[str, Any], await self._client.page_blob.clear_pages(**options)
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
     async def append_block(
-        self, data: Union[bytes, Iterable[bytes], IO[bytes]], length: Optional[int] = None, **kwargs: Any
+        self,
+        data: Union[bytes, Iterable[bytes], IO[bytes]],
+        length: Optional[int] = None,
+        **kwargs: Any,
     ) -> Dict[str, Union[str, datetime, int]]:
         """Commits a new block of data to the end of the existing append blob.
 
@@ -3237,10 +3471,14 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         if self.require_encryption or (self.key_encryption_key is not None):
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if kwargs.get("cpk") and self.scheme.lower() != "https":
-            raise ValueError("Customer provided encryption key must be used over HTTPS.")
+            raise ValueError(
+                "Customer provided encryption key must be used over HTTPS."
+            )
         options = _append_block_options(data=data, length=length, **kwargs)
         try:
-            return cast(Dict[str, Any], await self._client.append_blob.append_block(**options))
+            return cast(
+                Dict[str, Any], await self._client.append_blob.append_block(**options)
+            )
         except HttpResponseError as error:
             process_storage_error(error)
 
@@ -3363,19 +3601,27 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
             raise ValueError(_ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
         if self.scheme.lower() != "https":
             if kwargs.get("cpk") or kwargs.get("source_cpk"):
-                raise ValueError("Customer provided encryption key must be used over HTTPS.")
+                raise ValueError(
+                    "Customer provided encryption key must be used over HTTPS."
+                )
         options = _append_block_from_url_options(
-            copy_source_url=copy_source_url, source_offset=source_offset, source_length=source_length, **kwargs
+            copy_source_url=copy_source_url,
+            source_offset=source_offset,
+            source_length=source_length,
+            **kwargs,
         )
         try:
             return cast(
-                Dict[str, Union[str, datetime, int]], await self._client.append_blob.append_block_from_url(**options)
+                Dict[str, Union[str, datetime, int]],
+                await self._client.append_blob.append_block_from_url(**options),
             )
         except HttpResponseError as error:
             process_storage_error(error)
 
     @distributed_trace_async
-    async def seal_append_blob(self, **kwargs: Any) -> Dict[str, Union[str, datetime, int]]:
+    async def seal_append_blob(
+        self, **kwargs: Any
+    ) -> Dict[str, Union[str, datetime, int]]:
         """The Seal operation seals the Append Blob to make it read-only.
 
             .. versionadded:: 12.4.0
@@ -3443,9 +3689,13 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         """
         from ._container_client_async import ContainerClient
 
-        if not isinstance(self._pipeline._transport, AsyncTransportWrapper):  # pylint: disable = protected-access
+        if not isinstance(
+            self._pipeline._transport, AsyncTransportWrapper
+        ):  # pylint: disable = protected-access
             _pipeline = AsyncPipeline(
-                transport=AsyncTransportWrapper(self._pipeline._transport),  # pylint: disable = protected-access
+                transport=AsyncTransportWrapper(
+                    self._pipeline._transport
+                ),  # pylint: disable = protected-access
                 policies=cast(
                     Iterable["AsyncHTTPPolicy"], self._pipeline._impl_policies
                 ),  # pylint: disable = protected-access

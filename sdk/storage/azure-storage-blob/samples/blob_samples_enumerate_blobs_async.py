@@ -28,7 +28,9 @@ async def main():
         print("STORAGE_CONNECTION_STRING must be set.")
         sys.exit(1)
 
-    container = ContainerClient.from_connection_string(CONNECTION_STRING, container_name="mycontainerenumerateasync")
+    container = ContainerClient.from_connection_string(
+        CONNECTION_STRING, container_name="mycontainerenumerateasync"
+    )
     await container.create_container()
     async with container:
         async for blob in container.list_blobs():

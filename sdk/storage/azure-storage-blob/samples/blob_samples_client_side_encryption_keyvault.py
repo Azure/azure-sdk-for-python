@@ -90,7 +90,9 @@ credential = DefaultAzureCredential()
 key_client = KeyClient(keyvault_url, credential=credential)
 
 # The key is url-safe base64 encoded bytes
-kvk = key_client.create_rsa_key(name="symmetric-key", size=2048, key_operations=["unwrapKey", "wrapKey"])
+kvk = key_client.create_rsa_key(
+    name="symmetric-key", size=2048, key_operations=["unwrapKey", "wrapKey"]
+)
 kek = KeyWrapper(kvk, credential)
 
 storage_client = BlobServiceClient(storage_url, credential=credential)

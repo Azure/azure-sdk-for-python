@@ -17,7 +17,11 @@ from typing import (
 from typing_extensions import Self
 
 from azure.core import MatchConditions
-from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
+from azure.core.credentials import (
+    AzureNamedKeyCredential,
+    AzureSasCredential,
+    TokenCredential,
+)
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
 from ._blob_client import BlobClient
@@ -43,7 +47,13 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         self,
         account_url: str,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                TokenCredential,
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -60,7 +70,10 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     ) -> None: ...
     def __enter__(self) -> Self: ...
     def __exit__(
-        self, typ: Optional[type[BaseException]], exc: Optional[BaseException], tb: Optional[TracebackType]
+        self,
+        typ: Optional[type[BaseException]],
+        exc: Optional[BaseException],
+        tb: Optional[TracebackType],
     ) -> None: ...
     def close(self) -> None: ...
     @classmethod
@@ -68,7 +81,13 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         cls,
         conn_str: str,
         credential: Optional[
-            Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, TokenCredential]
+            Union[
+                str,
+                Dict[str, str],
+                AzureNamedKeyCredential,
+                AzureSasCredential,
+                TokenCredential,
+            ]
         ] = None,
         *,
         api_version: Optional[str] = None,
@@ -96,9 +115,13 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
     @distributed_trace
     def get_account_information(self, **kwargs: Any) -> Dict[str, str]: ...
     @distributed_trace
-    def get_service_stats(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
+    def get_service_stats(
+        self, *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> Dict[str, Any]: ...
     @distributed_trace
-    def get_service_properties(self, *, timeout: Optional[int] = None, **kwargs: Any) -> Dict[str, Any]: ...
+    def get_service_properties(
+        self, *, timeout: Optional[int] = None, **kwargs: Any
+    ) -> Dict[str, Any]: ...
     @distributed_trace
     def set_service_properties(
         self,
@@ -141,7 +164,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         metadata: Optional[Dict[str, str]] = None,
         public_access: Optional[Union[PublicAccess, str]] = None,
         *,
-        container_encryption_scope: Optional[Union[dict, ContainerEncryptionScope]] = None,
+        container_encryption_scope: Optional[
+            Union[dict, ContainerEncryptionScope]
+        ] = None,
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerClient: ...
@@ -177,7 +202,9 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         timeout: Optional[int] = None,
         **kwargs: Any
     ) -> ContainerClient: ...
-    def get_container_client(self, container: Union[ContainerProperties, str]) -> ContainerClient: ...
+    def get_container_client(
+        self, container: Union[ContainerProperties, str]
+    ) -> ContainerClient: ...
     def get_blob_client(
         self,
         container: Union[ContainerProperties, str],

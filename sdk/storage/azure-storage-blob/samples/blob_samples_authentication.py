@@ -28,7 +28,9 @@ import sys
 
 class AuthSamples(object):
     url = "https://{}.blob.core.windows.net".format(os.getenv("STORAGE_ACCOUNT_NAME"))
-    oauth_url = "https://{}.blob.core.windows.net".format(os.getenv("OAUTH_STORAGE_ACCOUNT_NAME"))
+    oauth_url = "https://{}.blob.core.windows.net".format(
+        os.getenv("OAUTH_STORAGE_ACCOUNT_NAME")
+    )
 
     connection_string = os.getenv("STORAGE_CONNECTION_STRING")
     shared_access_key = os.getenv("STORAGE_ACCOUNT_KEY")
@@ -44,20 +46,26 @@ class AuthSamples(object):
         # [START auth_from_connection_string]
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
         # [END auth_from_connection_string]
 
         # [START auth_from_connection_string_container]
         from azure.storage.blob import ContainerClient
 
-        container_client = ContainerClient.from_connection_string(self.connection_string, container_name="mycontainer")
+        container_client = ContainerClient.from_connection_string(
+            self.connection_string, container_name="mycontainer"
+        )
         # [END auth_from_connection_string_container]
 
         # [START auth_from_connection_string_blob]
         from azure.storage.blob import BlobClient
 
         blob_client = BlobClient.from_connection_string(
-            self.connection_string, container_name="mycontainer", blob_name="blobname.txt"
+            self.connection_string,
+            container_name="mycontainer",
+            blob_name="blobname.txt",
         )
         # [END auth_from_connection_string_blob]
 
@@ -66,12 +74,18 @@ class AuthSamples(object):
 
     def auth_shared_key(self):
         if self.shared_access_key is None:
-            print("Missing required environment variable: STORAGE_ACCOUNT_KEY." + "\n" + "Test: auth_shared_key")
+            print(
+                "Missing required environment variable: STORAGE_ACCOUNT_KEY."
+                + "\n"
+                + "Test: auth_shared_key"
+            )
             sys.exit(1)
         # [START create_blob_service_client]
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient(account_url=self.url, credential=self.shared_access_key)
+        blob_service_client = BlobServiceClient(
+            account_url=self.url, credential=self.shared_access_key
+        )
         # [END create_blob_service_client]
 
         # Get account information for the Blob Service
@@ -81,7 +95,9 @@ class AuthSamples(object):
         # [START create_blob_client]
         from azure.storage.blob import BlobClient
 
-        blob_client = BlobClient.from_blob_url(blob_url="https://account.blob.core.windows.net/container/blob-name")
+        blob_client = BlobClient.from_blob_url(
+            blob_url="https://account.blob.core.windows.net/container/blob-name"
+        )
         # [END create_blob_client]
 
         # [START create_blob_client_sas_url]
@@ -102,15 +118,25 @@ class AuthSamples(object):
         # Instantiate a BlobServiceClient using a connection string
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
+        blob_service_client = BlobServiceClient.from_connection_string(
+            self.connection_string
+        )
         if blob_service_client.account_name is None:
-            print("Connection string did not provide an account name." + "\n" + "Test: auth_shared_access_signature")
+            print(
+                "Connection string did not provide an account name."
+                + "\n"
+                + "Test: auth_shared_access_signature"
+            )
             sys.exit(1)
 
         # [START create_sas_token]
         # Create a SAS token to use to authenticate a new client
         from datetime import datetime, timedelta
-        from azure.storage.blob import ResourceTypes, AccountSasPermissions, generate_account_sas
+        from azure.storage.blob import (
+            ResourceTypes,
+            AccountSasPermissions,
+            generate_account_sas,
+        )
 
         sas_token = generate_account_sas(
             blob_service_client.account_name,
@@ -135,7 +161,9 @@ class AuthSamples(object):
         # Instantiate a BlobServiceClient using a token credential
         from azure.storage.blob import BlobServiceClient
 
-        blob_service_client = BlobServiceClient(account_url=self.oauth_url, credential=default_credential)
+        blob_service_client = BlobServiceClient(
+            account_url=self.oauth_url, credential=default_credential
+        )
         # [END create_blob_service_client_oauth]
 
         # Get account information for the Blob Service
