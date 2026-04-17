@@ -264,6 +264,7 @@
         "azure.ai.projects.models.AgentProtocol": "Azure.AI.Projects.AgentProtocol",
         "azure.ai.projects.models.ToolChoiceParamType": "OpenAI.ToolChoiceParamType",
         "azure.ai.projects.models.TextResponseFormatConfigurationType": "OpenAI.TextResponseFormatConfigurationType",
+        "azure.ai.projects.models.AgentVersionStatus": "Azure.AI.Projects.AgentVersionStatus",
         "azure.ai.projects.models.AgentBlueprintReferenceType": "Azure.AI.Projects.AgentBlueprintReferenceType",
         "azure.ai.projects.models.VersionSelectorType": "Azure.AI.Projects.VersionSelectorType",
         "azure.ai.projects.models.AgentEndpointProtocol": "Azure.AI.Projects.AgentEndpointProtocol",
