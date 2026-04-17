@@ -1,5 +1,46 @@
 # Release History
 
+## 3.0.0b1 (2026-03-10)
+
+### Features Added
+
+  - Client `CommunicationServiceManagementClient` added method `send_request`
+  - Model `CommunicationServiceResource` added property `properties`
+  - Model `CommunicationServiceResourceUpdate` added property `properties`
+  - Model `DomainResource` added property `properties`
+  - Model `EmailServiceResource` added property `properties`
+  - Model `SenderUsernameResource` added property `properties`
+  - Model `SmtpUsernameResource` added property `properties`
+  - Model `SuppressionListAddressResource` added property `properties`
+  - Model `SuppressionListResource` added property `properties`
+  - Model `UpdateDomainRequestParameters` added property `properties`
+  - Added model `CommunicationServiceProperties`
+  - Added model `CommunicationServiceUpdateProperties`
+  - Added model `DomainProperties`
+  - Added model `EmailServiceProperties`
+  - Added model `SenderUsernameProperties`
+  - Added model `SmtpUsernameProperties`
+  - Added model `SuppressionListAddressProperties`
+  - Added model `SuppressionListProperties`
+  - Added model `UpdateDomainProperties`
+
+### Breaking Changes
+
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
+  - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
+  - Model `CommunicationServiceResource` moved instance variable `provisioning_state`, `host_name`, `data_location`, `notification_hub_id`, `version`, `immutable_resource_id`, `linked_domains`, `public_network_access` and `disable_local_auth` under property `properties`
+  - Model `CommunicationServiceResourceUpdate` moved instance variable `linked_domains`, `public_network_access` and `disable_local_auth` under property `properties`
+  - Model `DomainResource` moved instance variable `provisioning_state`, `data_location`, `from_sender_domain`, `mail_from_sender_domain`, `domain_management`, `verification_states`, `verification_records` and `user_engagement_tracking` under property `properties`
+  - Model `EmailServiceResource` moved instance variable `provisioning_state` and `data_location` under property `properties`
+  - Model `SenderUsernameResource` moved instance variable `data_location`, `username`, `display_name` and `provisioning_state` under property `properties`
+  - Model `SmtpUsernameResource` moved instance variable `username`, `entra_application_id` and `tenant_id` under property `properties`
+  - Model `SuppressionListAddressResource` moved instance variable `email`, `first_name`, `last_name`, `notes`, `last_modified` and `data_location` under property `properties`
+  - Model `SuppressionListResource` moved instance variable `list_name`, `last_updated_time_stamp`, `created_time_stamp` and `data_location` under property `properties`
+  - Model `UpdateDomainRequestParameters` deleted or renamed its instance variable `user_engagement_tracking`
+
+### Other Changes
+  - Deleted model `CommunicationServiceResourceList`/`DomainResourceList`/`EmailServiceResourceList`/`SenderUsernameResourceCollection`/`SmtpUsernameResourceCollection`/`SuppressionListAddressResourceCollection`/`SuppressionListResourceCollection` which actually were not used by SDK users
+
 ## 2.2.0 (2026-01-19)
 
 ### Features Added

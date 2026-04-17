@@ -31,7 +31,7 @@ from typing import (
     cast,
 )
 
-from jinja2 import Template
+from jinja2.sandbox import SandboxedEnvironment
 from openai import AsyncStream
 from openai.types.chat import ChatCompletion, ChatCompletionChunk, ChatCompletionUserMessageParam
 from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAIError
@@ -210,7 +210,7 @@ MARKDOWN_IMAGE_PATTERN = re.compile(r"(?P<match>!\[[^\]]*\]\(.*?(?=\"|\))\))", f
    the named capture group to appear in the list of split parts"""
 
 IMAGE_URL_PARSING_PATTERN = re.compile(
-    r"^!\[(?P<alt_text>[^\]]+)\]\((?P<link>(?P<scheme>[^:]+(?=:))?:?(?P<mime_type>[^;]+(?=;))?;?(?P<data>[^\)]*))\)$"
+    r"^!\[(?P<alt_text>[^\]]*)\]\((?P<link>(?P<scheme>[^:]+(?=:))?:?(?P<mime_type>[^;]+(?=;))?;?(?P<data>[^\)]*))\)$"
 )
 """Pattern used to parse the image URL from the markdown syntax. This caputres the following groups:
     - alt_text: The alt text for the image
@@ -242,9 +242,16 @@ FILE_EXT_TO_MIME: Final[Mapping[str, str]] = {
 """Mapping of file extensions to mime types"""
 
 
+_SANDBOXED_ENV = SandboxedEnvironment(trim_blocks=True, keep_trailing_newline=True)
+
+
 def render_jinja_template(template_str: str, *, trim_blocks=True, keep_trailing_newline=True, **kwargs) -> str:
     try:
-        template = Template(template_str, trim_blocks=trim_blocks, keep_trailing_newline=keep_trailing_newline)
+        if trim_blocks is True and keep_trailing_newline is True:
+            env = _SANDBOXED_ENV
+        else:
+            env = SandboxedEnvironment(trim_blocks=trim_blocks, keep_trailing_newline=keep_trailing_newline)
+        template = env.from_string(template_str)
         return template.render(**kwargs)
     except Exception as e:  # pylint: disable=broad-except
         raise PromptyException(f"Failed to render jinja template - {type(e).__name__}: {str(e)}") from e
@@ -380,6 +387,15 @@ def _inline_image(image: str, working_dir: Path, image_detail: str) -> Dict[str,
 
     match = re.match(IMAGE_URL_PARSING_PATTERN, image)
     if not match:
+        # If the image string looks like markdown image syntax but couldn't be parsed,
+        # treat it as plain text rather than crashing.  This can happen with unusual
+        # markdown produced by Document Intelligence or similar services.
+        if image.startswith("!["):
+            logger.debug(
+                "Image reference '%s' could not be parsed. Treating as plain text.",
+                image,
+            )
+            return {"type": "text", "text": image}
         raise InvalidInputError(f"Invalid image URL '{image}'")
 
     inlined_uri: str

@@ -101,10 +101,14 @@ def main() -> None:
     source_analyzer_info = client.get_analyzer(analyzer_id=source_analyzer_id)
     print(f"Source analyzer description: {source_analyzer_info.description}")
     if source_analyzer_info.tags:
-        print(f"Source analyzer tags: {', '.join(f'{k}={v}' for k, v in source_analyzer_info.tags.items())}")
+        print(
+            f"Source analyzer tags: {', '.join(f'{k}={v}' for k, v in source_analyzer_info.tags.items())}"
+        )
 
     # [START copy_analyzer]
-    print(f"\nCopying analyzer from '{source_analyzer_id}' to '{target_analyzer_id}'...")
+    print(
+        f"\nCopying analyzer from '{source_analyzer_id}' to '{target_analyzer_id}'..."
+    )
 
     poller = client.begin_copy_analyzer(
         analyzer_id=target_analyzer_id,
@@ -133,7 +137,9 @@ def main() -> None:
     updated_target = client.get_analyzer(analyzer_id=target_analyzer_id)
     print(f"Updated target analyzer description: {updated_target.description}")
     if updated_target.tags:
-        print(f"Updated target analyzer tag: {updated_target.tags.get('modelType', 'N/A')}")
+        print(
+            f"Updated target analyzer tag: {updated_target.tags.get('modelType', 'N/A')}"
+        )
     # [END update_and_verify_analyzer]
 
     # [START delete_copied_analyzers]

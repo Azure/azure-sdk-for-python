@@ -166,6 +166,20 @@ _ENTITY_TO_PYTHON_CONVERSIONS = {
 def deserialize_iso(value: Optional[str]) -> Optional[TablesEntityDatetime]:
     if not value:
         return None
+    # New generated models may return datetime objects directly via rest_field()
+    if isinstance(value, datetime):
+        if isinstance(value, TablesEntityDatetime):
+            return value
+        return TablesEntityDatetime(
+            value.year,
+            value.month,
+            value.day,
+            value.hour,
+            value.minute,
+            value.second,
+            value.microsecond,
+            value.tzinfo,
+        )
     # Cosmos returns this with a decimal point that throws an error on deserialization
     cleaned_value = _clean_up_dotnet_timestamps(value)
     try:

@@ -71,7 +71,9 @@ async def main() -> None:
     key = os.getenv("CONTENTUNDERSTANDING_KEY")
     credential = AzureKeyCredential(key) if key else DefaultAzureCredential()
 
-    async with ContentUnderstandingClient(endpoint=endpoint, credential=credential) as client:
+    async with ContentUnderstandingClient(
+        endpoint=endpoint, credential=credential
+    ) as client:
         # [START analyze_document_from_binary]
         # Replace with the path to your local document file.
         file_path = "sample_files/sample_invoice.pdf"
@@ -86,6 +88,47 @@ async def main() -> None:
         )
         result: AnalysisResult = await poller.result()
         # [END analyze_document_from_binary]
+
+        # [START analyze_binary_with_content_range]
+        # Use a multi-page document for content range demonstrations.
+        multi_page_path = "sample_files/mixed_financial_invoices.pdf"
+        with open(multi_page_path, "rb") as f:
+            multi_page_bytes = f.read()
+
+        # Analyze only pages 3 onward.
+        print("\nAnalyzing pages 3 onward with content range '3-'...")
+        range_poller = await client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=multi_page_bytes,
+            content_range="3-",
+        )
+        range_result: AnalysisResult = await range_poller.result()
+
+        if isinstance(range_result.contents[0], DocumentContent):
+            range_doc = range_result.contents[0]
+            print(
+                f"Content range analysis returned pages"
+                f" {range_doc.start_page_number} - {range_doc.end_page_number}"
+            )
+        # [END analyze_binary_with_content_range]
+
+        # [START analyze_binary_with_combined_content_range]
+        # Analyze pages 1-3, page 5, and pages 9 onward.
+        print("\nAnalyzing combined pages (1-3, 5, 9-) with content range '1-3,5,9-'...")
+        combine_range_poller = await client.begin_analyze_binary(
+            analyzer_id="prebuilt-documentSearch",
+            binary_input=multi_page_bytes,
+            content_range="1-3,5,9-",
+        )
+        combine_range_result: AnalysisResult = await combine_range_poller.result()
+
+        if isinstance(combine_range_result.contents[0], DocumentContent):
+            combine_doc = combine_range_result.contents[0]
+            print(
+                f"Combined content range analysis returned pages"
+                f" {combine_doc.start_page_number} - {combine_doc.end_page_number}"
+            )
+        # [END analyze_binary_with_combined_content_range]
 
         # [START extract_markdown]
         print("\nMarkdown Content:")
@@ -110,14 +153,18 @@ async def main() -> None:
                 print(f"\nNumber of pages: {len(content.pages)}")
                 for page in content.pages:
                     unit = content.unit or "units"
-                    print(f"  Page {page.page_number}: {page.width} x {page.height} {unit}")
+                    print(
+                        f"  Page {page.page_number}: {page.width} x {page.height} {unit}"
+                    )
 
             # Check for tables
             if content.tables and len(content.tables) > 0:
                 print(f"\nNumber of tables: {len(content.tables)}")
                 table_counter = 1
                 for table in content.tables:
-                    print(f"  Table {table_counter}: {table.row_count} rows x {table.column_count} columns")
+                    print(
+                        f"  Table {table_counter}: {table.row_count} rows x {table.column_count} columns"
+                    )
                     table_counter += 1
         # [END access_document_properties]
 

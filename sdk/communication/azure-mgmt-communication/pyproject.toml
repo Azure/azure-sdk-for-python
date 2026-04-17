@@ -13,7 +13,7 @@ authors = [
 description = "Microsoft Azure Communication Management Client Library for Python"
 license = "MIT"
 classifiers = [
-    "Development Status :: 5 - Production/Stable",
+    "Development Status :: 4 - Beta",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3 :: Only",
     "Programming Language :: Python :: 3",
@@ -79,7 +79,7 @@ package_name = "azure-mgmt-communication"
 package_nspkg = "azure-mgmt-nspkg"
 package_pprint_name = "Communication Management"
 package_doc_id = ""
-is_stable = true
+is_stable = false
 is_arm = true
 sample_link = ""
 title = "CommunicationServiceManagementClient"

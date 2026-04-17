@@ -30,14 +30,12 @@
 
 **REFERENCE DOCUMENTATION:**
 - [Official pylint guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/pylint_checking.md)
-- [Tox formatting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+- [Tool usage guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md)
 
 **COMMAND:**
 ```bash
-tox -e pylint --c <path_to_tox.ini> --root .
+azpysdk pylint .
 ```
-
-**DEFAULT PATH:** `azure-sdk-for-python/eng/tox/tox.ini`
 
 ### FIXING PYLINT WARNINGS
 
@@ -66,13 +64,13 @@ tox -e pylint --c <path_to_tox.ini> --root .
 ### RUNNING AND FIXING MYPY
 
 **REFERENCE DOCUMENTATION:**
-- [Tox guidance](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/tests.md#tox)
+- [Tool usage guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/tool_usage_guide.md)
 - [MyPy fixing guide](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/static_type_checking_cheat_sheet.md)
 
 **REQUIREMENTS:**
 - Use Python 3.9 compatible environment
 - Follow official fixing guidelines
-- Use tox mcp tool for running MyPy
+- Run `azpysdk mypy .` from the package directory
 
 ---
 
@@ -128,6 +126,41 @@ For all TypeSpec-based SDK workflows (generation, building, validation, testing,
 
 ### REQUIRED CONFIRMATIONS
 Ask the user for clarification if repository path or configuration file is ambiguous.
+
+---
+
+## MGMT SDK Code Review Rules
+
+### SCOPE
+These rules apply to management-plane SDK packages located at `sdk/*/azure-mgmt-*/`.
+
+### REVIEW EXCLUSIONS
+- **Skip** the `generated_samples/` and `generated_tests/` folders entirely — do not review generated sample or test code.
+- **Skip** source code under `azure/mgmt/**/` **except** `_client.py` — only review `_client.py` among the generated source files.
+
+### VERSION CONSISTENCY
+- The version string in `_version.py` **must** match the latest version listed in `CHANGELOG.md`.
+
+### CHANGELOG DATE
+- If the release date of the latest version in `CHANGELOG.md` is **more than 3 weeks in the future** from the current date, remind the author to verify and update the date.
+
+### PYPROJECT.TOML STABILITY FLAGS
+- **Stable version** (version string does **not** contain `b`):
+  - `is_stable` in `pyproject.toml` must be `true`
+  - `classifiers` must include `"Development Status :: 5 - Production/Stable"`
+- **Preview version** (version string contains `b`):
+  - `is_stable` in `pyproject.toml` must be `false`
+  - `classifiers` must include `"Development Status :: 4 - Beta"`
+
+### CLIENT SIGNATURE
+- The `__init__` method of the client class in `_client.py` must include the parameters `credential`, `subscription_id`, and `base_url` **in that order**. Default values are not checked.
+- If `subscription_id` is **not** present in the client's `__init__` signature, `pyproject.toml` must contain `no_sub = true`. If it does not, hint the user to add `no_sub = true` in `pyproject.toml` and regenerate the SDK.
+
+### CLIENT NAME CONSISTENCY
+- The client class name in `_client.py`, the client name referenced in `README.md`, and the `title` value in `pyproject.toml` must all be the same.
+
+### README CODE SNIPPETS
+- Code snippets in `README.md` must follow the real client class signatures and usage patterns. Verify that sample code matches the actual client API.
 
 ---
 

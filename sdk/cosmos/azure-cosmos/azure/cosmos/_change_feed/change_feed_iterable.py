@@ -27,6 +27,7 @@ from azure.core.paging import PageIterator
 
 from azure.cosmos._change_feed.change_feed_fetcher import ChangeFeedFetcherV1, ChangeFeedFetcherV2
 from azure.cosmos._change_feed.change_feed_state import ChangeFeedState, ChangeFeedStateVersion
+from .._constants import _Constants as Constants
 
 
 class ChangeFeedIterable(PageIterator):
@@ -118,7 +119,7 @@ class ChangeFeedIterable(PageIterator):
         change_feed_state = \
             ChangeFeedState.from_json(
                 self._collection_link,
-                cast(str, self._options.get("containerRID")),
+                cast(str, self._options.get(Constants.ContainerRID)),
                 change_feed_state_context)
 
         self._options["changeFeedState"] = change_feed_state

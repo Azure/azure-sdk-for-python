@@ -22,7 +22,7 @@ import email.utils
 from datetime import datetime, date, time, timedelta, timezone
 from json import JSONEncoder
 import xml.etree.ElementTree as ET
-from collections.abc import MutableMapping
+from collections.abc import MutableMapping  # pylint: disable=import-error
 from typing_extensions import Self
 import isodate
 from azure.core.exceptions import DeserializationError
@@ -515,6 +515,8 @@ class _MyMutableMapping(MutableMapping[str, typing.Any]):
         return self._data.setdefault(key, default)
 
     def __eq__(self, other: typing.Any) -> bool:
+        if isinstance(other, _MyMutableMapping):
+            return self._data == other._data
         try:
             other_model = self.__class__(other)
         except Exception:
@@ -628,6 +630,9 @@ class Model(_MyMutableMapping):
                         if len(items) > 0:
                             existed_attr_keys.append(xml_name)
                             dict_to_pass[rf._rest_name] = _deserialize(rf._type, items)
+                        elif not rf._is_optional:
+                            existed_attr_keys.append(xml_name)
+                            dict_to_pass[rf._rest_name] = []
                         continue
 
                     # text element is primitive type
@@ -690,7 +695,7 @@ class Model(_MyMutableMapping):
             cls._attr_to_rest_field: dict[str, _RestField] = dict(attr_to_rest_field.items())
             cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
-        return super().__new__(cls)
+        return super().__new__(cls)  # pylint: disable=no-value-for-parameter
 
     def __init_subclass__(cls, discriminator: typing.Optional[str] = None) -> None:
         for base in cls.__bases__:
@@ -889,6 +894,8 @@ def _get_deserialize_callable_from_annotation(  # pylint: disable=too-many-retur
     # is it optional?
     try:
         if any(a is _NONE_TYPE for a in annotation.__args__):  # pyright: ignore
+            if rf:
+                rf._is_optional = True
             if len(annotation.__args__) <= 2:  # pyright: ignore
                 if_obj_deserializer = _get_deserialize_callable_from_annotation(
                     next(a for a in annotation.__args__ if a is not _NONE_TYPE), module, rf  # pyright: ignore
@@ -981,16 +988,20 @@ def _deserialize_with_callable(
                 return float(value.text) if value.text else None
             if deserializer is bool:
                 return value.text == "true" if value.text else None
+            if deserializer and deserializer in _DESERIALIZE_MAPPING.values():
+                return deserializer(value.text) if value.text else None
+            if deserializer and deserializer in _DESERIALIZE_MAPPING_WITHFORMAT.values():
+                return deserializer(value.text) if value.text else None
         if deserializer is None:
             return value
         if deserializer in [int, float, bool]:
             return deserializer(value)
         if isinstance(deserializer, CaseInsensitiveEnumMeta):
             try:
-                return deserializer(value)
+                return deserializer(value.text if isinstance(value, ET.Element) else value)
             except ValueError:
                 # for unknown value, return raw value
-                return value
+                return value.text if isinstance(value, ET.Element) else value
         if isinstance(deserializer, type) and issubclass(deserializer, Model):
             return deserializer._deserialize(value, [])
         return typing.cast(typing.Callable[[typing.Any], typing.Any], deserializer)(value)
@@ -1043,6 +1054,7 @@ def _failsafe_deserialize_xml(
         return None
 
 
+# pylint: disable=too-many-instance-attributes
 class _RestField:
     def __init__(
         self,
@@ -1062,6 +1074,7 @@ class _RestField:
         self._is_discriminator = is_discriminator
         self._visibility = visibility
         self._is_model = False
+        self._is_optional = False
         self._default = default
         self._format = format
         self._is_multipart_file_input = is_multipart_file_input

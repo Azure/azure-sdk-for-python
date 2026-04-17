@@ -20,7 +20,11 @@ from ..models import (
     ResponseUsageOutputTokensDetails,
     MemoryStoreUpdateCompletedResult,
     UpdateMemoriesLROPoller,
-    UpdateMemoriesLROPollingMethod,
+)
+from ..models._patch import (
+    _UpdateMemoriesLROPollingMethod,
+    _FOUNDRY_FEATURES_HEADER_NAME,
+    _BETA_OPERATION_FEATURE_HEADERS,
 )
 from ._operations import JSON, _Unset, ClsType, BetaMemoryStoresOperations as GenerateBetaMemoryStoresOperations
 from .._validation import api_version_validation
@@ -330,7 +334,9 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[MemoryStoreUpdateCompletedResult] = kwargs.pop("cls", None)
-        polling: Union[bool, UpdateMemoriesLROPollingMethod] = kwargs.pop("polling", True)
+        polling = kwargs.pop("polling", True)
+        if not isinstance(polling, bool):
+            raise TypeError("polling must be of type bool.")
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
@@ -382,14 +388,16 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
-        if polling is True:
-            polling_method: UpdateMemoriesLROPollingMethod = UpdateMemoriesLROPollingMethod(
-                lro_delay, path_format_arguments=path_format_arguments, **kwargs
+        if polling:
+            polling_method: _UpdateMemoriesLROPollingMethod = _UpdateMemoriesLROPollingMethod(
+                lro_delay,
+                path_format_arguments=path_format_arguments,
+                headers={_FOUNDRY_FEATURES_HEADER_NAME: _BETA_OPERATION_FEATURE_HEADERS["memory_stores"]},
+                **kwargs,
             )
-        elif polling is False:
-            polling_method = cast(UpdateMemoriesLROPollingMethod, NoPolling())
         else:
-            polling_method = polling
+            polling_method = cast(_UpdateMemoriesLROPollingMethod, NoPolling())
+
         if cont_token:
             return UpdateMemoriesLROPoller.from_continuation_token(
                 polling_method=polling_method,
@@ -397,6 +405,7 @@ class BetaMemoryStoresOperations(GenerateBetaMemoryStoresOperations):
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
+
         return UpdateMemoriesLROPoller(
             self._client,
             raw_result,  # type: ignore[possibly-undefined]
