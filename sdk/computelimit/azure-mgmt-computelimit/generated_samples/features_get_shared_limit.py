@@ -15,7 +15,7 @@ from azure.mgmt.computelimit import ComputeLimitMgmtClient
     pip install azure-identity
     pip install azure-mgmt-computelimit
 # USAGE
-    python shared_limits_get.py
+    python features_get_shared_limit.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.shared_limits.get(
+    response = client.features.get(
         location="eastus",
-        name="StandardDSv3Family",
+        feature_name="SharedLimit",
     )
     print(response)
 
 
-# x-ms-original-file: 2026-04-30/SharedLimits_Get.json
+# x-ms-original-file: 2026-04-30/Features_Get_SharedLimit.json
 if __name__ == "__main__":
     main()
