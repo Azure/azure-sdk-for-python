@@ -1,0 +1,111 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT license.
+"""Unit tests for FoundryStorageLoggingPolicy."""
+
+from __future__ import annotations
+
+import logging
+from unittest.mock import AsyncMock, MagicMock
+
+import pytest
+
+from azure.ai.agentserver.responses.store._foundry_logging_policy import FoundryStorageLoggingPolicy
+
+
+def _make_request(method: str = "GET", url: str = "https://storage.example.com/responses/r1") -> MagicMock:
+    http_request = MagicMock()
+    http_request.method = method
+    http_request.url = url
+    http_request.headers = {"x-ms-client-request-id": "test-client-id-123"}
+    pipeline_request = MagicMock()
+    pipeline_request.http_request = http_request
+    return pipeline_request
+
+
+def _make_response(status_code: int = 200, headers: dict | None = None) -> MagicMock:
+    http_response = MagicMock()
+    http_response.status_code = status_code
+    http_response.headers = headers or {"x-ms-request-id": "server-req-456"}
+    response = MagicMock()
+    response.http_response = http_response
+    return response
+
+
+@pytest.mark.asyncio
+async def test_logging_policy_logs_successful_request(caplog: pytest.LogCaptureFixture) -> None:
+    policy = FoundryStorageLoggingPolicy()
+    next_policy = AsyncMock()
+    next_policy.send = AsyncMock(return_value=_make_response(200))
+    policy.next = next_policy
+
+    request = _make_request("GET", "https://storage.example.com/responses/r1")
+
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        await policy.send(request)
+
+    assert len(caplog.records) == 1
+    record = caplog.records[0]
+    assert record.levelno == logging.INFO
+    assert "GET" in record.message
+    assert "200" in record.message
+    assert "test-client-id-123" in record.message
+    assert "server-req-456" in record.message
+    assert "ms" in record.message
+
+
+@pytest.mark.asyncio
+async def test_logging_policy_logs_error_response_at_warning(caplog: pytest.LogCaptureFixture) -> None:
+    policy = FoundryStorageLoggingPolicy()
+    next_policy = AsyncMock()
+    next_policy.send = AsyncMock(return_value=_make_response(500))
+    policy.next = next_policy
+
+    request = _make_request("PUT", "https://storage.example.com/responses/r1")
+
+    with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver"):
+        await policy.send(request)
+
+    assert len(caplog.records) == 1
+    record = caplog.records[0]
+    assert record.levelno == logging.WARNING
+    assert "PUT" in record.message
+    assert "500" in record.message
+
+
+@pytest.mark.asyncio
+async def test_logging_policy_logs_transport_failure(caplog: pytest.LogCaptureFixture) -> None:
+    policy = FoundryStorageLoggingPolicy()
+    next_policy = AsyncMock()
+    next_policy.send = AsyncMock(side_effect=ConnectionError("network failure"))
+    policy.next = next_policy
+
+    request = _make_request("POST", "https://storage.example.com/responses")
+
+    with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver"):
+        with pytest.raises(ConnectionError):
+            await policy.send(request)
+
+    assert len(caplog.records) == 1
+    record = caplog.records[0]
+    assert record.levelno == logging.WARNING
+    assert "POST" in record.message
+    assert "failed" in record.message.lower()
+    assert "test-client-id-123" in record.message
+
+
+@pytest.mark.asyncio
+async def test_logging_policy_handles_missing_correlation_headers(caplog: pytest.LogCaptureFixture) -> None:
+    policy = FoundryStorageLoggingPolicy()
+    next_policy = AsyncMock()
+    next_policy.send = AsyncMock(return_value=_make_response(200, headers={}))
+    policy.next = next_policy
+
+    request = _make_request("DELETE", "https://storage.example.com/responses/r1")
+    request.http_request.headers = {}  # No correlation headers
+
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        await policy.send(request)
+
+    assert len(caplog.records) == 1
+    assert "DELETE" in caplog.records[0].message
+    assert "200" in caplog.records[0].message

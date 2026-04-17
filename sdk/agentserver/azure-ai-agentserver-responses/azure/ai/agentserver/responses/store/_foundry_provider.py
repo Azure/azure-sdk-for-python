@@ -14,6 +14,7 @@ from azure.core.rest import HttpRequest
 
 from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-defined]
 from ._foundry_errors import raise_for_storage_error
+from ._foundry_logging_policy import FoundryStorageLoggingPolicy
 from ._foundry_serializer import (
     deserialize_history_ids,
     deserialize_items_array,
@@ -96,9 +97,9 @@ class FoundryStorageProvider:
                     credential,
                     _FOUNDRY_TOKEN_SCOPE,
                 ),
+                FoundryStorageLoggingPolicy(),
                 policies.ContentDecodePolicy(),
                 policies.DistributedTracingPolicy(),
-                policies.HttpLoggingPolicy(),
             ],
         )
 

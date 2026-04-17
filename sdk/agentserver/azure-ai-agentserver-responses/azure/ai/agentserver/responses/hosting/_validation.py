@@ -199,7 +199,7 @@ def build_not_found_error_response(
     """
     return build_api_error_response(
         message=f"{resource_name} '{resource_id}' was not found",
-        code="not_found",
+        code="invalid_request_error",
         param=param,
         error_type="invalid_request_error",
     )
@@ -221,7 +221,7 @@ def build_invalid_mode_error_response(
     """
     return build_api_error_response(
         message=message,
-        code="invalid_mode",
+        code="invalid_request_error",
         param=param,
         error_type="invalid_request_error",
     )
@@ -241,13 +241,13 @@ def to_api_error_response(error: Exception) -> ApiErrorResponse:
     if isinstance(error, ValueError):
         return build_api_error_response(
             message=str(error) or "invalid request",
-            code="invalid_request",
+            code="invalid_request_error",
             error_type="invalid_request_error",
         )
 
     return build_api_error_response(
         message="internal server error",
-        code="internal_error",
+        code="server_error",
         error_type="server_error",
     )
 
@@ -327,7 +327,7 @@ def not_found_response(response_id: str, headers: dict[str, str]) -> JSONRespons
     """
     return _api_error(
         message=f"Response with id '{response_id}' not found.",
-        code="invalid_request",
+        code="invalid_request_error",
         param="response_id",
         error_type="invalid_request_error",
         status_code=404,
@@ -348,7 +348,7 @@ def invalid_request_response(message: str, headers: dict[str, str], *, param: st
     """
     return _api_error(
         message=message,
-        code="invalid_request",
+        code="invalid_request_error",
         param=param,
         error_type="invalid_request_error",
         status_code=400,
@@ -392,17 +392,15 @@ def service_unavailable_response(message: str, headers: dict[str, str]) -> JSONR
 
 
 def deleted_response(response_id: str, headers: dict[str, str]) -> JSONResponse:
-    """Build a 400 error response indicating the response has been deleted.
+    """Build a 404 error response indicating the response has been deleted.
+
+    Per spec, all endpoints treat deleted responses as not-found (HTTP 404).
 
     :param response_id: The ID of the deleted response.
     :type response_id: str
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
-    :return: A 400 JSONResponse.
+    :return: A 404 JSONResponse.
     :rtype: JSONResponse
     """
-    return invalid_request_response(
-        f"Response with id '{response_id}' has been deleted.",
-        headers,
-        param="response_id",
-    )
+    return not_found_response(response_id, headers)

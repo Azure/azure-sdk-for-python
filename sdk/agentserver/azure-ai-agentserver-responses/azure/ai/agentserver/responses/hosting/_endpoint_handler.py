@@ -34,6 +34,7 @@ from ..models._helpers import get_input_expanded, to_output_item
 from ..models.errors import RequestValidationError
 from ..models.runtime import ResponseExecution, ResponseModeFlags, build_cancelled_response, build_failed_response
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
+from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError, FoundryStorageError
 from ..streaming._helpers import _encode_sse
 from ..streaming._sse import encode_sse_any_event
 from ..streaming._state_machine import _normalize_lifecycle_events
@@ -575,7 +576,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                             "error": {
                                 "message": "internal server error",
                                 "type": "server_error",
-                                "code": "internal_error",
+                                "code": "server_error",
                                 "param": None,
                             }
                         }
@@ -601,7 +602,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     "error": {
                         "message": "internal server error",
                         "type": "server_error",
-                        "code": "internal_error",
+                        "code": "server_error",
                         "param": None,
                     }
                 }
@@ -661,6 +662,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     response_obj = await self._provider.get_response(response_id, isolation=_isolation)
                     snapshot = response_obj.as_dict()
                     return JSONResponse(snapshot, status_code=200)
+                except FoundryResourceNotFoundError:
+                    pass  # Fall through to 404 below
+                except FoundryBadRequestError as exc:
+                    return _invalid_request(str(exc), {}, param="response_id")
+                except FoundryApiError as exc:
+                    logger.error("Storage API error for GET response_id=%s: %s", response_id, exc, exc_info=True)
+                    return _error_response(exc, {})
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Provider fallback failed for GET response_id=%s", response_id, exc_info=True)
             else:
@@ -674,11 +682,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 try:
                     await self._provider.get_response(response_id, isolation=_isolation)
                     return _invalid_mode(
-                        "stream replay is not available for this response; to enable SSE replay, "
-                        + "create the response with background=true, stream=true, and store=true",
+                        "This response cannot be streamed because it was not created with background=true.",
                         {},
                         param="stream",
                     )
+                except FoundryResourceNotFoundError:
+                    pass  # Response doesn't exist in provider either — fall through to 404
+                except FoundryApiError as exc:
+                    logger.error("Storage API error for GET SSE replay response_id=%s: %s", response_id, exc, exc_info=True)
+                    return _error_response(exc, {})
                 except Exception:  # pylint: disable=broad-exception-caught
                     pass  # Response doesn't exist in provider either — fall through to 404
 
@@ -692,9 +704,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if not record.mode_flags.store:
                 return _not_found(response_id, {})
             if not record.replay_enabled:
+                if not record.mode_flags.background:
+                    return _invalid_mode(
+                        "This response cannot be streamed because it was not created with background=true.",
+                        {},
+                        param="stream",
+                    )
                 return _invalid_mode(
-                    "stream replay is not available for this response; to enable SSE replay, "
-                    + "create the response with background=true, stream=true, and store=true",
+                    "This response cannot be streamed because it was not created with stream=true.",
                     {},
                     param="stream",
                 )
@@ -874,16 +891,21 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     )
                 if stored_status == "cancelled":
                     return _invalid_request(
-                        "Cannot cancel an already cancelled response.",
+                        "Cannot cancel a response in terminal state.",
                         {},
                         param="response_id",
                     )
                 if stored_status == "incomplete":
                     return _invalid_request(
-                        "Cannot cancel an incomplete response.",
+                        "Cannot cancel a response in terminal state.",
                         {},
                         param="response_id",
                     )
+            except FoundryResourceNotFoundError:
+                pass  # Fall through to 404 below
+            except FoundryApiError as exc:
+                logger.error("Storage API error for cancel response_id=%s: %s", response_id, exc, exc_info=True)
+                return _error_response(exc, {})
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.debug(
                     "Provider fallback failed for cancel response_id=%s",
@@ -924,7 +946,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         if record.status == "incomplete":
             return _invalid_request(
-                "Cannot cancel an incomplete response.",
+                "Cannot cancel a response in terminal state.",
                 {},
                 param="response_id",
             )
@@ -988,6 +1010,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             )
         except ValueError:
             return _deleted_response(response_id, {})
+        except FoundryResourceNotFoundError:
+            return _not_found(response_id, {})
+        except FoundryBadRequestError as exc:
+            return _invalid_request(str(exc), {}, param="response_id")
+        except FoundryApiError as exc:
+            logger.error("Storage API error for input_items response_id=%s: %s", response_id, exc, exc_info=True)
+            return _error_response(exc, {})
         except KeyError:
             # Fall back to runtime_state for in-flight responses not yet persisted to provider
             try:

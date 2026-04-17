@@ -135,6 +135,13 @@ def test_get__returns_404_for_unknown_response_id() -> None:
     assert get_response.status_code == 404
     payload = get_response.json()
     assert isinstance(payload.get("error"), dict)
+    assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
+    # 404 message must reference the requested response ID
+    error_message = payload["error"].get("message", "")
+    assert "resp_does_not_exist" in error_message, (
+        f"404 error message should reference the response ID, got: {error_message!r}"
+    )
 
 
 def test_get__returns_snapshot_for_stored_non_background_stream_response_after_completion() -> None:
@@ -159,7 +166,12 @@ def test_get_replay__rejects_request_when_replay_preconditions_are_not_met() -> 
     payload = replay_response.json()
     assert isinstance(payload.get("error"), dict)
     assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
     assert payload["error"].get("param") == "stream"
+    error_message = payload["error"].get("message", "")
+    assert "background=true" in error_message, (
+        f"SSE replay rejection for non-bg response must mention 'background=true', got: {error_message!r}"
+    )
 
 
 def test_get_replay__rejects_invalid_starting_after_cursor_type() -> None:
@@ -217,6 +229,12 @@ def test_get_replay__rejects_bg_non_stream_response() -> None:
     assert replay_response.status_code == 400
     payload = replay_response.json()
     assert payload["error"]["type"] == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
+    error_message = payload["error"].get("message", "")
+    assert "stream=true" in error_message, (
+        f"SSE replay rejection for bg+non-stream must mention 'stream=true', got: {error_message!r}"
+    )
+    assert payload["error"].get("param") == "stream"
 
 
 # ══════════════════════════════════════════════════════════
@@ -251,6 +269,8 @@ def test_get_replay__rejection_message_hints_at_background_true() -> None:
     assert "background=true" in error_message, (
         f"Error message should hint at 'background=true' to guide the client, but got: {error_message!r}"
     )
+    assert payload["error"].get("code") == "invalid_request_error"
+    assert payload["error"].get("param") == "stream"
 
 
 # ════════════════════════════════════════════════════════
@@ -552,6 +572,18 @@ def test_get__sse_replay_store_false_returns_404() -> None:
 
     with client.stream("GET", f"/responses/{response_id}?stream=true") as replay:
         assert replay.status_code == 404
+
+
+def test_get__sse_replay_unknown_id_returns_404_with_error_shape() -> None:
+    """SSE replay on a completely unknown response ID returns 404 with proper error envelope."""
+    client = _build_client()
+
+    replay_response = client.get("/responses/resp_does_not_exist?stream=true")
+    assert replay_response.status_code == 404
+    payload = replay_response.json()
+    assert isinstance(payload.get("error"), dict)
+    assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
 
 
 def test_get__stream_false_returns_json_snapshot() -> None:

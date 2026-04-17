@@ -183,6 +183,7 @@ def _assert_error(
     expected_status: int,
     expected_type: str,
     expected_message: str | None = None,
+    expected_code: str | None = None,
 ) -> None:
     assert response.status_code == expected_status
     payload = response.json()
@@ -190,6 +191,10 @@ def _assert_error(
     assert payload["error"].get("type") == expected_type
     if expected_message is not None:
         assert payload["error"].get("message") == expected_message
+    if expected_code is not None:
+        assert payload["error"].get("code") == expected_code, (
+            f"Expected error.code={expected_code!r}, got {payload['error'].get('code')!r}"
+        )
 
 
 def test_cancel__cancels_background_response_and_clears_output() -> None:
@@ -237,6 +242,7 @@ def test_cancel__returns_400_for_completed_background_response() -> None:
         expected_status=400,
         expected_type="invalid_request_error",
         expected_message="Cannot cancel a completed response.",
+        expected_code="invalid_request_error",
     )
 
 
@@ -420,6 +426,8 @@ def test_cancel__returns_400_for_incomplete_background_response() -> None:
         cancel_response,
         expected_status=400,
         expected_type="invalid_request_error",
+        expected_message="Cannot cancel a response in terminal state.",
+        expected_code="invalid_request_error",
     )
 
 
@@ -445,6 +453,7 @@ def test_cancel__returns_400_for_synchronous_response() -> None:
         expected_status=400,
         expected_type="invalid_request_error",
         expected_message="Cannot cancel a synchronous response.",
+        expected_code="invalid_request_error",
     )
 
 
@@ -483,6 +492,7 @@ def test_cancel__returns_404_for_in_flight_synchronous_response() -> None:
         cancel_response,
         expected_status=404,
         expected_type="invalid_request_error",
+        expected_code="invalid_request_error",
     )
 
     release_gate.set()
@@ -504,6 +514,7 @@ def test_cancel__returns_404_for_unknown_response_id() -> None:
         cancel_response,
         expected_status=404,
         expected_type="invalid_request_error",
+        expected_code="invalid_request_error",
     )
 
 
@@ -616,6 +627,7 @@ def test_cancel__provider_fallback_returns_400_for_completed_after_restart() -> 
         expected_status=400,
         expected_type="invalid_request_error",
         expected_message="Cannot cancel a completed response.",
+        expected_code="invalid_request_error",
     )
 
 
@@ -643,6 +655,7 @@ def test_cancel__provider_fallback_returns_400_for_failed_after_restart() -> Non
         expected_status=400,
         expected_type="invalid_request_error",
         expected_message="Cannot cancel a failed response.",
+        expected_code="invalid_request_error",
     )
 
 

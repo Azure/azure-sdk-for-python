@@ -843,6 +843,9 @@ class TestC3BgPollStored:
 
         cancel_resp = client.post(f"/responses/{response_id}/cancel")
         assert cancel_resp.status_code == 400
+        error = cancel_resp.json()["error"]
+        assert error.get("code") == "invalid_request_error"
+        assert "Cannot cancel a response in terminal state" in error["message"]
 
     def test_e44_bg_progressive_polling_output_grows(self) -> None:
         """B5, B10 — background poll shows progressive output accumulation.
