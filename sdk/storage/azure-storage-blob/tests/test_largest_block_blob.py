@@ -19,23 +19,24 @@ from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
-TEST_BLOB_PREFIX = 'largestblob'
+TEST_BLOB_PREFIX = "largestblob"
 LARGEST_BLOCK_SIZE = 4000 * 1024 * 1024
 LARGEST_SINGLE_UPLOAD_SIZE = 5000 * 1024 * 1024
 LARGE_BLOCK_SIZE = 100 * 1024 * 1024
 # ------------------------------------------------------------------------------
 
-if platform.python_implementation() == 'PyPy':
+if platform.python_implementation() == "PyPy":
     pytest.skip("Skip tests for Pypy", allow_module_level=True)
 
 
 class TestStorageLargestBlockBlob(StorageRecordedTestCase):
     def _setup(
-        self, storage_account_name,
+        self,
+        storage_account_name,
         key,
         additional_policies=None,
         min_large_block_upload_threshold=1 * 1024 * 1024,
-        max_single_put_size=32 * 1024
+        max_single_put_size=32 * 1024,
     ):
         self.bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
@@ -43,9 +44,10 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
             max_single_put_size=max_single_put_size,
             max_block_size=LARGEST_BLOCK_SIZE,
             min_large_block_upload_threshold=min_large_block_upload_threshold,
-            _additional_pipeline_policies=additional_policies)
+            _additional_pipeline_policies=additional_policies,
+        )
         self.config = self.bsc._config
-        self.container_name = self.get_resource_name('utcontainer')
+        self.container_name = self.get_resource_name("utcontainer")
         self.container_name = self.container_name + str(uuid.uuid4())
 
         if self.is_live:
@@ -58,7 +60,7 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
     def _create_blob(self):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(b'')
+        blob.upload_blob(b"")
         return blob
 
     # --Test cases for block blobs --------------------------------------------
@@ -74,19 +76,16 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
 
         # Act
         data = urandom(LARGEST_BLOCK_SIZE)
-        blockId = str(uuid.uuid4()).encode('utf-8')
-        resp = blob.stage_block(
-            blockId,
-            data,
-            length=LARGEST_BLOCK_SIZE)
+        blockId = str(uuid.uuid4()).encode("utf-8")
+        resp = blob.stage_block(blockId, data, length=LARGEST_BLOCK_SIZE)
         blob.commit_block_list([BlobBlock(blockId)])
         block_list = blob.get_block_list()
 
         # Assert
         assert resp is not None
-        assert 'content_md5' in resp
-        assert 'content_crc64' in resp
-        assert 'request_id' in resp
+        assert "content_md5" in resp
+        assert "content_crc64" in resp
+        assert "request_id" in resp
         assert block_list is not None
         assert len(block_list) == 2
         assert len(block_list[1]) == 0
@@ -106,19 +105,16 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
 
         # Act
         data = urandom(LARGEST_BLOCK_SIZE)
-        blockId = str(uuid.uuid4()).encode('utf-8')
-        resp = blob.stage_block(
-            blockId,
-            data,
-            length=LARGEST_BLOCK_SIZE)
+        blockId = str(uuid.uuid4()).encode("utf-8")
+        resp = blob.stage_block(blockId, data, length=LARGEST_BLOCK_SIZE)
         blob.commit_block_list([BlobBlock(blockId)])
         block_list = blob.get_block_list()
 
         # Assert
         assert resp is not None
-        assert 'content_md5' in resp
-        assert 'content_crc64' in resp
-        assert 'request_id' in resp
+        assert "content_md5" in resp
+        assert "content_crc64" in resp
+        assert "request_id" in resp
         assert block_list is not None
         assert len(block_list) == 2
         assert len(block_list[1]) == 0
@@ -140,19 +136,15 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
         stream = LargeStream(LARGEST_BLOCK_SIZE)
         blockId = str(uuid.uuid4())
         requestId = str(uuid.uuid4())
-        resp = blob.stage_block(
-            blockId,
-            stream,
-            length=LARGEST_BLOCK_SIZE,
-            client_request_id=requestId)
+        resp = blob.stage_block(blockId, stream, length=LARGEST_BLOCK_SIZE, client_request_id=requestId)
         blob.commit_block_list([BlobBlock(blockId)])
         block_list = blob.get_block_list()
 
         # Assert
         assert resp is not None
-        assert 'content_md5' in resp
-        assert 'content_crc64' in resp
-        assert 'request_id' in resp
+        assert "content_md5" in resp
+        assert "content_crc64" in resp
+        assert "request_id" in resp
         assert block_list is not None
         assert len(block_list) == 2
         assert len(block_list[1]) == 0
@@ -174,19 +166,15 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
         stream = LargeStream(LARGEST_BLOCK_SIZE)
         blockId = str(uuid.uuid4())
         requestId = str(uuid.uuid4())
-        resp = blob.stage_block(
-            blockId,
-            stream,
-            length=LARGEST_BLOCK_SIZE,
-            client_request_id=requestId)
+        resp = blob.stage_block(blockId, stream, length=LARGEST_BLOCK_SIZE, client_request_id=requestId)
         blob.commit_block_list([BlobBlock(blockId)])
         block_list = blob.get_block_list()
 
         # Assert
         assert resp is not None
-        assert 'content_md5' in resp
-        assert 'content_crc64' in resp
-        assert 'request_id' in resp
+        assert "content_md5" in resp
+        assert "content_crc64" in resp
+        assert "request_id" in resp
         assert block_list is not None
         assert len(block_list) == 2
         assert len(block_list[1]) == 0
@@ -214,7 +202,6 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
             # Act
             temp_file.seek(0)
             blob.upload_blob(temp_file, max_concurrency=2)
-
 
     def test_substream_for_single_thread_upload_large_block(self):
         with tempfile.TemporaryFile() as temp_file:
@@ -280,7 +267,7 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
 
         number_of_blocks = 50000
 
-        stream = LargeStream(LARGEST_BLOCK_SIZE*number_of_blocks)
+        stream = LargeStream(LARGEST_BLOCK_SIZE * number_of_blocks)
 
         # Act
         blob.upload_blob(stream, max_concurrency=1)
@@ -297,8 +284,12 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
 
         payload_dropping_policy = PayloadDroppingPolicy()
         credential_policy = _format_shared_key_credential(storage_account_name, storage_account_key.secret)
-        self._setup(storage_account_name, storage_account_key, [payload_dropping_policy, credential_policy],
-                    max_single_put_size=LARGEST_SINGLE_UPLOAD_SIZE+1)
+        self._setup(
+            storage_account_name,
+            storage_account_key,
+            [payload_dropping_policy, credential_policy],
+            max_single_put_size=LARGEST_SINGLE_UPLOAD_SIZE + 1,
+        )
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
@@ -313,7 +304,7 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
 
 
 class LargeStream:
-    def __init__(self, length, initial_buffer_length=1024*1024):
+    def __init__(self, length, initial_buffer_length=1024 * 1024):
         self._base_data = urandom(initial_buffer_length)
         self._base_data_length = initial_buffer_length
         self._position = 0
@@ -367,20 +358,23 @@ def _is_put_block_request(request):
     query = request.http_request.query
     return query and "comp" in query and query["comp"] == "block"
 
+
 def _is_put_blob_request(request):
     query = request.http_request.query
     return request.http_request.method == "PUT" and not query
+
 
 def _get_body_length(request):
     body = request.http_request.body
     length = 0
     if hasattr(body, "read"):
-        chunk = body.read(10*1024*1024)
+        chunk = body.read(10 * 1024 * 1024)
         while chunk:
             length = length + len(chunk)
             chunk = body.read(10 * 1024 * 1024)
     else:
         length = len(body)
     return length
+
 
 # ------------------------------------------------------------------------------

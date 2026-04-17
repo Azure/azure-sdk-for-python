@@ -17,26 +17,23 @@ from .._encryption import (
     get_blob_encryptor_and_padder,
     generate_blob_encryption_data,
     _ENCRYPTION_PROTOCOL_V1,
-    _ENCRYPTION_PROTOCOL_V2
+    _ENCRYPTION_PROTOCOL_V2,
 )
-from .._generated.models import (
-    AppendPositionAccessConditions,
-    BlockLookupList,
-    ModifiedAccessConditions
-)
+from .._generated.models import AppendPositionAccessConditions, BlockLookupList, ModifiedAccessConditions
 from .._shared.response_handlers import process_storage_error, return_response_headers
 from .._shared.uploads_async import (
     AppendBlobChunkUploader,
     BlockBlobChunkUploader,
     PageBlobChunkUploader,
     upload_data_chunks,
-    upload_substream_blocks
+    upload_substream_blocks,
 )
 from .._upload_helpers import _any_conditions, _convert_mod_error
 
 if TYPE_CHECKING:
     from .._generated.aio.operations import AppendBlobOperations, BlockBlobOperations, PageBlobOperations
     from .._shared.models import StorageConfiguration
+
     BlobLeaseClient = TypeVar("BlobLeaseClient")
 
 
@@ -50,23 +47,23 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
     validate_content: bool,
     max_concurrency: Optional[int],
     length: Optional[int] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     try:
         if not overwrite and not _any_conditions(**kwargs):
-            kwargs['modified_access_conditions'].if_none_match = '*'
+            kwargs["modified_access_conditions"].if_none_match = "*"
         adjusted_count = length
-        if (encryption_options.get('key') is not None) and (adjusted_count is not None):
-            adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options['version'])
-        blob_headers = kwargs.pop('blob_headers', None)
-        tier = kwargs.pop('standard_blob_tier', None)
-        blob_tags_string = kwargs.pop('blob_tags_string', None)
+        if (encryption_options.get("key") is not None) and (adjusted_count is not None):
+            adjusted_count = get_adjusted_upload_size(adjusted_count, encryption_options["version"])
+        blob_headers = kwargs.pop("blob_headers", None)
+        tier = kwargs.pop("standard_blob_tier", None)
+        blob_tags_string = kwargs.pop("blob_tags_string", None)
 
-        immutability_policy = kwargs.pop('immutability_policy', None)
+        immutability_policy = kwargs.pop("immutability_policy", None)
         immutability_policy_expiry = None if immutability_policy is None else immutability_policy.expiry_time
         immutability_policy_mode = None if immutability_policy is None else immutability_policy.policy_mode
-        legal_hold = kwargs.pop('legal_hold', None)
-        progress_hook = kwargs.pop('progress_hook', None)
+        legal_hold = kwargs.pop("legal_hold", None)
+        progress_hook = kwargs.pop("progress_hook", None)
 
         # Do single put if the size is smaller than config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
@@ -74,55 +71,64 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
             if inspect.isawaitable(data):
                 data = await data
             if not isinstance(data, bytes):
-                raise TypeError('Blob data should be of type bytes.')
+                raise TypeError("Blob data should be of type bytes.")
 
-            if encryption_options.get('key'):
+            if encryption_options.get("key"):
                 if not isinstance(data, bytes):
-                    raise TypeError('Blob data should be of type bytes.')
-                encryption_data, data = encrypt_blob(data, encryption_options['key'], encryption_options['version'])
-                headers['x-ms-meta-encryptiondata'] = encryption_data
+                    raise TypeError("Blob data should be of type bytes.")
+                encryption_data, data = encrypt_blob(data, encryption_options["key"], encryption_options["version"])
+                headers["x-ms-meta-encryptiondata"] = encryption_data
 
-            response = cast(Dict[str, Any], await client.upload(
-                body=data,  # type: ignore [arg-type]
-                content_length=adjusted_count,
-                blob_http_headers=blob_headers,
-                headers=headers,
-                cls=return_response_headers,
-                validate_content=validate_content,
-                data_stream_total=adjusted_count,
-                upload_stream_current=0,
-                tier=tier.value if tier else None,
-                blob_tags_string=blob_tags_string,
-                immutability_policy_expiry=immutability_policy_expiry,
-                immutability_policy_mode=immutability_policy_mode,
-                legal_hold=legal_hold,
-                **kwargs))
+            response = cast(
+                Dict[str, Any],
+                await client.upload(
+                    body=data,  # type: ignore [arg-type]
+                    content_length=adjusted_count,
+                    blob_http_headers=blob_headers,
+                    headers=headers,
+                    cls=return_response_headers,
+                    validate_content=validate_content,
+                    data_stream_total=adjusted_count,
+                    upload_stream_current=0,
+                    tier=tier.value if tier else None,
+                    blob_tags_string=blob_tags_string,
+                    immutability_policy_expiry=immutability_policy_expiry,
+                    immutability_policy_mode=immutability_policy_mode,
+                    legal_hold=legal_hold,
+                    **kwargs,
+                ),
+            )
 
             if progress_hook:
                 await progress_hook(adjusted_count, adjusted_count)
 
             return response
 
-        use_original_upload_path = blob_settings.use_byte_buffer or \
-            validate_content or encryption_options.get('required') or \
-            blob_settings.max_block_size < blob_settings.min_large_block_upload_threshold or \
-            hasattr(stream, 'seekable') and not stream.seekable() or \
-            not hasattr(stream, 'seek') or not hasattr(stream, 'tell')
+        use_original_upload_path = (
+            blob_settings.use_byte_buffer
+            or validate_content
+            or encryption_options.get("required")
+            or blob_settings.max_block_size < blob_settings.min_large_block_upload_threshold
+            or hasattr(stream, "seekable")
+            and not stream.seekable()
+            or not hasattr(stream, "seek")
+            or not hasattr(stream, "tell")
+        )
 
         if use_original_upload_path:
             total_size = length
             encryptor, padder = None, None
-            if encryption_options and encryption_options.get('key'):
+            if encryption_options and encryption_options.get("key"):
                 cek, iv, encryption_metadata = generate_blob_encryption_data(
-                    encryption_options['key'],
-                    encryption_options['version'])
-                headers['x-ms-meta-encryptiondata'] = encryption_metadata
+                    encryption_options["key"], encryption_options["version"]
+                )
+                headers["x-ms-meta-encryptiondata"] = encryption_metadata
 
-                if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
+                if encryption_options["version"] == _ENCRYPTION_PROTOCOL_V1:
                     encryptor, padder = get_blob_encryptor_and_padder(cek, iv, True)
 
                 # Adjust total_size for encryption V2
-                if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V2:
+                if encryption_options["version"] == _ENCRYPTION_PROTOCOL_V2:
                     # Adjust total_size for encryption V2
                     total_size = adjusted_count
                     # V2 wraps the data stream with an encryption stream
@@ -142,7 +148,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
                 encryptor=encryptor,
                 padder=padder,
                 headers=headers,
-                **kwargs
+                **kwargs,
             )
         else:
             block_ids = await upload_substream_blocks(
@@ -155,23 +161,27 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
                 validate_content=validate_content,
                 progress_hook=progress_hook,
                 headers=headers,
-                **kwargs
+                **kwargs,
             )
 
         block_lookup = BlockLookupList(committed=[], uncommitted=[], latest=[])
         block_lookup.latest = block_ids
-        return cast(Dict[str, Any], await client.commit_block_list(
-            block_lookup,
-            blob_http_headers=blob_headers,
-            cls=return_response_headers,
-            validate_content=validate_content,
-            headers=headers,
-            tier=tier.value if tier else None,
-            blob_tags_string=blob_tags_string,
-            immutability_policy_expiry=immutability_policy_expiry,
-            immutability_policy_mode=immutability_policy_mode,
-            legal_hold=legal_hold,
-            **kwargs))
+        return cast(
+            Dict[str, Any],
+            await client.commit_block_list(
+                block_lookup,
+                blob_http_headers=blob_headers,
+                cls=return_response_headers,
+                validate_content=validate_content,
+                headers=headers,
+                tier=tier.value if tier else None,
+                blob_tags_string=blob_tags_string,
+                immutability_policy_expiry=immutability_policy_expiry,
+                immutability_policy_mode=immutability_policy_mode,
+                legal_hold=legal_hold,
+                **kwargs,
+            ),
+        )
     except HttpResponseError as error:
         try:
             process_storage_error(error)
@@ -191,64 +201,71 @@ async def upload_page_blob(
     length: Optional[int] = None,
     validate_content: Optional[bool] = None,
     max_concurrency: Optional[int] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     try:
         if not overwrite and not _any_conditions(**kwargs):
-            kwargs['modified_access_conditions'].if_none_match = '*'
+            kwargs["modified_access_conditions"].if_none_match = "*"
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")
         if length % 512 != 0:
-            raise ValueError(f"Invalid page blob size: {length}. "
-                             "The size must be aligned to a 512-byte boundary.")
+            raise ValueError(f"Invalid page blob size: {length}. " "The size must be aligned to a 512-byte boundary.")
         tier = None
-        if kwargs.get('premium_page_blob_tier'):
-            premium_page_blob_tier = kwargs.pop('premium_page_blob_tier')
+        if kwargs.get("premium_page_blob_tier"):
+            premium_page_blob_tier = kwargs.pop("premium_page_blob_tier")
             try:
                 tier = premium_page_blob_tier.value
             except AttributeError:
                 tier = premium_page_blob_tier
 
-        if encryption_options and encryption_options.get('key'):
+        if encryption_options and encryption_options.get("key"):
             cek, iv, encryption_data = generate_blob_encryption_data(
-                encryption_options['key'],
-                encryption_options['version'])
-            headers['x-ms-meta-encryptiondata'] = encryption_data
+                encryption_options["key"], encryption_options["version"]
+            )
+            headers["x-ms-meta-encryptiondata"] = encryption_data
 
-        blob_tags_string = kwargs.pop('blob_tags_string', None)
-        progress_hook = kwargs.pop('progress_hook', None)
+        blob_tags_string = kwargs.pop("blob_tags_string", None)
+        progress_hook = kwargs.pop("progress_hook", None)
 
-        response = cast(Dict[str, Any], await client.create(
-            content_length=0,
-            blob_content_length=length,
-            blob_sequence_number=None,  # type: ignore [arg-type]
-            blob_http_headers=kwargs.pop('blob_headers', None),
-            blob_tags_string=blob_tags_string,
-            tier=tier,
-            cls=return_response_headers,
-            headers=headers,
-            **kwargs))
+        response = cast(
+            Dict[str, Any],
+            await client.create(
+                content_length=0,
+                blob_content_length=length,
+                blob_sequence_number=None,  # type: ignore [arg-type]
+                blob_http_headers=kwargs.pop("blob_headers", None),
+                blob_tags_string=blob_tags_string,
+                tier=tier,
+                cls=return_response_headers,
+                headers=headers,
+                **kwargs,
+            ),
+        )
         if length == 0:
             return cast(Dict[str, Any], response)
 
-        if encryption_options and encryption_options.get('key'):
-            if encryption_options['version'] == _ENCRYPTION_PROTOCOL_V1:
+        if encryption_options and encryption_options.get("key"):
+            if encryption_options["version"] == _ENCRYPTION_PROTOCOL_V1:
                 encryptor, padder = get_blob_encryptor_and_padder(cek, iv, False)
-                kwargs['encryptor'] = encryptor
-                kwargs['padder'] = padder
+                kwargs["encryptor"] = encryptor
+                kwargs["padder"] = padder
 
-        kwargs['modified_access_conditions'] = ModifiedAccessConditions(if_match=response['etag'])
-        return cast(Dict[str, Any], await upload_data_chunks(
-            service=client,
-            uploader_class=PageBlobChunkUploader,
-            total_size=length,
-            chunk_size=blob_settings.max_page_size,
-            stream=stream,
-            max_concurrency=max_concurrency,
-            validate_content=validate_content,
-            progress_hook=progress_hook,
-            headers=headers,
-            **kwargs))
+        kwargs["modified_access_conditions"] = ModifiedAccessConditions(if_match=response["etag"])
+        return cast(
+            Dict[str, Any],
+            await upload_data_chunks(
+                service=client,
+                uploader_class=PageBlobChunkUploader,
+                total_size=length,
+                chunk_size=blob_settings.max_page_size,
+                stream=stream,
+                max_concurrency=max_concurrency,
+                validate_content=validate_content,
+                progress_hook=progress_hook,
+                headers=headers,
+                **kwargs,
+            ),
+        )
 
     except HttpResponseError as error:
         try:
@@ -269,17 +286,17 @@ async def upload_append_blob(  # pylint: disable=unused-argument
     length: Optional[int] = None,
     validate_content: Optional[bool] = None,
     max_concurrency: Optional[int] = None,
-    **kwargs: Any
+    **kwargs: Any,
 ) -> Dict[str, Any]:
     try:
         if length == 0:
             return {}
-        blob_headers = kwargs.pop('blob_headers', None)
+        blob_headers = kwargs.pop("blob_headers", None)
         append_conditions = AppendPositionAccessConditions(
-            max_size=kwargs.pop('maxsize_condition', None),
-            append_position=None)
-        blob_tags_string = kwargs.pop('blob_tags_string', None)
-        progress_hook = kwargs.pop('progress_hook', None)
+            max_size=kwargs.pop("maxsize_condition", None), append_position=None
+        )
+        blob_tags_string = kwargs.pop("blob_tags_string", None)
+        progress_hook = kwargs.pop("progress_hook", None)
 
         try:
             if overwrite:
@@ -288,24 +305,29 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                     blob_http_headers=blob_headers,
                     headers=headers,
                     blob_tags_string=blob_tags_string,
-                    **kwargs)
-            return cast(Dict[str, Any], await upload_data_chunks(
-                service=client,
-                uploader_class=AppendBlobChunkUploader,
-                total_size=length,
-                chunk_size=blob_settings.max_block_size,
-                stream=stream,
-                max_concurrency=max_concurrency,
-                validate_content=validate_content,
-                append_position_access_conditions=append_conditions,
-                progress_hook=progress_hook,
-                headers=headers,
-                **kwargs))
+                    **kwargs,
+                )
+            return cast(
+                Dict[str, Any],
+                await upload_data_chunks(
+                    service=client,
+                    uploader_class=AppendBlobChunkUploader,
+                    total_size=length,
+                    chunk_size=blob_settings.max_block_size,
+                    stream=stream,
+                    max_concurrency=max_concurrency,
+                    validate_content=validate_content,
+                    append_position_access_conditions=append_conditions,
+                    progress_hook=progress_hook,
+                    headers=headers,
+                    **kwargs,
+                ),
+            )
         except HttpResponseError as error:
             if error.response.status_code != 404:  # type: ignore [union-attr]
                 raise
             # rewind the request body if it is a stream
-            if hasattr(stream, 'read'):
+            if hasattr(stream, "read"):
                 try:
                     # attempt to rewind the body to the initial position
                     stream.seek(0, SEEK_SET)
@@ -317,18 +339,23 @@ async def upload_append_blob(  # pylint: disable=unused-argument
                 blob_http_headers=blob_headers,
                 headers=headers,
                 blob_tags_string=blob_tags_string,
-                **kwargs)
-            return cast(Dict[str, Any], await upload_data_chunks(
-                service=client,
-                uploader_class=AppendBlobChunkUploader,
-                total_size=length,
-                chunk_size=blob_settings.max_block_size,
-                stream=stream,
-                max_concurrency=max_concurrency,
-                validate_content=validate_content,
-                append_position_access_conditions=append_conditions,
-                progress_hook=progress_hook,
-                headers=headers,
-                **kwargs))
+                **kwargs,
+            )
+            return cast(
+                Dict[str, Any],
+                await upload_data_chunks(
+                    service=client,
+                    uploader_class=AppendBlobChunkUploader,
+                    total_size=length,
+                    chunk_size=blob_settings.max_block_size,
+                    stream=stream,
+                    max_concurrency=max_concurrency,
+                    validate_content=validate_content,
+                    append_position_access_conditions=append_conditions,
+                    progress_hook=progress_hook,
+                    headers=headers,
+                    **kwargs,
+                ),
+            )
     except HttpResponseError as error:
         process_storage_error(error)

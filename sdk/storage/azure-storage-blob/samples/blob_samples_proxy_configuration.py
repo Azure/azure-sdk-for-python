@@ -29,24 +29,21 @@ import sys
 from azure.storage.blob import BlobServiceClient
 
 # Retrieve connection string from environment variables
-connection_string = os.environ.get('AZURE_STORAGE_CONNECTION_STRING', None)
+connection_string = os.environ.get("AZURE_STORAGE_CONNECTION_STRING", None)
 if not connection_string:
-    print('AZURE_STORAGE_CONNECTION_STRING required.')
+    print("AZURE_STORAGE_CONNECTION_STRING required.")
     sys.exit(1)
 
 # configure logging
-logger = logging.getLogger('azure')
+logger = logging.getLogger("azure")
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 logger.setLevel(logging.DEBUG)
 
 # TODO: Update this with your actual proxy information.
-http_proxy = 'http://10.10.1.10:1180'
-https_proxy = 'http://user:password@10.10.1.10:1180/'
+http_proxy = "http://10.10.1.10:1180"
+https_proxy = "http://user:password@10.10.1.10:1180/"
 
-proxies = {
-    'http': http_proxy,
-    'https': https_proxy
-}
+proxies = {"http": http_proxy, "https": https_proxy}
 # Construct the BlobServiceClient, including the customized configuation.
 service_client = BlobServiceClient.from_connection_string(connection_string, proxies=proxies)
 containers = list(service_client.list_containers(logging_enable=True))
@@ -54,8 +51,8 @@ print("{} containers.".format(len(containers)))
 
 # Alternatively, proxy settings can be set using environment variables, with no
 # custom configuration necessary.
-HTTP_PROXY_ENV_VAR = 'HTTP_PROXY'
-HTTPS_PROXY_ENV_VAR = 'HTTPS_PROXY'
+HTTP_PROXY_ENV_VAR = "HTTP_PROXY"
+HTTPS_PROXY_ENV_VAR = "HTTPS_PROXY"
 os.environ[HTTPS_PROXY_ENV_VAR] = https_proxy
 
 service_client = BlobServiceClient.from_connection_string(connection_string)

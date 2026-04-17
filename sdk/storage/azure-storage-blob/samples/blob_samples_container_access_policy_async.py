@@ -37,10 +37,11 @@ from azure.storage.blob import AccessPolicy, ContainerSasPermissions, PublicAcce
 from azure.storage.blob.aio import BlobServiceClient
 
 try:
-    CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
+    CONNECTION_STRING = os.environ["STORAGE_CONNECTION_STRING"]
 except KeyError:
     print("STORAGE_CONNECTION_STRING must be set.")
     sys.exit(1)
+
 
 async def get_and_set_container_access_policy():
     service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
@@ -53,11 +54,13 @@ async def get_and_set_container_access_policy():
         except ResourceExistsError:
             pass
         # Create access policy
-        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True, write=True),
-                                        expiry=datetime.utcnow() + timedelta(hours=1),
-                                        start=datetime.utcnow() - timedelta(minutes=1))
+        access_policy = AccessPolicy(
+            permission=ContainerSasPermissions(read=True, write=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+            start=datetime.utcnow() - timedelta(minutes=1),
+        )
 
-        identifiers = {'read': access_policy}
+        identifiers = {"read": access_policy}
 
         # Specifies full public read access for container and blob data.
         public_access = PublicAccess.CONTAINER
@@ -76,7 +79,7 @@ async def get_and_set_container_access_policy():
         print("\n..Getting container access policy")
         access_policy_dict = await container_client.get_container_access_policy()
         print(f"Blob Access Type: {access_policy_dict['public_access']}")
-        for identifier in access_policy_dict['signed_identifiers']:
+        for identifier in access_policy_dict["signed_identifiers"]:
             print(f"Identifier '{identifier.id}' has permissions '{identifier.access_policy.permission}''")
 
 
@@ -87,5 +90,6 @@ async def main():
         print(error)
         sys.exit(1)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     asyncio.run(main())

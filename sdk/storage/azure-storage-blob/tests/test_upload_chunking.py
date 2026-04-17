@@ -23,7 +23,7 @@ class StorageBlobUploadChunkingTest(unittest.TestCase):
 
         # assuming the max size of the buffer is 4MB, this test needs to be updated if that has changed
         # the block size is 6MB for this test
-        expected_data = data[0: 6 * 1024 * 1024]
+        expected_data = data[0 : 6 * 1024 * 1024]
         wrapped_stream = BytesIO(data)  # simulate stream given by user
         lockObj = Lock()  # simulate multi-threaded environment
         substream = SubStream(wrapped_stream, stream_begin_index=0, length=6 * 1024 * 1024, lockObj=lockObj)
@@ -75,7 +75,7 @@ class StorageBlobUploadChunkingTest(unittest.TestCase):
 
         # assuming the max size of the buffer is 4MB, this test needs to be updated if that has changed
         # the block size is 2MB for this test
-        expected_data = data[0: 2 * 1024 * 1024]
+        expected_data = data[0 : 2 * 1024 * 1024]
         wrapped_stream = BytesIO(expected_data)  # simulate stream given by user
         lockObj = Lock()  # simulate multi-threaded environment
         substream = SubStream(wrapped_stream, stream_begin_index=0, length=2 * 1024 * 1024, lockObj=lockObj)
