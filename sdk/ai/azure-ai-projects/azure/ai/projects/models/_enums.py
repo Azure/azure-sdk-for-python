@@ -17,6 +17,60 @@ class _AgentDefinitionOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HOSTED_AGENTS_V1_PREVIEW."""
     WORKFLOW_AGENTS_V1_PREVIEW = "WorkflowAgents=V1Preview"
     """WORKFLOW_AGENTS_V1_PREVIEW."""
+    CONTAINER_AGENTS_V1_PREVIEW = "ContainerAgents=V1Preview"
+    """CONTAINER_AGENTS_V1_PREVIEW."""
+    AGENT_ENDPOINT_V1_PREVIEW = "AgentEndpoints=V1Preview"
+    """AGENT_ENDPOINT_V1_PREVIEW."""
+
+
+class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of _FoundryFeaturesOptInKeys."""
+
+    SKILLS_V1_PREVIEW = "Skills=V1Preview"
+    """SKILLS_V1_PREVIEW."""
+    EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
+    """EVALUATIONS_V1_PREVIEW."""
+    SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
+    """SCHEDULES_V1_PREVIEW."""
+    RED_TEAMS_V1_PREVIEW = "RedTeams=V1Preview"
+    """RED_TEAMS_V1_PREVIEW."""
+    INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
+    """INSIGHTS_V1_PREVIEW."""
+    MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
+    """MEMORY_STORES_V1_PREVIEW."""
+    TOOLBOXES_V1_PREVIEW = "Toolboxes=V1Preview"
+    """TOOLBOXES_V1_PREVIEW."""
+
+
+class AgentBlueprintReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentBlueprintReferenceType."""
+
+    MANAGED_AGENT_IDENTITY_BLUEPRINT = "ManagedAgentIdentityBlueprint"
+    """MANAGED_AGENT_IDENTITY_BLUEPRINT."""
+
+
+class AgentEndpointAuthorizationSchemeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentEndpointAuthorizationSchemeType."""
+
+    ENTRA = "Entra"
+    """ENTRA."""
+    BOT_SERVICE = "BotService"
+    """BOT_SERVICE."""
+    BOT_SERVICE_RBAC = "BotServiceRbac"
+    """BOT_SERVICE_RBAC."""
+
+
+class AgentEndpointProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of AgentEndpointProtocol."""
+
+    ACTIVITY = "activity"
+    """ACTIVITY."""
+    RESPONSES = "responses"
+    """RESPONSES."""
+    A2A = "a2a"
+    """A2A."""
+    INVOCATIONS = "invocations"
+    """INVOCATIONS."""
 
 
 class AgentKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -52,6 +106,44 @@ class AgentProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ACTIVITY_PROTOCOL."""
     RESPONSES = "responses"
     """RESPONSES."""
+    INVOCATIONS = "invocations"
+    """INVOCATIONS."""
+
+
+class AgentSessionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of an agent session."""
+
+    CREATING = "creating"
+    """Session initialization is in progress."""
+    ACTIVE = "active"
+    """Session is running and operational."""
+    IDLE = "idle"
+    """Session sandbox is auto-suspended; resumes on next invocation."""
+    UPDATING = "updating"
+    """Reserved for future session re-parenting flows."""
+    FAILED = "failed"
+    """Session initialization or lifecycle handling failed and requires delete to recover."""
+    DELETING = "deleting"
+    """Session is being deleted (cleanup in progress)."""
+    DELETED = "deleted"
+    """Session has been explicitly deleted."""
+    EXPIRED = "expired"
+    """Session TTL exceeded (30 days from last activity)."""
+
+
+class AgentVersionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning status of an agent version."""
+
+    CREATING = "creating"
+    """The agent version is being provisioned."""
+    ACTIVE = "active"
+    """The agent version is active and ready to serve requests."""
+    FAILED = "failed"
+    """The agent version provisioning failed."""
+    DELETING = "deleting"
+    """The agent version is being deleted."""
+    DELETED = "deleted"
+    """The agent version has been deleted."""
 
 
 class AttackStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -358,21 +450,6 @@ class EvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Custom evaluator."""
 
 
-class _FoundryFeaturesOptInKeys(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Type of FoundryFeaturesOptInKeys."""
-
-    EVALUATIONS_V1_PREVIEW = "Evaluations=V1Preview"
-    """EVALUATIONS_V1_PREVIEW."""
-    SCHEDULES_V1_PREVIEW = "Schedules=V1Preview"
-    """SCHEDULES_V1_PREVIEW."""
-    RED_TEAMS_V1_PREVIEW = "RedTeams=V1Preview"
-    """RED_TEAMS_V1_PREVIEW."""
-    INSIGHTS_V1_PREVIEW = "Insights=V1Preview"
-    """INSIGHTS_V1_PREVIEW."""
-    MEMORY_STORES_V1_PREVIEW = "MemoryStores=V1Preview"
-    """MEMORY_STORES_V1_PREVIEW."""
-
-
 class FunctionShellToolParamEnvironmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of FunctionShellToolParamEnvironmentType."""
 
@@ -437,6 +514,15 @@ class InsightType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cluster Insight on an Agent."""
     EVALUATION_COMPARISON = "EvaluationComparison"
     """Evaluation Comparison."""
+
+
+class IsolationKeySourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of IsolationKeySourceKind."""
+
+    ENTRA = "Entra"
+    """ENTRA."""
+    HEADER = "Header"
+    """HEADER."""
 
 
 class MemoryItemKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -630,6 +716,15 @@ class SearchContextSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """HIGH."""
 
 
+class SessionLogEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Known SSE event types emitted by the hosted agent session log stream. Additional event types
+    may be introduced in future versions.
+    """
+
+    LOG = "log"
+    """A log line from the agent session container."""
+
+
 class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of TextResponseFormatConfigurationType."""
 
@@ -709,6 +804,8 @@ class ToolType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SHAREPOINT_GROUNDING_PREVIEW."""
     MEMORY_SEARCH_PREVIEW = "memory_search_preview"
     """MEMORY_SEARCH_PREVIEW."""
+    WORK_IQ_PREVIEW = "work_iq_preview"
+    """WORK_IQ_PREVIEW."""
     AZURE_AI_SEARCH = "azure_ai_search"
     """AZURE_AI_SEARCH."""
     AZURE_FUNCTION = "azure_function"
@@ -745,3 +842,17 @@ class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Recurrence based trigger."""
     ONE_TIME = "OneTime"
     """One-time trigger."""
+
+
+class VersionIndicatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of version indicator used to determine the agent version backing a session."""
+
+    VERSION_REF = "version_ref"
+    """Direct reference to a specific agent version."""
+
+
+class VersionSelectorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of VersionSelectorType."""
+
+    FIXED_RATIO = "FixedRatio"
+    """FIXED_RATIO."""
