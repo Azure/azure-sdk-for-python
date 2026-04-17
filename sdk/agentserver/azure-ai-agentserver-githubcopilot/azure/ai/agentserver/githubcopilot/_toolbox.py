@@ -87,6 +87,8 @@ def discover_mcp_servers(
 
     # Auto-inject headers for toolbox endpoints
     for server in servers.values():
+        if not isinstance(server, dict):
+            continue
         headers = server.setdefault("headers", {})
         if "Authorization" not in headers:
             headers["_auto_auth"] = True
