@@ -33,7 +33,7 @@ python -m pip install azure-ai-language-documents
 
 ### Authenticate the client
 
-To interact with the Documents service, create an instance of [AnalyzeDocumentsClient][documents_client_class]. The **recommended** approach is to use Azure Active Directory via `DefaultAzureCredential` from the [azure-identity][azure_identity_credentials] library.
+To interact with the Documents service, create an instance of `AnalyzeDocumentsClient`<!-- [documents_client_class] -->. The **recommended** approach is to use Azure Active Directory via `DefaultAzureCredential` from the [azure-identity][azure_identity_credentials] library.
 
 > Important: To use Azure AD (AAD) you must use your resource's **custom subdomain** endpoint, for example `https://<my-subdomain>.cognitiveservices.azure.com/`. Regional endpoints do **not** support AAD token authentication.
 
@@ -428,7 +428,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [azure_core_ref_docs]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-core/latest/azure.core.html
 [azure_core_readme]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md
 [pip_link]: https://pypi.org/project/pip/
-[documents_client_class]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-documents/latest/azure.ai.language.documents.html#azure.ai.language.documents.AnalyzeDocumentsClient
+<!-- [documents_client_class]: https://azuresdkdocs.z19.web.core.windows.net/python/azure-ai-language-documents/latest/azure.ai.language.documents.html#azure.ai.language.documents.AnalyzeDocumentsClient -->
 [documents_client_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-documents/
 [documents_docs]: https://learn.microsoft.com/azure/ai-services/language-service/
 [documents_pypi_package]: https://pypi.org/project/azure-ai-language-documents/
