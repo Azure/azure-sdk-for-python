@@ -15,7 +15,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python list_accelerator_deployments.py
+    python update_managed_compute_deployment.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,14 +30,15 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.accelerator_deployments.list(
+    response = client.managed_compute_deployments.begin_update(
         resource_group_name="resourceGroupName",
         account_name="accountName",
-    )
-    for item in response:
-        print(item)
+        deployment_name="myManagedComputeDeployment",
+        properties={"sku": {"capacity": 2, "name": "GlobalManagedCompute"}},
+    ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-03-15-preview/ListAcceleratorDeployments.json
+# x-ms-original-file: 2026-03-15-preview/UpdateManagedComputeDeployment.json
 if __name__ == "__main__":
     main()

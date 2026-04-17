@@ -14,14 +14,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestCognitiveServicesManagementAcceleratorDeploymentsOperations(AzureMgmtRecordedTestCase):
+class TestCognitiveServicesManagementManagedComputeDeploymentsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(CognitiveServicesManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_accelerator_deployments_get(self, resource_group):
-        response = self.client.accelerator_deployments.get(
+    def test_managed_compute_deployments_get(self, resource_group):
+        response = self.client.managed_compute_deployments.get(
             resource_group_name=resource_group.name,
             account_name="str",
             deployment_name="str",
@@ -32,8 +32,8 @@ class TestCognitiveServicesManagementAcceleratorDeploymentsOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_accelerator_deployments_begin_create_or_update(self, resource_group):
-        response = self.client.accelerator_deployments.begin_create_or_update(
+    def test_managed_compute_deployments_begin_create_or_update(self, resource_group):
+        response = self.client.managed_compute_deployments.begin_create_or_update(
             resource_group_name=resource_group.name,
             account_name="str",
             deployment_name="str",
@@ -42,10 +42,10 @@ class TestCognitiveServicesManagementAcceleratorDeploymentsOperations(AzureMgmtR
                 "id": "str",
                 "name": "str",
                 "properties": {
+                    "model": "str",
                     "acceleratorType": "str",
                     "acceleratorsPerInstance": 0,
                     "deploymentTemplate": "str",
-                    "model": "str",
                     "provisioningDetails": {"lastOperationTimestamp": "2020-02-20 00:00:00", "message": "str"},
                     "provisioningState": "str",
                     "routes": {"chatCompletionsScoringPath": "str", "messagesApiScoringPath": "str", "swagger": "str"},
@@ -61,7 +61,6 @@ class TestCognitiveServicesManagementAcceleratorDeploymentsOperations(AzureMgmtR
                     "lastModifiedBy": "str",
                     "lastModifiedByType": "str",
                 },
-                "tags": {"str": "str"},
                 "type": "str",
             },
         ).result()  # call '.result()' to poll until service return final result
@@ -71,15 +70,12 @@ class TestCognitiveServicesManagementAcceleratorDeploymentsOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_accelerator_deployments_begin_update(self, resource_group):
-        response = self.client.accelerator_deployments.begin_update(
+    def test_managed_compute_deployments_begin_update(self, resource_group):
+        response = self.client.managed_compute_deployments.begin_update(
             resource_group_name=resource_group.name,
             account_name="str",
             deployment_name="str",
-            properties={
-                "sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"},
-                "tags": {"str": "str"},
-            },
+            properties={"sku": {"name": "str", "capacity": 0, "family": "str", "size": "str", "tier": "str"}},
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -87,8 +83,8 @@ class TestCognitiveServicesManagementAcceleratorDeploymentsOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_accelerator_deployments_begin_delete(self, resource_group):
-        response = self.client.accelerator_deployments.begin_delete(
+    def test_managed_compute_deployments_begin_delete(self, resource_group):
+        response = self.client.managed_compute_deployments.begin_delete(
             resource_group_name=resource_group.name,
             account_name="str",
             deployment_name="str",
@@ -99,8 +95,8 @@ class TestCognitiveServicesManagementAcceleratorDeploymentsOperations(AzureMgmtR
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_accelerator_deployments_list(self, resource_group):
-        response = self.client.accelerator_deployments.list(
+    def test_managed_compute_deployments_list(self, resource_group):
+        response = self.client.managed_compute_deployments.list(
             resource_group_name=resource_group.name,
             account_name="str",
         )

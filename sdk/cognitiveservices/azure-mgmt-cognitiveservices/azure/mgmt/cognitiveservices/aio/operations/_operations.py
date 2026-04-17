@@ -39,11 +39,6 @@ from ..._utils.serialization import Deserializer, Serializer
 from ..._utils.utils import ClientMixinABC
 from ..._validation import api_version_validation
 from ...operations._operations import (
-    build_accelerator_deployments_create_or_update_request,
-    build_accelerator_deployments_delete_request,
-    build_accelerator_deployments_get_request,
-    build_accelerator_deployments_list_request,
-    build_accelerator_deployments_update_request,
     build_account_capability_hosts_create_or_update_request,
     build_account_capability_hosts_delete_request,
     build_account_capability_hosts_get_request,
@@ -116,6 +111,11 @@ from ...operations._operations import (
     build_encryption_scopes_get_request,
     build_encryption_scopes_list_request,
     build_location_based_model_capacities_list_request,
+    build_managed_compute_deployments_create_or_update_request,
+    build_managed_compute_deployments_delete_request,
+    build_managed_compute_deployments_get_request,
+    build_managed_compute_deployments_list_request,
+    build_managed_compute_deployments_update_request,
     build_managed_network_provisions_provision_managed_network_request,
     build_managed_network_settings_delete_request,
     build_managed_network_settings_get_request,
@@ -13897,14 +13897,14 @@ class AgentApplicationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class AcceleratorDeploymentsOperations:
+class ManagedComputeDeploymentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.cognitiveservices.aio.CognitiveServicesManagementClient`'s
-        :attr:`accelerator_deployments` attribute.
+        :attr:`managed_compute_deployments` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -13933,19 +13933,20 @@ class AcceleratorDeploymentsOperations:
     )
     async def get(
         self, resource_group_name: str, account_name: str, deployment_name: str, **kwargs: Any
-    ) -> _models.AcceleratorDeployment:
-        """Gets the specified accelerator deployment associated with the Cognitive Services account.
+    ) -> _models.ManagedComputeDeployment:
+        """Gets the specified managed compute deployment associated with the Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :return: AcceleratorDeployment. The AcceleratorDeployment is compatible with MutableMapping
-        :rtype: ~azure.mgmt.cognitiveservices.models.AcceleratorDeployment
+        :return: ManagedComputeDeployment. The ManagedComputeDeployment is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -13959,9 +13960,9 @@ class AcceleratorDeploymentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AcceleratorDeployment] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ManagedComputeDeployment] = kwargs.pop("cls", None)
 
-        _request = build_accelerator_deployments_get_request(
+        _request = build_managed_compute_deployments_get_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             deployment_name=deployment_name,
@@ -13999,7 +14000,7 @@ class AcceleratorDeploymentsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.AcceleratorDeployment, response.json())
+            deserialized = _deserialize(_models.ManagedComputeDeployment, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -14026,7 +14027,7 @@ class AcceleratorDeploymentsOperations:
         resource_group_name: str,
         account_name: str,
         deployment_name: str,
-        resource: Union[_models.AcceleratorDeployment, JSON, IO[bytes]],
+        resource: Union[_models.ManagedComputeDeployment, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14050,7 +14051,7 @@ class AcceleratorDeploymentsOperations:
         else:
             _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_accelerator_deployments_create_or_update_request(
+        _request = build_managed_compute_deployments_create_or_update_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             deployment_name=deployment_name,
@@ -14106,30 +14107,30 @@ class AcceleratorDeploymentsOperations:
         resource_group_name: str,
         account_name: str,
         deployment_name: str,
-        resource: _models.AcceleratorDeployment,
+        resource: _models.ManagedComputeDeployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AcceleratorDeployment]:
-        """Creates or updates an accelerator deployment associated with the Cognitive Services account.
+    ) -> AsyncLROPoller[_models.ManagedComputeDeployment]:
+        """Creates or updates a managed compute deployment associated with the Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param resource: The accelerator deployment properties. Required.
-        :type resource: ~azure.mgmt.cognitiveservices.models.AcceleratorDeployment
+        :param resource: The managed compute deployment properties. Required.
+        :type resource: ~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns AcceleratorDeployment. The
-         AcceleratorDeployment is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -14143,26 +14144,26 @@ class AcceleratorDeploymentsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AcceleratorDeployment]:
-        """Creates or updates an accelerator deployment associated with the Cognitive Services account.
+    ) -> AsyncLROPoller[_models.ManagedComputeDeployment]:
+        """Creates or updates a managed compute deployment associated with the Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param resource: The accelerator deployment properties. Required.
+        :param resource: The managed compute deployment properties. Required.
         :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns AcceleratorDeployment. The
-         AcceleratorDeployment is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -14176,26 +14177,26 @@ class AcceleratorDeploymentsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AcceleratorDeployment]:
-        """Creates or updates an accelerator deployment associated with the Cognitive Services account.
+    ) -> AsyncLROPoller[_models.ManagedComputeDeployment]:
+        """Creates or updates a managed compute deployment associated with the Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param resource: The accelerator deployment properties. Required.
+        :param resource: The managed compute deployment properties. Required.
         :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns AcceleratorDeployment. The
-         AcceleratorDeployment is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -14220,33 +14221,34 @@ class AcceleratorDeploymentsOperations:
         resource_group_name: str,
         account_name: str,
         deployment_name: str,
-        resource: Union[_models.AcceleratorDeployment, JSON, IO[bytes]],
+        resource: Union[_models.ManagedComputeDeployment, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AcceleratorDeployment]:
-        """Creates or updates an accelerator deployment associated with the Cognitive Services account.
+    ) -> AsyncLROPoller[_models.ManagedComputeDeployment]:
+        """Creates or updates a managed compute deployment associated with the Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param resource: The accelerator deployment properties. Is one of the following types:
-         AcceleratorDeployment, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.cognitiveservices.models.AcceleratorDeployment or JSON or IO[bytes]
-        :return: An instance of AsyncLROPoller that returns AcceleratorDeployment. The
-         AcceleratorDeployment is compatible with MutableMapping
+        :param resource: The managed compute deployment properties. Is one of the following types:
+         ManagedComputeDeployment, JSON, IO[bytes] Required.
+        :type resource: ~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment or JSON or
+         IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AcceleratorDeployment] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ManagedComputeDeployment] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -14267,7 +14269,7 @@ class AcceleratorDeploymentsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.AcceleratorDeployment, response.json())
+            deserialized = _deserialize(_models.ManagedComputeDeployment, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -14285,13 +14287,13 @@ class AcceleratorDeploymentsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.AcceleratorDeployment].from_continuation_token(
+            return AsyncLROPoller[_models.ManagedComputeDeployment].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.AcceleratorDeployment](
+        return AsyncLROPoller[_models.ManagedComputeDeployment](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -14315,7 +14317,7 @@ class AcceleratorDeploymentsOperations:
         resource_group_name: str,
         account_name: str,
         deployment_name: str,
-        properties: Union[_models.PatchResourceTagsAndSku, JSON, IO[bytes]],
+        properties: Union[_models.PatchResourceSku, JSON, IO[bytes]],
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
@@ -14339,7 +14341,7 @@ class AcceleratorDeploymentsOperations:
         else:
             _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_accelerator_deployments_update_request(
+        _request = build_managed_compute_deployments_update_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             deployment_name=deployment_name,
@@ -14379,6 +14381,9 @@ class AcceleratorDeploymentsOperations:
         if response.status_code == 202:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -14393,30 +14398,31 @@ class AcceleratorDeploymentsOperations:
         resource_group_name: str,
         account_name: str,
         deployment_name: str,
-        properties: _models.PatchResourceTagsAndSku,
+        properties: _models.PatchResourceSku,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AcceleratorDeployment]:
-        """Updates the specified accelerator deployment associated with the Cognitive Services account.
+    ) -> AsyncLROPoller[_models.ManagedComputeDeployment]:
+        """Updates the specified managed compute deployment associated with the Cognitive Services
+        account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param properties: The accelerator deployment patch properties. Required.
-        :type properties: ~azure.mgmt.cognitiveservices.models.PatchResourceTagsAndSku
+        :param properties: The managed compute deployment patch properties. Required.
+        :type properties: ~azure.mgmt.cognitiveservices.models.PatchResourceSku
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns AcceleratorDeployment. The
-         AcceleratorDeployment is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -14430,26 +14436,27 @@ class AcceleratorDeploymentsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AcceleratorDeployment]:
-        """Updates the specified accelerator deployment associated with the Cognitive Services account.
+    ) -> AsyncLROPoller[_models.ManagedComputeDeployment]:
+        """Updates the specified managed compute deployment associated with the Cognitive Services
+        account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param properties: The accelerator deployment patch properties. Required.
+        :param properties: The managed compute deployment patch properties. Required.
         :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns AcceleratorDeployment. The
-         AcceleratorDeployment is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -14463,26 +14470,27 @@ class AcceleratorDeploymentsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AcceleratorDeployment]:
-        """Updates the specified accelerator deployment associated with the Cognitive Services account.
+    ) -> AsyncLROPoller[_models.ManagedComputeDeployment]:
+        """Updates the specified managed compute deployment associated with the Cognitive Services
+        account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param properties: The accelerator deployment patch properties. Required.
+        :param properties: The managed compute deployment patch properties. Required.
         :type properties: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of AsyncLROPoller that returns AcceleratorDeployment. The
-         AcceleratorDeployment is compatible with MutableMapping
+        :return: An instance of AsyncLROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -14507,34 +14515,34 @@ class AcceleratorDeploymentsOperations:
         resource_group_name: str,
         account_name: str,
         deployment_name: str,
-        properties: Union[_models.PatchResourceTagsAndSku, JSON, IO[bytes]],
+        properties: Union[_models.PatchResourceSku, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.AcceleratorDeployment]:
-        """Updates the specified accelerator deployment associated with the Cognitive Services account.
+    ) -> AsyncLROPoller[_models.ManagedComputeDeployment]:
+        """Updates the specified managed compute deployment associated with the Cognitive Services
+        account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param properties: The accelerator deployment patch properties. Is one of the following types:
-         PatchResourceTagsAndSku, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.cognitiveservices.models.PatchResourceTagsAndSku or JSON or
-         IO[bytes]
-        :return: An instance of AsyncLROPoller that returns AcceleratorDeployment. The
-         AcceleratorDeployment is compatible with MutableMapping
+        :param properties: The managed compute deployment patch properties. Is one of the following
+         types: PatchResourceSku, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.cognitiveservices.models.PatchResourceSku or JSON or IO[bytes]
+        :return: An instance of AsyncLROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AcceleratorDeployment] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ManagedComputeDeployment] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -14555,7 +14563,7 @@ class AcceleratorDeploymentsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.AcceleratorDeployment, response.json())
+            deserialized = _deserialize(_models.ManagedComputeDeployment, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -14573,13 +14581,13 @@ class AcceleratorDeploymentsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return AsyncLROPoller[_models.AcceleratorDeployment].from_continuation_token(
+            return AsyncLROPoller[_models.ManagedComputeDeployment].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller[_models.AcceleratorDeployment](
+        return AsyncLROPoller[_models.ManagedComputeDeployment](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -14612,7 +14620,7 @@ class AcceleratorDeploymentsOperations:
 
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_accelerator_deployments_delete_request(
+        _request = build_managed_compute_deployments_delete_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             deployment_name=deployment_name,
@@ -14648,7 +14656,10 @@ class AcceleratorDeploymentsOperations:
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -14675,15 +14686,16 @@ class AcceleratorDeploymentsOperations:
     async def begin_delete(
         self, resource_group_name: str, account_name: str, deployment_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
-        """Deletes the specified accelerator deployment associated with the Cognitive Services account.
+        """Deletes the specified managed compute deployment associated with the Cognitive Services
+        account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
@@ -14744,23 +14756,23 @@ class AcceleratorDeploymentsOperations:
     )
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> AsyncItemPaged["_models.AcceleratorDeployment"]:
-        """Gets the accelerator deployments associated with the Cognitive Services account.
+    ) -> AsyncItemPaged["_models.ManagedComputeDeployment"]:
+        """Gets the managed compute deployments associated with the Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :return: An iterator like instance of AcceleratorDeployment
+        :return: An iterator like instance of ManagedComputeDeployment
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AcceleratorDeployment]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ManagedComputeDeployment]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -14773,7 +14785,7 @@ class AcceleratorDeploymentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_accelerator_deployments_list_request(
+                _request = build_managed_compute_deployments_list_request(
                     resource_group_name=resource_group_name,
                     account_name=account_name,
                     subscription_id=self._config.subscription_id,
@@ -14813,7 +14825,7 @@ class AcceleratorDeploymentsOperations:
         async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.AcceleratorDeployment],
+                List[_models.ManagedComputeDeployment],
                 deserialized.get("value", []),
             )
             if cls:

@@ -15,7 +15,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python delete_accelerator_deployment.py
+    python get_managed_compute_deployment.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.accelerator_deployments.begin_delete(
+    response = client.managed_compute_deployments.get(
         resource_group_name="resourceGroupName",
         account_name="accountName",
-        deployment_name="myAcceleratorDeployment",
-    ).result()
+        deployment_name="myManagedComputeDeployment",
+    )
+    print(response)
 
 
-# x-ms-original-file: 2026-03-15-preview/DeleteAcceleratorDeployment.json
+# x-ms-original-file: 2026-03-15-preview/GetManagedComputeDeployment.json
 if __name__ == "__main__":
     main()

@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.cognitiveservices import CognitiveServicesManagementClient
     pip install azure-identity
     pip install azure-mgmt-cognitiveservices
 # USAGE
-    python update_accelerator_deployment.py
+    python create_or_update_managed_compute_deployment.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,15 +31,23 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.accelerator_deployments.begin_update(
+    response = client.managed_compute_deployments.begin_create_or_update(
         resource_group_name="resourceGroupName",
         account_name="accountName",
-        deployment_name="myAcceleratorDeployment",
-        properties={"sku": {"capacity": 2, "name": "GlobalManagedCompute"}, "tags": {"environment": "production"}},
+        deployment_name="myManagedComputeDeployment",
+        resource={
+            "properties": {
+                "acceleratorType": "H100_80GB",
+                "deploymentTemplate": "azureml://registries/azureml/deploymenttemplates/Llama-3.1-8B-Instruct/versions/3",
+                "model": "azureml://registries/azureml/models/Llama-3.1-8B-Instruct/versions/3",
+                "versionUpgradeOption": "OnceNewDefaultVersionAvailable",
+            },
+            "sku": {"capacity": 1, "name": "GlobalManagedCompute"},
+        },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-03-15-preview/UpdateAcceleratorDeployment.json
+# x-ms-original-file: 2026-03-15-preview/CreateOrUpdateManagedComputeDeployment.json
 if __name__ == "__main__":
     main()

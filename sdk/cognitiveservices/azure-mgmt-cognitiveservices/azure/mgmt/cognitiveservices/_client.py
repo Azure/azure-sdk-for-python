@@ -20,7 +20,6 @@ from azure.mgmt.core.tools import get_arm_endpoints
 from ._configuration import CognitiveServicesManagementClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
-    AcceleratorDeploymentsOperations,
     AccountCapabilityHostsOperations,
     AccountConnectionsOperations,
     AccountsOperations,
@@ -34,6 +33,7 @@ from .operations import (
     DeploymentsOperations,
     EncryptionScopesOperations,
     LocationBasedModelCapacitiesOperations,
+    ManagedComputeDeploymentsOperations,
     ManagedNetworkProvisionsOperations,
     ManagedNetworkSettingsOperations,
     ModelCapacitiesOperations,
@@ -125,9 +125,9 @@ class CognitiveServicesManagementClient(
     :ivar agent_applications: AgentApplicationsOperations operations
     :vartype agent_applications:
      azure.mgmt.cognitiveservices.operations.AgentApplicationsOperations
-    :ivar accelerator_deployments: AcceleratorDeploymentsOperations operations
-    :vartype accelerator_deployments:
-     azure.mgmt.cognitiveservices.operations.AcceleratorDeploymentsOperations
+    :ivar managed_compute_deployments: ManagedComputeDeploymentsOperations operations
+    :vartype managed_compute_deployments:
+     azure.mgmt.cognitiveservices.operations.ManagedComputeDeploymentsOperations
     :ivar compute_operations: ComputeOperationsOperations operations
     :vartype compute_operations:
      azure.mgmt.cognitiveservices.operations.ComputeOperationsOperations
@@ -283,7 +283,7 @@ class CognitiveServicesManagementClient(
         self.agent_applications = AgentApplicationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.accelerator_deployments = AcceleratorDeploymentsOperations(
+        self.managed_compute_deployments = ManagedComputeDeploymentsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.compute_operations = ComputeOperationsOperations(

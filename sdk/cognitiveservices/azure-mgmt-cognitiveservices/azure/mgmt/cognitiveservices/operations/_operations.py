@@ -3104,7 +3104,7 @@ def build_agent_applications_disable_request(
     return HttpRequest(method="POST", url=_url, params=_params, **kwargs)
 
 
-def build_accelerator_deployments_get_request(  # pylint: disable=name-too-long
+def build_managed_compute_deployments_get_request(  # pylint: disable=name-too-long
     resource_group_name: str, account_name: str, deployment_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3114,7 +3114,7 @@ def build_accelerator_deployments_get_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/acceleratorDeployments/{deploymentName}"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/managedComputeDeployments/{deploymentName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -3133,7 +3133,7 @@ def build_accelerator_deployments_get_request(  # pylint: disable=name-too-long
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_accelerator_deployments_create_or_update_request(  # pylint: disable=name-too-long
+def build_managed_compute_deployments_create_or_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, account_name: str, deployment_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3144,7 +3144,7 @@ def build_accelerator_deployments_create_or_update_request(  # pylint: disable=n
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/acceleratorDeployments/{deploymentName}"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/managedComputeDeployments/{deploymentName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -3165,7 +3165,7 @@ def build_accelerator_deployments_create_or_update_request(  # pylint: disable=n
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_accelerator_deployments_update_request(  # pylint: disable=name-too-long
+def build_managed_compute_deployments_update_request(  # pylint: disable=name-too-long
     resource_group_name: str, account_name: str, deployment_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3176,7 +3176,7 @@ def build_accelerator_deployments_update_request(  # pylint: disable=name-too-lo
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/acceleratorDeployments/{deploymentName}"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/managedComputeDeployments/{deploymentName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -3197,14 +3197,14 @@ def build_accelerator_deployments_update_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_accelerator_deployments_delete_request(  # pylint: disable=name-too-long
+def build_managed_compute_deployments_delete_request(  # pylint: disable=name-too-long
     resource_group_name: str, account_name: str, deployment_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-03-15-preview"))
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/acceleratorDeployments/{deploymentName}"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/managedComputeDeployments/{deploymentName}"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -3220,7 +3220,7 @@ def build_accelerator_deployments_delete_request(  # pylint: disable=name-too-lo
     return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
 
 
-def build_accelerator_deployments_list_request(  # pylint: disable=name-too-long
+def build_managed_compute_deployments_list_request(  # pylint: disable=name-too-long
     resource_group_name: str, account_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3230,7 +3230,7 @@ def build_accelerator_deployments_list_request(  # pylint: disable=name-too-long
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/acceleratorDeployments"
+    _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CognitiveServices/accounts/{accountName}/managedComputeDeployments"
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
         "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
@@ -18178,14 +18178,14 @@ class AgentApplicationsOperations:
             return cls(pipeline_response, None, {})  # type: ignore
 
 
-class AcceleratorDeploymentsOperations:
+class ManagedComputeDeploymentsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.cognitiveservices.CognitiveServicesManagementClient`'s
-        :attr:`accelerator_deployments` attribute.
+        :attr:`managed_compute_deployments` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -18214,19 +18214,20 @@ class AcceleratorDeploymentsOperations:
     )
     def get(
         self, resource_group_name: str, account_name: str, deployment_name: str, **kwargs: Any
-    ) -> _models.AcceleratorDeployment:
-        """Gets the specified accelerator deployment associated with the Cognitive Services account.
+    ) -> _models.ManagedComputeDeployment:
+        """Gets the specified managed compute deployment associated with the Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :return: AcceleratorDeployment. The AcceleratorDeployment is compatible with MutableMapping
-        :rtype: ~azure.mgmt.cognitiveservices.models.AcceleratorDeployment
+        :return: ManagedComputeDeployment. The ManagedComputeDeployment is compatible with
+         MutableMapping
+        :rtype: ~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map: MutableMapping = {
@@ -18240,9 +18241,9 @@ class AcceleratorDeploymentsOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.AcceleratorDeployment] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ManagedComputeDeployment] = kwargs.pop("cls", None)
 
-        _request = build_accelerator_deployments_get_request(
+        _request = build_managed_compute_deployments_get_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             deployment_name=deployment_name,
@@ -18280,7 +18281,7 @@ class AcceleratorDeploymentsOperations:
         if _stream:
             deserialized = response.iter_bytes() if _decompress else response.iter_raw()
         else:
-            deserialized = _deserialize(_models.AcceleratorDeployment, response.json())
+            deserialized = _deserialize(_models.ManagedComputeDeployment, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -18307,7 +18308,7 @@ class AcceleratorDeploymentsOperations:
         resource_group_name: str,
         account_name: str,
         deployment_name: str,
-        resource: Union[_models.AcceleratorDeployment, JSON, IO[bytes]],
+        resource: Union[_models.ManagedComputeDeployment, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -18331,7 +18332,7 @@ class AcceleratorDeploymentsOperations:
         else:
             _content = json.dumps(resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_accelerator_deployments_create_or_update_request(
+        _request = build_managed_compute_deployments_create_or_update_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             deployment_name=deployment_name,
@@ -18387,30 +18388,30 @@ class AcceleratorDeploymentsOperations:
         resource_group_name: str,
         account_name: str,
         deployment_name: str,
-        resource: _models.AcceleratorDeployment,
+        resource: _models.ManagedComputeDeployment,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.AcceleratorDeployment]:
-        """Creates or updates an accelerator deployment associated with the Cognitive Services account.
+    ) -> LROPoller[_models.ManagedComputeDeployment]:
+        """Creates or updates a managed compute deployment associated with the Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param resource: The accelerator deployment properties. Required.
-        :type resource: ~azure.mgmt.cognitiveservices.models.AcceleratorDeployment
+        :param resource: The managed compute deployment properties. Required.
+        :type resource: ~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns AcceleratorDeployment. The AcceleratorDeployment
-         is compatible with MutableMapping
+        :return: An instance of LROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -18424,26 +18425,26 @@ class AcceleratorDeploymentsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.AcceleratorDeployment]:
-        """Creates or updates an accelerator deployment associated with the Cognitive Services account.
+    ) -> LROPoller[_models.ManagedComputeDeployment]:
+        """Creates or updates a managed compute deployment associated with the Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param resource: The accelerator deployment properties. Required.
+        :param resource: The managed compute deployment properties. Required.
         :type resource: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns AcceleratorDeployment. The AcceleratorDeployment
-         is compatible with MutableMapping
+        :return: An instance of LROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -18457,26 +18458,26 @@ class AcceleratorDeploymentsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.AcceleratorDeployment]:
-        """Creates or updates an accelerator deployment associated with the Cognitive Services account.
+    ) -> LROPoller[_models.ManagedComputeDeployment]:
+        """Creates or updates a managed compute deployment associated with the Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param resource: The accelerator deployment properties. Required.
+        :param resource: The managed compute deployment properties. Required.
         :type resource: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns AcceleratorDeployment. The AcceleratorDeployment
-         is compatible with MutableMapping
+        :return: An instance of LROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -18501,33 +18502,34 @@ class AcceleratorDeploymentsOperations:
         resource_group_name: str,
         account_name: str,
         deployment_name: str,
-        resource: Union[_models.AcceleratorDeployment, JSON, IO[bytes]],
+        resource: Union[_models.ManagedComputeDeployment, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[_models.AcceleratorDeployment]:
-        """Creates or updates an accelerator deployment associated with the Cognitive Services account.
+    ) -> LROPoller[_models.ManagedComputeDeployment]:
+        """Creates or updates a managed compute deployment associated with the Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param resource: The accelerator deployment properties. Is one of the following types:
-         AcceleratorDeployment, JSON, IO[bytes] Required.
-        :type resource: ~azure.mgmt.cognitiveservices.models.AcceleratorDeployment or JSON or IO[bytes]
-        :return: An instance of LROPoller that returns AcceleratorDeployment. The AcceleratorDeployment
-         is compatible with MutableMapping
+        :param resource: The managed compute deployment properties. Is one of the following types:
+         ManagedComputeDeployment, JSON, IO[bytes] Required.
+        :type resource: ~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment or JSON or
+         IO[bytes]
+        :return: An instance of LROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AcceleratorDeployment] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ManagedComputeDeployment] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -18548,7 +18550,7 @@ class AcceleratorDeploymentsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.AcceleratorDeployment, response.json())
+            deserialized = _deserialize(_models.ManagedComputeDeployment, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -18566,13 +18568,13 @@ class AcceleratorDeploymentsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.AcceleratorDeployment].from_continuation_token(
+            return LROPoller[_models.ManagedComputeDeployment].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.AcceleratorDeployment](
+        return LROPoller[_models.ManagedComputeDeployment](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -18596,7 +18598,7 @@ class AcceleratorDeploymentsOperations:
         resource_group_name: str,
         account_name: str,
         deployment_name: str,
-        properties: Union[_models.PatchResourceTagsAndSku, JSON, IO[bytes]],
+        properties: Union[_models.PatchResourceSku, JSON, IO[bytes]],
         **kwargs: Any
     ) -> Iterator[bytes]:
         error_map: MutableMapping = {
@@ -18620,7 +18622,7 @@ class AcceleratorDeploymentsOperations:
         else:
             _content = json.dumps(properties, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_accelerator_deployments_update_request(
+        _request = build_managed_compute_deployments_update_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             deployment_name=deployment_name,
@@ -18660,6 +18662,9 @@ class AcceleratorDeploymentsOperations:
         if response.status_code == 202:
             response_headers["location"] = self._deserialize("str", response.headers.get("location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
 
@@ -18674,30 +18679,31 @@ class AcceleratorDeploymentsOperations:
         resource_group_name: str,
         account_name: str,
         deployment_name: str,
-        properties: _models.PatchResourceTagsAndSku,
+        properties: _models.PatchResourceSku,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.AcceleratorDeployment]:
-        """Updates the specified accelerator deployment associated with the Cognitive Services account.
+    ) -> LROPoller[_models.ManagedComputeDeployment]:
+        """Updates the specified managed compute deployment associated with the Cognitive Services
+        account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param properties: The accelerator deployment patch properties. Required.
-        :type properties: ~azure.mgmt.cognitiveservices.models.PatchResourceTagsAndSku
+        :param properties: The managed compute deployment patch properties. Required.
+        :type properties: ~azure.mgmt.cognitiveservices.models.PatchResourceSku
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns AcceleratorDeployment. The AcceleratorDeployment
-         is compatible with MutableMapping
+        :return: An instance of LROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -18711,26 +18717,27 @@ class AcceleratorDeploymentsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.AcceleratorDeployment]:
-        """Updates the specified accelerator deployment associated with the Cognitive Services account.
+    ) -> LROPoller[_models.ManagedComputeDeployment]:
+        """Updates the specified managed compute deployment associated with the Cognitive Services
+        account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param properties: The accelerator deployment patch properties. Required.
+        :param properties: The managed compute deployment patch properties. Required.
         :type properties: JSON
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns AcceleratorDeployment. The AcceleratorDeployment
-         is compatible with MutableMapping
+        :return: An instance of LROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -18744,26 +18751,27 @@ class AcceleratorDeploymentsOperations:
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> LROPoller[_models.AcceleratorDeployment]:
-        """Updates the specified accelerator deployment associated with the Cognitive Services account.
+    ) -> LROPoller[_models.ManagedComputeDeployment]:
+        """Updates the specified managed compute deployment associated with the Cognitive Services
+        account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param properties: The accelerator deployment patch properties. Required.
+        :param properties: The managed compute deployment patch properties. Required.
         :type properties: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: An instance of LROPoller that returns AcceleratorDeployment. The AcceleratorDeployment
-         is compatible with MutableMapping
+        :return: An instance of LROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
@@ -18788,34 +18796,34 @@ class AcceleratorDeploymentsOperations:
         resource_group_name: str,
         account_name: str,
         deployment_name: str,
-        properties: Union[_models.PatchResourceTagsAndSku, JSON, IO[bytes]],
+        properties: Union[_models.PatchResourceSku, JSON, IO[bytes]],
         **kwargs: Any
-    ) -> LROPoller[_models.AcceleratorDeployment]:
-        """Updates the specified accelerator deployment associated with the Cognitive Services account.
+    ) -> LROPoller[_models.ManagedComputeDeployment]:
+        """Updates the specified managed compute deployment associated with the Cognitive Services
+        account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
-        :param properties: The accelerator deployment patch properties. Is one of the following types:
-         PatchResourceTagsAndSku, JSON, IO[bytes] Required.
-        :type properties: ~azure.mgmt.cognitiveservices.models.PatchResourceTagsAndSku or JSON or
-         IO[bytes]
-        :return: An instance of LROPoller that returns AcceleratorDeployment. The AcceleratorDeployment
-         is compatible with MutableMapping
+        :param properties: The managed compute deployment patch properties. Is one of the following
+         types: PatchResourceSku, JSON, IO[bytes] Required.
+        :type properties: ~azure.mgmt.cognitiveservices.models.PatchResourceSku or JSON or IO[bytes]
+        :return: An instance of LROPoller that returns ManagedComputeDeployment. The
+         ManagedComputeDeployment is compatible with MutableMapping
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.polling.LROPoller[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.AcceleratorDeployment] = kwargs.pop("cls", None)
+        cls: ClsType[_models.ManagedComputeDeployment] = kwargs.pop("cls", None)
         polling: Union[bool, PollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
@@ -18836,7 +18844,7 @@ class AcceleratorDeploymentsOperations:
 
         def get_long_running_output(pipeline_response):
             response = pipeline_response.http_response
-            deserialized = _deserialize(_models.AcceleratorDeployment, response.json())
+            deserialized = _deserialize(_models.ManagedComputeDeployment, response.json())
             if cls:
                 return cls(pipeline_response, deserialized, {})  # type: ignore
             return deserialized
@@ -18854,13 +18862,13 @@ class AcceleratorDeploymentsOperations:
         else:
             polling_method = polling
         if cont_token:
-            return LROPoller[_models.AcceleratorDeployment].from_continuation_token(
+            return LROPoller[_models.ManagedComputeDeployment].from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return LROPoller[_models.AcceleratorDeployment](
+        return LROPoller[_models.ManagedComputeDeployment](
             self._client, raw_result, get_long_running_output, polling_method  # type: ignore
         )
 
@@ -18893,7 +18901,7 @@ class AcceleratorDeploymentsOperations:
 
         cls: ClsType[Iterator[bytes]] = kwargs.pop("cls", None)
 
-        _request = build_accelerator_deployments_delete_request(
+        _request = build_managed_compute_deployments_delete_request(
             resource_group_name=resource_group_name,
             account_name=account_name,
             deployment_name=deployment_name,
@@ -18929,7 +18937,10 @@ class AcceleratorDeploymentsOperations:
 
         response_headers = {}
         if response.status_code == 202:
-            response_headers["location"] = self._deserialize("str", response.headers.get("location"))
+            response_headers["Azure-AsyncOperation"] = self._deserialize(
+                "str", response.headers.get("Azure-AsyncOperation")
+            )
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
             response_headers["Retry-After"] = self._deserialize("int", response.headers.get("Retry-After"))
 
         deserialized = response.iter_bytes() if _decompress else response.iter_raw()
@@ -18956,15 +18967,16 @@ class AcceleratorDeploymentsOperations:
     def begin_delete(
         self, resource_group_name: str, account_name: str, deployment_name: str, **kwargs: Any
     ) -> LROPoller[None]:
-        """Deletes the specified accelerator deployment associated with the Cognitive Services account.
+        """Deletes the specified managed compute deployment associated with the Cognitive Services
+        account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :param deployment_name: The name of the accelerator deployment associated with the Cognitive
-         Services Account. Required.
+        :param deployment_name: The name of the managed compute deployment associated with the
+         Cognitive Services Account. Required.
         :type deployment_name: str
         :return: An instance of LROPoller that returns None
         :rtype: ~azure.core.polling.LROPoller[None]
@@ -19025,23 +19037,23 @@ class AcceleratorDeploymentsOperations:
     )
     def list(
         self, resource_group_name: str, account_name: str, **kwargs: Any
-    ) -> ItemPaged["_models.AcceleratorDeployment"]:
-        """Gets the accelerator deployments associated with the Cognitive Services account.
+    ) -> ItemPaged["_models.ManagedComputeDeployment"]:
+        """Gets the managed compute deployments associated with the Cognitive Services account.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
         :param account_name: The name of Cognitive Services account. Required.
         :type account_name: str
-        :return: An iterator like instance of AcceleratorDeployment
+        :return: An iterator like instance of ManagedComputeDeployment
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.AcceleratorDeployment]
+         ~azure.core.paging.ItemPaged[~azure.mgmt.cognitiveservices.models.ManagedComputeDeployment]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[List[_models.AcceleratorDeployment]] = kwargs.pop("cls", None)
+        cls: ClsType[List[_models.ManagedComputeDeployment]] = kwargs.pop("cls", None)
 
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -19054,7 +19066,7 @@ class AcceleratorDeploymentsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_accelerator_deployments_list_request(
+                _request = build_managed_compute_deployments_list_request(
                     resource_group_name=resource_group_name,
                     account_name=account_name,
                     subscription_id=self._config.subscription_id,
@@ -19094,7 +19106,7 @@ class AcceleratorDeploymentsOperations:
         def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = _deserialize(
-                List[_models.AcceleratorDeployment],
+                List[_models.ManagedComputeDeployment],
                 deserialized.get("value", []),
             )
             if cls:
