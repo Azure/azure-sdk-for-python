@@ -17,7 +17,7 @@
 
 ### Breaking Changes
 
-  - All Cloud Services (classic) APIs have been removed following the [retirement of Azure Cloud Services (classic)](https://azure.microsoft.com/en-us/updates?id=486344). Removed APIs include operation groups `CloudServicesOperations`, `CloudServiceRoleInstancesOperations`, `CloudServiceRolesOperations`, `CloudServiceOperatingSystemsOperations`, `CloudServicesUpdateDomainOperations`, all associated models (`CloudService*`, `Extension`, `InstanceSku`, `InstanceViewStatusesSummary`, `LoadBalancerConfiguration*`, `LoadBalancerFrontendIpConfiguration*`, `OSFamily*`, `OSVersion*`, `ResourceInstanceViewStatus`, `ResourceWithOptionalLocation`, `RoleInstance*`, `RoleInstances`, `StatusCodeCount`, `UpdateDomain`) and enums (`CloudServiceSlotType`, `CloudServiceUpgradeMode`)
+  - All Cloud Services (classic) related operations have been removed due to the [Azure Cloud Services (classic) retirement](https://azure.microsoft.com/updates?id=486344).
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
   - Deleted or renamed enum `AvailabilitySetSkuTypes`
