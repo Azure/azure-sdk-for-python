@@ -81,7 +81,7 @@ AI agents can assist with the following activities:
 
 ### Relationship to Copilot Instructions
 
-This `AGENTS.md` file is the primary reference for AI agents working in this repository. It follows the [AGENTS.md standard](https://github.com/anthropics/agents-md) that most AI coding tools recognize automatically. For additional Copilot-specific guidance (e.g., TypeSpec generation details, MCP tool usage), see [`.github/copilot-instructions.md`](.github/copilot-instructions.md). Reusable skills are available in [`.github/skills/`](.github/skills/) and prompt templates in [`.github/prompts/`](.github/prompts/).
+This `AGENTS.md` file is the primary reference for AI agents working in this repository. It follows the [AGENTS.md standard](https://github.com/agentsmd/agents.md) that most AI coding tools recognize automatically. For additional Copilot-specific guidance (e.g., TypeSpec generation details, MCP tool usage), see [`.github/copilot-instructions.md`](https://github.com/Azure/azure-sdk-for-python/blob/main/.github/copilot-instructions.md). Reusable skills are available in [`.github/skills/`](https://github.com/Azure/azure-sdk-for-python/tree/main/.github/skills/) and prompt templates in [`.github/prompts/`](https://github.com/Azure/azure-sdk-for-python/tree/main/.github/prompts/).
 
 ### Key Workflows
 
