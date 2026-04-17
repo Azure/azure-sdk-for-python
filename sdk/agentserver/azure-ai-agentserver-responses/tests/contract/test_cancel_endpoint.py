@@ -452,6 +452,9 @@ def test_cancel__returns_400_for_synchronous_response() -> None:
         cancel_response,
         expected_status=400,
         expected_type="invalid_request_error",
+        # After eager eviction the in-memory record is gone.  The provider
+        # fallback loads the persisted response and checks background first (B1),
+        # returning the correct "synchronous" message.
         expected_message="Cannot cancel a synchronous response.",
         expected_code="invalid_request_error",
     )

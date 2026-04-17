@@ -362,9 +362,9 @@ class TestEphemeralStoreFalse:
     def test_ephemeral_store_false_cancel_rejected(self, stream: bool) -> None:
         """B1, B14 — store=false response not bg, cancel rejected.
 
-        With unconditional runtime-state registration,
-        the cancel endpoint finds the record and returns 400 "Cannot cancel a
-        synchronous response." for non-bg requests.
+        After eager eviction, the runtime record is removed. Since store=false,
+        nothing was persisted — the provider throws ResourceNotFound → 404.
+        This matches .NET's ``Ephemeral_StoreFalse_Cancel_Returns404``.
         """
         handler = _simple_text_handler if stream else _noop_handler
         client = _build_client(handler)
@@ -388,8 +388,8 @@ class TestEphemeralStoreFalse:
             response_id = r.json()["id"]
 
         result = client.post(f"/responses/{response_id}/cancel")
-        # Contract: record found in runtime state → 400 (cannot cancel synchronous).
-        assert result.status_code == 400
+        # Contract: evicted + never persisted → 404.
+        assert result.status_code == 404
 
 
 # ════════════════════════════════════════════════════════════

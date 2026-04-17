@@ -679,6 +679,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if await self._runtime_state.is_deleted(response_id):
                 return _deleted_response(response_id, {})
 
+            # Chat isolation enforcement for evicted/restarted responses
+            if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
+                return _not_found(response_id, {})
+
             stream_replay = request.query_params.get("stream", "false").lower() == "true"
             if not stream_replay:
                 # Provider fallback: serve completed responses that are no longer in runtime state
@@ -697,17 +701,40 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Provider fallback failed for GET response_id=%s", response_id, exc_info=True)
             else:
+                # Validate starting_after cursor early — invalid cursors must
+                # always get param=starting_after regardless of stream availability.
+                parsed_cursor = self._parse_starting_after(request)
+                if isinstance(parsed_cursor, Response):
+                    return parsed_cursor
+
                 # Stream provider fallback: replay persisted SSE events when runtime state is gone.
                 replay_response = await self._try_replay_persisted_stream(request, response_id, isolation=_isolation)
                 if replay_response is not None:
                     return replay_response
 
-                # Response may exist in storage but wasn't replay-eligible
-                # (e.g., created without background=true, stream=true, store=true).
+                # No stream events available.  Check the persisted response's
+                # mode flags to return the correct error (matching .NET's B2 check).
                 try:
-                    await self._provider.get_response(response_id, isolation=_isolation)
+                    persisted = await self._provider.get_response(response_id, isolation=_isolation)
+                    persisted_dict = persisted.as_dict()
+                    # B2: SSE replay requires background mode.
+                    if persisted_dict.get("background") is not True:
+                        return _invalid_mode(
+                            "This response cannot be streamed because it was not created with background=true.",
+                            {},
+                            param="stream",
+                        )
+                    # B2 continued: bg+non-stream → different message.
+                    if persisted_dict.get("stream") is not True:
+                        return _invalid_mode(
+                            "This response cannot be streamed because it was not created with stream=true.",
+                            {},
+                            param="stream",
+                        )
+                    # Response is background+stream but stream events not available
+                    # (e.g. cancelled response — stream events are not persisted).
                     return _invalid_mode(
-                        "This response cannot be streamed because it was not created with background=true.",
+                        "Event stream is not available for this response.",
                         {},
                         param="stream",
                     )
@@ -856,6 +883,47 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         _isolation = _extract_isolation(request)
         record = await self._runtime_state.get(response_id)
         if record is None:
+            # Provider fallback: response may have been evicted from memory after
+            # reaching terminal state, or the server restarted since creation.
+            if await self._runtime_state.is_deleted(response_id):
+                return _not_found(response_id, {})
+
+            # Chat isolation enforcement for evicted/restarted responses
+            if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
+                return _not_found(response_id, {})
+
+            try:
+                await self._provider.delete_response(response_id, isolation=_isolation)
+                # Clean up persisted stream events
+                if self._stream_provider is not None:
+                    try:
+                        await self._stream_provider.delete_stream_events(response_id, isolation=_isolation)
+                    except Exception:  # pylint: disable=broad-exception-caught
+                        logger.debug(
+                            "Best-effort stream event delete failed for response_id=%s",
+                            response_id,
+                            exc_info=True,
+                        )
+                # Mark as deleted in runtime state so subsequent requests get 404
+                await self._runtime_state.mark_deleted(response_id)
+                return JSONResponse(
+                    {"id": response_id, "object": "response", "deleted": True},
+                    status_code=200,
+                )
+            except FoundryResourceNotFoundError:
+                pass  # Fall through to 404 below
+            except FoundryBadRequestError as exc:
+                return _invalid_request(str(exc), {}, param="response_id")
+            except FoundryApiError as exc:
+                logger.error("Storage API error for DELETE response_id=%s: %s", response_id, exc, exc_info=True)
+                return _error_response(exc, {})
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.debug(
+                    "Provider fallback failed for DELETE response_id=%s",
+                    response_id,
+                    exc_info=True,
+                )
+
             return _not_found(response_id, {})
 
         # Chat isolation enforcement
@@ -922,9 +990,25 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # Provider fallback: after a restart, stored terminal responses lose
             # their runtime records.  Check the provider so we return the correct
             # 400 error instead of a misleading 404.
+
+            # Chat isolation enforcement for evicted/restarted responses
+            if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
+                return _not_found(response_id, {})
+
             try:
                 response_obj = await self._provider.get_response(response_id, isolation=_isolation)
-                stored_status = response_obj.as_dict().get("status")
+                persisted = response_obj.as_dict()
+
+                # B1: background check comes first — non-bg responses always
+                # get the "synchronous" message regardless of terminal status.
+                if persisted.get("background") is not True:
+                    return _invalid_request(
+                        "Cannot cancel a synchronous response.",
+                        {},
+                        param="response_id",
+                    )
+
+                stored_status = persisted.get("status")
                 if stored_status == "completed":
                     return _invalid_request(
                         "Cannot cancel a completed response.",
@@ -938,10 +1022,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         param="response_id",
                     )
                 if stored_status == "cancelled":
-                    return _invalid_request(
-                        "Cannot cancel a response in terminal state.",
-                        {},
-                        param="response_id",
+                    # Idempotent: already cancelled — return the stored snapshot
+                    return JSONResponse(
+                        persisted,
+                        status_code=200,
+                        headers=self._response_headers,
                     )
                 if stored_status == "incomplete":
                     return _invalid_request(
@@ -1019,6 +1104,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         # Set cancelled snapshot and transition
         record.set_response_snapshot(build_cancelled_response(record.response_id, record.agent_reference, record.model))
+        # Stamp mode flags so the provider fallback can enforce B1/B2 checks
+        # after eager eviction removes the in-memory record.
+        if record.response is not None:
+            record.response.background = record.mode_flags.background
+            record.response.stream = record.mode_flags.stream  # pyright: ignore[reportAttributeAccessIssue]
         record.transition_to("cancelled")
 
         # Persist cancelled state to durable store (B11: cancellation always wins)
@@ -1028,7 +1118,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Best-effort cancel persist failed for response_id=%s", record.response_id, exc_info=True)
 
-        return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=self._response_headers)
+        # Build snapshot before eviction removes the record from memory
+        snapshot = _RuntimeState.to_snapshot(record)
+
+        # Eager eviction: free memory now that the terminal state is persisted
+        await self._runtime_state.try_evict(record.response_id)
+
+        return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
 
     async def handle_input_items(self, request: Request) -> Response:
         """Route handler for ``GET /responses/{response_id}/input_items``.

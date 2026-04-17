@@ -75,6 +75,49 @@ class _RuntimeState:
             self._chat_isolation_keys.pop(response_id, None)
             return True
 
+    _TERMINAL_STATUSES = frozenset({"completed", "failed", "cancelled", "incomplete"})
+
+    async def try_evict(self, response_id: str) -> bool:
+        """Evict a terminal record from in-memory state to free memory.
+
+        Unlike :meth:`delete`, eviction does **not** mark the response as
+        deleted — it simply removes the runtime record so that subsequent
+        requests fall through to the durable provider (storage).
+
+        Only records in a terminal status are evicted.  Non-terminal records
+        are left untouched so that in-flight operations remain correct.
+
+        :param response_id: The response ID to evict.
+        :type response_id: str
+        :return: ``True`` if the record was evicted, ``False`` otherwise.
+        :rtype: bool
+        """
+        async with self._lock:
+            record = self._records.get(response_id)
+            if record is None:
+                return False
+            if record.status not in self._TERMINAL_STATUSES:
+                return False
+            del self._records[response_id]
+            # NOTE: chat isolation keys are intentionally preserved so that
+            # provider fallback paths can still enforce isolation after eviction.
+            return True
+
+    async def mark_deleted(self, response_id: str) -> None:
+        """Mark a response ID as deleted without requiring a runtime record.
+
+        Used by the delete handler's provider fallback path when the record
+        has already been evicted from memory but still exists in durable storage.
+
+        :param response_id: The response ID to mark as deleted.
+        :type response_id: str
+        :return: None
+        :rtype: None
+        """
+        async with self._lock:
+            self._deleted_response_ids.add(response_id)
+            self._chat_isolation_keys.pop(response_id, None)
+
     def check_chat_isolation(self, response_id: str, request_chat_key: str | None) -> bool:
         """Check whether the request chat key matches the creation-time key.
 
