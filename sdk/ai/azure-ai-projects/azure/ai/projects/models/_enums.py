@@ -725,6 +725,40 @@ class SessionLogEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A log line from the agent session container."""
 
 
+class TelemetryDataKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of telemetry data to export."""
+
+    CONTAINER_STDOUT_STDERR = "ContainerStdoutStderr"
+    """Container stdout and stderr logs."""
+    CONTAINER_OTEL = "ContainerOtel"
+    """Container OpenTelemetry signals."""
+    METRICS = "Metrics"
+    """Container metrics."""
+
+
+class TelemetryEndpointAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of authentication for a telemetry endpoint."""
+
+    HEADER = "header"
+    """Header-based secret authentication."""
+
+
+class TelemetryEndpointKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of telemetry export endpoint."""
+
+    OTLP = "OTLP"
+    """OpenTelemetry Protocol (OTLP) endpoint."""
+
+
+class TelemetryTransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The transport protocol for telemetry export."""
+
+    HTTP = "Http"
+    """HTTP transport protocol."""
+    GRPC = "Grpc"
+    """gRPC transport protocol."""
+
+
 class TextResponseFormatConfigurationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Type of TextResponseFormatConfigurationType."""
 
