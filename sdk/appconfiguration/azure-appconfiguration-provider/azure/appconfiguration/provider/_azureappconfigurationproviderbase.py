@@ -304,6 +304,13 @@ class AzureAppConfigurationProviderBase(Mapping[str, Union[str, JSON]]):  # pyli
         self._watched_feature_flags: Dict[Tuple[str, str], Optional[str]] = {}
         self._feature_flag_refresh_timer: _RefreshTimer = _RefreshTimer(**kwargs)
         self._feature_flag_refresh_enabled = kwargs.pop("feature_flag_refresh_enabled", False)
+        refresh_enabled = kwargs.pop("refresh_enabled", None)
+        if refresh_enabled is None and len(refresh_on) > 0:
+            # If refresh_enabled is not explicitly set, enable refresh if there are settings to refresh on
+            # This make sure we don't break existing users.
+            refresh_enabled = True
+        self._refresh_enabled = refresh_enabled
+        self._page_etags: List[List[str]] = []
         self._tracing_context = _RequestTracingContext(kwargs.pop("load_balancing_enabled", False))
         self._update_lock = Lock()
         self._refresh_lock = Lock()

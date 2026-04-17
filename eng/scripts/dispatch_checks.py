@@ -1,5 +1,6 @@
 import argparse
 import asyncio
+import glob
 import os
 import sys
 import time
@@ -15,6 +16,7 @@ from ci_tools.variables import in_ci
 from ci_tools.scenario.generation import build_whl_for_req, replace_dev_reqs
 from ci_tools.logging import configure_logging, logger
 from ci_tools.environment_exclusions import is_check_enabled, CHECK_DEFAULTS
+from ci_tools.parsing import get_config_setting
 from devtools_testutils.proxy_startup import prepare_local_tool
 from packaging.requirements import Requirement
 
@@ -49,6 +51,7 @@ INSTALL_AND_TEST_CHECKS = {
     "sdist",
     "devtest",
     "optional",
+    "import_all",
     "latestdependency",
     "mindependency",
 }
@@ -84,9 +87,7 @@ def _compare_req_to_injected_reqs(parsed_req, injected_packages: List[str]) -> b
     return any(parsed_req.name in req for req in injected_packages)
 
 
-def _inject_custom_reqs(
-    req_file: str, injected_packages: str, package_dir: str
-) -> None:
+def _inject_custom_reqs(req_file: str, injected_packages: str, package_dir: str) -> None:
     req_lines = []
     injected_list = [p for p in re.split(r"[\s,]", injected_packages) if p]
 
@@ -115,8 +116,7 @@ def _inject_custom_reqs(
         all_adjustments = installable + [
             line_tuple[0].strip()
             for line_tuple in req_lines
-            if line_tuple[0].strip()
-            and not _compare_req_to_injected_reqs(line_tuple[1], all_filter_names)
+            if line_tuple[0].strip() and not _compare_req_to_injected_reqs(line_tuple[1], all_filter_names)
         ]
     else:
         all_adjustments = installable
@@ -138,6 +138,7 @@ async def run_check(
     mark_arg: Optional[str],
     dest_dir: Optional[str] = None,
     service: Optional[str] = None,
+    python_version: Optional[str] = None,
 ) -> CheckResult:
     """Run a single check (subprocess) within a concurrency semaphore, capturing output and timing.
 
@@ -161,6 +162,8 @@ async def run_check(
     async with semaphore:
         start = time.time()
         cmd = base_args + [check, "--isolate", package]
+        if python_version:
+            cmd += ["--python", python_version]
         if service:
             cmd += ["--service", service]
         if mark_arg:
@@ -172,9 +175,7 @@ async def run_check(
         env["PROXY_URL"] = f"http://localhost:{proxy_port}"
 
         if in_ci():
-            env["PROXY_ASSETS_FOLDER"] = os.path.join(
-                root_dir, ".assets_distributed", str(proxy_port)
-            )
+            env["PROXY_ASSETS_FOLDER"] = os.path.join(root_dir, ".assets_distributed", str(proxy_port))
         try:
             logger.info(" ".join(cmd))
             proc = await asyncio.create_subprocess_exec(
@@ -194,9 +195,7 @@ async def run_check(
         stderr = stderr_b.decode(errors="replace")
         exit_code = proc.returncode or 0
         status = "OK" if exit_code == 0 else f"FAIL({exit_code})"
-        logger.info(
-            f"[END   {idx}/{total}] {check} :: {package} -> {status} in {duration:.2f}s"
-        )
+        logger.info(f"[END   {idx}/{total}] {check} :: {package} -> {status} in {duration:.2f}s")
         # Print captured output after completion to avoid interleaving
         header = f"===== OUTPUT: {check} :: {package} (exit {exit_code}) ====="
         trailer = "=" * len(header)
@@ -220,10 +219,10 @@ async def run_check(
         # finally, we need to clean up any temp dirs created by --isolate
         if in_ci():
             package_name = os.path.basename(os.path.normpath(package))
-            isolate_dir = os.path.join(
-                root_dir, ".venv", package_name, f".venv_{check}"
-            )
-            ISOLATE_DIRS_TO_CLEAN.append(isolate_dir)
+            venv_pkg_root = os.path.join(root_dir, ".venv", package_name)
+            # match both .venv_{check} and version-qualified .venv_{check}_py311 etc.
+            for d in glob.glob(os.path.join(venv_pkg_root, f".venv_{check}*")):
+                ISOLATE_DIRS_TO_CLEAN.append(d)
         return CheckResult(package, check, exit_code, duration, stdout, stderr)
 
 
@@ -247,14 +246,10 @@ def summarize(results: List[CheckResult]) -> int:
     print("-" * len(header))
     for r in sorted(results, key=lambda x: (x.exit_code != 0, x.package, x.check)):
         status = "OK" if r.exit_code == 0 else f"FAIL({r.exit_code})"
-        print(
-            f"{r.package.ljust(pkg_w)}  {r.check.ljust(chk_w)}  {status.ljust(8)}  {r.duration:>10.2f}"
-        )
+        print(f"{r.package.ljust(pkg_w)}  {r.check.ljust(chk_w)}  {status.ljust(8)}  {r.duration:>10.2f}")
     worst = max((r.exit_code for r in results), default=0)
     failed = [r for r in results if r.exit_code != 0]
-    print(
-        f"\nTotal checks: {len(results)} | Failed: {len(failed)} | Worst exit code: {worst}"
-    )
+    print(f"\nTotal checks: {len(results)} | Failed: {len(failed)} | Worst exit code: {worst}")
     return worst
 
 
@@ -292,14 +287,10 @@ async def run_all_checks(
     dependency_tools_path = os.path.join(root_dir, "eng", "dependency_tools.txt")
 
     if in_ci():
-        logger.info(
-            "Replacing relative requirements in eng/test_tools.txt with prebuilt wheels."
-        )
+        logger.info("Replacing relative requirements in eng/test_tools.txt with prebuilt wheels.")
         replace_dev_reqs(test_tools_path, root_dir, wheel_dir)
 
-        logger.info(
-            "Replacing relative requirements in eng/dependency_tools.txt with prebuilt wheels."
-        )
+        logger.info("Replacing relative requirements in eng/dependency_tools.txt with prebuilt wheels.")
         replace_dev_reqs(dependency_tools_path, root_dir, wheel_dir)
 
     for pkg in packages:
@@ -321,15 +312,19 @@ async def run_all_checks(
         if not is_check_enabled(package, check, CHECK_DEFAULTS.get(check, True)):
             logger.warning(f"Skipping disabled check {check} for package {package}")
             continue
-        logger.info(
-            f"Assigning proxy port {next_proxy_port} to check {check} for package {package}"
-        )
-        scheduled.append((package, check, next_proxy_port))
+        logger.info(f"Assigning proxy port {next_proxy_port} to check {check} for package {package}")
+
+        # Check if this package overrides the Python version for analysis
+        pkg_python_version = get_config_setting(package, "analyze_python_version", None)
+        if pkg_python_version:
+            logger.info(f"Package {package} overrides analyze Python version to {pkg_python_version}")
+
+        scheduled.append((package, check, next_proxy_port, pkg_python_version))
         next_proxy_port += 1
 
     total = len(scheduled)
 
-    for idx, (package, check, proxy_port) in enumerate(scheduled, start=1):
+    for idx, (package, check, proxy_port, pkg_python_version) in enumerate(scheduled, start=1):
         tasks.append(
             asyncio.create_task(
                 run_check(
@@ -343,6 +338,7 @@ async def run_all_checks(
                     mark_arg,
                     dest_dir,
                     service,
+                    pkg_python_version,
                 )
             )
         )
@@ -358,15 +354,13 @@ async def run_all_checks(
         raise
     # Normalize exceptions
     norm_results: List[CheckResult] = []
-    for res, (package, check, _) in zip(results, scheduled):
+    for res, (package, check, _, _) in zip(results, scheduled):
         if isinstance(res, CheckResult):
             norm_results.append(res)
         elif isinstance(res, Exception):
             norm_results.append(CheckResult(package, check, 99, 0.0, "", str(res)))
         else:
-            norm_results.append(
-                CheckResult(package, check, 98, 0.0, "", f"Unknown result type: {res}")
-            )
+            norm_results.append(CheckResult(package, check, 98, 0.0, "", f"Unknown result type: {res}"))
     return summarize(norm_results)
 
 
@@ -442,15 +436,11 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         ),
     )
 
-    parser.add_argument(
-        "--disablecov", help=("Flag. Disables code coverage."), action="store_true"
-    )
+    parser.add_argument("--disablecov", help=("Flag. Disables code coverage."), action="store_true")
 
     parser.add_argument(
         "--service",
-        help=(
-            "Name of service directory (under sdk/) to test. Example: --service applicationinsights"
-        ),
+        help=("Name of service directory (under sdk/) to test. Example: --service applicationinsights"),
     )
 
     parser.add_argument(
@@ -517,9 +507,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     else:
         target_dir = root_dir
 
-    logger.info(
-        f"Beginning discovery for {args.service} and root dir {root_dir}. Resolving to {target_dir}."
-    )
+    logger.info(f"Beginning discovery for {args.service} and root dir {root_dir}. Resolving to {target_dir}.")
 
     # ensure that recursive virtual envs aren't messed with by this call
     os.environ.pop("VIRTUAL_ENV", None)
@@ -536,9 +524,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     )
 
     if len(targeted_packages) == 0:
-        logger.info(
-            f"No packages collected for targeting string {args.glob_string} and root dir {root_dir}. Exit 0."
-        )
+        logger.info(f"No packages collected for targeting string {args.glob_string} and root dir {root_dir}. Exit 0.")
         exit(0)
 
     logger.info(f"Executing checks with the executable {sys.executable}.")
@@ -570,9 +556,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
         try:
             proxy_executable = prepare_local_tool(root_dir)
         except Exception as exc:
-            logger.error(
-                f"Unable to prepare test proxy executable for recording restore: {exc}"
-            )
+            logger.error(f"Unable to prepare test proxy executable for recording restore: {exc}")
             sys.exit(1)
 
     logger.info(
@@ -583,9 +567,7 @@ In the case of an environment invoking `pytest`, results can be collected in a j
     proxy_processes: List[ProxyProcess] = []
     try:
         if in_ci():
-            logger.info(
-                f"Ensuring {len(checks)} test proxies are running for requested checks..."
-            )
+            logger.info(f"Ensuring {len(checks)} test proxies are running for requested checks...")
         # Pass through service if set and not "auto"
         effective_service = args.service if (args.service and args.service != "auto") else None
         exit_code = asyncio.run(
