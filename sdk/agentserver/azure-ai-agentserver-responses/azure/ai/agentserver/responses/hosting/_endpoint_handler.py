@@ -34,7 +34,7 @@ from ..models._helpers import get_input_expanded, to_output_item
 from ..models.errors import RequestValidationError
 from ..models.runtime import ResponseExecution, ResponseModeFlags, build_cancelled_response, build_failed_response
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
-from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError, FoundryStorageError
+from ..store._foundry_errors import FoundryApiError, FoundryBadRequestError, FoundryResourceNotFoundError
 from ..streaming._helpers import _encode_sse
 from ..streaming._sse import encode_sse_any_event
 from ..streaming._state_machine import _normalize_lifecycle_events
@@ -688,8 +688,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     )
                 except FoundryResourceNotFoundError:
                     pass  # Response doesn't exist in provider either — fall through to 404
+                except FoundryBadRequestError as exc:
+                    return _invalid_request(str(exc), {}, param="response_id")
                 except FoundryApiError as exc:
-                    logger.error("Storage API error for GET SSE replay response_id=%s: %s", response_id, exc, exc_info=True)
+                    logger.error(
+                        "Storage API error for GET SSE replay response_id=%s: %s",
+                        response_id, exc, exc_info=True,
+                    )
                     return _error_response(exc, {})
                 except Exception:  # pylint: disable=broad-exception-caught
                     pass  # Response doesn't exist in provider either — fall through to 404
@@ -903,6 +908,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     )
             except FoundryResourceNotFoundError:
                 pass  # Fall through to 404 below
+            except FoundryBadRequestError as exc:
+                return _invalid_request(str(exc), {}, param="response_id")
             except FoundryApiError as exc:
                 logger.error("Storage API error for cancel response_id=%s: %s", response_id, exc, exc_info=True)
                 return _error_response(exc, {})

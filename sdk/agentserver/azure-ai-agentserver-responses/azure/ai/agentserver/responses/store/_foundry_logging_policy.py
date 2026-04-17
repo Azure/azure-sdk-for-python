@@ -13,17 +13,13 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import TYPE_CHECKING, TypeVar
+from typing import cast
 
 from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
-
-if TYPE_CHECKING:
-    pass
+from azure.core.rest import HttpResponse
 
 logger = logging.getLogger("azure.ai.agentserver")
-
-T = TypeVar("T")
 
 # Correlation headers to extract and log
 _CLIENT_REQUEST_ID_HEADER = "x-ms-client-request-id"
@@ -67,8 +63,9 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy[PipelineRequest, PipelineRespo
             raise
 
         elapsed_ms = (time.monotonic() - start) * 1000
-        status_code = response.http_response.status_code
-        server_request_id = response.http_response.headers.get(_SERVER_REQUEST_ID_HEADER, "")
+        http_response = cast(HttpResponse, response.http_response)
+        status_code = http_response.status_code
+        server_request_id = http_response.headers.get(_SERVER_REQUEST_ID_HEADER, "")
 
         log_level = logging.INFO if 200 <= status_code < 400 else logging.WARNING
         logger.log(

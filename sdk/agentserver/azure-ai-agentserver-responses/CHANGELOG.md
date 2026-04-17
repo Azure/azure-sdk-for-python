@@ -2,22 +2,19 @@
 
 ## 1.0.0b2 (Unreleased)
 
-### Breaking Changes
-
-- Error responses for deleted resources now return HTTP 404 (was 400). Affects `GET /responses/{id}`, `GET /responses/{id}/input_items`, and `DELETE /responses/{id}` (second delete) on previously deleted responses.
-- Cancel on incomplete responses now returns message `"Cannot cancel a response in terminal state."` (was `"Cannot cancel an incomplete response."`).
-- SSE replay rejection messages now use spec-compliant wording:
-  - Non-background responses: `"This response cannot be streamed because it was not created with background=true."`
-  - Background non-stream responses: `"This response cannot be streamed because it was not created with stream=true."`
-
 ### Features Added
 
-- `FoundryStorageLoggingPolicy` — Azure Core per-retry pipeline policy that logs Foundry storage HTTP calls (method, URI, status code, duration, correlation headers) at the `azure.ai.agentserver` logger. Replaces the built-in `HttpLoggingPolicy` in the Foundry pipeline to provide single-line summaries with duration timing and error-level escalation.
+- `FoundryStorageLoggingPolicy` — Azure Core per-retry pipeline policy that logs Foundry storage HTTP calls (method, URI, status code, duration, correlation headers) at the `azure.ai.agentserver` logger. Replaces the built-in `HttpLoggingPolicy` in the Foundry pipeline to provide single-line summaries with duration timing and log-level escalation (WARNING for 4xx/5xx).
 
 ### Bugs Fixed
 
 - Error `code` field now uses spec-compliant values: `"invalid_request_error"` for 400/404 errors (was `"invalid_request"`, `"not_found"`, or `"invalid_mode"`), `"server_error"` for 500 errors (was `"internal_error"`).
 - `RequestValidationError` default code updated from `"invalid_request"` to `"invalid_request_error"`.
+- Error responses for deleted resources now correctly return HTTP 404 (was 400). Affects `GET /responses/{id}`, `GET /responses/{id}/input_items`, and `DELETE /responses/{id}` (second delete) on previously deleted responses.
+- Cancel on a response in terminal state now returns the spec-compliant message `"Cannot cancel a response in terminal state."` (was `"Cannot cancel an incomplete response."`).
+- SSE replay rejection messages now use spec-compliant wording:
+  - Non-background responses: `"This response cannot be streamed because it was not created with background=true."`
+  - Background non-stream responses: `"This response cannot be streamed because it was not created with stream=true."`
 - Foundry storage errors (`FoundryResourceNotFoundError`, `FoundryBadRequestError`, `FoundryApiError`) are now explicitly caught in endpoint handlers and mapped to appropriate HTTP status codes instead of being swallowed by broad exception handlers.
 
 ## 1.0.0b1 (2026-04-14)
