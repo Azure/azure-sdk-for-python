@@ -132,7 +132,7 @@ def validate_create_response(request: CreateResponse) -> None:
         if not is_valid:
             raise RequestValidationError(
                 "Malformed identifier.",
-                code="invalid_request_error",
+                code="invalid_parameters",
                 param="previous_response_id",
             )
 
@@ -361,6 +361,29 @@ def invalid_request_response(message: str, headers: dict[str, str], *, param: st
     return _api_error(
         message=message,
         code="invalid_request_error",
+        param=param,
+        error_type="invalid_request_error",
+        status_code=400,
+        headers=headers,
+    )
+
+
+def invalid_parameters_response(message: str, headers: dict[str, str], *, param: str | None = None) -> JSONResponse:
+    """Build a 400 Bad Request error response with ``code: "invalid_parameters"``.
+
+    Used for malformed identifier validation (spec rule B40).
+
+    :param message: Human-readable error message.
+    :type message: str
+    :param headers: HTTP headers to include in the response.
+    :type headers: dict[str, str]
+    :keyword param: Optional parameter name associated with the error.
+    :return: A 400 JSONResponse.
+    :rtype: JSONResponse
+    """
+    return _api_error(
+        message=message,
+        code="invalid_parameters",
         param=param,
         error_type="invalid_request_error",
         status_code=400,

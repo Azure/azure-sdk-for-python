@@ -68,6 +68,9 @@ from ._validation import (
     invalid_mode_response as _invalid_mode,
 )
 from ._validation import (
+    invalid_parameters_response as _invalid_parameters,
+)
+from ._validation import (
     invalid_request_response as _invalid_request,
 )
 from ._validation import (
@@ -122,22 +125,26 @@ def _extract_isolation(request: Request) -> IsolationContext:
     )
 
 
-def _validate_response_id_format(response_id: str) -> Response | None:
+def _validate_response_id_format(response_id: str, headers: dict[str, str] | None = None) -> Response | None:
     """Validate that a response_id path parameter has the expected ID format.
 
     Returns a 400 error response if the ID is malformed, or ``None`` if valid.
+    The error shape follows spec rule B40: ``code: "invalid_parameters"``,
+    ``param: "responseId{<value>}"``.
 
     :param response_id: The response ID from the URL path.
     :type response_id: str
+    :param headers: Optional HTTP headers to include on the error response.
+    :type headers: dict[str, str] | None
     :return: A 400 error response if invalid, or ``None`` if valid.
     :rtype: Response | None
     """
     is_valid, _ = IdGenerator.is_valid(response_id, allowed_prefixes=["caresp"])
     if not is_valid:
-        return _invalid_request(
+        return _invalid_parameters(
             "Malformed identifier.",
-            {},
-            param="response_id",
+            headers or {},
+            param=f"responseId{{{response_id}}}",
         )
     return None
 
@@ -262,6 +269,33 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 span.set_attribute(key, value)
         except Exception:  # pylint: disable=broad-exception-caught
             logger.debug("Failed to set span attributes: %s", list(attrs.keys()), exc_info=True)
+
+    # ------------------------------------------------------------------
+    # §8: Session ID response header helper
+    # ------------------------------------------------------------------
+
+    def _session_headers(self, session_id: str | None = None) -> dict[str, str]:
+        """Build response headers including ``x-agent-session-id``.
+
+        Merges the base ``_response_headers`` with the session ID header.
+        For POST /responses the caller passes the per-request resolved
+        session ID; other endpoints use the ``FOUNDRY_AGENT_SESSION_ID``
+        environment variable via the host config (resolved lazily so the
+        value is available even when the handler is constructed before the
+        base class ``__init__``).
+
+        :param session_id: Per-request session ID (overrides env var).
+        :type session_id: str | None
+        :return: Headers dict with ``x-agent-session-id`` when available.
+        :rtype: dict[str, str]
+        """
+        sid = session_id or (
+            getattr(getattr(self._host, "config", None), "session_id", "") or ""
+        )
+        headers = dict(self._response_headers)
+        if sid:
+            headers["x-agent-session-id"] = sid
+        return headers
 
     # ------------------------------------------------------------------
     # Streaming response helpers
@@ -462,7 +496,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: Response
         """
         if self._is_draining:
-            return _service_unavailable("Server is shutting down.", {})
+            return _service_unavailable("Server is shutting down.", self._session_headers())
 
         # Also maintain CreateSpanHook for backward compat (tests etc.)
         span = start_create_span(
@@ -480,7 +514,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             logger.error("Failed to parse/validate create request", exc_info=exc)
             captured_error = exc
             span.end(captured_error)
-            return _error_response(exc, {})
+            return _error_response(exc, self._session_headers())
 
         try:
             response_id, agent_reference = _resolve_identity_fields(
@@ -491,7 +525,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             logger.error("Failed to resolve identity fields", exc_info=exc)
             captured_error = exc
             span.end(captured_error)
-            return _error_response(exc, {})
+            return _error_response(exc, self._session_headers())
 
         # B39: Resolve session ID
         config_session_id = getattr(getattr(self._host, "config", None), "session_id", "") or ""
@@ -579,7 +613,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     sse_response = StreamingResponse(
                         body_iter,
                         media_type="text/event-stream",
-                        headers=self._sse_headers,
+                        headers={**self._sse_headers, **self._session_headers(agent_session_id)},
                     )
                     wrapped = self._wrap_streaming_response(sse_response, otel_span)
                     return wrapped
@@ -595,7 +629,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                             len(snapshot.get("output", [])),
                         )
                         end_span(otel_span)
-                        return JSONResponse(snapshot, status_code=200)
+                        return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
                     except _HandlerError as exc:
                         logger.error(
                             "Handler error in sync create (response_id=%s)",
@@ -619,7 +653,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                                 "param": None,
                             }
                         }
-                        return JSONResponse(err_body, status_code=500)
+                        return JSONResponse(err_body, status_code=500, headers=self._session_headers(agent_session_id))
                     finally:
                         disconnect_task.cancel()
 
@@ -630,7 +664,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     snapshot.get("status"),
                 )
                 end_span(otel_span)
-                return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
+                return JSONResponse(snapshot, status_code=200, headers=self._session_headers(agent_session_id))
             except _HandlerError as exc:
                 logger.error("Handler error in create (response_id=%s)", ctx.response_id, exc_info=exc.original)
                 self._safe_set_attrs(
@@ -653,7 +687,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return JSONResponse(
                     err_body,
                     status_code=500,
-                    headers=self._response_headers,
+                    headers=self._session_headers(agent_session_id),
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
@@ -692,7 +726,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: Response
         """
         response_id = request.path_params["response_id"]
-        format_error = _validate_response_id_format(response_id)
+        _hdrs = self._session_headers()
+        format_error = _validate_response_id_format(response_id, _hdrs)
         if format_error is not None:
             return format_error
 
@@ -706,11 +741,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         record = await self._runtime_state.get(response_id)
         if record is None:
             if await self._runtime_state.is_deleted(response_id):
-                return _deleted_response(response_id, {})
+                return _deleted_response(response_id, _hdrs)
 
             # Chat isolation enforcement for evicted/restarted responses
             if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
-                return _not_found(response_id, {})
+                return _not_found(response_id, _hdrs)
 
             stream_replay = stream_replay_param
             if not stream_replay:
@@ -725,14 +760,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         snapshot.get("status"),
                         len(snapshot.get("output", [])),
                     )
-                    return JSONResponse(snapshot, status_code=200)
+                    return JSONResponse(snapshot, status_code=200, headers=_hdrs)
                 except FoundryResourceNotFoundError:
                     pass  # Fall through to 404 below
                 except FoundryBadRequestError as exc:
-                    return _invalid_request(str(exc), {}, param="response_id")
+                    return _invalid_request(str(exc), _hdrs, param="response_id")
                 except FoundryApiError as exc:
                     logger.error("Storage API error for GET response_id=%s: %s", response_id, exc, exc_info=True)
-                    return _error_response(exc, {})
+                    return _error_response(exc, _hdrs)
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning("Provider fallback failed for GET response_id=%s", response_id, exc_info=True)
             else:
@@ -759,7 +794,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     if persisted_dict.get("background") is not True:
                         return _invalid_mode(
                             "This response cannot be streamed because it was not created with background=true.",
-                            {},
+                            _hdrs,
                             param="stream",
                         )
                     # TODO: The container spec prescribes distinct error messages for
@@ -770,27 +805,27 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     return _invalid_mode(
                         "This response cannot be streamed because it was not created "
                         "with stream=true or the stream TTL has expired.",
-                        {},
+                        _hdrs,
                         param="stream",
                     )
                 except FoundryResourceNotFoundError:
                     pass  # Response doesn't exist in provider either — fall through to 404
                 except FoundryBadRequestError as exc:
-                    return _invalid_request(str(exc), {}, param="response_id")
+                    return _invalid_request(str(exc), _hdrs, param="response_id")
                 except FoundryApiError as exc:
                     logger.error(
                         "Storage API error for GET SSE replay response_id=%s: %s",
                         response_id, exc, exc_info=True,
                     )
-                    return _error_response(exc, {})
+                    return _error_response(exc, _hdrs)
                 except Exception:  # pylint: disable=broad-exception-caught
                     pass  # Response doesn't exist in provider either — fall through to 404
 
-            return _not_found(response_id, {})
+            return _not_found(response_id, _hdrs)
 
         # Chat isolation enforcement on in-flight response
         if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
-            return _not_found(response_id, {})
+            return _not_found(response_id, _hdrs)
 
         _refresh_background_status(record)
 
@@ -798,17 +833,17 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if stream_replay:
             # B14: store=false responses are never persisted — return 404.
             if not record.mode_flags.store:
-                return _not_found(response_id, {})
+                return _not_found(response_id, _hdrs)
             if not record.replay_enabled:
                 if not record.mode_flags.background:
                     return _invalid_mode(
                         "This response cannot be streamed because it was not created with background=true.",
-                        {},
+                        _hdrs,
                         param="stream",
                     )
                 return _invalid_mode(
                     "This response cannot be streamed because it was not created with stream=true.",
-                    {},
+                    _hdrs,
                     param="stream",
                 )
 
@@ -819,7 +854,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return self._build_live_stream_response(record, parsed_cursor)
 
         if not record.visible_via_get:
-            return _not_found(response_id, {})
+            return _not_found(response_id, _hdrs)
 
         snapshot = _RuntimeState.to_snapshot(record)
         logger.info(
@@ -828,7 +863,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             snapshot.get("status"),
             len(snapshot.get("output", [])),
         )
-        return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
+        return JSONResponse(snapshot, status_code=200, headers=_hdrs)
 
     @staticmethod
     def _parse_starting_after(request: Request) -> int | Response:
@@ -918,7 +953,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: Response
         """
         response_id = request.path_params["response_id"]
-        format_error = _validate_response_id_format(response_id)
+        _hdrs = self._session_headers()
+        format_error = _validate_response_id_format(response_id, _hdrs)
         if format_error is not None:
             return format_error
 
@@ -930,11 +966,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # Provider fallback: response may have been evicted from memory after
             # reaching terminal state, or the server restarted since creation.
             if await self._runtime_state.is_deleted(response_id):
-                return _not_found(response_id, {})
+                return _not_found(response_id, _hdrs)
 
             # Chat isolation enforcement for evicted/restarted responses
             if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
-                return _not_found(response_id, {})
+                return _not_found(response_id, _hdrs)
 
             try:
                 await self._provider.delete_response(response_id, isolation=_isolation)
@@ -954,14 +990,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return JSONResponse(
                     {"id": response_id, "object": "response", "deleted": True},
                     status_code=200,
+                    headers=_hdrs,
                 )
             except FoundryResourceNotFoundError:
                 pass  # Fall through to 404 below
             except FoundryBadRequestError as exc:
-                return _invalid_request(str(exc), {}, param="response_id")
+                return _invalid_request(str(exc), _hdrs, param="response_id")
             except FoundryApiError as exc:
                 logger.error("Storage API error for DELETE response_id=%s: %s", response_id, exc, exc_info=True)
-                return _error_response(exc, {})
+                return _error_response(exc, _hdrs)
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.debug(
                     "Provider fallback failed for DELETE response_id=%s",
@@ -969,28 +1006,28 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     exc_info=True,
                 )
 
-            return _not_found(response_id, {})
+            return _not_found(response_id, _hdrs)
 
         # Chat isolation enforcement
         if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
-            return _not_found(response_id, {})
+            return _not_found(response_id, _hdrs)
 
         # store=false responses are not deletable (FR-014)
         if not record.mode_flags.store:
-            return _not_found(response_id, {})
+            return _not_found(response_id, _hdrs)
 
         _refresh_background_status(record)
 
         if record.mode_flags.background and record.status in {"queued", "in_progress"}:
             return _invalid_request(
                 "Cannot delete an in-flight response.",
-                {},
+                _hdrs,
                 param="response_id",
             )
 
         deleted = await self._runtime_state.delete(response_id)
         if not deleted:
-            return _not_found(response_id, {})
+            return _not_found(response_id, _hdrs)
 
         if record.mode_flags.store:
             try:
@@ -1015,6 +1052,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         return JSONResponse(
             {"id": response_id, "object": "response", "deleted": True},
             status_code=200,
+            headers=_hdrs,
         )
 
     async def handle_cancel(self, request: Request) -> Response:
@@ -1026,7 +1064,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: Response
         """
         response_id = request.path_params["response_id"]
-        format_error = _validate_response_id_format(response_id)
+        _hdrs = self._session_headers()
+        format_error = _validate_response_id_format(response_id, _hdrs)
         if format_error is not None:
             return format_error
 
@@ -1041,7 +1080,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
             # Chat isolation enforcement for evicted/restarted responses
             if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
-                return _not_found(response_id, {})
+                return _not_found(response_id, _hdrs)
 
             try:
                 response_obj = await self._provider.get_response(response_id, isolation=_isolation)
@@ -1052,7 +1091,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 if persisted.get("background") is not True:
                     return _invalid_request(
                         "Cannot cancel a synchronous response.",
-                        {},
+                        _hdrs,
                         param="response_id",
                     )
 
@@ -1060,13 +1099,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 if stored_status == "completed":
                     return _invalid_request(
                         "Cannot cancel a completed response.",
-                        {},
+                        _hdrs,
                         param="response_id",
                     )
                 if stored_status == "failed":
                     return _invalid_request(
                         "Cannot cancel a failed response.",
-                        {},
+                        _hdrs,
                         param="response_id",
                     )
                 if stored_status == "cancelled":
@@ -1074,39 +1113,39 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     return JSONResponse(
                         persisted,
                         status_code=200,
-                        headers=self._response_headers,
+                        headers=_hdrs,
                     )
                 if stored_status == "incomplete":
                     return _invalid_request(
                         "Cannot cancel a response in terminal state.",
-                        {},
+                        _hdrs,
                         param="response_id",
                     )
             except FoundryResourceNotFoundError:
                 pass  # Fall through to 404 below
             except FoundryBadRequestError as exc:
-                return _invalid_request(str(exc), {}, param="response_id")
+                return _invalid_request(str(exc), _hdrs, param="response_id")
             except FoundryApiError as exc:
                 logger.error("Storage API error for cancel response_id=%s: %s", response_id, exc, exc_info=True)
-                return _error_response(exc, {})
+                return _error_response(exc, _hdrs)
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.debug(
                     "Provider fallback failed for cancel response_id=%s",
                     response_id,
                     exc_info=True,
                 )
-            return _not_found(response_id, {})
+            return _not_found(response_id, _hdrs)
 
         # Chat isolation enforcement on in-flight response
         if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
-            return _not_found(response_id, {})
+            return _not_found(response_id, _hdrs)
 
         _refresh_background_status(record)
 
         if not record.mode_flags.background:
             return _invalid_request(
                 "Cannot cancel a synchronous response.",
-                {},
+                _hdrs,
                 param="response_id",
             )
 
@@ -1115,26 +1154,26 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             record.set_response_snapshot(
                 build_cancelled_response(record.response_id, record.agent_reference, record.model)
             )
-            return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=self._response_headers)
+            return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=_hdrs)
 
         if record.status == "completed":
             return _invalid_request(
                 "Cannot cancel a completed response.",
-                {},
+                _hdrs,
                 param="response_id",
             )
 
         if record.status == "failed":
             return _invalid_request(
                 "Cannot cancel a failed response.",
-                {},
+                _hdrs,
                 param="response_id",
             )
 
         if record.status == "incomplete":
             return _invalid_request(
                 "Cannot cancel a response in terminal state.",
-                {},
+                _hdrs,
                 param="response_id",
             )
 
@@ -1172,7 +1211,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         await self._runtime_state.try_evict(record.response_id)
 
         logger.info("Cancelled response %s, status=%s", response_id, snapshot.get("status"))
-        return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
+        return JSONResponse(snapshot, status_code=200, headers=_hdrs)
 
     async def handle_input_items(self, request: Request) -> Response:
         """Route handler for ``GET /responses/{response_id}/input_items``.
@@ -1185,7 +1224,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: Response
         """
         response_id = request.path_params["response_id"]
-        format_error = _validate_response_id_format(response_id)
+        _hdrs = self._session_headers()
+        format_error = _validate_response_id_format(response_id, _hdrs)
         if format_error is not None:
             return format_error
 
@@ -1194,20 +1234,20 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # Chat isolation enforcement
         _isolation = _extract_isolation(request)
         if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
-            return _not_found(response_id, {})
+            return _not_found(response_id, _hdrs)
 
         limit_raw = request.query_params.get("limit", "20")
         try:
             limit = int(limit_raw)
         except ValueError:
-            return _invalid_request("limit must be an integer between 1 and 100", {}, param="limit")
+            return _invalid_request("limit must be an integer between 1 and 100", _hdrs, param="limit")
 
         if limit < 1 or limit > 100:
-            return _invalid_request("limit must be between 1 and 100", {}, param="limit")
+            return _invalid_request("limit must be between 1 and 100", _hdrs, param="limit")
 
         order = request.query_params.get("order", "desc").lower()
         if order not in {"asc", "desc"}:
-            return _invalid_request("order must be 'asc' or 'desc'", {}, param="order")
+            return _invalid_request("order must be 'asc' or 'desc'", _hdrs, param="order")
 
         after = request.query_params.get("after")
         before = request.query_params.get("before")
@@ -1217,22 +1257,22 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 response_id, limit=100, ascending=True, isolation=_isolation
             )
         except ValueError:
-            return _deleted_response(response_id, {})
+            return _deleted_response(response_id, _hdrs)
         except FoundryResourceNotFoundError:
-            return _not_found(response_id, {})
+            return _not_found(response_id, _hdrs)
         except FoundryBadRequestError as exc:
-            return _invalid_request(str(exc), {}, param="response_id")
+            return _invalid_request(str(exc), _hdrs, param="response_id")
         except FoundryApiError as exc:
             logger.error("Storage API error for input_items response_id=%s: %s", response_id, exc, exc_info=True)
-            return _error_response(exc, {})
+            return _error_response(exc, _hdrs)
         except KeyError:
             # Fall back to runtime_state for in-flight responses not yet persisted to provider
             try:
                 items = await self._runtime_state.get_input_items(response_id)
             except ValueError:
-                return _deleted_response(response_id, {})
+                return _deleted_response(response_id, _hdrs)
             except KeyError:
-                return _not_found(response_id, {})
+                return _not_found(response_id, _hdrs)
 
         ordered_items = items if order == "asc" else list(reversed(items))
         ordered_dicts: list[dict[str, Any]] = [
@@ -1257,6 +1297,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 "has_more": has_more,
             },
             status_code=200,
+            headers=_hdrs,
         )
 
     async def handle_shutdown(self) -> None:

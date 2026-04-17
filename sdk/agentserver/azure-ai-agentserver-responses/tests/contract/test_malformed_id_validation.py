@@ -3,8 +3,8 @@
 """Contract tests for malformed response ID validation.
 
 All endpoints that accept a response_id path parameter must reject
-malformed IDs with 400 (``code: "invalid_request_error"``,
-``param: "response_id"``) before touching storage.
+malformed IDs with 400 (``code: "invalid_parameters"``,
+``param: "responseId{<value>}"``).
 
 Malformed ``previous_response_id`` in the POST body must be rejected
 with 400 and a ``details`` array containing the validation error.
@@ -52,8 +52,8 @@ class TestMalformedPathId:
         r = client.get(f"/responses/{bad_id}")
         assert r.status_code == 400
         body = r.json()
-        assert body["error"]["code"] == "invalid_request_error"
-        assert "response_id" in (body["error"].get("param") or "")
+        assert body["error"]["code"] == "invalid_parameters"
+        assert body["error"]["param"] == f"responseId{{{bad_id}}}"
 
     @pytest.mark.parametrize("bad_id", MALFORMED_IDS)
     def test_get_sse_malformed_id_returns_400(self, bad_id: str) -> None:
@@ -102,7 +102,7 @@ class TestMalformedPreviousResponseId:
         assert r.status_code == 400
         body = r.json()
         error = body["error"]
-        assert error["code"] == "invalid_request_error"
+        assert error["code"] == "invalid_parameters"
 
     def test_wrong_prefix_previous_response_id_returns_400(self) -> None:
         client = _make_client()
