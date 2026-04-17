@@ -38,6 +38,8 @@ from ._enums import (
     RecurrenceType,
     SampleType,
     ScheduleTaskType,
+    TelemetryEndpointAuthType,
+    TelemetryEndpointKind,
     TextResponseFormatConfigurationType,
     ToolChoiceParamType,
     ToolType,
@@ -5544,6 +5546,84 @@ class HeaderIsolationKeySource(IsolationKeySource, discriminator="Header"):
         self.kind = IsolationKeySourceKind.HEADER  # type: ignore
 
 
+class TelemetryEndpointAuth(_Model):
+    """Authentication configuration for a telemetry endpoint.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    HeaderTelemetryEndpointAuth
+
+    :ivar type: The authentication type. Required. "header"
+    :vartype type: str or ~azure.ai.projects.models.TelemetryEndpointAuthType
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    type: str = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])
+    """The authentication type. Required. \"header\""""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        type: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class HeaderTelemetryEndpointAuth(TelemetryEndpointAuth, discriminator="header"):
+    """Header-based secret authentication for a telemetry endpoint. The resolved secret value is
+    injected as an HTTP header.
+
+    :ivar type: The authentication type, always 'header' for header-based secret authentication.
+     Required. Header-based secret authentication.
+    :vartype type: str or ~azure.ai.projects.models.HEADER
+    :ivar header_name: The name of the HTTP header to inject the secret value into. Required.
+    :vartype header_name: str
+    :ivar secret_id: The identifier of the secret store or connection. Required.
+    :vartype secret_id: str
+    :ivar secret_key: The key within the secret to retrieve the authentication value. Required.
+    :vartype secret_key: str
+    """
+
+    type: Literal[TelemetryEndpointAuthType.HEADER] = rest_discriminator(name="type", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The authentication type, always 'header' for header-based secret authentication. Required.
+     Header-based secret authentication."""
+    header_name: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The name of the HTTP header to inject the secret value into. Required."""
+    secret_id: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The identifier of the secret store or connection. Required."""
+    secret_key: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The key within the secret to retrieve the authentication value. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        header_name: str,
+        secret_id: str,
+        secret_key: str,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.type = TelemetryEndpointAuthType.HEADER  # type: ignore
+
+
 class HostedAgentDefinition(AgentDefinition, discriminator="hosted"):
     """The hosted agent definition.
 
@@ -5575,6 +5655,9 @@ class HostedAgentDefinition(AgentDefinition, discriminator="hosted"):
      deployments. Mutually exclusive with container_configuration — the service validates that
      exactly one is set.
     :vartype code_configuration: ~azure.ai.projects.models.CodeConfiguration
+    :ivar telemetry_config: Optional customer-supplied telemetry configuration for exporting
+     container logs, traces, and metrics.
+    :vartype telemetry_config: ~azure.ai.projects.models.TelemetryConfig
     """
 
     kind: Literal[AgentKind.HOSTED] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
@@ -5610,6 +5693,11 @@ class HostedAgentDefinition(AgentDefinition, discriminator="hosted"):
     )
     """Code-based deployment configuration. Provide this for code-based deployments. Mutually
      exclusive with container_configuration — the service validates that exactly one is set."""
+    telemetry_config: Optional["_models.TelemetryConfig"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional customer-supplied telemetry configuration for exporting container logs, traces, and
+     metrics."""
 
     @overload
     def __init__(
@@ -5625,6 +5713,7 @@ class HostedAgentDefinition(AgentDefinition, discriminator="hosted"):
         container_configuration: Optional["_models.ContainerConfiguration"] = None,
         protocol_versions: Optional[list["_models.ProtocolVersionRecord"]] = None,
         code_configuration: Optional["_models.CodeConfiguration"] = None,
+        telemetry_config: Optional["_models.TelemetryConfig"] = None,
     ) -> None: ...
 
     @overload
@@ -7803,6 +7892,104 @@ class OpenApiTool(Tool, discriminator="openapi"):
         self.type = ToolType.OPENAPI  # type: ignore
 
 
+class TelemetryEndpoint(_Model):
+    """A telemetry export endpoint configuration.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    OtlpTelemetryEndpoint
+
+    :ivar kind: The telemetry export endpoint kind. Required. "OTLP"
+    :vartype kind: str or ~azure.ai.projects.models.TelemetryEndpointKind
+    :ivar data: Data types to export to this endpoint. Use an empty array to export no data.
+     Required.
+    :vartype data: list[str or ~azure.ai.projects.models.TelemetryDataKind]
+    :ivar auth: Optional authentication configuration.
+    :vartype auth: ~azure.ai.projects.models.TelemetryEndpointAuth
+    """
+
+    __mapping__: dict[str, _Model] = {}
+    kind: str = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])
+    """The telemetry export endpoint kind. Required. \"OTLP\""""
+    data: list[Union[str, "_models.TelemetryDataKind"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Data types to export to this endpoint. Use an empty array to export no data. Required."""
+    auth: Optional["_models.TelemetryEndpointAuth"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Optional authentication configuration."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        kind: str,
+        data: list[Union[str, "_models.TelemetryDataKind"]],
+        auth: Optional["_models.TelemetryEndpointAuth"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class OtlpTelemetryEndpoint(TelemetryEndpoint, discriminator="OTLP"):
+    """An OTLP (OpenTelemetry Protocol) telemetry export endpoint.
+
+    :ivar data: Data types to export to this endpoint. Use an empty array to export no data.
+     Required.
+    :vartype data: list[str or ~azure.ai.projects.models.TelemetryDataKind]
+    :ivar auth: Optional authentication configuration.
+    :vartype auth: ~azure.ai.projects.models.TelemetryEndpointAuth
+    :ivar kind: The endpoint kind, always 'OTLP' for OpenTelemetry Protocol endpoints. Required.
+     OpenTelemetry Protocol (OTLP) endpoint.
+    :vartype kind: str or ~azure.ai.projects.models.OTLP
+    :ivar endpoint: The OTLP collector endpoint URL. Required.
+    :vartype endpoint: str
+    :ivar protocol: The transport protocol for the OTLP endpoint. Required. Known values are:
+     "Http" and "Grpc".
+    :vartype protocol: str or ~azure.ai.projects.models.TelemetryTransportProtocol
+    """
+
+    kind: Literal[TelemetryEndpointKind.OTLP] = rest_discriminator(name="kind", visibility=["read", "create", "update", "delete", "query"])  # type: ignore
+    """The endpoint kind, always 'OTLP' for OpenTelemetry Protocol endpoints. Required. OpenTelemetry
+     Protocol (OTLP) endpoint."""
+    endpoint: str = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """The OTLP collector endpoint URL. Required."""
+    protocol: Union[str, "_models.TelemetryTransportProtocol"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The transport protocol for the OTLP endpoint. Required. Known values are: \"Http\" and
+     \"Grpc\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data: list[Union[str, "_models.TelemetryDataKind"]],
+        endpoint: str,
+        protocol: Union[str, "_models.TelemetryTransportProtocol"],
+        auth: Optional["_models.TelemetryEndpointAuth"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+        self.kind = TelemetryEndpointKind.OTLP  # type: ignore
+
+
 class PendingUploadRequest(_Model):
     """Represents a request for a pending upload.
 
@@ -9223,6 +9410,36 @@ class TaxonomySubCategory(_Model):
         enabled: bool,
         description: Optional[str] = None,
         properties: Optional[dict[str, str]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class TelemetryConfig(_Model):
+    """Customer-supplied telemetry configuration for exporting container logs, traces, and metrics.
+
+    :ivar endpoints: Customer-supplied telemetry export endpoint configurations. Required.
+    :vartype endpoints: list[~azure.ai.projects.models.TelemetryEndpoint]
+    """
+
+    endpoints: list["_models.TelemetryEndpoint"] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Customer-supplied telemetry export endpoint configurations. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        endpoints: list["_models.TelemetryEndpoint"],
     ) -> None: ...
 
     @overload
