@@ -64,17 +64,11 @@ def _generate_delete_blobs_subrequest_options(
     timeout = kwargs.pop("timeout", None)
     query_parameters = {}
     if snapshot is not None:
-        query_parameters["snapshot"] = client._serialize.query(
-            "snapshot", snapshot, "str"
-        )
+        query_parameters["snapshot"] = client._serialize.query("snapshot", snapshot, "str")
     if version_id is not None:
-        query_parameters["versionid"] = client._serialize.query(
-            "version_id", version_id, "str"
-        )
+        query_parameters["versionid"] = client._serialize.query("version_id", version_id, "str")
     if timeout is not None:
-        query_parameters["timeout"] = client._serialize.query(
-            "timeout", timeout, "int", minimum=0
-        )
+        query_parameters["timeout"] = client._serialize.query("timeout", timeout, "int", minimum=0)
 
     # Construct headers
     header_parameters = {}
@@ -83,9 +77,7 @@ def _generate_delete_blobs_subrequest_options(
             "delete_snapshots", delete_snapshots, "DeleteSnapshotsOptionType"
         )
     if lease_id is not None:
-        header_parameters["x-ms-lease-id"] = client._serialize.header(
-            "lease_id", lease_id, "str"
-        )
+        header_parameters["x-ms-lease-id"] = client._serialize.header("lease_id", lease_id, "str")
     if if_modified_since is not None:
         header_parameters["If-Modified-Since"] = client._serialize.header(
             "if_modified_since", if_modified_since, "rfc-1123"
@@ -95,17 +87,11 @@ def _generate_delete_blobs_subrequest_options(
             "if_unmodified_since", if_unmodified_since, "rfc-1123"
         )
     if if_match is not None:
-        header_parameters["If-Match"] = client._serialize.header(
-            "if_match", if_match, "str"
-        )
+        header_parameters["If-Match"] = client._serialize.header("if_match", if_match, "str")
     if if_none_match is not None:
-        header_parameters["If-None-Match"] = client._serialize.header(
-            "if_none_match", if_none_match, "str"
-        )
+        header_parameters["If-None-Match"] = client._serialize.header("if_none_match", if_none_match, "str")
     if if_tags is not None:
-        header_parameters["x-ms-if-tags"] = client._serialize.header(
-            "if_tags", if_tags, "str"
-        )
+        header_parameters["x-ms-if-tags"] = client._serialize.header("if_tags", if_tags, "str")
 
     return query_parameters, header_parameters
 
@@ -201,36 +187,24 @@ def _generate_set_tiers_subrequest_options(
     # Construct parameters
     query_parameters = {}
     if snapshot is not None:
-        query_parameters["snapshot"] = client._serialize.query(
-            "snapshot", snapshot, "str"
-        )
+        query_parameters["snapshot"] = client._serialize.query("snapshot", snapshot, "str")
     if version_id is not None:
-        query_parameters["versionid"] = client._serialize.query(
-            "version_id", version_id, "str"
-        )
+        query_parameters["versionid"] = client._serialize.query("version_id", version_id, "str")
     if timeout is not None:
-        query_parameters["timeout"] = client._serialize.query(
-            "timeout", timeout, "int", minimum=0
-        )
+        query_parameters["timeout"] = client._serialize.query("timeout", timeout, "int", minimum=0)
     query_parameters["comp"] = client._serialize.query("comp", comp, "str")
 
     # Construct headers
     header_parameters = {}
-    header_parameters["x-ms-access-tier"] = client._serialize.header(
-        "tier", tier, "str"
-    )
+    header_parameters["x-ms-access-tier"] = client._serialize.header("tier", tier, "str")
     if rehydrate_priority is not None:
         header_parameters["x-ms-rehydrate-priority"] = client._serialize.header(
             "rehydrate_priority", rehydrate_priority, "str"
         )
     if lease_id is not None:
-        header_parameters["x-ms-lease-id"] = client._serialize.header(
-            "lease_id", lease_id, "str"
-        )
+        header_parameters["x-ms-lease-id"] = client._serialize.header("lease_id", lease_id, "str")
     if if_tags is not None:
-        header_parameters["x-ms-if-tags"] = client._serialize.header(
-            "if_tags", if_tags, "str"
-        )
+        header_parameters["x-ms-if-tags"] = client._serialize.header("if_tags", if_tags, "str")
 
     return query_parameters, header_parameters
 
