@@ -854,6 +854,23 @@ class TestRealCUPatterns:
         assert "<!-- page 1 -->" in output
         assert "<!-- page 2 -->" in output
 
+    def test_metadata_keys_with_yaml_special_chars(self):
+        """Metadata keys with YAML-special characters must be quoted to produce valid YAML."""
+        doc = DocumentContent(kind="document", markdown="Hello")
+        output = to_llm_input(
+            _make_result([doc]),
+            metadata={
+                "with: colon": "val1",
+                "with# hash": "val2",
+                "- dash_start": "val3",
+                "normal_key": "val4",
+            },
+        )
+        assert "'with: colon': val1" in output
+        assert "'with# hash': val2" in output
+        assert "'- dash_start': val3" in output
+        assert "normal_key: val4" in output
+
     def test_audio_search_single_segment(self):
         """Matches audio_analysis.mp3.json: single audioVisual, no path, with transcriptPhrases."""
         av = AudioVisualContent(

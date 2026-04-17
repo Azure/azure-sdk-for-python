@@ -13,6 +13,7 @@ Provides ``to_llm_input`` — a single public function that converts
 from __future__ import annotations
 
 import datetime
+import math
 import re
 from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
@@ -314,7 +315,6 @@ def _page_markers_from_spans(
 
     # Compute offset shifts from the cleaning
     # Re-map original offsets to cleaned string positions
-    shift = 0
     break_pattern = re.compile(r"\n*<!-- PageBreak -->\n*")
     shifts: List[tuple] = []  # (original_pos, delta)
     for m in break_pattern.finditer(markdown):
@@ -432,6 +432,8 @@ def _yaml_scalar(value: Any) -> str:
     if isinstance(value, int):
         return str(value)
     if isinstance(value, float):
+        if not math.isfinite(value):
+            return str(value)
         return str(int(value)) if value == int(value) else str(value)
 
     s = str(value)
@@ -464,18 +466,19 @@ def _emit_mapping(
     for key, value in mapping.items():
         if value is None:
             continue
+        safe_key = _yaml_scalar(key)
         if isinstance(value, dict):
             if not value:
                 continue
-            lines.append(f"{prefix}{key}:")
+            lines.append(f"{prefix}{safe_key}:")
             _emit_mapping(lines, value, indent + 1)
         elif isinstance(value, list):
             if not value:
                 continue
-            lines.append(f"{prefix}{key}:")
+            lines.append(f"{prefix}{safe_key}:")
             _emit_sequence(lines, value, indent)
         else:
-            lines.append(f"{prefix}{key}: {_yaml_scalar(value)}")
+            lines.append(f"{prefix}{safe_key}: {_yaml_scalar(value)}")
 
 
 def _emit_sequence(
@@ -490,16 +493,17 @@ def _emit_sequence(
                 if v is None:
                     continue
                 tag = f"{prefix}- " if first else f"{prefix}  "
+                safe_k = _yaml_scalar(k)
                 if isinstance(v, dict) and v:
-                    lines.append(f"{tag}{k}:")
+                    lines.append(f"{tag}{safe_k}:")
                     inner_indent = indent + 2 if first else indent + 1
                     _emit_mapping(lines, v, inner_indent)
                 elif isinstance(v, list) and v:
-                    lines.append(f"{tag}{k}:")
+                    lines.append(f"{tag}{safe_k}:")
                     inner_indent = indent + 1
                     _emit_sequence(lines, v, inner_indent)
                 else:
-                    lines.append(f"{tag}{k}: {_yaml_scalar(v)}")
+                    lines.append(f"{tag}{safe_k}: {_yaml_scalar(v)}")
                 first = False
         else:
             lines.append(f"{prefix}- {_yaml_scalar(item)}")
