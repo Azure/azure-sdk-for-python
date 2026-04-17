@@ -13,11 +13,13 @@ from typing import Dict, Any
 
 from azure.appconfiguration import FeatureFlagConfigurationSetting
 from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
-    delay_failure,
     is_json_content_type,
     _build_watched_setting,
-    sdk_allowed_kwargs,
     AzureAppConfigurationProviderBase,
+)
+from azure.appconfiguration.provider._utils import (
+    delay_failure,
+    sdk_allowed_kwargs,
 )
 from azure.appconfiguration.provider._models import SettingSelector
 from azure.appconfiguration.provider._constants import (

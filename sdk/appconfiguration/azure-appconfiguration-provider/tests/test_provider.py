@@ -14,7 +14,7 @@ from test_constants import (
     FEATURE_MANAGEMENT_KEY,
 )
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
-from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
+from azure.appconfiguration.provider._utils import (
     delay_failure,
 )
 from azure.appconfiguration.provider._azureappconfigurationprovider import _buildprovider

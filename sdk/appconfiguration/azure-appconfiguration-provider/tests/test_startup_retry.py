@@ -6,7 +6,7 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import datetime
-from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
+from azure.appconfiguration.provider._utils import (
     _get_startup_backoff,
     _calculate_backoff_duration,
 )

@@ -29,12 +29,10 @@ from ._constants import (
     DEFAULT_STARTUP_TIMEOUT,
     SNAPSHOT_REF_CONTENT_TYPE,
 )
-from ._azureappconfigurationproviderbase import (
-    AzureAppConfigurationProviderBase,
-    _get_startup_backoff,
-)
+from ._azureappconfigurationproviderbase import AzureAppConfigurationProviderBase
 from ._client_manager import ConfigurationClientManager, _ConfigurationClientWrapper as ConfigurationClient
 from ._user_agent import USER_AGENT
+from ._utils import _get_startup_backoff
 
 JSON = Mapping[str, Any]
 logger = logging.getLogger(__name__)

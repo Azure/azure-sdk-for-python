@@ -33,13 +33,13 @@ from .._constants import (
 )
 from .._azureappconfigurationproviderbase import (
     AzureAppConfigurationProviderBase,
-    _get_startup_backoff,
 )
 from ._async_client_manager import (
     AsyncConfigurationClientManager as ConfigurationClientManager,
     _AsyncConfigurationClientWrapper as ConfigurationClient,
 )
 from .._user_agent import USER_AGENT
+from .._utils import _get_startup_backoff
 
 JSON = Mapping[str, Any]
 logger = logging.getLogger(__name__)

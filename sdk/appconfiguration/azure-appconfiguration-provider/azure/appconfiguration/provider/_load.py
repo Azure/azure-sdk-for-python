@@ -17,7 +17,7 @@ from ._constants import (
     DEFAULT_STARTUP_TIMEOUT,
 )
 from ._models import AzureAppConfigurationKeyVaultOptions, SettingSelector
-from ._azureappconfigurationproviderbase import (
+from ._utils import (
     delay_failure,
     process_load_parameters,
     sdk_allowed_kwargs,
