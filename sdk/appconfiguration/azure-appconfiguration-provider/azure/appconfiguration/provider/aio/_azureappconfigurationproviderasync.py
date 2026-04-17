@@ -348,8 +348,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
 
             processed_settings = self._process_feature_flags(processed_settings, processed_feature_flags, feature_flags)
             self._dict = processed_settings
-            self._page_etags = page_etags
             if settings_refreshed:
+                self._page_etags = page_etags
                 # Update the watch keys that have changed
                 self._watched_settings.update(updated_watched_settings)
             # Reset timers at the same time as they should load from the same store.
