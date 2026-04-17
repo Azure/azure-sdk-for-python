@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b4 (Unreleased)
+## 1.0.0b5 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,12 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.0.0b4 (2026-04-17)
+
+### Other Changes
+
+- Moved the package to a new service category folder `transcription`.
 
 ## 1.0.0b3 (2026-02-04)
 
