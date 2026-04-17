@@ -44,8 +44,9 @@ class ComputeLimitMgmtClient:
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Default value is "2025-08-15".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2025-08-15".
+     Default value is "2025-08-15". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     """
 
