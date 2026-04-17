@@ -25,6 +25,7 @@ from ..models._generated import CreateResponse, ResponseStreamEvent
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..store._memory import InMemoryResponseProvider
 from ._endpoint_handler import _ResponseEndpointHandler
+from ._middleware import InboundRequestLoggingMiddleware
 from ._orchestrator import _ResponseOrchestrator
 from ._runtime_state import _RuntimeState
 
@@ -211,6 +212,10 @@ class ResponsesAgentServerHost(AgentServerHost):
         # Merge with any routes from sibling mixins via cooperative init
         existing = list(kwargs.pop("routes", None) or [])
         super().__init__(routes=existing + response_routes, **kwargs)
+
+        # Inbound request logging (matching .NET InboundRequestLoggingMiddleware).
+        # Must be added AFTER super().__init__() so it wraps the full app.
+        self.add_middleware(InboundRequestLoggingMiddleware)
 
         # Register the responses protocol version on the host so the
         # x-platform-server header includes this package's version.

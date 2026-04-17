@@ -1226,6 +1226,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         """
         new_stream_counter()
         state = _PipelineState()
+        _handler_name = getattr(self._create_fn, "__qualname__", None) or getattr(self._create_fn, "__name__", "unknown")
+        logger.info("Invoking handler %s for response %s", _handler_name, ctx.response_id)
         handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
 
         # Helper: route to the right finalize method based on the request semantics
@@ -1389,6 +1391,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :raises _HandlerError: If the handler raises during iteration.
         """
         state = _PipelineState()
+        _handler_name = getattr(self._create_fn, "__qualname__", None) or getattr(self._create_fn, "__name__", "unknown")
+        logger.info("Invoking handler %s for response %s", _handler_name, ctx.response_id)
         handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
         # _process_handler_events handles all error paths (B8, S-035, S-015, B11).
         # run_sync only needs to exhaust the generator for state.handler_events side-effects.

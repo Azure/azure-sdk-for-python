@@ -508,6 +508,18 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             request=request,
         )
 
+        logger.info(
+            "Creating response %s: streaming=%s background=%s store=%s model=%s "
+            "conversation_id=%s previous_response_id=%s",
+            ctx.response_id,
+            ctx.stream,
+            ctx.background,
+            ctx.store,
+            ctx.model,
+            ctx.conversation_id,
+            ctx.previous_response_id,
+        )
+
         # Extract X-Request-Id header for request ID propagation (truncated to 256 chars).
         request_id = extract_request_id(request.headers)
         _project_id = getattr(getattr(self._host, "config", None), "project_id", "") or ""
@@ -576,6 +588,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     disconnect_task = asyncio.create_task(self._monitor_disconnect(request, ctx.cancellation_signal))
                     try:
                         snapshot = await self._orchestrator.run_sync(ctx)
+                        logger.info(
+                            "Response %s completed: status=%s output_count=%d",
+                            ctx.response_id,
+                            snapshot.get("status"),
+                            len(snapshot.get("output", [])),
+                        )
                         end_span(otel_span)
                         return JSONResponse(snapshot, status_code=200)
                     except _HandlerError as exc:
@@ -606,6 +624,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         disconnect_task.cancel()
 
                 snapshot = await self._orchestrator.run_background(ctx)
+                logger.info(
+                    "Background response created for %s: status=%s",
+                    ctx.response_id,
+                    snapshot.get("status"),
+                )
                 end_span(otel_span)
                 return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
             except _HandlerError as exc:
@@ -673,6 +696,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if format_error is not None:
             return format_error
 
+        stream_replay_param = request.query_params.get("stream", "false").lower() == "true"
+        if stream_replay_param:
+            logger.info("Getting response %s with SSE replay", response_id)
+        else:
+            logger.info("Getting response %s", response_id)
+
         _isolation = _extract_isolation(request)
         record = await self._runtime_state.get(response_id)
         if record is None:
@@ -683,13 +712,19 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
                 return _not_found(response_id, {})
 
-            stream_replay = request.query_params.get("stream", "false").lower() == "true"
+            stream_replay = stream_replay_param
             if not stream_replay:
                 # Provider fallback: serve completed responses that are no longer in runtime state
                 # (e.g., after a process restart).
                 try:
                     response_obj = await self._provider.get_response(response_id, isolation=_isolation)
                     snapshot = response_obj.as_dict()
+                    logger.info(
+                        "Retrieved response %s: status=%s output_count=%d",
+                        response_id,
+                        snapshot.get("status"),
+                        len(snapshot.get("output", [])),
+                    )
                     return JSONResponse(snapshot, status_code=200)
                 except FoundryResourceNotFoundError:
                     pass  # Fall through to 404 below
@@ -760,7 +795,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         _refresh_background_status(record)
 
-        stream_replay = request.query_params.get("stream", "false").lower() == "true"
+        stream_replay = stream_replay_param
         if stream_replay:
             # B14: store=false responses are never persisted — return 404.
             if not record.mode_flags.store:
@@ -787,7 +822,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if not record.visible_via_get:
             return _not_found(response_id, {})
 
-        return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=self._response_headers)
+        snapshot = _RuntimeState.to_snapshot(record)
+        logger.info(
+            "Retrieved response %s: status=%s output_count=%d",
+            response_id,
+            snapshot.get("status"),
+            len(snapshot.get("output", [])),
+        )
+        return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
 
     @staticmethod
     def _parse_starting_after(request: Request) -> int | Response:
@@ -881,6 +923,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         if format_error is not None:
             return format_error
 
+        logger.info("Deleting response %s", response_id)
+
         _isolation = _extract_isolation(request)
         record = await self._runtime_state.get(response_id)
         if record is None:
@@ -907,6 +951,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         )
                 # Mark as deleted in runtime state so subsequent requests get 404
                 await self._runtime_state.mark_deleted(response_id)
+                logger.info("Deleted response %s", response_id)
                 return JSONResponse(
                     {"id": response_id, "object": "response", "deleted": True},
                     status_code=200,
@@ -967,6 +1012,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                         exc_info=True,
                     )
 
+        logger.info("Deleted response %s", response_id)
         return JSONResponse(
             {"id": response_id, "object": "response", "deleted": True},
             status_code=200,
@@ -984,6 +1030,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         format_error = _validate_response_id_format(response_id)
         if format_error is not None:
             return format_error
+
+        logger.info("Cancelling response %s", response_id)
 
         _isolation = _extract_isolation(request)
         record = await self._runtime_state.get(response_id)
@@ -1124,6 +1172,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # Eager eviction: free memory now that the terminal state is persisted
         await self._runtime_state.try_evict(record.response_id)
 
+        logger.info("Cancelled response %s, status=%s", response_id, snapshot.get("status"))
         return JSONResponse(snapshot, status_code=200, headers=self._response_headers)
 
     async def handle_input_items(self, request: Request) -> Response:
@@ -1140,6 +1189,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         format_error = _validate_response_id_format(response_id)
         if format_error is not None:
             return format_error
+
+        logger.info("Getting input items for response %s", response_id)
 
         # Chat isolation enforcement
         _isolation = _extract_isolation(request)
