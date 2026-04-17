@@ -5,8 +5,7 @@
 Logs method, URI, status code, duration, and correlation headers for
 each outbound storage request at the ``azure.ai.agentserver`` logger.
 
-This mirrors the .NET ``FoundryStorageLoggingPolicy`` and provides
-consistent observability for storage operations.
+Provides consistent observability for storage operations.
 """
 
 from __future__ import annotations

@@ -213,7 +213,7 @@ class ResponsesAgentServerHost(AgentServerHost):
         existing = list(kwargs.pop("routes", None) or [])
         super().__init__(routes=existing + response_routes, **kwargs)
 
-        # Inbound request logging (matching .NET InboundRequestLoggingMiddleware).
+        # Inbound request logging middleware.
         # Must be added AFTER super().__init__() so it wraps the full app.
         self.add_middleware(InboundRequestLoggingMiddleware)
 

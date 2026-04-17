@@ -5,7 +5,7 @@
 A pure-ASGI middleware that logs every inbound HTTP request at INFO level
 (start) and at INFO or WARNING level (completion, depending on status code).
 
-Matching .NET ``InboundRequestLoggingMiddleware``:
+Behaviour:
 - Logs method + path (no query string) on start.
 - Logs method + path + status code + duration on completion.
 - Correlation headers (``x-request-id``, ``x-ms-client-request-id``) are

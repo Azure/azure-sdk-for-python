@@ -751,7 +751,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 # background flag; if not bg, give the clear non-bg error.
                 # Otherwise, we can't distinguish bg+non-stream from
                 # bg+stream-with-expired-TTL (we don't persist the stream flag),
-                # so use a combined message matching .NET's SseReplayResult.
+                # so use a combined message.
                 try:
                     persisted = await self._provider.get_response(response_id, isolation=_isolation)
                     persisted_dict = persisted.as_dict()
@@ -766,8 +766,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                     # "not created with stream=true" vs "stream TTL expired", but after
                     # eager eviction the persisted response does not carry the stream
                     # mode flag — we cannot distinguish the two cases.  Until the
-                    # provider surfaces the reason, we use a combined message (matching
-                    # .NET's SseReplayResult).
+                    # provider surfaces the reason, we use a combined message.
                     return _invalid_mode(
                         "This response cannot be streamed because it was not created "
                         "with stream=true or the stream TTL has expired.",
