@@ -17,13 +17,10 @@
 
 ### Breaking Changes
 
+  - All Cloud Services (classic) APIs have been removed following the [retirement of Azure Cloud Services (classic)](https://azure.microsoft.com/en-us/updates?id=486344). Removed APIs include operation groups `CloudServicesOperations`, `CloudServiceRoleInstancesOperations`, `CloudServiceRolesOperations`, `CloudServiceOperatingSystemsOperations`, `CloudServicesUpdateDomainOperations`, all associated models (`CloudService*`, `Extension`, `InstanceSku`, `InstanceViewStatusesSummary`, `LoadBalancerConfiguration*`, `LoadBalancerFrontendIpConfiguration*`, `OSFamily*`, `OSVersion*`, `ResourceInstanceViewStatus`, `ResourceWithOptionalLocation`, `RoleInstance*`, `RoleInstances`, `StatusCodeCount`, `UpdateDomain`) and enums (`CloudServiceSlotType`, `CloudServiceUpgradeMode`)
   - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - For the method breakings, please refer to https://aka.ms/azsdk/python/migrate/operations for migration.
-  - Deleted or renamed client operation group `ComputeManagementClient.cloud_service_role_instances`
-  - Deleted or renamed client operation group `ComputeManagementClient.cloud_service_roles`
-  - Deleted or renamed client operation group `ComputeManagementClient.cloud_services`
-  - Deleted or renamed client operation group `ComputeManagementClient.cloud_services_update_domain`
-  - Deleted or renamed client operation group `ComputeManagementClient.cloud_service_operating_systems`
+  - Deleted or renamed enum `AvailabilitySetSkuTypes`
   - Model `AvailabilitySetUpdate` moved instance variable `platform_update_domain_count`, `platform_fault_domain_count`, `virtual_machines`, `proximity_placement_group`, `statuses`, `scheduled_events_policy` and `virtual_machine_scale_set_migration_info` under property `properties`
   - Model `CapacityReservationGroupUpdate` moved instance variable `capacity_reservations`, `virtual_machines_associated`, `instance_view`, `sharing_profile` and `reservation_type` under property `properties`
   - Model `CapacityReservationUpdate` moved instance variable `reservation_id`, `platform_fault_domain_count`, `virtual_machines_associated`, `provisioning_time`, `provisioning_state`, `instance_view`, `time_created` and `schedule_profile` under property `properties`
@@ -56,51 +53,6 @@
   - Method `VirtualMachineScaleSetsOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
   - Method `VirtualMachinesOperations.begin_create_or_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
   - Method `VirtualMachinesOperations.begin_update` replaced positional_or_keyword `if_match`/`if_none_match` to keyword_only `etag`/`match_condition`
-  - Deleted or renamed model `AvailabilitySetSkuTypes`
-  - Deleted or renamed model `CloudService`
-  - Deleted or renamed model `CloudServiceExtensionProfile`
-  - Deleted or renamed model `CloudServiceExtensionProperties`
-  - Deleted or renamed model `CloudServiceInstanceView`
-  - Deleted or renamed model `CloudServiceNetworkProfile`
-  - Deleted or renamed model `CloudServiceOsProfile`
-  - Deleted or renamed model `CloudServiceProperties`
-  - Deleted or renamed model `CloudServiceRole`
-  - Deleted or renamed model `CloudServiceRoleProfile`
-  - Deleted or renamed model `CloudServiceRoleProfileProperties`
-  - Deleted or renamed model `CloudServiceRoleProperties`
-  - Deleted or renamed model `CloudServiceRoleSku`
-  - Deleted or renamed model `CloudServiceSlotType`
-  - Deleted or renamed model `CloudServiceUpdate`
-  - Deleted or renamed model `CloudServiceUpgradeMode`
-  - Deleted or renamed model `CloudServiceVaultAndSecretReference`
-  - Deleted or renamed model `CloudServiceVaultCertificate`
-  - Deleted or renamed model `CloudServiceVaultSecretGroup`
-  - Deleted or renamed model `Extension`
-  - Deleted or renamed model `InstanceSku`
-  - Deleted or renamed model `InstanceViewStatusesSummary`
-  - Deleted or renamed model `LoadBalancerConfiguration`
-  - Deleted or renamed model `LoadBalancerConfigurationProperties`
-  - Deleted or renamed model `LoadBalancerFrontendIpConfiguration`
-  - Deleted or renamed model `LoadBalancerFrontendIpConfigurationProperties`
-  - Deleted or renamed model `OSFamily`
-  - Deleted or renamed model `OSFamilyProperties`
-  - Deleted or renamed model `OSVersion`
-  - Deleted or renamed model `OSVersionProperties`
-  - Deleted or renamed model `OSVersionPropertiesBase`
-  - Deleted or renamed model `ResourceInstanceViewStatus`
-  - Deleted or renamed model `ResourceWithOptionalLocation`
-  - Deleted or renamed model `RoleInstance`
-  - Deleted or renamed model `RoleInstanceNetworkProfile`
-  - Deleted or renamed model `RoleInstanceProperties`
-  - Deleted or renamed model `RoleInstanceView`
-  - Deleted or renamed model `RoleInstances`
-  - Deleted or renamed model `StatusCodeCount`
-  - Deleted or renamed model `UpdateDomain`
-  - Deleted or renamed operation group `CloudServiceOperatingSystemsOperations`
-  - Deleted or renamed operation group `CloudServiceRoleInstancesOperations`
-  - Deleted or renamed operation group `CloudServiceRolesOperations`
-  - Deleted or renamed operation group `CloudServicesOperations`
-  - Deleted or renamed operation group `CloudServicesUpdateDomainOperations`
   - Method `AvailabilitySetsOperations.list_by_subscription` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `CapacityReservationGroupsOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
   - Method `CapacityReservationGroupsOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
