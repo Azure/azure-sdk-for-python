@@ -17,12 +17,14 @@ USAGE:
 """
 import asyncio
 import os
-connection_string = os.environ['DATALAKE_STORAGE_CONNECTION_STRING']
+
+connection_string = os.environ["DATALAKE_STORAGE_CONNECTION_STRING"]
 
 
 async def instantiate_directory_client_from_conn_str():
     # [START instantiate_directory_client_from_conn_str]
     from azure.storage.filedatalake.aio import DataLakeDirectoryClient
+
     DataLakeDirectoryClient.from_connection_string(connection_string, "myfilesystem", "mydirectory")
     # [END instantiate_directory_client_from_conn_str]
 
@@ -30,6 +32,7 @@ async def instantiate_directory_client_from_conn_str():
 async def instantiate_file_client_from_conn_str():
     # [START instantiate_file_client_from_conn_str]
     from azure.storage.filedatalake.aio import DataLakeFileClient
+
     DataLakeFileClient.from_connection_string(connection_string, "myfilesystem", "mydirectory", "myfile")
     # [END instantiate_file_client_from_conn_str]
 
@@ -39,5 +42,5 @@ async def main():
     await instantiate_file_client_from_conn_str()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     asyncio.run(main())

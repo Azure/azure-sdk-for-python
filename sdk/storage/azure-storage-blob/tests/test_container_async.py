@@ -25,13 +25,9 @@ from azure.storage.blob import (
     PublicAccess,
     ResourceTypes,
     StandardBlobTier,
-    StorageErrorCode
-    )
-from azure.storage.blob.aio import (
-    BlobClient,
-    BlobServiceClient,
-    ContainerClient
+    StorageErrorCode,
 )
+from azure.storage.blob.aio import BlobClient, BlobServiceClient, ContainerClient
 
 from devtools_testutils import set_custom_default_matcher
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -39,14 +35,14 @@ from devtools_testutils.storage import LogCaptured
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
-#------------------------------------------------------------------------------
-TEST_CONTAINER_PREFIX = 'acontainer'
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+TEST_CONTAINER_PREFIX = "acontainer"
+# ------------------------------------------------------------------------------
 
 
 class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
-    #--Helpers-----------------------------------------------------------------
+    # --Helpers-----------------------------------------------------------------
     def _get_container_reference(self, prefix=TEST_CONTAINER_PREFIX):
         container_name = self.get_resource_name(prefix)
         return container_name
@@ -66,14 +62,16 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             result.append(item)
         return result
 
-    #--Test cases for containers -----------------------------------------
+    # --Test cases for containers -----------------------------------------
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_create_container(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, retry_total=0)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), storage_account_key.secret, retry_total=0
+        )
         container_name = self._get_container_reference()
 
         # Act
@@ -113,7 +111,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         container = bsc.get_container_client(container_name)
-        created = await container.create_container(public_access='container')
+        created = await container.create_container(public_access="container")
 
         # Assert
         assert created
@@ -130,15 +128,14 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         container = bsc.get_container_client(container_name)
-        created = await container.create_container(public_access='blob')
+        created = await container.create_container(public_access="blob")
 
         blob = container.get_blob_client("blob1")
-        await blob.upload_blob(u'xyz')
+        await blob.upload_blob("xyz")
 
         anonymous_service = BlobClient(
-            self.account_url(storage_account_name, "blob"),
-            container_name=container_name,
-            blob_name="blob1")
+            self.account_url(storage_account_name, "blob"), container_name=container_name, blob_name="blob1"
+        )
 
         # Assert
         assert created
@@ -152,7 +149,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container_name = self._get_container_reference()
-        metadata = {'hello': 'world', 'number': '42'}
+        metadata = {"hello": "world", "number": "42"}
 
         # Act
         container = bsc.get_container_client(container_name)
@@ -172,7 +169,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Act
         exists = await container.get_container_properties()
@@ -213,11 +210,14 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret,
-                                max_single_get_size=38,
-                                max_chunk_get_size=38)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_single_get_size=38,
+            max_chunk_get_size=38,
+        )
         container = await self._create_container(bsc, prefix="cont1")
-        data = b'hello world python storage test chunks' * 5
+        data = b"hello world python storage test chunks" * 5
         blob_name = self.get_resource_name("testblob")
         blob = container.get_blob_client(blob_name)
         await blob.upload_blob(data, overwrite=True)
@@ -233,8 +233,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
     @pytest.mark.skip(reason="Feature not yet enabled. Make sure to record this test once enabled.")
     @BlobPreparer()
-    async def test_rename_container_with_container_client(
-            self, storage_account_name, storage_account_key):
+    async def test_rename_container_with_container_client(self, storage_account_name, storage_account_key):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         old_name1 = self._get_container_reference(prefix="oldcontainer1")
         old_name2 = self._get_container_reference(prefix="oldcontainer2")
@@ -269,7 +268,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         new_name = self._get_container_reference(prefix="new")
         container = bsc.get_container_client(old_name)
         await container.create_container()
-        container_lease_id = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        container_lease_id = await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
         with pytest.raises(HttpResponseError):
             await bsc._rename_container(name=old_name, new_name=new_name)
         with pytest.raises(HttpResponseError):
@@ -285,7 +284,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        container_name = u'啊齄丂狛狜'
+        container_name = "啊齄丂狛狜"
 
         container = bsc.get_container_client(container_name)
         # Act
@@ -308,7 +307,6 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         containers = []
         async for c in bsc.list_containers():
             containers.append(c)
-
 
         # Assert
         assert containers is not None
@@ -367,14 +365,12 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        metadata = {'hello': 'world', 'number': '42'}
+        metadata = {"hello": "world", "number": "42"}
         resp = await container.set_container_metadata(metadata)
 
         # Act
         containers = []
-        async for c in bsc.list_containers(
-            name_starts_with=container.container_name,
-            include_metadata=True):
+        async for c in bsc.list_containers(name_starts_with=container.container_name, include_metadata=True):
             containers.append(c)
 
         # Assert
@@ -394,12 +390,12 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
-        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=expiry_time,
-                                     start=start_time)
-        signed_identifier = {'testid': access_policy}
+        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow())
+        access_policy = AccessPolicy(
+            permission=ContainerSasPermissions(read=True), expiry=expiry_time, start=start_time
+        )
+        signed_identifier = {"testid": access_policy}
         resp = await container.set_container_access_policy(signed_identifier, public_access=PublicAccess.Blob)
 
         # Act
@@ -423,7 +419,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        prefix = 'listcontainerasync'
+        prefix = "listcontainerasync"
         container_names = []
         for i in range(0, 4):
             cr = await self._create_container(bsc, prefix + str(i))
@@ -437,8 +433,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         async for c in await generator1.__anext__():
             containers1.append(c)
 
-        generator2 = bsc.list_containers(
-            name_starts_with=prefix, results_per_page=2).by_page(generator1.continuation_token)
+        generator2 = bsc.list_containers(name_starts_with=prefix, results_per_page=2).by_page(
+            generator1.continuation_token
+        )
         containers2 = []
         async for c in await generator2.__anext__():
             containers2.append(c)
@@ -468,7 +465,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             account_key=storage_account_key.secret,
             resource_types=ResourceTypes(service=True),
             permission=AccountSasPermissions(list=True),
-            expiry=datetime.utcnow() + timedelta(hours=3)
+            expiry=datetime.utcnow() + timedelta(hours=3),
         )
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=sas_token)
 
@@ -491,7 +488,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        metadata = {'hello': 'world', 'number': '43'}
+        metadata = {"hello": "world", "number": "43"}
         container = await self._create_container(bsc)
 
         # Act
@@ -508,9 +505,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        metadata = {'hello': 'world', 'number': '43'}
+        metadata = {"hello": "world", "number": "43"}
         container = await self._create_container(bsc)
-        lease_id = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease_id = await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Act
         await container.set_container_metadata(metadata, lease=lease_id)
@@ -532,7 +529,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         with pytest.raises(ResourceNotFoundError):
-            await container.set_container_metadata({'hello': 'world', 'number': '43'})
+            await container.set_container_metadata({"hello": "world", "number": "43"})
 
         # Assert
 
@@ -543,7 +540,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        metadata = {'hello': 'world', 'number': '42'}
+        metadata = {"hello": "world", "number": "42"}
         container = await self._create_container(bsc)
         await container.set_container_metadata(metadata)
 
@@ -561,10 +558,10 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        metadata = {'hello': 'world', 'number': '42'}
+        metadata = {"hello": "world", "number": "42"}
         container = await self._create_container(bsc)
         await container.set_container_metadata(metadata)
-        lease_id = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease_id = await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Act
         md = await container.get_container_properties(lease=lease_id)
@@ -579,8 +576,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(
-            storage_account_name, "blob"), storage_account_key.secret)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
 
         container1 = await self._create_container(bsc, prefix="container1")
         container2_name = self._get_container_reference(prefix="container2")
@@ -595,9 +591,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        metadata = {'hello': 'world', 'number': '42'}
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
+        metadata = {"hello": "world", "number": "42"}
         container = await self._create_container(bsc)
         await container.set_container_metadata(metadata)
 
@@ -618,10 +613,10 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        metadata = {'hello': 'world', 'number': '42'}
+        metadata = {"hello": "world", "number": "42"}
         container = await self._create_container(bsc)
         await container.set_container_metadata(metadata)
-        lease_id = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease_id = await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Act
         props = await container.get_container_properties(lease=lease_id)
@@ -630,9 +625,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert props is not None
         assert props.metadata == metadata
-        assert props.lease.duration == 'infinite'
-        assert props.lease.state == 'leased'
-        assert props.lease.status == 'locked'
+        assert props.lease.duration == "infinite"
+        assert props.lease.state == "leased"
+        assert props.lease.status == "locked"
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -648,8 +643,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert acl is not None
-        assert acl.get('public_access') is None
-        assert len(acl.get('signed_identifiers')) == 0
+        assert acl.get("public_access") is None
+        assert len(acl.get("signed_identifiers")) == 0
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -659,42 +654,42 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        lease_id = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease_id = await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Act
         acl = await container.get_container_access_policy(lease=lease_id)
 
         # Assert
         assert acl is not None
-        assert acl.get('public_access') is None
+        assert acl.get("public_access") is None
 
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_set_container_acl(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        variables = kwargs.pop('variables', {})
+        variables = kwargs.pop("variables", {})
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
         # Act
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
-        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=expiry_time,
-                                     start=start_time)
-        signed_identifier = {'testid': access_policy}
+        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow())
+        access_policy = AccessPolicy(
+            permission=ContainerSasPermissions(read=True), expiry=expiry_time, start=start_time
+        )
+        signed_identifier = {"testid": access_policy}
         response = await container.set_container_access_policy(signed_identifier)
 
-        assert response.get('etag') is not None
-        assert response.get('last_modified') is not None
+        assert response.get("etag") is not None
+        assert response.get("last_modified") is not None
 
         # Assert
         acl = await container.get_container_access_policy()
         assert acl is not None
-        assert len(acl.get('signed_identifiers')) == 1
-        assert acl.get('public_access') is None
+        assert len(acl.get("signed_identifiers")) == 1
+        assert acl.get("public_access") is None
 
         return variables
 
@@ -709,18 +704,18 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         container = await self._create_container(bsc)
 
         # Act
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
-        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=expiry_time,
-                                     start=start_time)
-        signed_identifier = {'testid': access_policy}
+        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow())
+        access_policy = AccessPolicy(
+            permission=ContainerSasPermissions(read=True), expiry=expiry_time, start=start_time
+        )
+        signed_identifier = {"testid": access_policy}
 
         response = await container.set_container_access_policy(signed_identifier)
 
         # Assert
-        assert response.get('etag') is not None
-        assert response.get('last_modified') is not None
+        assert response.get("etag") is not None
+        assert response.get("last_modified") is not None
 
         return variables
 
@@ -733,21 +728,21 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        lease_id = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease_id = await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Act
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
-        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=expiry_time,
-                                     start=start_time)
-        signed_identifier = {'testid': access_policy}
+        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow())
+        access_policy = AccessPolicy(
+            permission=ContainerSasPermissions(read=True), expiry=expiry_time, start=start_time
+        )
+        signed_identifier = {"testid": access_policy}
         await container.set_container_access_policy(signed_identifier, lease=lease_id)
 
         # Assert
         acl = await container.get_container_access_policy()
         assert acl is not None
-        assert acl.get('public_access') is None
+        assert acl.get("public_access") is None
 
         return variables
 
@@ -763,18 +758,18 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         container = await self._create_container(bsc)
 
         # Act
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
-        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=expiry_time,
-                                     start=start_time)
-        signed_identifier = {'testid': access_policy}
-        await container.set_container_access_policy(signed_identifier, public_access='container')
+        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow())
+        access_policy = AccessPolicy(
+            permission=ContainerSasPermissions(read=True), expiry=expiry_time, start=start_time
+        )
+        signed_identifier = {"testid": access_policy}
+        await container.set_container_access_policy(signed_identifier, public_access="container")
 
         # Assert
         acl = await container.get_container_access_policy()
         assert acl is not None
-        assert 'container' == acl.get('public_access')
+        assert "container" == acl.get("public_access")
 
         return variables
 
@@ -793,8 +788,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Assert
         acl = await container.get_container_access_policy()
         assert acl is not None
-        assert len(acl.get('signed_identifiers')) == 0
-        assert acl.get('public_access') is None
+        assert len(acl.get("signed_identifiers")) == 0
+        assert acl.get("public_access") is None
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -807,19 +802,19 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         container = await self._create_container(bsc)
 
         # Act
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
-        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow() - timedelta(minutes=1))
-        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=expiry_time,
-                                     start=start_time)
-        identifiers = {'testid': access_policy}
+        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow() - timedelta(minutes=1))
+        access_policy = AccessPolicy(
+            permission=ContainerSasPermissions(read=True), expiry=expiry_time, start=start_time
+        )
+        identifiers = {"testid": access_policy}
         await container.set_container_access_policy(identifiers)
 
         # Assert
         acl = await container.get_container_access_policy()
         assert acl is not None
-        assert 'testid' == acl.get('signed_identifiers')[0].id
-        assert acl.get('public_access') is None
+        assert "testid" == acl.get("signed_identifiers")[0].id
+        assert acl.get("public_access") is None
 
         return variables
 
@@ -839,10 +834,10 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Assert
         acl = await container.get_container_access_policy()
         assert acl is not None
-        assert len(acl.get('signed_identifiers')) == 3
-        assert '0' == acl.get('signed_identifiers')[0].id
-        assert acl.get('signed_identifiers')[0].access_policy is None
-        assert acl.get('public_access') is None
+        assert len(acl.get("signed_identifiers")) == 3
+        assert "0" == acl.get("signed_identifiers")[0].id
+        assert acl.get("signed_identifiers")[0].access_policy is None
+        assert acl.get("public_access") is None
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -854,11 +849,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
 
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
-        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow() - timedelta(minutes=1))
-        access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                     expiry=expiry_time,
-                                     start=start_time)
+        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow() - timedelta(minutes=1))
+        access_policy = AccessPolicy(
+            permission=ContainerSasPermissions(read=True), expiry=expiry_time, start=start_time
+        )
         identifiers = {i: access_policy for i in range(2)}
 
         # Act
@@ -867,10 +862,10 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Assert
         acl = await container.get_container_access_policy()
         assert acl is not None
-        assert len(acl.get('signed_identifiers')) == 2
-        assert '0' == acl.get('signed_identifiers')[0].id
-        assert acl.get('signed_identifiers')[0].access_policy is not None
-        assert acl.get('public_access') is None
+        assert len(acl.get("signed_identifiers")) == 2
+        assert "0" == acl.get("signed_identifiers")[0].id
+        assert acl.get("signed_identifiers")[0].access_policy is not None
+        assert acl.get("public_access") is None
 
         return variables
 
@@ -886,12 +881,15 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Act
         identifiers = {}
         for i in range(0, 6):
-            identifiers['id{}'.format(i)] = AccessPolicy()
+            identifiers["id{}".format(i)] = AccessPolicy()
 
         # Assert
         with pytest.raises(ValueError) as e:
             await container_name.set_container_access_policy(identifiers)
-        assert str(e.value.args[0]) == 'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
+        assert (
+            str(e.value.args[0])
+            == "Too many access policies provided. The server does not support setting more than 5 access policies on a single resource."
+        )
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -903,7 +901,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         container = await self._create_container(bsc)
 
         # Act
-        lease = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
         await lease.release()
 
         # Assert
@@ -916,7 +914,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        lease = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
+        lease = await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444", lease_duration=15)
         self.sleep(10)
         lease_id_start = lease.id
 
@@ -941,7 +939,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         container = await self._create_container(bsc)
 
         # Act
-        lease = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
+        lease = await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444", lease_duration=15)
 
         # Assert
         await lease.break_lease(lease_break_period=5)
@@ -957,7 +955,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        lease = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
         await lease.release()
 
         # Act
@@ -976,13 +974,13 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         container = await self._create_container(bsc)
 
         # Act
-        lease = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
+        lease = await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444", lease_duration=15)
 
         # Assert
         with pytest.raises(HttpResponseError):
             await container.acquire_lease()
         self.sleep(17)
-        await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -994,7 +992,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         container = await self._create_container(bsc)
 
         # Act
-        lease = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
+        lease = await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444", lease_duration=15)
 
         # Assert
         lease2 = await container.acquire_lease(lease_id=lease.id)
@@ -1010,7 +1008,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         container = await self._create_container(bsc)
 
         # Act
-        proposed_lease_id = '55e97f64-73e8-4390-838d-d9e84a374321'
+        proposed_lease_id = "55e97f64-73e8-4390-838d-d9e84a374321"
         lease = await container.acquire_lease(lease_id=proposed_lease_id)
 
         # Assert
@@ -1026,8 +1024,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         container = await self._create_container(bsc)
 
         # Act
-        lease_id = '29e0b239-ecda-4f69-bfa3-95f6af91464c'
-        lease = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease_id = "29e0b239-ecda-4f69-bfa3-95f6af91464c"
+        lease = await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
         lease_id1 = lease.id
         await lease.change(proposed_lease_id=lease_id)
         await lease.renew()
@@ -1070,7 +1068,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
                 await container.delete_container()
 
             log_as_str = log_captured.getvalue()
-            #assert 'ERROR' in log_as_str
+            # assert 'ERROR' in log_as_str
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1080,7 +1078,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        lease = await container.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
+        lease = await container.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444", lease_duration=15)
 
         # Act
         deleted = await container.delete_container(lease=lease)
@@ -1129,18 +1127,17 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
 
-        await (container.get_blob_client('blob1')).upload_blob(data)
-        await (container.get_blob_client('blob2')).upload_blob(data)
-
+        await container.get_blob_client("blob1").upload_blob(data)
+        await container.get_blob_client("blob2").upload_blob(data)
 
         # Act
         blobs = []
         async for b in container.list_blobs():
             blobs.append(b.name)
 
-        assert blobs, ['blob1' == 'blob2']
+        assert blobs, ["blob1" == "blob2"]
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1150,9 +1147,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
 
-        blob_client = container.get_blob_client('blob1')
+        blob_client = container.get_blob_client("blob1")
         await blob_client.upload_blob(data, standard_blob_tier=StandardBlobTier.Archive)
         await blob_client.set_standard_blob_tier(StandardBlobTier.Hot)
 
@@ -1169,9 +1166,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
 
-        blob_client = container.get_blob_client('blob1')
+        blob_client = container.get_blob_client("blob1")
         await blob_client.upload_blob(data, standard_blob_tier=StandardBlobTier.Cold)
 
         # Act
@@ -1187,10 +1184,10 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
-        cr0 = container.get_blob_client('blob1')
+        data = b"hello world"
+        cr0 = container.get_blob_client("blob1")
         await cr0.upload_blob(data)
-        cr1 = container.get_blob_client('blob2')
+        cr1 = container.get_blob_client("blob2")
         await cr1.upload_blob(data)
 
         # Act
@@ -1202,10 +1199,10 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         assert blobs is not None
         assert len(blobs) >= 2
         assert blobs[0] is not None
-        self.assertNamedItemInContainer(blobs, 'blob1')
-        self.assertNamedItemInContainer(blobs, 'blob2')
+        self.assertNamedItemInContainer(blobs, "blob1")
+        self.assertNamedItemInContainer(blobs, "blob2")
         assert blobs[0].size == 11
-        assert blobs[1].content_settings.content_type == 'application/octet-stream'
+        assert blobs[1].content_settings.content_type == "application/octet-stream"
         assert blobs[0].creation_time is not None
 
     @pytest.mark.playback_test_only
@@ -1216,14 +1213,14 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        container = bsc.get_container_client('orp-source')
-        data = b'hello world'
-        b_c = container.get_blob_client('blob3')
+        container = bsc.get_container_client("orp-source")
+        data = b"hello world"
+        b_c = container.get_blob_client("blob3")
         await b_c.upload_blob(data, overwrite=True)
-        metadata = {'hello': 'world', 'number': '42'}
+        metadata = {"hello": "world", "number": "42"}
         await b_c.set_blob_metadata(metadata)
 
-        await container.get_blob_client('blob4').upload_blob(data, overwrite=True)
+        await container.get_blob_client("blob4").upload_blob(data, overwrite=True)
 
         # Act
         blobs_list = container.list_blobs()
@@ -1243,10 +1240,10 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
-        blob1 = container.get_blob_client('blob1')
+        data = b"hello world"
+        blob1 = container.get_blob_client("blob1")
         await blob1.upload_blob(data)
-        lease = await blob1.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = await blob1.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Act
         resp = []
@@ -1256,11 +1253,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         assert resp is not None
         assert len(resp) >= 1
         assert resp[0] is not None
-        self.assertNamedItemInContainer(resp, 'blob1')
+        self.assertNamedItemInContainer(resp, "blob1")
         assert resp[0].size == 11
-        assert resp[0].lease.duration == 'infinite'
-        assert resp[0].lease.status == 'locked'
-        assert resp[0].lease.state == 'leased'
+        assert resp[0].lease.duration == "infinite"
+        assert resp[0].lease.status == "locked"
+        assert resp[0].lease.state == "leased"
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1270,24 +1267,24 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
-        c0 = container.get_blob_client('blob_a1')
+        data = b"hello world"
+        c0 = container.get_blob_client("blob_a1")
         await c0.upload_blob(data)
-        c1 = container.get_blob_client('blob_a2')
+        c1 = container.get_blob_client("blob_a2")
         await c1.upload_blob(data)
-        c2 = container.get_blob_client('blob_b1')
+        c2 = container.get_blob_client("blob_b1")
         await c2.upload_blob(data)
 
         # Act
         resp = []
-        async for b in container.list_blobs(name_starts_with='blob_a'):
+        async for b in container.list_blobs(name_starts_with="blob_a"):
             resp.append(b)
 
         # Assert
         assert resp is not None
         assert len(resp) == 2
-        self.assertNamedItemInContainer(resp, 'blob_a1')
-        self.assertNamedItemInContainer(resp, 'blob_a2')
+        self.assertNamedItemInContainer(resp, "blob_a1")
+        self.assertNamedItemInContainer(resp, "blob_a2")
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1297,14 +1294,14 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
-        c0 = container.get_blob_client('blob_a1')
+        data = b"hello world"
+        c0 = container.get_blob_client("blob_a1")
         await c0.upload_blob(data)
-        c1 = container.get_blob_client('blob_a2')
+        c1 = container.get_blob_client("blob_a2")
         await c1.upload_blob(data)
-        c2 = container.get_blob_client('blob_a3')
+        c2 = container.get_blob_client("blob_a3")
         await c2.upload_blob(data)
-        c3 = container.get_blob_client('blob_b1')
+        c3 = container.get_blob_client("blob_b1")
         await c3.upload_blob(data)
 
         # Act
@@ -1316,8 +1313,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert blobs is not None
         assert len(blobs) == 2
-        self.assertNamedItemInContainer(generator.current_page, 'blob_a1')
-        self.assertNamedItemInContainer(generator.current_page, 'blob_a2')
+        self.assertNamedItemInContainer(generator.current_page, "blob_a1")
+        self.assertNamedItemInContainer(generator.current_page, "blob_a2")
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1327,11 +1324,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
-        blob1 = container.get_blob_client('blob1')
+        data = b"hello world"
+        blob1 = container.get_blob_client("blob1")
         await blob1.upload_blob(data)
         await blob1.create_snapshot()
-        await (container.get_blob_client('blob2')).upload_blob(data)
+        await container.get_blob_client("blob2").upload_blob(data)
 
         # Act
         blobs = []
@@ -1340,11 +1337,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert len(blobs) == 3
-        assert blobs[0].name == 'blob1'
+        assert blobs[0].name == "blob1"
         assert blobs[0].snapshot is not None
-        assert blobs[1].name == 'blob1'
+        assert blobs[1].name == "blob1"
         assert blobs[1].snapshot is None
-        assert blobs[2].name == 'blob2'
+        assert blobs[2].name == "blob2"
         assert blobs[2].snapshot is None
 
     @BlobPreparer()
@@ -1355,12 +1352,12 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
-        blob1 = container.get_blob_client('blob1')
-        await blob1.upload_blob(data, metadata={'number': '1', 'name': 'bob'})
+        data = b"hello world"
+        blob1 = container.get_blob_client("blob1")
+        await blob1.upload_blob(data, metadata={"number": "1", "name": "bob"})
         await blob1.create_snapshot()
-        cr = container.get_blob_client('blob2')
-        await cr.upload_blob(data, metadata={'number': '2', 'name': 'car'})
+        cr = container.get_blob_client("blob2")
+        await cr.upload_blob(data, metadata={"number": "2", "name": "car"})
 
         # Act
         blobs = []
@@ -1369,12 +1366,12 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert len(blobs) == 2
-        assert blobs[0].name == 'blob1'
-        assert blobs[0].metadata['number'] == '1'
-        assert blobs[0].metadata['name'] == 'bob'
-        assert blobs[1].name == 'blob2'
-        assert blobs[1].metadata['number'] == '2'
-        assert blobs[1].metadata['name'] == 'car'
+        assert blobs[0].name == "blob1"
+        assert blobs[0].metadata["number"] == "1"
+        assert blobs[0].metadata["name"] == "bob"
+        assert blobs[1].name == "blob2"
+        assert blobs[1].metadata["number"] == "2"
+        assert blobs[1].metadata["name"] == "car"
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1382,23 +1379,29 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret
+        )
         container = await self._create_container(bsc)
-        data = b'hello world'
-        content_settings = ContentSettings(
-            content_language='spanish',
-            content_disposition='inline')
-        blob1 = container.get_blob_client('blob1')
-        resp = await blob1.upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '1', 'name': 'bob'})
-        version_id_1 = resp['version_id']
+        data = b"hello world"
+        content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
+        blob1 = container.get_blob_client("blob1")
+        resp = await blob1.upload_blob(
+            data, overwrite=True, content_settings=content_settings, metadata={"number": "1", "name": "bob"}
+        )
+        version_id_1 = resp["version_id"]
         await blob1.upload_blob(b"abc", overwrite=True)
         root_content = b"cde"
-        root_version_id = (await blob1.upload_blob(root_content, overwrite=True))['version_id']
+        root_version_id = (await blob1.upload_blob(root_content, overwrite=True))["version_id"]
         # this will delete the root blob, while you can still access it through versioning
         await blob1.delete_blob()
 
-        await container.get_blob_client('blob2').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
-        await container.get_blob_client('blob3').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+        await container.get_blob_client("blob2").upload_blob(
+            data, overwrite=True, content_settings=content_settings, metadata={"number": "2", "name": "car"}
+        )
+        await container.get_blob_client("blob3").upload_blob(
+            data, overwrite=True, content_settings=content_settings, metadata={"number": "2", "name": "car"}
+        )
 
         # Act
         blobs = []
@@ -1410,13 +1413,13 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         downloaded_original_content = await (await blob1.download_blob(version_id=version_id_1)).readall()
 
         # Assert
-        assert blobs[0].name == 'blob1'
+        assert blobs[0].name == "blob1"
         assert blobs[0].has_versions_only
         assert root_content == downloaded_root_content
         assert data == downloaded_original_content
-        assert blobs[1].name == 'blob2'
+        assert blobs[1].name == "blob2"
         assert not blobs[1].has_versions_only
-        assert blobs[2].name == 'blob3'
+        assert blobs[2].name == "blob3"
         assert not blobs[2].has_versions_only
 
     @BlobPreparer()
@@ -1427,14 +1430,14 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
-        blob1 = container.get_blob_client('blob1')
-        await blob1.stage_block('1', b'AAA')
-        await blob1.stage_block('2', b'BBB')
-        await blob1.stage_block('3', b'CCC')
+        data = b"hello world"
+        blob1 = container.get_blob_client("blob1")
+        await blob1.stage_block("1", b"AAA")
+        await blob1.stage_block("2", b"BBB")
+        await blob1.stage_block("3", b"CCC")
 
-        blob2 = container.get_blob_client('blob2')
-        await blob2.upload_blob(data, metadata={'number': '2', 'name': 'car'})
+        blob2 = container.get_blob_client("blob2")
+        await blob2.upload_blob(data, metadata={"number": "2", "name": "car"})
 
         # Act
         blobs = []
@@ -1443,8 +1446,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert len(blobs) == 2
-        assert blobs[0].name == 'blob1'
-        assert blobs[1].name == 'blob2'
+        assert blobs[0].name == "blob1"
+        assert blobs[1].name == "blob2"
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1454,14 +1457,14 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
-        await (container.get_blob_client('blob1')).upload_blob(data, metadata={'status': 'original'})
-        sourceblob = 'https://{0}.blob.core.windows.net/{1}/blob1'.format(
-            storage_account_name,
-            container.container_name)
+        data = b"hello world"
+        await container.get_blob_client("blob1").upload_blob(data, metadata={"status": "original"})
+        sourceblob = "https://{0}.blob.core.windows.net/{1}/blob1".format(
+            storage_account_name, container.container_name
+        )
 
-        blobcopy = container.get_blob_client('blob1copy')
-        await blobcopy.start_copy_from_url(sourceblob, metadata={'status': 'copy'})
+        blobcopy = container.get_blob_client("blob1copy")
+        await blobcopy.start_copy_from_url(sourceblob, metadata={"status": "copy"})
 
         # Act
         blobs = []
@@ -1470,22 +1473,22 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert len(blobs) == 2
-        assert blobs[0].name == 'blob1'
-        assert blobs[1].name == 'blob1copy'
+        assert blobs[0].name == "blob1"
+        assert blobs[1].name == "blob1copy"
         assert blobs[1].blob_type == blobs[0].blob_type
         assert blobs[1].size == 11
-        assert blobs[1].content_settings.content_type == 'application/octet-stream'
+        assert blobs[1].content_settings.content_type == "application/octet-stream"
         assert blobs[1].content_settings.cache_control == None
         assert blobs[1].content_settings.content_encoding == None
         assert blobs[1].content_settings.content_language == None
         assert blobs[1].content_settings.content_disposition == None
         assert blobs[1].content_settings.content_md5 != None
-        assert blobs[1].lease.status == 'unlocked'
-        assert blobs[1].lease.state == 'available'
+        assert blobs[1].lease.status == "unlocked"
+        assert blobs[1].lease.state == "available"
         assert blobs[1].copy.id != None
         assert blobs[1].copy.source == sourceblob
-        assert blobs[1].copy.status == 'success'
-        assert blobs[1].copy.progress == '11/11'
+        assert blobs[1].copy.status == "success"
+        assert blobs[1].copy.progress == "11/11"
         assert blobs[1].copy.completion_time != None
 
     @BlobPreparer()
@@ -1496,15 +1499,15 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
 
-        cr0 = container.get_blob_client('a/blob1')
+        cr0 = container.get_blob_client("a/blob1")
         await cr0.upload_blob(data)
-        cr1 = container.get_blob_client('a/blob2')
+        cr1 = container.get_blob_client("a/blob2")
         await cr1.upload_blob(data)
-        cr2 = container.get_blob_client('b/blob3')
+        cr2 = container.get_blob_client("b/blob3")
         await cr2.upload_blob(data)
-        cr4 = container.get_blob_client('blob4')
+        cr4 = container.get_blob_client("blob4")
         await cr4.upload_blob(data)
 
         # Act
@@ -1515,9 +1518,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert resp is not None
         assert len(resp) == 3
-        self.assertNamedItemInContainer(resp, 'a/')
-        self.assertNamedItemInContainer(resp, 'b/')
-        self.assertNamedItemInContainer(resp, 'blob4')
+        self.assertNamedItemInContainer(resp, "a/")
+        self.assertNamedItemInContainer(resp, "b/")
+        self.assertNamedItemInContainer(resp, "blob4")
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1526,20 +1529,20 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        container = await self._create_container(bsc, 'testfind')
+        container = await self._create_container(bsc, "testfind")
 
-        data = b'hello world'
+        data = b"hello world"
         tags = {"tag1": "tagone", "tag2": "tagtwo", "tag3": "tagthree"}
-        other_tags = {'tag1': 'other'}
+        other_tags = {"tag1": "other"}
         filter_expression = "tag1='tagone' and tag2='tagtwo'"
 
-        c1 = container.get_blob_client('blob1')
+        c1 = container.get_blob_client("blob1")
         await c1.upload_blob(data, tags=tags)
-        c2 = container.get_blob_client('blob2')
+        c2 = container.get_blob_client("blob2")
         await c2.upload_blob(data, tags=tags)
-        c3 = container.get_blob_client('blob3')
+        c3 = container.get_blob_client("blob3")
         await c3.upload_blob(data, tags=tags)
-        c4 = container.get_blob_client('blob4')
+        c4 = container.get_blob_client("blob4")
         await c4.upload_blob(data, tags=other_tags)
 
         if self.is_live:
@@ -1559,9 +1562,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert 2 == len(items_on_page1)
         assert 1 == len(items_on_page2)
-        assert len(items_on_page2[0]['tags']) == 2
-        assert items_on_page2[0]['tags']['tag1'] == 'tagone'
-        assert items_on_page2[0]['tags']['tag2'] == 'tagtwo'
+        assert len(items_on_page2[0]["tags"]) == 2
+        assert items_on_page2[0]["tags"]["tag1"] == "tagone"
+        assert items_on_page2[0]["tags"]["tag2"] == "tagtwo"
 
     def test_batch_delete_empty_blob_list(self):
         container_client = ContainerClient("https://mystorageaccount.blob.core.windows.net", "container")
@@ -1578,22 +1581,24 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
 
         try:
-            blob_client1 = container.get_blob_client('blob1')
+            blob_client1 = container.get_blob_client("blob1")
             await blob_client1.upload_blob(data)
-            await container.get_blob_client('blob2').upload_blob(data)
-            await container.get_blob_client('blob3').upload_blob(data)
+            await container.get_blob_client("blob2").upload_blob(data)
+            await container.get_blob_client("blob3").upload_blob(data)
         except:
             pass
 
         # Act
-        response = await self._to_list(await container.delete_blobs(
-            await blob_client1.get_blob_properties(),
-            'blob2',
-            'blob3',
-        ))
+        response = await self._to_list(
+            await container.delete_blobs(
+                await blob_client1.get_blob_properties(),
+                "blob2",
+                "blob3",
+            )
+        )
         assert len(response) == 3
         assert response[0].status_code == 202
         assert response[1].status_code == 202
@@ -1605,11 +1610,13 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret
+        )
         container: ContainerClient = await self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
-        blob_data = 'abc'
+        blob_data = "abc"
         blob_client = container.get_blob_client(blob_name)
 
         await blob_client.upload_blob(blob_data, overwrite=True)
@@ -1620,15 +1627,16 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         v3_props = await blob_client.get_blob_properties()
 
         # Act
-        await container.delete_blob(v2_props, version_id=v1_props['version_id'])
+        await container.delete_blob(v2_props, version_id=v1_props["version_id"])
         await container.delete_blob(v2_props)
 
         # Assert
         with pytest.raises(HttpResponseError):
             deleted = container.get_blob_client(v1_props)
             await deleted.get_blob_properties()
-        assert (await blob_client.get_blob_properties(version_id=v3_props['version_id'])).get("version_id") == v3_props[
-            'version_id']
+        assert (await blob_client.get_blob_properties(version_id=v3_props["version_id"])).get("version_id") == v3_props[
+            "version_id"
+        ]
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -1645,27 +1653,25 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             container_name,
             account_key=storage_account_key.secret,
             permission=ContainerSasPermissions(read=True, write=True, delete=True, list=True),
-            expiry=datetime.utcnow() + timedelta(hours=1)
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
         container_client = bsc.get_container_client(container_name)
         await container_client.create_container()
         container = ContainerClient.from_container_url(container_client.url, credential=sas_token)
-        data = b'hello world'
+        data = b"hello world"
 
         try:
-            blob_client1 = container.get_blob_client('blob1')
+            blob_client1 = container.get_blob_client("blob1")
             await blob_client1.upload_blob(data)
-            await container.get_blob_client('blob2').upload_blob(data)
-            await container.get_blob_client('blob3').upload_blob(data)
+            await container.get_blob_client("blob2").upload_blob(data)
+            await container.get_blob_client("blob3").upload_blob(data)
         except:
             pass
 
         # Act
-        response = await self._to_list(await container.delete_blobs(
-            await blob_client1.get_blob_properties(),
-            'blob2',
-            'blob3'
-        ))
+        response = await self._to_list(
+            await container.delete_blobs(await blob_client1.get_blob_properties(), "blob2", "blob3")
+        )
         assert len(response) == 3
         assert response[0].status_code == 202
         assert response[1].status_code == 202
@@ -1681,14 +1687,14 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(self.account_url(blob_storage_account_name, "blob"), blob_storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
 
         try:
-            blob_client1 = container.get_blob_client('blob1')
+            blob_client1 = container.get_blob_client("blob1")
             await blob_client1.upload_blob(data, overwrite=True, tags=tags)
-            await container.get_blob_client('blob2').upload_blob(data, overwrite=True, tags=tags)
-            await container.get_blob_client('blob3').upload_blob(data,  overwrite=True, tags=tags)
+            await container.get_blob_client("blob2").upload_blob(data, overwrite=True, tags=tags)
+            await container.get_blob_client("blob3").upload_blob(data, overwrite=True, tags=tags)
         except:
             pass
 
@@ -1697,17 +1703,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Act
         with pytest.raises(PartialBatchErrorException):
-            await container.delete_blobs(
-                'blob1',
-                'blob2',
-                'blob3',
-                if_tags_match_condition="\"tag1\"='firsttag WRONG'"
-            )
+            await container.delete_blobs("blob1", "blob2", "blob3", if_tags_match_condition="\"tag1\"='firsttag WRONG'")
         blob_list = await container.delete_blobs(
-            'blob1',
-            'blob2',
-            'blob3',
-            if_tags_match_condition="\"tag1\"='firsttag'"
+            "blob1", "blob2", "blob3", if_tags_match_condition="\"tag1\"='firsttag'"
         )
 
         response = []
@@ -1732,43 +1730,39 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             account_key=storage_account_key.secret,
             resource_types=ResourceTypes(object=True, container=True),
             permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
-            expiry=datetime.utcnow() + timedelta(hours=1)
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), sas_token)
         container = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
 
         # blob with snapshot
-        blob_client1 = container.get_blob_client('bloba')
+        blob_client1 = container.get_blob_client("bloba")
         await blob_client1.upload_blob(data, overwrite=True)
         snapshot = await blob_client1.create_snapshot()
 
-        blob_client2 = container.get_blob_client('blobb')
+        blob_client2 = container.get_blob_client("blobb")
         await blob_client2.upload_blob(data, overwrite=True)
-        blob_client3 = container.get_blob_client('blobc')
+        blob_client3 = container.get_blob_client("blobc")
         await blob_client3.upload_blob(data, overwrite=True)
 
         # blob with lease
-        blob_client4 = container.get_blob_client('blobd')
+        blob_client4 = container.get_blob_client("blobd")
         await blob_client4.upload_blob(data, overwrite=True)
         lease = await blob_client4.acquire_lease()
 
         # Act
         blob_props = await blob_client1.get_blob_properties()
-        blob_props.snapshot = snapshot['snapshot']
+        blob_props.snapshot = snapshot["snapshot"]
 
         blob_props_d = {}
-        blob_props_d['name'] = "blobd"
-        blob_props_d['delete_snapshots'] = "include"
-        blob_props_d['lease_id'] = lease.id
+        blob_props_d["name"] = "blobd"
+        blob_props_d["delete_snapshots"] = "include"
+        blob_props_d["lease_id"] = lease.id
 
-        response = await self._to_list(await container.delete_blobs(
-            blob_props,
-            'blobb',
-            'blobc',
-            blob_props_d,
-            timeout=3
-        ))
+        response = await self._to_list(
+            await container.delete_blobs(blob_props, "blobb", "blobc", blob_props_d, timeout=3)
+        )
         response = list(response)
         assert len(response) == 4
         assert response[0].status_code == 202
@@ -1786,22 +1780,19 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
 
         try:
-            await container.get_blob_client('blob1').upload_blob(data)
-            await container.get_blob_client('blob2').upload_blob(data)
-            await container.get_blob_client('blob3').upload_blob(data)
+            await container.get_blob_client("blob1").upload_blob(data)
+            await container.get_blob_client("blob2").upload_blob(data)
+            await container.get_blob_client("blob3").upload_blob(data)
         except:
             pass
 
         # Act
-        response = await self._to_list(await container.delete_blobs(
-            'blob1',
-            'blob2',
-            'blob3',
-            raise_on_any_failure=False
-        ))
+        response = await self._to_list(
+            await container.delete_blobs("blob1", "blob2", "blob3", raise_on_any_failure=False)
+        )
         assert len(response) == 3
         assert response[0].status_code == 202
         assert response[1].status_code == 202
@@ -1815,33 +1806,32 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret
+        )
         container = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
 
         try:
-            blob = bsc.get_blob_client(container.container_name, 'blob1')
+            blob = bsc.get_blob_client(container.container_name, "blob1")
             await blob.upload_blob(data, length=len(data))
-            await container.get_blob_client('blob2').upload_blob(data)
+            await container.get_blob_client("blob2").upload_blob(data)
         except:
             pass
 
         # Act
-        blob = bsc.get_blob_client(container.container_name, 'blob1')
+        blob = bsc.get_blob_client(container.container_name, "blob1")
         old_blob_version_id = (await blob.get_blob_properties()).get("version_id")
-        await blob.stage_block(block_id='1', data="Test Content")
-        await blob.commit_block_list(['1'])
+        await blob.stage_block(block_id="1", data="Test Content")
+        await blob.commit_block_list(["1"])
         new_blob_version_id = (await blob.get_blob_properties()).get("version_id")
         assert old_blob_version_id != new_blob_version_id
 
         blob1_del_data = {}
-        blob1_del_data['name'] = 'blob1'
-        blob1_del_data['version_id'] = old_blob_version_id
+        blob1_del_data["name"] = "blob1"
+        blob1_del_data["version_id"] = old_blob_version_id
 
-        response = await self._to_list(await container.delete_blobs(
-            blob1_del_data,
-            'blob2'
-        ))
+        response = await self._to_list(await container.delete_blobs(blob1_del_data, "blob2"))
 
         # Assert
         assert len(response) == 2
@@ -1856,11 +1846,13 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret
+        )
         container: ContainerClient = await self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
-        blob_data = 'abc'
+        blob_data = "abc"
         blob_client = container.get_blob_client(blob_name)
 
         await blob_client.upload_blob(blob_data, overwrite=True)
@@ -1871,18 +1863,16 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         v3_props = await blob_client.get_blob_properties()
 
         # Act
-        response = await self._to_list(await container.delete_blobs(
-            v1_props,
-            v2_props
-        ))
+        response = await self._to_list(await container.delete_blobs(v1_props, v2_props))
         remaining_blob = container.get_blob_client(v3_props)
 
         # Assert
         assert len(response) == 2
         assert response[0].status_code == 202
         assert response[1].status_code == 202
-        assert (await remaining_blob.get_blob_properties(version_id=v3_props['version_id'])).get("version_id") == \
-               v3_props['version_id']
+        assert (await remaining_blob.get_blob_properties(version_id=v3_props["version_id"])).get(
+            "version_id"
+        ) == v3_props["version_id"]
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -1894,27 +1884,24 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Arrange
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
 
         try:
-            blob1_client = container.get_blob_client('blob1')
+            blob1_client = container.get_blob_client("blob1")
             await blob1_client.upload_blob(data)
             await blob1_client.create_snapshot()
-            await container.get_blob_client('blob2').upload_blob(data)
-            await container.get_blob_client('blob3').upload_blob(data)
+            await container.get_blob_client("blob2").upload_blob(data)
+            await container.get_blob_client("blob3").upload_blob(data)
         except:
             pass
-        blobs = await self._to_list(container.list_blobs(include='snapshots'))
+        blobs = await self._to_list(container.list_blobs(include="snapshots"))
         assert len(blobs) == 4  # 3 blobs + 1 snapshot
 
         # Act
         try:
-            response = await self._to_list(await container.delete_blobs(
-                'blob1',
-                'blob2',
-                'blob3',
-                delete_snapshots='only'
-            ))
+            response = await self._to_list(
+                await container.delete_blobs("blob1", "blob2", "blob3", delete_snapshots="only")
+            )
         except PartialBatchErrorException as err:
             parts_list = err.parts
             assert len(parts_list) == 3
@@ -1922,7 +1909,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             assert parts_list[1].status_code == 404  # There was no snapshot
             assert parts_list[2].status_code == 404  # There was no snapshot
 
-            blobs = await self._to_list(container.list_blobs(include='snapshots'))
+            blobs = await self._to_list(container.list_blobs(include="snapshots"))
             assert len(blobs) == 3  # 3 blobs
 
     @pytest.mark.live_test_only
@@ -1938,23 +1925,25 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         for tier in tiers:
             try:
-                blob = container.get_blob_client('blob1')
-                data = b'hello world'
+                blob = container.get_blob_client("blob1")
+                data = b"hello world"
                 await blob.upload_blob(data)
-                await container.get_blob_client('blob2').upload_blob(data)
-                await container.get_blob_client('blob3').upload_blob(data)
+                await container.get_blob_client("blob2").upload_blob(data)
+                await container.get_blob_client("blob3").upload_blob(data)
 
                 blob_ref = await blob.get_blob_properties()
                 assert blob_ref.blob_tier is not None
                 assert blob_ref.blob_tier_inferred
                 assert blob_ref.blob_tier_change_time is None
 
-                parts = await self._to_list(await container.set_standard_blob_tier_blobs(
-                    tier,
-                    'blob1',
-                    'blob2',
-                    'blob3',
-                ))
+                parts = await self._to_list(
+                    await container.set_standard_blob_tier_blobs(
+                        tier,
+                        "blob1",
+                        "blob2",
+                        "blob3",
+                    )
+                )
 
                 assert len(parts) == 3
 
@@ -1969,9 +1958,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
             finally:
                 await container.delete_blobs(
-                    'blob1',
-                    'blob2',
-                    'blob3',
+                    "blob1",
+                    "blob2",
+                    "blob3",
                 )
 
     @pytest.mark.live_test_only
@@ -1986,11 +1975,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         tier = StandardBlobTier.Cool
         tags = {"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"}
 
-        blob = container.get_blob_client('blob1')
-        data = b'hello world'
+        blob = container.get_blob_client("blob1")
+        data = b"hello world"
         await blob.upload_blob(data, overwrite=True, tags=tags)
-        await container.get_blob_client('blob2').upload_blob(data, overwrite=True, tags=tags)
-        await container.get_blob_client('blob3').upload_blob(data, overwrite=True, tags=tags)
+        await container.get_blob_client("blob2").upload_blob(data, overwrite=True, tags=tags)
+        await container.get_blob_client("blob3").upload_blob(data, overwrite=True, tags=tags)
 
         blob_ref = await blob.get_blob_properties()
         assert blob_ref.blob_tier is not None
@@ -1999,19 +1988,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         with pytest.raises(PartialBatchErrorException):
             await container.set_standard_blob_tier_blobs(
-                tier,
-                'blob1',
-                'blob2',
-                'blob3',
-                if_tags_match_condition="\"tag1\"='firsttag WRONG'"
+                tier, "blob1", "blob2", "blob3", if_tags_match_condition="\"tag1\"='firsttag WRONG'"
             )
 
         parts_list = await container.set_standard_blob_tier_blobs(
-            tier,
-            'blob1',
-            'blob2',
-            'blob3',
-            if_tags_match_condition="\"tag1\"='firsttag'"
+            tier, "blob1", "blob2", "blob3", if_tags_match_condition="\"tag1\"='firsttag'"
         )
 
         parts = []
@@ -2028,12 +2009,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         assert not blob_ref2.blob_tier_inferred
         assert blob_ref2.blob_tier_change_time is not None
 
-        await container.delete_blobs(
-            'blob1',
-            'blob2',
-            'blob3',
-            raise_on_any_failure=False
-        )
+        await container.delete_blobs("blob1", "blob2", "blob3", raise_on_any_failure=False)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -2047,33 +2023,30 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             account_key=storage_account_key.secret,
             resource_types=ResourceTypes(object=True, container=True),
             permission=AccountSasPermissions(read=True, write=True, delete=True, list=True),
-            expiry=datetime.utcnow() + timedelta(hours=1)
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), sas_token)
         container = await self._create_container(bsc)
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
 
         for tier in tiers:
-            response = await container.delete_blobs(
-                'blob1',
-                'blob2',
-                'blob3',
-                raise_on_any_failure=False
-            )
-            blob = container.get_blob_client('blob1')
-            data = b'hello world'
+            response = await container.delete_blobs("blob1", "blob2", "blob3", raise_on_any_failure=False)
+            blob = container.get_blob_client("blob1")
+            data = b"hello world"
             await blob.upload_blob(data)
-            await container.get_blob_client('blob2').upload_blob(data)
-            await container.get_blob_client('blob3').upload_blob(data)
+            await container.get_blob_client("blob2").upload_blob(data)
+            await container.get_blob_client("blob3").upload_blob(data)
 
             blob_ref = await blob.get_blob_properties()
 
-            parts = await self._to_list(await container.set_standard_blob_tier_blobs(
+            parts = await self._to_list(
+                await container.set_standard_blob_tier_blobs(
                     tier,
                     blob_ref,
-                    'blob2',
-                    'blob3',
-                ))
+                    "blob2",
+                    "blob3",
+                )
+            )
 
             parts = list(parts)
             assert len(parts) == 3
@@ -2087,12 +2060,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             assert not blob_ref2.blob_tier_inferred
             assert blob_ref2.blob_tier_change_time is not None
 
-        response = await container.delete_blobs(
-            'blob1',
-            'blob2',
-            'blob3',
-            raise_on_any_failure=False
-        )
+        response = await container.delete_blobs("blob1", "blob2", "blob3", raise_on_any_failure=False)
 
     @pytest.mark.skip(reason="Wasn't able to get premium account with batch enabled")
     @BlobPreparer()
@@ -2100,13 +2068,15 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, transport=AiohttpTestTransport())
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"), storage_account_key.secret, transport=AiohttpTestTransport()
+        )
         url = self._get_premium_account_url()
         credential = self._get_premium_shared_key_credential()
         pbs = BlobServiceClient(url, credential=credential)
 
         try:
-            container_name = self.get_resource_name('utpremiumcontainer')
+            container_name = self.get_resource_name("utpremiumcontainer")
             container = pbs.get_container_client(container_name)
 
             if not self.is_playback():
@@ -2115,22 +2085,24 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
                 except ResourceExistsError:
                     pass
 
-            pblob = container.get_blob_client('blob1')
+            pblob = container.get_blob_client("blob1")
             await pblob.create_page_blob(1024)
-            await container.get_blob_client('blob2').create_page_blob(1024)
-            await container.get_blob_client('blob3').create_page_blob(1024)
+            await container.get_blob_client("blob2").create_page_blob(1024)
+            await container.get_blob_client("blob3").create_page_blob(1024)
 
             blob_ref = await pblob.get_blob_properties()
             assert PremiumPageBlobTier.P10 == blob_ref.blob_tier
             assert blob_ref.blob_tier is not None
             assert blob_ref.blob_tier_inferred
 
-            parts = await self._to_list(container.set_premium_page_blob_tier_blobs(
-                PremiumPageBlobTier.P50,
-                'blob1',
-                'blob2',
-                'blob3',
-            ))
+            parts = await self._to_list(
+                container.set_premium_page_blob_tier_blobs(
+                    PremiumPageBlobTier.P50,
+                    "blob1",
+                    "blob2",
+                    "blob3",
+                )
+            )
 
             assert len(parts) == 3
 
@@ -2138,16 +2110,15 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             assert parts[1].status_code in [200, 202]
             assert parts[2].status_code in [200, 202]
 
-
             blob_ref2 = await pblob.get_blob_properties()
             assert PremiumPageBlobTier.P50 == blob_ref2.blob_tier
             assert not blob_ref2.blob_tier_inferred
 
         finally:
             await container.delete_blobs(
-                'blob1',
-                'blob2',
-                'blob3',
+                "blob1",
+                "blob2",
+                "blob3",
             )
 
     @BlobPreparer()
@@ -2158,21 +2129,22 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
 
-        cr0 = container.get_blob_client('a/blob1')
+        cr0 = container.get_blob_client("a/blob1")
         await cr0.upload_blob(data)
-        cr1 = container.get_blob_client('a/blob2')
+        cr1 = container.get_blob_client("a/blob2")
         await cr1.upload_blob(data)
-        cr2 = container.get_blob_client('b/c/blob3')
+        cr2 = container.get_blob_client("b/c/blob3")
         await cr2.upload_blob(data)
-        cr3 = container.get_blob_client('blob4')
+        cr3 = container.get_blob_client("blob4")
         await cr3.upload_blob(data)
 
         blob_list = []
+
         async def recursive_walk(prefix):
             async for b in prefix:
-                if b.get('prefix'):
+                if b.get("prefix"):
                     await recursive_walk(b)
                 else:
                     blob_list.append(b.name)
@@ -2182,7 +2154,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert len(blob_list) == 4
-        assert blob_list, ['a/blob1', 'a/blob2', 'b/c/blob3' == 'blob4']
+        assert blob_list, ["a/blob1", "a/blob2", "b/c/blob3" == "blob4"]
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -2190,27 +2162,31 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret
+        )
         container = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
 
-        c0 = container.get_blob_client('a/blob1')
+        c0 = container.get_blob_client("a/blob1")
         await c0.upload_blob(data)
-        c1 = container.get_blob_client('a/blob2')
+        c1 = container.get_blob_client("a/blob2")
         await c1.upload_blob(data)
-        c2 = container.get_blob_client('b/blob3')
+        c2 = container.get_blob_client("b/blob3")
         await c2.upload_blob(data)
 
         # Act
-        prefix_list = await self._to_list(container.walk_blobs(name_starts_with='a', delimiter='/', include=['versions']))
+        prefix_list = await self._to_list(
+            container.walk_blobs(name_starts_with="a", delimiter="/", include=["versions"])
+        )
 
         # Assert
         assert len(prefix_list) == 1
         a = await self._to_list(prefix_list[0])
         assert len(a) == 2
-        assert a[0].name == 'a/blob1'
+        assert a[0].name == "a/blob1"
         assert a[0].version_id
-        assert a[1].name == 'a/blob2'
+        assert a[1].name == "a/blob2"
         assert a[1].version_id
 
     @BlobPreparer()
@@ -2221,9 +2197,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
 
-        await container.get_blob_client('blob1').upload_blob(data, standard_blob_tier=StandardBlobTier.Cold)
+        await container.get_blob_client("blob1").upload_blob(data, standard_blob_tier=StandardBlobTier.Cold)
 
         # Act
         resp = []
@@ -2241,13 +2217,13 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
-        blob1 = container.get_blob_client('blob1')
-        await blob1.upload_blob(data, metadata={'number': '1', 'name': 'bob'})
+        data = b"hello world"
+        blob1 = container.get_blob_client("blob1")
+        await blob1.upload_blob(data, metadata={"number": "1", "name": "bob"})
         await blob1.create_snapshot()
 
-        client = container.get_blob_client('blob2')
-        await client.upload_blob(data, metadata={'number': '2', 'name': 'car'})
+        client = container.get_blob_client("blob2")
+        await client.upload_blob(data, metadata={"number": "2", "name": "car"})
 
         # Act
         blobs = []
@@ -2256,18 +2232,18 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert len(blobs) == 3
-        assert blobs[0].name == 'blob1'
+        assert blobs[0].name == "blob1"
         assert blobs[0].snapshot is not None
-        assert blobs[0].metadata['number'] == '1'
-        assert blobs[0].metadata['name'] == 'bob'
-        assert blobs[1].name == 'blob1'
+        assert blobs[0].metadata["number"] == "1"
+        assert blobs[0].metadata["name"] == "bob"
+        assert blobs[1].name == "blob1"
         assert blobs[1].snapshot is None
-        assert blobs[1].metadata['number'] == '1'
-        assert blobs[1].metadata['name'] == 'bob'
-        assert blobs[2].name == 'blob2'
+        assert blobs[1].metadata["number"] == "1"
+        assert blobs[1].metadata["name"] == "bob"
+        assert blobs[2].name == "blob2"
         assert blobs[2].snapshot is None
-        assert blobs[2].metadata['number'] == '2'
-        assert blobs[2].metadata['name'] == 'car'
+        assert blobs[2].metadata["number"] == "2"
+        assert blobs[2].metadata["name"] == "car"
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -2278,8 +2254,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # SAS URL is calculated from storage key, so this test runs live only
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        blob_name  = 'blob1'
-        data = b'hello world'
+        blob_name = "blob1"
+        data = b"hello world"
 
         blob = container.get_blob_client(blob_name)
         await blob.upload_blob(data)
@@ -2331,7 +2307,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             # get a blob
             blob_data = await (await blob.download_blob()).readall()
             assert blob is not None
-            assert blob_data.decode('utf-8') == blob_content
+            assert blob_data.decode("utf-8") == blob_content
 
         finally:
             # delete container
@@ -2345,7 +2321,7 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
         blob_name = self.get_resource_name("blob")
 
         blob = container.get_blob_client(blob_name)
@@ -2362,11 +2338,13 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret
+        )
         container: ContainerClient = await self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
-        blob_data = b'abc'
+        blob_data = b"abc"
         blob_client = container.get_blob_client(blob_name)
 
         await blob_client.upload_blob(blob_data, overwrite=True)
@@ -2377,8 +2355,8 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         v3_props = await blob_client.get_blob_properties()
 
         # Act
-        downloaded = await container.download_blob(v2_props, version_id=v1_props['version_id'])
-        downloaded2 = await container.download_blob(v2_props, version_id=v3_props['version_id'])
+        downloaded = await container.download_blob(v2_props, version_id=v1_props["version_id"])
+        downloaded2 = await container.download_blob(v2_props, version_id=v3_props["version_id"])
 
         # Assert
         assert (await downloaded.readall()) == blob_data
@@ -2390,18 +2368,21 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret,
-                                max_single_get_size=1024,
-                                max_chunk_get_size=512)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_single_get_size=1024,
+            max_chunk_get_size=512,
+        )
         container = await self._create_container(bsc)
-        data = b'hello world python storage test chunks' * 1024
+        data = b"hello world python storage test chunks" * 1024
         blob_name = self.get_resource_name("testiteratechunks")
 
         await container.get_blob_client(blob_name).upload_blob(data, overwrite=True)
 
         # Act
         downloader = await container.download_blob(blob_name)
-        downloaded_data = b''
+        downloaded_data = b""
         chunk_size_list = []
         async for chunk in downloader.chunks():
             chunk_size_list.append(len(chunk))
@@ -2419,18 +2400,21 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret,
-                                max_single_get_size=1024,
-                                max_chunk_get_size=666)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_single_get_size=1024,
+            max_chunk_get_size=666,
+        )
         container = await self._create_container(bsc)
-        data = b'hello world python storage test chunks' * 1024
+        data = b"hello world python storage test chunks" * 1024
         blob_name = self.get_resource_name("testiteratechunks")
 
         await container.get_blob_client(blob_name).upload_blob(data, overwrite=True)
 
         # Act
-        downloader= await container.download_blob(blob_name)
-        downloaded_data = b''
+        downloader = await container.download_blob(blob_name)
+        downloaded_data = b""
         chunk_size_list = []
         async for chunk in downloader.chunks():
             chunk_size_list.append(len(chunk))
@@ -2448,18 +2432,21 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret,
-                                max_single_get_size=215,
-                                max_chunk_get_size=512)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_single_get_size=215,
+            max_chunk_get_size=512,
+        )
         container = await self._create_container(bsc)
-        data = b'hello world python storage test chunks' * 1024
+        data = b"hello world python storage test chunks" * 1024
         blob_name = self.get_resource_name("testiteratechunks")
 
         blob_client = container.get_blob_client(blob_name)
         await blob_client.upload_blob(data, overwrite=True)
 
         downloader = await container.download_blob(blob_name)
-        downloaded_data = b''
+        downloaded_data = b""
         chunk_size_list = []
         async for chunk in downloader.chunks():
             chunk_size_list.append(len(chunk))
@@ -2479,11 +2466,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container: ContainerClient = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
 
-        await (container.get_blob_client('blob1')).upload_blob(data, overwrite=True)
-        await (container.get_blob_client('blob2')).upload_blob(data, overwrite=True)
-        await (container.get_blob_client('test1')).upload_blob(data, overwrite=True)
+        await container.get_blob_client("blob1").upload_blob(data, overwrite=True)
+        await container.get_blob_client("blob2").upload_blob(data, overwrite=True)
+        await container.get_blob_client("test1").upload_blob(data, overwrite=True)
 
         # Act
         all_blobs = []
@@ -2496,11 +2483,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert len(all_blobs) == 3
-        assert all_blobs[0] == 'blob1'
-        assert all_blobs[1] == 'blob2'
-        assert all_blobs[2] == 'test1'
+        assert all_blobs[0] == "blob1"
+        assert all_blobs[1] == "blob2"
+        assert all_blobs[2] == "test1"
         assert len(test_blobs) == 1
-        assert test_blobs[0] == 'test1'
+        assert test_blobs[0] == "test1"
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -2510,11 +2497,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container: ContainerClient = await self._create_container(bsc)
-        data = b'hello world'
+        data = b"hello world"
 
-        await (container.get_blob_client('blob1')).upload_blob(data, overwrite=True)
-        await (container.get_blob_client('blob2')).upload_blob(data, overwrite=True)
-        await (container.get_blob_client('blob3')).upload_blob(data, overwrite=True)
+        await container.get_blob_client("blob1").upload_blob(data, overwrite=True)
+        await container.get_blob_client("blob2").upload_blob(data, overwrite=True)
+        await container.get_blob_client("blob3").upload_blob(data, overwrite=True)
 
         # Act
         blob_pages = container.list_blob_names(results_per_page=2).by_page()
@@ -2527,10 +2514,10 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert len(items_on_page1) == 2
-        assert items_on_page1[0] == 'blob1'
-        assert items_on_page1[1] == 'blob2'
+        assert items_on_page1[0] == "blob1"
+        assert items_on_page1[1] == "blob2"
         assert len(items_on_page2) == 1
-        assert items_on_page2[0] == 'blob3'
+        assert items_on_page2[0] == "blob3"
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -2538,11 +2525,13 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret)
+        bsc = BlobServiceClient(
+            self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret
+        )
         container: ContainerClient = await self._create_container(bsc)
 
         blob_name = self.get_resource_name("utcontainer")
-        blob_data = 'abc'
+        blob_data = "abc"
         blob_client = container.get_blob_client(blob_name)
 
         # Act
@@ -2555,22 +2544,24 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(blob_data * 4, overwrite=True)
         v4_props = await blob_client.get_blob_properties()
 
-        v1_blob_client = container.get_blob_client(blob=v1_props['name'], version_id=v1_props['version_id'])
+        v1_blob_client = container.get_blob_client(blob=v1_props["name"], version_id=v1_props["version_id"])
         props1 = await v1_blob_client.get_blob_properties()
-        v2_blob_client = container.get_blob_client(blob=v1_props, version_id=v2_props['version_id'])
+        v2_blob_client = container.get_blob_client(blob=v1_props, version_id=v2_props["version_id"])
         props2 = await v2_blob_client.get_blob_properties()
-        v3_blob_client = bsc.get_blob_client(container=container.container_name, blob=v2_props['name'],
-                                             version_id=v3_props['version_id'])
+        v3_blob_client = bsc.get_blob_client(
+            container=container.container_name, blob=v2_props["name"], version_id=v3_props["version_id"]
+        )
         props3 = await v3_blob_client.get_blob_properties()
-        v4_blob_client = bsc.get_blob_client(container=container.container_name, blob=v3_props,
-                                             version_id=v4_props['version_id'])
+        v4_blob_client = bsc.get_blob_client(
+            container=container.container_name, blob=v3_props, version_id=v4_props["version_id"]
+        )
         props4 = await v4_blob_client.get_blob_properties()
 
         # Assert
-        assert props1['version_id'] == v1_props['version_id']
-        assert props2['version_id'] == v2_props['version_id']
-        assert props3['version_id'] == v3_props['version_id']
-        assert props4['version_id'] == v4_props['version_id']
+        assert props1["version_id"] == v1_props["version_id"]
+        assert props2["version_id"] == v2_props["version_id"]
+        assert props3["version_id"] == v3_props["version_id"]
+        assert props4["version_id"] == v4_props["version_id"]
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -2579,14 +2570,16 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        cc = ContainerClient(self.account_url(storage_account_name, "blob"), 'testcont', storage_account_key.secret)
+        cc = ContainerClient(self.account_url(storage_account_name, "blob"), "testcont", storage_account_key.secret)
         await cc.exists()
 
         # Act
         token_credential = self.get_credential(ContainerClient, is_async=True)
         cc = ContainerClient(
-            self.account_url(storage_account_name, "blob"), 'testcont', credential=token_credential,
-            audience=f'https://{storage_account_name}.blob.core.windows.net'
+            self.account_url(storage_account_name, "blob"),
+            "testcont",
+            credential=token_credential,
+            audience=f"https://{storage_account_name}.blob.core.windows.net",
         )
 
         # Assert
@@ -2630,11 +2623,11 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
-        await (container.get_blob_client('blob1')).upload_blob(data)
-        await (container.get_blob_client('a/blob2')).upload_blob(data)
-        await (container.get_blob_client('a/blob3')).upload_blob(data)
-        await (container.get_blob_client('a/blob4')).upload_blob(data)
+        data = b"hello world"
+        await container.get_blob_client("blob1").upload_blob(data)
+        await container.get_blob_client("a/blob2").upload_blob(data)
+        await container.get_blob_client("a/blob3").upload_blob(data)
+        await container.get_blob_client("a/blob4").upload_blob(data)
 
         # Act
         blobs = []
@@ -2653,18 +2646,19 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
         container = await self._create_container(bsc)
-        data = b'hello world'
-        await (container.get_blob_client('a/blob1')).upload_blob(data)
-        await (container.get_blob_client('a/b/blob2')).upload_blob(data)
-        await (container.get_blob_client('a/b/blob3')).upload_blob(data)
-        await (container.get_blob_client('a/b/blob4')).upload_blob(data)
-        await (container.get_blob_client('b/blob5')).upload_blob(data)
-        await (container.get_blob_client('blob6')).upload_blob(data)
+        data = b"hello world"
+        await container.get_blob_client("a/blob1").upload_blob(data)
+        await container.get_blob_client("a/b/blob2").upload_blob(data)
+        await container.get_blob_client("a/b/blob3").upload_blob(data)
+        await container.get_blob_client("a/b/blob4").upload_blob(data)
+        await container.get_blob_client("b/blob5").upload_blob(data)
+        await container.get_blob_client("blob6").upload_blob(data)
 
         blobs = []
+
         async def recursive_walk(prefix):
             async for b in prefix:
-                if b.get('prefix'):
+                if b.get("prefix"):
                     await recursive_walk(b)
                 else:
                     blobs.append(b.name)

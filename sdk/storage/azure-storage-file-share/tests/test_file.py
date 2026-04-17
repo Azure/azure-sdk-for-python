@@ -11,7 +11,12 @@ import pytest
 import requests
 from azure.core import MatchConditions
 from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+)
 from azure.storage.blob import BlobServiceClient
 from azure.storage.fileshare import (
     AccessPolicy,
@@ -26,7 +31,7 @@ from azure.storage.fileshare import (
     ShareFileClient,
     ShareSasPermissions,
     ShareServiceClient,
-    StorageErrorCode
+    StorageErrorCode,
 )
 
 from devtools_testutils import recorded_by_proxy
@@ -35,14 +40,16 @@ from settings.testcase import FileSharePreparer
 from test_helpers import MockStorageTransport, ProgressTracker
 
 # ------------------------------------------------------------------------------
-TEST_SHARE_PREFIX = 'share'
-TEST_BLOB_PREFIX = 'blob'
-TEST_DIRECTORY_PREFIX = 'dir'
-TEST_FILE_PREFIX = 'file'
+TEST_SHARE_PREFIX = "share"
+TEST_BLOB_PREFIX = "blob"
+TEST_DIRECTORY_PREFIX = "dir"
+TEST_FILE_PREFIX = "file"
 LARGE_FILE_SIZE = 64 * 1024 + 5
-TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
-                        '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
-                        'S-1-5-21-397955417-626881126-188441444-3053964)'
+TEST_FILE_PERMISSIONS = (
+    "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-"
+    "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;"
+    "S-1-5-21-397955417-626881126-188441444-3053964)"
+)
 TEST_INTENT = "backup"
 # ------------------------------------------------------------------------------
 
@@ -59,8 +66,8 @@ class TestStorageFile(StorageRecordedTestCase):
         # the tests would take too long to execute
         self.fsc = ShareServiceClient(url, credential=credential.secret, max_range_size=4 * 1024)
         self.bsc = BlobServiceClient(blob_url, credential=credential.secret)
-        self.share_name = self.get_resource_name('utshare')
-        self.source_container_name = self.get_resource_name('sourceshare')
+        self.share_name = self.get_resource_name("utshare")
+        self.source_container_name = self.get_resource_name("sourceshare")
         if self.is_live:
             try:
                 self.fsc.create_share(self.share_name)
@@ -94,7 +101,7 @@ class TestStorageFile(StorageRecordedTestCase):
         except:
             pass
         blob_client = self.bsc.get_blob_client(self.source_container_name, self.get_resource_name(TEST_BLOB_PREFIX))
-        blob_client.upload_blob(b'abcdefghijklmnop' * 32, overwrite=True)
+        blob_client.upload_blob(b"abcdefghijklmnop" * 32, overwrite=True)
         return blob_client
 
     def _create_empty_file(self, file_name=None, file_size=2048):
@@ -111,7 +118,7 @@ class TestStorageFile(StorageRecordedTestCase):
         return file_client
 
     def _create_remote_share(self):
-        self.remote_share_name = self.get_resource_name('remoteshare')
+        self.remote_share_name = self.get_resource_name("remoteshare")
         remote_share = self.fsc2.get_share_client(self.remote_share_name)
         try:
             remote_share.create_share()
@@ -121,7 +128,7 @@ class TestStorageFile(StorageRecordedTestCase):
 
     def _create_remote_file(self, file_data=None):
         if not file_data:
-            file_data = b'12345678' * 1024
+            file_data = b"12345678" * 1024
         source_file_name = self._get_file_reference()
         remote_share = self.fsc2.get_share_client(self.remote_share_name)
         remote_file = remote_share.get_file_client(source_file_name)
@@ -133,13 +140,13 @@ class TestStorageFile(StorageRecordedTestCase):
         share_client = self.fsc.get_share_client(share_name)
         file_client = share_client.get_file_client(file_path)
         properties = file_client.get_file_properties()
-        while properties.copy.status != 'success':
+        while properties.copy.status != "success":
             count = count + 1
             if count > 15:
-                pytest.fail('Timed out waiting for async copy to complete.')
+                pytest.fail("Timed out waiting for async copy to complete.")
             self.sleep(6)
             properties = file_client.get_file_properties()
-        assert properties.copy.status == 'success'
+        assert properties.copy.status == "success"
 
     def assertFileEqual(self, file_client, expected_data, **kwargs):
         actual_data = file_client.download_file(**kwargs).readall()
@@ -171,7 +178,7 @@ class TestStorageFile(StorageRecordedTestCase):
         res = file_client.url
 
         # Assert
-        assert res == ('https://' + storage_account_name + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
+        assert res == ("https://" + storage_account_name + ".file.core.windows.net/vhds/vhd_dir/my.vhd")
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -187,7 +194,7 @@ class TestStorageFile(StorageRecordedTestCase):
         res = file_client.url
 
         # Assert
-        assert res == ('https://' + storage_account_name + '.file.core.windows.net/vhds/my.vhd')
+        assert res == ("https://" + storage_account_name + ".file.core.windows.net/vhds/my.vhd")
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -196,7 +203,7 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        url = self.account_url(storage_account_name, "file").replace('https', 'http')
+        url = self.account_url(storage_account_name, "file").replace("https", "http")
         fsc = ShareServiceClient(url, credential=storage_account_key.secret)
         share = fsc.get_share_client("vhds")
         file_client = share.get_file_client("vhd_dir/my.vhd")
@@ -205,7 +212,7 @@ class TestStorageFile(StorageRecordedTestCase):
         res = file_client.url
 
         # Assert
-        assert res == ('http://' + storage_account_name + '.file.core.windows.net/vhds/vhd_dir/my.vhd')
+        assert res == ("http://" + storage_account_name + ".file.core.windows.net/vhds/vhd_dir/my.vhd")
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -215,19 +222,19 @@ class TestStorageFile(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         # cspell:disable-next-line
-        sas = '?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D'
+        sas = "?sv=2015-04-05&st=2015-04-29T22%3A18%3A26Z&se=2015-04-30T02%3A23%3A26Z&sr=b&sp=rw&sip=168.1.5.60-168.1.5.70&spr=https&sig=Z%2FRHIX5Xcg0Mq2rqI3OlWTjEg2tYkboXr1P9ZUXDtkk%3D"
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name="vhds",
             file_path="vhd_dir/my.vhd",
-            credential=sas
+            credential=sas,
         )
 
         # Act
         res = file_client.url
 
         # Assert
-        assert res == ('https://' + storage_account_name + '.file.core.windows.net/vhds/vhd_dir/my.vhd{}'.format(sas))
+        assert res == ("https://" + storage_account_name + ".file.core.windows.net/vhds/vhd_dir/my.vhd{}".format(sas))
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -241,7 +248,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
 
         # Act / Assert
         assert not file_client.exists()
@@ -261,7 +269,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
 
         # Act
         resp = file_client.create_file(1024, file_attributes="hidden")
@@ -272,8 +281,8 @@ class TestStorageFile(StorageRecordedTestCase):
         assert props.lease is not None
         assert props.lease.state is not None
         assert props.lease.status is not None
-        assert props.etag == resp['etag']
-        assert props.last_modified == resp['last_modified']
+        assert props.etag == resp["etag"]
+        assert props.last_modified == resp["last_modified"]
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -289,7 +298,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            token_intent=TEST_INTENT)
+            token_intent=TEST_INTENT,
+        )
 
         # Act
         resp = file_client.create_file(1024)
@@ -300,8 +310,8 @@ class TestStorageFile(StorageRecordedTestCase):
         assert props.lease is not None
         assert props.lease.state is not None
         assert props.lease.status is not None
-        assert props.etag == resp['etag']
-        assert props.last_modified == resp['last_modified']
+        assert props.etag == resp["etag"]
+        assert props.last_modified == resp["last_modified"]
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -333,9 +343,10 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=file_name + '.',
+            file_path=file_name + ".",
             credential=storage_account_key.secret,
-            allow_trailing_dot=True)
+            allow_trailing_dot=True,
+        )
 
         # Act
         resp = file_client.create_file(1024)
@@ -346,9 +357,9 @@ class TestStorageFile(StorageRecordedTestCase):
         assert props.lease is not None
         assert props.lease.state is not None
         assert props.lease.status is not None
-        assert props.etag == resp['etag']
-        assert props.last_modified == resp['last_modified']
-        assert props.name == file_name + '.'
+        assert props.etag == resp["etag"]
+        assert props.last_modified == resp["last_modified"]
+        assert props.name == file_name + "."
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -361,9 +372,10 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=file_name + '.',
+            file_path=file_name + ".",
             credential=storage_account_key.secret,
-            allow_trailing_dot=False)
+            allow_trailing_dot=False,
+        )
 
         # Act
         resp = file_client.create_file(1024)
@@ -372,9 +384,10 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client_dotted = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=file_name + '.',
+            file_path=file_name + ".",
             credential=storage_account_key.secret,
-            allow_trailing_dot=False)
+            allow_trailing_dot=False,
+        )
 
         # create file client without dot
         file_client_no_dot = ShareFileClient(
@@ -382,17 +395,18 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            allow_trailing_dot=False)
+            allow_trailing_dot=False,
+        )
 
         props = file_client.get_file_properties()
         props_dotted = file_client_dotted.get_file_properties()
         props_no_dot = file_client_no_dot.get_file_properties()
 
         # Assert
-        assert props.name == file_name + '.'
-        assert props.path == file_name + '.'
-        assert props_dotted.name == file_name + '.'
-        assert props_dotted.path == file_name + '.'
+        assert props.name == file_name + "."
+        assert props.path == file_name + "."
+        assert props_dotted.name == file_name + "."
+        assert props_dotted.path == file_name + "."
         assert props_no_dot.name == file_name
         assert props_no_dot.path == file_name
 
@@ -403,13 +417,14 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        metadata = {'hello': 'world', 'number': '42'}
+        metadata = {"hello": "world", "number": "42"}
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
 
         # Act
         resp = file_client.create_file(1024, metadata=metadata)
@@ -417,8 +432,8 @@ class TestStorageFile(StorageRecordedTestCase):
         # Assert
         props = file_client.get_file_properties()
         assert props is not None
-        assert props.etag == resp['etag']
-        assert props.last_modified == resp['last_modified']
+        assert props.etag == resp["etag"]
+        assert props.last_modified == resp["last_modified"]
         assert props.metadata == metadata
 
     @FileSharePreparer()
@@ -428,14 +443,15 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        metadata = {'hello': 'world', 'number': '42'}
+        metadata = {"hello": "world", "number": "42"}
         file_name = self._get_file_reference()
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=file_name + '.',
+            file_path=file_name + ".",
             credential=storage_account_key.secret,
-            allow_trailing_dot=True)
+            allow_trailing_dot=True,
+        )
 
         # Act
         resp = file_client.create_file(1024, metadata=metadata)
@@ -443,10 +459,10 @@ class TestStorageFile(StorageRecordedTestCase):
         # Assert
         props = file_client.get_file_properties()
         assert props is not None
-        assert props.etag == resp['etag']
-        assert props.last_modified == resp['last_modified']
+        assert props.etag == resp["etag"]
+        assert props.last_modified == resp["last_modified"]
         assert props.metadata == metadata
-        assert props.name == file_name + '.'
+        assert props.name == file_name + "."
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -485,7 +501,7 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file1",
-            credential=storage_account_key.secret
+            credential=storage_account_key.secret,
         )
         file1.create_file(1024, file_property_semantics=None)
         props = file1.get_file_properties()
@@ -495,7 +511,7 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file2",
-            credential=storage_account_key.secret
+            credential=storage_account_key.secret,
         )
         file2.create_file(1024, file_property_semantics="New")
         props = file2.get_file_properties()
@@ -505,7 +521,7 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file2",
-            credential=storage_account_key.secret
+            credential=storage_account_key.secret,
         )
         file3.create_file(1024, file_property_semantics="Restore", file_permission=TEST_FILE_PERMISSIONS)
         props = file3.get_file_properties()
@@ -521,7 +537,7 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = self._get_file_client()
         file_client.create_file(1024)
 
-        lease = file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = file_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
         resp = file_client.create_file(1024, lease=lease)
         assert resp is not None
 
@@ -546,10 +562,11 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            token_intent=TEST_INTENT)
+            token_intent=TEST_INTENT,
+        )
         file_client.create_file(1024)
 
-        lease = file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = file_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
         resp = file_client.create_file(1024, lease=lease)
         assert resp is not None
 
@@ -570,9 +587,9 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = self._get_file_client()
         file_client.create_file(1024)
 
-        lease = file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = file_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
         old_lease_id = lease.id
-        lease.change('44444444-3333-2222-1111-000000000000')
+        lease.change("44444444-3333-2222-1111-000000000000")
 
         # use the old lease id to create file will throw exception.
         with pytest.raises(HttpResponseError):
@@ -597,12 +614,13 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            token_intent=TEST_INTENT)
+            token_intent=TEST_INTENT,
+        )
         file_client.create_file(1024)
 
-        lease = file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = file_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
         old_lease_id = lease.id
-        lease.change('44444444-3333-2222-1111-000000000000')
+        lease.change("44444444-3333-2222-1111-000000000000")
 
         # use the old lease id to create file will throw exception.
         with pytest.raises(HttpResponseError):
@@ -624,14 +642,15 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=file_name + '.',
+            file_path=file_name + ".",
             credential=storage_account_key.secret,
-            allow_trailing_dot=True)
+            allow_trailing_dot=True,
+        )
         file_client.create_file(1024)
 
-        lease = file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = file_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
         old_lease_id = lease.id
-        lease.change('44444444-3333-2222-1111-000000000000')
+        lease.change("44444444-3333-2222-1111-000000000000")
 
         # use the old lease id to create file will throw exception.
         with pytest.raises(HttpResponseError):
@@ -649,7 +668,7 @@ class TestStorageFile(StorageRecordedTestCase):
 
         # Assert
         assert resp is not None
-        assert props.name == file_name + '.'
+        assert props.name == file_name + "."
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -681,7 +700,9 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = self._get_file_client()
 
         file_attributes = NTFSAttributes(read_only=True, archive=True)
-        file_creation_time = file_last_write_time = file_change_time = datetime(2022, 3, 10, 10, 14, 30, 500000, tzinfo=timezone.utc)
+        file_creation_time = file_last_write_time = file_change_time = datetime(
+            2022, 3, 10, 10, 14, 30, 500000, tzinfo=timezone.utc
+        )
 
         # Act
         file_client.create_file(
@@ -689,7 +710,8 @@ class TestStorageFile(StorageRecordedTestCase):
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
-            file_change_time=file_change_time)
+            file_change_time=file_change_time,
+        )
         file_properties = file_client.get_file_properties()
 
         # Assert
@@ -697,8 +719,8 @@ class TestStorageFile(StorageRecordedTestCase):
         assert file_creation_time == file_properties.creation_time
         assert file_last_write_time == file_properties.last_write_time
         assert file_change_time == file_properties.change_time
-        assert 'ReadOnly' in file_properties.file_attributes
-        assert 'Archive' in file_properties.file_attributes
+        assert "ReadOnly" in file_properties.file_attributes
+        assert "Archive" in file_properties.file_attributes
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -727,7 +749,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path="missingdir/" + file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
 
         # Act
         with pytest.raises(ResourceNotFoundError):
@@ -753,7 +776,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
         props = snapshot_client.get_file_properties()
 
         # Assert
@@ -804,7 +828,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
 
         # Assert
         with pytest.raises(ResourceNotFoundError):
@@ -834,7 +859,7 @@ class TestStorageFile(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         file_client = self._create_file()
-        lease = file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = file_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Act
         with pytest.raises(HttpResponseError):
@@ -855,9 +880,7 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = self._create_file()
 
         # Act
-        content_settings = ContentSettings(
-            content_language='spanish',
-            content_disposition='inline')
+        content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
         resp = file_client.set_http_headers(content_settings=content_settings)
 
         # Assert
@@ -891,14 +914,10 @@ class TestStorageFile(StorageRecordedTestCase):
         ]
 
         # Act / Assert
-        content_settings = ContentSettings(
-            content_language='spanish',
-            content_disposition='inline')
+        content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
         for date1, date2 in zip(date_times[::2], date_times[1::2]):
             file_client.set_http_headers(
-                content_settings=content_settings,
-                file_creation_time=date1,
-                file_last_write_time=date2
+                content_settings=content_settings, file_creation_time=date1, file_last_write_time=date2
             )
 
     @FileSharePreparer()
@@ -912,15 +931,14 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=file_name + '.',
+            file_path=file_name + ".",
             credential=storage_account_key.secret,
-            allow_trailing_dot=True)
+            allow_trailing_dot=True,
+        )
         file_client.create_file(1024)
 
         # Act
-        content_settings = ContentSettings(
-            content_language='spanish',
-            content_disposition='inline')
+        content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
         resp = file_client.set_http_headers(content_settings=content_settings)
 
         # Assert
@@ -930,7 +948,7 @@ class TestStorageFile(StorageRecordedTestCase):
         assert properties.last_write_time is not None
         assert properties.creation_time is not None
         assert properties.permission_key is not None
-        assert properties.name == file_name + '.'
+        assert properties.name == file_name + "."
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -942,9 +960,7 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = self._create_file()
         properties_on_creation = file_client.get_file_properties()
 
-        content_settings = ContentSettings(
-            content_language='spanish',
-            content_disposition='inline')
+        content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
 
         ntfs_attributes = NTFSAttributes(archive=True, temporary=True)
         last_write_time = properties_on_creation.last_write_time + timedelta(hours=3)
@@ -957,7 +973,7 @@ class TestStorageFile(StorageRecordedTestCase):
             file_attributes=ntfs_attributes,
             file_last_write_time=last_write_time,
             file_creation_time=creation_time,
-            file_change_time=change_time
+            file_change_time=change_time,
         )
 
         # Assert
@@ -984,11 +1000,12 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            token_intent=TEST_INTENT)
+            token_intent=TEST_INTENT,
+        )
 
         # Act
         file_client.create_file(1024)
-        content_settings = ContentSettings(content_language='spanish', content_disposition='inline')
+        content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
         resp = file_client.set_http_headers(content_settings=content_settings)
 
         # Assert
@@ -1029,7 +1046,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            token_intent=TEST_INTENT)
+            token_intent=TEST_INTENT,
+        )
 
         # Act
         resp = file_client.create_file(1024)
@@ -1050,9 +1068,10 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=file_name + '.',
+            file_path=file_name + ".",
             credential=storage_account_key.secret,
-            allow_trailing_dot=True)
+            allow_trailing_dot=True,
+        )
         resp = file_client.create_file(1024)
 
         # Ensure allow_trailing_dot=True is enforced properly by attempting to construct without trailing dot
@@ -1060,7 +1079,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
         with pytest.raises(HttpResponseError):
             file_client_no_dot.get_file_properties()
 
@@ -1078,11 +1098,11 @@ class TestStorageFile(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         file_client = self._create_file()
-        file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        file_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Act
         with pytest.raises(HttpResponseError):
-            file_client.get_file_properties(lease='44444444-3333-2222-1111-000000000000')
+            file_client.get_file_properties(lease="44444444-3333-2222-1111-000000000000")
 
         # get properties on a leased file will succeed
         properties = file_client.get_file_properties()
@@ -1114,7 +1134,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
         snapshot_props = snapshot_client.get_file_properties()
 
         # Assert
@@ -1141,7 +1162,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
 
         metadata2 = {"test100": "foo100", "test200": "bar200"}
         file_client.set_file_metadata(metadata2)
@@ -1166,7 +1188,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
 
         # Act
         with pytest.raises(ResourceNotFoundError):
@@ -1197,7 +1220,7 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
+        metadata = {"hello": "world", "number": "42", "UP": "UPval"}
         file_client = self._create_file()
 
         # Act
@@ -1206,10 +1229,10 @@ class TestStorageFile(StorageRecordedTestCase):
         # Assert
         md = file_client.get_file_properties().metadata
         assert 3 == len(md)
-        assert md['hello'] == 'world'
-        assert md['number'] == '42'
-        assert md['UP'] == 'UPval'
-        assert not 'up' in md
+        assert md["hello"] == "world"
+        assert md["number"] == "42"
+        assert md["UP"] == "UPval"
+        assert not "up" in md
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1225,8 +1248,9 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            token_intent=TEST_INTENT)
-        metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
+            token_intent=TEST_INTENT,
+        )
+        metadata = {"hello": "world", "number": "42", "UP": "UPval"}
 
         # Act
         file_client.create_file(1024)
@@ -1235,10 +1259,10 @@ class TestStorageFile(StorageRecordedTestCase):
         # Assert
         md = file_client.get_file_properties().metadata
         assert 3 == len(md)
-        assert md['hello'] == 'world'
-        assert md['number'] == '42'
-        assert md['UP'] == 'UPval'
-        assert not 'up' in md
+        assert md["hello"] == "world"
+        assert md["number"] == "42"
+        assert md["UP"] == "UPval"
+        assert not "up" in md
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1248,7 +1272,7 @@ class TestStorageFile(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         file_client = self._create_file()
-        lease = file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = file_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Assert
         assert lease is not None
@@ -1262,10 +1286,10 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        metadata = {'hello': 'world', 'number': '42', 'UP': 'UPval'}
+        metadata = {"hello": "world", "number": "42", "UP": "UPval"}
         file_client = self._create_file()
 
-        lease = file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = file_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
         with pytest.raises(HttpResponseError):
             file_client.set_file_metadata(metadata)
 
@@ -1273,12 +1297,12 @@ class TestStorageFile(StorageRecordedTestCase):
         lease.break_lease()
 
         # lease is broken, set metadata doesn't require a lease
-        file_client.set_file_metadata({'hello': 'world'})
+        file_client.set_file_metadata({"hello": "world"})
         # Act
         md = file_client.get_file_properties().metadata
         # Assert
         assert 1 == len(md)
-        assert md['hello'] == 'world'
+        assert md["hello"] == "world"
 
         # Act
         file_client.acquire_lease(lease_id=lease_id_to_be_broken)
@@ -1287,10 +1311,10 @@ class TestStorageFile(StorageRecordedTestCase):
         # Assert
         md = file_client.get_file_properties().metadata
         assert 3 == len(md)
-        assert md['hello'] == 'world'
-        assert md['number'] == '42'
-        assert md['UP'] == 'UPval'
-        assert not 'up' in md
+        assert md["hello"] == "world"
+        assert md["number"] == "42"
+        assert md["UP"] == "UPval"
+        assert not "up" in md
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1322,7 +1346,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            token_intent=TEST_INTENT)
+            token_intent=TEST_INTENT,
+        )
 
         # Act
         file_client.create_file(1024)
@@ -1343,9 +1368,10 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=file_name + '.',
+            file_path=file_name + ".",
             credential=storage_account_key.secret,
-            allow_trailing_dot=True)
+            allow_trailing_dot=True,
+        )
         resp = file_client.create_file(1024)
 
         # Act
@@ -1367,7 +1393,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
 
         # Act
         with pytest.raises(ResourceNotFoundError):
@@ -1385,7 +1412,7 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = self._create_file()
 
         # Act
-        data = b'abcdefghijklmnop' * 32
+        data = b"abcdefghijklmnop" * 32
         file_client.upload_range(data, offset=0, length=512)
 
         # Assert
@@ -1405,13 +1432,14 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=file_name + '.',
+            file_path=file_name + ".",
             credential=storage_account_key.secret,
-            allow_trailing_dot=True)
+            allow_trailing_dot=True,
+        )
         file_client.upload_file(self.short_byte_data)
 
         # Act
-        data = b'abcdefghijklmnop' * 32
+        data = b"abcdefghijklmnop" * 32
         file_client.upload_range(data, offset=0, length=512)
         props = file_client.get_file_properties()
 
@@ -1420,7 +1448,7 @@ class TestStorageFile(StorageRecordedTestCase):
         assert len(data) == 512
         assert data == content[:512]
         assert self.short_byte_data[512:] == content[512:]
-        assert props.name == file_name + '.'
+        assert props.name == file_name + "."
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1430,10 +1458,10 @@ class TestStorageFile(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         file_client = self._create_file()
-        lease = file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = file_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Act
-        data = b'abcdefghijklmnop' * 32
+        data = b"abcdefghijklmnop" * 32
         with pytest.raises(HttpResponseError):
             file_client.upload_range(data, offset=0, length=512)
 
@@ -1455,7 +1483,7 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = self._create_file()
 
         # Act
-        data = b'abcdefghijklmnop' * 32
+        data = b"abcdefghijklmnop" * 32
         file_client.upload_range(data, offset=0, length=512, validate_content=True)
 
         # Assert
@@ -1471,13 +1499,14 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path='file1',
+            file_path="file1",
             credential=token_credential,
-            token_intent=TEST_INTENT)
+            token_intent=TEST_INTENT,
+        )
 
         # Act
         file_client.create_file(1024)
-        data = b'abcdefghijklmnop' * 32
+        data = b"abcdefghijklmnop" * 32
         file_client.upload_range(data, offset=0, length=512)
 
     @FileSharePreparer()
@@ -1491,7 +1520,7 @@ class TestStorageFile(StorageRecordedTestCase):
         current_last_write_time = file_client.get_file_properties().last_write_time
 
         # Act
-        data = b'abcdefghijklmnop' * 32
+        data = b"abcdefghijklmnop" * 32
         file_client.upload_range(data, offset=0, length=512, file_last_write_mode="Now")
 
         # Assert
@@ -1509,7 +1538,7 @@ class TestStorageFile(StorageRecordedTestCase):
         current_last_write_time = file_client.get_file_properties().last_write_time
 
         # Act
-        data = b'abcdefghijklmnop' * 32
+        data = b"abcdefghijklmnop" * 32
         file_client.upload_range(data, offset=0, length=512, file_last_write_mode="Preserve")
 
         # Assert
@@ -1523,10 +1552,10 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        source_file_name = 'testfile1'
+        source_file_name = "testfile1"
         source_file_client = self._create_file(source_file_name)
 
-        destination_file_name = 'filetoupdate'
+        destination_file_name = "filetoupdate"
         destination_file_client = self._create_file(destination_file_name)
 
         # generate SAS for the source file
@@ -1537,10 +1566,10 @@ class TestStorageFile(StorageRecordedTestCase):
             source_file_client.file_path,
             source_file_client.credential.account_key,
             FileSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1)
+            expiry=datetime.utcnow() + timedelta(hours=1),
         )
 
-        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+        source_file_url = source_file_client.url + "?" + sas_token_for_source_file
 
         # Act
         with pytest.raises(HttpResponseError):
@@ -1554,12 +1583,12 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        source_file_name = 'testfile'
+        source_file_name = "testfile"
         source_file_client = self._create_file(file_name=source_file_name)
-        data = b'abcdefghijklmnop' * 32
+        data = b"abcdefghijklmnop" * 32
         resp = source_file_client.upload_range(data, offset=0, length=512)
 
-        destination_file_name = 'filetoupdate'
+        destination_file_name = "filetoupdate"
         destination_file_client = self._create_empty_file(file_name=destination_file_name)
 
         # generate SAS for the source file
@@ -1570,21 +1599,27 @@ class TestStorageFile(StorageRecordedTestCase):
             source_file_client.file_path,
             source_file_client.credential.account_key,
             FileSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
 
-        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+        source_file_url = source_file_client.url + "?" + sas_token_for_source_file
         # Act
-        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
-                                                      source_etag=resp['etag'],
-                                                      source_match_condition=MatchConditions.IfNotModified)
+        destination_file_client.upload_range_from_url(
+            source_file_url,
+            offset=0,
+            length=512,
+            source_offset=0,
+            source_etag=resp["etag"],
+            source_match_condition=MatchConditions.IfNotModified,
+        )
 
         # Assert
         # To make sure the range of the file is actually updated
         file_ranges = destination_file_client.get_ranges()
         file_content = destination_file_client.download_file(offset=0, length=512).readall()
         assert 1 == len(file_ranges)
-        assert 0 == file_ranges[0].get('start')
-        assert 511 == file_ranges[0].get('end')
+        assert 0 == file_ranges[0].get("start")
+        assert 511 == file_ranges[0].get("end")
         assert data == file_content
 
     @FileSharePreparer()
@@ -1595,15 +1630,18 @@ class TestStorageFile(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         source_blob_client = self._create_source_blob()
-        token = "Bearer {}".format(self.get_credential(ShareServiceClient).get_token("https://storage.azure.com/.default").token)
+        token = "Bearer {}".format(
+            self.get_credential(ShareServiceClient).get_token("https://storage.azure.com/.default").token
+        )
 
-        destination_file_name = 'filetoupdate'
+        destination_file_name = "filetoupdate"
         destination_file_client = self._create_empty_file(file_name=destination_file_name)
         with pytest.raises(HttpResponseError):
             destination_file_client.upload_range_from_url(source_blob_client.url, offset=0, length=512, source_offset=0)
 
-        destination_file_client.upload_range_from_url(source_blob_client.url, offset=0, length=512, source_offset=0,
-                                                      source_authorization=token)
+        destination_file_client.upload_range_from_url(
+            source_blob_client.url, offset=0, length=512, source_offset=0, source_authorization=token
+        )
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1612,14 +1650,14 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        source_file_name = 'testfile'
+        source_file_name = "testfile"
         source_file_client = self._create_file(file_name=source_file_name)
-        data = b'abcdefghijklmnop' * 32
+        data = b"abcdefghijklmnop" * 32
         resp = source_file_client.upload_range(data, offset=0, length=512)
 
-        destination_file_name = 'filetoupdate'
+        destination_file_name = "filetoupdate"
         destination_file_client = self._create_empty_file(file_name=destination_file_name)
-        lease = destination_file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = destination_file_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # generate SAS for the source file
         sas_token_for_source_file = self.generate_sas(
@@ -1629,27 +1667,38 @@ class TestStorageFile(StorageRecordedTestCase):
             source_file_client.file_path,
             source_file_client.credential.account_key,
             FileSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
 
-        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+        source_file_url = source_file_client.url + "?" + sas_token_for_source_file
         # Act
         with pytest.raises(HttpResponseError):
-            destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
-                                                          source_etag=resp['etag'],
-                                                          source_match_condition=MatchConditions.IfNotModified)
+            destination_file_client.upload_range_from_url(
+                source_file_url,
+                offset=0,
+                length=512,
+                source_offset=0,
+                source_etag=resp["etag"],
+                source_match_condition=MatchConditions.IfNotModified,
+            )
 
-        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
-                                                      source_etag=resp['etag'],
-                                                      source_match_condition=MatchConditions.IfNotModified,
-                                                      lease=lease)
+        destination_file_client.upload_range_from_url(
+            source_file_url,
+            offset=0,
+            length=512,
+            source_offset=0,
+            source_etag=resp["etag"],
+            source_match_condition=MatchConditions.IfNotModified,
+            lease=lease,
+        )
 
         # Assert
         # To make sure the range of the file is actually updated
         file_ranges = destination_file_client.get_ranges()
         file_content = destination_file_client.download_file(offset=0, length=512).readall()
         assert 1 == len(file_ranges)
-        assert 0 == file_ranges[0].get('start')
-        assert 511 == file_ranges[0].get('end')
+        assert 0 == file_ranges[0].get("start")
+        assert 511 == file_ranges[0].get("end")
         assert data == file_content
 
     @FileSharePreparer()
@@ -1659,14 +1708,14 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        source_file_name = 'testfile1'
+        source_file_name = "testfile1"
         end = 1048575
 
         source_file_client = self._create_empty_file(file_name=source_file_name, file_size=1024 * 1024)
-        data = b'abcdefghijklmnop' * 65536
-        source_file_client.upload_range(data, offset=0, length=end+1)
+        data = b"abcdefghijklmnop" * 65536
+        source_file_client.upload_range(data, offset=0, length=end + 1)
 
-        destination_file_name = 'filetoupdate1'
+        destination_file_name = "filetoupdate1"
         destination_file_client = self._create_empty_file(file_name=destination_file_name, file_size=1024 * 1024)
 
         # generate SAS for the source file
@@ -1677,20 +1726,21 @@ class TestStorageFile(StorageRecordedTestCase):
             source_file_client.file_path,
             source_file_client.credential.account_key,
             FileSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
 
-        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+        source_file_url = source_file_client.url + "?" + sas_token_for_source_file
 
         # Act
-        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=end+1, source_offset=0)
+        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=end + 1, source_offset=0)
 
         # Assert
         # To make sure the range of the file is actually updated
         file_ranges = destination_file_client.get_ranges()
         file_content = destination_file_client.download_file(offset=0, length=end + 1).readall()
         assert 1 == len(file_ranges)
-        assert 0 == file_ranges[0].get('start')
-        assert end == file_ranges[0].get('end')
+        assert 0 == file_ranges[0].get("start")
+        assert end == file_ranges[0].get("end")
         assert data == file_content
 
     @FileSharePreparer()
@@ -1700,11 +1750,11 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        source_file_client = self._create_file(file_name='testfile')
-        data = b'abcdefghijklmnop' * 32
+        source_file_client = self._create_file(file_name="testfile")
+        data = b"abcdefghijklmnop" * 32
         source_file_client.upload_range(data, offset=0, length=512)
 
-        destination_file_client = self._create_empty_file(file_name='filetoupdate')
+        destination_file_client = self._create_empty_file(file_name="filetoupdate")
         current_last_write_time = destination_file_client.get_file_properties().last_write_time
 
         # generate SAS for the source file
@@ -1715,13 +1765,15 @@ class TestStorageFile(StorageRecordedTestCase):
             source_file_client.file_path,
             source_file_client.credential.account_key,
             FileSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
 
-        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+        source_file_url = source_file_client.url + "?" + sas_token_for_source_file
 
         # Act
-        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
-                                                      file_last_write_mode="Now")
+        destination_file_client.upload_range_from_url(
+            source_file_url, offset=0, length=512, source_offset=0, file_last_write_mode="Now"
+        )
 
         # Assert
         new_last_write_time = destination_file_client.get_file_properties().last_write_time
@@ -1734,11 +1786,11 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        source_file_client = self._create_file(file_name='testfile')
-        data = b'abcdefghijklmnop' * 32
+        source_file_client = self._create_file(file_name="testfile")
+        data = b"abcdefghijklmnop" * 32
         source_file_client.upload_range(data, offset=0, length=512)
 
-        destination_file_client = self._create_empty_file(file_name='filetoupdate')
+        destination_file_client = self._create_empty_file(file_name="filetoupdate")
         current_last_write_time = destination_file_client.get_file_properties().last_write_time
 
         # generate SAS for the source file
@@ -1749,13 +1801,15 @@ class TestStorageFile(StorageRecordedTestCase):
             source_file_client.file_path,
             source_file_client.credential.account_key,
             FileSasPermissions(read=True),
-            expiry=datetime.utcnow() + timedelta(hours=1))
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
 
-        source_file_url = source_file_client.url + '?' + sas_token_for_source_file
+        source_file_url = source_file_client.url + "?" + sas_token_for_source_file
 
         # Act
-        destination_file_client.upload_range_from_url(source_file_url, offset=0, length=512, source_offset=0,
-                                                      file_last_write_mode="Preserve")
+        destination_file_client.upload_range_from_url(
+            source_file_url, offset=0, length=512, source_offset=0, file_last_write_mode="Preserve"
+        )
 
         # Assert
         new_last_write_time = destination_file_client.get_file_properties().last_write_time
@@ -1775,7 +1829,7 @@ class TestStorageFile(StorageRecordedTestCase):
 
         # Assert
         content = file_client.download_file().readall()
-        assert b'\x00' * 512 == content[:512]
+        assert b"\x00" * 512 == content[:512]
         assert self.short_byte_data[512:] == content[512:]
 
     @FileSharePreparer()
@@ -1789,9 +1843,10 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=file_name + '.',
+            file_path=file_name + ".",
             credential=storage_account_key.secret,
-            allow_trailing_dot=True)
+            allow_trailing_dot=True,
+        )
         file_client.upload_file(self.short_byte_data)
 
         # Act
@@ -1800,9 +1855,9 @@ class TestStorageFile(StorageRecordedTestCase):
 
         # Assert
         content = file_client.download_file().readall()
-        assert b'\x00' * 512 == content[:512]
+        assert b"\x00" * 512 == content[:512]
         assert self.short_byte_data[512:] == content[512:]
-        assert props.name == file_name + '.'
+        assert props.name == file_name + "."
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1814,10 +1869,10 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = self._create_file()
 
         # Act
-        data = u'abcdefghijklmnop' * 32
+        data = "abcdefghijklmnop" * 32
         file_client.upload_range(data, offset=0, length=512)
 
-        encoded = data.encode('utf-8')
+        encoded = data.encode("utf-8")
 
         # Assert
         content = file_client.download_file().readall()
@@ -1838,7 +1893,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
         file_client.create_file(1024)
 
         # Act
@@ -1859,9 +1915,10 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=file_name + '.',
+            file_path=file_name + ".",
             credential=storage_account_key.secret,
-            allow_trailing_dot=True)
+            allow_trailing_dot=True,
+        )
         file_client.create_file(1024)
 
         # Act
@@ -1871,7 +1928,7 @@ class TestStorageFile(StorageRecordedTestCase):
         # Assert
         assert ranges is not None
         assert len(ranges) == 0
-        assert props.name == file_name + '.'
+        assert props.name == file_name + "."
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1885,14 +1942,15 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
         file_client.create_file(1024)
 
-        file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        file_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Act
         with pytest.raises(HttpResponseError):
-            file_client.get_ranges(lease='44444444-3333-2222-1111-000000000000')
+            file_client.get_ranges(lease="44444444-3333-2222-1111-000000000000")
 
         # Get ranges on a leased file will succeed without provide the lease
         ranges = file_client.get_ranges()
@@ -1913,7 +1971,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
 
         file_client.create_file(2048)
         share_client = self.fsc.get_share_client(self.share_name)
@@ -1925,7 +1984,7 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client.clear_range(offset=512, length=512)
 
         ranges1, cleared1 = file_client.get_ranges_diff(previous_sharesnapshot=snapshot1)
-        ranges2, cleared2 = file_client.get_ranges_diff(previous_sharesnapshot=snapshot2['snapshot'])
+        ranges2, cleared2 = file_client.get_ranges_diff(previous_sharesnapshot=snapshot2["snapshot"])
 
         # Assert
         assert ranges1 is not None
@@ -1933,20 +1992,20 @@ class TestStorageFile(StorageRecordedTestCase):
         assert len(ranges1) == 2
         assert isinstance(cleared1, list)
         assert len(cleared1) == 1
-        assert ranges1[0]['start'] == 0
-        assert ranges1[0]['end'] == 511
-        assert cleared1[0]['start'] == 512
-        assert cleared1[0]['end'] == 1023
-        assert ranges1[1]['start'] == 1024
-        assert ranges1[1]['end'] == 1535
+        assert ranges1[0]["start"] == 0
+        assert ranges1[0]["end"] == 511
+        assert cleared1[0]["start"] == 512
+        assert cleared1[0]["end"] == 1023
+        assert ranges1[1]["start"] == 1024
+        assert ranges1[1]["end"] == 1535
 
         assert ranges2 is not None
         assert isinstance(ranges2, list)
         assert len(ranges2) == 0
         assert isinstance(cleared2, list)
         assert len(cleared2) == 1
-        assert cleared2[0]['start'] == 512
-        assert cleared2[0]['end'] == 1023
+        assert cleared2[0]["start"] == 512
+        assert cleared2[0]["end"] == 1023
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -1962,7 +2021,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            token_intent=TEST_INTENT)
+            token_intent=TEST_INTENT,
+        )
 
         file_client.create_file(2048)
         share_client = self.fsc.get_share_client(self.share_name)
@@ -1974,7 +2034,7 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client.clear_range(offset=512, length=512)
 
         ranges1, cleared1 = file_client.get_ranges_diff(previous_sharesnapshot=snapshot1)
-        ranges2, cleared2 = file_client.get_ranges_diff(previous_sharesnapshot=snapshot2['snapshot'])
+        ranges2, cleared2 = file_client.get_ranges_diff(previous_sharesnapshot=snapshot2["snapshot"])
 
         # Assert
         assert ranges1 is not None
@@ -1982,20 +2042,20 @@ class TestStorageFile(StorageRecordedTestCase):
         assert len(ranges1) == 2
         assert isinstance(cleared1, list)
         assert len(cleared1) == 1
-        assert ranges1[0]['start'] == 0
-        assert ranges1[0]['end'] == 511
-        assert cleared1[0]['start'] == 512
-        assert cleared1[0]['end'] == 1023
-        assert ranges1[1]['start'] == 1024
-        assert ranges1[1]['end'] == 1535
+        assert ranges1[0]["start"] == 0
+        assert ranges1[0]["end"] == 511
+        assert cleared1[0]["start"] == 512
+        assert cleared1[0]["end"] == 1023
+        assert ranges1[1]["start"] == 1024
+        assert ranges1[1]["end"] == 1535
 
         assert ranges2 is not None
         assert isinstance(ranges2, list)
         assert len(ranges2) == 0
         assert isinstance(cleared2, list)
         assert len(cleared2) == 1
-        assert cleared2[0]['start'] == 512
-        assert cleared2[0]['end'] == 1023
+        assert cleared2[0]["start"] == 512
+        assert cleared2[0]["end"] == 1023
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -2008,9 +2068,10 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=file_name + '.',
+            file_path=file_name + ".",
             credential=storage_account_key.secret,
-            allow_trailing_dot=True)
+            allow_trailing_dot=True,
+        )
 
         file_client.create_file(2048)
         share_client = self.fsc.get_share_client(self.share_name)
@@ -2022,7 +2083,7 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client.clear_range(offset=512, length=512)
 
         ranges1, cleared1 = file_client.get_ranges_diff(previous_sharesnapshot=snapshot1)
-        ranges2, cleared2 = file_client.get_ranges_diff(previous_sharesnapshot=snapshot2['snapshot'])
+        ranges2, cleared2 = file_client.get_ranges_diff(previous_sharesnapshot=snapshot2["snapshot"])
         props = file_client.get_file_properties()
 
         # Assert
@@ -2031,22 +2092,22 @@ class TestStorageFile(StorageRecordedTestCase):
         assert len(ranges1) == 2
         assert isinstance(cleared1, list)
         assert len(cleared1) == 1
-        assert ranges1[0]['start'] == 0
-        assert ranges1[0]['end'] == 511
-        assert cleared1[0]['start'] == 512
-        assert cleared1[0]['end'] == 1023
-        assert ranges1[1]['start'] == 1024
-        assert ranges1[1]['end'] == 1535
+        assert ranges1[0]["start"] == 0
+        assert ranges1[0]["end"] == 511
+        assert cleared1[0]["start"] == 512
+        assert cleared1[0]["end"] == 1023
+        assert ranges1[1]["start"] == 1024
+        assert ranges1[1]["end"] == 1535
 
         assert ranges2 is not None
         assert isinstance(ranges2, list)
         assert len(ranges2) == 0
         assert isinstance(cleared2, list)
         assert len(cleared2) == 1
-        assert cleared2[0]['start'] == 512
-        assert cleared2[0]['end'] == 1023
+        assert cleared2[0]["start"] == 512
+        assert cleared2[0]["end"] == 1023
 
-        assert props.name == file_name + '.'
+        assert props.name == file_name + "."
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -2060,7 +2121,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
 
         file_client.create_file(2048)
         share_client = self.fsc.get_share_client(self.share_name)
@@ -2071,7 +2133,7 @@ class TestStorageFile(StorageRecordedTestCase):
         previous_snapshot = share_client.create_snapshot()
         file_client.clear_range(offset=512, length=512)
         file_client.upload_range(data2, offset=512, length=512)
-        file_client = file_client.rename_file(file_name + 'renamed')
+        file_client = file_client.rename_file(file_name + "renamed")
 
         # Assert
         with pytest.raises(ResourceExistsError):
@@ -2084,8 +2146,8 @@ class TestStorageFile(StorageRecordedTestCase):
         assert len(ranges) == 1
         assert isinstance(cleared, list)
         assert len(cleared) == 0
-        assert ranges[0]['start'] == 512
-        assert ranges[0]['end'] == 1023
+        assert ranges[0]["start"] == 512
+        assert ranges[0]["end"] == 1023
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -2099,10 +2161,11 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
         file_client.create_file(2048)
 
-        data = b'abcdefghijklmnop' * 32
+        data = b"abcdefghijklmnop" * 32
         resp1 = file_client.upload_range(data, offset=0, length=512)
         resp2 = file_client.upload_range(data, offset=1024, length=512)
 
@@ -2112,10 +2175,10 @@ class TestStorageFile(StorageRecordedTestCase):
         # Assert
         assert ranges is not None
         assert len(ranges) == 2
-        assert ranges[0]['start'] == 0
-        assert ranges[0]['end'] == 511
-        assert ranges[1]['start'] == 1024
-        assert ranges[1]['end'] == 1535
+        assert ranges[0]["start"] == 0
+        assert ranges[0]["end"] == 511
+        assert ranges[1]["start"] == 1024
+        assert ranges[1]["end"] == 1535
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -2129,7 +2192,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
         file_client.create_file(1024)
 
         share_client = self.fsc.get_share_client(self.share_name)
@@ -2139,7 +2203,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
 
         file_client.delete_file()
 
@@ -2164,7 +2229,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            token_intent=TEST_INTENT)
+            token_intent=TEST_INTENT,
+        )
         file_client.create_file(1024)
 
         share_client = self.fsc.get_share_client(self.share_name)
@@ -2175,7 +2241,8 @@ class TestStorageFile(StorageRecordedTestCase):
             file_path=file_client.file_name,
             snapshot=snapshot,
             credential=token_credential,
-            token_intent=TEST_INTENT)
+            token_intent=TEST_INTENT,
+        )
 
         file_client.delete_file()
 
@@ -2198,9 +2265,10 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
         file_client.create_file(2048)
-        data = b'abcdefghijklmnop' * 32
+        data = b"abcdefghijklmnop" * 32
         resp1 = file_client.upload_range(data, offset=0, length=512)
         resp2 = file_client.upload_range(data, offset=1024, length=512)
 
@@ -2211,7 +2279,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_client.file_name,
             snapshot=snapshot,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
 
         file_client.delete_file()
 
@@ -2221,10 +2290,10 @@ class TestStorageFile(StorageRecordedTestCase):
         # Assert
         assert ranges is not None
         assert len(ranges) == 2
-        assert ranges[0]['start'] == 0
-        assert ranges[0]['end'] == 511
-        assert ranges[1]['start'] == 1024
-        assert ranges[1]['end'] == 1535
+        assert ranges[0]["start"] == 0
+        assert ranges[0]["end"] == 511
+        assert ranges[1]["start"] == 1024
+        assert ranges[1]["end"] == 1535
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -2237,16 +2306,17 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path='file1copy',
-            credential=storage_account_key.secret)
+            file_path="file1copy",
+            credential=storage_account_key.secret,
+        )
 
         # Act
         copy = file_client.start_copy_from_url(source_client.url)
 
         # Assert
         assert copy is not None
-        assert copy['copy_status'] == 'success'
-        assert copy['copy_id'] is not None
+        assert copy["copy_status"] == "success"
+        assert copy["copy_id"] is not None
 
         copy_file = file_client.download_file().readall()
         assert copy_file == self.short_byte_data
@@ -2263,17 +2333,18 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path='file1copy',
+            file_path="file1copy",
             credential=token_credential,
-            token_intent=TEST_INTENT)
+            token_intent=TEST_INTENT,
+        )
 
         # Act
         copy = file_client.start_copy_from_url(source_client.url)
 
         # Assert
         assert copy is not None
-        assert copy['copy_status'] == 'success'
-        assert copy['copy_id'] is not None
+        assert copy["copy_status"] == "success"
+        assert copy["copy_id"] is not None
 
         copy_file = file_client.download_file().readall()
         assert copy_file == self.short_byte_data
@@ -2289,26 +2360,28 @@ class TestStorageFile(StorageRecordedTestCase):
         source_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path=file_name + '.',
+            file_path=file_name + ".",
             credential=storage_account_key.secret,
-            allow_trailing_dot=True)
+            allow_trailing_dot=True,
+        )
         source_client.upload_file(self.short_byte_data)
 
         dest_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path='file1copy.',
+            file_path="file1copy.",
             credential=storage_account_key.secret,
             allow_trailing_dot=True,
-            allow_source_trailing_dot=True)
+            allow_source_trailing_dot=True,
+        )
 
         # Act
         copy = dest_client.start_copy_from_url(source_client.url)
 
         # Assert
         assert copy is not None
-        assert copy['copy_status'] == 'success'
-        assert copy['copy_id'] is not None
+        assert copy["copy_status"] == "success"
+        assert copy["copy_id"] is not None
 
         copy_file = dest_client.download_file().readall()
         assert copy_file == self.short_byte_data
@@ -2324,10 +2397,11 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path='file1copy',
-            credential=storage_account_key.secret)
+            file_path="file1copy",
+            credential=storage_account_key.secret,
+        )
         file_client.create_file(1024)
-        lease = file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = file_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Act
         with pytest.raises(HttpResponseError):
@@ -2337,8 +2411,8 @@ class TestStorageFile(StorageRecordedTestCase):
 
         # Assert
         assert copy is not None
-        assert copy['copy_status'] == 'success'
-        assert copy['copy_id'] is not None
+        assert copy["copy_status"] == "success"
+        assert copy["copy_id"] is not None
 
         copy_file = file_client.download_file().readall()
         assert copy_file == self.short_byte_data
@@ -2354,8 +2428,9 @@ class TestStorageFile(StorageRecordedTestCase):
         dest_file = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path='file1copy',
-            credential=storage_account_key.secret)
+            file_path="file1copy",
+            credential=storage_account_key.secret,
+        )
 
         file_attributes = NTFSAttributes(read_only=True)
         dest_file.create_file(1024, file_attributes=file_attributes)
@@ -2368,8 +2443,8 @@ class TestStorageFile(StorageRecordedTestCase):
 
         # Assert
         assert copy is not None
-        assert copy['copy_status'] == 'success'
-        assert copy['copy_id'] is not None
+        assert copy["copy_status"] == "success"
+        assert copy["copy_id"] is not None
 
         copy_file = dest_file.download_file().readall()
         assert copy_file == self.short_byte_data
@@ -2385,8 +2460,9 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path='file1copy',
-            credential=storage_account_key.secret)
+            file_path="file1copy",
+            credential=storage_account_key.secret,
+        )
         source_props = source_client.get_file_properties()
 
         file_creation_time = source_props.creation_time - timedelta(hours=1)
@@ -2408,15 +2484,15 @@ class TestStorageFile(StorageRecordedTestCase):
         # Assert
         dest_prop = file_client.get_file_properties()
         # to make sure the attributes are the same as the set ones
-        assert file_creation_time == dest_prop['creation_time']
-        assert file_last_write_time == dest_prop['last_write_time']
-        assert file_change_time == dest_prop['change_time']
-        assert 'Temporary' in dest_prop['file_attributes']
-        assert 'NoScrubData' in dest_prop['file_attributes']
+        assert file_creation_time == dest_prop["creation_time"]
+        assert file_last_write_time == dest_prop["last_write_time"]
+        assert file_change_time == dest_prop["change_time"]
+        assert "Temporary" in dest_prop["file_attributes"]
+        assert "NoScrubData" in dest_prop["file_attributes"]
 
         assert copy is not None
-        assert copy['copy_status'] == 'success'
-        assert copy['copy_id'] is not None
+        assert copy["copy_status"] == "success"
+        assert copy["copy_id"] is not None
 
         copy_file = file_client.download_file().readall()
         assert copy_file == self.short_byte_data
@@ -2434,23 +2510,21 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path='file1copy',
-            credential=storage_account_key.secret)
+            file_path="file1copy",
+            credential=storage_account_key.secret,
+        )
 
         # Act
-        copy = file_client.start_copy_from_url(
-            source_client.url,
-            permission_key='source'
-        )
+        copy = file_client.start_copy_from_url(source_client.url, permission_key="source")
 
         # Assert
         dest_prop = file_client.get_file_properties()
         # to make sure the acl is copied from source
-        assert source_prop['permission_key'] == dest_prop['permission_key']
+        assert source_prop["permission_key"] == dest_prop["permission_key"]
 
         assert copy is not None
-        assert copy['copy_status'] == 'success'
-        assert copy['copy_id'] is not None
+        assert copy["copy_status"] == "success"
+        assert copy["copy_id"] is not None
 
         copy_file = file_client.download_file().readall()
         assert copy_file == self.short_byte_data
@@ -2463,17 +2537,23 @@ class TestStorageFile(StorageRecordedTestCase):
         secondary_storage_account_name = kwargs.pop("secondary_storage_account_name")
         secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key.secret)
+        self._setup(
+            storage_account_name,
+            storage_account_key,
+            secondary_storage_account_name,
+            secondary_storage_account_key.secret,
+        )
         self._create_remote_share()
         source_file = self._create_remote_file()
 
         # Act
-        target_file_name = 'targetfile'
+        target_file_name = "targetfile"
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
         with pytest.raises(HttpResponseError) as e:
             file_client.start_copy_from_url(source_file.url)
 
@@ -2487,8 +2567,13 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
         secondary_storage_account_name = kwargs.pop("secondary_storage_account_name")
         secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
-        self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key.secret)
-        data = b'12345678' * 1024
+        self._setup(
+            storage_account_name,
+            storage_account_key,
+            secondary_storage_account_name,
+            secondary_storage_account_key.secret,
+        )
+        data = b"12345678" * 1024
         self._create_remote_share()
         source_file = self._create_remote_file(file_data=data)
         sas_token = self.generate_sas(
@@ -2500,19 +2585,20 @@ class TestStorageFile(StorageRecordedTestCase):
             permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        source_url = source_file.url + '?' + sas_token
+        source_url = source_file.url + "?" + sas_token
 
         # Act
-        target_file_name = 'targetfile'
+        target_file_name = "targetfile"
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
         copy_resp = file_client.start_copy_from_url(source_url)
 
         # Assert
-        assert copy_resp['copy_status'] in ['success', 'pending']
+        assert copy_resp["copy_status"] in ["success", "pending"]
         self._wait_for_async_copy(self.share_name, target_file_name)
 
         actual_data = file_client.download_file().readall()
@@ -2526,8 +2612,13 @@ class TestStorageFile(StorageRecordedTestCase):
         secondary_storage_account_name = kwargs.pop("secondary_storage_account_name")
         secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
 
-        self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key.secret)
-        data = b'12345678' * 1024 * 1024
+        self._setup(
+            storage_account_name,
+            storage_account_key,
+            secondary_storage_account_name,
+            secondary_storage_account_key.secret,
+        )
+        data = b"12345678" * 1024 * 1024
         self._create_remote_share()
         source_file = self._create_remote_file(file_data=data)
         sas_token = self.generate_sas(
@@ -2539,23 +2630,24 @@ class TestStorageFile(StorageRecordedTestCase):
             permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        source_url = source_file.url + '?' + sas_token
+        source_url = source_file.url + "?" + sas_token
 
         # Act
-        target_file_name = 'targetfile'
+        target_file_name = "targetfile"
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
         copy_resp = file_client.start_copy_from_url(source_url)
-        assert copy_resp['copy_status'] == 'pending'
+        assert copy_resp["copy_status"] == "pending"
         file_client.abort_copy(copy_resp)
 
         # Assert
         target_file = file_client.download_file()
-        assert target_file.readall() == b''
-        assert target_file.properties.copy.status == 'aborted'
+        assert target_file.readall() == b""
+        assert target_file.properties.copy.status == "aborted"
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -2566,9 +2658,13 @@ class TestStorageFile(StorageRecordedTestCase):
         secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
         token_credential = self.get_credential(ShareServiceClient)
 
-        self._setup(storage_account_name, storage_account_key, secondary_storage_account_name,
-                    secondary_storage_account_key.secret)
-        data = b'12345678' * 1024 * 1024
+        self._setup(
+            storage_account_name,
+            storage_account_key,
+            secondary_storage_account_name,
+            secondary_storage_account_key.secret,
+        )
+        data = b"12345678" * 1024 * 1024
         self._create_remote_share()
         source_file = self._create_remote_file(file_data=data)
         sas_token = self.generate_sas(
@@ -2580,24 +2676,25 @@ class TestStorageFile(StorageRecordedTestCase):
             permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
         )
-        source_url = source_file.url + '?' + sas_token
+        source_url = source_file.url + "?" + sas_token
 
         # Act
-        target_file_name = 'targetfile'
+        target_file_name = "targetfile"
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=target_file_name,
             credential=token_credential,
-            token_intent=TEST_INTENT)
+            token_intent=TEST_INTENT,
+        )
         copy_resp = file_client.start_copy_from_url(source_url)
-        assert copy_resp['copy_status'] == 'pending'
+        assert copy_resp["copy_status"] == "pending"
         file_client.abort_copy(copy_resp)
 
         # Assert
         target_file = file_client.download_file()
-        assert target_file.readall() == b''
-        assert target_file.properties.copy.status == 'aborted'
+        assert target_file.readall() == b""
+        assert target_file.properties.copy.status == "aborted"
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -2609,19 +2706,20 @@ class TestStorageFile(StorageRecordedTestCase):
         source_file = self._create_file()
 
         # Act
-        target_file_name = 'targetfile'
+        target_file_name = "targetfile"
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=target_file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
         copy_resp = file_client.start_copy_from_url(source_file.url)
 
         with pytest.raises(HttpResponseError):
             file_client.abort_copy(copy_resp)
 
         # Assert
-        assert copy_resp['copy_status'] == 'success'
+        assert copy_resp["copy_status"] == "success"
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -2630,19 +2728,20 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        file_name = '啊齄丂狛狜'
+        file_name = "啊齄丂狛狜"
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
-        file_client.upload_file(b'hello world')
+            credential=storage_account_key.secret,
+        )
+        file_client.upload_file(b"hello world")
 
         # Act
         content = file_client.download_file().readall()
 
         # Assert
-        assert content == b'hello world'
+        assert content == b"hello world"
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -2651,28 +2750,29 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        file_name = '啊齄丂狛狜'
+        file_name = "啊齄丂狛狜"
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
         file_client.create_file(1024)
-        lease = file_client.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        lease = file_client.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
         with pytest.raises(HttpResponseError):
-            file_client.upload_file(b'hello world')
+            file_client.upload_file(b"hello world")
 
-        file_client.upload_file(b'hello world', lease=lease)
+        file_client.upload_file(b"hello world", lease=lease)
 
         # Act
         # download the file with a wrong lease id will fail
         with pytest.raises(HttpResponseError):
-            file_client.upload_file(b'hello world', lease='44444444-3333-2222-1111-000000000000')
+            file_client.upload_file(b"hello world", lease="44444444-3333-2222-1111-000000000000")
 
         content = file_client.download_file(lease=lease).readall()
 
         # Assert
-        assert content == b'hello world'
+        assert content == b"hello world"
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -2686,10 +2786,11 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
 
         # Act
-        data = u'hello world啊齄丂狛狜'.encode('utf-8')
+        data = "hello world啊齄丂狛狜".encode("utf-8")
         file_client.upload_file(data)
 
         # Assert
@@ -2706,14 +2807,14 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = self._get_file_client()
 
         # Act
-        data = u'hello world啊齄丂狛狜'.encode('utf-8')
+        data = "hello world啊齄丂狛狜".encode("utf-8")
         file_client.upload_file(data, file_attributes=NTFSAttributes(temporary=True))
 
         # Assert
         content = file_client.download_file().readall()
         properties = file_client.get_file_properties()
         assert content == data
-        assert 'Temporary' in properties.file_attributes
+        assert "Temporary" in properties.file_attributes
 
     @FileSharePreparer()
     @recorded_by_proxy
@@ -2722,7 +2823,7 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        base64_data = 'AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=='
+        base64_data = "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/wABAgMEBQYHCAkKCwwNDg8QERITFBUWFxgZGhscHR4fICEiIyQlJicoKSorLC0uLzAxMjM0NTY3ODk6Ozw9Pj9AQUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVpbXF1eX2BhYmNkZWZnaGlqa2xtbm9wcXJzdHV2d3h5ent8fX5/gIGCg4SFhoeIiYqLjI2Oj5CRkpOUlZaXmJmam5ydnp+goaKjpKWmp6ipqqusra6vsLGys7S1tre4ubq7vL2+v8DBwsPExcbHyMnKy8zNzs/Q0dLT1NXW19jZ2tvc3d7f4OHi4+Tl5ufo6err7O3u7/Dx8vP09fb3+Pn6+/z9/v8AAQIDBAUGBwgJCgsMDQ4PEBESExQVFhcYGRobHB0eHyAhIiMkJSYnKCkqKywtLi8wMTIzNDU2Nzg5Ojs8PT4/QEFCQ0RFRkdISUpLTE1OT1BRUlNUVVZXWFlaW1xdXl9gYWJjZGVmZ2hpamtsbW5vcHFyc3R1dnd4eXp7fH1+f4CBgoOEhYaHiImKi4yNjo+QkZKTlJWWl5iZmpucnZ6foKGio6SlpqeoqaqrrK2ur7CxsrO0tba3uLm6u7y9vr/AwcLDxMXGx8jJysvMzc7P0NHS09TV1tfY2drb3N3e3+Dh4uPk5ebn6Onq6+zt7u/w8fLz9PX29/j5+vv8/f7/AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8gISIjJCUmJygpKissLS4vMDEyMzQ1Njc4OTo7PD0+P0BBQkNERUZHSElKS0xNTk9QUVJTVFVWV1hZWltcXV5fYGFiY2RlZmdoaWprbG1ub3BxcnN0dXZ3eHl6e3x9fn+AgYKDhIWGh4iJiouMjY6PkJGSk5SVlpeYmZqbnJ2en6ChoqOkpaanqKmqq6ytrq+wsbKztLW2t7i5uru8vb6/wMHCw8TFxsfIycrLzM3Oz9DR0tPU1dbX2Nna29zd3t/g4eLj5OXm5+jp6uvs7e7v8PHy8/T19vf4+fr7/P3+/w=="
         binary_data = base64.b64decode(base64_data)
 
         file_name = self._get_file_reference()
@@ -2730,7 +2831,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret)
+            credential=storage_account_key.secret,
+        )
         file_client.upload_file(binary_data)
 
         # Act
@@ -2753,20 +2855,22 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
         progress = []
+
         def callback(response):
-            current = response.context['upload_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["upload_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
         response = file_client.upload_file(data, max_concurrency=2, raw_response_hook=callback)
         assert isinstance(response, dict)
-        assert 'last_modified' in response
-        assert 'etag' in response
+        assert "last_modified" in response
+        assert "etag" in response
 
         # Assert
         self.assertFileEqual(file_client, data)
@@ -2786,13 +2890,14 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
         response = file_client.upload_file(data[index:], max_concurrency=2)
         assert isinstance(response, dict)
-        assert 'last_modified' in response
-        assert 'etag' in response
+        assert "last_modified" in response
+        assert "etag" in response
 
         # Assert
         self.assertFileEqual(file_client, data[1024:])
@@ -2813,16 +2918,17 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
         response = file_client.upload_file(data[index:], length=count, max_concurrency=2)
         assert isinstance(response, dict)
-        assert 'last_modified' in response
-        assert 'etag' in response
+        assert "last_modified" in response
+        assert "etag" in response
 
         # Assert
-        self.assertFileEqual(file_client, data[index:index + count])
+        self.assertFileEqual(file_client, data[index : index + count])
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -2838,7 +2944,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
         with tempfile.TemporaryFile() as temp_file:
@@ -2846,8 +2953,8 @@ class TestStorageFile(StorageRecordedTestCase):
             temp_file.seek(0)
             response = file_client.upload_file(temp_file, max_concurrency=2)
             assert isinstance(response, dict)
-            assert 'last_modified' in response
-            assert 'etag' in response
+            assert "last_modified" in response
+            assert "etag" in response
 
         # Assert
         self.assertFileEqual(file_client, data)
@@ -2866,13 +2973,15 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
         progress = []
+
         def callback(response):
-            current = response.context['upload_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["upload_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -2881,8 +2990,8 @@ class TestStorageFile(StorageRecordedTestCase):
             temp_file.seek(0)
             response = file_client.upload_file(temp_file, max_concurrency=2, raw_response_hook=callback)
             assert isinstance(response, dict)
-            assert 'last_modified' in response
-            assert 'etag' in response
+            assert "last_modified" in response
+            assert "etag" in response
 
         # Assert
         self.assertFileEqual(file_client, data)
@@ -2902,7 +3011,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
         file_size = len(data)
@@ -2911,8 +3021,8 @@ class TestStorageFile(StorageRecordedTestCase):
             temp_file.seek(0)
             response = file_client.upload_file(temp_file, max_concurrency=2)
             assert isinstance(response, dict)
-            assert 'last_modified' in response
-            assert 'etag' in response
+            assert "last_modified" in response
+            assert "etag" in response
 
         # Assert
         self.assertFileEqual(file_client, data[:file_size])
@@ -2931,7 +3041,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
         file_size = len(data)
@@ -2958,13 +3069,15 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
         progress = []
+
         def callback(response):
-            current = response.context['upload_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["upload_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -2992,7 +3105,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
         file_size = len(data) - 512
@@ -3018,13 +3132,15 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
         progress = []
+
         def callback(response):
-            current = response.context['upload_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["upload_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -3046,14 +3162,15 @@ class TestStorageFile(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
-        text = u'hello 啊齄丂狛狜 world'
-        data = text.encode('utf-8')
+        text = "hello 啊齄丂狛狜 world"
+        data = text.encode("utf-8")
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
         file_client.upload_file(text)
@@ -3069,17 +3186,18 @@ class TestStorageFile(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
-        text = u'hello 啊齄丂狛狜 world'
-        data = text.encode('utf-16')
+        text = "hello 啊齄丂狛狜 world"
+        data = text.encode("utf-16")
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
-        file_client.upload_file(text, encoding='UTF-16')
+        file_client.upload_file(text, encoding="UTF-16")
 
         # Assert
         self.assertFileEqual(file_client, data)
@@ -3093,13 +3211,14 @@ class TestStorageFile(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         file_name = self._get_file_reference()
         data = self.get_random_text_data(LARGE_FILE_SIZE)
-        encoded_data = data.encode('utf-8')
+        encoded_data = data.encode("utf-8")
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
         file_client.upload_file(data)
@@ -3121,7 +3240,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
         file_client.upload_file(data, validate_content=True)
@@ -3142,7 +3262,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         # Act
         file_client.upload_file(data, validate_content=True, max_concurrency=2)
@@ -3163,9 +3284,10 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=1024)
+            max_range_size=1024,
+        )
 
-        data = b'a' * 5 * 1024
+        data = b"a" * 5 * 1024
         progress = ProgressTracker(len(data), 1024)
 
         # Act
@@ -3189,9 +3311,10 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=1024)
+            max_range_size=1024,
+        )
 
-        data = b'a' * 5 * 1024
+        data = b"a" * 5 * 1024
         progress = ProgressTracker(len(data), 1024)
 
         # Act
@@ -3224,7 +3347,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_client.file_name,
-            credential=token)
+            credential=token,
+        )
         content = file_client.download_file().readall()
 
         # Assert
@@ -3235,19 +3359,19 @@ class TestStorageFile(StorageRecordedTestCase):
     def test_sas_signed_identifier(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        variables = kwargs.pop('variables', {})
+        variables = kwargs.pop("variables", {})
 
         self._setup(storage_account_name, storage_account_key)
         file_client = self._create_file()
         share_client = self.fsc.get_share_client(self.share_name)
 
         access_policy = AccessPolicy()
-        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow() - timedelta(hours=1))
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        start_time = self.get_datetime_variable(variables, "start_time", datetime.utcnow() - timedelta(hours=1))
+        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(hours=1))
         access_policy.start = start_time
         access_policy.expiry = expiry_time
         access_policy.permission = FileSasPermissions(read=True)
-        identifiers = {'testid': access_policy}
+        identifiers = {"testid": access_policy}
         share_client.set_share_access_policy(identifiers)
 
         token = self.generate_sas(
@@ -3256,12 +3380,11 @@ class TestStorageFile(StorageRecordedTestCase):
             file_client.share_name,
             file_client.file_path,
             file_client.credential.account_key,
-            policy_id='testid')
+            policy_id="testid",
+        )
 
         # Act
-        sas_file = ShareFileClient.from_file_url(
-            file_client.url,
-            credential=token)
+        sas_file = ShareFileClient.from_file_url(file_client.url, credential=token)
 
         content = file_client.download_file().readall()
 
@@ -3292,7 +3415,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_client.file_name,
-            credential=token)
+            credential=token,
+        )
 
         response = requests.get(file_client.url)
 
@@ -3322,7 +3446,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_client.file_name,
-            credential=AzureSasCredential(token))
+            credential=AzureSasCredential(token),
+        )
 
         properties = file_client.get_file_properties()
 
@@ -3335,7 +3460,6 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-
         self._setup(storage_account_name, storage_account_key)
         file_client = self._create_file()
         named_key = AzureNamedKeyCredential(storage_account_name, storage_account_key.secret)
@@ -3345,7 +3469,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_client.file_name,
-            credential=named_key)
+            credential=named_key,
+        )
 
         properties = file_client.get_file_properties()
 
@@ -3361,7 +3486,8 @@ class TestStorageFile(StorageRecordedTestCase):
                 self.account_url(storage_account_name, "file") + "?sig=foo",
                 share_name="foo",
                 file_path="foo",
-                credential=AzureSasCredential("?foo=bar"))
+                credential=AzureSasCredential("?foo=bar"),
+            )
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -3386,7 +3512,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_client.file_name,
-            credential=token)
+            credential=token,
+        )
         response = requests.get(file_client.url)
 
         # Assert
@@ -3409,11 +3536,11 @@ class TestStorageFile(StorageRecordedTestCase):
             file_client.credential.account_key,
             permission=FileSasPermissions(read=True),
             expiry=datetime.utcnow() + timedelta(hours=1),
-            cache_control='no-cache',
-            content_disposition='inline',
-            content_encoding='utf-8',
-            content_language='fr',
-            content_type='text',
+            cache_control="no-cache",
+            content_disposition="inline",
+            content_encoding="utf-8",
+            content_language="fr",
+            content_type="text",
         )
 
         # Act
@@ -3421,16 +3548,17 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_client.file_name,
-            credential=token)
+            credential=token,
+        )
         response = requests.get(file_client.url)
 
         # Assert
         assert self.short_byte_data == response.content
-        assert response.headers['cache-control'] == 'no-cache'
-        assert response.headers['content-disposition'] == 'inline'
-        assert response.headers['content-encoding'] == 'utf-8'
-        assert response.headers['content-language'] == 'fr'
-        assert response.headers['content-type'] == 'text'
+        assert response.headers["cache-control"] == "no-cache"
+        assert response.headers["content-disposition"] == "inline"
+        assert response.headers["content-encoding"] == "utf-8"
+        assert response.headers["content-language"] == "fr"
+        assert response.headers["content-type"] == "text"
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -3439,7 +3567,7 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        updated_data = b'updated file data'
+        updated_data = b"updated file data"
         file_client_admin = self._create_file()
         token = self.generate_sas(
             generate_file_sas,
@@ -3454,16 +3582,17 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_client_admin.file_name,
-            credential=token)
+            credential=token,
+        )
 
         # Act
-        headers = {'x-ms-range': 'bytes=0-16', 'x-ms-write': 'update'}
-        response = requests.put(file_client.url + '&comp=range', headers=headers, data=updated_data)
+        headers = {"x-ms-range": "bytes=0-16", "x-ms-write": "update"}
+        response = requests.put(file_client.url + "&comp=range", headers=headers, data=updated_data)
 
         # Assert
         assert response.ok
         file_content = file_client_admin.download_file().readall()
-        assert updated_data == file_content[:len(updated_data)]
+        assert updated_data == file_content[: len(updated_data)]
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -3486,7 +3615,8 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_client_admin.file_name,
-            credential=token)
+            credential=token,
+        )
 
         # Act
         response = requests.delete(file_client.url)
@@ -3503,13 +3633,13 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        source_file = self._create_file('file1')
+        source_file = self._create_file("file1")
 
         # Act
-        new_file = source_file.rename_file('file2')
+        new_file = source_file.rename_file("file2")
 
         # Assert
-        assert 'file2' == new_file.file_name
+        assert "file2" == new_file.file_name
         props = new_file.get_file_properties()
         assert props is not None
 
@@ -3527,14 +3657,15 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=token_credential,
-            token_intent=TEST_INTENT)
+            token_intent=TEST_INTENT,
+        )
 
         # Act
         file_client.create_file(1024)
-        new_file = file_client.rename_file('file2')
+        new_file = file_client.rename_file("file2")
 
         # Assert
-        assert 'file2' == new_file.file_name
+        assert "file2" == new_file.file_name
         props = new_file.get_file_properties()
         assert props is not None
 
@@ -3547,15 +3678,15 @@ class TestStorageFile(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
-        source_directory = share_client.create_directory('dir1')
-        dest_directory = share_client.create_directory('dir2')
-        source_file = source_directory.upload_file('file1', self.short_byte_data)
+        source_directory = share_client.create_directory("dir1")
+        dest_directory = share_client.create_directory("dir2")
+        source_file = source_directory.upload_file("file1", self.short_byte_data)
 
         # Act
-        new_file = source_file.rename_file(dest_directory.directory_path + '/' + source_file.file_name)
+        new_file = source_file.rename_file(dest_directory.directory_path + "/" + source_file.file_name)
 
         # Assert
-        assert 'dir2' in new_file.file_path
+        assert "dir2" in new_file.file_path
         props = new_file.get_file_properties()
         assert props is not None
 
@@ -3568,9 +3699,9 @@ class TestStorageFile(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
-        source_file = share_client.get_file_client('file1')
+        source_file = share_client.get_file_client("file1")
         source_file.create_file(1024)
-        dest_file = share_client.get_file_client('file2')
+        dest_file = share_client.get_file_client("file2")
 
         file_attributes = NTFSAttributes(read_only=True)
         dest_file.create_file(1024, file_attributes=file_attributes)
@@ -3579,7 +3710,7 @@ class TestStorageFile(StorageRecordedTestCase):
         new_file = source_file.rename_file(dest_file.file_name, overwrite=True, ignore_read_only=True)
 
         # Assert
-        assert 'file2' == new_file.file_name
+        assert "file2" == new_file.file_name
         props = new_file.get_file_properties()
         assert props is not None
 
@@ -3593,11 +3724,11 @@ class TestStorageFile(StorageRecordedTestCase):
         share_client = self.fsc.get_share_client(self.share_name)
         file_permission_key = share_client.create_permission_for_share(TEST_FILE_PERMISSIONS)
 
-        source_file = share_client.get_file_client('file1')
+        source_file = share_client.get_file_client("file1")
         source_file.create_file(1024)
 
         # Act
-        new_file = source_file.rename_file('file2', file_permission=TEST_FILE_PERMISSIONS)
+        new_file = source_file.rename_file("file2", file_permission=TEST_FILE_PERMISSIONS)
 
         # Assert
         props = new_file.get_file_properties()
@@ -3613,14 +3744,14 @@ class TestStorageFile(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
 
-        source_file = share_client.get_file_client('file1')
+        source_file = share_client.get_file_client("file1")
         source_file.create_file(1024, file_permission=TEST_FILE_PERMISSIONS)
 
         source_props = source_file.get_file_properties()
         source_permission_key = source_props.permission_key
 
         # Act
-        new_file = source_file.rename_file('file2', file_permission='preserve')
+        new_file = source_file.rename_file("file2", file_permission="preserve")
 
         # Assert
         props = new_file.get_file_properties()
@@ -3634,7 +3765,7 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        source_file = self._create_file('file1')
+        source_file = self._create_file("file1")
 
         file_attributes = NTFSAttributes(read_only=True, archive=True)
         file_creation_time = datetime(2022, 1, 26, 10, 9, 30, 500000, tzinfo=timezone.utc)
@@ -3643,16 +3774,17 @@ class TestStorageFile(StorageRecordedTestCase):
 
         # Act
         new_file = source_file.rename_file(
-            'file2',
+            "file2",
             file_attributes=file_attributes,
             file_creation_time=file_creation_time,
             file_last_write_time=file_last_write_time,
-            file_change_time=file_change_time)
+            file_change_time=file_change_time,
+        )
 
         # Assert
         props = new_file.get_file_properties()
         assert props is not None
-        assert str(file_attributes), props.file_attributes.replace(' ' == '')
+        assert str(file_attributes), props.file_attributes.replace(" " == "")
         assert file_creation_time == props.creation_time
         assert file_last_write_time == props.last_write_time
         assert file_change_time == props.change_time
@@ -3664,13 +3796,11 @@ class TestStorageFile(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        source_file = self._create_file('file1')
-        content_type = 'text/plain'
+        source_file = self._create_file("file1")
+        content_type = "text/plain"
 
         # Act
-        new_file = source_file.rename_file(
-            'file2',
-            content_type=content_type)
+        new_file = source_file.rename_file("file2", content_type=content_type)
 
         # Assert
         props = new_file.get_file_properties()
@@ -3685,20 +3815,18 @@ class TestStorageFile(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
 
-        source_file = self._create_file('file1')
-        dest_file = self._create_file('file2')
-        source_lease = source_file.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
-        dest_lease = dest_file.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        source_file = self._create_file("file1")
+        dest_file = self._create_file("file2")
+        source_lease = source_file.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
+        dest_lease = dest_file.acquire_lease(lease_id="00000000-1111-2222-3333-444444444444")
 
         # Act
         new_file = source_file.rename_file(
-            dest_file.file_name,
-            overwrite=True,
-            source_lease=source_lease,
-            destination_lease=dest_lease)
+            dest_file.file_name, overwrite=True, source_lease=source_lease, destination_lease=dest_lease
+        )
 
         # Assert
-        assert 'file2' == new_file.file_name
+        assert "file2" == new_file.file_name
         props = new_file.get_file_properties()
         assert props is not None
 
@@ -3717,19 +3845,19 @@ class TestStorageFile(StorageRecordedTestCase):
             share_client.share_name,
             share_client.credential.account_key,
             expiry=datetime.utcnow() + timedelta(hours=1),
-            permission=ShareSasPermissions(read=True, write=True))
+            permission=ShareSasPermissions(read=True, write=True),
+        )
 
         source_file = ShareFileClient(
-            self.account_url(storage_account_name, 'file'),
-            share_client.share_name, 'file1',
-            credential=token)
+            self.account_url(storage_account_name, "file"), share_client.share_name, "file1", credential=token
+        )
         source_file.create_file(1024)
 
         # Act
-        new_file = source_file.rename_file('file2' + '?' + token)
+        new_file = source_file.rename_file("file2" + "?" + token)
 
         # Assert
-        assert 'file2' == new_file.file_name
+        assert "file2" == new_file.file_name
         props = new_file.get_file_properties()
         assert props is not None
 
@@ -3746,7 +3874,7 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret
+            credential=storage_account_key.secret,
         )
         file_client.create_file(1024)
 
@@ -3761,7 +3889,7 @@ class TestStorageFile(StorageRecordedTestCase):
             file_path=file_name,
             credential=token_credential,
             token_intent=TEST_INTENT,
-            audience=f'https://{storage_account_name}.file.core.windows.net'
+            audience=f"https://{storage_account_name}.file.core.windows.net",
         )
 
         # Assert
@@ -3781,7 +3909,7 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name,
-            credential=storage_account_key.secret
+            credential=storage_account_key.secret,
         )
         file_client.create_file(1024)
 
@@ -3796,7 +3924,7 @@ class TestStorageFile(StorageRecordedTestCase):
             file_path=file_name,
             credential=token_credential,
             token_intent=TEST_INTENT,
-            audience=f'https://badaudience.file.core.windows.net'
+            audience=f"https://badaudience.file.core.windows.net",
         )
 
         # Assert
@@ -3810,20 +3938,20 @@ class TestStorageFile(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         share_client = self.fsc.get_share_client(self.share_name)
-        source_file = share_client.get_file_client('file1')
-        user_given_permission_sddl = ("O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-"
-                                      "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;"
-                                      "S-1-5-21-397955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL")
-        user_given_permission_binary = ("AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/AR8AAQEAAAAAAAUSAAAAAAAYAP8BHw"
-                                        "ABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUA"
-                                        "AAAAAAUVAAAAoGXPfnhLm1/nfIdwr/1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA=")
+        source_file = share_client.get_file_client("file1")
+        user_given_permission_sddl = (
+            "O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-"
+            "1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;"
+            "S-1-5-21-397955417-626881126-188441444-3053964)S:NO_ACCESS_CONTROL"
+        )
+        user_given_permission_binary = (
+            "AQAUhGwAAACIAAAAAAAAABQAAAACAFgAAwAAAAAAFAD/AR8AAQEAAAAAAAUSAAAAAAAYAP8BHw"
+            "ABAgAAAAAABSAAAAAgAgAAAAAkAKkAEgABBQAAAAAABRUAAABZUbgXZnJdJWRjOwuMmS4AAQUA"
+            "AAAAAAUVAAAAoGXPfnhLm1/nfIdwr/1IAQEFAAAAAAAFFQAAAKBlz354S5tf53yHcAECAAA="
+        )
 
         # Create file
-        source_file.create_file(
-            1024,
-            file_permission=user_given_permission_binary,
-            file_permission_format="binary"
-        )
+        source_file.create_file(1024, file_permission=user_given_permission_binary, file_permission_format="binary")
 
         props = source_file.get_file_properties()
         assert props is not None
@@ -3831,29 +3959,23 @@ class TestStorageFile(StorageRecordedTestCase):
 
         # Rename file
         new_file = source_file.rename_file(
-            'file2',
-            file_permission=user_given_permission_binary,
-            file_permission_format="binary"
+            "file2", file_permission=user_given_permission_binary, file_permission_format="binary"
         )
         props = new_file.get_file_properties()
         assert props is not None
         assert props.permission_key is not None
 
         server_returned_permission = share_client.get_permission_for_share(
-            props.permission_key,
-            file_permission_format="binary"
+            props.permission_key, file_permission_format="binary"
         )
         assert server_returned_permission == user_given_permission_binary
 
         # Set HTTP headers
-        content_settings = ContentSettings(
-            content_language='spanish',
-            content_disposition='inline'
-        )
+        content_settings = ContentSettings(content_language="spanish", content_disposition="inline")
         new_file.set_http_headers(
             content_settings=content_settings,
             file_permission=user_given_permission_binary,
-            file_permission_format="binary"
+            file_permission_format="binary",
         )
         props = new_file.get_file_properties()
         assert props is not None
@@ -3862,8 +3984,7 @@ class TestStorageFile(StorageRecordedTestCase):
         assert props.content_settings.content_disposition == content_settings.content_disposition
 
         server_returned_permission = share_client.get_permission_for_share(
-            props.permission_key,
-            file_permission_format="sddl"
+            props.permission_key, file_permission_format="sddl"
         )
         assert server_returned_permission == user_given_permission_sddl
 
@@ -3871,17 +3992,15 @@ class TestStorageFile(StorageRecordedTestCase):
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
-            file_path='filecopy',
-            credential=storage_account_key.secret
+            file_path="filecopy",
+            credential=storage_account_key.secret,
         )
         copy = file_client.start_copy_from_url(
-            new_file.url,
-            file_permission=user_given_permission_binary,
-            file_permission_format="binary"
+            new_file.url, file_permission=user_given_permission_binary, file_permission_format="binary"
         )
         assert copy is not None
-        assert copy['copy_status'] == 'success'
-        assert copy['copy_id'] is not None
+        assert copy["copy_status"] == "success"
+        assert copy["copy_id"] is not None
 
         new_file.delete_file()
         file_client.delete_file()
@@ -3900,7 +4019,7 @@ class TestStorageFile(StorageRecordedTestCase):
             file_path="filemocktransport",
             credential=storage_account_key.secret,
             transport=transport,
-            retry_total=0
+            retry_total=0,
         )
 
         data = file_client.download_file()
@@ -3930,7 +4049,7 @@ class TestStorageFile(StorageRecordedTestCase):
             file_path="filemocktransport",
             credential=storage_account_key.secret,
             transport=transport,
-            retry_total=0
+            retry_total=0,
         )
 
         data = b"Hello World!"
@@ -3949,17 +4068,12 @@ class TestStorageFile(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
 
         try:
-            source_file_client = self._create_file(file_name='sourcefile')
-            source_file_client.upload_range(b'abcdefghijklmnop' * 32, offset=0, length=512)
-            target_file_client = self._create_empty_file(file_name='targetfile')
+            source_file_client = self._create_file(file_name="sourcefile")
+            source_file_client.upload_range(b"abcdefghijklmnop" * 32, offset=0, length=512)
+            target_file_client = self._create_empty_file(file_name="targetfile")
 
             with pytest.raises(HttpResponseError) as e:
-                target_file_client.upload_range_from_url(
-                    source_file_client.url,
-                    offset=0,
-                    length=512,
-                    source_offset=0
-                )
+                target_file_client.upload_range_from_url(source_file_client.url, offset=0, length=512, source_offset=0)
 
             assert e.value.response.headers["x-ms-copy-source-status-code"] == "401"
             assert e.value.response.headers["x-ms-copy-source-error-code"] == "NoAuthenticationInformation"
@@ -3979,11 +4093,11 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024
+            max_range_size=4 * 1024,
         )
-        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        compressed_data = b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00"
         decompressed_data = b"hello from gzip"
-        content_settings = ContentSettings(content_encoding='gzip')
+        content_settings = ContentSettings(content_encoding="gzip")
 
         # Act / Assert
         file_client.upload_file(data=compressed_data, content_settings=content_settings)
@@ -4006,8 +4120,8 @@ class TestStorageFile(StorageRecordedTestCase):
             max_chunk_get_size=4,
             max_single_get_size=4,
         )
-        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
-        content_settings = ContentSettings(content_encoding='gzip')
+        compressed_data = b"\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00"
+        content_settings = ContentSettings(content_encoding="gzip")
 
         # Act / Assert
         file_client.upload_file(data=compressed_data, content_settings=content_settings)
@@ -4028,7 +4142,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         data = b"hello world"
 
@@ -4050,7 +4165,8 @@ class TestStorageFile(StorageRecordedTestCase):
             share_name=self.share_name,
             file_path=file_name,
             credential=storage_account_key.secret,
-            max_range_size=4 * 1024)
+            max_range_size=4 * 1024,
+        )
 
         data = b"hello world"
         file_client.upload_file(data)
@@ -4074,7 +4190,7 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file1",
-            credential=storage_account_key
+            credential=storage_account_key,
         )
         file1.create_file(1024, file_property_semantics=None)
         props = file1.get_file_properties()
@@ -4084,7 +4200,7 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file2",
-            credential=storage_account_key
+            credential=storage_account_key,
         )
         file2.create_file(1024, file_property_semantics="New")
         props = file2.get_file_properties()
@@ -4094,7 +4210,7 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file2",
-            credential=storage_account_key
+            credential=storage_account_key,
         )
         file3.create_file(1024, file_property_semantics="Restore", file_permission=TEST_FILE_PERMISSIONS)
         props = file3.get_file_properties()
@@ -4112,12 +4228,13 @@ class TestStorageFile(StorageRecordedTestCase):
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
             file_path=file_name + "file",
-            credential=storage_account_key.secret
+            credential=storage_account_key.secret,
         )
         size = 1024
         data = b"abc" * size
         file_client.create_file(len(data), data=data)
         downloaded_data = file_client.download_file().readall()
         assert downloaded_data == data
+
 
 # ------------------------------------------------------------------------------

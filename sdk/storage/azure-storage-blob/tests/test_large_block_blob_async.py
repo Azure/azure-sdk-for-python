@@ -19,7 +19,7 @@ from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
-TEST_BLOB_PREFIX = 'largeblob'
+TEST_BLOB_PREFIX = "largeblob"
 LARGE_BLOB_SIZE = 12 * 1024 * 1024
 LARGE_BLOCK_SIZE = 6 * 1024 * 1024
 # ------------------------------------------------------------------------------
@@ -35,9 +35,10 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
             credential=key.secret,
             max_single_put_size=32 * 1024,
             max_block_size=2 * 1024 * 1024,
-            min_large_block_upload_threshold=1 * 1024 * 1024)
+            min_large_block_upload_threshold=1 * 1024 * 1024,
+        )
         self.config = self.bsc._config
-        self.container_name = self.get_resource_name('utcontainer')
+        self.container_name = self.get_resource_name("utcontainer")
         if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
@@ -51,7 +52,7 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
     async def _create_blob(self):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        await blob.upload_blob(b'')
+        await blob.upload_blob(b"")
         return blob
 
     async def assertBlobEqual(self, container_name, blob_name, expected_data):
@@ -61,6 +62,7 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         async for data in actual_data.chunks():
             actual_bytes += data
         assert actual_bytes == expected_data
+
     # --------------------------------------------------------------------------
 
     @pytest.mark.live_test_only
@@ -76,8 +78,7 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Act
         futures = []
         for i in range(5):
-            futures.append(blob.stage_block(
-                'block {0}'.format(i).encode('utf-8'), urandom(LARGE_BLOCK_SIZE)))
+            futures.append(blob.stage_block("block {0}".format(i).encode("utf-8"), urandom(LARGE_BLOCK_SIZE)))
 
         await asyncio.gather(*futures)
 
@@ -94,13 +95,12 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Act
         for i in range(5):
             resp = await blob.stage_block(
-                'block {0}'.format(i).encode('utf-8'),
-                urandom(LARGE_BLOCK_SIZE),
-                validate_content=True)
+                "block {0}".format(i).encode("utf-8"), urandom(LARGE_BLOCK_SIZE), validate_content=True
+            )
             assert resp is not None
-            assert 'content_md5' in resp
-            assert 'content_crc64' in resp
-            assert 'request_id' in resp
+            assert "content_md5" in resp
+            assert "content_crc64" in resp
+            assert "request_id" in resp
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -115,14 +115,11 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Act
         for i in range(5):
             stream = BytesIO(bytearray(LARGE_BLOCK_SIZE))
-            resp = await blob.stage_block(
-                'block {0}'.format(i).encode('utf-8'),
-                stream,
-                length=LARGE_BLOCK_SIZE)
+            resp = await blob.stage_block("block {0}".format(i).encode("utf-8"), stream, length=LARGE_BLOCK_SIZE)
             assert resp is not None
-            assert 'content_md5' in resp
-            assert 'content_crc64' in resp
-            assert 'request_id' in resp
+            assert "content_md5" in resp
+            assert "content_crc64" in resp
+            assert "request_id" in resp
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -138,14 +135,12 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         for i in range(5):
             stream = BytesIO(bytearray(LARGE_BLOCK_SIZE))
             resp = resp = await blob.stage_block(
-                'block {0}'.format(i).encode('utf-8'),
-                stream,
-                length=LARGE_BLOCK_SIZE,
-                validate_content=True)
+                "block {0}".format(i).encode("utf-8"), stream, length=LARGE_BLOCK_SIZE, validate_content=True
+            )
             assert resp is not None
-            assert 'content_md5' in resp
-            assert 'content_crc64' in resp
-            assert 'request_id' in resp
+            assert "content_md5" in resp
+            assert "content_crc64" in resp
+            assert "request_id" in resp
 
         # Assert
 
@@ -194,7 +189,6 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
 
-
     @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_create_large_blob_from_path_non_parallel(self, **kwargs):
@@ -216,7 +210,6 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
 
-
     @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_create_large_blob_from_path_with_progress(self, **kwargs):
@@ -231,9 +224,10 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
-            current = response.context['upload_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["upload_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -245,7 +239,6 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
-
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -260,9 +253,7 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         data = bytearray(urandom(LARGE_BLOB_SIZE))
 
         # Act
-        content_settings = ContentSettings(
-            content_type='image/png',
-            content_language='spanish')
+        content_settings = ContentSettings(content_type="image/png", content_language="spanish")
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
@@ -309,9 +300,10 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
-            current = response.context['upload_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["upload_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -359,9 +351,7 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         data = bytearray(urandom(LARGE_BLOB_SIZE))
 
         # Act
-        content_settings = ContentSettings(
-            content_type='image/png',
-            content_language='spanish')
+        content_settings = ContentSettings(content_type="image/png", content_language="spanish")
         blob_size = len(data) - 301
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
@@ -387,9 +377,7 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         data = bytearray(urandom(LARGE_BLOB_SIZE))
 
         # Act
-        content_settings = ContentSettings(
-            content_type='image/png',
-            content_language='spanish')
+        content_settings = ContentSettings(content_type="image/png", content_language="spanish")
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
@@ -400,5 +388,6 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         properties = await blob.get_blob_properties()
         assert properties.content_settings.content_type == content_settings.content_type
         assert properties.content_settings.content_language == content_settings.content_language
+
 
 # ------------------------------------------------------------------------------

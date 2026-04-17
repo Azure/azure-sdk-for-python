@@ -13,12 +13,12 @@ from ._data_lake_service_client_async import DataLakeServiceClient
 from ._data_lake_lease_async import DataLakeLeaseClient
 
 __all__ = [
-    'DataLakeServiceClient',
-    'FileSystemClient',
-    'DataLakeDirectoryClient',
-    'DataLakeFileClient',
-    'DataLakeLeaseClient',
-    'ExponentialRetry',
-    'LinearRetry',
-    'StorageStreamDownloader'
+    "DataLakeServiceClient",
+    "FileSystemClient",
+    "DataLakeDirectoryClient",
+    "DataLakeFileClient",
+    "DataLakeLeaseClient",
+    "ExponentialRetry",
+    "LinearRetry",
+    "StorageStreamDownloader",
 ]

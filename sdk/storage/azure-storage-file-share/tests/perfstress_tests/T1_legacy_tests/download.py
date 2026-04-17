@@ -18,10 +18,8 @@ class LegacyDownloadTest(_LegacyShareTest):
         await super().global_setup()
         data = get_random_bytes(self.args.size)
         self.service_client.create_file_from_bytes(
-            share_name=self.share_name,
-            directory_name=None,
-            file_name=self.file_name,
-            file=data)
+            share_name=self.share_name, directory_name=None, file_name=self.file_name, file=data
+        )
 
     def run_sync(self):
         self.download_stream.reset()
@@ -30,7 +28,8 @@ class LegacyDownloadTest(_LegacyShareTest):
             directory_name=None,
             file_name=self.file_name,
             stream=self.download_stream,
-            max_connections=self.args.max_concurrency)
+            max_connections=self.args.max_concurrency,
+        )
 
     async def run_async(self):
         raise NotImplementedError("Async not supported for legacy T1 tests.")

@@ -12,9 +12,9 @@ from ._lease_async import ShareLeaseClient
 
 
 __all__ = [
-    'ShareFileClient',
-    'ShareDirectoryClient',
-    'ShareClient',
-    'ShareServiceClient',
-    'ShareLeaseClient',
+    "ShareFileClient",
+    "ShareDirectoryClient",
+    "ShareClient",
+    "ShareServiceClient",
+    "ShareLeaseClient",
 ]

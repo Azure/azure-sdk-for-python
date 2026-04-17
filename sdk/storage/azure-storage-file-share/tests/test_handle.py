@@ -13,7 +13,7 @@ from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 
 # ------------------------------------------------------------------------------
-TEST_SHARE_NAME = 'test-share'
+TEST_SHARE_NAME = "test-share"
 # ------------------------------------------------------------------------------
 
 
@@ -50,7 +50,7 @@ class TestStorageHandle(StorageRecordedTestCase):
 
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
-    
+
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
         root = share.get_directory_client()
@@ -107,10 +107,9 @@ class TestStorageHandle(StorageRecordedTestCase):
         old_handle = handles[0]
 
         # Continue listing
-        remaining_handles = list(next(
-            root.list_handles(recursive=True).by_page(
-                continuation_token=handle_generator.continuation_token)
-        ))
+        remaining_handles = list(
+            next(root.list_handles(recursive=True).by_page(continuation_token=handle_generator.continuation_token))
+        )
         self._validate_handles(handles)
 
         # Make sure the old handle did not appear
@@ -130,7 +129,7 @@ class TestStorageHandle(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
-        dir = share.get_directory_client('testdir')
+        dir = share.get_directory_client("testdir")
 
         # Act
         handles = list(dir.list_handles(recursive=True))
@@ -156,7 +155,7 @@ class TestStorageHandle(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
-        client = share.get_file_client('testdir/test.txt')
+        client = share.get_file_client("testdir/test.txt")
 
         # Act
         handles = list(client.list_handles())
@@ -182,13 +181,13 @@ class TestStorageHandle(StorageRecordedTestCase):
 
         # Act
         with pytest.raises(ValueError):
-            root.close_handle('*')
+            root.close_handle("*")
 
         handles_info = root.close_handle(handles[0])
 
         # Assert 1 handle has been closed
-        assert 1 == handles_info['closed_handles_count']
-        assert handles_info['failed_handles_count'] == 0
+        assert 1 == handles_info["closed_handles_count"]
+        assert handles_info["failed_handles_count"] == 0
 
     @pytest.mark.playback_test_only
     @FileSharePreparer()
@@ -210,8 +209,8 @@ class TestStorageHandle(StorageRecordedTestCase):
         handles_info = root.close_all_handles(recursive=True)
 
         # Assert at least 1 handle has been closed
-        assert handles_info['closed_handles_count'] > 1
-        assert handles_info['failed_handles_count'] == 0
+        assert handles_info["closed_handles_count"] > 1
+        assert handles_info["failed_handles_count"] == 0
 
     @pytest.mark.playback_test_only
     @FileSharePreparer()
@@ -224,19 +223,19 @@ class TestStorageHandle(StorageRecordedTestCase):
         # only run when recording, or playing back in CI
 
         self._setup(storage_account_name, storage_account_key)
-        share = self.fsc.get_share_client('mytestshare')
-        root = share.get_directory_client('testdir')
-        file_client = root.get_file_client('testfile.txt')
+        share = self.fsc.get_share_client("mytestshare")
+        root = share.get_directory_client("testdir")
+        file_client = root.get_file_client("testfile.txt")
 
         # Act
         handles = list(file_client.list_handles())
 
         # Assert
         self._validate_handles(handles)
-        assert handles[0]['access_rights'][0] == 'Write'
-        assert handles[0]['client_name'] is not None
+        assert handles[0]["access_rights"][0] == "Write"
+        assert handles[0]["client_name"] is not None
 
 
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()

@@ -4,10 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
-from typing import (
-    Any, cast, Collection, Dict, List, NoReturn, Tuple,
-    TYPE_CHECKING
-)
+from typing import Any, cast, Collection, Dict, List, NoReturn, Tuple, TYPE_CHECKING
 from xml.etree.ElementTree import Element
 
 from azure.core.pipeline.policies import ContentDecodePolicy
@@ -17,7 +14,7 @@ from azure.core.exceptions import (
     ResourceModifiedError,
     ClientAuthenticationError,
     ResourceNotFoundError,
-    ResourceExistsError
+    ResourceExistsError,
 )
 from ._models import (
     AnalyticsLogging,
@@ -28,7 +25,7 @@ from ._models import (
     Metrics,
     PathProperties,
     RetentionPolicy,
-    StaticWebsite
+    StaticWebsite,
 )
 from ._shared.models import StorageErrorCode
 from ._shared.response_handlers import deserialize_metadata
@@ -36,52 +33,40 @@ from ._shared.response_handlers import deserialize_metadata
 if TYPE_CHECKING:
     from azure.core.rest import HttpResponse
     from azure.storage.blob import BlobProperties
-    from ._generated.models import (
-        BlobItemInternal,
-        Path,
-        PathList
-    )
+    from ._generated.models import BlobItemInternal, Path, PathList
     from ._models import ContentSettings
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def deserialize_dir_properties(
-    response: "HttpResponse",
-    obj: Any,
-    headers: Dict[str, Any]
-) -> DirectoryProperties:
+def deserialize_dir_properties(response: "HttpResponse", obj: Any, headers: Dict[str, Any]) -> DirectoryProperties:
     metadata = deserialize_metadata(response, obj, headers)
     dir_properties = DirectoryProperties(
         metadata=metadata,
-        owner=response.headers.get('x-ms-owner'),
-        group=response.headers.get('x-ms-group'),
-        permissions=response.headers.get('x-ms-permissions'),
-        acl=response.headers.get('x-ms-acl'),
-        **headers
+        owner=response.headers.get("x-ms-owner"),
+        group=response.headers.get("x-ms-group"),
+        permissions=response.headers.get("x-ms-permissions"),
+        acl=response.headers.get("x-ms-acl"),
+        **headers,
     )
     return dir_properties
 
 
-def deserialize_file_properties(
-    response: "HttpResponse",
-    obj: Any,
-    headers: Dict[str, Any]
-) -> FileProperties:
+def deserialize_file_properties(response: "HttpResponse", obj: Any, headers: Dict[str, Any]) -> FileProperties:
     metadata = deserialize_metadata(response, obj, headers)
     # DataLake specific headers that are not deserialized in blob are pulled directly from the raw response header
     file_properties = FileProperties(
         metadata=metadata,
-        encryption_context=response.headers.get('x-ms-encryption-context'),
-        owner=response.headers.get('x-ms-owner'),
-        group=response.headers.get('x-ms-group'),
-        permissions=response.headers.get('x-ms-permissions'),
-        acl=response.headers.get('x-ms-acl'),
-        **headers
+        encryption_context=response.headers.get("x-ms-encryption-context"),
+        owner=response.headers.get("x-ms-owner"),
+        group=response.headers.get("x-ms-group"),
+        permissions=response.headers.get("x-ms-permissions"),
+        acl=response.headers.get("x-ms-acl"),
+        **headers,
     )
-    if 'Content-Range' in headers:
-        if 'x-ms-blob-content-md5' in headers:
-            file_properties.content_settings.content_md5 = headers['x-ms-blob-content-md5']
+    if "Content-Range" in headers:
+        if "x-ms-blob-content-md5" in headers:
+            file_properties.content_settings.content_md5 = headers["x-ms-blob-content-md5"]
         else:
             file_properties.content_settings.content_md5 = None
     return file_properties
@@ -92,14 +77,14 @@ def deserialize_path_properties(path_list: List["Path"]) -> List[PathProperties]
 
 
 def return_headers_and_deserialized_path_list(  # pylint: disable=name-too-long, unused-argument
-    _,
-    deserialized: "PathList",
-    response_headers: Dict[str, Any]
+    _, deserialized: "PathList", response_headers: Dict[str, Any]
 ) -> Tuple[Collection["Path"], Dict[str, Any]]:
     return deserialized.paths if deserialized.paths else {}, normalize_headers(response_headers)
 
 
-def get_deleted_path_properties_from_generated_code(generated: "BlobItemInternal") -> DeletedPathProperties:  # pylint: disable=name-too-long
+def get_deleted_path_properties_from_generated_code(
+    generated: "BlobItemInternal",
+) -> DeletedPathProperties:  # pylint: disable=name-too-long
     deleted_path = DeletedPathProperties()
     deleted_path.name = generated.name
     deleted_path.deleted_time = generated.properties.deleted_time
@@ -109,19 +94,27 @@ def get_deleted_path_properties_from_generated_code(generated: "BlobItemInternal
 
 
 def is_file_path(_, __, headers: Dict[str, Any]) -> bool:
-    return headers['x-ms-resource-type'] == "file"
+    return headers["x-ms-resource-type"] == "file"
 
 
 def get_datalake_service_properties(datalake_properties: Dict[str, Any]) -> Dict[str, Any]:
     datalake_properties["analytics_logging"] = AnalyticsLogging._from_generated(  # pylint: disable=protected-access
-        datalake_properties["analytics_logging"])
-    datalake_properties["hour_metrics"] = Metrics._from_generated(datalake_properties["hour_metrics"])  # pylint: disable=protected-access
+        datalake_properties["analytics_logging"]
+    )
+    datalake_properties["hour_metrics"] = Metrics._from_generated(
+        datalake_properties["hour_metrics"]
+    )  # pylint: disable=protected-access
     datalake_properties["minute_metrics"] = Metrics._from_generated(  # pylint: disable=protected-access
-        datalake_properties["minute_metrics"])
-    datalake_properties["delete_retention_policy"] = RetentionPolicy._from_generated(  # pylint: disable=protected-access
-        datalake_properties["delete_retention_policy"])
+        datalake_properties["minute_metrics"]
+    )
+    datalake_properties["delete_retention_policy"] = (
+        RetentionPolicy._from_generated(  # pylint: disable=protected-access
+            datalake_properties["delete_retention_policy"]
+        )
+    )
     datalake_properties["static_website"] = StaticWebsite._from_generated(  # pylint: disable=protected-access
-        datalake_properties["static_website"])
+        datalake_properties["static_website"]
+    )
     return datalake_properties
 
 
@@ -141,11 +134,11 @@ def from_blob_properties(blob_properties: "BlobProperties", **additional_args: A
     file_props.content_settings = cast("ContentSettings", blob_properties.content_settings)
 
     # Parse additional Datalake-only properties
-    file_props.encryption_context = additional_args.pop('encryption_context', None)
-    file_props.owner = additional_args.pop('owner', None)
-    file_props.group = additional_args.pop('group', None)
-    file_props.permissions = additional_args.pop('permissions', None)
-    file_props.acl = additional_args.pop('acl', None)
+    file_props.encryption_context = additional_args.pop("encryption_context", None)
+    file_props.owner = additional_args.pop("owner", None)
+    file_props.group = additional_args.pop("group", None)
+    file_props.permissions = additional_args.pop("permissions", None)
+    file_props.acl = additional_args.pop("acl", None)
 
     return file_props
 
@@ -153,9 +146,9 @@ def from_blob_properties(blob_properties: "BlobProperties", **additional_args: A
 def normalize_headers(headers: Dict[str, Any]) -> Dict[str, Any]:
     normalized = {}
     for key, value in headers.items():
-        if key.startswith('x-ms-'):
+        if key.startswith("x-ms-"):
             key = key[5:]
-        normalized[key.lower().replace('-', '_')] = value
+        normalized[key.lower().replace("-", "_")] = value
     return normalized
 
 
@@ -167,7 +160,7 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
     # If it is one of those three then it has been serialized prior by the generated layer.
     if isinstance(storage_error, (ResourceNotFoundError, ClientAuthenticationError, ResourceExistsError)):
         serialized = True
-    error_code = storage_error.response.headers.get('x-ms-error-code')
+    error_code = storage_error.response.headers.get("x-ms-error-code")
     error_message = storage_error.message
     additional_data = {}
     error_dict = {}
@@ -175,23 +168,21 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
         error_body = ContentDecodePolicy.deserialize_from_http_generics(storage_error.response)
         # If it is an XML response
         if isinstance(error_body, Element):
-            error_dict = {
-                child.tag.lower(): child.text
-                for child in error_body
-            }
+            error_dict = {child.tag.lower(): child.text for child in error_body}
         # If it is a JSON response
         elif isinstance(error_body, dict):
-            error_dict = error_body.get('error', {})
+            error_dict = error_body.get("error", {})
         elif not error_code:
             _LOGGER.warning(
-                'Unexpected return type %s from ContentDecodePolicy.deserialize_from_http_generics.', type(error_body))
-            error_dict = {'message': str(error_body)}
+                "Unexpected return type %s from ContentDecodePolicy.deserialize_from_http_generics.", type(error_body)
+            )
+            error_dict = {"message": str(error_body)}
 
         # If we extracted from a Json or XML response
         if error_dict:
-            error_code = error_dict.get('code')
-            error_message = error_dict.get('message')
-            additional_data = {k: v for k, v in error_dict.items() if k not in {'code', 'message'}}
+            error_code = error_dict.get("code")
+            error_message = error_dict.get("message")
+            additional_data = {k: v for k, v in error_dict.items() if k not in {"code", "message"}}
 
     except DecodeError:
         pass
@@ -202,33 +193,36 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
             error_code = StorageErrorCode(error_code)
             if error_code in [StorageErrorCode.condition_not_met]:
                 raise_error = ResourceModifiedError
-            if error_code in [StorageErrorCode.invalid_authentication_info,
-                              StorageErrorCode.authentication_failed]:
+            if error_code in [StorageErrorCode.invalid_authentication_info, StorageErrorCode.authentication_failed]:
                 raise_error = ClientAuthenticationError
-            if error_code in [StorageErrorCode.resource_not_found,
-                              StorageErrorCode.invalid_property_name,
-                              StorageErrorCode.invalid_source_uri,
-                              StorageErrorCode.source_path_not_found,
-                              StorageErrorCode.lease_name_mismatch,
-                              StorageErrorCode.file_system_not_found,
-                              StorageErrorCode.path_not_found,
-                              StorageErrorCode.parent_not_found,
-                              StorageErrorCode.invalid_destination_path,
-                              StorageErrorCode.invalid_rename_source_path,
-                              StorageErrorCode.lease_is_already_broken,
-                              StorageErrorCode.invalid_source_or_destination_resource_type,
-                              StorageErrorCode.rename_destination_parent_path_not_found]:
+            if error_code in [
+                StorageErrorCode.resource_not_found,
+                StorageErrorCode.invalid_property_name,
+                StorageErrorCode.invalid_source_uri,
+                StorageErrorCode.source_path_not_found,
+                StorageErrorCode.lease_name_mismatch,
+                StorageErrorCode.file_system_not_found,
+                StorageErrorCode.path_not_found,
+                StorageErrorCode.parent_not_found,
+                StorageErrorCode.invalid_destination_path,
+                StorageErrorCode.invalid_rename_source_path,
+                StorageErrorCode.lease_is_already_broken,
+                StorageErrorCode.invalid_source_or_destination_resource_type,
+                StorageErrorCode.rename_destination_parent_path_not_found,
+            ]:
                 raise_error = ResourceNotFoundError
-            if error_code in [StorageErrorCode.account_already_exists,
-                              StorageErrorCode.account_being_created,
-                              StorageErrorCode.resource_already_exists,
-                              StorageErrorCode.resource_type_mismatch,
-                              StorageErrorCode.source_path_is_being_deleted,
-                              StorageErrorCode.path_already_exists,
-                              StorageErrorCode.destination_path_is_being_deleted,
-                              StorageErrorCode.file_system_already_exists,
-                              StorageErrorCode.file_system_being_deleted,
-                              StorageErrorCode.path_conflict]:
+            if error_code in [
+                StorageErrorCode.account_already_exists,
+                StorageErrorCode.account_being_created,
+                StorageErrorCode.resource_already_exists,
+                StorageErrorCode.resource_type_mismatch,
+                StorageErrorCode.source_path_is_being_deleted,
+                StorageErrorCode.path_already_exists,
+                StorageErrorCode.destination_path_is_being_deleted,
+                StorageErrorCode.file_system_already_exists,
+                StorageErrorCode.file_system_being_deleted,
+                StorageErrorCode.path_conflict,
+            ]:
                 raise_error = ResourceExistsError
     except ValueError:
         # Got an unknown error code
@@ -256,6 +250,6 @@ def process_storage_error(storage_error) -> NoReturn:  # type: ignore [misc] # p
 
     try:
         # `from None` prevents us from double printing the exception (suppresses generated layer error context)
-        exec("raise error from None")   # pylint: disable=exec-used # nosec
+        exec("raise error from None")  # pylint: disable=exec-used # nosec
     except SyntaxError as exc:
         raise error from exc
