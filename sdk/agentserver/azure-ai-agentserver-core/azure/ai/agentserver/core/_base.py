@@ -274,7 +274,10 @@ class AgentServerHost(Starlette):
             lifespan=_lifespan,
             middleware=[
                 Middleware(InboundRequestLoggingMiddleware),  # type: ignore[arg-type]
-                Middleware(_PlatformHeaderMiddleware, get_server_version=self._build_server_version),  # type: ignore[arg-type]
+                Middleware(  # type: ignore[arg-type]
+                    _PlatformHeaderMiddleware,
+                    get_server_version=self._build_server_version,
+                ),
             ],
             **kwargs,
         )

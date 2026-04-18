@@ -186,6 +186,40 @@ def _ensure_response_log_filter() -> None:
         _log_filter_installed = True
 
 
+_CANCEL_TERMINAL_ERRORS: dict[str, str] = {
+    "completed": "Cannot cancel a completed response.",
+    "failed": "Cannot cancel a failed response.",
+    "incomplete": "Cannot cancel a response in terminal state.",
+}
+
+
+def _check_cancel_terminal_status(
+    status: str | None,
+    headers: dict[str, str],
+) -> Response | None:
+    """Return an error response if *status* is terminal, else ``None``.
+
+    For ``"cancelled"`` the caller must handle the idempotent path itself
+    (the caller decides between in-memory snapshot vs. persisted payload),
+    so this helper returns a sentinel ``JSONResponse`` with status 200 and
+    an empty body that the caller replaces.
+
+    :param status: The response's current status string.
+    :type status: str | None
+    :param headers: Session headers to include on error responses.
+    :type headers: dict[str, str]
+    :return: An error response, 200 sentinel for *cancelled*, or ``None``.
+    :rtype: Response | None
+    """
+    msg = _CANCEL_TERMINAL_ERRORS.get(status or "")
+    if msg is not None:
+        return _invalid_request(msg, headers, param="response_id")
+    if status == "cancelled":
+        # Sentinel — caller builds the idempotent 200 itself.
+        return JSONResponse({}, status_code=200, headers=headers)
+    return None
+
+
 class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     """HTTP-layer handler for all Responses API endpoints.
 
@@ -752,86 +786,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             )
         record = await self._runtime_state.get(response_id)
         if record is None:
-            if await self._runtime_state.is_deleted(response_id):
-                return _deleted_response(response_id, _hdrs)
-
-            stream_replay = stream_replay_param
-            if not stream_replay:
-                # Provider fallback: serve completed responses that are no longer in runtime state
-                # (e.g., after a process restart).
-                try:
-                    response_obj = await self._provider.get_response(response_id, isolation=_isolation)
-                    snapshot = response_obj.as_dict()
-                    logger.info(
-                        "Retrieved response %s: status=%s output_count=%d",
-                        response_id,
-                        snapshot.get("status"),
-                        len(snapshot.get("output", [])),
-                    )
-                    return JSONResponse(snapshot, status_code=200, headers=_hdrs)
-                except FoundryResourceNotFoundError:
-                    pass  # Fall through to 404 below
-                except FoundryBadRequestError as exc:
-                    return _invalid_request(str(exc), _hdrs, param="response_id")
-                except FoundryApiError as exc:
-                    logger.error("Storage API error for GET response_id=%s: %s", response_id, exc, exc_info=True)
-                    return _error_response(exc, _hdrs)
-                except Exception:  # pylint: disable=broad-exception-caught
-                    logger.warning("Provider fallback failed for GET response_id=%s", response_id, exc_info=True)
-            else:
-                # Validate starting_after cursor early — invalid cursors must
-                # always get param=starting_after regardless of stream availability.
-                parsed_cursor = self._parse_starting_after(request, _hdrs)
-                if isinstance(parsed_cursor, Response):
-                    return parsed_cursor
-
-                # Stream provider fallback: replay persisted SSE events when runtime state is gone.
-                replay_response = await self._try_replay_persisted_stream(
-                    request, response_id, isolation=_isolation, headers=_hdrs,
-                )
-                if replay_response is not None:
-                    return replay_response
-
-                # No stream events available.  Check the persisted response's
-                # background flag; if not bg, give the clear non-bg error.
-                # Otherwise, we can't distinguish bg+non-stream from
-                # bg+stream-with-expired-TTL (we don't persist the stream flag),
-                # so use a combined message.
-                try:
-                    persisted = await self._provider.get_response(response_id, isolation=_isolation)
-                    persisted_dict = persisted.as_dict()
-                    # B2: SSE replay requires background mode.
-                    if persisted_dict.get("background") is not True:
-                        return _invalid_mode(
-                            "This response cannot be streamed because it was not created with background=true.",
-                            _hdrs,
-                            param="stream",
-                        )
-                    # TODO: The container spec prescribes distinct error messages for
-                    # "not created with stream=true" vs "stream TTL expired", but after
-                    # eager eviction the persisted response does not carry the stream
-                    # mode flag — we cannot distinguish the two cases.  Until the
-                    # provider surfaces the reason, we use a combined message.
-                    return _invalid_mode(
-                        "This response cannot be streamed because it was not created "
-                        "with stream=true or the stream TTL has expired.",
-                        _hdrs,
-                        param="stream",
-                    )
-                except FoundryResourceNotFoundError:
-                    pass  # Response doesn't exist in provider either — fall through to 404
-                except FoundryBadRequestError as exc:
-                    return _invalid_request(str(exc), _hdrs, param="response_id")
-                except FoundryApiError as exc:
-                    logger.error(
-                        "Storage API error for GET SSE replay response_id=%s: %s",
-                        response_id, exc, exc_info=True,
-                    )
-                    return _error_response(exc, _hdrs)
-                except Exception:  # pylint: disable=broad-exception-caught
-                    pass  # Response doesn't exist in provider either — fall through to 404
-
-            return _not_found(response_id, _hdrs)
+            return await self._handle_get_fallback(
+                request, response_id, stream_replay_param, _isolation, _hdrs,
+            )
 
         # Chat isolation enforcement on in-flight response
         if not _RuntimeState.check_chat_isolation(record.chat_isolation_key, _isolation.chat_key):
@@ -839,29 +796,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         _refresh_background_status(record)
 
-        stream_replay = stream_replay_param
-        if stream_replay:
-            # B14: store=false responses are never persisted — return 404.
-            if not record.mode_flags.store:
-                return _not_found(response_id, _hdrs)
-            if not record.replay_enabled:
-                if not record.mode_flags.background:
-                    return _invalid_mode(
-                        "This response cannot be streamed because it was not created with background=true.",
-                        _hdrs,
-                        param="stream",
-                    )
-                return _invalid_mode(
-                    "This response cannot be streamed because it was not created with stream=true.",
-                    _hdrs,
-                    param="stream",
-                )
-
-            parsed_cursor = self._parse_starting_after(request, _hdrs)
-            if isinstance(parsed_cursor, Response):
-                return parsed_cursor
-
-            return self._build_live_stream_response(record, parsed_cursor, _hdrs)
+        if stream_replay_param:
+            return self._handle_get_stream(request, record, _hdrs)
 
         if not record.visible_via_get:
             return _not_found(response_id, _hdrs)
@@ -874,6 +810,152 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             len(snapshot.get("output", [])),
         )
         return JSONResponse(snapshot, status_code=200, headers=_hdrs)
+
+    def _handle_get_stream(
+        self,
+        request: Request,
+        record: ResponseExecution,
+        _hdrs: dict[str, str],
+    ) -> Response:
+        """Handle the ``stream=true`` path for an in-flight response.
+
+        :param request: Incoming Starlette request.
+        :type request: Request
+        :param record: The in-flight execution record.
+        :type record: ResponseExecution
+        :param _hdrs: Session headers to include on the response.
+        :type _hdrs: dict[str, str]
+        :return: SSE streaming response or error.
+        :rtype: Response
+        """
+        response_id = record.response_id
+        # B14: store=false responses are never persisted — return 404.
+        if not record.mode_flags.store:
+            return _not_found(response_id, _hdrs)
+        if not record.replay_enabled:
+            if not record.mode_flags.background:
+                return _invalid_mode(
+                    "This response cannot be streamed because it was not created with background=true.",
+                    _hdrs,
+                    param="stream",
+                )
+            return _invalid_mode(
+                "This response cannot be streamed because it was not created with stream=true.",
+                _hdrs,
+                param="stream",
+            )
+
+        parsed_cursor = self._parse_starting_after(request, _hdrs)
+        if isinstance(parsed_cursor, Response):
+            return parsed_cursor
+
+        return self._build_live_stream_response(record, parsed_cursor, _hdrs)
+
+    async def _handle_get_fallback(  # pylint: disable=too-many-return-statements
+        self,
+        request: Request,
+        response_id: str,
+        stream_replay: bool,
+        _isolation: "IsolationContext",
+        _hdrs: dict[str, str],
+    ) -> Response:
+        """Provider fallback for GET when the record is not in runtime state.
+
+        Handles both JSON snapshot and SSE replay paths when the response
+        has been evicted from memory or the server has restarted.
+
+        :param request: Incoming Starlette request.
+        :type request: Request
+        :param response_id: The response ID to retrieve.
+        :type response_id: str
+        :param stream_replay: Whether the client requested SSE replay.
+        :type stream_replay: bool
+        :param _isolation: Isolation context from the request.
+        :type _isolation: IsolationContext
+        :param _hdrs: Session headers to include on the response.
+        :type _hdrs: dict[str, str]
+        :return: Response.
+        :rtype: Response
+        """
+        if await self._runtime_state.is_deleted(response_id):
+            return _deleted_response(response_id, _hdrs)
+
+        if not stream_replay:
+            # Provider fallback: serve completed responses that are no longer in runtime state
+            # (e.g., after a process restart).
+            try:
+                response_obj = await self._provider.get_response(response_id, isolation=_isolation)
+                snapshot = response_obj.as_dict()
+                logger.info(
+                    "Retrieved response %s: status=%s output_count=%d",
+                    response_id,
+                    snapshot.get("status"),
+                    len(snapshot.get("output", [])),
+                )
+                return JSONResponse(snapshot, status_code=200, headers=_hdrs)
+            except FoundryResourceNotFoundError:
+                pass  # Fall through to 404 below
+            except FoundryBadRequestError as exc:
+                return _invalid_request(str(exc), _hdrs, param="response_id")
+            except FoundryApiError as exc:
+                logger.error("Storage API error for GET response_id=%s: %s", response_id, exc, exc_info=True)
+                return _error_response(exc, _hdrs)
+            except Exception:  # pylint: disable=broad-exception-caught
+                logger.warning("Provider fallback failed for GET response_id=%s", response_id, exc_info=True)
+        else:
+            # Validate starting_after cursor early — invalid cursors must
+            # always get param=starting_after regardless of stream availability.
+            parsed_cursor = self._parse_starting_after(request, _hdrs)
+            if isinstance(parsed_cursor, Response):
+                return parsed_cursor
+
+            # Stream provider fallback: replay persisted SSE events when runtime state is gone.
+            replay_response = await self._try_replay_persisted_stream(
+                request, response_id, isolation=_isolation, headers=_hdrs,
+            )
+            if replay_response is not None:
+                return replay_response
+
+            # No stream events available.  Check the persisted response's
+            # background flag; if not bg, give the clear non-bg error.
+            # Otherwise, we can't distinguish bg+non-stream from
+            # bg+stream-with-expired-TTL (we don't persist the stream flag),
+            # so use a combined message.
+            try:
+                persisted = await self._provider.get_response(response_id, isolation=_isolation)
+                persisted_dict = persisted.as_dict()
+                # B2: SSE replay requires background mode.
+                if persisted_dict.get("background") is not True:
+                    return _invalid_mode(
+                        "This response cannot be streamed because it was not created with background=true.",
+                        _hdrs,
+                        param="stream",
+                    )
+                # TODO: The container spec prescribes distinct error messages for
+                # "not created with stream=true" vs "stream TTL expired", but after
+                # eager eviction the persisted response does not carry the stream
+                # mode flag — we cannot distinguish the two cases.  Until the
+                # provider surfaces the reason, we use a combined message.
+                return _invalid_mode(
+                    "This response cannot be streamed because it was not created "
+                    "with stream=true or the stream TTL has expired.",
+                    _hdrs,
+                    param="stream",
+                )
+            except FoundryResourceNotFoundError:
+                pass  # Response doesn't exist in provider either — fall through to 404
+            except FoundryBadRequestError as exc:
+                return _invalid_request(str(exc), _hdrs, param="response_id")
+            except FoundryApiError as exc:
+                logger.error(
+                    "Storage API error for GET SSE replay response_id=%s: %s",
+                    response_id, exc, exc_info=True,
+                )
+                return _error_response(exc, _hdrs)
+            except Exception:  # pylint: disable=broad-exception-caught
+                pass  # Response doesn't exist in provider either — fall through to 404
+
+        return _not_found(response_id, _hdrs)
 
     @staticmethod
     def _parse_starting_after(request: Request, headers: dict[str, str] | None = None) -> int | Response:
@@ -1106,63 +1188,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         )
         record = await self._runtime_state.get(response_id)
         if record is None:
-            # Provider fallback: after a restart, stored terminal responses lose
-            # their runtime records.  Check the provider so we return the correct
-            # 400 error instead of a misleading 404.
-
-            try:
-                response_obj = await self._provider.get_response(response_id, isolation=_isolation)
-                persisted = response_obj.as_dict()
-
-                # B1: background check comes first — non-bg responses always
-                # get the "synchronous" message regardless of terminal status.
-                if persisted.get("background") is not True:
-                    return _invalid_request(
-                        "Cannot cancel a synchronous response.",
-                        _hdrs,
-                        param="response_id",
-                    )
-
-                stored_status = persisted.get("status")
-                if stored_status == "completed":
-                    return _invalid_request(
-                        "Cannot cancel a completed response.",
-                        _hdrs,
-                        param="response_id",
-                    )
-                if stored_status == "failed":
-                    return _invalid_request(
-                        "Cannot cancel a failed response.",
-                        _hdrs,
-                        param="response_id",
-                    )
-                if stored_status == "cancelled":
-                    # Idempotent: already cancelled — return the stored snapshot
-                    return JSONResponse(
-                        persisted,
-                        status_code=200,
-                        headers=_hdrs,
-                    )
-                if stored_status == "incomplete":
-                    return _invalid_request(
-                        "Cannot cancel a response in terminal state.",
-                        _hdrs,
-                        param="response_id",
-                    )
-            except FoundryResourceNotFoundError:
-                pass  # Fall through to 404 below
-            except FoundryBadRequestError as exc:
-                return _invalid_request(str(exc), _hdrs, param="response_id")
-            except FoundryApiError as exc:
-                logger.error("Storage API error for cancel response_id=%s: %s", response_id, exc, exc_info=True)
-                return _error_response(exc, _hdrs)
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.debug(
-                    "Provider fallback failed for cancel response_id=%s",
-                    response_id,
-                    exc_info=True,
-                )
-            return _not_found(response_id, _hdrs)
+            return await self._handle_cancel_fallback(response_id, _isolation, _hdrs)
 
         # Chat isolation enforcement on in-flight response
         if not _RuntimeState.check_chat_isolation(record.chat_isolation_key, _isolation.chat_key):
@@ -1177,39 +1203,19 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 param="response_id",
             )
 
-        if record.status == "cancelled":
-            # Idempotent: ensure the response snapshot reflects cancelled state
-            record.set_response_snapshot(
-                build_cancelled_response(record.response_id, record.agent_reference, record.model)
-            )
-            return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=_hdrs)
-
-        if record.status == "completed":
-            return _invalid_request(
-                "Cannot cancel a completed response.",
-                _hdrs,
-                param="response_id",
-            )
-
-        if record.status == "failed":
-            return _invalid_request(
-                "Cannot cancel a failed response.",
-                _hdrs,
-                param="response_id",
-            )
-
-        if record.status == "incomplete":
-            return _invalid_request(
-                "Cannot cancel a response in terminal state.",
-                _hdrs,
-                param="response_id",
-            )
+        terminal_error = _check_cancel_terminal_status(record.status, _hdrs)
+        if terminal_error is not None:
+            if record.status == "cancelled":
+                record.set_response_snapshot(
+                    build_cancelled_response(record.response_id, record.agent_reference, record.model)
+                )
+                return JSONResponse(_RuntimeState.to_snapshot(record), status_code=200, headers=_hdrs)
+            return terminal_error
 
         # B11: initiate cancellation winddown
         record.cancel_requested = True
         record.cancel_signal.set()
 
-        # Wait for handler to complete with grace period (B11: up to 10 seconds).
         # Wait for handler task to finish (up to 10s grace period).
         if record.execution_task is not None:
             try:
@@ -1240,6 +1246,61 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         logger.info("Cancelled response %s, status=%s", response_id, snapshot.get("status"))
         return JSONResponse(snapshot, status_code=200, headers=_hdrs)
+
+    async def _handle_cancel_fallback(
+        self,
+        response_id: str,
+        _isolation: "IsolationContext",
+        _hdrs: dict[str, str],
+    ) -> Response:
+        """Provider fallback for cancel when the record is not in runtime state.
+
+        After a restart, stored terminal responses lose their runtime records.
+        Check the provider so we return the correct 400 error instead of a
+        misleading 404.
+
+        :param response_id: The response ID to cancel.
+        :type response_id: str
+        :param _isolation: Isolation context from the request.
+        :type _isolation: IsolationContext
+        :param _hdrs: Session headers to include on the response.
+        :type _hdrs: dict[str, str]
+        :return: Error or idempotent response.
+        :rtype: Response
+        """
+        try:
+            response_obj = await self._provider.get_response(response_id, isolation=_isolation)
+            persisted = response_obj.as_dict()
+
+            # B1: background check comes first — non-bg responses always
+            # get the "synchronous" message regardless of terminal status.
+            if persisted.get("background") is not True:
+                return _invalid_request(
+                    "Cannot cancel a synchronous response.",
+                    _hdrs,
+                    param="response_id",
+                )
+
+            stored_status = persisted.get("status")
+            terminal_error = _check_cancel_terminal_status(stored_status, _hdrs)
+            if terminal_error is not None:
+                if stored_status == "cancelled":
+                    return JSONResponse(persisted, status_code=200, headers=_hdrs)
+                return terminal_error
+        except FoundryResourceNotFoundError:
+            pass  # Fall through to 404 below
+        except FoundryBadRequestError as exc:
+            return _invalid_request(str(exc), _hdrs, param="response_id")
+        except FoundryApiError as exc:
+            logger.error("Storage API error for cancel response_id=%s: %s", response_id, exc, exc_info=True)
+            return _error_response(exc, _hdrs)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug(
+                "Provider fallback failed for cancel response_id=%s",
+                response_id,
+                exc_info=True,
+            )
+        return _not_found(response_id, _hdrs)
 
     async def handle_input_items(self, request: Request) -> Response:
         """Route handler for ``GET /responses/{response_id}/input_items``.
