@@ -15,6 +15,7 @@
 
 ### Bugs Fixed
 
+- Post-eviction chat isolation — after eager eviction, GET, DELETE, Cancel, and InputItems requests with missing or mismatched `x-agent-chat-isolation-key` headers now correctly fall through to Foundry storage (which returns HTTP 400) instead of being blocked locally with HTTP 404. In-flight isolation enforcement is unchanged.
 - Error `code` field now uses spec-compliant values: `"invalid_request_error"` for 400/404 errors (was `"invalid_request"`, `"not_found"`, or `"invalid_mode"`), `"server_error"` for 500 errors (was `"internal_error"`).
 - `RequestValidationError` default code updated from `"invalid_request"` to `"invalid_request_error"`.
 - Error responses for deleted resources now correctly return HTTP 404 (was 400). Affects `GET /responses/{id}`, `GET /responses/{id}/input_items`, and `DELETE /responses/{id}` (second delete) on previously deleted responses.

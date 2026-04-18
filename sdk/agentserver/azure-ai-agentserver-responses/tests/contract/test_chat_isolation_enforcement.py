@@ -224,7 +224,14 @@ def _build_async_client(handler: Any) -> _AsyncAsgiClient:
 # ── GET with isolation ────────────────────────────────────
 
 class TestGetChatIsolation:
-    """GET /responses/{id} with chat isolation key enforcement."""
+    """GET /responses/{id} with chat isolation key enforcement.
+
+    In-flight isolation is enforced locally by the endpoint handler.
+    After eviction, the Foundry storage provider enforces isolation
+    server-side (returning 400 for missing/mismatched keys).
+    These tests verify the in-flight path using background responses
+    that remain in runtime state.
+    """
 
     def test_get_matching_key_returns_200(self) -> None:
         """GET with the same chat key that was used at creation → 200."""
@@ -234,21 +241,72 @@ class TestGetChatIsolation:
         r = client.get(f"/responses/{resp['id']}", headers={"x-agent-chat-isolation-key": "key_A"})
         assert r.status_code == 200
 
-    def test_get_mismatched_key_returns_404(self) -> None:
-        """GET with a different chat key → 404 (indistinguishable from not found)."""
-        client = _make_client()
-        resp = _create_response(client, chat_key="key_A")
-        _wait_for_terminal(client, resp["id"], **{"x-agent-chat-isolation-key": "key_A"})
-        r = client.get(f"/responses/{resp['id']}", headers={"x-agent-chat-isolation-key": "key_B"})
-        assert r.status_code == 404
+    @pytest.mark.asyncio
+    async def test_get_mismatched_key_returns_404(self) -> None:
+        """GET with a different chat key on in-flight response → 404."""
+        handler = _make_cancellable_bg_handler()
+        client = _build_async_client(handler)
+        response_id = IdGenerator.new_response_id()
 
-    def test_get_missing_key_when_created_with_key_returns_404(self) -> None:
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={
+                    "response_id": response_id,
+                    "model": "test",
+                    "background": True,
+                    "stream": True,
+                },
+                headers={"x-agent-chat-isolation-key": "key_A"},
+            )
+        )
+        try:
+            await asyncio.wait_for(handler.started.wait(), timeout=5.0)
+            r = await client.get(
+                f"/responses/{response_id}",
+                headers={"x-agent-chat-isolation-key": "key_B"},
+            )
+            assert r.status_code == 404
+        finally:
+            handler.started.set()
+            if not post_task.done():
+                post_task.cancel()
+                try:
+                    await post_task
+                except (asyncio.CancelledError, Exception):
+                    pass
+
+    @pytest.mark.asyncio
+    async def test_get_missing_key_when_created_with_key_returns_404(self) -> None:
         """GET without chat key when response was created with one → 404."""
-        client = _make_client()
-        resp = _create_response(client, chat_key="key_A")
-        _wait_for_terminal(client, resp["id"], **{"x-agent-chat-isolation-key": "key_A"})
-        r = client.get(f"/responses/{resp['id']}")
-        assert r.status_code == 404
+        handler = _make_cancellable_bg_handler()
+        client = _build_async_client(handler)
+        response_id = IdGenerator.new_response_id()
+
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={
+                    "response_id": response_id,
+                    "model": "test",
+                    "background": True,
+                    "stream": True,
+                },
+                headers={"x-agent-chat-isolation-key": "key_A"},
+            )
+        )
+        try:
+            await asyncio.wait_for(handler.started.wait(), timeout=5.0)
+            r = await client.get(f"/responses/{response_id}")
+            assert r.status_code == 404
+        finally:
+            handler.started.set()
+            if not post_task.done():
+                post_task.cancel()
+                try:
+                    await post_task
+                except (asyncio.CancelledError, Exception):
+                    pass
 
     def test_get_created_without_key_any_request_returns_200(self) -> None:
         """GET with or without key when response was created without one → 200 (backward compat)."""
@@ -262,22 +320,53 @@ class TestGetChatIsolation:
         r = client.get(f"/responses/{resp['id']}")
         assert r.status_code == 200
 
-    def test_get_404_error_body_is_standard(self) -> None:
+    @pytest.mark.asyncio
+    async def test_get_404_error_body_is_standard(self) -> None:
         """404 from isolation mismatch has the standard error body shape."""
-        client = _make_client()
-        resp = _create_response(client, chat_key="key_A")
-        _wait_for_terminal(client, resp["id"], **{"x-agent-chat-isolation-key": "key_A"})
-        r = client.get(f"/responses/{resp['id']}", headers={"x-agent-chat-isolation-key": "key_WRONG"})
-        assert r.status_code == 404
-        body = r.json()
-        assert "error" in body
-        assert body["error"]["code"] == "invalid_request_error"
+        handler = _make_cancellable_bg_handler()
+        client = _build_async_client(handler)
+        response_id = IdGenerator.new_response_id()
+
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={
+                    "response_id": response_id,
+                    "model": "test",
+                    "background": True,
+                    "stream": True,
+                },
+                headers={"x-agent-chat-isolation-key": "key_A"},
+            )
+        )
+        try:
+            await asyncio.wait_for(handler.started.wait(), timeout=5.0)
+            r = await client.get(
+                f"/responses/{response_id}",
+                headers={"x-agent-chat-isolation-key": "key_WRONG"},
+            )
+            assert r.status_code == 404
+            body = r.json()
+            assert "error" in body
+            assert body["error"]["code"] == "invalid_request_error"
+        finally:
+            handler.started.set()
+            if not post_task.done():
+                post_task.cancel()
+                try:
+                    await post_task
+                except (asyncio.CancelledError, Exception):
+                    pass
 
 
 # ── DELETE with isolation ────────────────────────────────
 
 class TestDeleteChatIsolation:
-    """DELETE /responses/{id} with chat isolation key enforcement."""
+    """DELETE /responses/{id} with chat isolation key enforcement.
+
+    In-flight isolation is enforced locally; after eviction, isolation is
+    enforced by the Foundry storage provider server-side.
+    """
 
     def test_delete_matching_key_returns_200(self) -> None:
         client = _make_client()
@@ -286,19 +375,71 @@ class TestDeleteChatIsolation:
         r = client.delete(f"/responses/{resp['id']}", headers={"x-agent-chat-isolation-key": "key_A"})
         assert r.status_code == 200
 
-    def test_delete_mismatched_key_returns_404(self) -> None:
-        client = _make_client()
-        resp = _create_response(client, chat_key="key_A")
-        _wait_for_terminal(client, resp["id"], **{"x-agent-chat-isolation-key": "key_A"})
-        r = client.delete(f"/responses/{resp['id']}", headers={"x-agent-chat-isolation-key": "key_B"})
-        assert r.status_code == 404
+    @pytest.mark.asyncio
+    async def test_delete_mismatched_key_returns_404(self) -> None:
+        handler = _make_cancellable_bg_handler()
+        client = _build_async_client(handler)
+        response_id = IdGenerator.new_response_id()
 
-    def test_delete_missing_key_when_created_with_key_returns_404(self) -> None:
-        client = _make_client()
-        resp = _create_response(client, chat_key="key_A")
-        _wait_for_terminal(client, resp["id"], **{"x-agent-chat-isolation-key": "key_A"})
-        r = client.delete(f"/responses/{resp['id']}")
-        assert r.status_code == 404
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={
+                    "response_id": response_id,
+                    "model": "test",
+                    "background": True,
+                    "stream": True,
+                },
+                headers={"x-agent-chat-isolation-key": "key_A"},
+            )
+        )
+        try:
+            await asyncio.wait_for(handler.started.wait(), timeout=5.0)
+            r = await client.request(
+                "DELETE",
+                f"/responses/{response_id}",
+                headers={"x-agent-chat-isolation-key": "key_B"},
+            )
+            assert r.status_code == 404
+        finally:
+            handler.started.set()
+            if not post_task.done():
+                post_task.cancel()
+                try:
+                    await post_task
+                except (asyncio.CancelledError, Exception):
+                    pass
+
+    @pytest.mark.asyncio
+    async def test_delete_missing_key_when_created_with_key_returns_404(self) -> None:
+        handler = _make_cancellable_bg_handler()
+        client = _build_async_client(handler)
+        response_id = IdGenerator.new_response_id()
+
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={
+                    "response_id": response_id,
+                    "model": "test",
+                    "background": True,
+                    "stream": True,
+                },
+                headers={"x-agent-chat-isolation-key": "key_A"},
+            )
+        )
+        try:
+            await asyncio.wait_for(handler.started.wait(), timeout=5.0)
+            r = await client.request("DELETE", f"/responses/{response_id}")
+            assert r.status_code == 404
+        finally:
+            handler.started.set()
+            if not post_task.done():
+                post_task.cancel()
+                try:
+                    await post_task
+                except (asyncio.CancelledError, Exception):
+                    pass
 
 
 # ── CANCEL with isolation (async — needs real event loop) ──
@@ -418,7 +559,11 @@ class TestCancelChatIsolation:
 # ── INPUT_ITEMS with isolation ────────────────────────────
 
 class TestInputItemsChatIsolation:
-    """GET /responses/{id}/input_items with chat isolation key enforcement."""
+    """GET /responses/{id}/input_items with chat isolation key enforcement.
+
+    In-flight isolation is enforced locally; after eviction, isolation is
+    enforced by the Foundry storage provider server-side.
+    """
 
     def test_input_items_matching_key_returns_200(self) -> None:
         client = _make_client()
@@ -430,19 +575,67 @@ class TestInputItemsChatIsolation:
         )
         assert r.status_code == 200
 
-    def test_input_items_mismatched_key_returns_404(self) -> None:
-        client = _make_client()
-        resp = _create_response(client, chat_key="key_A")
-        _wait_for_terminal(client, resp["id"], **{"x-agent-chat-isolation-key": "key_A"})
-        r = client.get(
-            f"/responses/{resp['id']}/input_items",
-            headers={"x-agent-chat-isolation-key": "key_B"},
-        )
-        assert r.status_code == 404
+    @pytest.mark.asyncio
+    async def test_input_items_mismatched_key_returns_404(self) -> None:
+        handler = _make_cancellable_bg_handler()
+        client = _build_async_client(handler)
+        response_id = IdGenerator.new_response_id()
 
-    def test_input_items_missing_key_when_created_with_key_returns_404(self) -> None:
-        client = _make_client()
-        resp = _create_response(client, chat_key="key_A")
-        _wait_for_terminal(client, resp["id"], **{"x-agent-chat-isolation-key": "key_A"})
-        r = client.get(f"/responses/{resp['id']}/input_items")
-        assert r.status_code == 404
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={
+                    "response_id": response_id,
+                    "model": "test",
+                    "background": True,
+                    "stream": True,
+                },
+                headers={"x-agent-chat-isolation-key": "key_A"},
+            )
+        )
+        try:
+            await asyncio.wait_for(handler.started.wait(), timeout=5.0)
+            r = await client.get(
+                f"/responses/{response_id}/input_items",
+                headers={"x-agent-chat-isolation-key": "key_B"},
+            )
+            assert r.status_code == 404
+        finally:
+            handler.started.set()
+            if not post_task.done():
+                post_task.cancel()
+                try:
+                    await post_task
+                except (asyncio.CancelledError, Exception):
+                    pass
+
+    @pytest.mark.asyncio
+    async def test_input_items_missing_key_when_created_with_key_returns_404(self) -> None:
+        handler = _make_cancellable_bg_handler()
+        client = _build_async_client(handler)
+        response_id = IdGenerator.new_response_id()
+
+        post_task = asyncio.create_task(
+            client.post(
+                "/responses",
+                json_body={
+                    "response_id": response_id,
+                    "model": "test",
+                    "background": True,
+                    "stream": True,
+                },
+                headers={"x-agent-chat-isolation-key": "key_A"},
+            )
+        )
+        try:
+            await asyncio.wait_for(handler.started.wait(), timeout=5.0)
+            r = await client.get(f"/responses/{response_id}/input_items")
+            assert r.status_code == 404
+        finally:
+            handler.started.set()
+            if not post_task.done():
+                post_task.cancel()
+                try:
+                    await post_task
+                except (asyncio.CancelledError, Exception):
+                    pass

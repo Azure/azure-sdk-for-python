@@ -755,10 +755,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if await self._runtime_state.is_deleted(response_id):
                 return _deleted_response(response_id, _hdrs)
 
-            # Chat isolation enforcement for evicted/restarted responses
-            if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
-                return _not_found(response_id, _hdrs)
-
             stream_replay = stream_replay_param
             if not stream_replay:
                 # Provider fallback: serve completed responses that are no longer in runtime state
@@ -1004,10 +1000,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if await self._runtime_state.is_deleted(response_id):
                 return _not_found(response_id, _hdrs)
 
-            # Chat isolation enforcement for evicted/restarted responses
-            if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
-                return _not_found(response_id, _hdrs)
-
             try:
                 await self._provider.delete_response(response_id, isolation=_isolation)
                 # Clean up persisted stream events
@@ -1117,10 +1109,6 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             # Provider fallback: after a restart, stored terminal responses lose
             # their runtime records.  Check the provider so we return the correct
             # 400 error instead of a misleading 404.
-
-            # Chat isolation enforcement for evicted/restarted responses
-            if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
-                return _not_found(response_id, _hdrs)
 
             try:
                 response_obj = await self._provider.get_response(response_id, isolation=_isolation)
@@ -1277,9 +1265,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             _isolation.chat_key is not None,
         )
 
-        # Chat isolation enforcement
-        if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
-            return _not_found(response_id, _hdrs)
+        # Chat isolation enforcement for in-flight responses.  After eviction,
+        # the provider (Foundry storage) enforces isolation server-side.
+        record = await self._runtime_state.get(response_id)
+        if record is not None:
+            if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
+                return _not_found(response_id, _hdrs)
 
         limit_raw = request.query_params.get("limit", "20")
         try:
@@ -1312,6 +1303,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return _error_response(exc, _hdrs)
         except KeyError:
             # Fall back to runtime_state for in-flight responses not yet persisted to provider
+            # Chat isolation is enforced locally here because the runtime_state
+            # path does not go through Foundry (which would enforce it server-side).
+            if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
+                return _not_found(response_id, _hdrs)
             try:
                 items = await self._runtime_state.get_input_items(response_id)
             except ValueError:

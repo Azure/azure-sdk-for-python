@@ -99,8 +99,11 @@ class _RuntimeState:
             if record.status not in self._TERMINAL_STATUSES:
                 return False
             del self._records[response_id]
-            # NOTE: chat isolation keys are intentionally preserved so that
-            # provider fallback paths can still enforce isolation after eviction.
+            # Chat isolation keys are cleaned up on eviction.  After eviction,
+            # requests fall through to the Foundry storage provider which
+            # enforces isolation server-side (returning 400 for missing or
+            # mismatched keys).
+            self._chat_isolation_keys.pop(response_id, None)
             return True
 
     async def mark_deleted(self, response_id: str) -> None:
