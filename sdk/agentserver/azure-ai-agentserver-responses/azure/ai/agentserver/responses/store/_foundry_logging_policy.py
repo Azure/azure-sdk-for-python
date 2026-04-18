@@ -111,6 +111,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
                 client_request_id,
                 has_user_isolation_key,
                 has_chat_isolation_key,
+                exc_info=True,
             )
             raise
 

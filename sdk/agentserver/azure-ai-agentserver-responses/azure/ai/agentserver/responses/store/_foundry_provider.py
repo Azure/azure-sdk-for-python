@@ -13,6 +13,7 @@ from azure.core.pipeline import PipelineRequest, policies
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
 
+from .._version import VERSION
 from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-defined]
 from ._foundry_errors import raise_for_storage_error
 from ._foundry_logging_policy import FoundryStorageLoggingPolicy
@@ -103,7 +104,8 @@ class FoundryStorageProvider:
         to use as the ``User-Agent`` header on outgoing Foundry HTTP requests.
         Evaluated lazily on each request so that it reflects the final
         composed ``x-platform-server`` value.  When ``None`` (default),
-        this provider uses Azure Core's default ``User-Agent`` policy.
+        this provider uses Azure Core's default ``UserAgentPolicy`` with the
+        SDK moniker ``ai-agentserver-responses/{VERSION}``.
     :type get_server_version: Callable[[], str] | None
 
     Example::
@@ -124,7 +126,7 @@ class FoundryStorageProvider:
         if get_server_version is not None:
             ua_policy = _ServerVersionUserAgentPolicy(get_server_version)
         else:
-            ua_policy = policies.UserAgentPolicy()
+            ua_policy = policies.UserAgentPolicy(sdk_moniker=f"ai-agentserver-responses/{VERSION}")
 
         self._client: AsyncPipelineClient = AsyncPipelineClient(
             base_url=self._settings.storage_base_url,

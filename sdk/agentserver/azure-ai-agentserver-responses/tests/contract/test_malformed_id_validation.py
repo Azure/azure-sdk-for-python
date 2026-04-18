@@ -7,7 +7,7 @@ malformed IDs with 400 (``code: "invalid_parameters"``,
 ``param: "responseId{<value>}"``).
 
 Malformed ``previous_response_id`` in the POST body must be rejected
-with 400 and a ``details`` array containing the validation error.
+with 400 (``code: "invalid_parameters"``, ``param: "previous_response_id"``).
 """
 
 from __future__ import annotations
@@ -92,7 +92,8 @@ class TestMalformedPathId:
 class TestMalformedPreviousResponseId:
     """``previous_response_id`` in POST body must be valid ``caresp`` format."""
 
-    def test_malformed_previous_response_id_returns_400_with_details(self) -> None:
+    def test_malformed_previous_response_id_returns_400(self) -> None:
+        """Malformed previous_response_id returns 400 with invalid_parameters code and param."""
         client = _make_client()
         r = client.post("/responses", json={
             "model": "m",
@@ -103,6 +104,8 @@ class TestMalformedPreviousResponseId:
         body = r.json()
         error = body["error"]
         assert error["code"] == "invalid_parameters"
+        assert error["type"] == "invalid_request_error"
+        assert "previous_response_id" in error.get("param", "")
 
     def test_wrong_prefix_previous_response_id_returns_400(self) -> None:
         client = _make_client()
