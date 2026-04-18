@@ -4,12 +4,13 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Iterable
+from typing import TYPE_CHECKING, Any, Callable, Iterable
 from urllib.parse import quote as _url_quote
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
-from azure.core.pipeline import policies
+from azure.core.pipeline import PipelineRequest, policies
+from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
 
 from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-defined]
@@ -33,6 +34,33 @@ _FOUNDRY_TOKEN_SCOPE = "https://ai.azure.com/.default"
 _JSON_CONTENT_TYPE = "application/json; charset=utf-8"
 _USER_ISOLATION_HEADER = "x-agent-user-isolation-key"
 _CHAT_ISOLATION_HEADER = "x-agent-chat-isolation-key"
+
+
+class _ServerVersionUserAgentPolicy(SansIOHTTPPolicy):  # type: ignore[type-arg]
+    """Pipeline policy that sets the ``User-Agent`` header lazily from a callback.
+
+    Unlike :class:`~azure.core.pipeline.policies.UserAgentPolicy` which
+    captures the value at construction time, this policy evaluates the
+    callback on each request so it reflects segments registered after the
+    pipeline was built (e.g. by cooperative ``__init__`` in a multi-protocol
+    host).
+
+    :param get_server_version: Callable returning the current server version
+        string (the same value used for the ``x-platform-server`` header).
+    :type get_server_version: Callable[[], str]
+    """
+
+    def __init__(self, get_server_version: Callable[[], str]) -> None:
+        super().__init__()
+        self._get_server_version = get_server_version
+
+    def on_request(self, request: PipelineRequest) -> None:  # type: ignore[type-arg]
+        """Set the ``User-Agent`` header before the request is sent.
+
+        :param request: The pipeline request.
+        :type request: ~azure.core.pipeline.PipelineRequest
+        """
+        request.http_request.headers["User-Agent"] = self._get_server_version()
 
 
 def _encode(value: str) -> str:
@@ -71,6 +99,12 @@ class FoundryStorageProvider:
     :param settings: Storage settings. If omitted,
         :meth:`~FoundryStorageSettings.from_env` is called automatically.
     :type settings: FoundryStorageSettings | None
+    :param get_server_version: Callable returning the server version string
+        to use as the ``User-Agent`` header on outgoing Foundry HTTP requests.
+        Evaluated lazily on each request so that it reflects the final
+        composed ``x-platform-server`` value.  When ``None`` (default),
+        no ``User-Agent`` is set by this provider.
+    :type get_server_version: Callable[[], str] | None
 
     Example::
 
@@ -82,16 +116,22 @@ class FoundryStorageProvider:
         self,
         credential: AsyncTokenCredential,
         settings: FoundryStorageSettings | None = None,
+        get_server_version: Callable[[], str] | None = None,
     ) -> None:
         self._settings = settings or FoundryStorageSettings.from_env()
+
+        ua_policy: policies.UserAgentPolicy | _ServerVersionUserAgentPolicy
+        if get_server_version is not None:
+            ua_policy = _ServerVersionUserAgentPolicy(get_server_version)
+        else:
+            ua_policy = policies.UserAgentPolicy()
+
         self._client: AsyncPipelineClient = AsyncPipelineClient(
             base_url=self._settings.storage_base_url,
             policies=[
                 policies.RequestIdPolicy(),
                 policies.HeadersPolicy(),
-                policies.UserAgentPolicy(
-                    sdk_moniker="ai-agentserver-responses",
-                ),
+                ua_policy,
                 policies.AsyncRetryPolicy(),
                 policies.AsyncBearerTokenCredentialPolicy(
                     credential,

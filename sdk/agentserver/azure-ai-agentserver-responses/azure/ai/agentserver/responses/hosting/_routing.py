@@ -120,6 +120,13 @@ class ResponsesAgentServerHost(AgentServerHost):
         # Build internal components
         runtime_options = options or ResponsesServerOptions()
 
+        # Server version string — the responses segment is built once and
+        # registered on the host.  The full x-platform-server value is
+        # assembled lazily by _build_server_version() (joining all
+        # registered segments) and is also used as the Foundry storage
+        # User-Agent via callback so both headers are always identical.
+        _responses_version = build_server_version("azure-ai-agentserver-responses", _RESPONSES_VERSION)
+
         # Resolve AgentConfig — used for Foundry auto-activation and
         # merging platform env-vars (SSE keep-alive) into runtime options.
         from azure.ai.agentserver.core._config import AgentConfig
@@ -151,7 +158,11 @@ class ResponsesAgentServerHost(AgentServerHost):
                     logger.warning("azure-identity not installed; Foundry auto-activation disabled")
                 else:
                     settings = FoundryStorageSettings.from_endpoint(config.project_endpoint)
-                    store = FoundryStorageProvider(DefaultAzureCredential(), settings)
+                    store = FoundryStorageProvider(
+                        DefaultAzureCredential(),
+                        settings,
+                        get_server_version=self._build_server_version,
+                    )
 
         resolved_provider: ResponseProviderProtocol = store if store is not None else InMemoryResponseProvider()
         stream_provider = resolved_provider if isinstance(resolved_provider, ResponseStreamProviderProtocol) else None
@@ -212,9 +223,10 @@ class ResponsesAgentServerHost(AgentServerHost):
         existing = list(kwargs.pop("routes", None) or [])
         super().__init__(routes=existing + response_routes, **kwargs)
 
-        # Register the responses protocol version on the host so the
-        # x-platform-server header includes this package's version.
-        self.register_server_version(build_server_version("azure-ai-agentserver-responses", _RESPONSES_VERSION))
+        # Register the responses protocol version (and any additional version
+        # from the handler developer) on the host so the x-platform-server
+        # header includes this package's version.
+        self.register_server_version(_responses_version)
 
         # Allow handler developers to append their own version segment.
         if runtime_options.additional_server_version:
