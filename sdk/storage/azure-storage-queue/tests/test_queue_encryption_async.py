@@ -315,7 +315,7 @@ class TestAsyncStorageQueueEncryption(AsyncStorageRecordedTestCase):
         with pytest.raises(AttributeError) as e:
             await queue.send_message("message")
 
-        assert str(e.value.args[0]), _ERROR_OBJECT_INVALID.format("key encryption key", "get_kid")
+        assert str(e.value.args[0]) == _ERROR_OBJECT_INVALID.format("key encryption key", "get_kid")
 
         queue.key_encryption_key = KeyWrapper("key1")
         queue.key_encryption_key.get_kid = None

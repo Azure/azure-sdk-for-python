@@ -544,7 +544,7 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         messages = []
         async for m in queue_client.receive_messages():
             messages.append(m)
-            if not messages:
+            if messages:
                 break
         message = messages[0]
         # Asserts

@@ -149,17 +149,14 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key.secret)
         queue = await self._create_queue(qsc)
-        # Action.
+
+        # Act
         with pytest.raises(TypeError) as e:
             message = b"xyz"
             await queue.send_message(message)
 
-            # Asserts
-            assert str(
-                e.exception.startswith(
-                    "Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes."
-                )
-            )
+        # Assert
+        assert "Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes." in e.value.args[0]
 
     @QueuePreparer()
     async def test_message_text_fails(self, **kwargs):

@@ -153,17 +153,13 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
         queue = qsc.get_queue_client(self.get_resource_name("failqueue"))
         queue.create_queue()
 
-        # Action.
+        # Act
         with pytest.raises(TypeError) as e:
             message = b"xyz"
             queue.send_message(message)
 
-            # Asserts
-            assert str(
-                e.exception.startswith(
-                    "Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes."
-                )
-            )
+        # Assert
+        assert "Message content must not be bytes. Use the BinaryBase64EncodePolicy to send bytes." in e.value.args[0]
 
     @QueuePreparer()
     def test_message_text_fails(self, **kwargs):
