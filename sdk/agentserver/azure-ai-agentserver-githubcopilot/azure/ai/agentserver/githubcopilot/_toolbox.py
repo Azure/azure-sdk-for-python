@@ -111,6 +111,8 @@ def refresh_mcp_auth(servers: Dict[str, Any], credential: Any) -> None:
     """
     token = credential.get_token(_FOUNDRY_SCOPE).token
     for server in servers.values():
+        if not isinstance(server, dict):
+            continue
         headers = server.get("headers", {})
         if headers.get("_auto_auth"):
             headers["Authorization"] = f"Bearer {token}"

@@ -804,6 +804,8 @@ class GitHubCopilotAdapter(CopilotAdapter):
             return
 
         for name, server_cfg in list(mcp_servers.items()):
+            if not isinstance(server_cfg, dict):
+                continue
             url = server_cfg.get("url")
             if not url:
                 continue
