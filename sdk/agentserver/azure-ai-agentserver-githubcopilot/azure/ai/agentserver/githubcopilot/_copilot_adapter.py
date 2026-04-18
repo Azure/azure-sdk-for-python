@@ -681,17 +681,19 @@ class GitHubCopilotAdapter(CopilotAdapter):
         self._toolbox_bridges: list = []
 
         # AGENTS.md persona injection — load the project's AGENTS.md and use it
-        # as an appended system message so the agent fully embodies its persona
+        # as the system message so the agent fully embodies its persona
         # instead of defaulting to the generic Copilot CLI identity.
+        # Uses "replace" mode so the agent IS the persona, not a CLI that
+        # happens to know about it.
         agents_md = self._load_agents_md(root)
         if agents_md:
             existing = self._session_config.get("system_message")
             if existing is None:
                 self._session_config["system_message"] = {
-                    "mode": "append",
+                    "mode": "replace",
                     "content": agents_md,
                 }
-                logger.info("Injected AGENTS.md as system_message (append mode, %d chars)", len(agents_md))
+                logger.info("Injected AGENTS.md as system_message (replace mode, %d chars)", len(agents_md))
 
         # Skill discovery
         if skill_directories:
