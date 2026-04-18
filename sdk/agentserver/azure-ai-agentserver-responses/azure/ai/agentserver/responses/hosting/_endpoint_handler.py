@@ -834,7 +834,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return _not_found(response_id, _hdrs)
 
         # Chat isolation enforcement on in-flight response
-        if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
+        if not _RuntimeState.check_chat_isolation(record.chat_isolation_key, _isolation.chat_key):
             return _not_found(response_id, _hdrs)
 
         _refresh_background_status(record)
@@ -1037,7 +1037,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return _not_found(response_id, _hdrs)
 
         # Chat isolation enforcement
-        if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
+        if not _RuntimeState.check_chat_isolation(record.chat_isolation_key, _isolation.chat_key):
             return _not_found(response_id, _hdrs)
 
         # store=false responses are not deletable (FR-014)
@@ -1165,7 +1165,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             return _not_found(response_id, _hdrs)
 
         # Chat isolation enforcement on in-flight response
-        if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
+        if not _RuntimeState.check_chat_isolation(record.chat_isolation_key, _isolation.chat_key):
             return _not_found(response_id, _hdrs)
 
         _refresh_background_status(record)
@@ -1269,7 +1269,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         # the provider (Foundry storage) enforces isolation server-side.
         record = await self._runtime_state.get(response_id)
         if record is not None:
-            if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
+            if not _RuntimeState.check_chat_isolation(record.chat_isolation_key, _isolation.chat_key):
                 return _not_found(response_id, _hdrs)
 
         limit_raw = request.query_params.get("limit", "20")
@@ -1302,11 +1302,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             logger.error("Storage API error for input_items response_id=%s: %s", response_id, exc, exc_info=True)
             return _error_response(exc, _hdrs)
         except KeyError:
-            # Fall back to runtime_state for in-flight responses not yet persisted to provider
-            # Chat isolation is enforced locally here because the runtime_state
-            # path does not go through Foundry (which would enforce it server-side).
-            if not self._runtime_state.check_chat_isolation(response_id, _isolation.chat_key):
-                return _not_found(response_id, _hdrs)
+            # Fall back to runtime_state for in-flight responses not yet persisted to provider.
+            # Chat isolation was already checked above when the record is in-flight.
             try:
                 items = await self._runtime_state.get_input_items(response_id)
             except ValueError:

@@ -361,8 +361,8 @@ class TestTryEvict:
         assert await state.is_deleted(record.response_id) is False
 
     @pytest.mark.asyncio
-    async def test_try_evict_cleans_up_isolation_key(self) -> None:
-        """Eviction removes chat isolation keys; after eviction, the provider enforces isolation server-side."""
+    async def test_try_evict_removes_record_so_isolation_falls_to_storage(self) -> None:
+        """After eviction the record is gone — isolation is enforced by Foundry storage, not locally."""
         from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState
         from azure.ai.agentserver.responses.models.runtime import ResponseExecution, ResponseModeFlags
 
@@ -375,13 +375,15 @@ class TestTryEvict:
             chat_isolation_key="my_key",
         )
         await state.add(record)
-        assert state.check_chat_isolation(rid, "my_key") is True
+
+        # In-flight: static helper enforces isolation via the record's key
+        assert _RuntimeState.check_chat_isolation(record.chat_isolation_key, "my_key") is True
+        assert _RuntimeState.check_chat_isolation(record.chat_isolation_key, "wrong") is False
+        assert _RuntimeState.check_chat_isolation(record.chat_isolation_key, None) is False
 
         await state.try_evict(rid)
-        # After eviction, isolation key is cleaned up — the Foundry storage
-        # provider enforces isolation server-side (returning 400 for
-        # missing/mismatched keys).  check_chat_isolation returns True
-        # when no stored key exists (no local enforcement).
-        assert state.check_chat_isolation(rid, "my_key") is True
-        assert state.check_chat_isolation(rid, "wrong_key") is True
-        assert state.check_chat_isolation(rid, None) is True
+
+        # After eviction the record is gone; callers fall through to the
+        # Foundry storage provider which enforces isolation server-side.
+        assert await state.get(rid) is None
+        assert await state.is_deleted(rid) is False
