@@ -72,7 +72,7 @@ def _mask_storage_url(url: str) -> str:
         return "(redacted)"
 
 
-class FoundryStorageLoggingPolicy(AsyncHTTPPolicy[PipelineRequest, PipelineResponse]):
+class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
     """Azure Core per-retry pipeline policy that logs Foundry storage calls.
 
     Logs the HTTP method, masked URI (host redacted, path preserved, query
@@ -81,7 +81,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy[PipelineRequest, PipelineRespo
     observability of storage operations.
     """
 
-    async def send(self, request: PipelineRequest) -> PipelineResponse:  # type: ignore[override]
+    async def send(self, request: PipelineRequest) -> PipelineResponse:
         """Send the request and log the operation details.
 
         :param request: The pipeline request.

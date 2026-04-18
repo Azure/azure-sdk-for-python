@@ -103,7 +103,7 @@ class FoundryStorageProvider:
         to use as the ``User-Agent`` header on outgoing Foundry HTTP requests.
         Evaluated lazily on each request so that it reflects the final
         composed ``x-platform-server`` value.  When ``None`` (default),
-        no ``User-Agent`` is set by this provider.
+        this provider uses Azure Core's default ``User-Agent`` policy.
     :type get_server_version: Callable[[], str] | None
 
     Example::
