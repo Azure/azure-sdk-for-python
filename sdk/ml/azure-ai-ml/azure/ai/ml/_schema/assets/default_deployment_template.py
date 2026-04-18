@@ -15,8 +15,8 @@ module_logger = logging.getLogger(__name__)
 
 
 @experimental
-class DefaultDeploymentTemplateSchema(metaclass=PatchedSchemaMeta):
-    """Schema for DefaultDeploymentTemplate."""
+class DeploymentTemplateReferenceSchema(metaclass=PatchedSchemaMeta):
+    """Schema for DeploymentTemplateReference."""
 
     asset_id = fields.Str(
         metadata={
@@ -27,13 +27,13 @@ class DefaultDeploymentTemplateSchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        """Create DefaultDeploymentTemplate instance from loaded data.
+        """Create DeploymentTemplateReference instance from loaded data.
 
         :param data: The deserialized data.
         :type data: dict
-        :return: DefaultDeploymentTemplate instance.
-        :rtype: ~azure.ai.ml.entities.DefaultDeploymentTemplate
+        :return: DeploymentTemplateReference instance.
+        :rtype: ~azure.ai.ml.entities.DeploymentTemplateReference
         """
-        from azure.ai.ml.entities._assets.default_deployment_template import DefaultDeploymentTemplate
+        from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
 
-        return DefaultDeploymentTemplate(**data)
+        return DeploymentTemplateReference(**data)

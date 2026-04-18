@@ -11,12 +11,12 @@ import pytest
 
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview.models import (
     ModelVersionData,
-    ModelVersionDefaultDeploymentTemplate,
+    ModelVersionDeploymentTemplateReference,
     ModelVersionDetails,
 )
 from azure.ai.ml._restclient.v2023_04_01_preview.models import ModelVersion, ModelVersionProperties
 from azure.ai.ml.entities import Model
-from azure.ai.ml.entities._assets.default_deployment_template import DefaultDeploymentTemplate
+from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
 
 
 @pytest.mark.unittest
@@ -27,8 +27,8 @@ class TestModelAllowedDeploymentTemplates:
     def test_model_init_with_allowed_deployment_templates(self) -> None:
         """Test creating a Model with allowed_deployment_templates."""
         templates = [
-            DefaultDeploymentTemplate(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/versions/1"),
-            DefaultDeploymentTemplate(asset_id="azureml://registries/reg1/deploymenttemplates/dt2/versions/1"),
+            DeploymentTemplateReference(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/versions/1"),
+            DeploymentTemplateReference(asset_id="azureml://registries/reg1/deploymenttemplates/dt2/versions/1"),
         ]
         model = Model(
             name="test-model",
@@ -57,7 +57,7 @@ class TestModelAllowedDeploymentTemplates:
 
         assert model.allowed_deployment_templates is not None
         assert len(model.allowed_deployment_templates) == 2
-        assert all(isinstance(t, DefaultDeploymentTemplate) for t in model.allowed_deployment_templates)
+        assert all(isinstance(t, DeploymentTemplateReference) for t in model.allowed_deployment_templates)
 
     def test_model_init_without_allowed_deployment_templates(self) -> None:
         """Test creating a Model without allowed_deployment_templates."""
@@ -71,10 +71,12 @@ class TestModelAllowedDeploymentTemplates:
 
     def test_model_init_with_both_default_and_allowed(self) -> None:
         """Test Model with both default and allowed deployment templates."""
-        default = DefaultDeploymentTemplate(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/labels/latest")
+        default = DeploymentTemplateReference(
+            asset_id="azureml://registries/reg1/deploymenttemplates/dt1/labels/latest"
+        )
         allowed = [
-            DefaultDeploymentTemplate(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/labels/latest"),
-            DefaultDeploymentTemplate(asset_id="azureml://registries/reg1/deploymenttemplates/dt2/labels/latest"),
+            DeploymentTemplateReference(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/labels/latest"),
+            DeploymentTemplateReference(asset_id="azureml://registries/reg1/deploymenttemplates/dt2/labels/latest"),
         ]
         model = Model(
             name="test-model",
@@ -92,7 +94,7 @@ class TestModelAllowedDeploymentTemplates:
     def test_model_to_rest_object_with_allowed_only(self) -> None:
         """Test _to_rest_object with only allowed_deployment_templates (no default)."""
         allowed = [
-            DefaultDeploymentTemplate(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/versions/1"),
+            DeploymentTemplateReference(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/versions/1"),
         ]
         model = Model(
             name="test-model",
@@ -112,10 +114,10 @@ class TestModelAllowedDeploymentTemplates:
 
     def test_model_to_rest_object_with_both(self) -> None:
         """Test _to_rest_object with both default and allowed templates."""
-        default = DefaultDeploymentTemplate(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/versions/1")
+        default = DeploymentTemplateReference(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/versions/1")
         allowed = [
-            DefaultDeploymentTemplate(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/versions/1"),
-            DefaultDeploymentTemplate(asset_id="azureml://registries/reg1/deploymenttemplates/dt2/versions/1"),
+            DeploymentTemplateReference(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/versions/1"),
+            DeploymentTemplateReference(asset_id="azureml://registries/reg1/deploymenttemplates/dt2/versions/1"),
         ]
         model = Model(
             name="test-model",
@@ -181,7 +183,7 @@ class TestModelAllowedDeploymentTemplates:
 
         assert model.allowed_deployment_templates is not None
         assert len(model.allowed_deployment_templates) == 2
-        assert all(isinstance(t, DefaultDeploymentTemplate) for t in model.allowed_deployment_templates)
+        assert all(isinstance(t, DeploymentTemplateReference) for t in model.allowed_deployment_templates)
         assert (
             model.allowed_deployment_templates[0].asset_id
             == "azureml://registries/reg1/deploymenttemplates/dt1/versions/1"
@@ -287,16 +289,16 @@ allowed_deployment_templates:
         assert "dt1" in model.default_deployment_template.asset_id
         assert model.allowed_deployment_templates is not None
         assert len(model.allowed_deployment_templates) == 2
-        assert all(isinstance(t, DefaultDeploymentTemplate) for t in model.allowed_deployment_templates)
+        assert all(isinstance(t, DeploymentTemplateReference) for t in model.allowed_deployment_templates)
         assert "dt1" in model.allowed_deployment_templates[0].asset_id
         assert "dt2" in model.allowed_deployment_templates[1].asset_id
 
     def test_model_round_trip_rest_with_both_templates(self) -> None:
         """Test round-trip: entity -> REST -> entity with both template types."""
-        default = DefaultDeploymentTemplate(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/versions/1")
+        default = DeploymentTemplateReference(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/versions/1")
         allowed = [
-            DefaultDeploymentTemplate(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/versions/1"),
-            DefaultDeploymentTemplate(asset_id="azureml://registries/reg1/deploymenttemplates/dt2/versions/1"),
+            DeploymentTemplateReference(asset_id="azureml://registries/reg1/deploymenttemplates/dt1/versions/1"),
+            DeploymentTemplateReference(asset_id="azureml://registries/reg1/deploymenttemplates/dt2/versions/1"),
         ]
         original = Model(
             name="test-model",

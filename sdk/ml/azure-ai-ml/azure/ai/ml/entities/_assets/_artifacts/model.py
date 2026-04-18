@@ -27,7 +27,7 @@ from azure.ai.ml.constants._common import (
     AssetTypes,
 )
 from azure.ai.ml.entities._assets import Artifact
-from azure.ai.ml.entities._assets.default_deployment_template import DefaultDeploymentTemplate
+from azure.ai.ml.entities._assets.default_deployment_template import DeploymentTemplateReference
 from azure.ai.ml.entities._assets.intellectual_property import IntellectualProperty
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_sha256_string, load_from_dict
@@ -62,9 +62,9 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
     :param stage: The stage of the resource. Defaults to None.
     :type stage: Optional[str]
     :param default_deployment_template: The default deployment template reference for the model. Defaults to None.
-    :type default_deployment_template: Optional[DefaultDeploymentTemplate]
+    :type default_deployment_template: Optional[DeploymentTemplateReference]
     :param allowed_deployment_templates: List of allowed deployment template references for the model.
-    :type allowed_deployment_templates: Optional[list[DefaultDeploymentTemplate]]
+    :type allowed_deployment_templates: Optional[list[DeploymentTemplateReference]]
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: Optional[dict]
 
@@ -91,8 +91,8 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
         stage: Optional[str] = None,
-        default_deployment_template: Optional[DefaultDeploymentTemplate] = None,
-        allowed_deployment_templates: Optional[List[DefaultDeploymentTemplate]] = None,
+        default_deployment_template: Optional[DeploymentTemplateReference] = None,
+        allowed_deployment_templates: Optional[List[DeploymentTemplateReference]] = None,
         **kwargs: Any,
     ) -> None:
         self.job_name = kwargs.pop("job_name", None)
@@ -112,17 +112,17 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         self._arm_type = ArmConstants.MODEL_VERSION_TYPE
         self.type = type or AssetTypes.CUSTOM_MODEL
         self.stage = stage
-        # Handle default_deployment_template - can be passed as dict or DefaultDeploymentTemplate object
-        self.default_deployment_template: Optional[DefaultDeploymentTemplate]
+        # Handle default_deployment_template - can be passed as dict or DeploymentTemplateReference object
+        self.default_deployment_template: Optional[DeploymentTemplateReference]
         if isinstance(default_deployment_template, dict):
-            self.default_deployment_template = DefaultDeploymentTemplate(**default_deployment_template)
+            self.default_deployment_template = DeploymentTemplateReference(**default_deployment_template)
         else:
             self.default_deployment_template = default_deployment_template
-        # Handle allowed_deployment_templates - can be list of dicts or DefaultDeploymentTemplate objects
-        self.allowed_deployment_templates: Optional[List[DefaultDeploymentTemplate]] = None
+        # Handle allowed_deployment_templates - can be list of dicts or DeploymentTemplateReference objects
+        self.allowed_deployment_templates: Optional[List[DeploymentTemplateReference]] = None
         if allowed_deployment_templates:
             self.allowed_deployment_templates = [
-                DefaultDeploymentTemplate(**item) if isinstance(item, dict) else item
+                DeploymentTemplateReference(**item) if isinstance(item, dict) else item
                 for item in allowed_deployment_templates
             ]
         if self._is_anonymous and self.path:
@@ -169,12 +169,12 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
         ):
             # REST object has default_deployment_template as a dict with 'asset_id' key
             if isinstance(rest_model_version.default_deployment_template, dict):
-                default_deployment_template = DefaultDeploymentTemplate(
+                default_deployment_template = DeploymentTemplateReference(
                     asset_id=rest_model_version.default_deployment_template.get("asset_id")
                 )
             else:
                 # Handle case where it's already an object with asset_id attribute
-                default_deployment_template = DefaultDeploymentTemplate(
+                default_deployment_template = DeploymentTemplateReference(
                     asset_id=getattr(rest_model_version.default_deployment_template, "asset_id", None)
                 )
 
@@ -190,11 +190,11 @@ class Model(Artifact):  # pylint: disable=too-many-instance-attributes
                 for item in raw_list:
                     if isinstance(item, dict):
                         allowed_deployment_templates.append(
-                            DefaultDeploymentTemplate(asset_id=item.get("asset_id") or item.get("assetId"))
+                            DeploymentTemplateReference(asset_id=item.get("asset_id") or item.get("assetId"))
                         )
                     else:
                         allowed_deployment_templates.append(
-                            DefaultDeploymentTemplate(asset_id=getattr(item, "asset_id", None))
+                            DeploymentTemplateReference(asset_id=getattr(item, "asset_id", None))
                         )
 
         model = Model(

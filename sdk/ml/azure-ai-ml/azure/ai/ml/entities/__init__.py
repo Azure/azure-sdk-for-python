@@ -36,7 +36,7 @@ from ._assets._artifacts.feature_set import FeatureSet
 from ._assets._artifacts.index import Index
 from ._assets._artifacts.model import Model
 from ._assets.asset import Asset
-from ._assets.default_deployment_template import DefaultDeploymentTemplate
+from ._assets.default_deployment_template import DeploymentTemplateReference
 from ._assets.environment import BuildContext, Environment
 from ._assets.intellectual_property import IntellectualProperty
 from ._assets.workspace_asset_reference import WorkspaceAssetReference as WorkspaceModelReference
@@ -515,7 +515,7 @@ __all__ = [
     "GitSource",
     "LocalSource",
     "IndexModelConfiguration",
-    "DefaultDeploymentTemplate",
+    "DeploymentTemplateReference",
     "AcceleratorMap",
 ]
 
