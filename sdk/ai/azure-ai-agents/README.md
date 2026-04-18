@@ -550,6 +550,8 @@ For a complete example, see [`sample_agents_mcp_in_create_and_process.py`](https
 
 Azure AI Search is an enterprise search system for high-performance applications. It integrates with Azure OpenAI Service and Azure Machine Learning, offering advanced search technologies like vector search and full-text search. Ideal for knowledge base insights, information discovery, and automation. Creating an Agent with Azure AI Search requires an existing Azure AI Search Index. For more information and setup guides, see [Azure AI Search Tool Guide](https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/azure-ai-search?tabs=azurecli%2Cpython&pivots=overview-azure-ai-search).
 
+If you use `query_type` values `vector`, `vector_simple_hybrid`, or `vector_semantic_hybrid`, ensure the target Azure AI Search index is created with a vectorizer configuration.
+
 Here is an example to integrate Azure AI Search:
 
 <!-- SNIPPET:sample_agents_azure_ai_search.create_agent_with_azure_ai_search_tool -->

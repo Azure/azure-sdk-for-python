@@ -15,6 +15,9 @@ PREREQUISITES:
     If you already have one, you must create an agent that can use an existing Azure AI Search index:
     https://learn.microsoft.com/azure/ai-services/agents/how-to/tools/azure-ai-search?tabs=azurecli%2Cpython&pivots=overview-azure-ai-search
 
+    If using query types `vector`, `vector_simple_hybrid`, or `vector_semantic_hybrid`,
+    ensure your Azure AI Search index is created with a vectorizer configuration.
+
     If you do not already have an agent Setup with an Azure AI Search resource, follow the guide for a Standard agent setup:
     https://learn.microsoft.com/azure/ai-services/agents/quickstart?pivots=programming-language-python-azure
 

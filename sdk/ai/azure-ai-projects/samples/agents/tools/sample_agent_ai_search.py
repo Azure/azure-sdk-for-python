@@ -25,6 +25,9 @@ USAGE:
        as found in the "Connections" tab in your Microsoft Foundry project.
     4) AI_SEARCH_INDEX_NAME - The name of the AI Search index to use for searching.
     5) AI_SEARCH_USER_INPUT - (Optional) The question to ask. If not set, you will be prompted.
+
+    If using query types `vector`, `vector_simple_hybrid`, or `vector_semantic_hybrid`,
+    ensure your Azure AI Search index is created with a vectorizer configuration.
 """
 
 import os
