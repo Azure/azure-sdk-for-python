@@ -31,7 +31,7 @@ from typing import (
     cast,
 )
 
-from jinja2 import Template
+from jinja2.sandbox import SandboxedEnvironment
 from openai import AsyncStream
 from openai.types.chat import ChatCompletion, ChatCompletionChunk, ChatCompletionUserMessageParam
 from openai import APIConnectionError, APIStatusError, APITimeoutError, OpenAIError
@@ -242,9 +242,16 @@ FILE_EXT_TO_MIME: Final[Mapping[str, str]] = {
 """Mapping of file extensions to mime types"""
 
 
+_SANDBOXED_ENV = SandboxedEnvironment(trim_blocks=True, keep_trailing_newline=True)
+
+
 def render_jinja_template(template_str: str, *, trim_blocks=True, keep_trailing_newline=True, **kwargs) -> str:
     try:
-        template = Template(template_str, trim_blocks=trim_blocks, keep_trailing_newline=keep_trailing_newline)
+        if trim_blocks is True and keep_trailing_newline is True:
+            env = _SANDBOXED_ENV
+        else:
+            env = SandboxedEnvironment(trim_blocks=trim_blocks, keep_trailing_newline=keep_trailing_newline)
+        template = env.from_string(template_str)
         return template.render(**kwargs)
     except Exception as e:  # pylint: disable=broad-except
         raise PromptyException(f"Failed to render jinja template - {type(e).__name__}: {str(e)}") from e

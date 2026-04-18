@@ -72,7 +72,7 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         code_configuration: Optional[Dict[str, Any]] = None,
         environment_variables: Optional[Dict[str, str]] = None,
         app_insights_enabled: Optional[bool] = None,
-        allowed_instance_types: Optional[str] = None,
+        allowed_instance_types: Optional[List[str]] = None,
         default_instance_type: Optional[str] = None,  # Handle default instance type
         scoring_port: Optional[int] = None,
         scoring_path: Optional[str] = None,
@@ -103,6 +103,10 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         self.code_configuration = code_configuration
         self.environment_variables = environment_variables
         self.app_insights_enabled = app_insights_enabled
+        if allowed_instance_types is not None and not isinstance(allowed_instance_types, list):
+            raise TypeError(
+                "allowed_instance_types must be a list of strings, e.g. ['Standard_DS3_v2', 'Standard_DS4_v2']."
+            )
         self.allowed_instance_types = allowed_instance_types
         self.default_instance_type = default_instance_type
         self.scoring_port = scoring_port
@@ -585,16 +589,9 @@ class DeploymentTemplate(Resource, RestTranslatableMixin):  # pylint: disable=to
         if hasattr(self, "app_insights_enabled") and self.app_insights_enabled is not None:
             result["appInsightsEnabled"] = self.app_insights_enabled  # type: ignore
 
-        # Handle allowed instance types - convert string to array format for API
+        # Handle allowed instance types
         if hasattr(self, "allowed_instance_types") and self.allowed_instance_types:
-            if isinstance(self.allowed_instance_types, str):
-                # Convert space-separated string to array
-                instance_types_array = self.allowed_instance_types.split()
-            elif isinstance(self.allowed_instance_types, list):
-                instance_types_array = self.allowed_instance_types
-            else:
-                instance_types_array = [str(self.allowed_instance_types)]
-            result["allowedInstanceTypes"] = instance_types_array  # type: ignore[assignment]
+            result["allowedInstanceTypes"] = self.allowed_instance_types  # type: ignore[assignment]
 
         if self.accelerator_maps:
             result["acceleratorMaps"] = [am._to_rest_dict() for am in self.accelerator_maps]

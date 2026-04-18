@@ -1,16 +1,11 @@
 import logging
 import os
-import re
 import json
 from typing import List, Any
 from datetime import datetime
 
 from github.Issue import Issue
 from github.Repository import Repository
-import requests
-from azure.devops.v6_0.pipelines.pipelines_client import PipelinesClient
-from azure.devops.v6_0.pipelines import models
-from msrest.authentication import BasicAuthentication
 from packaging.version import parse as Version
 from urllib3 import Retry, PoolManager
 
@@ -56,78 +51,6 @@ def get_last_released_date(package_name: str) -> (str, datetime):
     except:
         return '', to_datetime('1970-01-01T00:00:00')
 
-# get python release pipeline link from web
-def get_python_release_pipeline(output_folder):
-    pipeline_client = PipelinesClient(base_url='https://dev.azure.com/azure-sdk',
-                                      creds=BasicAuthentication(os.getenv('PIPELINE_TOKEN'), ''))
-    pipelines = pipeline_client.list_pipelines(project='internal')
-    for pipeline in pipelines:
-        if re.findall(r'^python - \w*$', pipeline.name):
-            key = pipeline.name.replace('python - ', '')
-            if key == output_folder:
-                pipeline_url = 'https://dev.azure.com/azure-sdk/internal/_build?definitionId={}'.format(pipeline.id)
-                return pipeline_url
-    else:
-        _LOG.info('Cannot find definitionId, Do not display pipeline_url')
-    return ''
-
-
-# Run sdk-auto-release(main) to generate SDK
-def run_pipeline(issue_link, pipeline_url, spec_readme, python_tag="", rest_repo_hash="", target_date="", issue_owner=""):
-    paramaters = {
-        "stages_to_skip": [],
-        "resources": {
-            "repositories": {
-                "self": {
-                    "refName": "refs/heads/main"
-                }
-            }
-        },
-        "variables": {
-            "BASE_BRANCH": {
-                "value": "",
-                "isSecret": False
-            },
-            "ISSUE_LINK": {
-                "value": issue_link,
-                "isSecret": False
-            },
-            "PIPELINE_LINK": {
-                "value": pipeline_url,
-                "isSecret": False
-            },
-            "SPEC_README": {
-                "value": spec_readme,
-                "isSecret": False
-            },
-            "PYTHON_TAG": {
-                "value": python_tag,
-                "isSecret": False
-            },
-            "REST_REPO_HASH": {
-                "value": rest_repo_hash,
-                "isSecret": False
-            },
-            "TARGET_DATE": {
-                "value": target_date,
-                "isSecret": False
-            },
-            "ISSUE_OWNER": {
-                "value": issue_owner,
-                "isSecret": False
-            }
-        }
-    }
-    # Fill in with your personal access token and org URL
-    personal_access_token = os.getenv('PIPELINE_TOKEN')
-    organization_url = 'https://dev.azure.com/azure-sdk'
-
-    # Create a connection to the org
-    credentials = BasicAuthentication('', personal_access_token)
-    run_parameters = models.RunPipelineParameters(**paramaters)
-    client = PipelinesClient(base_url=organization_url, creds=credentials)
-    result = client.run_pipeline(project='internal', pipeline_id=2500, run_parameters=run_parameters)
-    return result.state == 'inProgress'
 
 
 def record_release(package_name: str, issue_info: Any, file: str, version: str) -> None:

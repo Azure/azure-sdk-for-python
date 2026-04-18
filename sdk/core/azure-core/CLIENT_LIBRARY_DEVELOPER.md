@@ -20,6 +20,7 @@
   - [Implementation Guidance](#implementation-guidance)
   - [Known uses of token request parameters](#known-uses-of-token-request-parameters)
   - [BearerTokenCredentialPolicy and AsyncBearerTokenCredentialPolicy](#bearertokencredentialpolicy-and-asyncbearertokencredentialpolicy)
+- [Environment Variables](#environment-variables)
 - [Long-running operation (LRO) customization](#long-running-operation-lro-customization)
 
 ## Pipeline
@@ -209,10 +210,11 @@ synchronous_transport = RequestsTransport(use_env_settings=True)
 
 If "use_env_settings" is set to True(by default), the transport will look for environment variables
 
-- HTTP_PROXY
-- HTTPS_PROXY
+- `HTTP_PROXY`
+- `HTTPS_PROXY`
+- `NO_PROXY`
 
-and use their values to configure the proxy settings.
+and use their values to configure the proxy settings. See the [Environment Variables](#environment-variables) section for the full list of recognized environment variables.
 
 - Use ProxyPolicy
 
@@ -482,6 +484,7 @@ from azure.core.pipeline.policies import (
 |  |  | logging_enable | x | x | Use to enable per operation. Defaults to `False`. |
 | HttpLoggingPolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | logger | x | x | If specified, it will be used to log information |
+|  |  | http_logging_level | x | x | The logging level to use for HTTP request and response logs. Defaults to `logging.INFO`. |
 | ContentDecodePolicy | SansIOHTTPPolicy |  |  |  |  |
 |  |  | response_encoding | x | x | The encoding to use if known for this service (will disable auto-detection). |
 | ProxyPolicy | SansIOHTTPPolicy |  |  |  |  |
@@ -739,6 +742,64 @@ from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
 authentication_policy = BearerTokenCredentialPolicy(credential, scopes, enable_cae=True)
 ```
+
+## Environment Variables
+
+The following environment variables are recognized by `azure-core`. They are resolved through the `azure.core.settings` module with the following priority order (highest to lowest):
+
+1. Immediate values (passed directly when retrieving the setting)
+2. Previously user-set values (assigned programmatically via `settings.<name> = value`)
+3. Environment variables (from `os.environ`)
+4. System settings (OS-level registries or hooks)
+5. Implicit defaults
+
+### SDK Configuration
+
+| Variable | Description | Accepted Values | Default |
+| --- | --- | --- | --- |
+| `AZURE_LOG_LEVEL` | Logging level for all Azure SDK clients. | `CRITICAL`, `ERROR`, `WARNING`, `INFO`, `DEBUG` (case-insensitive) | `INFO` |
+| `AZURE_TRACING_ENABLED` | Enable/disable distributed tracing. | `true`/`false`, `yes`/`no`, `1`/`0`, `on`/`off` (case-insensitive) | Auto-detected based on `AZURE_SDK_TRACING_IMPLEMENTATION` |
+| `AZURE_SDK_TRACING_IMPLEMENTATION` | Tracing implementation to use. Requires the corresponding plugin package (`azure-core-tracing-opentelemetry`). | `opentelemetry` | None |
+| `AZURE_SDK_CLOUD_CONF` | Azure cloud environment. | `AZURE_PUBLIC_CLOUD`, `AZURE_CHINA_CLOUD`, `AZURE_US_GOVERNMENT` | `AZURE_PUBLIC_CLOUD` |
+
+These settings can also be read or set programmatically:
+
+```python
+from azure.core.settings import settings
+import logging
+
+# Read the current value (resolves using the priority order above)
+current_level = settings.log_level()
+
+# Set a value programmatically (takes priority over environment variable)
+settings.log_level = logging.DEBUG
+```
+
+### HTTP Pipeline
+
+| Variable | Description | Used By | Default |
+| --- | --- | --- | --- |
+| `AZURE_HTTP_USER_AGENT` | Additional string appended to the `User-Agent` header. Only used when `user_agent_use_env=True` (the default). | `UserAgentPolicy` | None |
+| `AZURE_SDK_LOGGING_MULTIRECORD` | When set to any truthy value, HTTP request and response details are logged as separate log records instead of a single combined record. | `HttpLoggingPolicy` | Disabled |
+
+### Network & Proxy
+
+These standard proxy environment variables are honored by the underlying HTTP transport libraries (`requests` and `aiohttp`) when the transport is created with `use_env_settings=True` (the default).
+
+| Variable | Description | Example |
+| --- | --- | --- |
+| `HTTP_PROXY` | Proxy URL for HTTP requests. | `http://proxy.example.com:8080` |
+| `HTTPS_PROXY` | Proxy URL for HTTPS requests. | `http://user:password@proxy.example.com:8080` |
+| `NO_PROXY` | Comma-separated list of hosts that should bypass the proxy. | `localhost,127.0.0.1,.internal.corp` |
+
+To disable reading proxy settings from the environment:
+
+```python
+from azure.core.pipeline.transport import RequestsTransport
+transport = RequestsTransport(use_env_settings=False)
+```
+
+See the [Proxy Settings](#proxy-settings) section for more details.
 
 ## Long-running operation (LRO) customization
 

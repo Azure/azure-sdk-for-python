@@ -45,7 +45,7 @@ class DeploymentTemplateSchema(PathAwareSchema):
     readiness_probe = NestedField(ProbeSettingsSchema)
     instance_count = fields.Int()
     model_mount_path = fields.Str()
-    allowed_instance_types = fields.Str()
+    allowed_instance_types = fields.List(fields.Str())
     default_instance_type = fields.Str()
     environment = UnionField(
         [
