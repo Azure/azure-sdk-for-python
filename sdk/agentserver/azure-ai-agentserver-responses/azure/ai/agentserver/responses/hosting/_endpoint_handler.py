@@ -21,7 +21,13 @@ from opentelemetry import context as _otel_context
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response, StreamingResponse
 
-from azure.ai.agentserver.core import detach_context, end_span, flush_spans, set_current_span, trace_stream
+from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
+    detach_context,
+    end_span,
+    flush_spans,
+    set_current_span,
+    trace_stream,
+)
 from azure.ai.agentserver.responses.models._generated import (
     AgentReference,
     CreateResponse,

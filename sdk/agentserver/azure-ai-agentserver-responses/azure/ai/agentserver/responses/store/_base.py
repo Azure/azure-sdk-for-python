@@ -79,7 +79,7 @@ class ResponseProviderProtocol(Protocol):
         :raises KeyError: If the response does not exist.
         """
 
-    async def get_input_items(
+    async def get_input_items(  # pylint: disable=too-many-positional-arguments
         self,
         response_id: str,
         limit: int = 20,

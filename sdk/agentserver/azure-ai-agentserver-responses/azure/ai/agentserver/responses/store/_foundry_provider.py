@@ -243,7 +243,7 @@ class FoundryStorageProvider:
         http_resp = await self._client.send_request(request)
         raise_for_storage_error(http_resp)
 
-    async def get_input_items(
+    async def get_input_items(  # pylint: disable=too-many-positional-arguments
         self,
         response_id: str,
         limit: int = 20,

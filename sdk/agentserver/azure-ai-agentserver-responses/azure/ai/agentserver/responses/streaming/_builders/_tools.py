@@ -410,7 +410,7 @@ class OutputItemImageGenCallBuilder(BaseOutputItemBuilder):
 class OutputItemMcpCallBuilder(BaseOutputItemBuilder):
     """Scoped builder for MCP tool call events."""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-positional-arguments
         self,
         stream: "ResponseEventStream",
         output_index: int,
@@ -699,7 +699,7 @@ class OutputItemMcpListToolsBuilder(BaseOutputItemBuilder):
 class OutputItemCustomToolCallBuilder(BaseOutputItemBuilder):
     """Scoped builder for custom tool call events."""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-positional-arguments
         self,
         stream: "ResponseEventStream",
         output_index: int,

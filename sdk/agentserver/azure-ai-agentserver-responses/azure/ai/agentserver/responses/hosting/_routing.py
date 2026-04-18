@@ -16,7 +16,10 @@ from typing import Any, AsyncIterator, Callable, Optional, Union
 
 from starlette.routing import Route
 
-from azure.ai.agentserver.core import AgentServerHost, build_server_version
+from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-in-module
+    AgentServerHost,
+    build_server_version,
+)
 
 from .._options import ResponsesServerOptions
 from .._response_context import ResponseContext
@@ -129,7 +132,7 @@ class ResponsesAgentServerHost(AgentServerHost):
 
         # Resolve AgentConfig — used for Foundry auto-activation and
         # merging platform env-vars (SSE keep-alive) into runtime options.
-        from azure.ai.agentserver.core._config import AgentConfig
+        from azure.ai.agentserver.core._config import AgentConfig  # pylint: disable=import-error,no-name-in-module
 
         config = AgentConfig.from_env()
 
