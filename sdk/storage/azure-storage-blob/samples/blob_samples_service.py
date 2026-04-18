@@ -1,10 +1,9 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=unused-variable, protected-access
 
 """
 FILE: blob_samples_service.py
@@ -160,7 +159,7 @@ class BlobServiceSamples(object):
             # Delete the container
             blob_service_client.delete_container("containertest")
 
-    def get_blob_service_client_from_container_client(self):
+    def get_bsc_from_container_client(self):
         if self.connection_string is None:
             print("Missing required environment variable: STORAGE_CONNECTION_STRING." + '\n' +
                   "Test: get_blob_service_client_from_container_client")
@@ -188,4 +187,4 @@ if __name__ == '__main__':
     sample.container_operations()
     sample.blob_service_properties()
     sample.blob_service_stats()
-    sample.get_blob_service_client_from_container_client()
+    sample.get_bsc_from_container_client()
