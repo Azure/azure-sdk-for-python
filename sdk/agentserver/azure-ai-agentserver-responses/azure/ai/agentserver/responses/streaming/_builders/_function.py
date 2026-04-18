@@ -18,7 +18,7 @@ if TYPE_CHECKING:
 class OutputItemFunctionCallBuilder(BaseOutputItemBuilder):
     """Scoped builder for a function-call output item in stream mode."""
 
-    def __init__(  # pylint: disable=too-many-positional-arguments
+    def __init__(
         self,
         stream: "ResponseEventStream",
         output_index: int,
