@@ -232,7 +232,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if _is_intermediate_response(eval_input.get("response")):
             return self._not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
-                self.threshold
+                self.threshold,
             )
 
         # Preprocess messages if they are lists
@@ -277,6 +277,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
             # Format the output
             reason = llm_output.get("reason", "")
+            reason = llm_output.get("reason", "")
             score = float(score)
             score_result = "pass" if score >= self.threshold else "fail"
             llm_properties = llm_output.get("properties", {}) or {}
@@ -284,6 +285,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             response_dict = {
                 f"{self._result_key}_score": score,
                 f"{self._result_key}_passed": score_result == "pass",
+                f"{self._result_key}_reason": reason,
                 f"{self._result_key}_reason": reason,
                 f"{self._result_key}_status": "completed",
                 f"{self._result_key}_threshold": self._threshold,

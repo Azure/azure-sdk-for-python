@@ -1,4 +1,4 @@
-# pylint: disable=too-many-lines,line-too-long,useless-suppression
+# pylint: disable=too-many-lines,line-too-long,useless-suppression,broad-exception-caught
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -6,8 +6,8 @@
 # cSpell:disable
 
 import asyncio
-import pytest
 from typing import Final
+import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils import RecordedTransport, is_live, is_live_and_not_recording
@@ -27,9 +27,9 @@ class TestAgentMemorySearchAsync(TestBase):
     )
     @servicePreparer()
     @recorded_by_proxy_async(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
-    async def test_agent_memory_search_async(self, **kwargs):
+    async def test_agent_memory_search_async(self, **kwargs):  # pylint: disable=too-many-statements
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
         chat_model = kwargs.get("memory_store_chat_model_deployment_name")
         embedding_model = kwargs.get("memory_store_embedding_model_deployment_name")
 
