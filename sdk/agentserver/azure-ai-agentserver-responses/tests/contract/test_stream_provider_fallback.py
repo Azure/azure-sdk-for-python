@@ -253,6 +253,9 @@ class TestStreamProviderFallback:
         del_resp = client.delete(f"/responses/{response_id}")
         assert del_resp.status_code == 200
 
-        # After delete → 404
+        # After delete → 404 for both the response and its replay stream
         get_resp = client.get(f"/responses/{response_id}")
         assert get_resp.status_code == 404
+
+        with client.stream("GET", f"/responses/{response_id}?stream=true") as replay_resp:
+            assert replay_resp.status_code == 404
