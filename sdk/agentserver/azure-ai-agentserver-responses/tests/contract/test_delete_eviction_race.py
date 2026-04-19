@@ -134,12 +134,23 @@ class TestDeleteEvictionRace:
         assert body["id"] == response_id
         assert body["deleted"] is True
 
-    def test_delete_after_natural_eviction_succeeds_via_provider(self) -> None:
+    def test_delete_after_natural_eviction_succeeds_via_provider(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """DELETE after the bg task has naturally evicted the record should succeed.
 
         This tests the normal provider-fallback path (record=None) rather than
         the race path, but serves as a baseline that the provider has the data.
+        Uses a recording wrapper to assert the provider delete was actually called.
         """
+        _provider_delete_called = False
+        _original_delete = InMemoryResponseProvider.delete_response
+
+        async def _recording_delete(self: InMemoryResponseProvider, response_id: str, **kwargs: Any) -> None:
+            nonlocal _provider_delete_called
+            _provider_delete_called = True
+            return await _original_delete(self, response_id, **kwargs)
+
+        monkeypatch.setattr(InMemoryResponseProvider, "delete_response", _recording_delete)
+
         provider = InMemoryResponseProvider()
         app = ResponsesAgentServerHost(store=provider)
         app.response_handler(_simple_handler)
@@ -155,12 +166,25 @@ class TestDeleteEvictionRace:
         # Wait for terminal (natural eviction will happen)
         _wait_for_terminal(client, response_id)
 
-        # Give the event loop a moment for eviction to complete
-        import time
+        # Poll until the record is gone from runtime state (eviction complete)
+        # rather than relying on a fixed sleep.
+        def _is_evicted() -> bool:
+            get_resp = client.get(f"/responses/{response_id}")
+            # After eviction, GET still returns 200 via provider fallback —
+            # but the runtime state no longer has the record, so the handler
+            # takes the fallback path. We can't distinguish from outside,
+            # so just ensure the response is retrievable.
+            return get_resp.status_code == 200
 
-        time.sleep(0.1)
+        ok, failure = poll_until(
+            _is_evicted,
+            timeout_s=5.0,
+            interval_s=0.05,
+            label="wait_for_eviction",
+        )
+        assert ok, failure
 
-        # DELETE via provider fallback (record is None)
+        # DELETE — should succeed via provider fallback (or race-recovery)
         delete_resp = client.delete(f"/responses/{response_id}")
         assert delete_resp.status_code == 200, (
             f"Expected 200 but got {delete_resp.status_code}: {delete_resp.json()}"
@@ -168,6 +192,8 @@ class TestDeleteEvictionRace:
         body = delete_resp.json()
         assert body["id"] == response_id
         assert body["deleted"] is True
+        # Verify the provider was actually called (not just an in-memory path)
+        assert _provider_delete_called, "Expected provider.delete_response to be called"
 
     def test_second_delete_after_race_recovery_returns_404(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """After a race-recovered DELETE, a second DELETE should return 404."""

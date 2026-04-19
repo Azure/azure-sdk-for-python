@@ -1095,7 +1095,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if await self._runtime_state.is_deleted(response_id):
                 return _not_found(response_id, _hdrs)
 
-            result = await self._provider_delete_response(response_id, request, _hdrs)
+            result = await self._provider_delete_response(response_id, _isolation, _hdrs)
             if result is not None:
                 return result
 
@@ -1121,11 +1121,12 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         deleted = await self._runtime_state.delete(response_id)
         if not deleted:
             # Race: the background task's eager eviction (try_evict) removed
-            # the record between our get() and delete() calls.  Since
-            # try_evict runs only AFTER provider persistence, the durable
-            # store has the response — delegate to the provider path.
+            # the record between our get() and delete() calls. Eviction for
+            # terminal responses typically happens after a provider
+            # persistence attempt, but persistence is best-effort and may not
+            # have succeeded, so delegate to the provider path as a fallback.
             if record.mode_flags.store:
-                result = await self._provider_delete_response(response_id, request, _hdrs)
+                result = await self._provider_delete_response(response_id, _isolation, _hdrs)
                 if result is not None:
                     return result
             return _not_found(response_id, _hdrs)
@@ -1159,7 +1160,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
     async def _provider_delete_response(
         self,
         response_id: str,
-        request: Request,
+        isolation: "IsolationContext",
         headers: dict[str, str],
     ) -> Response | None:
         """Delete a response from the durable provider (storage).
@@ -1169,25 +1170,25 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         path (record evicted between ``get()`` and ``delete()``).
 
         Returns a :class:`Response` on success or on a deterministic error
-        (bad request, API error).  Returns ``None`` when the provider reports
-        the response as not found, so the caller can fall through to 404.
+        (bad request, API error).  Returns ``None`` when the provider
+        reports the response as not found **or** when an unexpected error
+        occurs (logged at DEBUG), so the caller can fall through to 404.
 
         :param response_id: The response ID to delete.
         :type response_id: str
-        :param request: The incoming HTTP request (used to extract isolation).
-        :type request: Request
+        :param isolation: Isolation context extracted from the request.
+        :type isolation: IsolationContext
         :param headers: Session headers to include on the response.
         :type headers: dict[str, str]
         :return: A success/error response, or ``None`` if not found.
         :rtype: Response | None
         """
-        _isolation = _extract_isolation(request)
         try:
-            await self._provider.delete_response(response_id, isolation=_isolation)
+            await self._provider.delete_response(response_id, isolation=isolation)
             # Clean up persisted stream events
             if self._stream_provider is not None:
                 try:
-                    await self._stream_provider.delete_stream_events(response_id, isolation=_isolation)
+                    await self._stream_provider.delete_stream_events(response_id, isolation=isolation)
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.debug(
                         "Best-effort stream event delete failed for response_id=%s",
@@ -1202,7 +1203,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 status_code=200,
                 headers=headers,
             )
-        except FoundryResourceNotFoundError:
+        except (FoundryResourceNotFoundError, KeyError):
             return None  # Caller falls through to 404
         except FoundryBadRequestError as exc:
             return _invalid_request(str(exc), headers, param="response_id")
