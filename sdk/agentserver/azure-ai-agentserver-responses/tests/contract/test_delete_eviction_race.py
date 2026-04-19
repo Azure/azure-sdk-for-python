@@ -9,8 +9,9 @@ in-memory state, causing ``delete()`` to return ``False`` and producing
 a spurious 404.
 
 The fix falls through to the durable provider when ``delete()`` returns
-``False`` — since ``try_evict`` only runs AFTER provider persistence,
-the provider always has the response at that point.
+``False`` — since ``try_evict`` only runs AFTER a provider persistence
+attempt, the provider will typically have the response at that point,
+though it may not if persistence failed.
 
 Regression test for: intermittent DELETE 404 caused by eviction race
 between _runtime_state.get() and _runtime_state.delete().
@@ -139,17 +140,35 @@ class TestDeleteEvictionRace:
 
         This tests the normal provider-fallback path (record=None) rather than
         the race path, but serves as a baseline that the provider has the data.
-        Uses a recording wrapper to assert the provider delete was actually called.
+        Uses _RuntimeState.get patching to deterministically detect when the
+        record has been evicted, and tracks _provider_delete_response calls to
+        verify the fallback path (not the normal in-memory delete path) ran.
         """
-        _provider_delete_called = False
-        _original_delete = InMemoryResponseProvider.delete_response
+        from azure.ai.agentserver.responses.hosting._endpoint_handler import _ResponseEndpointHandler
 
-        async def _recording_delete(self: InMemoryResponseProvider, response_id: str, **kwargs: Any) -> None:
-            nonlocal _provider_delete_called
-            _provider_delete_called = True
-            return await _original_delete(self, response_id, **kwargs)
+        _fallback_delete_called = False
+        _original_provider_delete = _ResponseEndpointHandler._provider_delete_response
 
-        monkeypatch.setattr(InMemoryResponseProvider, "delete_response", _recording_delete)
+        async def _recording_fallback(self_handler: Any, response_id: str, isolation: Any, headers: Any) -> Any:
+            nonlocal _fallback_delete_called
+            _fallback_delete_called = True
+            return await _original_provider_delete(self_handler, response_id, isolation, headers)
+
+        monkeypatch.setattr(_ResponseEndpointHandler, "_provider_delete_response", _recording_fallback)
+
+        from azure.ai.agentserver.responses.hosting._runtime_state import _RuntimeState as RS
+
+        _original_rs_get = RS.get
+        _eviction_detected = False
+
+        async def _detecting_get(self_rs: Any, response_id: str) -> Any:
+            nonlocal _eviction_detected
+            result = await _original_rs_get(self_rs, response_id)
+            if result is None:
+                _eviction_detected = True
+            return result
+
+        monkeypatch.setattr(RS, "get", _detecting_get)
 
         provider = InMemoryResponseProvider()
         app = ResponsesAgentServerHost(store=provider)
@@ -166,15 +185,10 @@ class TestDeleteEvictionRace:
         # Wait for terminal (natural eviction will happen)
         _wait_for_terminal(client, response_id)
 
-        # Poll until the record is gone from runtime state (eviction complete)
-        # rather than relying on a fixed sleep.
+        # Poll until _RuntimeState.get returns None for this ID (eviction complete)
         def _is_evicted() -> bool:
-            get_resp = client.get(f"/responses/{response_id}")
-            # After eviction, GET still returns 200 via provider fallback —
-            # but the runtime state no longer has the record, so the handler
-            # takes the fallback path. We can't distinguish from outside,
-            # so just ensure the response is retrievable.
-            return get_resp.status_code == 200
+            client.get(f"/responses/{response_id}")
+            return _eviction_detected
 
         ok, failure = poll_until(
             _is_evicted,
@@ -184,7 +198,7 @@ class TestDeleteEvictionRace:
         )
         assert ok, failure
 
-        # DELETE — should succeed via provider fallback (or race-recovery)
+        # DELETE — should succeed via provider fallback (record is None)
         delete_resp = client.delete(f"/responses/{response_id}")
         assert delete_resp.status_code == 200, (
             f"Expected 200 but got {delete_resp.status_code}: {delete_resp.json()}"
@@ -192,8 +206,9 @@ class TestDeleteEvictionRace:
         body = delete_resp.json()
         assert body["id"] == response_id
         assert body["deleted"] is True
-        # Verify the provider was actually called (not just an in-memory path)
-        assert _provider_delete_called, "Expected provider.delete_response to be called"
+        # Verify the _provider_delete_response fallback was used (not the
+        # normal in-memory delete path which also calls provider.delete_response)
+        assert _fallback_delete_called, "Expected _provider_delete_response fallback to be called"
 
     def test_second_delete_after_race_recovery_returns_404(self, monkeypatch: pytest.MonkeyPatch) -> None:
         """After a race-recovered DELETE, a second DELETE should return 404."""

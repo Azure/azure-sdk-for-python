@@ -347,12 +347,11 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                     # ``await signal.wait()`` can resume and capture the
                     # in_progress snapshot *before* the handler continues
                     # to terminal state.  Without this, handlers that yield
-                    # events synchronously (no await between yields) will
+                    # events synchronously (no await between yields) can
                     # run to completion — including transition_to("completed"),
                     # persistence, and eager eviction — in a single
                     # uninterrupted coroutine run, causing the POST response
-                    # to return "completed" (or even 404 after eviction)
-                    # instead of "in_progress".
+                    # to return "completed" instead of "in_progress".
                     await asyncio.sleep(0)
                 else:
                     # Track output_item.added events for FR-008a
