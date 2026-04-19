@@ -57,7 +57,7 @@ def _parse_trace_id_from_traceparent(traceparent: str | None) -> str | None:
     if not traceparent:
         return None
     parts = traceparent.strip().split("-")
-    # W3C traceparent has exactly 4 fields: version-traceid-parentid-flags
+    # W3C traceparent has exactly 4 fields: version-trace_id-parent_id-flags
     if len(parts) >= 4 and len(parts[1]) == 32 and parts[1] != "0" * 32:
         return parts[1]
     return None
