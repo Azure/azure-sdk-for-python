@@ -245,7 +245,7 @@ def request_span(
     if x_request_id:
         ctx = _otel_baggage.set_baggage("x_request_id", x_request_id, context=ctx)
 
-    with tracer.start_as_current_span(
+    with tracer.start_as_current_span(  # type: ignore[reportGeneralTypeIssues]
         name=name,
         attributes=attrs,
         kind=trace.SpanKind.SERVER,
@@ -549,6 +549,7 @@ def _setup_trace_export(provider: Any, connection_string: str) -> None:
         return
     try:
         from opentelemetry.sdk.trace.export import BatchSpanProcessor
+
         from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter  # type: ignore[import-untyped]
     except ImportError:
         logger.warning("Trace export requires azure-monitor-opentelemetry-exporter.")
@@ -567,6 +568,7 @@ def _setup_log_export(resource: Any, connection_string: str) -> None:
         from opentelemetry._logs import set_logger_provider
         from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
         from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+
         from azure.monitor.opentelemetry.exporter import AzureMonitorLogExporter  # type: ignore[import-untyped]
     except ImportError:
         logger.warning("Log export requires azure-monitor-opentelemetry-exporter.")
@@ -615,9 +617,12 @@ def _setup_otlp_log_export(resource: Any, endpoint: str) -> None:
         from opentelemetry._logs import set_logger_provider
         log_provider = LoggerProvider(resource=resource)
         set_logger_provider(log_provider)
-    log_provider.add_log_record_processor(BatchLogRecordProcessor(
-        OTLPLogExporter(endpoint=endpoint)))  # type: ignore[union-attr]
-    log_provider.add_log_record_processor(_BaggageLogRecordProcessor())  # type: ignore[arg-type]
+    log_provider.add_log_record_processor(  # type: ignore[union-attr]
+        BatchLogRecordProcessor(OTLPLogExporter(endpoint=endpoint))
+    )
+    log_provider.add_log_record_processor(  # type: ignore[union-attr]
+        _BaggageLogRecordProcessor()  # type: ignore[arg-type]
+    )
     # Note: LoggingHandler is NOT added here to avoid duplicating the
     # handler already installed by _setup_log_export. The OTel LoggerProvider
     # receives log records via the handler added there (or from direct OTel
