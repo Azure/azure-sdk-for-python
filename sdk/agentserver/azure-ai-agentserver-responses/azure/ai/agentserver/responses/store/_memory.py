@@ -641,6 +641,7 @@ class InMemoryResponseProvider(ResponseProviderProtocol, ResponseStreamProviderP
 
         for response_id in expired_ids:
             del self._entries[response_id]
+            self._stream_events.pop(response_id, None)
 
         return len(expired_ids)
 

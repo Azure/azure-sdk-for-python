@@ -329,9 +329,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :return: Headers dict with ``x-agent-session-id`` when available.
         :rtype: dict[str, str]
         """
-        sid = session_id or (
-            getattr(getattr(self._host, "config", None), "session_id", "") or ""
-        )
+        sid = session_id or (getattr(getattr(self._host, "config", None), "session_id", "") or "")
         headers = dict(self._response_headers)
         if sid:
             headers["x-agent-session-id"] = sid
@@ -793,7 +791,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         record = await self._runtime_state.get(response_id)
         if record is None:
             return await self._handle_get_fallback(
-                request, response_id, stream_replay_param, _isolation, _hdrs,
+                request,
+                response_id,
+                stream_replay_param,
+                _isolation,
+                _hdrs,
             )
 
         # Chat isolation enforcement on in-flight response
@@ -917,7 +919,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
             # Stream provider fallback: replay persisted SSE events when runtime state is gone.
             replay_response = await self._try_replay_persisted_stream(
-                request, response_id, isolation=_isolation, headers=_hdrs,
+                request,
+                response_id,
+                isolation=_isolation,
+                headers=_hdrs,
             )
             if replay_response is not None:
                 return replay_response
@@ -955,7 +960,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             except FoundryApiError as exc:
                 logger.error(
                     "Storage API error for GET SSE replay response_id=%s: %s",
-                    response_id, exc, exc_info=True,
+                    response_id,
+                    exc,
+                    exc_info=True,
                 )
                 return _error_response(exc, _hdrs)
             except Exception:  # pylint: disable=broad-exception-caught
@@ -1356,9 +1363,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         before = request.query_params.get("before")
 
         try:
-            items = await self._provider.get_input_items(
-                response_id, limit=100, ascending=True, isolation=_isolation
-            )
+            items = await self._provider.get_input_items(response_id, limit=100, ascending=True, isolation=_isolation)
         except ValueError:
             return _deleted_response(response_id, _hdrs)
         except FoundryResourceNotFoundError:

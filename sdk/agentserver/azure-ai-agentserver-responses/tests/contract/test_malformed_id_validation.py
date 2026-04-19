@@ -37,6 +37,7 @@ def _make_client() -> TestClient:
 
 # ── Path parameter ID validation ──────────────────────────
 
+
 class TestMalformedPathId:
     """Path parameter ``response_id`` validation on all endpoints (B40)."""
 
@@ -89,17 +90,21 @@ class TestMalformedPathId:
 
 # ── Body field ``previous_response_id`` validation ─────────
 
+
 class TestMalformedPreviousResponseId:
     """``previous_response_id`` in POST body must be valid ``caresp`` format."""
 
     def test_malformed_previous_response_id_returns_400(self) -> None:
         """Malformed previous_response_id returns 400 with invalid_parameters code and param."""
         client = _make_client()
-        r = client.post("/responses", json={
-            "model": "m",
-            "input": [{"role": "user", "content": "hi"}],
-            "previous_response_id": "totally-invalid",
-        })
+        r = client.post(
+            "/responses",
+            json={
+                "model": "m",
+                "input": [{"role": "user", "content": "hi"}],
+                "previous_response_id": "totally-invalid",
+            },
+        )
         assert r.status_code == 400
         body = r.json()
         error = body["error"]
@@ -109,11 +114,14 @@ class TestMalformedPreviousResponseId:
 
     def test_wrong_prefix_previous_response_id_returns_400(self) -> None:
         client = _make_client()
-        r = client.post("/responses", json={
-            "model": "m",
-            "input": [{"role": "user", "content": "hi"}],
-            "previous_response_id": "resp_abc123xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        })
+        r = client.post(
+            "/responses",
+            json={
+                "model": "m",
+                "input": [{"role": "user", "content": "hi"}],
+                "previous_response_id": "resp_abc123xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+            },
+        )
         assert r.status_code == 400
 
     def test_valid_format_nonexistent_previous_response_id_not_rejected_by_format(self) -> None:
@@ -122,11 +130,14 @@ class TestMalformedPreviousResponseId:
         error shape (code=invalid_parameters, Malformed message)."""
         client = _make_client()
         valid_id = IdGenerator.new_response_id()
-        r = client.post("/responses", json={
-            "model": "m",
-            "input": [{"role": "user", "content": "hi"}],
-            "previous_response_id": valid_id,
-        })
+        r = client.post(
+            "/responses",
+            json={
+                "model": "m",
+                "input": [{"role": "user", "content": "hi"}],
+                "previous_response_id": valid_id,
+            },
+        )
         # If the server returns 400, it must NOT be the format-validation shape.
         if r.status_code == 400:
             error = r.json().get("error", {})

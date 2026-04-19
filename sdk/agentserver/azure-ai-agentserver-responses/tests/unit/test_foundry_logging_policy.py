@@ -203,8 +203,7 @@ class TestMaskStorageUrl:
 
     def test_masks_host_and_project_path(self) -> None:
         result = _mask_storage_url(
-            "https://acct.services.ai.azure.com/api/projects/myproj"
-            "/storage/responses/resp_123?api-version=2025-01-01"
+            "https://acct.services.ai.azure.com/api/projects/myproj/storage/responses/resp_123?api-version=2025-01-01"
         )
         assert result == "***/storage/responses/resp_123?api-version=2025-01-01"
         assert "acct.services.ai.azure.com" not in result

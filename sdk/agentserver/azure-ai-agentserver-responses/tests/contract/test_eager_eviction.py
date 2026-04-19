@@ -28,8 +28,8 @@ from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from tests._helpers import poll_until
 
-
 # ── Helpers ───────────────────────────────────────────────
+
 
 def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     async def _events():
@@ -40,6 +40,7 @@ def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
 
 
 # ── Async ASGI client (needed for background requests) ───
+
 
 class _AsgiResponse:
     def __init__(self, status_code: int, body: bytes, headers: list[tuple[bytes, bytes]]) -> None:
@@ -57,7 +58,9 @@ class _AsyncAsgiClient:
 
     @staticmethod
     def _build_scope(
-        method: str, path: str, body: bytes,
+        method: str,
+        path: str,
+        body: bytes,
         headers: list[tuple[bytes, bytes]] | None = None,
     ) -> dict[str, Any]:
         hdr: list[tuple[bytes, bytes]] = list(headers or [])
@@ -71,24 +74,30 @@ class _AsyncAsgiClient:
                 (b"content-length", str(len(body)).encode()),
             ]
         return {
-            "type": "http", "asgi": {"version": "3.0"}, "http_version": "1.1",
-            "method": method, "headers": hdr, "scheme": "http",
-            "path": path, "raw_path": path.encode(),
+            "type": "http",
+            "asgi": {"version": "3.0"},
+            "http_version": "1.1",
+            "method": method,
+            "headers": hdr,
+            "scheme": "http",
+            "path": path,
+            "raw_path": path.encode(),
             "query_string": query_string,
-            "server": ("localhost", 80), "client": ("127.0.0.1", 123),
+            "server": ("localhost", 80),
+            "client": ("127.0.0.1", 123),
             "root_path": "",
         }
 
     async def request(
-        self, method: str, path: str, *,
+        self,
+        method: str,
+        path: str,
+        *,
         json_body: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
     ) -> _AsgiResponse:
         body = _json.dumps(json_body).encode() if json_body else b""
-        raw_headers = (
-            [(k.lower().encode(), v.encode()) for k, v in headers.items()]
-            if headers else []
-        )
+        raw_headers = [(k.lower().encode(), v.encode()) for k, v in headers.items()] if headers else []
         scope = self._build_scope(method, path, body, raw_headers)
         status_code: int | None = None
         response_headers: list[tuple[bytes, bytes]] = []
@@ -124,7 +133,10 @@ class _AsyncAsgiClient:
         return await self.request("GET", path, headers=headers)
 
     async def post(
-        self, path: str, *, json_body: dict[str, Any] | None = None,
+        self,
+        path: str,
+        *,
+        json_body: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
     ) -> _AsgiResponse:
         return await self.request("POST", path, json_body=json_body, headers=headers)
@@ -146,11 +158,14 @@ def _make_client(handler=_noop_handler) -> TestClient:
 
 def _create_and_complete(client: TestClient, *, store: bool = True) -> str:
     """Create a sync response and return the response_id."""
-    r = client.post("/responses", json={
-        "model": "m",
-        "input": [{"role": "user", "content": "hi"}],
-        "store": store,
-    })
+    r = client.post(
+        "/responses",
+        json={
+            "model": "m",
+            "input": [{"role": "user", "content": "hi"}],
+            "store": store,
+        },
+    )
     assert r.status_code == 200
     body = r.json()
     assert body["status"] in {"completed", "failed", "incomplete"}
@@ -253,12 +268,15 @@ class TestBackgroundEviction:
 
         # Start background response
         post_task = asyncio.create_task(
-            client.post("/responses", json_body={
-                "response_id": response_id,
-                "model": "test",
-                "background": True,
-                "stream": True,
-            })
+            client.post(
+                "/responses",
+                json_body={
+                    "response_id": response_id,
+                    "model": "test",
+                    "background": True,
+                    "stream": True,
+                },
+            )
         )
 
         # Wait for handler to start

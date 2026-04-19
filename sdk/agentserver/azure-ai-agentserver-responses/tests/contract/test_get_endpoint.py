@@ -142,9 +142,7 @@ def test_get__returns_404_for_unknown_response_id() -> None:
     assert payload["error"].get("code") == "invalid_request_error"
     # 404 message must reference the requested response ID
     error_message = payload["error"].get("message", "")
-    assert unknown_id in error_message, (
-        f"404 error message should reference the response ID, got: {error_message!r}"
-    )
+    assert unknown_id in error_message, f"404 error message should reference the response ID, got: {error_message!r}"
 
 
 def test_get__returns_snapshot_for_stored_non_background_stream_response_after_completion() -> None:
@@ -239,9 +237,7 @@ def test_get_replay__rejects_bg_non_stream_response() -> None:
     assert payload["error"]["type"] == "invalid_request_error"
     assert payload["error"].get("code") == "invalid_request_error"
     error_message = payload["error"].get("message", "")
-    assert "stream=true" in error_message, (
-        f"SSE replay rejection must mention 'stream=true', got: {error_message!r}"
-    )
+    assert "stream=true" in error_message, f"SSE replay rejection must mention 'stream=true', got: {error_message!r}"
     assert payload["error"].get("param") == "stream"
 
 

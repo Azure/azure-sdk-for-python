@@ -487,7 +487,8 @@ class TestSessionIdHeaderOnNonPostEndpoints:
         with patch.dict(os.environ, {"FOUNDRY_AGENT_SESSION_ID": env_session_id}):
             client = _build_client()
             create_resp = client.post(
-                "/responses", json={"model": "test", "background": True},
+                "/responses",
+                json={"model": "test", "background": True},
             )
             assert create_resp.status_code == 200
             response_id = create_resp.json()["id"]

@@ -22,7 +22,6 @@ import pytest
 
 from azure.ai.agentserver.responses import ResponsesAgentServerHost
 
-
 # ── Helpers ───────────────────────────────────────────────
 
 LOGGER_NAME = "azure.ai.agentserver"
@@ -40,6 +39,7 @@ def _make_app(handler=None):
         async def _events():
             if False:  # pragma: no cover
                 yield None
+
         return _events()
 
     if handler is not None:
@@ -63,7 +63,9 @@ class _AsyncAsgiClient:
 
     @staticmethod
     def _build_scope(
-        method: str, path: str, body: bytes,
+        method: str,
+        path: str,
+        body: bytes,
         headers: list[tuple[bytes, bytes]] | None = None,
     ) -> dict[str, Any]:
         hdr: list[tuple[bytes, bytes]] = list(headers or [])
@@ -77,24 +79,30 @@ class _AsyncAsgiClient:
                 (b"content-length", str(len(body)).encode()),
             ]
         return {
-            "type": "http", "asgi": {"version": "3.0"}, "http_version": "1.1",
-            "method": method, "headers": hdr, "scheme": "http",
-            "path": path, "raw_path": path.encode(),
+            "type": "http",
+            "asgi": {"version": "3.0"},
+            "http_version": "1.1",
+            "method": method,
+            "headers": hdr,
+            "scheme": "http",
+            "path": path,
+            "raw_path": path.encode(),
             "query_string": query_string,
-            "server": ("localhost", 80), "client": ("127.0.0.1", 123),
+            "server": ("localhost", 80),
+            "client": ("127.0.0.1", 123),
             "root_path": "",
         }
 
     async def request(
-        self, method: str, path: str, *,
+        self,
+        method: str,
+        path: str,
+        *,
         json_body: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
     ) -> _AsgiResponse:
         body = _json.dumps(json_body).encode() if json_body else b""
-        raw_headers = (
-            [(k.lower().encode(), v.encode()) for k, v in headers.items()]
-            if headers else []
-        )
+        raw_headers = [(k.lower().encode(), v.encode()) for k, v in headers.items()] if headers else []
         scope = self._build_scope(method, path, body, raw_headers)
         status_code: int | None = None
         response_headers: list[tuple[bytes, bytes]] = []
@@ -130,7 +138,10 @@ class _AsyncAsgiClient:
         return await self.request("GET", path, headers=headers)
 
     async def post(
-        self, path: str, *, json_body: dict[str, Any] | None = None,
+        self,
+        path: str,
+        *,
+        json_body: dict[str, Any] | None = None,
         headers: dict[str, str] | None = None,
     ) -> _AsgiResponse:
         return await self.request("POST", path, json_body=json_body, headers=headers)
@@ -174,7 +185,8 @@ class TestInboundRequestLoggingMiddleware:
         assert resp.status_code == 404
 
         warning_records = [
-            r for r in caplog.records
+            r
+            for r in caplog.records
             if r.name == LOGGER_NAME
             and r.levelno == logging.WARNING
             and "Inbound" in r.message
@@ -234,7 +246,7 @@ class TestInboundRequestLoggingMiddleware:
         client = _AsyncAsgiClient(app)
 
         with caplog.at_level(logging.INFO, logger=LOGGER_NAME):
-            resp = await client.get(f"/responses/{_NONEXISTENT_ID}?stream=true")
+            await client.get(f"/responses/{_NONEXISTENT_ID}?stream=true")
         # The response should be 404 but that's fine — we're checking the logs
         messages = [r.message for r in caplog.records if r.name == LOGGER_NAME and "Inbound" in r.message]
         assert len(messages) >= 1
@@ -253,7 +265,8 @@ class TestInboundRequestLoggingMiddleware:
             await client.post("/responses", json_body={"model": "m"})
 
         completion_msgs = [
-            r.message for r in caplog.records
+            r.message
+            for r in caplog.records
             if r.name == LOGGER_NAME and "Inbound" in r.message and "completed" in r.message
         ]
         assert len(completion_msgs) >= 1

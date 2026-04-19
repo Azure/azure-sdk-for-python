@@ -1021,11 +1021,7 @@ def test_item_reference_input_items_endpoint() -> None:
     # History items from the chain may also be present.
     item_ids = [item.get("id") for item in items]
     inline_present = any(
-        any(
-            p.get("text") == "New input"
-            for p in (item.get("content") or [])
-            if p.get("type") == "input_text"
-        )
+        any(p.get("text") == "New input" for p in (item.get("content") or []) if p.get("type") == "input_text")
         for item in items
     )
     assert inline_present, "Inline message 'New input' not found in persisted input items"

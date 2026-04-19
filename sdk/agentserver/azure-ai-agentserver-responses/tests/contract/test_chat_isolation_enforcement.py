@@ -24,8 +24,8 @@ from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 from tests._helpers import poll_until
 
-
 # ── Shared helpers (sync, for GET / DELETE / INPUT_ITEMS) ──
+
 
 def _noop_handler(request: Any, context: Any, cancellation_signal: Any):
     async def _events():
@@ -41,9 +41,7 @@ def _make_client(handler=_noop_handler) -> TestClient:
     return TestClient(host)
 
 
-def _create_response(
-    client: TestClient, *, chat_key: str | None = None, **overrides
-) -> dict[str, Any]:
+def _create_response(client: TestClient, *, chat_key: str | None = None, **overrides) -> dict[str, Any]:
     """Create a response and return the parsed JSON body."""
     payload = {
         "model": "m",
@@ -58,9 +56,7 @@ def _create_response(
     return r.json()
 
 
-def _wait_for_terminal(
-    client: TestClient, response_id: str, **headers: str
-) -> dict[str, Any]:
+def _wait_for_terminal(client: TestClient, response_id: str, **headers: str) -> dict[str, Any]:
     latest: dict[str, Any] = {}
     terminal = {"completed", "failed", "incomplete", "cancelled"}
 
@@ -80,9 +76,7 @@ def _wait_for_terminal(
 
 
 class _AsgiResponse:
-    def __init__(
-        self, status_code: int, body: bytes, headers: list[tuple[bytes, bytes]]
-    ) -> None:
+    def __init__(self, status_code: int, body: bytes, headers: list[tuple[bytes, bytes]]) -> None:
         self.status_code = status_code
         self.body = body
         self.headers = headers
@@ -138,11 +132,7 @@ class _AsyncAsgiClient:
         headers: dict[str, str] | None = None,
     ) -> _AsgiResponse:
         body = _json.dumps(json_body).encode() if json_body else b""
-        raw_headers = (
-            [(k.lower().encode(), v.encode()) for k, v in headers.items()]
-            if headers
-            else []
-        )
+        raw_headers = [(k.lower().encode(), v.encode()) for k, v in headers.items()] if headers else []
         scope = self._build_scope(method, path, body, raw_headers)
         status_code: int | None = None
         response_headers: list[tuple[bytes, bytes]] = []
@@ -178,9 +168,7 @@ class _AsyncAsgiClient:
             headers=response_headers,
         )
 
-    async def get(
-        self, path: str, *, headers: dict[str, str] | None = None
-    ) -> _AsgiResponse:
+    async def get(self, path: str, *, headers: dict[str, str] | None = None) -> _AsgiResponse:
         return await self.request("GET", path, headers=headers)
 
     async def post(
@@ -222,6 +210,7 @@ def _build_async_client(handler: Any) -> _AsyncAsgiClient:
 
 
 # ── GET with isolation ────────────────────────────────────
+
 
 class TestGetChatIsolation:
     """GET /responses/{id} with chat isolation key enforcement.
@@ -360,6 +349,7 @@ class TestGetChatIsolation:
 
 
 # ── DELETE with isolation ────────────────────────────────
+
 
 class TestDeleteChatIsolation:
     """DELETE /responses/{id} with chat isolation key enforcement.
@@ -557,6 +547,7 @@ class TestCancelChatIsolation:
 
 
 # ── INPUT_ITEMS with isolation ────────────────────────────
+
 
 class TestInputItemsChatIsolation:
     """GET /responses/{id}/input_items with chat isolation key enforcement.
