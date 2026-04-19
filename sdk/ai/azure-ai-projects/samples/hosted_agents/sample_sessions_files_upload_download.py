@@ -25,6 +25,8 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format '<registry>/<repository>[:<tag>|@<digest>]'
+     3) FOUNDRY_PROJECTS_AZURE_SUBSCRIPTION_ID - Azure subscription ID where the
+         Azure AI account and project are deployed.
 
     You can build and push an example image from
     `samples/hosted_agents/assets/responses-echo-agent` and use that image value
@@ -38,12 +40,14 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
-from hosted_agents_util import create_agent_and_session
+from hosted_agents_util import create_agent, create_session
+from rbac_util import ensure_agent_identity_rbac
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 image = os.environ["FOUNDRY_AGENT_CONTAINER_IMAGE"]
+subscription_id = os.environ["FOUNDRY_PROJECTS_AZURE_SUBSCRIPTION_ID"]
 
 # Construct the paths to the data folder and data file used in this sample
 script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -52,6 +56,7 @@ data_file1 = os.path.join(data_folder, "data_file1.txt")
 data_file2 = os.path.join(data_folder, "data_file2.txt")
 remote_file_path1 = "/remote/data_file1.txt"
 remote_file_path2 = "/remote/data_file2.txt"
+agent_name = "MySessionHostedAgent"
 
 
 with (
@@ -61,57 +66,61 @@ with (
         credential=credential,
         allow_preview=True,
     ) as project_client,
+    create_agent(project_client, agent_name, image) as agent,
+    ensure_agent_identity_rbac(
+        agent=agent,
+        credential=credential,
+        subscription_id=subscription_id,
+        foundry_project_endpoint=endpoint,
+    ),
+    create_session(project_client, agent_name, agent.version) as session,
 ):
-    agent_name = "MySessionHostedAgent"
+    # Upload and list session files
+    project_client.beta.agents.upload_session_file(
+        agent_name=agent_name,
+        session_id=session.agent_session_id,
+        content_or_file_path=data_file1,
+        path=remote_file_path1,
+    )
 
-    with create_agent_and_session(project_client, agent_name, image) as (_, session):
+    print(f"Uploading session file: {data_file2} -> {remote_file_path2}")
+    project_client.beta.agents.upload_session_file(
+        agent_name=agent_name,
+        session_id=session.agent_session_id,
+        content_or_file_path=data_file2,
+        path=remote_file_path2,
+    )
 
-        # Upload and list session files
-        project_client.beta.agents.upload_session_file(
-            agent_name=agent_name,
-            session_id=session.agent_session_id,
-            content_or_file_path=data_file1,
-            path=remote_file_path1,
-        )
+    print("Listing session files for the session at path '.'...")
+    files = project_client.beta.agents.get_session_files(
+        agent_name=agent_name,
+        session_id=session.agent_session_id,
+        path="/remote",
+    )
+    for entry in files.entries:
+        print(f"  - name={entry.name}, size={entry.size}, is_directory={entry.is_directory}")
 
-        print(f"Uploading session file: {data_file2} -> {remote_file_path2}")
-        project_client.beta.agents.upload_session_file(
-            agent_name=agent_name,
-            session_id=session.agent_session_id,
-            content_or_file_path=data_file2,
-            path=remote_file_path2,
-        )
-
-        print("Listing session files for the session at path '.'...")
-        files = project_client.beta.agents.get_session_files(
-            agent_name=agent_name,
-            session_id=session.agent_session_id,
-            path="/remote",
-        )
-        for entry in files.entries:
-            print(f"  - name={entry.name}, size={entry.size}, is_directory={entry.is_directory}")
-
-        print(f"Downloading and printing content from '{remote_file_path1}'")
-        content_bytes = b"".join(
-            project_client.beta.agents.download_session_file(
-                agent_name=agent_name,
-                session_id=session.agent_session_id,
-                path=remote_file_path1,
-            )
-        )
-        file_content = content_bytes.decode("utf-8", errors="replace")
-        print(f"Session file content ({remote_file_path1}):\n{file_content}")
-
-        print(f"Deleting session file at path: {remote_file_path1}...")
-        project_client.beta.agents.delete_session_file(
+    print(f"Downloading and printing content from '{remote_file_path1}'")
+    content_bytes = b"".join(
+        project_client.beta.agents.download_session_file(
             agent_name=agent_name,
             session_id=session.agent_session_id,
             path=remote_file_path1,
         )
+    )
+    file_content = content_bytes.decode("utf-8", errors="replace")
+    print(f"Session file content ({remote_file_path1}):\n{file_content}")
 
-        print(f"Deleting session file at path: {remote_file_path2}...")
-        project_client.beta.agents.delete_session_file(
-            agent_name=agent_name,
-            session_id=session.agent_session_id,
-            path=remote_file_path2,
-        )
+    print(f"Deleting session file at path: {remote_file_path1}...")
+    project_client.beta.agents.delete_session_file(
+        agent_name=agent_name,
+        session_id=session.agent_session_id,
+        path=remote_file_path1,
+    )
+
+    print(f"Deleting session file at path: {remote_file_path2}...")
+    project_client.beta.agents.delete_session_file(
+        agent_name=agent_name,
+        session_id=session.agent_session_id,
+        path=remote_file_path2,
+    )

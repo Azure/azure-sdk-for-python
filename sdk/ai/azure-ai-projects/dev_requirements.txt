@@ -8,6 +8,7 @@ azure-core-tracing-opentelemetry
 azure-mgmt-authorization
 azure-mgmt-cognitiveservices
 azure-mgmt-resource
+azure-mgmt-subscription
 azure-monitor-opentelemetry
 azure-monitor-query
 jsonref

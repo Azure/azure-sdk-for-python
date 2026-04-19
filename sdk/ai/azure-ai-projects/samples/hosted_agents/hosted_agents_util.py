@@ -2,11 +2,17 @@ import asyncio
 import logging
 import time
 from contextlib import asynccontextmanager, contextmanager
-from typing import AsyncGenerator, Optional
+from typing import Any, AsyncGenerator, Iterator, Optional
 
 from azure.ai.projects import AIProjectClient
 from azure.ai.projects.aio import AIProjectClient as AsyncAIProjectClient
-from azure.ai.projects.models import HostedAgentDefinition, ProtocolVersionRecord, VersionRefIndicator
+from azure.ai.projects.models import (
+    HostedAgentDefinition,
+    ProtocolVersionRecord,
+    VersionRefIndicator,
+    AgentVersionDetails,
+    AgentSessionResource,
+)
 
 
 def wait_for_agent_version_active(
@@ -82,12 +88,11 @@ async def wait_for_agent_version_active_async(
 
 
 @contextmanager
-def create_agent_and_session(
+def create_agent(
     project_client: AIProjectClient,
     agent_name: str,
     image: str,
-    isolation_key: str = "sample-isolation-key",
-):
+) -> Iterator[AgentVersionDetails]:
     agent = project_client.agents.create_version(
         agent_name=agent_name,
         definition=HostedAgentDefinition(
@@ -102,21 +107,31 @@ def create_agent_and_session(
     )
     print(f"Agent created (name: {agent.name}, version: {agent.version})")
 
-    wait_for_agent_version_active(
-        project_client=project_client,
-        agent_name=agent_name,
-        agent_version=agent.version,
-    )
+    wait_for_agent_version_active(project_client=project_client, agent_name=agent_name, agent_version=agent.version)
 
+    try:
+        yield agent
+    finally:
+        project_client.agents.delete_version(agent_name=agent_name, agent_version=agent.version)
+        print(f"Agent version {agent.version} deleted.")
+
+
+@contextmanager
+def create_session(
+    project_client: AIProjectClient,
+    agent_name: str,
+    agent_version: str,
+    isolation_key: str = "sample-isolation-key",
+) -> Iterator[AgentSessionResource]:
     session = project_client.beta.agents.create_session(
         agent_name=agent_name,
         isolation_key=isolation_key,
-        version_indicator=VersionRefIndicator(agent_version=agent.version),
+        version_indicator=VersionRefIndicator(agent_version=agent_version),
     )
     print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
 
     try:
-        yield agent, session
+        yield session
     finally:
         project_client.beta.agents.delete_session(
             agent_name=agent_name,
@@ -124,54 +139,3 @@ def create_agent_and_session(
             isolation_key=isolation_key,
         )
         print(f"Session with id: {session.agent_session_id} deleted.")
-
-        project_client.agents.delete_version(agent_name=agent_name, agent_version=agent.version)
-        print(f"Agent version {agent.version} deleted.")
-
-
-@asynccontextmanager
-async def create_agent_and_session_async(
-    project_client: AsyncAIProjectClient,
-    agent_name: str,
-    image: str,
-    isolation_key: str = "sample-isolation-key",
-) -> AsyncGenerator[tuple[str, str], None]:
-    agent = await project_client.agents.create_version(
-        agent_name=agent_name,
-        definition=HostedAgentDefinition(
-            cpu="0.5",
-            memory="1Gi",
-            image=image,
-            container_protocol_versions=[
-                ProtocolVersionRecord(protocol="responses", version="1.0.0"),
-            ],
-        ),
-        metadata={"enableVnextExperience": "true"},
-    )
-    print(f"Agent created (name: {agent.name}, version: {agent.version})")
-
-    await wait_for_agent_version_active_async(
-        project_client=project_client,
-        agent_name=agent_name,
-        agent_version=agent.version,
-    )
-
-    session = await project_client.beta.agents.create_session(
-        agent_name=agent_name,
-        isolation_key=isolation_key,
-        version_indicator=VersionRefIndicator(agent_version=agent.version),
-    )
-    print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
-
-    try:
-        yield agent.version, session.agent_session_id
-    finally:
-        await project_client.beta.agents.delete_session(
-            agent_name=agent_name,
-            session_id=session.agent_session_id,
-            isolation_key=isolation_key,
-        )
-        print(f"Session with id: {session.agent_session_id} deleted.")
-
-        await project_client.agents.delete_version(agent_name=agent_name, agent_version=agent.version)
-        print(f"Agent version {agent.version} deleted.")

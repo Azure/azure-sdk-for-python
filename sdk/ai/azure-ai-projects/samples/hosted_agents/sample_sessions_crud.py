@@ -25,10 +25,24 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format '<registry>/<repository>[:<tag>|@<digest>]'
+     3) FOUNDRY_PROJECTS_AZURE_SUBSCRIPTION_ID - Azure subscription ID where the
+         Azure AI account and project are deployed.
 
     You can build and push an example image from
     `samples/hosted_agents/assets/responses-echo-agent` and use that image value
     for `FOUNDRY_AGENT_CONTAINER_IMAGE`.
+
+SDK FUNCTIONS:
+    - project_client.agents.create_version: creates an agent version (via create_agent context manager).
+    - ensure_agent_identity_rbac: sets up RBAC for the agent's managed identity (context manager).
+    - project_client.beta.agents.create_session: creates a session for the agent (via create_session context manager).
+    - project_client.beta.agents.get_session: retrieves a session by ID.
+    - project_client.beta.agents.list_sessions: lists sessions for an agent.
+
+CLEANUP FUNCTIONS (called on context manager exit in reverse order):
+    - project_client.beta.agents.delete_session: deletes the session.
+    - authorization_client.role_assignments.delete: removes the RBAC role assignment (only if this sample created it).
+    - project_client.agents.delete_version: deletes the agent version.
 """
 
 import os
@@ -38,13 +52,16 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import HostedAgentDefinition, VersionRefIndicator, ProtocolVersionRecord
-from hosted_agents_util import wait_for_agent_version_active
+from hosted_agents_util import create_agent, create_session
+from rbac_util import ensure_agent_identity_rbac
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 image = os.environ["FOUNDRY_AGENT_CONTAINER_IMAGE"]
+subscription_id = os.environ["FOUNDRY_PROJECTS_AZURE_SUBSCRIPTION_ID"]
+agent_name = "MySessionHostedAgent"
+isolation_key = "sample-isolation-key"
 
 with (
     DefaultAzureCredential() as credential,
@@ -53,41 +70,15 @@ with (
         credential=credential,
         allow_preview=True,
     ) as project_client,
+    create_agent(project_client, agent_name, image) as agent,
+    ensure_agent_identity_rbac(
+        agent=agent,
+        credential=credential,
+        subscription_id=subscription_id,
+        foundry_project_endpoint=endpoint,
+    ),
+    create_session(project_client, agent_name, agent.version, isolation_key=isolation_key) as session,
 ):
-    agent_name = "MySessionHostedAgent"
-
-    # Create an agent version to back the session
-    agent = project_client.agents.create_version(
-        agent_name=agent_name,
-        definition=HostedAgentDefinition(
-            cpu="0.5",
-            memory="1Gi",
-            image=image,
-            container_protocol_versions=[
-                ProtocolVersionRecord(protocol="responses", version="1.0.0"),
-            ],
-        ),
-        metadata={"enableVnextExperience": "true"},
-    )
-    print(f"Agent created (name: {agent.name}, version: {agent.version})")
-
-    wait_for_agent_version_active(
-        project_client=project_client,
-        agent_name=agent_name,
-        agent_version=agent.version,
-    )
-
-    isolation_key = "sample-isolation-key"
-
-    # Create a session for the agent
-    print(f"Creating {3} sessions for the agent...")
-    session = project_client.beta.agents.create_session(
-        agent_name=agent_name,
-        isolation_key=isolation_key,
-        version_indicator=VersionRefIndicator(agent_version=agent.version),
-    )
-    print(f"Session created (id: {session.agent_session_id}, status: {session.status})")
-
     # Retrieve the session by its ID
     fetched = project_client.beta.agents.get_session(
         agent_name=agent_name,
@@ -101,12 +92,3 @@ with (
     print("Sessions:")
     for item in sessions:
         print(f"  - {item.agent_session_id} (status: {item.status})")
-
-    # Delete the session
-    print(f"Deleting session with id: {session.agent_session_id}...")
-    project_client.beta.agents.delete_session(
-        agent_name=agent_name,
-        session_id=session.agent_session_id,
-        isolation_key=isolation_key,
-    )
-    print(f"Session with id: {session.agent_session_id} deleted.")

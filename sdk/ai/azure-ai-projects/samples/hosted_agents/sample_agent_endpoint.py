@@ -28,6 +28,8 @@ USAGE:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
     2) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format '<registry>/<repository>[:<tag>|@<digest>]'
+     3) FOUNDRY_PROJECTS_AZURE_SUBSCRIPTION_ID - Azure subscription ID where the
+         Azure AI account and project are deployed.
 
     You can build and push an example image from
     `samples/hosted_agents/assets/responses-echo-agent` and use that image value
@@ -47,12 +49,14 @@ from azure.ai.projects.models import (
     FixedRatioVersionSelectionRule,
     VersionSelector,
 )
-from hosted_agents_util import create_agent_and_session
+from hosted_agents_util import create_agent, create_session
+from rbac_util import ensure_agent_identity_rbac
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 image = os.environ["FOUNDRY_AGENT_CONTAINER_IMAGE"]
+subscription_id = os.environ["FOUNDRY_PROJECTS_AZURE_SUBSCRIPTION_ID"]
 agent_name = "MySessionHostedAgent"
 
 with (
@@ -62,7 +66,14 @@ with (
         credential=credential,
         allow_preview=True,
     ) as project_client,
-    create_agent_and_session(project_client, agent_name, image) as (agent, session),
+    create_agent(project_client, agent_name, image) as agent,
+    ensure_agent_identity_rbac(
+        agent=agent,
+        credential=credential,
+        subscription_id=subscription_id,
+        foundry_project_endpoint=endpoint,
+    ),
+    create_session(project_client, agent_name, agent.version) as session,
 ):
     # Configure endpoint routing so this agent name serves the created version.
     # 100% of traffic is routed to the single created version.
