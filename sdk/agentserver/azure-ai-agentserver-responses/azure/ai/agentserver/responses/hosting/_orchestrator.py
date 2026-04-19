@@ -53,6 +53,40 @@ if TYPE_CHECKING:
 logger = logging.getLogger("azure.ai.agentserver")
 
 
+async def _resolve_input_items_for_persistence(
+    context: "ResponseContext | None",
+    fallback_items: list[generated_models.OutputItem] | None,
+) -> list[generated_models.OutputItem] | None:
+    """Resolve ``item_reference`` inputs via the provider before persisting.
+
+    When the caller's input includes ``ItemReferenceParam`` entries (references
+    to previously-stored items), this function batch-resolves them through the
+    provider and returns concrete :class:`OutputItem` instances suitable for
+    storage.  If reference resolution is unavailable (no provider or failure),
+    falls back to *fallback_items* — the pre-expanded list that already has
+    references stripped.
+
+    :param context: The :class:`ResponseContext` for this request.
+    :type context: ResponseContext | None
+    :param fallback_items: Pre-expanded input items (references dropped).
+    :type fallback_items: list[OutputItem] | None
+    :return: Resolved output items, or ``None`` if the list is empty.
+    :rtype: list[OutputItem] | None
+    """
+    if context is not None:
+        try:
+            resolved = await context._get_input_items_for_persistence()  # pylint: disable=protected-access
+            if resolved:
+                return list(resolved)
+            return None
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug(
+                "item_reference resolution failed; falling back to pre-expanded items",
+                exc_info=True,
+            )
+    return list(fallback_items) if fallback_items else None
+
+
 def _check_first_event_contract(normalized: generated_models.ResponseStreamEvent, response_id: str) -> str | None:
     """Return an error message if the first handler event violates FR-006/FR-007, else None.
 
@@ -297,8 +331,11 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                                 if record.previous_response_id
                                 else None
                             )
+                            _resolved_items = await _resolve_input_items_for_persistence(
+                                context, record.input_items
+                            )
                             await provider.create_response(
-                                _response_obj, record.input_items or None, _history_ids, isolation=_isolation
+                                _response_obj, _resolved_items, _history_ids, isolation=_isolation
                             )
                             _provider_created = True
                         except Exception:  # pylint: disable=broad-exception-caught
@@ -435,8 +472,11 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                     # Response was never created (handler yielded nothing or
                     # failed before response.created) — create instead of update.
                     _isolation = context.isolation if context else None
+                    _resolved_items = await _resolve_input_items_for_persistence(
+                        context, record.input_items
+                    )
                     await provider.create_response(
-                        record.response, record.input_items or None, None, isolation=_isolation
+                        record.response, _resolved_items, None, isolation=_isolation
                     )
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning(
@@ -725,8 +765,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 if ctx.previous_response_id
                 else None
             )
+            _resolved_items = await _resolve_input_items_for_persistence(
+                ctx.context, ctx.input_items
+            )
             await self._provider.create_response(
-                _initial_response_obj, ctx.input_items or None, _history_ids, isolation=_isolation
+                _initial_response_obj, _resolved_items, _history_ids, isolation=_isolation
             )
 
     async def _process_handler_events(  # pylint: disable=too-many-return-statements
@@ -1157,9 +1200,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     if ctx.previous_response_id
                     else None
                 )
+                _resolved_items = await _resolve_input_items_for_persistence(
+                    ctx.context, ctx.input_items
+                )
                 await self._provider.create_response(
                     generated_models.ResponseObject(response_payload),
-                    ctx.input_items or None,
+                    _resolved_items,
                     _history_ids,
                     isolation=_isolation,
                 )
@@ -1472,9 +1518,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     if ctx.previous_response_id
                     else None
                 )
+                _resolved_items = await _resolve_input_items_for_persistence(
+                    ctx.context, ctx.input_items
+                )
                 await self._provider.create_response(
                     _response_obj,
-                    ctx.input_items or None,
+                    _resolved_items,
                     _history_ids,
                     isolation=_isolation,
                 )
