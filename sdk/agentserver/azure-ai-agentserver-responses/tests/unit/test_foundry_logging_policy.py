@@ -54,6 +54,30 @@ async def test_logging_policy_logs_successful_request(caplog: pytest.LogCaptureF
 
 
 @pytest.mark.asyncio
+async def test_logging_policy_logs_response_correlation_headers(caplog: pytest.LogCaptureFixture) -> None:
+    """x-request-id and apim-request-id from the response are logged for tracing."""
+    policy = FoundryStorageLoggingPolicy()
+    resp_headers = {
+        "x-ms-request-id": "ms-req-789",
+        "x-request-id": "trace-id-abc123",
+        "apim-request-id": "apim-456",
+    }
+    next_policy = AsyncMock()
+    next_policy.send = AsyncMock(return_value=_make_response(200, headers=resp_headers))
+    policy.next = next_policy
+
+    request = _make_request("POST", "https://storage.example.com/responses")
+
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        await policy.send(request)
+
+    msg = caplog.records[0].message
+    assert "x-ms-request-id=ms-req-789" in msg
+    assert "x-request-id=trace-id-abc123" in msg
+    assert "apim-request-id=apim-456" in msg
+
+
+@pytest.mark.asyncio
 async def test_logging_policy_logs_error_response_at_warning(caplog: pytest.LogCaptureFixture) -> None:
     policy = FoundryStorageLoggingPolicy()
     next_policy = AsyncMock()
@@ -127,8 +151,8 @@ async def test_logging_policy_logs_isolation_header_presence(caplog: pytest.LogC
         await policy.send(request)
 
     msg = caplog.records[0].message
-    assert "has_user_isolation_key=True" in msg
-    assert "has_chat_isolation_key=True" in msg
+    assert "HasUserIsolationKey=True" in msg
+    assert "HasChatIsolationKey=True" in msg
     # Values must never appear
     assert "secret-user-key" not in msg
     assert "secret-chat-key" not in msg
@@ -149,8 +173,8 @@ async def test_logging_policy_logs_isolation_header_absence(caplog: pytest.LogCa
         await policy.send(request)
 
     msg = caplog.records[0].message
-    assert "has_user_isolation_key=False" in msg
-    assert "has_chat_isolation_key=False" in msg
+    assert "HasUserIsolationKey=False" in msg
+    assert "HasChatIsolationKey=False" in msg
 
 
 @pytest.mark.asyncio
@@ -169,8 +193,8 @@ async def test_logging_policy_failure_logs_isolation_header_presence(caplog: pyt
             await policy.send(request)
 
     msg = caplog.records[0].message
-    assert "has_user_isolation_key=False" in msg
-    assert "has_chat_isolation_key=True" in msg
+    assert "HasUserIsolationKey=False" in msg
+    assert "HasChatIsolationKey=True" in msg
     assert "secret" not in msg
 
 

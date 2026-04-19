@@ -203,8 +203,29 @@ class TestInboundRequestLoggingMiddleware:
         messages = [r.message for r in caplog.records if r.name == LOGGER_NAME]
         start_msgs = [m for m in messages if "Inbound" in m and "started" in m]
         assert len(start_msgs) >= 1
-        assert "x-request-id=req-abc-123" in start_msgs[0]
-        assert "x-ms-client-request-id=client-xyz" in start_msgs[0]
+        assert "x-request-id: req-abc-123" in start_msgs[0]
+        assert "x-ms-client-request-id: client-xyz" in start_msgs[0]
+
+    @pytest.mark.asyncio
+    async def test_trace_id_extracted_from_traceparent(self, caplog: pytest.LogCaptureFixture):
+        """Middleware extracts trace-id from traceparent header when no OTel span is active."""
+        app = _make_app()
+        client = _AsyncAsgiClient(app)
+
+        trace_id = "0af7651916cd43dd8448eb211c80319c"
+        traceparent = f"00-{trace_id}-b7ad6b7169203331-01"
+        with caplog.at_level(logging.INFO, logger=LOGGER_NAME):
+            resp = await client.post(
+                "/responses",
+                json_body={"model": "m"},
+                headers={"traceparent": traceparent},
+            )
+        assert resp.status_code == 200
+
+        messages = [r.message for r in caplog.records if r.name == LOGGER_NAME]
+        start_msgs = [m for m in messages if "Inbound" in m and "started" in m]
+        assert len(start_msgs) >= 1
+        assert f"trace-id: {trace_id}" in start_msgs[0]
 
     @pytest.mark.asyncio
     async def test_query_string_not_logged(self, caplog: pytest.LogCaptureFixture):
