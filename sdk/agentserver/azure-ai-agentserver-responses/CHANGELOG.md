@@ -9,6 +9,7 @@
 ### Bugs Fixed
 
 - `DELETE /responses/{id}` no longer returns intermittent 404 when the background task's eager eviction races with the delete handler. Previously, `try_evict` could remove the record from in-memory state between the handler's `get()` and `delete()` calls, causing `delete()` to return `False` and producing a spurious 404. The handler now falls through to the durable provider when the in-memory delete fails due to a concurrent eviction.
+- `POST /responses` with `background=true, stream=false` now correctly returns `status: "in_progress"` instead of `"completed"`. Handlers that yield events synchronously (no `await` between yields — the normal pattern with `ResponseEventStream`) would cause the background task to run to completion before `run_background` captured the initial snapshot. A cooperative yield after `response_created_signal.set()` now ensures the POST handler resumes promptly.
 
 ### Other Changes
 
