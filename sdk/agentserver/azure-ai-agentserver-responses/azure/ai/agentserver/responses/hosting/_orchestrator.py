@@ -463,13 +463,13 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
             record.response.background = record.mode_flags.background
         # Persist terminal state update via provider (bg non-stream: update after runner completes)
         if store and provider is not None and record.status not in {"cancelled"} and record.response is not None:
+            _isolation = context.isolation if context else None
             try:
                 if _provider_created:
-                    await provider.update_response(record.response)
+                    await provider.update_response(record.response, isolation=_isolation)
                 else:
                     # Response was never created (handler yielded nothing or
                     # failed before response.created) — create instead of update.
-                    _isolation = context.isolation if context else None
                     _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
                     await provider.create_response(record.response, _resolved_items, None, isolation=_isolation)
             except Exception:  # pylint: disable=broad-exception-caught
@@ -478,7 +478,7 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                     response_id,
                     exc_info=True,
                 )
-        # Eager eviction: free memory once terminal state is persisted (or store=False).
+        # Eager eviction: free memory once terminal state is reached (or store=False).
         if runtime_state is not None and record.is_terminal:
             await runtime_state.try_evict(response_id)
 
@@ -1111,7 +1111,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     await record.subject.complete()
                 except Exception:  # pylint: disable=broad-exception-caught
                     pass  # best effort
-            # Eager eviction: free memory once terminal state is persisted.
+            # Eager eviction: free memory once terminal state is reached.
             if record.is_terminal:
                 await self._runtime_state.try_evict(ctx.response_id)
             return
@@ -1217,7 +1217,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         ctx.span.end(state.captured_error)
 
-        # Eager eviction: free memory once terminal state is persisted (or store=False).
+        # Eager eviction: free memory once terminal state is reached (or store=False).
         if execution.is_terminal:
             await self._runtime_state.try_evict(ctx.response_id)
 

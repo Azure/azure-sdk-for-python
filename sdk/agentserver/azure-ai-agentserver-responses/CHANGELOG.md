@@ -1,5 +1,21 @@
 # Release History
 
+## 1.0.0b4 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b3 (2026-04-19)
+
+### Bugs Fixed
+
+- Background non-stream finalization now passes isolation keys to `update_response` — previously the `isolation=` kwarg was missing, causing Foundry storage to return 404 when isolation headers were present (the response was created in a scoped partition but the update targeted the unscoped partition). This left responses permanently stuck at `in_progress`.
+
 ## 1.0.0b2 (2026-04-17)
 
 ### Features Added
