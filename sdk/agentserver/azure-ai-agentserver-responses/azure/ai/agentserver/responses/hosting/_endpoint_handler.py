@@ -1095,39 +1095,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if await self._runtime_state.is_deleted(response_id):
                 return _not_found(response_id, _hdrs)
 
-            try:
-                await self._provider.delete_response(response_id, isolation=_isolation)
-                # Clean up persisted stream events
-                if self._stream_provider is not None:
-                    try:
-                        await self._stream_provider.delete_stream_events(response_id, isolation=_isolation)
-                    except Exception:  # pylint: disable=broad-exception-caught
-                        logger.debug(
-                            "Best-effort stream event delete failed for response_id=%s",
-                            response_id,
-                            exc_info=True,
-                        )
-                # Mark as deleted in runtime state so subsequent requests get 404
-                await self._runtime_state.mark_deleted(response_id)
-                logger.info("Deleted response %s", response_id)
-                return JSONResponse(
-                    {"id": response_id, "object": "response", "deleted": True},
-                    status_code=200,
-                    headers=_hdrs,
-                )
-            except FoundryResourceNotFoundError:
-                pass  # Fall through to 404 below
-            except FoundryBadRequestError as exc:
-                return _invalid_request(str(exc), _hdrs, param="response_id")
-            except FoundryApiError as exc:
-                logger.error("Storage API error for DELETE response_id=%s: %s", response_id, exc, exc_info=True)
-                return _error_response(exc, _hdrs)
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.debug(
-                    "Provider fallback failed for DELETE response_id=%s",
-                    response_id,
-                    exc_info=True,
-                )
+            result = await self._provider_delete_response(response_id, request, _hdrs)
+            if result is not None:
+                return result
 
             return _not_found(response_id, _hdrs)
 
@@ -1150,6 +1120,14 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         deleted = await self._runtime_state.delete(response_id)
         if not deleted:
+            # Race: the background task's eager eviction (try_evict) removed
+            # the record between our get() and delete() calls.  Since
+            # try_evict runs only AFTER provider persistence, the durable
+            # store has the response — delegate to the provider path.
+            if record.mode_flags.store:
+                result = await self._provider_delete_response(response_id, request, _hdrs)
+                if result is not None:
+                    return result
             return _not_found(response_id, _hdrs)
 
         if record.mode_flags.store:
@@ -1177,6 +1155,67 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             status_code=200,
             headers=_hdrs,
         )
+
+    async def _provider_delete_response(
+        self,
+        response_id: str,
+        request: Request,
+        headers: dict[str, str],
+    ) -> Response | None:
+        """Delete a response from the durable provider (storage).
+
+        Used by :meth:`handle_delete` in both the provider-fallback path
+        (record already evicted from memory) and the eviction-race recovery
+        path (record evicted between ``get()`` and ``delete()``).
+
+        Returns a :class:`Response` on success or on a deterministic error
+        (bad request, API error).  Returns ``None`` when the provider reports
+        the response as not found, so the caller can fall through to 404.
+
+        :param response_id: The response ID to delete.
+        :type response_id: str
+        :param request: The incoming HTTP request (used to extract isolation).
+        :type request: Request
+        :param headers: Session headers to include on the response.
+        :type headers: dict[str, str]
+        :return: A success/error response, or ``None`` if not found.
+        :rtype: Response | None
+        """
+        _isolation = _extract_isolation(request)
+        try:
+            await self._provider.delete_response(response_id, isolation=_isolation)
+            # Clean up persisted stream events
+            if self._stream_provider is not None:
+                try:
+                    await self._stream_provider.delete_stream_events(response_id, isolation=_isolation)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.debug(
+                        "Best-effort stream event delete failed for response_id=%s",
+                        response_id,
+                        exc_info=True,
+                    )
+            # Mark as deleted in runtime state so subsequent requests get 404
+            await self._runtime_state.mark_deleted(response_id)
+            logger.info("Deleted response %s via provider", response_id)
+            return JSONResponse(
+                {"id": response_id, "object": "response", "deleted": True},
+                status_code=200,
+                headers=headers,
+            )
+        except FoundryResourceNotFoundError:
+            return None  # Caller falls through to 404
+        except FoundryBadRequestError as exc:
+            return _invalid_request(str(exc), headers, param="response_id")
+        except FoundryApiError as exc:
+            logger.error("Storage API error for DELETE response_id=%s: %s", response_id, exc, exc_info=True)
+            return _error_response(exc, headers)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug(
+                "Provider fallback failed for DELETE response_id=%s",
+                response_id,
+                exc_info=True,
+            )
+            return None
 
     async def handle_cancel(self, request: Request) -> Response:
         """Route handler for ``POST /responses/{response_id}/cancel``.

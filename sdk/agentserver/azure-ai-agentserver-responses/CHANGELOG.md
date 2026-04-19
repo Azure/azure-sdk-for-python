@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- `DELETE /responses/{id}` no longer returns intermittent 404 when the background task's eager eviction races with the delete handler. Previously, `try_evict` could remove the record from in-memory state between the handler's `get()` and `delete()` calls, causing `delete()` to return `False` and producing a spurious 404. The handler now falls through to the durable provider when the in-memory delete fails due to a concurrent eviction.
+
 ### Other Changes
 
 ## 1.0.0b3 (2026-04-19)
