@@ -230,7 +230,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
         # Check for intermediate response
         if _is_intermediate_response(eval_input.get("response")):
-            return self._return_not_applicable_result(
+            return self._not_applicable_result(
                 "Intermediate response. Please provide the agent's final response for evaluation.",
                 self.threshold
             )
@@ -258,8 +258,8 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             # Handle skipped status from LLM
             llm_status = llm_output.get("status", "completed")
             if llm_status == "skipped":
-                reason = llm_output.get("reasoning", "")
-                return self._return_not_applicable_result(reason, self.threshold)
+                reason = llm_output.get("reason", "")
+                return self._not_applicable_result(reason, self.threshold)
 
             score = llm_output.get(self._LLM_SCORE_KEY, None)
             if not score or not check_score_is_valid(
@@ -276,26 +276,15 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 )
 
             # Format the output
-            reason = llm_output.get("reasoning", "")
+            reason = llm_output.get("reason", "")
             score = float(score)
             score_result = "pass" if score >= self.threshold else "fail"
-            llm_properties = llm_output.get("properties", {})
-            llm_properties.update(
-                {
-                    "prompt_tokens": prompty_output_dict.get("input_token_count", 0),
-                    "completion_tokens": prompty_output_dict.get("output_token_count", 0),
-                    "total_tokens": prompty_output_dict.get("total_token_count", 0),
-                    "finish_reason": prompty_output_dict.get("finish_reason", ""),
-                    "model": prompty_output_dict.get("model_id", ""),
-                    "sample_input": prompty_output_dict.get("sample_input", ""),
-                    "sample_output": prompty_output_dict.get("sample_output", ""),
-                }
-            )
+            llm_properties = llm_output.get("properties", {}) or {}
+            llm_properties.update(self._get_token_metadata(prompty_output_dict))
             response_dict = {
                 f"{self._result_key}_score": score,
-                f"{self._result_key}_result": score_result,
                 f"{self._result_key}_passed": score_result == "pass",
-                f"{self._result_key}_reasoning": reason,
+                f"{self._result_key}_reason": reason,
                 f"{self._result_key}_status": "completed",
                 f"{self._result_key}_threshold": self._threshold,
                 f"{self._result_key}_properties": llm_properties,
@@ -325,7 +314,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
         if isinstance(eval_input, dict) and eval_input.get("error_message"):
             # If there is an error message, return not applicable result
-            return self._return_not_applicable_result(eval_input.get("error_message"), self.threshold)
+            return self._not_applicable_result(eval_input.get("error_message"), self.threshold)
         # Do the evaluation
         result = await self._do_eval(eval_input)
         # Return the result

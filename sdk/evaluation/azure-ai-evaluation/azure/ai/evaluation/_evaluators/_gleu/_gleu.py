@@ -8,7 +8,6 @@ from typing_extensions import overload, override
 from azure.ai.evaluation._common.utils import nltk_tokenize
 
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
-from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
 
 class GleuScoreEvaluator(EvaluatorBase):
@@ -88,8 +87,11 @@ class GleuScoreEvaluator(EvaluatorBase):
                 binary_result = True
         return {
             "gleu_score": score,
-            "gleu_result": EVALUATION_PASS_FAIL_MAPPING[binary_result],
+            "gleu_passed": binary_result,
+            "gleu_reason": None,
+            "gleu_status": "completed",
             "gleu_threshold": self._threshold,
+            "gleu_properties": None,
         }
 
     @overload  # type: ignore

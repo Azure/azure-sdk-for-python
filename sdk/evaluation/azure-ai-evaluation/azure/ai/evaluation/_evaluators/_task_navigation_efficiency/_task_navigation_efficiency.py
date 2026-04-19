@@ -7,7 +7,6 @@ import json
 from typing import Dict, List, Union, Any, Tuple
 from typing_extensions import overload, override
 
-from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
 from azure.ai.evaluation._evaluators._common._validators import TaskNavigationEfficiencyValidator, ValidatorInterface
 from azure.ai.evaluation._exceptions import (
@@ -339,10 +338,14 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
                 self, agent_steps, ground_truth_steps
             )
 
+            additional_properties_metrics["label"] = match_result
             return {
-                "task_navigation_efficiency_label": match_result,
-                "task_navigation_efficiency_result": EVALUATION_PASS_FAIL_MAPPING[match_result],
-                "task_navigation_efficiency_details": additional_properties_metrics,
+                "task_navigation_efficiency_score": float(match_result),
+                "task_navigation_efficiency_passed": match_result,
+                "task_navigation_efficiency_reason": None,
+                "task_navigation_efficiency_status": "completed",
+                "task_navigation_efficiency_threshold": 0.5,
+                "task_navigation_efficiency_properties": additional_properties_metrics,
             }
         else:
             raise EvaluationException(

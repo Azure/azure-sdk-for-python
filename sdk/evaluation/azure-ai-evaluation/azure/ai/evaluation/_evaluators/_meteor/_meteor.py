@@ -8,7 +8,6 @@ from typing_extensions import overload, override
 
 from azure.ai.evaluation._common.utils import nltk_tokenize, ensure_nltk_data_downloaded
 from azure.ai.evaluation._evaluators._common import EvaluatorBase
-from azure.ai.evaluation._constants import EVALUATION_PASS_FAIL_MAPPING
 
 
 class MeteorScoreEvaluator(EvaluatorBase):
@@ -107,8 +106,11 @@ class MeteorScoreEvaluator(EvaluatorBase):
                 binary_result = True
         return {
             "meteor_score": score,
-            "meteor_result": EVALUATION_PASS_FAIL_MAPPING[binary_result],
+            "meteor_passed": binary_result,
+            "meteor_reason": None,
+            "meteor_status": "completed",
             "meteor_threshold": self._threshold,
+            "meteor_properties": None,
         }
 
     @overload  # type: ignore
