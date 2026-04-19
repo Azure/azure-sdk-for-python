@@ -16,6 +16,7 @@
 
 ### Bugs Fixed
 
+- Background non-stream finalization now passes isolation keys to `update_response` — previously the `isolation=` kwarg was missing, causing Foundry storage to return 404 when isolation headers were present (the response was created in a scoped partition but the update targeted the unscoped partition). This left responses permanently stuck at `in_progress`.
 - SSE stream replay now works when the response provider does not implement `ResponseStreamProviderProtocol` (e.g. `FoundryStorageProvider`). Previously, `GET /responses/{id}?stream=true` returned HTTP 400 after eager eviction because no stream provider was configured. The host now auto-provisions an in-memory stream provider as a fallback.
 - `item_reference` inputs are now resolved at persistence time — when a `POST /responses` request includes `item_reference` entries in its input, they are batch-resolved via the provider before being stored. Previously, `item_reference` entries were silently dropped during input expansion, so `GET /responses/{id}/input_items` would only return inline items. This matches the .NET SDK behavior (`GetInputItemsForPersistenceAsync`).
 - Post-eviction chat isolation — after eager eviction, GET, DELETE, Cancel, and InputItems requests with missing or mismatched `x-agent-chat-isolation-key` headers now correctly fall through to Foundry storage (which returns HTTP 400) instead of being blocked locally with HTTP 404. In-flight isolation enforcement is unchanged.
