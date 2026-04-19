@@ -151,8 +151,8 @@ async def test_logging_policy_logs_isolation_header_presence(caplog: pytest.LogC
         await policy.send(request)
 
     msg = caplog.records[0].message
-    assert "HasUserIsolationKey=True" in msg
-    assert "HasChatIsolationKey=True" in msg
+    assert "has_user_isolation_key=True" in msg
+    assert "has_chat_isolation_key=True" in msg
     # Values must never appear
     assert "secret-user-key" not in msg
     assert "secret-chat-key" not in msg
@@ -173,8 +173,8 @@ async def test_logging_policy_logs_isolation_header_absence(caplog: pytest.LogCa
         await policy.send(request)
 
     msg = caplog.records[0].message
-    assert "HasUserIsolationKey=False" in msg
-    assert "HasChatIsolationKey=False" in msg
+    assert "has_user_isolation_key=False" in msg
+    assert "has_chat_isolation_key=False" in msg
 
 
 @pytest.mark.asyncio
@@ -193,8 +193,8 @@ async def test_logging_policy_failure_logs_isolation_header_presence(caplog: pyt
             await policy.send(request)
 
     msg = caplog.records[0].message
-    assert "HasUserIsolationKey=False" in msg
-    assert "HasChatIsolationKey=True" in msg
+    assert "has_user_isolation_key=False" in msg
+    assert "has_chat_isolation_key=True" in msg
     assert "secret" not in msg
 
 

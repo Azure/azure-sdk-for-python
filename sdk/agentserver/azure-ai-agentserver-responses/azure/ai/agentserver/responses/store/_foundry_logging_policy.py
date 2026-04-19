@@ -107,7 +107,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
             logger.warning(
                 "Foundry storage %s %s failed after %.1fms "
                 "(x-ms-client-request-id=%s, "
-                "HasUserIsolationKey=%s, HasChatIsolationKey=%s)",
+                "has_user_isolation_key=%s, has_chat_isolation_key=%s)",
                 method,
                 url,
                 elapsed_ms,
@@ -131,7 +131,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
             "Foundry storage %s %s -> %d (%.1fms, "
             "x-ms-client-request-id=%s, x-ms-request-id=%s, "
             "x-request-id=%s, apim-request-id=%s, "
-            "HasUserIsolationKey=%s, HasChatIsolationKey=%s)",
+            "has_user_isolation_key=%s, has_chat_isolation_key=%s)",
             method,
             url,
             status_code,
