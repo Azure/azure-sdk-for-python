@@ -1,0 +1,4 @@
+query,response,context,ground_truth
+What is the capital of France?,Paris is the capital of France.,France is a country in Western Europe.,Paris is the capital of France.
+What is machine learning?,Machine learning is a subset of AI that learns from data.,Machine learning is a branch of artificial intelligence.,Machine learning is a type of AI that enables computers to learn from data without being explicitly programmed.
+Explain neural networks.,Neural networks are computing systems inspired by biological neural networks.,Neural networks are used in deep learning.,Neural networks are a set of algorithms modeled after the human brain designed to recognize patterns.

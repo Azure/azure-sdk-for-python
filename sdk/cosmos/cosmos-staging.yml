@@ -24,15 +24,20 @@ jobs:
     displayName: Use Python 3.x
     condition: succeededOrFailed()
   - task: Bash@3
+    displayName: Install azpysdk
+    condition: succeededOrFailed()
+    inputs:
+      targetType: inline
+      script: |
+        python -m pip install ./eng/tools/azure-sdk-tools
+  - task: Bash@3
     displayName: Bash Script
     inputs:
       targetType: inline
       script: >-
         cd ./sdk/cosmos/azure-cosmos
 
-        pip install tox==4.5.0
-
-        tox -c ../../../eng/tox/tox.ini --root . -e whl -- -k 'not cosmosEmulator and not cosmosMultiRegion and not cosmosCircuitBreaker and not cosmosCircuitBreakerMultiRegion'
+        azpysdk whl --pytest-args -k 'not cosmosEmulator and not cosmosMultiRegion and not cosmosCircuitBreaker and not cosmosCircuitBreakerMultiRegion'
     env:
       ACCOUNT_KEY: $(ACCOUNT_KEY) # Maps the secret variable $(token) from my-var-group
   - task: AzurePowerShell@5
