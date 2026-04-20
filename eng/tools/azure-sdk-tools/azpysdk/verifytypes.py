@@ -51,7 +51,13 @@ class verifytypes(Check):
             package_dir = parsed.folder
             package_name = parsed.name
             module = parsed.namespace
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for verifytypes check")
 
             self.install_dev_reqs(executable, args, package_dir)
@@ -169,6 +175,13 @@ class verifytypes(Check):
                 os.chdir(subdirectory)
 
                 command = get_pip_command(python_executable) + ["install", ".", "--force-reinstall"]
+
+                # When using uv, add --no-sources to ignore [tool.uv.sources] relative paths
+                # that can't resolve in a sparse checkout, and --python to target the correct venv.
+                if command[0] == "uv":
+                    command += ["--no-sources"]
+                    if python_executable:
+                        command += ["--python", python_executable]
 
                 subprocess.check_call(command, stdout=subprocess.DEVNULL)
             finally:

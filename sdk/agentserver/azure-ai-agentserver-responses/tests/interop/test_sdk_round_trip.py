@@ -59,7 +59,7 @@ def _make_sdk_client(handler) -> openai.OpenAI:
     network calls are made.
     """
     app = ResponsesAgentServerHost()
-    app.create_handler(handler)
+    app.response_handler(handler)
     tc = TestClient(app)
     return openai.OpenAI(
         api_key="test-key",
@@ -719,7 +719,7 @@ class TestStreamingRoundTrip:
         """Stream yields events and the final response has the expected text."""
         handler = _text_message_handler("Streamed text")
         app = ResponsesAgentServerHost()
-        app.create_handler(handler)
+        app.response_handler(handler)
         tc = TestClient(app)
         client = openai.OpenAI(
             api_key="test-key",
@@ -745,7 +745,7 @@ class TestStreamingRoundTrip:
         """Stream a function call and verify argument events."""
         handler = _function_call_handler("my_func", "call_s1", '{"x": 1}')
         app = ResponsesAgentServerHost()
-        app.create_handler(handler)
+        app.response_handler(handler)
         tc = TestClient(app)
         client = openai.OpenAI(
             api_key="test-key",
@@ -770,7 +770,7 @@ class TestStreamingRoundTrip:
         """Stream a mix of output items."""
         handler = _multiple_items_handler()
         app = ResponsesAgentServerHost()
-        app.create_handler(handler)
+        app.response_handler(handler)
         tc = TestClient(app)
         client = openai.OpenAI(
             api_key="test-key",

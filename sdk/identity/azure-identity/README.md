@@ -23,6 +23,10 @@ pip install azure-identity
 - An [Azure subscription](https://azure.microsoft.com/free/python)
 - Python 3.9 or a recent version of Python 3 (this library doesn't support end-of-life versions)
 
+### Use with AI tools
+
+AI coding tools such as VS Code and GitHub Copilot can help you write and debug code that uses this library. See [Using the Azure SDK for Python with AI tools](https://aka.ms/azsdk/python/ai) for available integrations.
+
 ### Authenticate the client
 
 When debugging and executing code locally, it's typical for a developer to use their own account for authenticating calls to Azure services. There are several developer tools that can be used to perform this authentication in your development environment. For more information, see [Authentication during local development](https://learn.microsoft.com/azure/developer/python/sdk/authentication/overview#authentication-during-local-development).
