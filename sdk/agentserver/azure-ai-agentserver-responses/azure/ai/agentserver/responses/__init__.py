@@ -14,7 +14,6 @@ from .models import CreateResponse, ResponseObject
 from .models._helpers import (
     get_conversation_id,
     get_input_expanded,
-    get_input_text,
     to_output_item,
 )
 from .store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
@@ -52,6 +51,5 @@ __all__ = [
     "ResponseObject",
     "get_conversation_id",
     "get_input_expanded",
-    "get_input_text",
     "to_output_item",
 ]
