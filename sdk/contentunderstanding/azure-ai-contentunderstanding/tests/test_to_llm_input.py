@@ -887,3 +887,38 @@ class TestRealCUPatterns:
         assert "Summary: A greeting call." in output
         # No separator for single segment
         assert "*****" not in output
+
+    def test_nested_dict_in_array_indentation(self):
+        """Nested objects inside array items must indent children deeper than the parent key."""
+        doc = DocumentContent(
+            kind="document",
+            fields={
+                "Items": ArrayField(
+                    type="array",
+                    value_array=[
+                        ObjectField(type="object", value_object={
+                            "Name": StringField(type="string", value_string="Widget"),
+                            "Cost": ObjectField(type="object", value_object={
+                                "Amount": NumberField(type="number", value_number=50),
+                                "Currency": StringField(type="string", value_string="USD"),
+                            }),
+                        }),
+                    ],
+                ),
+            },
+        )
+        output = to_llm_input(_make_result([doc]))
+        lines = output.split("\n")
+        # Find the Cost key and its children
+        for i, line in enumerate(lines):
+            if "Cost:" in line:
+                cost_indent = len(line) - len(line.lstrip())
+                amount_line = lines[i + 1]
+                amount_indent = len(amount_line) - len(amount_line.lstrip())
+                assert amount_indent > cost_indent, (
+                    f"Child 'Amount' indent ({amount_indent}) must be greater than "
+                    f"parent 'Cost' indent ({cost_indent}): {repr(amount_line)}"
+                )
+                break
+        else:
+            raise AssertionError("Cost: not found in output")

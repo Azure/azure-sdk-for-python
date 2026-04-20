@@ -496,8 +496,7 @@ def _emit_sequence(
                 safe_k = _yaml_scalar(k)
                 if isinstance(v, dict) and v:
                     lines.append(f"{tag}{safe_k}:")
-                    inner_indent = indent + 2 if first else indent + 1
-                    _emit_mapping(lines, v, inner_indent)
+                    _emit_mapping(lines, v, indent + 2)
                 elif isinstance(v, list) and v:
                     lines.append(f"{tag}{safe_k}:")
                     inner_indent = indent + 1
