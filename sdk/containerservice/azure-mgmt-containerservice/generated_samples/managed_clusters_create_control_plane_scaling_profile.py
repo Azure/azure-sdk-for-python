@@ -15,7 +15,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python managed_clusters_create_enable_ai_toolchain_operator.py
+    python managed_clusters_create_control_plane_scaling_profile.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -36,7 +36,6 @@ def main():
         parameters={
             "location": "location1",
             "properties": {
-                "addonProfiles": {},
                 "agentPoolProfiles": [
                     {
                         "count": 3,
@@ -48,28 +47,25 @@ def main():
                         "vmSize": "Standard_DS2_v2",
                     }
                 ],
-                "aiToolchainOperatorProfile": {"enabled": True},
+                "controlPlaneScalingProfile": {"scalingSize": "H4"},
                 "dnsPrefix": "dnsprefix1",
-                "enableRBAC": True,
-                "kubernetesVersion": "",
+                "kubernetesVersion": "1.33.0",
                 "linuxProfile": {"adminUsername": "azureuser", "ssh": {"publicKeys": [{"keyData": "keydata"}]}},
                 "networkProfile": {
                     "loadBalancerProfile": {"managedOutboundIPs": {"count": 2}},
                     "loadBalancerSku": "standard",
-                    "networkDataplane": "cilium",
                     "networkPlugin": "azure",
                     "networkPluginMode": "overlay",
                     "outboundType": "loadBalancer",
                 },
-                "servicePrincipalProfile": {"clientId": "clientid", "secret": "secret"},
             },
-            "sku": {"name": "Basic", "tier": "Free"},
+            "sku": {"name": "Base", "tier": "Standard"},
             "tags": {"archv2": "", "tier": "production"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-02-preview/ManagedClustersCreate_EnableAIToolchainOperator.json
+# x-ms-original-file: 2026-02-02-preview/ManagedClustersCreate_ControlPlaneScalingProfile.json
 if __name__ == "__main__":
     main()

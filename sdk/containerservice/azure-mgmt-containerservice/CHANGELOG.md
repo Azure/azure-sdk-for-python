@@ -1,5 +1,36 @@
 # Release History
 
+## 41.1.0b2 (2026-04-20)
+
+### Features Added
+
+  - Model `AgentPoolManagedClusterAgentPoolProfileProperties` added property `prepared_image_specification_profile`
+  - Model `ManagedClusterAgentPoolProfile` added property `prepared_image_specification_profile`
+  - Model `ManagedClusterAgentPoolProfileProperties` added property `prepared_image_specification_profile`
+  - Model `ManagedClusterAzureMonitorProfileAppMonitoring` added property `open_telemetry_logs_and_traces`
+  - Model `ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics` added property `http_port`
+  - Model `ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics` added property `grpc_port`
+  - Model `ManagedClusterAzureMonitorProfileMetrics` added property `control_plane`
+  - Model `ManagedClusterHostedSystemProfile` added property `system_node_subnet_id`
+  - Model `ManagedClusterHostedSystemProfile` added property `node_subnet_id`
+  - Model `ManagedClusterProperties` added property `control_plane_scaling_profile`
+  - Added enum `ControlPlaneScalingSize`
+  - Added model `ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogsAndTraces`
+  - Added model `ManagedClusterAzureMonitorProfileMetricsControlPlane`
+  - Added model `ManagedClusterControlPlaneScalingProfile`
+  - Added model `PreparedImageSpecificationProfile`
+
+### Breaking Changes
+
+  - Model `AgentPoolManagedClusterAgentPoolProfileProperties` deleted or renamed its instance variable `node_customization_profile`
+  - Model `ManagedClusterAgentPoolProfile` deleted or renamed its instance variable `node_customization_profile`
+  - Model `ManagedClusterAgentPoolProfileProperties` deleted or renamed its instance variable `node_customization_profile`
+  - Model `ManagedClusterAzureMonitorProfileAppMonitoring` deleted or renamed its instance variable `open_telemetry_logs`
+  - Model `ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryMetrics` deleted or renamed its instance variable `port`
+  - Deleted or renamed model `ManagedClusterAzureMonitorProfileAppMonitoringOpenTelemetryLogs`
+  - Deleted or renamed model `NodeCustomizationProfile`
+  - `ManagedClusterPropertiesForSnapshot.__init__` had all overloads removed
+
 ## 41.1.0b1 (2026-03-30)
 
 ### Features Added
