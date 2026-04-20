@@ -25,7 +25,6 @@ json-delta==2.0.2
 python-dotenv==1.0.1
 pyyaml==6.0.2
 urllib3==2.2.3
-six==1.17.0
 
 # local dev packages
 ./eng/tools/azure-sdk-tools[ghtools]
