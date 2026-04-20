@@ -263,7 +263,7 @@ class Check(abc.ABC):
             install_into_venv(executable, requirements, package_dir)
         except subprocess.CalledProcessError as e:
             logger.error(f"Failed to install dev requirements: {e}")
-            raise e
+            raise
         finally:
             if temp_req_file and temp_req_file.name:
                 try:

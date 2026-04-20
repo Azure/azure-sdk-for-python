@@ -205,8 +205,14 @@ class verifytypes(Check):
                 logger.error(
                     f"pyright --verifytypes exited with code 1 but did not produce valid JSON output.\n"
                     f"stdout: {e.output}\n"
-                    f"stderr: {e.stderr}"
+                    f"stderr: {e.stderr}\n"
+                    f"Re-running without --outputjson for diagnostic output..."
                 )
+                non_json_commands = [c for c in commands[1:] if c != "--outputjson"]
+                diag = self.run_venv_command(executable, non_json_commands, cwd, check=False)
+                logger.error(f"Diagnostic pyright stdout:\n{diag.stdout}")
+                if diag.stderr:
+                    logger.error(f"Diagnostic pyright stderr:\n{diag.stderr}")
                 return -1.0
             if check_pytyped:
                 pytyped_present = report["typeCompleteness"].get("pyTypedPath", None)
