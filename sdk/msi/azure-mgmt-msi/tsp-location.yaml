@@ -1,0 +1,4 @@
+directory: specification/msi/resource-manager/Microsoft.ManagedIdentity/ManagedIdentity
+commit: 0e7d7f677e84df025fab004ca557cc3d07c01c39
+repo: Azure/azure-rest-api-specs
+additionalDirectories: 

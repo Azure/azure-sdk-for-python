@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-05-31-preview",
+  "apiVersions": {
+    "Microsoft.ManagedIdentity": "2025-05-31-preview"
+  },
+  "commit": "0e7d7f677e84df025fab004ca557cc3d07c01c39",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/msi/resource-manager/Microsoft.ManagedIdentity/ManagedIdentity",
+  "emitterVersion": "0.61.3"
+}
