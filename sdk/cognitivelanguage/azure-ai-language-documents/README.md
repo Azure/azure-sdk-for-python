@@ -29,7 +29,7 @@ Install the Azure AI Language Documents client library for Python with [pip][pip
 python -m pip install azure-ai-language-documents
 ```
 
-> This version of the client library targets the service REST API version `2026-05-01`.
+> This version of the client library targets the service REST API version `2026-05-15-preview`.
 
 ### Authenticate the client
 
