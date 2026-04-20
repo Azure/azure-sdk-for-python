@@ -1,5 +1,9 @@
 # Release History
 
+## 25.1.0 (2026-04-20)
+
+skip changelog generation
+
 ## 25.0.0 (2026-02-04)
 
 ### Breaking Changes
