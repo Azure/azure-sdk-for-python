@@ -518,6 +518,71 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         context.is_shutdown_requested = self._shutdown_requested.is_set()
         return context
 
+    async def _prefetch_history_ids(
+        self,
+        ctx: _ExecutionContext,
+        *,
+        span: "CreateSpan",
+        agent_session_id: str | None,
+    ) -> Response | None:
+        """Eagerly validate conversation references and prefetch history IDs.
+
+        Calls ``provider.get_history_item_ids()`` when the request carries
+        ``previous_response_id`` or ``conversation_id``.  A nonexistent
+        reference surfaces as a client-facing error *before* the handler is
+        invoked.  On success the fetched IDs are cached on *ctx* and its
+        ``ResponseContext`` so that ``get_history()`` skips the redundant
+        provider call.
+
+        :param ctx: The execution context for the current request.
+        :type ctx: _ExecutionContext
+        :keyword span: Active observability span.
+        :paramtype span: CreateSpan
+        :keyword agent_session_id: Resolved session ID for response headers.
+        :paramtype agent_session_id: str | None
+        :return: An error ``Response`` when validation fails, or ``None`` on success.
+        :rtype: Response | None
+        """
+        if self._provider is None or (not ctx.previous_response_id and not ctx.conversation_id):
+            return None
+
+        _hdrs = self._session_headers(agent_session_id)
+        try:
+            _isolation = ctx.context.isolation if ctx.context else None
+            prefetched = await self._provider.get_history_item_ids(
+                ctx.previous_response_id,
+                ctx.conversation_id,
+                self._runtime_options.default_fetch_history_count,
+                isolation=_isolation,
+            )
+            ctx.prefetched_history_ids = prefetched
+            if ctx.context is not None:
+                ctx.context._prefetched_history_ids = prefetched  # pylint: disable=protected-access
+            return None
+        except FoundryResourceNotFoundError as exc:
+            span.end(exc)
+            if exc.response_body is not None:
+                return JSONResponse(exc.response_body, status_code=404, headers=_hdrs)
+            return _not_found(str(ctx.previous_response_id or ctx.conversation_id), _hdrs)
+        except FoundryBadRequestError as exc:
+            span.end(exc)
+            if exc.response_body is not None:
+                return JSONResponse(exc.response_body, status_code=400, headers=_hdrs)
+            return _invalid_request(str(exc), _hdrs)
+        except FoundryApiError as exc:
+            span.end(exc)
+            if exc.response_body is not None:
+                return JSONResponse(exc.response_body, status_code=500, headers=_hdrs)
+            return _error_response(exc, _hdrs)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error(
+                "Failed to validate conversation references for response %s",
+                ctx.response_id,
+                exc_info=exc,
+            )
+            span.end(exc)
+            return _error_response(exc, _hdrs)
+
     # ------------------------------------------------------------------
     # Route handlers
     # ------------------------------------------------------------------
@@ -596,50 +661,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             ctx.chat_isolation_key is not None,
         )
 
-        # Eagerly validate conversation references with the provider so that
-        # a nonexistent previous_response_id / conversation_id surfaces as a
-        # client-facing error *before* the handler is invoked.  The fetched
-        # IDs are cached on the execution context and reused by
-        # ResponseContext.get_history() (skipping a redundant provider call).
-        if self._provider is not None and (ctx.previous_response_id or ctx.conversation_id):
-            try:
-                _isolation = ctx.context.isolation if ctx.context else None
-                prefetched = await self._provider.get_history_item_ids(
-                    ctx.previous_response_id,
-                    ctx.conversation_id,
-                    self._runtime_options.default_fetch_history_count,
-                    isolation=_isolation,
-                )
-                ctx.prefetched_history_ids = prefetched
-                if ctx.context is not None:
-                    ctx.context._prefetched_history_ids = prefetched  # pylint: disable=protected-access
-            except FoundryResourceNotFoundError as exc:
-                captured_error = exc
-                span.end(captured_error)
-                if exc.response_body is not None:
-                    return JSONResponse(exc.response_body, status_code=404, headers=self._session_headers())
-                return _error_response(exc, self._session_headers())
-            except FoundryBadRequestError as exc:
-                captured_error = exc
-                span.end(captured_error)
-                if exc.response_body is not None:
-                    return JSONResponse(exc.response_body, status_code=400, headers=self._session_headers())
-                return _error_response(exc, self._session_headers())
-            except FoundryApiError as exc:
-                captured_error = exc
-                span.end(captured_error)
-                if exc.response_body is not None:
-                    return JSONResponse(exc.response_body, status_code=500, headers=self._session_headers())
-                return _error_response(exc, self._session_headers())
-            except Exception as exc:  # pylint: disable=broad-exception-caught
-                logger.error(
-                    "Failed to validate conversation references for response %s",
-                    ctx.response_id,
-                    exc_info=exc,
-                )
-                captured_error = exc
-                span.end(captured_error)
-                return _error_response(exc, self._session_headers())
+        # Eagerly validate conversation references before the handler runs.
+        prefetch_error = await self._prefetch_history_ids(ctx, span=span, agent_session_id=agent_session_id)
+        if prefetch_error is not None:
+            return prefetch_error
 
         # Extract X-Request-Id header for request ID propagation (truncated to 256 chars).
         request_id = extract_request_id(request.headers)
