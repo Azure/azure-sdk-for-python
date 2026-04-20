@@ -141,7 +141,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             if self._feature_flag_refresh_enabled and self._feature_flag_refresh_timer.needs_refresh():
                 feature_flag_refresh_attempted = True
 
-                if client.check_feature_flag_page_etags(
+                if not self._feature_flag_page_etags or client.check_feature_flag_page_etags(
                     self._feature_flag_selectors, self._feature_flag_page_etags, headers=headers, **kwargs
                 ):
                     feature_flags, feature_flag_page_etags = client.load_feature_flags(
