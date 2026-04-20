@@ -232,7 +232,7 @@ def upload_page_blob(
         if length is None or length < 0:
             raise ValueError("A content length must be specified for a Page Blob.")
         if length % 512 != 0:
-            raise ValueError(f"Invalid page blob size: {length}. " "The size must be aligned to a 512-byte boundary.")
+            raise ValueError(f"Invalid page blob size: {length}. The size must be aligned to a 512-byte boundary.")
         tier = None
         if kwargs.get("premium_page_blob_tier"):
             premium_page_blob_tier = kwargs.pop("premium_page_blob_tier")

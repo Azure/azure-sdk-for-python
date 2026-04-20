@@ -165,7 +165,7 @@ class CommonBlobSamplesAsync(object):
             my_blobs = container_client.list_blobs(name_starts_with="my_blob")
             await container_client.delete_blobs(
                 *[b async for b in my_blobs]
-            )  # async for in list comprehension after 3.6 only
+            )
             # [END delete_multiple_blobs]
 
             # Delete container
