@@ -142,11 +142,22 @@ class verifytypes(Check):
 
         subdirectory = path.relative_to(REPO_ROOT)
         cwd = os.getcwd()
+
+        def _run_git(cmd: List[str]) -> None:
+            """Run a git step, capturing stderr so failures are visible in logs."""
+            result = subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True)
+            if result.returncode != 0:
+                logger.error(
+                    f"git step failed ({' '.join(cmd)}) with exit code {result.returncode}.\n"
+                    f"stderr:\n{result.stderr}"
+                )
+                raise subprocess.CalledProcessError(result.returncode, cmd, output=None, stderr=result.stderr)
+
         with tempfile.TemporaryDirectory() as temp_dir_name:
             os.chdir(temp_dir_name)
             try:
-                subprocess.check_call(["git", "init"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
-                subprocess.check_call(
+                _run_git(["git", "init"])
+                _run_git(
                     [
                         "git",
                         "clone",
@@ -154,18 +165,12 @@ class verifytypes(Check):
                         "https://github.com/Azure/azure-sdk-for-python.git",
                         "--depth",
                         "1",
-                    ],
-                    stdout=subprocess.DEVNULL,
-                    stderr=subprocess.STDOUT,
+                    ]
                 )
                 os.chdir("azure-sdk-for-python")
-                subprocess.check_call(
-                    ["git", "sparse-checkout", "init", "--cone"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT
-                )
-                subprocess.check_call(
-                    ["git", "sparse-checkout", "set", subdirectory], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT
-                )
-                subprocess.check_call(["git", "checkout", "main"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+                _run_git(["git", "sparse-checkout", "init", "--cone"])
+                _run_git(["git", "sparse-checkout", "set", subdirectory.as_posix()])
+                _run_git(["git", "checkout", "main"])
 
                 if not os.path.exists(os.path.join(os.getcwd(), subdirectory)):
                     # code is not checked into main yet, nothing to compare
@@ -174,7 +179,15 @@ class verifytypes(Check):
 
                 os.chdir(subdirectory)
 
-                command = get_pip_command(python_executable) + ["install", ".", "--force-reinstall"]
+                # --no-deps: we only want the main-branch version of *this* package; dependencies
+                # were already installed during the PR-version install and must remain identical
+                # so that pyright sees the same dep closure for both type-completeness runs.
+                command = get_pip_command(python_executable) + [
+                    "install",
+                    ".",
+                    "--force-reinstall",
+                    "--no-deps",
+                ]
 
                 # When using uv, add --no-sources to ignore [tool.uv.sources] relative paths
                 # that can't resolve in a sparse checkout, and --python to target the correct venv.
@@ -183,7 +196,34 @@ class verifytypes(Check):
                     if python_executable:
                         command += ["--python", python_executable]
 
-                subprocess.check_call(command, stdout=subprocess.DEVNULL)
+                logger.info(f"Installing main-branch version of package: {' '.join(command)}")
+                install_result = subprocess.run(
+                    command,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    text=True,
+                )
+                if install_result.returncode != 0:
+                    # Hard-fail: callers treat a positive return from install_from_main as
+                    # "nothing to compare, skip" (e.g., package not in main yet). A real install
+                    # failure must surface as an exception so CI reports a check failure rather
+                    # than silently skipping the comparison.
+                    logger.error(
+                        f"Failed to install main-branch version of {subdirectory} "
+                        f"(exit code {install_result.returncode}).\n"
+                        f"stdout:\n{install_result.stdout}\n"
+                        f"stderr:\n{install_result.stderr}"
+                    )
+                    raise subprocess.CalledProcessError(
+                        install_result.returncode,
+                        command,
+                        output=install_result.stdout,
+                        stderr=install_result.stderr,
+                    )
+                logger.debug(f"install_from_main stdout:\n{install_result.stdout}")
+                if install_result.stderr:
+                    # uv/pip commonly write progress to stderr; keep at debug to avoid noise.
+                    logger.debug(f"install_from_main stderr:\n{install_result.stderr}")
             finally:
                 os.chdir(cwd)  # allow temp dir to be deleted
             return 0
