@@ -100,7 +100,7 @@ if [ -z "$VIRTUAL_ENV" ]; then
         source .venv/bin/activate
         print_success "✓ Activated .venv"
     else
-        print_warning "⚠ No virtual environment found. Consider running sdk-py-setup-env skill first."
+        print_warning "⚠ No virtual environment found. Consider running cu-sdk-setup skill first."
     fi
 else
     print_info "Using active virtual environment: $VIRTUAL_ENV"

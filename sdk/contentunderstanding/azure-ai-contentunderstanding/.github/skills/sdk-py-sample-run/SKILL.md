@@ -12,14 +12,14 @@ Run a specific sample from the Azure AI Content Understanding SDK.
 ## Prerequisites
 
 - Python >= 3.9
-- Virtual environment set up with SDK installed (see `sdk-py-setup` skill)
+- Virtual environment set up with SDK installed (see `cu-sdk-setup` skill)
 - Environment variables configured in `.env`
 - For prebuilt analyzers: model deployments configured (run `sample_update_defaults.py` first)
 
 > **[ASK USER] Prerequisites check:**
 > Before proceeding, verify the user's environment:
-> 1. "Have you already set up your Python environment and installed the SDK?" -- If no, direct them to the `sdk-py-setup` skill first.
-> 2. "Have you configured your `.env` file with your endpoint and credentials?" -- If no, direct them to Step 4 of the `sdk-py-setup` skill.
+> 1. "Have you already set up your Python environment and installed the SDK?" -- If no, direct them to the `cu-sdk-setup` skill first.
+> 2. "Have you configured your `.env` file with your endpoint and credentials?" -- If no, direct them to Step 4 of the `cu-sdk-setup` skill.
 > 3. "Have you run `sample_update_defaults.py` to configure model defaults?" -- If no and they want to use prebuilt analyzers, guide them to run it first.
 
 ## Package Directory
@@ -117,7 +117,7 @@ source .venv/bin/activate  # Linux/macOS
 
 > **[ASK USER] Confirm venv active:**
 > Ask: "Is your virtual environment active? Run `which python` (or `where python` on Windows) and confirm it points to a path inside `.venv`."
-> If the user reports it is not active or does not exist, direct them to the `sdk-py-setup` skill.
+> If the user reports it is not active or does not exist, direct them to the `cu-sdk-setup` skill.
 
 ### Step 3: Choose and Run the Sample
 
@@ -212,14 +212,14 @@ python sample_analyze_url_async.py
 |-------|----------|
 | `ModuleNotFoundError: azure.ai.contentunderstanding` | Activate venv: `source .venv/bin/activate` then `pip install azure-ai-contentunderstanding` |
 | `ImportError: aiohttp package is not installed` | Install dev dependencies: `pip install -r dev_requirements.txt` |
-| `KeyError: 'CONTENTUNDERSTANDING_ENDPOINT'` | Create `.env` file with credentials (see `sdk-py-setup` skill) |
+| `KeyError: 'CONTENTUNDERSTANDING_ENDPOINT'` | Create `.env` file with credentials (see `cu-sdk-setup` skill) |
 | `FileNotFoundError: sample_files/...` | Run samples from the `samples/` directory |
 | `Access denied` or authorization errors | Ensure **Cognitive Services User** role is assigned; check API key or run `az login` |
 | `Model deployment not found` | Run `sample_update_defaults.py` first to configure model mappings |
 
 ## Related Skills
 
-- `sdk-py-setup` - Set up environment for running samples
+- `cu-sdk-setup` - Set up environment for running samples
 - `sdkinternal-py-sample-run` - Run all samples at once
 
 ## Additional Resources
