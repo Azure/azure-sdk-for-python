@@ -1,5 +1,23 @@
 # Release History
 
+## 41.1.0 (2026-04-20)
+
+### Features Added
+
+  - Model `ManagedClusterAzureMonitorProfile` added property `app_monitoring`
+  - Model `ManagedClusterIngressProfile` added property `gateway_api`
+  - Model `ManagedClusterIngressProfileWebAppRouting` added property `gateway_api_implementations`
+  - Model `ManagedClusterProperties` added property `hosted_system_profile`
+  - Enum `OSSKU` added member `WINDOWS2025`
+  - Added enum `GatewayAPIIstioEnabled`
+  - Added model `ManagedClusterAppRoutingIstio`
+  - Added model `ManagedClusterAzureMonitorProfileAppMonitoring`
+  - Added model `ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation`
+  - Added model `ManagedClusterHostedSystemProfile`
+  - Added model `ManagedClusterIngressProfileGatewayConfiguration`
+  - Added model `ManagedClusterWebAppRoutingGatewayAPIImplementations`
+  - Added enum `ManagedGatewayType`
+
 ## 41.1.0b1 (2026-03-30)
 
 ### Features Added
