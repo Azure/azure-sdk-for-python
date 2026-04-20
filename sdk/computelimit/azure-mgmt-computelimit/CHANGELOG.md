@@ -9,7 +9,7 @@
   - Added model `FeatureProperties`
   - Added enum `FeatureState`
   - Added model `OperationStatusResult`
-  - Added model `FeaturesOperations`
+  - Added operation group `FeaturesOperations`
 
 ## 1.0.0b1 (2025-11-14)
 
