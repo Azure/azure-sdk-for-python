@@ -30,13 +30,15 @@ class BatchClient(GenerateBatchClient):
     :type hub: str
     :param credentials: Credential needed for the client to connect to Azure.
     :type credentials: ~azure.identity.ClientSecretCredential, ~azure.core.credentials.AzureNamedKeyCredential,
-     or ~azure.identity.TokenCredentials
+     or ~azure.identity.AsyncTokenCredential
     :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(self, endpoint: str, credential: Union[AzureNamedKeyCredential, TokenCredential], **kwargs) -> None:
+    def __init__(
+        self, endpoint: str, credential: Union[AzureNamedKeyCredential, AsyncTokenCredential], **kwargs
+    ) -> None:
         per_call_policies = kwargs.pop("per_call_policies", [])
         per_call_policies.append(BatchExceptionPolicy())
         super().__init__(

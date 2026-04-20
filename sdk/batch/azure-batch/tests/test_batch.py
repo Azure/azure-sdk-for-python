@@ -1242,7 +1242,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         # Test Get Subtasks
         # TODO: Test with actual subtasks
-        subtasks = list(await wrap_list_result(client.list_sub_tasks(batch_job.id, task_param.id)))
+        subtasks = list(await wrap_list_result(client.list_subtasks(batch_job.id, task_param.id)))
         assert isinstance(subtasks, Iterable)
 
         # Test Delete Task

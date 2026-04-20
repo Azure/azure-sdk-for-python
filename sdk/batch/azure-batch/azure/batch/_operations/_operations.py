@@ -1968,7 +1968,7 @@ def build_batch_replace_task_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_batch_list_sub_tasks_request(
+def build_batch_list_subtasks_request(
     job_id: str,
     task_id: str,
     *,
@@ -8245,7 +8245,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, response_headers)  # type: ignore
 
     @distributed_trace
-    def list_sub_tasks(
+    def list_subtasks(
         self,
         job_id: str,
         task_id: str,
@@ -8293,7 +8293,7 @@ class _BatchClientOperationsMixin(  # pylint: disable=too-many-public-methods
         def prepare_request(next_link=None):
             if not next_link:
 
-                _request = build_batch_list_sub_tasks_request(
+                _request = build_batch_list_subtasks_request(
                     job_id=job_id,
                     task_id=task_id,
                     service_timeout=service_timeout,
