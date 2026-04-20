@@ -513,6 +513,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 user_key=ctx.user_isolation_key,
                 chat_key=ctx.chat_isolation_key,
             ),
+            prefetched_history_ids=ctx.prefetched_history_ids,
         )
         context.is_shutdown_requested = self._shutdown_requested.is_set()
         return context
@@ -594,6 +595,51 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             ctx.user_isolation_key is not None,
             ctx.chat_isolation_key is not None,
         )
+
+        # Eagerly validate conversation references with the provider so that
+        # a nonexistent previous_response_id / conversation_id surfaces as a
+        # client-facing error *before* the handler is invoked.  The fetched
+        # IDs are cached on the execution context and reused by
+        # ResponseContext.get_history() (skipping a redundant provider call).
+        if self._provider is not None and (ctx.previous_response_id or ctx.conversation_id):
+            try:
+                _isolation = ctx.context.isolation if ctx.context else None
+                prefetched = await self._provider.get_history_item_ids(
+                    ctx.previous_response_id,
+                    ctx.conversation_id,
+                    self._runtime_options.default_fetch_history_count,
+                    isolation=_isolation,
+                )
+                ctx.prefetched_history_ids = prefetched
+                if ctx.context is not None:
+                    ctx.context._prefetched_history_ids = prefetched  # pylint: disable=protected-access
+            except FoundryResourceNotFoundError as exc:
+                captured_error = exc
+                span.end(captured_error)
+                if exc.response_body is not None:
+                    return JSONResponse(exc.response_body, status_code=404, headers=self._session_headers())
+                return _error_response(exc, self._session_headers())
+            except FoundryBadRequestError as exc:
+                captured_error = exc
+                span.end(captured_error)
+                if exc.response_body is not None:
+                    return JSONResponse(exc.response_body, status_code=400, headers=self._session_headers())
+                return _error_response(exc, self._session_headers())
+            except FoundryApiError as exc:
+                captured_error = exc
+                span.end(captured_error)
+                if exc.response_body is not None:
+                    return JSONResponse(exc.response_body, status_code=500, headers=self._session_headers())
+                return _error_response(exc, self._session_headers())
+            except Exception as exc:  # pylint: disable=broad-exception-caught
+                logger.error(
+                    "Failed to validate conversation references for response %s",
+                    ctx.response_id,
+                    exc_info=exc,
+                )
+                captured_error = exc
+                span.end(captured_error)
+                return _error_response(exc, self._session_headers())
 
         # Extract X-Request-Id header for request ID propagation (truncated to 256 chars).
         request_id = extract_request_id(request.headers)
