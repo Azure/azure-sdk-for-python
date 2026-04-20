@@ -782,7 +782,7 @@ class TestRealCUPatterns:
 
     def test_video_three_segments(self):
         """Matches flight_simulator_search.mp4.json: 3 audioVisual segments, no path."""
-        segs = [
+        segments = [
             AudioVisualContent(
                 kind="audioVisual",
                 markdown="Speaker 1: When it comes to the neural TTS...",
@@ -805,7 +805,7 @@ class TestRealCUPatterns:
                 end_time_ms=43233,
             ),
         ]
-        output = to_llm_input(_make_result(segs), metadata={"source": "video.mp4"})
+        output = to_llm_input(_make_result(segments), metadata={"source": "video.mp4"})
         # 3 segments, 2 separators
         assert output.count("*****") == 2
         assert output.count("contentType: audioVisual") == 3
