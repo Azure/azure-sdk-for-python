@@ -113,7 +113,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         account_url: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None, 
         **kwargs: Any,
     ) -> None:
         parsed_url, sas_token = _parse_url(account_url=account_url)
@@ -156,7 +156,7 @@ class BlobServiceClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         conn_str: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None, 
         **kwargs: Any,
     ) -> Self:
         """Create BlobServiceClient from a Connection String.

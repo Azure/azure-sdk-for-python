@@ -124,7 +124,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         container_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None, 
         **kwargs: Any,
     ) -> None:
         parsed_url, sas_token = _parse_url(account_url=account_url, container_name=container_name)
@@ -168,7 +168,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         container_url: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None, 
         **kwargs: Any,
     ) -> Self:
         """Create ContainerClient from a container url.
@@ -224,7 +224,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         container_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None, 
         **kwargs: Any,
     ) -> Self:
         """Create ContainerClient from a Connection String.
@@ -826,7 +826,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, please use the 'name_starts_with' parameter instead."
             )
 
         if include and not isinstance(include, list):
@@ -875,7 +875,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, please use the 'name_starts_with' parameter instead."
             )
 
         name_starts_with = kwargs.pop("name_starts_with", None)
@@ -935,7 +935,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, please use the 'name_starts_with' parameter instead."
             )
 
         if include and not isinstance(include, list):

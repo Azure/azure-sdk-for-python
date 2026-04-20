@@ -86,7 +86,7 @@ class BlobServiceSamples(object):
     def blob_service_stats(self):
         if self.connection_string is None:
             print(
-                "Missing required environment variable: STORAGE_CONNECTION_STRING." + "\n" + "Test: blob_service_stats"
+                "Missing required environment variable: STORAGE_CONNECTION_STRING.\nTest: blob_service_stats"
             )
             sys.exit(1)
 

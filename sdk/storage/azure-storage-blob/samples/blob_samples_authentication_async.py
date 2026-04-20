@@ -66,7 +66,7 @@ class AuthSamplesAsync(object):
 
     async def auth_shared_key_async(self):
         if self.shared_access_key is None:
-            print("Missing required environment variable: STORAGE_ACCOUNT_KEY." + "\n" + "Test: auth_shared_key_async")
+            print("Missing required environment variable: STORAGE_ACCOUNT_KEY.\nTest: auth_shared_key_async")
             sys.exit(1)
         # [START create_blob_service_client]
         from azure.storage.blob.aio import BlobServiceClient
@@ -102,7 +102,7 @@ class AuthSamplesAsync(object):
         blob_service_client = BlobServiceClient.from_connection_string(self.connection_string)
         if blob_service_client.account_name is None:
             print(
-                "Connection string did not provide an account name." + "\n" + "Test: auth_shared_access_signature_async"
+                "Connection string did not provide an account name.\nTest: auth_shared_access_signature_async"
             )
             sys.exit(1)
 

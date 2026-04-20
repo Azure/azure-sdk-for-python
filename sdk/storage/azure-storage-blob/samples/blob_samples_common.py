@@ -35,7 +35,7 @@ class CommonBlobSamples(object):
 
     def blob_snapshots(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + "\n" + "Test: blob_snapshots")
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING.\nTest: blob_snapshots")
             sys.exit(1)
 
         # Instantiate a BlobServiceClient using a connection string

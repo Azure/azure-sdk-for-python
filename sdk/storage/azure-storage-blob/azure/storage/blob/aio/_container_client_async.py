@@ -137,7 +137,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         container_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None, 
         **kwargs: Any,
     ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
@@ -182,7 +182,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         container_url: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None, 
         **kwargs: Any,
     ) -> Self:
         """Create ContainerClient from a container url.
@@ -238,7 +238,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         container_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None,  # pylint: disable=line-too-long
+        ] = None, 
         **kwargs: Any,
     ) -> Self:
         """Create ContainerClient from a Connection String.
@@ -843,7 +843,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, please use the 'name_starts_with' parameter instead."
             )
 
         if include and not isinstance(include, list):
@@ -892,7 +892,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, please use the 'name_starts_with' parameter instead."
             )
 
         name_starts_with = kwargs.pop("name_starts_with", None)
@@ -953,7 +953,7 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         """
         if kwargs.pop("prefix", None):
             raise ValueError(
-                "Passing 'prefix' has no effect on filtering, " + "please use the 'name_starts_with' parameter instead."
+                "Passing 'prefix' has no effect on filtering, please use the 'name_starts_with' parameter instead."
             )
 
         if include and not isinstance(include, list):

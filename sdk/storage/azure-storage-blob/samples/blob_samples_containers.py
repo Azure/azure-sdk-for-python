@@ -36,7 +36,7 @@ class ContainerSamples(object):
 
     def container_sample(self):
         if self.connection_string is None:
-            print("Missing required environment variable: STORAGE_CONNECTION_STRING." + "\n" + "Test: container_sample")
+            print("Missing required environment variable: STORAGE_CONNECTION_STRING.\nTest: container_sample")
             sys.exit(1)
 
         # [START create_container_client_from_service]
@@ -153,7 +153,7 @@ class ContainerSamples(object):
         # Instantiate a ContainerClient
         container_client = blob_service_client.get_container_client("myaccesscontainer")
         if container_client.account_name is None:
-            print("Connection string did not provide an account name." + "\n" + "Test: container_access_policy")
+            print("Connection string did not provide an account name.\nTest: container_access_policy")
             sys.exit(1)
 
         try:
