@@ -1,5 +1,5 @@
 ---
-name: sdk-py-setup
+name: cu-sdk-setup
 description: Guide SDK users through setting up their Python environment for Azure AI Content Understanding. Use this skill when users need help installing the SDK, configuring Azure resources, deploying required models, setting environment variables, or running samples.
 ---
 
@@ -320,7 +320,7 @@ Run the interactive setup script that handles all steps automatically:
 ```bash
 # From the package directory
 cd sdk/contentunderstanding/azure-ai-contentunderstanding
-.github/skills/sdk-py-setup/scripts/setup_user_env.sh
+.github/skills/cu-sdk-setup/scripts/setup_user_env.sh
 ```
 
 The script will:
