@@ -15,7 +15,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python agent_pools_create_type_virtual_machines_autoscale.py
+    python managed_clusters_list_cluster_monitoring_user_credentials.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,27 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.agent_pools.begin_create_or_update(
+    response = client.managed_clusters.list_cluster_monitoring_user_credentials(
         resource_group_name="rg1",
         resource_name="clustername1",
-        agent_pool_name="agentpool1",
-        parameters={
-            "properties": {
-                "nodeLabels": {"key1": "val1"},
-                "nodeTaints": ["Key1=Value1:NoSchedule"],
-                "orchestratorVersion": "1.29.0",
-                "osType": "Linux",
-                "tags": {"name1": "val1"},
-                "type": "VirtualMachines",
-                "virtualMachinesProfile": {
-                    "scale": {"autoscale": {"maxCount": 5, "minCount": 1, "size": "Standard_D2_v2"}}
-                },
-            }
-        },
-    ).result()
+    )
     print(response)
 
 
-# x-ms-original-file: 2026-01-02-preview/AgentPoolsCreate_TypeVirtualMachines_Autoscale.json
+# x-ms-original-file: 2026-02-01/ManagedClustersListClusterMonitoringUserCredentials.json
 if __name__ == "__main__":
     main()

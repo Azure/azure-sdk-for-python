@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -15,7 +16,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python load_balancers_delete.py
+    python agent_pools_create_crg.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +31,23 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    client.load_balancers.begin_delete(
+    response = client.agent_pools.begin_create_or_update(
         resource_group_name="rg1",
         resource_name="clustername1",
-        load_balancer_name="kubernetes",
+        agent_pool_name="agentpool1",
+        parameters={
+            "properties": {
+                "capacityReservationGroupID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/CapacityReservationGroups/crg1",
+                "count": 3,
+                "orchestratorVersion": "",
+                "osType": "Linux",
+                "vmSize": "Standard_DS2_v2",
+            }
+        },
     ).result()
+    print(response)
 
 
-# x-ms-original-file: 2026-01-02-preview/LoadBalancers_Delete.json
+# x-ms-original-file: 2026-02-01/AgentPoolsCreate_CRG.json
 if __name__ == "__main__":
     main()
