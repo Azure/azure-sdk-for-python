@@ -19,32 +19,10 @@ from test_samples_helpers import get_sample_env_vars
 evaluationsPreparer = functools.partial(
     EnvironmentVariableLoader,
     "",
-    azure_ai_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
-    azure_ai_model_deployment_name="sanitized-model-deployment-name",
-    azure_ai_agent_name="sanitized-agent-name",
+    foundry_project_endpoint="https://sanitized-account-name.services.ai.azure.com/api/projects/sanitized-project-name",
+    foundry_model_name="sanitized-model-deployment-name",
+    foundry_agent_name="sanitized-agent-name",
 )
-
-evaluations_instructions = """
-We just ran Python code for an evaluation sample and captured print/log output in an attached log file (TXT).
-Your job: determine if the sample code executed to completion WITHOUT throwing an unhandled exception.
-
-Respond TRUE (correct=true) if:
-- The output shows the evaluation was created and produced results (any results, including zeros)
-- The sample ran to completion (no unhandled Python exceptions/tracebacks)
-- Evaluation metric JSON with fields like "failed": 0, "error": null, "not_applicable": 0 is NORMAL
-  successful output — these are counters, NOT errors
-- Status messages like "in_progress", "Waiting for eval run" are normal polling behavior
-- HTTP debug headers (x-stainless-read-timeout, x-ms-client-request-id, etc.) are normal and irrelevant
-- "deleted": true/false in cleanup output is normal
-- The absence of explicit "success" text is fine — no crash means success
-
-Respond FALSE (correct=false) ONLY if:
-- There is an actual Python traceback or unhandled exception
-- There is an explicit error message like "Evaluation run failed" or "FAILED_EXECUTION"
-- There is an actual timeout error or connection failure (NOT an HTTP header containing "timeout")
-- The output shows corrupted or malformed data that prevented completion
-
-Always respond with `reason` indicating the reason for the response.""".strip()
 
 
 def _preprocess_eval_validation(entries: list[str]) -> str:
@@ -170,6 +148,10 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
                 "sample_scheduled_evaluations.py",  # Missing dependency azure.mgmt.resource (ModuleNotFoundError)
                 "sample_evaluations_builtin_with_dataset_id.py",  # Requires dataset upload / Blob Storage prerequisite
                 "sample_continuous_evaluation_rule.py",  # Requires manual RBAC assignment in Azure Portal
+                "sample_evaluations_builtin_with_csv.py",  # Requires CSV file upload prerequisite
+                "sample_synthetic_data_agent_evaluation.py",  # Synthetic data gen is long-running preview feature
+                "sample_synthetic_data_model_evaluation.py",  # Synthetic data gen is long-running preview feature
+                "sample_eval_catalog_prompt_based_evaluators.py",  # For some reason fails with 500 (Internal server error)
             ],
         ),
     )
@@ -185,11 +167,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             **kwargs,
         )
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=evaluations_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
-        )
+        executor.validate_print_calls_by_llm()
 
     # To run this test with a specific sample, use:
     # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_agentic_evaluator_samples[sample_coherence]
@@ -217,11 +195,7 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             **kwargs,
         )
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=evaluations_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
-        )
+        executor.validate_print_calls_by_llm()
 
     # To run this test, use:
     # pytest tests/samples/test_samples_evaluations.py::TestSamplesEvaluations::test_generic_agentic_evaluator_sample
@@ -248,8 +222,4 @@ class TestSamplesEvaluations(AzureRecordedTestCase):
             **kwargs,
         )
         executor.execute()
-        executor.validate_print_calls_by_llm(
-            instructions=evaluations_instructions,
-            project_endpoint=kwargs["azure_ai_project_endpoint"],
-            model=kwargs["azure_ai_model_deployment_name"],
-        )
+        executor.validate_print_calls_by_llm()

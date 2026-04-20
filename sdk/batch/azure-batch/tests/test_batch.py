@@ -173,7 +173,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             "InvalidPropertyValue",
             client.create_pool,
             pool=test_network_pool,
-            timeout=45,
+            service_timeout=45,
         )
 
         test_image_pool = models.BatchPoolCreateOptions(
@@ -191,7 +191,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
                 node_agent_sku_id="batch.node.ubuntu 22.04",
             ),
         )
-        await self.assertBatchError("InvalidPropertyValue", client.create_pool, pool=test_image_pool, timeout=45)
+        await self.assertBatchError(
+            "InvalidPropertyValue", client.create_pool, pool=test_image_pool, service_timeout=45
+        )
 
         # Test Create Pool with Data Disk
         data_disk = models.DataDisk(logical_unit_number=1, disk_size_gb=50)
@@ -816,7 +818,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             client.begin_reboot_node(
                 batch_pool.name,
                 nodes[0].id,
-                models.BatchNodeRebootOptions(node_reboot_kind=models.BatchNodeRebootKind.TERMINATE),
+                models._models.BatchNodeRebootOptions(node_reboot_kind=models._enums.BatchNodeRebootKind.TERMINATE),
                 polling_interval=5,
             )
         )
@@ -947,7 +949,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         assert response is None
 
         # Test Update User
-        user = models.BatchNodeUserUpdateOptions(password="liilef#$DdRGSa_ewkjh")
+        user = models.BatchNodeUserReplaceOptions(password="liilef#$DdRGSa_ewkjh")
         response = await wrap_result(client.replace_node_user(batch_pool.name, nodes[0].id, user_name, user))
         assert response is None
 
@@ -1202,9 +1204,9 @@ class TestBatch(AzureMgmtRecordedTestCase):
             )
         result = await wrap_result(client.create_tasks(batch_job.id, task_collection=tasks))
         assert isinstance(result, models.BatchCreateTaskCollectionResult)
-        assert result.values_property is not None
-        assert len(result.values_property) == 3
-        assert result.values_property[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
+        assert result.result_values is not None
+        assert len(result.result_values) == 3
+        assert result.result_values[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
 
         # Test List Tasks
         tasks = list(await wrap_list_result(client.list_tasks(batch_job.id)))
@@ -1270,7 +1272,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
             client.create_tasks,
             batch_job.id,
             tasks_to_add,
-            concurrencies=3,
+            max_concurrency=3,
         )
 
         # Test Bulk Add Task Success
@@ -1292,10 +1294,10 @@ class TestBatch(AzureMgmtRecordedTestCase):
             tasks_to_add.append(task)
         result = await wrap_result(client.create_tasks(batch_job.id, tasks_to_add))
         assert isinstance(result, models.BatchCreateTaskCollectionResult)
-        assert result.values_property is not None
-        assert len(result.values_property) == 733
-        assert result.values_property[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
-        assert all(t.status.lower() == models.BatchTaskAddStatus.SUCCESS for t in result.values_property)
+        assert result.result_values is not None
+        assert len(result.result_values) == 733
+        assert result.result_values[0].status.lower() == models.BatchTaskAddStatus.SUCCESS
+        assert all(t.status.lower() == models.BatchTaskAddStatus.SUCCESS for t in result.result_values)
 
     @CachedResourceGroupPreparer(location=AZURE_LOCATION)
     @AccountPreparer(location=AZURE_LOCATION, batch_environment=BATCH_ENVIRONMENT)
@@ -1330,7 +1332,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
 
         now = datetime.datetime.now(datetime.timezone.utc)
 
-        response = await wrap_result(client.create_job(job=job_param, ocpdate=now))
+        response = await wrap_result(client.create_job(job=job_param, ocp_date=now))
         assert response is None
 
         # Test Update Job
@@ -1414,7 +1416,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
         poller = await wrap_result(
             client.begin_terminate_job(
                 job_id=job_param.id,
-                options=models.BatchJobTerminateOptions(termination_reason="UserTerminate"),
+                options=models._models.BatchJobTerminateOptions(termination_reason="UserTerminate"),
                 polling_interval=5,
             )
         )

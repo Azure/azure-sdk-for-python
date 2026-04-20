@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import datetime
 import functools
 from unittest.mock import MagicMock, patch
 from devtools_testutils import EnvironmentVariableLoader, recorded_by_proxy
@@ -14,9 +13,6 @@ from test_constants import (
     FEATURE_MANAGEMENT_KEY,
 )
 from azure.appconfiguration.provider import SettingSelector, AzureAppConfigurationKeyVaultOptions
-from azure.appconfiguration.provider._azureappconfigurationproviderbase import (
-    delay_failure,
-)
 from azure.appconfiguration.provider._azureappconfigurationprovider import _buildprovider
 
 AppConfigProviderPreparer = functools.partial(
@@ -31,10 +27,6 @@ AppConfigProviderNoSecretPreparer = functools.partial(
     "appconfiguration",
     appconfiguration_endpoint_string=APPCONFIGURATION_ENDPOINT_STRING,
 )
-
-
-def sleep(seconds):
-    assert isinstance(seconds, float)
 
 
 class TestAppConfigurationProvider(AppConfigTestCase):
@@ -252,18 +244,6 @@ class TestAppConfigurationProvider(AppConfigTestCase):
         # Feature Flags aren't modified by configuration mappers
         assert "Alpha" not in client
         assert client["feature_management"]["feature_flags"][0]["id"] == "Alpha"
-
-    # method: delay_failure
-    @patch("time.sleep", side_effect=sleep)
-    def test_delay_failure(self, mock_sleep):
-        start_time = datetime.datetime.now()
-        delay_failure(start_time)
-        assert mock_sleep.call_count == 1
-
-        mock_sleep.reset_mock()
-        start_time = datetime.datetime.now() - datetime.timedelta(seconds=10)
-        delay_failure(start_time)
-        mock_sleep.assert_not_called()
 
     def test_process_key_value_content_type(self):
         with patch(

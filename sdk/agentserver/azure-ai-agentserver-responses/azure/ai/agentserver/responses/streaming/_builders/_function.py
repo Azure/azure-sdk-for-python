@@ -201,11 +201,15 @@ class OutputItemFunctionCallOutputBuilder(BaseOutputItemBuilder):
         """
         super().__init__(stream=stream, output_index=output_index, item_id=item_id)
         self._call_id = _require_non_empty(call_id, "call_id")
-        self._final_output: str | list[
-            generated_models.InputTextContentParam
-            | generated_models.InputImageContentParamAutoParam
-            | generated_models.InputFileContentParam
-        ] | None = None
+        self._final_output: (
+            str
+            | list[
+                generated_models.InputTextContentParam
+                | generated_models.InputImageContentParamAutoParam
+                | generated_models.InputFileContentParam
+            ]
+            | None
+        ) = None
 
     @property
     def call_id(self) -> str:
