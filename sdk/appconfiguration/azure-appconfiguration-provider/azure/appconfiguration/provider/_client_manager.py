@@ -204,17 +204,29 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
     @distributed_trace
     def load_feature_flags(
         self, feature_flag_selectors: List[SettingSelector], **kwargs
-    ) -> List[FeatureFlagConfigurationSetting]:
+    ) -> Tuple[List[FeatureFlagConfigurationSetting], List[List[str]]]:
+        """
+        Loads feature flags using page-based iteration, collecting page etags for each selector.
+
+        :param feature_flag_selectors: List of setting selectors to filter feature flags
+        :type feature_flag_selectors: List[SettingSelector]
+        :return: A tuple of (feature_flags, page_etags_per_selector)
+        :rtype: Tuple[List[FeatureFlagConfigurationSetting], List[List[str]]]
+        """
         loaded_feature_flags: List[FeatureFlagConfigurationSetting] = []
+        page_etags: List[List[str]] = []
         # Needs to be removed unknown keyword argument for list_configuration_settings
         kwargs.pop("sentinel_keys", None)
         for select in feature_flag_selectors:
-            feature_flags = []
+            selector_etags: List[str] = []
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
                 if not self._validate_snapshot(select.snapshot_name):
-                    return []
+                    return [], []
                 feature_flags = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
+                for ff in feature_flags:
+                    if isinstance(ff, FeatureFlagConfigurationSetting):
+                        loaded_feature_flags.append(ff)
             else:
                 # Handle None key_filter by converting to empty string
                 key_filter = select.key_filter if select.key_filter is not None else ""
@@ -224,9 +236,44 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
                     tags_filter=select.tag_filters,
                     **kwargs,
                 )
-            loaded_feature_flags.extend(ff for ff in feature_flags if isinstance(ff, FeatureFlagConfigurationSetting))
+                iterator = feature_flags.by_page()
+                for page in iterator:
+                    for ff in page:
+                        if isinstance(ff, FeatureFlagConfigurationSetting):
+                            loaded_feature_flags.append(ff)
+                    selector_etags.append(iterator.etag)
+            page_etags.append(selector_etags)
 
-        return loaded_feature_flags
+        return loaded_feature_flags, page_etags
+
+    @distributed_trace
+    def check_feature_flag_page_etags(
+        self, feature_flag_selectors: List[SettingSelector], page_etags: List[List[str]], **kwargs
+    ) -> bool:
+        """
+        Checks if any feature flag page has changed using page etags.
+
+        :param feature_flag_selectors: List of setting selectors for feature flags
+        :type feature_flag_selectors: List[SettingSelector]
+        :param page_etags: The page etags from the last load, one list per selector
+        :type page_etags: List[List[str]]
+        :return: True if any page has changed, False otherwise
+        :rtype: bool
+        """
+        for i, select in enumerate(feature_flag_selectors):
+            selector_etags = page_etags[i]
+            if select.snapshot_name is None:
+                key_filter = select.key_filter if select.key_filter is not None else ""
+                feature_flags = self._client.list_configuration_settings(
+                    key_filter=FEATURE_FLAG_PREFIX + key_filter,
+                    label_filter=select.label_filter,
+                    tags_filter=select.tag_filters,
+                    **kwargs,
+                )
+                for _ in feature_flags.by_page(match_conditions=selector_etags):
+                    # If any page is returned, it means that page has changed
+                    return True
+        return False
 
     @distributed_trace
     def get_updated_watched_settings(
@@ -257,25 +304,6 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         if trigger_refresh:
             return updated_watched_settings
         return {}
-
-    @distributed_trace
-    def try_check_feature_flags(
-        self, watched_feature_flags: Mapping[Tuple[str, str], Optional[str]], headers: Dict[str, str], **kwargs
-    ) -> bool:
-        """
-        Gets the refreshed feature flags if they have changed.
-
-        :param Mapping[Tuple[str, str], Optional[str]] watched_feature_flags: The feature flags to check for changes
-        :param Mapping[str, str] headers: The headers to use for the request
-
-        :return: True if any feature flags have changed, False otherwise
-        :rtype: bool
-        """
-        for (key, label), etag in watched_feature_flags.items():
-            changed, _ = self._check_configuration_setting(key=key, label=label, etag=etag, headers=headers, **kwargs)
-            if changed:
-                return True
-        return False
 
     @distributed_trace
     def get_configuration_setting(self, key: str, label: str, **kwargs) -> Optional[ConfigurationSetting]:

@@ -127,6 +127,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
         updated_watched_settings: Mapping[Tuple[str, str], Optional[str]] = {}
         existing_feature_flag_usage = self._tracing_context.feature_filter_usage.copy()
         page_etags: List[List[str]] = []
+        feature_flag_page_etags: List[List[str]] = []
         try:
             if self._refresh_enabled and not self._watched_settings and self._refresh_timer.needs_refresh():
                 configuration_refresh_attempted = True
@@ -153,12 +154,10 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
             if self._feature_flag_refresh_enabled and self._feature_flag_refresh_timer.needs_refresh():
                 feature_flag_refresh_attempted = True
 
-                feature_flags_need_refresh = await client.try_check_feature_flags(
-                    self._watched_feature_flags, headers=headers, **kwargs
-                )
-
-                if feature_flags_need_refresh:
-                    feature_flags = await client.load_feature_flags(
+                if await client.check_feature_flag_page_etags(
+                    self._feature_flag_selectors, self._feature_flag_page_etags, headers=headers, **kwargs
+                ):
+                    feature_flags, feature_flag_page_etags = await client.load_feature_flags(
                         self._feature_flag_selectors, headers=headers, **kwargs
                     )
             # Default to existing settings if no refresh occurred
@@ -176,6 +175,8 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 self._page_etags = page_etags
                 # Update the watch keys that have changed
                 self._watched_settings.update(updated_watched_settings)
+            if feature_flags is not None:
+                self._feature_flag_page_etags = feature_flag_page_etags
             # Reset timers at the same time as they should load from the same store.
             if configuration_refresh_attempted:
                 self._refresh_timer.reset()
@@ -288,8 +289,10 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 watched_settings = self._update_watched_settings(configuration_settings)
                 processed_settings = await self._process_configurations(configuration_settings, client)
 
+                feature_flag_page_etags: List[List[str]] = []
                 if self._feature_flag_enabled:
-                    feature_flags: List[FeatureFlagConfigurationSetting] = await client.load_feature_flags(
+                    feature_flags: List[FeatureFlagConfigurationSetting]
+                    feature_flags, feature_flag_page_etags = await client.load_feature_flags(
                         self._feature_flag_selectors,
                         headers=headers,
                         **kwargs,
@@ -320,6 +323,7 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                     self._watched_settings = watched_settings
                     self._dict = processed_settings
                     self._page_etags = page_etags
+                    self._feature_flag_page_etags = feature_flag_page_etags
                 return True
             except AzureError as e:
                 logger.warning("Failed to load configurations from endpoint %s.\n %s", client.endpoint, e.message)
@@ -388,9 +392,6 @@ class AzureAppConfigurationProvider(AzureAppConfigurationProviderBase):  # pylin
                 # Feature flags are not processed like other settings
                 feature_flag_value = self._process_feature_flag(setting)
                 feature_flags_processed.append(feature_flag_value)
-
-                if self._feature_flag_refresh_enabled:
-                    self._watched_feature_flags[(setting.key, setting.label)] = setting.etag
             else:
                 key = self._process_key_name(setting)
                 value = await self._process_key_value(setting)
