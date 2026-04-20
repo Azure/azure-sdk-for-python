@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import math
 import os, logging
 from typing import Dict, List, Optional, Union, Any, Tuple
 
@@ -22,6 +23,7 @@ from ..._common.utils import (
     construct_prompty_model_config,
     validate_model_config,
     simplify_messages,
+    parse_quality_evaluator_reason_score,
 )
 
 try:
@@ -295,23 +297,69 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         if isinstance(eval_input.get("query"), list):
             eval_input["query"] = _preprocess_messages(eval_input["query"])
 
-        if eval_input.get("query", None) is None:
-            return await super()._do_eval(eval_input)
+        if eval_input.get("query", None) is not None:
+            contains_context = self._has_context(eval_input)
+            simplified_query = simplify_messages(eval_input["query"], drop_tool_calls=contains_context)
+            simplified_response = simplify_messages(eval_input["response"], drop_tool_calls=False)
+            eval_input = {
+                "query": simplified_query,
+                "response": simplified_response,
+                "context": eval_input["context"],
+            }
 
-        contains_context = self._has_context(eval_input)
+        prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
 
-        simplified_query = simplify_messages(eval_input["query"], drop_tool_calls=contains_context)
-        simplified_response = simplify_messages(eval_input["response"], drop_tool_calls=False)
+        score = math.nan
+        reason = ""
 
-        # Build simplified input
-        simplified_eval_input = {
-            "query": simplified_query,
-            "response": simplified_response,
-            "context": eval_input["context"],
-        }
+        if prompty_output_dict:
+            llm_output = prompty_output_dict.get("llm_output", "")
+            input_token_count = prompty_output_dict.get("input_token_count", 0)
+            output_token_count = prompty_output_dict.get("output_token_count", 0)
+            total_token_count = prompty_output_dict.get("total_token_count", 0)
+            finish_reason = prompty_output_dict.get("finish_reason", "")
+            model_id = prompty_output_dict.get("model_id", "")
+            sample_input = prompty_output_dict.get("sample_input", "")
+            sample_output = prompty_output_dict.get("sample_output", "")
 
-        # Replace and call the parent method
-        return await super()._do_eval(simplified_eval_input)
+            if isinstance(llm_output, dict):
+                status = llm_output.get("status", "completed")
+                reason = llm_output.get("reason", "")
+                raw_score = llm_output.get("score")
+            else:
+                # Fallback for string output
+                score, reason = parse_quality_evaluator_reason_score(llm_output)
+                status = "completed"
+                raw_score = score
+
+            if status == "skipped":
+                return self._not_applicable_result(reason, self._threshold)
+
+            if raw_score is not None:
+                score = float(raw_score)
+
+            binary_result = self._get_binary_result(score)
+            return {
+                self._result_key: float(score),
+                f"gpt_{self._result_key}": float(score),
+                f"{self._result_key}_reason": reason,
+                f"{self._result_key}_result": binary_result,
+                f"{self._result_key}_threshold": self._threshold,
+                f"{self._result_key}_prompt_tokens": input_token_count,
+                f"{self._result_key}_completion_tokens": output_token_count,
+                f"{self._result_key}_total_tokens": total_token_count,
+                f"{self._result_key}_finish_reason": finish_reason,
+                f"{self._result_key}_model": model_id,
+                f"{self._result_key}_sample_input": sample_input,
+                f"{self._result_key}_sample_output": sample_output,
+            }
+
+        raise EvaluationException(
+            message="Evaluator returned invalid output.",
+            blame=ErrorBlame.SYSTEM_ERROR,
+            category=ErrorCategory.FAILED_EXECUTION,
+            target=ErrorTarget.GROUNDEDNESS_EVALUATOR,
+        )
 
     async def _real_call(self, **kwargs):
         """The asynchronous call where real end-to-end evaluation logic is performed.
