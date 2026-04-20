@@ -208,7 +208,7 @@ class verifytypes(Check):
                     f"stderr: {e.stderr}\n"
                     f"Re-running without --outputjson for diagnostic output..."
                 )
-                non_json_commands = [c for c in commands[1:] if c != "--outputjson"]
+                non_json_commands = [c for c in commands[1:] if c != "--outputjson"] + ["--verbose"]
                 diag = self.run_venv_command(executable, non_json_commands, cwd, check=False)
                 logger.error(f"Diagnostic pyright stdout:\n{diag.stdout}")
                 if diag.stderr:
