@@ -30,7 +30,7 @@ class BatchClient(GenerateBatchClient):
     :type hub: str
     :param credentials: Credential needed for the client to connect to Azure.
     :type credentials: ~azure.identity.ClientSecretCredential, ~azure.core.credentials.AzureNamedKeyCredential,
-     or ~azure.identity.AsyncTokenCredential
+     or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword api_version: Api Version. The default value is "2021-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
