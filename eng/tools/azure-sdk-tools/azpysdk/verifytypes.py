@@ -119,6 +119,8 @@ class verifytypes(Check):
                 if self.install_from_main(os.path.abspath(package_dir), executable) > 0:
                     continue
 
+                self._log_installed_package_layout(executable, module)
+
                 score_from_main = self.get_type_complete_score(executable, commands, package_dir)
                 if score_from_main == -1.0:
                     results.append(1)
@@ -227,6 +229,58 @@ class verifytypes(Check):
             finally:
                 os.chdir(cwd)  # allow temp dir to be deleted
             return 0
+
+    def _log_installed_package_layout(self, executable: str, module: str) -> None:
+        """Log what was actually installed so we can diagnose empty-pyright-output cases.
+
+        A 'successful' install that results in pyright finding zero symbols (empty
+        --verifytypes output) usually means the installed package is missing
+        namespace __init__.py files, missing py.typed, or was installed to an
+        unexpected location. Dump enough state to diagnose that from CI logs."""
+        # Distribution name derived from the module dotted path (e.g. azure.ai.transcription
+        # -> azure-ai-transcription). This matches our SDK naming convention.
+        dist_name = module.replace(".", "-")
+        try:
+            show = subprocess.run(
+                [executable, "-m", "pip", "show", "-f", dist_name],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            logger.info(
+                f"pip show -f {dist_name} (exit {show.returncode}):\n"
+                f"stdout:\n{show.stdout}\n"
+                f"stderr:\n{show.stderr}"
+            )
+
+            # Also list the actual files on disk for the module namespace, which is what
+            # pyright will walk. Missing azure/__init__.py or azure/ai/__init__.py here
+            # can make pyright --verifytypes discover zero symbols.
+            probe_script = (
+                "import importlib.util, os;"
+                f"spec = importlib.util.find_spec({module!r});"
+                "print('spec:', spec);"
+                "print('origin:', getattr(spec, 'origin', None));"
+                "locs = list(getattr(spec, 'submodule_search_locations', []) or []);"
+                "print('submodule_search_locations:', locs);"
+                "[print('  file:', os.path.join(root, f))"
+                " for loc in locs"
+                " for root, _, files in os.walk(loc)"
+                " for f in files]"
+            )
+            probe = subprocess.run(
+                [executable, "-c", probe_script],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+            logger.info(
+                f"Installed layout for {module} (exit {probe.returncode}):\n"
+                f"stdout:\n{probe.stdout}\n"
+                f"stderr:\n{probe.stderr}"
+            )
+        except Exception as e:  # pylint: disable=broad-except
+            logger.warning(f"Failed to introspect installed package layout for {module}: {e}")
 
     def get_type_complete_score(
         self, executable, commands: typing.List[str], cwd: str, check_pytyped: bool = False
