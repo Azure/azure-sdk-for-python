@@ -12,8 +12,8 @@
   - Added model `OperationStatusResult`
   - Added model `VmFamily`
   - Added model `VmFamilyProperties`
-  - Added model `FeaturesOperations`
-  - Added model `VmFamiliesOperations`
+  - Added operation group `FeaturesOperations`
+  - Added operation group `VmFamiliesOperations`
 
 ## 1.0.0b1 (2025-11-14)
 
