@@ -13,7 +13,8 @@ from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.logging import logger
 
 PYTHON_VERSION = "3.10"
-MYPY_VERSION = "1.18.1"
+MYPY_VERSION = "1.19.1"
+NEXT_MYPY_VERSION = "1.19.1"
 ADDITIONAL_LOCKED_DEPENDENCIES = [
     "types-chardet==5.0.4.6",
     "types-requests==2.31.0.6",
@@ -69,7 +70,7 @@ class mypy(Check):
             try:
                 if args.next:
                     # use latest version of mypy
-                    install_into_venv(executable, ["mypy"] + additional_requirements, package_dir)
+                    install_into_venv(executable, [f"mypy=={NEXT_MYPY_VERSION}"] + additional_requirements, package_dir)
                 else:
                     install_into_venv(executable, [f"mypy=={MYPY_VERSION}"] + additional_requirements, package_dir)
             except CalledProcessError as e:
