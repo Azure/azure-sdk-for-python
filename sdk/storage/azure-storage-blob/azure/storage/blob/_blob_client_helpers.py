@@ -95,6 +95,23 @@ def _format_url(container_name: Union[bytes, str], scheme: str, blob_name: str, 
     return f"{scheme}://{hostname}/{quote(container_name)}/{quote(blob_name, safe='~/')}{query_str}"
 
 
+def _strip_snapshot_from_url(url: str) -> str:
+    """Strip snapshot query params from a URL.
+
+    The generated client should receive a base URL without snapshot params,
+    since snapshots are passed per-operation.
+
+    :param str url: The full URL possibly containing snapshot query params.
+    :return: The URL with snapshot query params removed.
+    :rtype: str
+    """
+    if "?" not in url:
+        return url
+    base, qs = url.split("?", 1)
+    filtered = "&".join(part for part in qs.split("&") if not part.startswith(("sharesnapshot=", "snapshot=")))
+    return f"{base}?{filtered}" if filtered else base
+
+
 def _encode_source_url(source_url: str) -> str:
     parsed_source_url = urlparse(source_url)
     source_scheme = parsed_source_url.scheme

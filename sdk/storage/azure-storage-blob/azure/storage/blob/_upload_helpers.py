@@ -51,9 +51,6 @@ def _convert_mod_error(error):
 
 
 def _any_conditions(blob_kwargs):
-    # `match_condition` of None or MatchConditions.Unconditionally is the default behaviour
-    # (no condition applied); only a more specific value represents an actual condition.
-    # `etag` is only meaningful paired with a match_condition, so it is not considered on its own.
     match_condition = blob_kwargs.get("match_condition")
     return any(
         [
