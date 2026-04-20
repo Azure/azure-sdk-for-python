@@ -27,6 +27,9 @@
   - `BatchNodeRebootKind`
   - `BatchNodeReimageOption`
 
+- Renamed public methods:
+  - `list_sub_tasks` -> `list_subtasks`
+  
 - Renamed parameters across all operation methods:
   - `timeout` -> `service_timeout`
   - `ocpdate` -> `ocp_date`
