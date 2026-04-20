@@ -1,12 +1,12 @@
 # Copyright (c) Microsoft. All rights reserved.
 
-"""Streaming echo agent supporting both WebSocket and HTTP (SSE) conversations.
+"""Streaming echo agent supporting both WebSocket and HTTP (SSE) invocations.
 
 Echoes user input back as a stream, sending each word as a separate token chunk.
 Supports two communication modes:
 
 - **WebSocket** at ``ws://localhost:8088/conversations/ws``
-- **HTTP SSE** at ``POST http://localhost:8088/conversations``
+- **HTTP SSE** at ``POST http://localhost:8088/invocations``
 
 **Server** (this file)::
 
@@ -37,7 +37,7 @@ Supports two communication modes:
 
 **HTTP SSE client** (using ``curl``)::
 
-    curl -N -X POST http://localhost:8088/conversations \\
+    curl -N -X POST http://localhost:8088/invocations \\
         -H "Content-Type: application/json" \\
         -d '{"message": "Hello world!"}'
 """
@@ -46,19 +46,14 @@ import asyncio
 import json
 from collections.abc import AsyncGenerator
 
+from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import Response, StreamingResponse
-from starlette.routing import Route
 
 from azure.ai.agentserver.conversations import ConversationAgentServerHost, ConversationContext
+from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 ECHO_PREFIX = "🔊 Echo: "
-
-_CORS_HEADERS = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-}
 
 
 async def echo_tokens(message: str) -> AsyncGenerator[dict, None]:
@@ -74,45 +69,87 @@ async def echo_tokens(message: str) -> AsyncGenerator[dict, None]:
         await asyncio.sleep(0.1)  # simulate token-by-token latency
 
 
-# ---------------------------------------------------------------------------
-# HTTP SSE conversation endpoint
+# ---------------------------------------------------------------------------InvocationAgentServerHost
+# Combined host — Conversations (WebSocket) + Invocations (HTTP/SSE)
 # ---------------------------------------------------------------------------
 
 
+class EchoAgentHost(ConversationAgentServerHost, InvocationAgentServerHost):
+    """Combined host supporting both Invocations (HTTP/SSE) and Conversations (WebSocket).
+
+    Both parent classes store their handler in ``_invoke_fn`` with incompatible
+    signatures, so we keep a separate ``_http_invoke_fn`` for the invocations
+    endpoint and override ``_dispatch_invoke`` to use it.
+    """
+
+    def __init__(self, **kwargs: object) -> None:
+        self._http_invoke_fn = None
+        super().__init__(**kwargs)
+
+    def http_invoke_handler(self, fn):  # type: ignore[override]
+        """Register the HTTP invocation handler."""
+        self._http_invoke_fn = fn
+        return fn
+
+    async def _dispatch_invoke(self, request: Request) -> Response:
+        """Route HTTP invocations to the dedicated HTTP handler."""
+        if self._http_invoke_fn is not None:
+            return await self._http_invoke_fn(request)
+        raise NotImplementedError(
+            "No HTTP invoke handler registered. Use @app.http_invoke_handler."
+        )
+
+
+app = EchoAgentHost()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# ---------------------------------------------------------------------------
+# HTTP SSE invocation endpoint (via azure-ai-agentserver-invocations)
+# ---------------------------------------------------------------------------
+
+
+async def _generate_sse(message: str, invocation_id: str) -> AsyncGenerator[bytes, None]:
+    """Yield SSE-formatted token events with simulated latency.
+
+    :param message: The user message to echo.
+    :type message: str
+    :param invocation_id: The invocation ID for this request.
+    :type invocation_id: str
+    """
+    async for chunk in echo_tokens(message):
+        payload = json.dumps(chunk)
+        yield f"data: {payload}\n\n".encode()
+    done_payload = json.dumps({"invocation_id": invocation_id})
+    yield f"event: done\ndata: {done_payload}\n\n".encode()
+
+
+@app.http_invoke_handler
 async def handle_http_invoke(request: Request) -> Response:
-    """HTTP conversation endpoint — streams tokens as Server-Sent Events.
+    """HTTP invocation endpoint — streams tokens as Server-Sent Events.
 
     :param request: The incoming HTTP request.
     :type request: ~starlette.requests.Request
     """
-    if request.method == "OPTIONS":
-        return Response(status_code=204, headers=_CORS_HEADERS)
-
     data = await request.json()
+    invocation_id = request.state.invocation_id
     message = data.get("message", "Hello! Send me a message and I'll echo it back.")
 
-    async def generate_sse() -> AsyncGenerator[bytes, None]:
-        async for chunk in echo_tokens(message):
-            payload = json.dumps(chunk)
-            yield f"data: {payload}\n\n".encode()
-        yield b"event: done\ndata: {}\n\n"
-
     return StreamingResponse(
-        generate_sse(),
+        _generate_sse(message, invocation_id),
         media_type="text/event-stream",
-        headers={**_CORS_HEADERS, "Cache-Control": "no-cache", "Connection": "keep-alive"},
+        headers={"Cache-Control": "no-cache", "Connection": "keep-alive"},
     )
 
 
 # ---------------------------------------------------------------------------
-# Application — WebSocket + HTTP routes
+# WebSocket conversation endpoint (via azure-ai-agentserver-websocket)
 # ---------------------------------------------------------------------------
-
-app = ConversationAgentServerHost(
-    routes=[
-        Route("/conversations", handle_http_invoke, methods=["POST", "OPTIONS"]),
-    ],
-)
 
 
 @app.invoke_handler

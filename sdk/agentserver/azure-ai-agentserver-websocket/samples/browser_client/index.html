@@ -49,7 +49,7 @@
     <label for="modeHttp">HTTP (SSE)</label>
   </div>
   <div class="connection-bar">
-    <input id="urlInput" type="text" value="ws://localhost:8088/conversations/ws" placeholder="ws://host:port/conversations/ws">
+    <input id="urlInput" type="text" value="ws://localhost:8088/conversations/ws" placeholder="ws://host:port/...">
     <button id="connectBtn">Connect</button>
     <button id="disconnectBtn" disabled>Disconnect</button>
     <span class="status"><span id="statusDot" class="dot disconnected"></span><span id="statusText">Disconnected</span></span>
@@ -91,8 +91,8 @@
     cleanup();
 
     if (getMode() === "http") {
-      urlInput.value = "http://localhost:8088/conversations";
-      urlInput.placeholder = "http://host:port/conversations";
+      urlInput.value = "http://localhost:8088/invocations";
+      urlInput.placeholder = "http://host:port/invocations";
       connectBtn.style.display = "none";
       disconnectBtn.style.display = "none";
       setStatus("connected");
@@ -100,7 +100,7 @@
       addMessage("Switched to HTTP (SSE) mode", "system");
     } else {
       urlInput.value = "ws://localhost:8088/conversations/ws";
-      urlInput.placeholder = "ws://host:port/conversations/ws";
+      urlInput.placeholder = "ws://host:port/conversations/ws";  
       connectBtn.style.display = "";
       disconnectBtn.style.display = "";
       setStatus("disconnected");

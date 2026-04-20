@@ -1,18 +1,18 @@
 **IMPORTANT!** All samples and other resources made available in this GitHub repository ("samples") are designed to assist in accelerating development of agents, solutions, and agent workflows for various scenarios. Review all provided resources and carefully test output behavior in the context of your use case. AI responses may be inaccurate and AI actions should be monitored with human oversight.
 
-# Echo Agent — Conversations Protocol (WebSocket + HTTP SSE Streaming)
+# Echo Agent — Conversations (WebSocket) + Invocations (HTTP SSE) Streaming
 
-This sample demonstrates a minimal echo agent built with [azure-ai-agentserver-conversations](https://pypi.org/project/azure-ai-agentserver-conversations/) that streams responses word-by-word. It supports **two communication modes**:
+This sample demonstrates a minimal echo agent that combines [azure-ai-agentserver-conversations](https://pypi.org/project/azure-ai-agentserver-conversations/) (WebSocket) and [azure-ai-agentserver-invocations](https://pypi.org/project/azure-ai-agentserver-invocations/) (HTTP SSE) on a single server, streaming responses word-by-word. It supports **two communication modes**:
 
 - **WebSocket** — persistent connection at `ws://localhost:8088/conversations/ws`
-- **HTTP SSE** — stateless POST at `http://localhost:8088/conversations`
+- **HTTP SSE** — stateless POST at `http://localhost:8088/invocations`
 
 ## How It Works
 
 The agent receives user input and echoes it back with a `🔊 Echo:` prefix. Each word is streamed as a separate token chunk.
 
-- **WebSocket mode**: tokens are sent as `stream_chunk` messages, followed by a `stream_end` signal.
-- **HTTP SSE mode**: tokens are sent as `data:` lines per the Server-Sent Events spec, followed by an `event: done` signal.
+- **WebSocket mode** (Conversations protocol): tokens are sent as `stream_chunk` messages, followed by a `stream_end` signal.
+- **HTTP SSE mode** (Invocations protocol): tokens are sent as `data:` lines per the Server-Sent Events spec, followed by an `event: done` signal.
 
 ## Running Locally
 
@@ -62,12 +62,12 @@ async def main():
 asyncio.run(main())
 ```
 
-### Test with HTTP SSE
+### Test with HTTP SSE (Invocations)
 
 Using `curl`:
 
 ```bash
-curl -N -X POST http://localhost:8088/conversations \
+curl -N -X POST http://localhost:8088/invocations \
     -H "Content-Type: application/json" \
     -d '{"message": "Hello world!"}'
 ```
