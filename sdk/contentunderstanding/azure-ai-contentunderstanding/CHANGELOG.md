@@ -1,5 +1,10 @@
 # Release History
 
+## 1.0.2 (2026-04-20)
+
+### Bugs Fixed
+- Exposed `usage` property on `AnalyzeLROPoller` and `AnalyzeAsyncLROPoller` to surface billing and token consumption details (`UsageDetails`) returned by the REST API. Previously the `usage` field in the LRO response envelope was discarded by the generated deserialization callback.
+
 ## 1.0.1 (2026-03-06)
 
 ### Bugs Fixed

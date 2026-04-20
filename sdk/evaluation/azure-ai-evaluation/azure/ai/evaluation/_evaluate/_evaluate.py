@@ -2576,7 +2576,8 @@ def _extract_metric_values(
             "score": 4.5,
             "coherence_reason": "Good flow",
             "threshold": 3.0,
-            "sample": {...}
+            "sample": {...},
+            "properties": {"explanation": "Detailed analysis...", "confidence": 0.95}
         }
         expected_metrics = ["score"]
 
@@ -2586,13 +2587,29 @@ def _extract_metric_values(
                 "score": 4.5,
                 "reason": "Good flow",
                 "threshold": 3.0,
-                "sample": {...}
+                "sample": {...},
+                "properties": {"explanation": "Detailed analysis...", "confidence": 0.95}
             }
         }
+
+    Note: If a ``properties`` key is present in the metrics dict and its value is a dict,
+    it is extracted and attached to every per-metric result entry. This allows evaluators
+    to return additional output fields alongside standard score/reason/threshold values.
     """
     result_per_metric = {}
+    properties = None
 
     for metric_key, metric_value in metrics.items():
+        if metric_key == "properties":
+            if isinstance(metric_value, dict):
+                properties = metric_value
+            else:
+                logger.info(
+                    "Evaluator '%s' returned 'properties' as %s instead of dict; ignoring.",
+                    criteria_name,
+                    type(metric_value).__name__,
+                )
+            continue
         metric = _get_metric_from_criteria(criteria_name, metric_key, expected_metrics)
         temp_result_per_metric = {}
         if metric not in result_per_metric:
@@ -2611,6 +2628,11 @@ def _extract_metric_values(
         )
         if result_name == "label" and criteria_type == "azure_ai_evaluator" and derived_passed is not None:
             _append_indirect_attachments_to_results(result_per_metric, "passed", metric, derived_passed, None, None)
+
+    if properties is not None:
+        for metric_dict in result_per_metric.values():
+            if metric_dict is not None and len(metric_dict) > 0:
+                metric_dict["properties"] = properties.copy()
 
     empty_metrics = []
     empty_metrics.extend(
@@ -2855,7 +2877,8 @@ def _create_result_object(
             "score": 4.5,
             "reason": "Good logical flow",
             "threshold": 3.0,
-            "sample": {"input": "...", "output": "..."}
+            "sample": {"input": "...", "output": "..."},
+            "properties": {"explanation": "...", "confidence": 0.95}
         }
         criteria_type = "quality"
 
@@ -2869,8 +2892,13 @@ def _create_result_object(
             "reason": "Good logical flow",
             "threshold": 3.0,
             "passed": None,
-            "sample": {"input": "...", "output": "..."}
+            "sample": {"input": "...", "output": "..."},
+            "properties": {"explanation": "...", "confidence": 0.95}
         }
+
+    Note: The ``properties`` field is included only when the evaluator returned a
+    properties dict. It carries additional output fields beyond the standard
+    score/label/reason/threshold/passed values.
     """
     # Extract values
     score = metric_values.get("score")
@@ -2879,6 +2907,7 @@ def _create_result_object(
     threshold = metric_values.get("threshold")
     passed = metric_values.get("passed")
     sample = metric_values.get("sample")
+    properties = metric_values.get("properties")
 
     # Handle decrease boolean metrics
     if is_inverse:
@@ -2898,6 +2927,8 @@ def _create_result_object(
 
     if sample is not None:
         result_obj["sample"] = sample
+    if properties is not None:
+        result_obj["properties"] = properties
 
     return result_obj
 
