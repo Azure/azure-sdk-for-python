@@ -1,5 +1,10 @@
 # Release History
 
+## 1.1.0 (2026-04-24)
+
+### Features Added
+- Added `to_llm_input` helper function that converts `AnalysisResult` objects into LLM-friendly text with YAML front matter and markdown content. Supports documents, audio/video, and classification hierarchies.
+
 ## 1.0.2 (2026-04-20)
 
 ### Bugs Fixed
