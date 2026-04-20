@@ -137,7 +137,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = DeleteJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval)
+        polling_method = DeleteJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval=polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -219,7 +219,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = DisableJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval)
+        polling_method = DisableJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval=polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -294,7 +294,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = EnableJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval)
+        polling_method = EnableJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval=polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -369,7 +369,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = DeleteJobSchedulePollingMethodAsync(
-            self, pipeline_response, None, job_schedule_id, polling_interval
+            self, pipeline_response, None, job_schedule_id, polling_interval=polling_interval
         )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
@@ -452,7 +452,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = DeletePoolPollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval)
+        polling_method = DeletePoolPollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval=polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -509,7 +509,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = DeallocateNodePollingMethodAsync(
-            self, pipeline_response, None, pool_id, node_id, polling_interval
+            self, pipeline_response, None, pool_id, node_id=node_id, polling_interval=polling_interval
         )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
@@ -566,7 +566,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = RebootNodePollingMethodAsync(self, pipeline_response, None, pool_id, node_id, polling_interval)
+        polling_method = RebootNodePollingMethodAsync(self, pipeline_response, None, pool_id, node_id=node_id, polling_interval=polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -627,7 +627,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = ReimageNodePollingMethodAsync(
-            self, pipeline_response, None, pool_id, node_id, polling_interval
+            self, pipeline_response, None, pool_id, node_id=node_id, polling_interval=polling_interval
         )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
@@ -705,7 +705,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = RemoveNodePollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval)
+        polling_method = RemoveNodePollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval=polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -786,7 +786,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = ResizePoolPollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval)
+        polling_method = ResizePoolPollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval=polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -838,7 +838,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = StartNodePollingMethodAsync(self, pipeline_response, None, pool_id, node_id, polling_interval)
+        polling_method = StartNodePollingMethodAsync(self, pipeline_response, None, pool_id, node_id=node_id, polling_interval=polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -915,7 +915,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = StopPoolResizePollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval)
+        polling_method = StopPoolResizePollingMethodAsync(self, pipeline_response, None, pool_id, polling_interval=polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -1000,7 +1000,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             ),
         )
 
-        polling_method = TerminateJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval)
+        polling_method = TerminateJobPollingMethodAsync(self, pipeline_response, None, job_id, polling_interval=polling_interval)
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
     @distributed_trace
@@ -1076,7 +1076,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         )
 
         polling_method = TerminateJobSchedulePollingMethodAsync(
-            self, pipeline_response, None, job_schedule_id, polling_interval
+            self, pipeline_response, None, job_schedule_id, polling_interval=polling_interval
         )
         return AsyncLROPoller(self, pipeline_response, lambda _: None, polling_method, **kwargs)
 
