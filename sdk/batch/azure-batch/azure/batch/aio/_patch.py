@@ -9,7 +9,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 
 from typing import Union
 
-from azure.core.credentials import TokenCredential
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.credentials import AzureNamedKeyCredential
 
 from ._client import BatchClient as GenerateBatchClient
