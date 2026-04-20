@@ -1,3 +1,4 @@
+# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -20,14 +21,12 @@ Covers:
   10. Edge cases (no fields, no markdown, None field values)
 """
 
-import datetime
 import pytest
 
 from azure.ai.contentunderstanding import to_llm_input
 from azure.ai.contentunderstanding._helpers import _resolve_fields
 from azure.ai.contentunderstanding.models import (
     AnalysisResult,
-    AnalysisContent,
     AudioVisualContent,
     DocumentContent,
     DocumentContentSegment,
@@ -42,7 +41,6 @@ from azure.ai.contentunderstanding.models import (
     ArrayField,
     ObjectField,
     JsonField,
-    ContentField,
 )
 
 
@@ -222,6 +220,25 @@ class TestResolveFields:
         }
         resolved = _resolve_fields(fields)
         assert resolved["Items"] == [{"Sub": {"Deep": "val"}}]
+
+    def test_object_field_none_value_object(self):
+        fields = {"Addr": ObjectField(type="object", value_object=None)}
+        resolved = _resolve_fields(fields)
+        assert "Addr" not in resolved
+
+    def test_array_items_with_none_filtered(self):
+        fields = {
+            "Tags": ArrayField(
+                type="array",
+                value_array=[
+                    StringField(type="string", value_string="a"),
+                    StringField(type="string", value_string=None),
+                    StringField(type="string", value_string="b"),
+                ],
+            )
+        }
+        resolved = _resolve_fields(fields)
+        assert resolved["Tags"] == ["a", "b"]
 
     def test_empty_fields_dict(self):
         assert _resolve_fields({}) == {}
@@ -552,6 +569,14 @@ class TestFrontMatter:
         assert "N: 42" in output
         assert "N: 42.0" not in output
 
+    def test_fractional_number_keeps_decimal(self):
+        doc = DocumentContent(
+            kind="document",
+            fields={"Price": NumberField(type="number", value_number=9.99)},
+        )
+        output = to_llm_input(_make_result([doc]))
+        assert "Price: 9.99" in output
+
 
 # ===========================================================================
 # 10. Edge cases
@@ -643,6 +668,14 @@ class TestEdgeCases:
         result = AnalysisResult(contents=[doc], warnings=[warning])
         output = to_llm_input(result, include_fields=False, include_markdown=False)
         assert "rai_warnings:" in output
+
+    def test_empty_string_field_value_quoted(self):
+        doc = DocumentContent(
+            kind="document",
+            fields={"Note": StringField(type="string", value_string="")},
+        )
+        output = to_llm_input(_make_result([doc]))
+        assert "Note: ''" in output
 
 
 # ===========================================================================
@@ -922,3 +955,38 @@ class TestRealCUPatterns:
                 break
         else:
             raise AssertionError("Cost: not found in output")
+
+    def test_nested_list_in_array_indentation(self):
+        """Nested lists inside array items must indent children deeper than the parent key."""
+        doc = DocumentContent(
+            kind="document",
+            fields={
+                "Items": ArrayField(
+                    type="array",
+                    value_array=[
+                        ObjectField(type="object", value_object={
+                            "Name": StringField(type="string", value_string="Widget"),
+                            "Tags": ArrayField(type="array", value_array=[
+                                StringField(type="string", value_string="red"),
+                                StringField(type="string", value_string="blue"),
+                            ]),
+                        }),
+                    ],
+                ),
+            },
+        )
+        output = to_llm_input(_make_result([doc]))
+        lines = output.split("\n")
+        # Find the Tags key and its children
+        for i, line in enumerate(lines):
+            if "Tags:" in line:
+                tags_indent = len(line) - len(line.lstrip())
+                child_line = lines[i + 1]
+                child_indent = len(child_line) - len(child_line.lstrip())
+                assert child_indent > tags_indent, (
+                    f"Child '- red' indent ({child_indent}) must be greater than "
+                    f"parent 'Tags' indent ({tags_indent}): {repr(child_line)}"
+                )
+                break
+        else:
+            raise AssertionError("Tags: not found in output")

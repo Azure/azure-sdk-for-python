@@ -565,8 +565,7 @@ def _emit_sequence(lines: List[str], sequence: List[Any], indent: int) -> None:
                     _emit_mapping(lines, v, indent + 2)
                 elif isinstance(v, list) and v:
                     lines.append(f"{tag}{safe_k}:")
-                    inner_indent = indent + 1
-                    _emit_sequence(lines, v, inner_indent)
+                    _emit_sequence(lines, v, indent + 2)
                 else:
                     lines.append(f"{tag}{safe_k}: {_yaml_scalar(v)}")
                 first = False
