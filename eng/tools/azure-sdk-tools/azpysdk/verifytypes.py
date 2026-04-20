@@ -199,7 +199,15 @@ class verifytypes(Check):
                     f"Running verifytypes failed: {e.stderr}. See https://aka.ms/python/typing-guide for information."
                 )
                 return -1.0
-            report = json.loads(e.output)
+            try:
+                report = json.loads(e.output)
+            except (json.JSONDecodeError, TypeError):
+                logger.error(
+                    f"pyright --verifytypes exited with code 1 but did not produce valid JSON output.\n"
+                    f"stdout: {e.output}\n"
+                    f"stderr: {e.stderr}"
+                )
+                return -1.0
             if check_pytyped:
                 pytyped_present = report["typeCompleteness"].get("pyTypedPath", None)
                 if not pytyped_present:
