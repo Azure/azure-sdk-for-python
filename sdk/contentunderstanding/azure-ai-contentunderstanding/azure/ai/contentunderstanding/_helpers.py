@@ -94,9 +94,7 @@ def to_llm_input(
     from .models import AnalysisResult as _AnalysisResult
 
     if not isinstance(result, _AnalysisResult):
-        raise TypeError(
-            f"Expected AnalysisResult, got {type(result).__name__}"
-        )
+        raise TypeError(f"Expected AnalysisResult, got {type(result).__name__}")
 
     if not result.contents:
         return ""
@@ -149,15 +147,21 @@ def _resolve_fields(fields: Dict[str, "ContentField"]) -> Dict[str, Any]:
     return resolved
 
 
-def _resolve_field_value(field: "ContentField") -> Any:
-    """Resolve a single ContentField to a plain Python value."""
+def _resolve_field_value(
+    field: "ContentField",
+) -> Any:
+    """Resolve a single ContentField to a plain Python value.
+
+    :param field: The content field to resolve.
+    :type field: ~azure.ai.contentunderstanding.models.ContentField
+    :returns: The resolved plain Python value.
+    :rtype: Any
+    """
     from .models import ArrayField, ObjectField
 
     if isinstance(field, ObjectField):
         obj = field.value_object
-        if obj:
-            return _resolve_fields(obj)
-        return None
+        return _resolve_fields(obj) if obj else None
 
     if isinstance(field, ArrayField):
         arr = field.value_array
@@ -171,14 +175,12 @@ def _resolve_field_value(field: "ContentField") -> Any:
         return None
 
     # Leaf field — use the .value convenience property
-    val = field.value
+    val = field.value  # type: ignore[attr-defined]
     if val is None:
         return None
 
     # Convert date/time to ISO strings for YAML serialization
-    if isinstance(val, datetime.date):
-        return val.isoformat()
-    if isinstance(val, datetime.time):
+    if isinstance(val, (datetime.date, datetime.time)):
         return val.isoformat()
 
     return val
@@ -197,6 +199,11 @@ def _get_renderable_contents(
     A "parent" content has ``segments`` but no ``category``. When
     detected, the parent is skipped to avoid text duplication — only
     children (with ``category`` set) are rendered.
+
+    :param contents: The list of analysis contents to filter.
+    :type contents: list[~azure.ai.contentunderstanding.models.AnalysisContent]
+    :returns: The filtered list of renderable contents.
+    :rtype: list[~azure.ai.contentunderstanding.models.AnalysisContent]
     """
     from .models import DocumentContent
 
@@ -226,7 +233,20 @@ def _render_content_block(
     metadata: Optional[Dict[str, Any]],
     is_multi_segment: bool = False,
 ) -> str:
-    """Render a single content item as front matter + body."""
+    """Render a single content item as front matter + body.
+
+    :param content: The content item to render.
+    :type content: ~azure.ai.contentunderstanding.models.AnalysisContent
+    :param result: The full analysis result (used for warnings).
+    :type result: ~azure.ai.contentunderstanding.models.AnalysisResult
+    :keyword bool include_fields: Whether to include extracted fields.
+    :keyword bool include_markdown: Whether to include markdown body.
+    :keyword metadata: Optional user-provided metadata dict.
+    :paramtype metadata: dict[str, Any] or None
+    :keyword bool is_multi_segment: Whether this is part of a multi-segment result.
+    :returns: The rendered string with YAML front matter and optional body.
+    :rtype: str
+    """
     from .models import AudioVisualContent, DocumentContent
 
     # -- Build ordered front matter data --
@@ -242,10 +262,7 @@ def _render_content_block(
 
     # 3. timeRange (audioVisual — only for multi-segment)
     if isinstance(content, AudioVisualContent) and is_multi_segment:
-        if (
-            content.start_time_ms is not None
-            and content.end_time_ms is not None
-        ):
+        if content.start_time_ms is not None and content.end_time_ms is not None:
             fm["timeRange"] = _format_time_range(
                 content.start_time_ms, content.end_time_ms
             )
@@ -288,7 +305,14 @@ def _render_content_block(
 
 
 def _add_page_markers(content: "DocumentContent", markdown: str) -> str:
-    """Add ``<!-- page N -->`` markers to document markdown."""
+    """Add ``<!-- page N -->`` markers to document markdown.
+
+    :param content: The document content with page information.
+    :type content: ~azure.ai.contentunderstanding.models.DocumentContent
+    :param str markdown: The markdown text to annotate.
+    :returns: The markdown with page markers inserted.
+    :rtype: str
+    """
     if content.pages:
         result = _page_markers_from_spans(markdown, content.pages)
         if result is not markdown:  # spans were found and used
@@ -296,10 +320,15 @@ def _add_page_markers(content: "DocumentContent", markdown: str) -> str:
     return _page_markers_from_breaks(markdown, content)
 
 
-def _page_markers_from_spans(
-    markdown: str, pages: "List[DocumentPage]"
-) -> str:
-    """Insert page markers using ``pages[].spans`` offsets."""
+def _page_markers_from_spans(markdown: str, pages: "List[DocumentPage]") -> str:
+    """Insert page markers using ``pages[].spans`` offsets.
+
+    :param str markdown: The markdown text.
+    :param pages: The list of document pages with span info.
+    :type pages: list[~azure.ai.contentunderstanding.models.DocumentPage]
+    :returns: The markdown with page markers inserted at span offsets.
+    :rtype: str
+    """
     markers: List[tuple] = []
     for page in pages:
         if page.spans:
@@ -342,10 +371,15 @@ def _page_markers_from_spans(
     return "".join(parts)
 
 
-def _page_markers_from_breaks(
-    markdown: str, content: "DocumentContent"
-) -> str:
-    """Fall back to splitting on ``<!-- PageBreak -->`` markers."""
+def _page_markers_from_breaks(markdown: str, content: "DocumentContent") -> str:
+    """Fall back to splitting on ``<!-- PageBreak -->`` markers.
+
+    :param str markdown: The markdown text.
+    :param content: The document content with page number info.
+    :type content: ~azure.ai.contentunderstanding.models.DocumentContent
+    :returns: The markdown with page markers replacing PageBreak markers.
+    :rtype: str
+    """
     start_page = 1
     if content.start_page_number is not None:
         start_page = content.start_page_number
@@ -366,7 +400,13 @@ def _page_markers_from_breaks(
 
 
 def _format_time_range(start_ms: int, end_ms: int) -> str:
-    """Format millisecond timestamps as ``MM:SS \u2013 MM:SS``."""
+    """Format millisecond timestamps as ``MM:SS \u2013 MM:SS``.
+
+    :param int start_ms: Start time in milliseconds.
+    :param int end_ms: End time in milliseconds.
+    :returns: The formatted time range string.
+    :rtype: str
+    """
 
     def _fmt(ms: int) -> str:
         total_s = ms // 1000
@@ -376,7 +416,11 @@ def _format_time_range(start_ms: int, end_ms: int) -> str:
 
 
 def _format_pages(content: "AnalysisContent") -> Any:
-    """Return a pages value: int for single page, string for range, or *None*."""
+    """Return a pages value: int for single page, string for range, or *None*.
+
+    :param content: The analysis content to extract page info from.
+    :type content: ~azure.ai.contentunderstanding.models.AnalysisContent
+    """
     from .models import DocumentContent
 
     if not isinstance(content, DocumentContent):
@@ -393,16 +437,22 @@ def _format_pages(content: "AnalysisContent") -> Any:
 def _format_warnings(
     warnings: "List[ODataV4Format]",
 ) -> List[Dict[str, str]]:
-    """Convert ODataV4Format warnings to plain dicts for YAML output."""
+    """Convert ODataV4Format warnings to plain dicts for YAML output.
+
+    :param warnings: The list of warnings to convert.
+    :type warnings: list[~azure.ai.contentunderstanding.models.ODataV4Format]
+    :returns: A list of warning dicts with code, message, and target keys.
+    :rtype: list[dict[str, str]]
+    """
     items: List[Dict[str, str]] = []
     for w in warnings:
         entry: Dict[str, str] = {}
         if getattr(w, "code", None):
-            entry["code"] = w.code  # type: ignore[union-attr]
+            entry["code"] = w.code  # type: ignore[assignment, union-attr]
         if getattr(w, "message", None):
-            entry["message"] = w.message  # type: ignore[union-attr]
+            entry["message"] = w.message  # type: ignore[assignment, union-attr]
         if getattr(w, "target", None):
-            entry["target"] = w.target  # type: ignore[union-attr]
+            entry["target"] = w.target  # type: ignore[assignment, union-attr]
         if entry:
             items.append(entry)
     return items
@@ -412,19 +462,21 @@ def _format_warnings(
 # Minimal YAML serializer (no external dependency)
 # ---------------------------------------------------------------------------
 
-_YAML_SPECIAL_START = re.compile(
-    r"^[\-\?\:\,\[\]\{\}\#\&\*\!\|\>\'\"\%\@\`]"
-)
+_YAML_SPECIAL_START = re.compile(r"^[\-\?\:\,\[\]\{\}\#\&\*\!\|\>\'\"\%\@\`]")
 _YAML_SPECIAL_INSIDE = re.compile(r"[:\#] |[\n\r]")
 _YAML_BOOL = re.compile(r"^(true|false|yes|no|on|off|null)$", re.IGNORECASE)
-_YAML_NUMBER = re.compile(
-    r"^[+\-]?(\d+\.?\d*|\.\d+)([eE][+\-]?\d+)?$"
-)
+_YAML_NUMBER = re.compile(r"^[+\-]?(\d+\.?\d*|\.\d+)([eE][+\-]?\d+)?$")
 _YAML_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}")
 
 
 def _yaml_scalar(value: Any) -> str:
-    """Serialize a scalar to its YAML text form."""
+    """Serialize a scalar to its YAML text form.
+
+    :param value: The value to serialize.
+    :type value: Any
+    :returns: The YAML-formatted string.
+    :rtype: str
+    """
     if value is None:
         return "null"
     if isinstance(value, bool):
@@ -437,31 +489,40 @@ def _yaml_scalar(value: Any) -> str:
         return str(int(value)) if value == int(value) else str(value)
 
     s = str(value)
-    if not s:
-        return "''"
-    if (
-        _YAML_BOOL.match(s)
+    needs_quote = (
+        not s
+        or _YAML_BOOL.match(s)
         or _YAML_NUMBER.match(s)
         or _YAML_DATE.match(s)
         or _YAML_SPECIAL_START.search(s)
         or _YAML_SPECIAL_INSIDE.search(s)
-    ):
-        return "'" + s.replace("'", "''") + "'"
-    return s
+    )
+    return ("'" + s.replace("'", "''") + "'") if needs_quote else s
 
 
 def _build_front_matter(data: Dict[str, Any]) -> str:
-    """Build a ``---`` delimited YAML front matter string."""
+    """Build a ``---`` delimited YAML front matter string.
+
+    :param data: The data to serialize as YAML front matter.
+    :type data: dict[str, Any]
+    :returns: The YAML front matter string.
+    :rtype: str
+    """
     lines: List[str] = ["---"]
     _emit_mapping(lines, data, indent=0)
     lines.append("---")
     return "\n".join(lines)
 
 
-def _emit_mapping(
-    lines: List[str], mapping: Dict[str, Any], indent: int
-) -> None:
-    """Emit a YAML mapping (block style)."""
+def _emit_mapping(lines: List[str], mapping: Dict[str, Any], indent: int) -> None:
+    """Emit a YAML mapping (block style).
+
+    :param lines: The list of output lines to append to.
+    :type lines: list[str]
+    :param mapping: The mapping to emit.
+    :type mapping: dict[str, Any]
+    :param int indent: The current indentation level.
+    """
     prefix = "  " * indent
     for key, value in mapping.items():
         if value is None:
@@ -481,10 +542,15 @@ def _emit_mapping(
             lines.append(f"{prefix}{safe_key}: {_yaml_scalar(value)}")
 
 
-def _emit_sequence(
-    lines: List[str], sequence: List[Any], indent: int
-) -> None:
-    """Emit a YAML sequence (block style, compact notation)."""
+def _emit_sequence(lines: List[str], sequence: List[Any], indent: int) -> None:
+    """Emit a YAML sequence (block style, compact notation).
+
+    :param lines: The list of output lines to append to.
+    :type lines: list[str]
+    :param sequence: The sequence to emit.
+    :type sequence: list[Any]
+    :param int indent: The current indentation level.
+    """
     prefix = "  " * indent
     for item in sequence:
         if isinstance(item, dict):
