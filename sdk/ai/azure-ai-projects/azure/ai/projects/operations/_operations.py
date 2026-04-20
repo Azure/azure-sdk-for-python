@@ -973,7 +973,7 @@ def build_beta_agents_get_session_log_stream_request(  # pylint: disable=name-to
 
 
 def build_beta_agents_upload_session_file_request(  # pylint: disable=name-too-long
-    agent_name: str, session_id: str, *, path: str, **kwargs: Any
+    agent_name: str, agent_session_id: str, *, path: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -983,10 +983,10 @@ def build_beta_agents_upload_session_file_request(  # pylint: disable=name-too-l
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/endpoint/sessions/{session_id}/files/content"
+    _url = "/agents/{agent_name}/endpoint/sessions/{agent_session_id}/files/content"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "session_id": _SERIALIZER.url("session_id", session_id, "str"),
+        "agent_session_id": _SERIALIZER.url("agent_session_id", agent_session_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1003,7 +1003,7 @@ def build_beta_agents_upload_session_file_request(  # pylint: disable=name-too-l
 
 
 def build_beta_agents_download_session_file_request(  # pylint: disable=name-too-long
-    agent_name: str, session_id: str, *, path: str, **kwargs: Any
+    agent_name: str, agent_session_id: str, *, path: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1012,10 +1012,10 @@ def build_beta_agents_download_session_file_request(  # pylint: disable=name-too
     accept = _headers.pop("Accept", "application/octet-stream")
 
     # Construct URL
-    _url = "/agents/{agent_name}/endpoint/sessions/{session_id}/files/content"
+    _url = "/agents/{agent_name}/endpoint/sessions/{agent_session_id}/files/content"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "session_id": _SERIALIZER.url("session_id", session_id, "str"),
+        "agent_session_id": _SERIALIZER.url("agent_session_id", agent_session_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1031,7 +1031,7 @@ def build_beta_agents_download_session_file_request(  # pylint: disable=name-too
 
 
 def build_beta_agents_get_session_files_request(  # pylint: disable=name-too-long
-    agent_name: str, session_id: str, *, path: str, **kwargs: Any
+    agent_name: str, agent_session_id: str, *, path: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1040,10 +1040,10 @@ def build_beta_agents_get_session_files_request(  # pylint: disable=name-too-lon
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/agents/{agent_name}/endpoint/sessions/{session_id}/files"
+    _url = "/agents/{agent_name}/endpoint/sessions/{agent_session_id}/files"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "session_id": _SERIALIZER.url("session_id", session_id, "str"),
+        "agent_session_id": _SERIALIZER.url("agent_session_id", agent_session_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1059,16 +1059,16 @@ def build_beta_agents_get_session_files_request(  # pylint: disable=name-too-lon
 
 
 def build_beta_agents_delete_session_file_request(  # pylint: disable=name-too-long
-    agent_name: str, session_id: str, *, path: str, recursive: Optional[bool] = None, **kwargs: Any
+    agent_name: str, agent_session_id: str, *, path: str, recursive: Optional[bool] = None, **kwargs: Any
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "v1"))
     # Construct URL
-    _url = "/agents/{agent_name}/endpoint/sessions/{session_id}/files"
+    _url = "/agents/{agent_name}/endpoint/sessions/{agent_session_id}/files"
     path_format_arguments = {
         "agent_name": _SERIALIZER.url("agent_name", agent_name, "str"),
-        "session_id": _SERIALIZER.url("session_id", session_id, "str"),
+        "agent_session_id": _SERIALIZER.url("agent_session_id", agent_session_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -5852,15 +5852,15 @@ class BetaAgentsOperations:
 
     @distributed_trace
     def _upload_session_file(
-        self, agent_name: str, session_id: str, content: bytes, *, path: str, **kwargs: Any
+        self, agent_name: str, agent_session_id: str, content: bytes, *, path: str, **kwargs: Any
     ) -> _models.SessionFileWriteResponse:
         """Upload a file to the session sandbox via binary stream. Maximum file size is 50 MB. Uploads
         exceeding this limit return 413 Payload Too Large.
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
+        :param agent_session_id: The session ID. Required.
+        :type agent_session_id: str
         :param content: Required.
         :type content: bytes
         :keyword path: The destination file path within the sandbox, relative to the session home
@@ -5889,7 +5889,7 @@ class BetaAgentsOperations:
 
         _request = build_beta_agents_upload_session_file_request(
             agent_name=agent_name,
-            session_id=session_id,
+            agent_session_id=agent_session_id,
             path=path,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -5934,13 +5934,15 @@ class BetaAgentsOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def download_session_file(self, agent_name: str, session_id: str, *, path: str, **kwargs: Any) -> Iterator[bytes]:
+    def download_session_file(
+        self, agent_name: str, agent_session_id: str, *, path: str, **kwargs: Any
+    ) -> Iterator[bytes]:
         """Download a file from the session sandbox as a binary stream.
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
+        :param agent_session_id: The session ID. Required.
+        :type agent_session_id: str
         :keyword path: The file path to download from the sandbox, relative to the session home
          directory. Required.
         :paramtype path: str
@@ -5963,7 +5965,7 @@ class BetaAgentsOperations:
 
         _request = build_beta_agents_download_session_file_request(
             agent_name=agent_name,
-            session_id=session_id,
+            agent_session_id=agent_session_id,
             path=path,
             api_version=self._config.api_version,
             headers=_headers,
@@ -6004,15 +6006,15 @@ class BetaAgentsOperations:
 
     @distributed_trace
     def get_session_files(
-        self, agent_name: str, session_id: str, *, path: str, **kwargs: Any
+        self, agent_name: str, agent_session_id: str, *, path: str, **kwargs: Any
     ) -> _models.SessionDirectoryListResponse:
         """List files and directories at a given path in the session sandbox. Returns only the immediate
         children of the specified directory (non-recursive).
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
+        :param agent_session_id: The session ID. Required.
+        :type agent_session_id: str
         :keyword path: The directory path to list, relative to the session home directory. Required.
         :paramtype path: str
         :return: SessionDirectoryListResponse. The SessionDirectoryListResponse is compatible with
@@ -6035,7 +6037,7 @@ class BetaAgentsOperations:
 
         _request = build_beta_agents_get_session_files_request(
             agent_name=agent_name,
-            session_id=session_id,
+            agent_session_id=agent_session_id,
             path=path,
             api_version=self._config.api_version,
             headers=_headers,
@@ -6079,15 +6081,15 @@ class BetaAgentsOperations:
 
     @distributed_trace
     def delete_session_file(  # pylint: disable=inconsistent-return-statements
-        self, agent_name: str, session_id: str, *, path: str, recursive: Optional[bool] = None, **kwargs: Any
+        self, agent_name: str, agent_session_id: str, *, path: str, recursive: Optional[bool] = None, **kwargs: Any
     ) -> None:
         """Delete a file or directory from the session sandbox. If ``recursive`` is false (default) and
         the target is a non-empty directory, the API returns 409 Conflict.
 
         :param agent_name: The name of the agent. Required.
         :type agent_name: str
-        :param session_id: The session ID. Required.
-        :type session_id: str
+        :param agent_session_id: The session ID. Required.
+        :type agent_session_id: str
         :keyword path: The file or directory path to delete, relative to the session home directory.
          Required.
         :paramtype path: str
@@ -6113,7 +6115,7 @@ class BetaAgentsOperations:
 
         _request = build_beta_agents_delete_session_file_request(
             agent_name=agent_name,
-            session_id=session_id,
+            agent_session_id=agent_session_id,
             path=path,
             recursive=recursive,
             api_version=self._config.api_version,
