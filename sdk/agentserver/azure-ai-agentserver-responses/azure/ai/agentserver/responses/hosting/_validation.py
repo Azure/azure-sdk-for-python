@@ -8,6 +8,7 @@ from typing import Any, Mapping
 
 from starlette.responses import JSONResponse
 
+from azure.ai.agentserver.responses._id_generator import IdGenerator
 from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from azure.ai.agentserver.responses.models._generated import ApiErrorResponse, CreateResponse, Error
 from azure.ai.agentserver.responses.models._generated._validators import validate_CreateResponse
@@ -124,6 +125,17 @@ def validate_create_response(request: CreateResponse) -> None:
                     param="metadata",
                 )
 
+    # Validate previous_response_id format (must be a valid caresp ID)
+    prev_id = getattr(request, "previous_response_id", None)
+    if isinstance(prev_id, str) and prev_id:
+        is_valid, _ = IdGenerator.is_valid(prev_id, allowed_prefixes=["caresp"])
+        if not is_valid:
+            raise RequestValidationError(
+                "Malformed identifier.",
+                code="invalid_parameters",
+                param="previous_response_id",
+            )
+
 
 def parse_and_validate_create_response(
     payload: Mapping[str, Any],
@@ -199,7 +211,7 @@ def build_not_found_error_response(
     """
     return build_api_error_response(
         message=f"{resource_name} '{resource_id}' was not found",
-        code="not_found",
+        code="invalid_request_error",
         param=param,
         error_type="invalid_request_error",
     )
@@ -221,7 +233,7 @@ def build_invalid_mode_error_response(
     """
     return build_api_error_response(
         message=message,
-        code="invalid_mode",
+        code="invalid_request_error",
         param=param,
         error_type="invalid_request_error",
     )
@@ -241,13 +253,13 @@ def to_api_error_response(error: Exception) -> ApiErrorResponse:
     if isinstance(error, ValueError):
         return build_api_error_response(
             message=str(error) or "invalid request",
-            code="invalid_request",
+            code="invalid_request_error",
             error_type="invalid_request_error",
         )
 
     return build_api_error_response(
         message="internal server error",
-        code="internal_error",
+        code="server_error",
         error_type="server_error",
     )
 
@@ -327,7 +339,7 @@ def not_found_response(response_id: str, headers: dict[str, str]) -> JSONRespons
     """
     return _api_error(
         message=f"Response with id '{response_id}' not found.",
-        code="invalid_request",
+        code="invalid_request_error",
         param="response_id",
         error_type="invalid_request_error",
         status_code=404,
@@ -348,7 +360,30 @@ def invalid_request_response(message: str, headers: dict[str, str], *, param: st
     """
     return _api_error(
         message=message,
-        code="invalid_request",
+        code="invalid_request_error",
+        param=param,
+        error_type="invalid_request_error",
+        status_code=400,
+        headers=headers,
+    )
+
+
+def invalid_parameters_response(message: str, headers: dict[str, str], *, param: str | None = None) -> JSONResponse:
+    """Build a 400 Bad Request error response with ``code: "invalid_parameters"``.
+
+    Used for malformed identifier validation (spec rule B40).
+
+    :param message: Human-readable error message.
+    :type message: str
+    :param headers: HTTP headers to include in the response.
+    :type headers: dict[str, str]
+    :keyword param: Optional parameter name associated with the error.
+    :return: A 400 JSONResponse.
+    :rtype: JSONResponse
+    """
+    return _api_error(
+        message=message,
+        code="invalid_parameters",
         param=param,
         error_type="invalid_request_error",
         status_code=400,
@@ -392,17 +427,15 @@ def service_unavailable_response(message: str, headers: dict[str, str]) -> JSONR
 
 
 def deleted_response(response_id: str, headers: dict[str, str]) -> JSONResponse:
-    """Build a 400 error response indicating the response has been deleted.
+    """Build a 404 error response indicating the response has been deleted.
+
+    Per spec, all endpoints treat deleted responses as not-found (HTTP 404).
 
     :param response_id: The ID of the deleted response.
     :type response_id: str
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
-    :return: A 400 JSONResponse.
+    :return: A 404 JSONResponse.
     :rtype: JSONResponse
     """
-    return invalid_request_response(
-        f"Response with id '{response_id}' has been deleted.",
-        headers,
-        param="response_id",
-    )
+    return not_found_response(response_id, headers)

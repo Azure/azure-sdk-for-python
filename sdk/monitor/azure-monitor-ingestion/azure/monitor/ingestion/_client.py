@@ -15,14 +15,14 @@ from azure.core.pipeline import policies
 from azure.core.rest import HttpRequest, HttpResponse
 
 from ._configuration import LogsIngestionClientConfiguration
-from ._operations import LogsIngestionClientOperationsMixin
+from ._operations import _LogsIngestionClientOperationsMixin
 from ._utils.serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class LogsIngestionClient(LogsIngestionClientOperationsMixin):
+class LogsIngestionClient(_LogsIngestionClientOperationsMixin):
     """Azure Monitor data collection client.
 
     :param endpoint: The Data Collection Endpoint for the Data Collection Rule. For example,
@@ -31,8 +31,9 @@ class LogsIngestionClient(LogsIngestionClientOperationsMixin):
     :type endpoint: str
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: The API version to use for this operation. Default value is "2023-01-01".
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are "2023-01-01".
+     Default value is "2023-01-01". Note that overriding this default value may result in
+     unsupported behavior.
     :paramtype api_version: str
     """
 

@@ -15,6 +15,7 @@ misconfiguration is surfaced at startup rather than silently masked.
 """
 import os
 from typing import Optional
+
 from typing_extensions import Self
 
 # ======================================================================

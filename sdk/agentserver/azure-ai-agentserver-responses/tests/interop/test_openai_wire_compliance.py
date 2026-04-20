@@ -516,8 +516,11 @@ def test_create_response_max_output_tokens() -> None:
 
 
 def test_create_response_previous_response_id() -> None:
-    req = _send_and_capture('{"model": "test", "previous_response_id": "resp_prev_001"}')
-    assert req.previous_response_id == "resp_prev_001"
+    from azure.ai.agentserver.responses._id_generator import IdGenerator
+
+    valid_id = IdGenerator.new_response_id()
+    req = _send_and_capture(f'{{"model": "test", "previous_response_id": "{valid_id}"}}')
+    assert req.previous_response_id == valid_id
 
 
 def test_create_response_store() -> None:
