@@ -17,9 +17,11 @@ from azure.ai.agentserver.responses.store._foundry_errors import (
     FoundryBadRequestError,
     FoundryResourceNotFoundError,
 )
+from azure.ai.agentserver.responses._platform_headers import (
+    CHAT_ISOLATION_KEY as _CHAT_ISOLATION_HEADER,
+    USER_ISOLATION_KEY as _USER_ISOLATION_HEADER,
+)
 from azure.ai.agentserver.responses.store._foundry_provider import (
-    _CHAT_ISOLATION_HEADER,
-    _USER_ISOLATION_HEADER,
     FoundryStorageProvider,
 )
 from azure.ai.agentserver.responses.store._foundry_settings import FoundryStorageSettings
