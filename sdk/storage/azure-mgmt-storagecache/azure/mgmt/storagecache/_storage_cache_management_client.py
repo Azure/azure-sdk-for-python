@@ -27,6 +27,7 @@ from .operations import (
     AutoExportJobsOperations,
     AutoImportJobsOperations,
     CachesOperations,
+    ExpansionJobsOperations,
     ImportJobsOperations,
     Operations,
     SkusOperations,
@@ -56,6 +57,8 @@ class StorageCacheManagementClient(
     :vartype import_jobs: azure.mgmt.storagecache.operations.ImportJobsOperations
     :ivar auto_import_jobs: AutoImportJobsOperations operations
     :vartype auto_import_jobs: azure.mgmt.storagecache.operations.AutoImportJobsOperations
+    :ivar expansion_jobs: ExpansionJobsOperations operations
+    :vartype expansion_jobs: azure.mgmt.storagecache.operations.ExpansionJobsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.storagecache.operations.Operations
     :ivar skus: SkusOperations operations
@@ -81,7 +84,7 @@ class StorageCacheManagementClient(
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: Api Version. Default value is "2025-07-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2026-01-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -138,6 +141,7 @@ class StorageCacheManagementClient(
         self.auto_export_jobs = AutoExportJobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.import_jobs = ImportJobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.auto_import_jobs = AutoImportJobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.expansion_jobs = ExpansionJobsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
         self.usage_models = UsageModelsOperations(self._client, self._config, self._serialize, self._deserialize)

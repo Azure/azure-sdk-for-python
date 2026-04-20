@@ -34,6 +34,6 @@ def main():
     client.check_aml_fs_subnets()
 
 
-# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/stable/2025-07-01/examples/checkAmlFSSubnets.json
+# x-ms-original-file: specification/storagecache/resource-manager/Microsoft.StorageCache/StorageCache/stable/2026-01-01/examples/checkAmlFSSubnets.json
 if __name__ == "__main__":
     main()
