@@ -34,14 +34,17 @@ keywords = ["azure", "azure sdk"]
 dependencies = [
     "isodate>=0.6.1",
     "azure-core>=1.38.3",
-    "cryptography>=2.1.4",
     "typing-extensions>=4.6.0",
+    "cryptography>=2.1.4",
+]
+dynamic = [
+"version", "readme"
 ]
 
-dynamic = ["version", "readme"]
-
 [project.optional-dependencies]
-aio = ["azure-core[aio]>=1.38.3"]
+aio = [
+  "azure-core[aio]>=1.38.3",
+]
 
 [project.urls]
 repository = "https://github.com/Azure/azure-sdk-for-python"
@@ -51,7 +54,15 @@ version = {attr = "azure.storage.blob._version.VERSION"}
 readme = {file = ["README.md", "CHANGELOG.md"], content-type = "text/markdown"}
 
 [tool.setuptools.packages.find]
-include = ["azure.storage.blob*"]
+exclude = [
+    "tests*",
+    "generated_tests*",
+    "samples*",
+    "generated_samples*",
+    "doc*",
+    "azure",
+    "azure.storage",
+]
 
 [tool.setuptools.package-data]
 pytyped = ["py.typed"]

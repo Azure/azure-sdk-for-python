@@ -177,7 +177,7 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
             # make sure authorization header is logged, but its value is not
             # the keyword SharedKey is present in the authorization header's value
             assert _AUTHORIZATION_HEADER_NAME in log_as_str
-            assert not 'SharedKey' in log_as_str
+            assert not "SharedKey" in log_as_str
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -190,17 +190,17 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             storage_account_key.secret,
             logging_enable=True,
-            logging_body=True
+            logging_body=True,
         )
-        container_name = self.get_resource_name('utcontainer')
+        container_name = self.get_resource_name("utcontainer")
         container = bsc.get_container_client(container_name)
         if self.is_live:
             try:
                 await container.create_container()
             except:
                 pass
-        
-        request_body = 'testoverridelogging'
+
+        request_body = "testoverridelogging"
         blob_name = self.get_resource_name("testoverride")
         blob_client = container.get_blob_client(blob_name)
         await blob_client.upload_blob(request_body, overwrite=True)
@@ -221,18 +221,18 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
 
         # Act - Upload with logging_body=False (test request logging override)
         with LogCaptured(self) as log_captured:
-            await blob_client.upload_blob('uploadtest', overwrite=True, logging_body=False)
+            await blob_client.upload_blob("uploadtest", overwrite=True, logging_body=False)
             log_as_str = log_captured.getvalue()
             # Assert - Request body should NOT be logged
-            assert 'uploadtest' not in log_as_str
+            assert "uploadtest" not in log_as_str
 
         # Act - Upload/Download with logging_enable=False (should override constructor and disable logging entirely)
         with LogCaptured(self) as log_captured:
-            await blob_client.upload_blob('uploadtest', overwrite=True, logging_enable=False)
+            await blob_client.upload_blob("uploadtest", overwrite=True, logging_enable=False)
             await blob_client.download_blob(logging_enable=False)
             log_as_str = log_captured.getvalue()
             # Assert - No logging should occur
-            assert log_as_str == ''
+            assert log_as_str == ""
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -245,18 +245,18 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             storage_account_key.secret,
             logging_enable=True,
-            logging_body=True
+            logging_body=True,
         )
-        container_name = self.get_resource_name('utcontainer')
+        container_name = self.get_resource_name("utcontainer")
         container = bsc.get_container_client(container_name)
         if self.is_live:
             try:
                 await container.create_container()
             except:
                 pass
-        
-        request_body_1 = 'isolationtest1'
-        request_body_2 = 'isolationtest2'
+
+        request_body_1 = "isolationtest1"
+        request_body_2 = "isolationtest2"
         blob_name_1 = self.get_resource_name("testblob1")
         blob_name_2 = self.get_resource_name("testblob2")
         blob_client_1 = container.get_blob_client(blob_name_1)
@@ -297,7 +297,7 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
             self.account_url(storage_account_name, "blob"),
             storage_account_key.secret,
             logging_enable=True,
-            logging_body=False
+            logging_body=False,
         )
         container_no_body = bsc_no_body.get_container_client(container_name)
         blob_client_no_body = container_no_body.get_blob_client(blob_name_1)
@@ -331,27 +331,28 @@ class TestStorageLoggingAsync(AsyncStorageRecordedTestCase):
             initial_backoff=0.1,
             increment_base=0.1,
         )
-        container_name = self.get_resource_name('utcontainer')
+        container_name = self.get_resource_name("utcontainer")
         container = bsc.get_container_client(container_name)
         if self.is_live:
             try:
                 await container.create_container()
             except:
                 pass
-        
-        request_body = 'testretrylogging'
+
+        request_body = "testretrylogging"
         blob_name = self.get_resource_name("testretry")
         blob_client = container.get_blob_client(blob_name)
         await blob_client.upload_blob(request_body, overwrite=True)
 
         # Test 1: logging_body=False should prevent logging on both original and retry attempts
         call_count = 0
+
         def response_hook_fail_once(response):
             nonlocal call_count
             call_count += 1
             if call_count == 1:
                 response.http_response.status_code = 408  # Request Timeout - triggers retry
-        
+
         with LogCaptured(self) as log_captured:
             call_count = 0
             await blob_client.download_blob(raw_response_hook=response_hook_fail_once, logging_body=False)

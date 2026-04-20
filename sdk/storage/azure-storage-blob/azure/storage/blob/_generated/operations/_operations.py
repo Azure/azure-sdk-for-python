@@ -3278,7 +3278,7 @@ def build_page_blob_upload_pages_from_url_request(  # pylint: disable=name-too-l
             "source_content_crc64", source_content_crc64, "bytearray"
         )
     _headers["Content-Length"] = _SERIALIZER.header("content_length", content_length, "int")
-    _headers["x-ms-range"] = _SERIALIZER.header("range", range, "str")
+    _headers["Range"] = _SERIALIZER.header("range", range, "str")
     if encryption_key is not None:
         _headers["x-ms-encryption-key"] = _SERIALIZER.header("encryption_key", encryption_key, "str")
     if encryption_key_sha256 is not None:
