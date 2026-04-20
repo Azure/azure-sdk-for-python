@@ -252,17 +252,7 @@ The canonical definition of which install-and-test checks run in each mode lives
 
 Static analysis checks always run against **Python 3.10** (configured via `PythonVersion` in `eng/pipelines/templates/variables/globals.yml`).
 
-The install-and-test checks run across the following Python version and platform matrix:
-
-| Platform | Python Version |
-|---|---|
-| Linux | `3.9` |
-| Linux | `3.10` |
-| Linux | `3.13` |
-| Linux | `3.14` |
-| Linux | `PyPy 3.11` |
-| Windows | `3.12` |
-| macOS | `3.11` |
+The install-and-test checks run across the Python version and platform matrix defined in [`platform-matrix.json`](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/pipelines/templates/stages/platform-matrix.json).
 
 ## Static Analysis Checks
 
@@ -487,7 +477,7 @@ The following checks are the additional entries in `FULL_BUILD_SET` beyond the P
 
 <a name="import-all"></a>
 
-The `import_all` check ensures all modules in a target package can be successfully imported. Installing and importing verifies that all package requirements are properly set in `setup.py` and that the `__all__` for the package is properly defined. This test installs the package and its required packages, then executes `from <package-root-namespace> import *`. For example from `azure-core`, the following would be invoked: `from azure.core import *`.
+The `import_all` check ensures all modules in a target package can be successfully imported. Installing and importing verifies that all package requirements are properly set in `setup.py`/`pyproject.toml` and that the `__all__` for the package is properly defined. This test installs the package and its required packages, then executes `from <package-root-namespace> import *`. For example from `azure-core`, the following would be invoked: `from azure.core import *`.
 
 To run locally:
 
@@ -511,7 +501,7 @@ azpysdk whl_no_aio .
 
 <a name="latest-dependency-test"></a>
 
-For each Azure SDK dependency declared in `setup.py` (dev-only requirements are excluded), this check resolves the **latest** published version available on PyPI that satisfies the requirement range, installs it in place of the in-repo dev version, and then runs the full test suite. This confirms that the package works with the newest available version of each of its dependencies.
+For each Azure SDK dependency declared in `setup.py`/`pyproject.toml` (dev-only requirements are excluded), this check resolves the **latest** published version available on PyPI that satisfies the requirement range, installs it in place of the in-repo dev version, and then runs the full test suite. This confirms that the package works with the newest available version of each of its dependencies.
 
 To run locally:
 
