@@ -222,7 +222,8 @@ class _ConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
                 if not self._validate_snapshot(select.snapshot_name):
-                    return [], []
+                    page_etags.append(selector_etags)
+                    continue
                 feature_flags = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
                 for ff in feature_flags:
                     if isinstance(ff, FeatureFlagConfigurationSetting):

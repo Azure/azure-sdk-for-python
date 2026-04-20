@@ -224,7 +224,8 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
             if select.snapshot_name is not None:
                 # When loading from a snapshot, ignore key_filter, label_filter, and tag_filters
                 if not await self._validate_snapshot(select.snapshot_name):
-                    return [], []
+                    page_etags.append(selector_etags)
+                    continue
                 feature_flags = self._client.list_configuration_settings(snapshot_name=select.snapshot_name, **kwargs)
                 async for ff in feature_flags:
                     if isinstance(ff, FeatureFlagConfigurationSetting):
@@ -263,6 +264,9 @@ class _AsyncConfigurationClientWrapper(_ConfigurationClientWrapperBase):
         :rtype: bool
         """
         for i, select in enumerate(feature_flag_selectors):
+            if i >= len(page_etags):
+                # Missing or stale etag state should trigger a refresh instead of failing.
+                return True
             selector_etags = page_etags[i]
             if select.snapshot_name is None:
                 key_filter = select.key_filter if select.key_filter is not None else ""
