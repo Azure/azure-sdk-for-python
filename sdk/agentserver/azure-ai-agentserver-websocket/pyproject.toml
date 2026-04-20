@@ -1,7 +1,7 @@
 [project]
-name = "azure-ai-agentserver-invocations"
+name = "azure-ai-agentserver-websocket"
 dynamic = ["version", "readme"]
-description = "Invocations protocol for Azure AI Hosted Agents"
+description = "Conversations protocol for Azure AI Hosted Agents"
 requires-python = ">=3.10"
 authors = [
   { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
@@ -18,7 +18,7 @@ classifiers = [
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
 ]
-keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
+keywords = ["azure", "azure sdk", "agent", "agentserver", "conversations", "websocket"]
 
 dependencies = [
     "azure-ai-agentserver-core>=2.0.0b1",
@@ -42,11 +42,11 @@ exclude = [
 ]
 
 [tool.setuptools.dynamic]
-version = { attr = "azure.ai.agentserver.invocations._version.VERSION" }
+version = { attr = "azure.ai.agentserver.conversations._version.VERSION" }
 readme = { file = ["README.md"], content-type = "text/markdown" }
 
 [tool.setuptools.package-data]
-"azure.ai.agentserver.invocations" = ["py.typed"]
+"azure.ai.agentserver.conversations" = ["py.typed"]
 
 [tool.ruff]
 line-length = 120
@@ -56,7 +56,7 @@ lint.ignore = []
 fix = false
 
 [tool.ruff.lint.isort]
-known-first-party = ["azure.ai.agentserver.invocations"]
+known-first-party = ["azure.ai.agentserver.conversations"]
 combine-as-imports = true
 
 [tool.azure-sdk-build]

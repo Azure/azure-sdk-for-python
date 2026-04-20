@@ -1,17 +1,17 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Invocations protocol for Azure AI Hosted Agents.
+"""Conversations protocol for Azure AI Hosted Agents.
 
-This package provides an invocation protocol host as a subclass of
+This package provides an conversation protocol host as a subclass of
 :class:`~azure.ai.agentserver.core.AgentServerHost`.
 
 Quick start::
 
-    from azure.ai.agentserver.invocations import InvocationAgentServerHost
+    from azure.ai.agentserver.conversations import ConversationAgentServerHost
     from starlette.responses import JSONResponse
 
-    app = InvocationAgentServerHost()
+    app = ConversationAgentServerHost()
 
     @app.invoke_handler
     async def handle(request):
@@ -21,8 +21,8 @@ Quick start::
 """
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from ._invocation import InvocationAgentServerHost, InvocationContext, InvocationError
+from ._conversation import ConversationAgentServerHost, ConversationContext, ConversationError
 from ._version import VERSION
 
-__all__ = ["InvocationAgentServerHost", "InvocationContext", "InvocationError"]
+__all__ = ["ConversationAgentServerHost", "ConversationContext", "ConversationError"]
 __version__ = VERSION

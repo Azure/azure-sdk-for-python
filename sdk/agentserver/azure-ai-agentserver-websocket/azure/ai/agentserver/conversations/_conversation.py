@@ -1,15 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Invocation protocol host for Azure AI Hosted Agents (WebSocket).
+"""Conversation protocol host for Azure AI Hosted Agents (WebSocket).
 
-Provides the invocation protocol over WebSocket long connections
+Provides the conversation protocol over WebSocket long connections
 as a :class:`~azure.ai.agentserver.core.AgentServerHost` subclass.
 """
 import asyncio
 import contextlib
 import inspect
 import json
+import logging
 import os
 import re
 import uuid
@@ -24,14 +25,14 @@ from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from azure.ai.agentserver.core import (  # pylint: disable=no-name-in-module
     AgentServerHost,
-    get_logger,
-    Constants,
     create_error_response,
+    end_span,
+    record_error,
 )
 
-from ._constants import InvocationConstants
+from ._constants import ConversationConstants
 
-logger = get_logger()
+logger = logging.getLogger("azure.ai.agentserver")
 
 # Maximum length and allowed characters for user-provided IDs (defense in depth).
 _MAX_ID_LENGTH = 256
@@ -58,23 +59,23 @@ def _sanitize_id(value: str, fallback: str) -> str:
 
 
 @dataclass
-class InvocationContext:
-    """Contextual information for an invocation request.
+class ConversationContext:
+    """Contextual information for a conversation request.
 
     Passed to handler functions registered via :meth:`invoke_handler`,
-    :meth:`get_invocation_handler`, and :meth:`cancel_invocation_handler`.
+    :meth:`get_conversation_handler`, and :meth:`cancel_conversation_handler`.
 
-    :param invocation_id: Unique identifier for this invocation.
-    :type invocation_id: str
-    :param session_id: Session identifier for this invocation.
+    :param conversation_id: Unique identifier for this conversation.
+    :type conversation_id: str
+    :param session_id: Session identifier for this conversation.
     :type session_id: str
     """
 
-    invocation_id: str
+    conversation_id: str
     session_id: str
 
 
-class InvocationError(Exception):
+class ConversationError(Exception):
     """Raised by handlers to signal a domain-specific error.
 
     :param code: Machine-readable error code.
@@ -89,33 +90,33 @@ class InvocationError(Exception):
         super().__init__(message)
 
 
-class InvocationAgentServerHost(AgentServerHost):
-    """Invocation protocol host for Azure AI Hosted Agents over WebSocket.
+class ConversationAgentServerHost(AgentServerHost):
+    """Conversation protocol host for Azure AI Hosted Agents over WebSocket.
 
     A :class:`~azure.ai.agentserver.core.AgentServerHost` subclass that adds
-    a WebSocket endpoint for the invocation protocol.  Use the decorator
+    a WebSocket endpoint for the conversation protocol.  Use the decorator
     methods to wire handler functions to messages.
 
-    WebSocket endpoint: ``/invocations/ws``
+    WebSocket endpoint: ``/conversations/ws``
 
     **Client → Server messages** (JSON text frames)::
 
-        {"action": "invoke", "invocation_id": "opt", "session_id": "opt", "payload": {...}}
-        {"action": "get_invocation", "invocation_id": "required"}
-        {"action": "cancel_invocation", "invocation_id": "required"}
+        {"action": "invoke", "conversation_id": "opt", "session_id": "opt", "payload": {...}}
+        {"action": "get_conversation", "conversation_id": "required"}
+        {"action": "cancel_conversation", "conversation_id": "required"}
 
     **Server → Client messages** (JSON text frames)::
 
-        {"type": "result", "invocation_id": "...", "session_id": "...", "payload": {...}}
-        {"type": "stream_chunk", "invocation_id": "...", "session_id": "...", "payload": {...}}
-        {"type": "stream_end", "invocation_id": "...", "session_id": "..."}
-        {"type": "error", "invocation_id": "...", "error": {"code": "...", "message": "..."}}
+        {"type": "result", "conversation_id": "...", "session_id": "...", "payload": {...}}
+        {"type": "stream_chunk", "conversation_id": "...", "session_id": "...", "payload": {...}}
+        {"type": "stream_end", "conversation_id": "...", "session_id": "..."}
+        {"type": "error", "conversation_id": "...", "error": {"code": "...", "message": "..."}}
 
     Usage::
 
-        from azure.ai.agentserver.invocations import InvocationAgentServerHost, InvocationContext
+        from azure.ai.agentserver.conversations import ConversationAgentServerHost, ConversationContext
 
-        app = InvocationAgentServerHost()
+        app = ConversationAgentServerHost()
 
         @app.invoke_handler
         async def handle(payload, context):
@@ -124,7 +125,7 @@ class InvocationAgentServerHost(AgentServerHost):
         app.run()
 
     :param openapi_spec: Optional OpenAPI spec dict.  When provided, the spec
-        is served at ``GET /invocations/docs/openapi.json``.
+        is served at ``GET /conversations/docs/openapi.json``.
     :type openapi_spec: Optional[dict[str, Any]]
     :param ws_ping_interval: Interval in seconds between keep-alive ping
         frames sent to each connected WebSocket client.  Keeps the
@@ -142,33 +143,33 @@ class InvocationAgentServerHost(AgentServerHost):
         **kwargs: Any,
     ) -> None:
         self._invoke_fn: Optional[Callable] = None
-        self._get_invocation_fn: Optional[Callable] = None
-        self._cancel_invocation_fn: Optional[Callable] = None
+        self._get_conversation_fn: Optional[Callable] = None
+        self._cancel_conversation_fn: Optional[Callable] = None
         self._openapi_spec = openapi_spec
         self._ws_ping_interval: int = (
             ws_ping_interval
             if ws_ping_interval is not None
-            else InvocationConstants.DEFAULT_WS_PING_INTERVAL
+            else ConversationConstants.DEFAULT_WS_PING_INTERVAL
         )
 
-        # Build invocation routes
-        invocation_routes: list[Any] = [
+        # Build conversation routes
+        conversation_routes: list[Any] = [
             Route(
-                "/invocations/docs/openapi.json",
+                "/conversations/docs/openapi.json",
                 self._get_openapi_spec_endpoint,
                 methods=["GET"],
                 name="get_openapi_spec",
             ),
             WebSocketRoute(
-                "/invocations/ws",
+                "/conversations/ws",
                 self._websocket_endpoint,
-                name="invocations_ws",
+                name="conversations_ws",
             ),
         ]
 
         # Merge with any routes from sibling mixins via cooperative init
         existing = list(kwargs.pop("routes", None) or [])
-        super().__init__(routes=existing + invocation_routes, **kwargs)
+        super().__init__(routes=existing + conversation_routes, **kwargs)
 
     # ------------------------------------------------------------------
     # Handler decorators
@@ -179,7 +180,7 @@ class InvocationAgentServerHost(AgentServerHost):
     ) -> Callable[..., Any]:
         """Register a function as the invoke handler.
 
-        The handler receives ``(payload: dict, context: InvocationContext)``
+        The handler receives ``(payload: dict, context: ConversationContext)``
         and may be:
 
         - An async function returning a ``dict`` (non-streaming).
@@ -211,12 +212,12 @@ class InvocationAgentServerHost(AgentServerHost):
         self._invoke_fn = fn
         return fn
 
-    def get_invocation_handler(
+    def get_conversation_handler(
         self, fn: Callable[..., Any]
     ) -> Callable[..., Any]:
-        """Register a function as the get-invocation handler.
+        """Register a function as the get-conversation handler.
 
-        The handler receives ``(context: InvocationContext)`` and returns
+        The handler receives ``(context: ConversationContext)`` and returns
         a ``dict``.
 
         :param fn: Async function.
@@ -227,18 +228,18 @@ class InvocationAgentServerHost(AgentServerHost):
         """
         if not inspect.iscoroutinefunction(fn):
             raise TypeError(
-                f"get_invocation_handler expects an async function, got {type(fn).__name__}. "
+                f"get_conversation_handler expects an async function, got {type(fn).__name__}. "
                 "Use 'async def' to define your handler."
             )
-        self._get_invocation_fn = fn
+        self._get_conversation_fn = fn
         return fn
 
-    def cancel_invocation_handler(
+    def cancel_conversation_handler(
         self, fn: Callable[..., Any]
     ) -> Callable[..., Any]:
-        """Register a function as the cancel-invocation handler.
+        """Register a function as the cancel-conversation handler.
 
-        The handler receives ``(context: InvocationContext)`` and returns
+        The handler receives ``(context: ConversationContext)`` and returns
         a ``dict``.
 
         :param fn: Async function.
@@ -249,10 +250,10 @@ class InvocationAgentServerHost(AgentServerHost):
         """
         if not inspect.iscoroutinefunction(fn):
             raise TypeError(
-                f"cancel_invocation_handler expects an async function, got {type(fn).__name__}. "
+                f"cancel_conversation_handler expects an async function, got {type(fn).__name__}. "
                 "Use 'async def' to define your handler."
             )
-        self._cancel_invocation_fn = fn
+        self._cancel_conversation_fn = fn
         return fn
 
     # ------------------------------------------------------------------
@@ -290,7 +291,7 @@ class InvocationAgentServerHost(AgentServerHost):
     def _request_span(
         self,
         headers: Any,
-        invocation_id: str,
+        conversation_id: str,
         span_operation: str,
         operation_name: Optional[str] = None,
         session_id: str = "",
@@ -299,8 +300,8 @@ class InvocationAgentServerHost(AgentServerHost):
 
         :param headers: HTTP/WebSocket handshake headers.
         :type headers: any
-        :param invocation_id: The request/invocation ID.
-        :type invocation_id: str
+        :param conversation_id: The request/conversation ID.
+        :type conversation_id: str
         :param span_operation: Span operation name.
         :type span_operation: str
         :param operation_name: Optional ``gen_ai.operation.name`` value.
@@ -310,18 +311,16 @@ class InvocationAgentServerHost(AgentServerHost):
         :return: Context manager yielding the OTel span or *None*.
         :rtype: any
         """
-        if self._tracing is not None:
-            return self._tracing.request_span(
-                headers, invocation_id, span_operation,
-                operation_name=operation_name, session_id=session_id,
-                end_on_exit=False,
-            )
-        return contextlib.nullcontext(None)
+        return self.request_span(
+            headers, conversation_id, span_operation,
+            operation_name=operation_name, session_id=session_id,
+            end_on_exit=False,
+        )
 
     def _simple_request_span(
         self,
         headers: Any,
-        invocation_id: str,
+        conversation_id: str,
         span_operation: str,
         session_id: str = "",
     ) -> Any:
@@ -331,8 +330,8 @@ class InvocationAgentServerHost(AgentServerHost):
 
         :param headers: HTTP/WebSocket handshake headers.
         :type headers: any
-        :param invocation_id: The request/invocation ID.
-        :type invocation_id: str
+        :param conversation_id: The request/conversation ID.
+        :type conversation_id: str
         :param span_operation: Span operation name.
         :type span_operation: str
         :param session_id: Session ID (empty string if absent).
@@ -340,12 +339,10 @@ class InvocationAgentServerHost(AgentServerHost):
         :return: Context manager yielding the OTel span or *None*.
         :rtype: any
         """
-        if self._tracing is not None:
-            return self._tracing.request_span(
-                headers, invocation_id, span_operation,
-                session_id=session_id,
-            )
-        return contextlib.nullcontext(None)
+        return self.request_span(
+            headers, conversation_id, span_operation,
+            session_id=session_id,
+        )
 
     # ------------------------------------------------------------------
     # WebSocket endpoint
@@ -365,13 +362,13 @@ class InvocationAgentServerHost(AgentServerHost):
         try:
             while True:
                 await asyncio.sleep(self._ws_ping_interval)
-                await websocket.send_json({"type": InvocationConstants.MSG_TYPE_PING})
+                await websocket.send_json({"type": ConversationConstants.MSG_TYPE_PING})
         except (WebSocketDisconnect, Exception):  # pylint: disable=broad-exception-caught
             # Connection closed or errored — let the task exit silently.
             pass
 
     async def _websocket_endpoint(self, websocket: WebSocket) -> None:
-        """Main WebSocket endpoint for the invocation protocol.
+        """Main WebSocket endpoint for the conversation protocol.
 
         Accepts a WebSocket connection and processes JSON messages in a loop.
         Each message must contain an ``action`` field.
@@ -397,34 +394,34 @@ class InvocationAgentServerHost(AgentServerHost):
                     message = json.loads(raw)
                 except (json.JSONDecodeError, ValueError):
                     await websocket.send_json({
-                        "type": InvocationConstants.MSG_TYPE_ERROR,
+                        "type": ConversationConstants.MSG_TYPE_ERROR,
                         "error": {"code": "invalid_json", "message": "Invalid JSON message"},
                     })
                     continue
 
                 if not isinstance(message, dict):
                     await websocket.send_json({
-                        "type": InvocationConstants.MSG_TYPE_ERROR,
+                        "type": ConversationConstants.MSG_TYPE_ERROR,
                         "error": {"code": "invalid_message", "message": "Message must be a JSON object"},
                     })
                     continue
 
                 action = message.get("action")
-                if action == InvocationConstants.ACTION_INVOKE:
+                if action == ConversationConstants.ACTION_INVOKE:
                     await self._handle_ws_invoke(websocket, message)
-                elif action == InvocationConstants.ACTION_GET_INVOCATION:
-                    await self._handle_ws_get_invocation(websocket, message)
-                elif action == InvocationConstants.ACTION_CANCEL_INVOCATION:
-                    await self._handle_ws_cancel_invocation(websocket, message)
-                elif action == InvocationConstants.ACTION_PING:
+                elif action == ConversationConstants.ACTION_GET_CONVERSATION:
+                    await self._handle_ws_get_conversation(websocket, message)
+                elif action == ConversationConstants.ACTION_CANCEL_CONVERSATION:
+                    await self._handle_ws_cancel_conversation(websocket, message)
+                elif action == ConversationConstants.ACTION_PING:
                     # Client-initiated ping — respond with pong.
-                    await websocket.send_json({"type": InvocationConstants.MSG_TYPE_PONG})
-                elif action == InvocationConstants.ACTION_PONG:
+                    await websocket.send_json({"type": ConversationConstants.MSG_TYPE_PONG})
+                elif action == ConversationConstants.ACTION_PONG:
                     # Client pong response — no-op, already kept connection alive.
                     pass
                 else:
                     await websocket.send_json({
-                        "type": InvocationConstants.MSG_TYPE_ERROR,
+                        "type": ConversationConstants.MSG_TYPE_ERROR,
                         "error": {
                             "code": "invalid_action",
                             "message": f"Unknown action: {action}",
@@ -446,23 +443,23 @@ class InvocationAgentServerHost(AgentServerHost):
 
     async def _handle_ws_invoke(self, websocket: WebSocket, message: dict[str, Any]) -> None:
         generated_id = str(uuid.uuid4())
-        raw_invocation_id = message.get("invocation_id") or ""
-        invocation_id = _sanitize_id(raw_invocation_id, generated_id)
+        raw_conversation_id = message.get("conversation_id") or ""
+        conversation_id = _sanitize_id(raw_conversation_id, generated_id)
 
         raw_session_id = (
             message.get("session_id")
-            or os.environ.get(Constants.FOUNDRY_AGENT_SESSION_ID)
+            or os.environ.get("FOUNDRY_AGENT_SESSION_ID")
             or ""
         )
         session_id = _sanitize_id(raw_session_id, str(uuid.uuid4()))
 
-        context = InvocationContext(invocation_id=invocation_id, session_id=session_id)
+        context = ConversationContext(conversation_id=conversation_id, session_id=session_id)
         payload = message.get("payload", {})
 
         if self._invoke_fn is None:
             await websocket.send_json({
-                "type": InvocationConstants.MSG_TYPE_ERROR,
-                "invocation_id": invocation_id,
+                "type": ConversationConstants.MSG_TYPE_ERROR,
+                "conversation_id": conversation_id,
                 "session_id": session_id,
                 "error": {
                     "code": "not_implemented",
@@ -472,12 +469,12 @@ class InvocationAgentServerHost(AgentServerHost):
             return
 
         with self._request_span(
-            websocket.headers, invocation_id, "invoke_agent",
+            websocket.headers, conversation_id, "invoke_agent",
             operation_name="invoke_agent", session_id=session_id,
         ) as otel_span:
             self._safe_set_attrs(otel_span, {
-                InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
-                InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
+                ConversationConstants.ATTR_SPAN_CONVERSATION_ID: conversation_id,
+                ConversationConstants.ATTR_SPAN_SESSION_ID: session_id,
             })
 
             try:
@@ -485,176 +482,171 @@ class InvocationAgentServerHost(AgentServerHost):
                     # Streaming response
                     async for chunk in self._invoke_fn(payload, context):
                         await websocket.send_json({
-                            "type": InvocationConstants.MSG_TYPE_STREAM_CHUNK,
-                            "invocation_id": invocation_id,
+                            "type": ConversationConstants.MSG_TYPE_STREAM_CHUNK,
+                            "conversation_id": conversation_id,
                             "session_id": session_id,
                             "payload": chunk,
                         })
                     await websocket.send_json({
-                        "type": InvocationConstants.MSG_TYPE_STREAM_END,
-                        "invocation_id": invocation_id,
+                        "type": ConversationConstants.MSG_TYPE_STREAM_END,
+                        "conversation_id": conversation_id,
                         "session_id": session_id,
                     })
                 else:
                     # Non-streaming response
                     result = await self._invoke_fn(payload, context)
                     await websocket.send_json({
-                        "type": InvocationConstants.MSG_TYPE_RESULT,
-                        "invocation_id": invocation_id,
+                        "type": ConversationConstants.MSG_TYPE_RESULT,
+                        "conversation_id": conversation_id,
                         "session_id": session_id,
                         "payload": result,
                     })
-            except InvocationError as exc:
+            except ConversationError as exc:
                 self._safe_set_attrs(otel_span, {
-                    InvocationConstants.ATTR_SPAN_ERROR_CODE: exc.code,
-                    InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: exc.message,
+                    ConversationConstants.ATTR_SPAN_ERROR_CODE: exc.code,
+                    ConversationConstants.ATTR_SPAN_ERROR_MESSAGE: exc.message,
                 })
-                if self._tracing is not None:
-                    self._tracing.end_span(otel_span, exc=exc)
-                logger.error("Invocation %s failed: %s", invocation_id, exc)
+                end_span(otel_span, exc=exc)
+                logger.error("Conversation %s failed: %s", conversation_id, exc)
                 await websocket.send_json({
-                    "type": InvocationConstants.MSG_TYPE_ERROR,
-                    "invocation_id": invocation_id,
+                    "type": ConversationConstants.MSG_TYPE_ERROR,
+                    "conversation_id": conversation_id,
                     "session_id": session_id,
                     "error": {"code": exc.code, "message": exc.message},
                 })
                 return
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 self._safe_set_attrs(otel_span, {
-                    InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
-                    InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
+                    ConversationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
+                    ConversationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
                 })
-                if self._tracing is not None:
-                    self._tracing.end_span(otel_span, exc=exc)
-                logger.error("Error processing invocation %s: %s", invocation_id, exc, exc_info=True)
+                end_span(otel_span, exc=exc)
+                logger.error("Error processing conversation %s: %s", conversation_id, exc, exc_info=True)
                 await websocket.send_json({
-                    "type": InvocationConstants.MSG_TYPE_ERROR,
-                    "invocation_id": invocation_id,
+                    "type": ConversationConstants.MSG_TYPE_ERROR,
+                    "conversation_id": conversation_id,
                     "session_id": session_id,
                     "error": {"code": "internal_error", "message": "Internal server error"},
                 })
                 return
 
             # Success — end span
-            if self._tracing is not None:
-                self._tracing.end_span(otel_span)
+            end_span(otel_span)
 
     # ------------------------------------------------------------------
-    # Get-invocation handler
+    # Get-conversation handler
     # ------------------------------------------------------------------
 
-    async def _handle_ws_get_invocation(self, websocket: WebSocket, message: dict[str, Any]) -> None:
-        invocation_id = message.get("invocation_id") or ""
-        if not invocation_id:
+    async def _handle_ws_get_conversation(self, websocket: WebSocket, message: dict[str, Any]) -> None:
+        conversation_id = message.get("conversation_id") or ""
+        if not conversation_id:
             await websocket.send_json({
-                "type": InvocationConstants.MSG_TYPE_ERROR,
-                "error": {"code": "invalid_request", "message": "invocation_id is required"},
+                "type": ConversationConstants.MSG_TYPE_ERROR,
+                "error": {"code": "invalid_request", "message": "conversation_id is required"},
             })
             return
 
         session_id = message.get("session_id") or ""
-        context = InvocationContext(invocation_id=invocation_id, session_id=session_id)
+        context = ConversationContext(conversation_id=conversation_id, session_id=session_id)
 
         with self._simple_request_span(
-            websocket.headers, invocation_id, "get_invocation",
+            websocket.headers, conversation_id, "get_conversation",
             session_id=session_id,
         ) as otel_span:
             self._safe_set_attrs(otel_span, {
-                InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
-                InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
+                ConversationConstants.ATTR_SPAN_CONVERSATION_ID: conversation_id,
+                ConversationConstants.ATTR_SPAN_SESSION_ID: session_id,
             })
 
-            if self._get_invocation_fn is None:
+            if self._get_conversation_fn is None:
                 await websocket.send_json({
-                    "type": InvocationConstants.MSG_TYPE_ERROR,
-                    "invocation_id": invocation_id,
-                    "error": {"code": "not_found", "message": "get_invocation not implemented"},
+                    "type": ConversationConstants.MSG_TYPE_ERROR,
+                    "conversation_id": conversation_id,
+                    "error": {"code": "not_found", "message": "get_conversation not implemented"},
                 })
                 return
 
             try:
-                result = await self._get_invocation_fn(context)
+                result = await self._get_conversation_fn(context)
                 await websocket.send_json({
-                    "type": InvocationConstants.MSG_TYPE_RESULT,
-                    "invocation_id": invocation_id,
+                    "type": ConversationConstants.MSG_TYPE_RESULT,
+                    "conversation_id": conversation_id,
                     "payload": result,
                 })
-            except InvocationError as exc:
+            except ConversationError as exc:
                 await websocket.send_json({
-                    "type": InvocationConstants.MSG_TYPE_ERROR,
-                    "invocation_id": invocation_id,
+                    "type": ConversationConstants.MSG_TYPE_ERROR,
+                    "conversation_id": conversation_id,
                     "error": {"code": exc.code, "message": exc.message},
                 })
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 self._safe_set_attrs(otel_span, {
-                    InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
-                    InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
+                    ConversationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
+                    ConversationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
                 })
-                if self._tracing is not None:
-                    self._tracing.record_error(otel_span, exc)
-                logger.error("Error in get_invocation %s: %s", invocation_id, exc, exc_info=True)
+                record_error(otel_span, exc)
+                logger.error("Error in get_conversation %s: %s", conversation_id, exc, exc_info=True)
                 await websocket.send_json({
-                    "type": InvocationConstants.MSG_TYPE_ERROR,
-                    "invocation_id": invocation_id,
+                    "type": ConversationConstants.MSG_TYPE_ERROR,
+                    "conversation_id": conversation_id,
                     "error": {"code": "internal_error", "message": "Internal server error"},
                 })
 
     # ------------------------------------------------------------------
-    # Cancel-invocation handler
+    # Cancel-conversation handler
     # ------------------------------------------------------------------
 
-    async def _handle_ws_cancel_invocation(self, websocket: WebSocket, message: dict[str, Any]) -> None:
-        invocation_id = message.get("invocation_id") or ""
-        if not invocation_id:
+    async def _handle_ws_cancel_conversation(self, websocket: WebSocket, message: dict[str, Any]) -> None:
+        conversation_id = message.get("conversation_id") or ""
+        if not conversation_id:
             await websocket.send_json({
-                "type": InvocationConstants.MSG_TYPE_ERROR,
-                "error": {"code": "invalid_request", "message": "invocation_id is required"},
+                "type": ConversationConstants.MSG_TYPE_ERROR,
+                "error": {"code": "invalid_request", "message": "conversation_id is required"},
             })
             return
 
         session_id = message.get("session_id") or ""
-        context = InvocationContext(invocation_id=invocation_id, session_id=session_id)
+        context = ConversationContext(conversation_id=conversation_id, session_id=session_id)
 
         with self._simple_request_span(
-            websocket.headers, invocation_id, "cancel_invocation",
+            websocket.headers, conversation_id, "cancel_conversation",
             session_id=session_id,
         ) as otel_span:
             self._safe_set_attrs(otel_span, {
-                InvocationConstants.ATTR_SPAN_INVOCATION_ID: invocation_id,
-                InvocationConstants.ATTR_SPAN_SESSION_ID: session_id,
+                ConversationConstants.ATTR_SPAN_CONVERSATION_ID: conversation_id,
+                ConversationConstants.ATTR_SPAN_SESSION_ID: session_id,
             })
 
-            if self._cancel_invocation_fn is None:
+            if self._cancel_conversation_fn is None:
                 await websocket.send_json({
-                    "type": InvocationConstants.MSG_TYPE_ERROR,
-                    "invocation_id": invocation_id,
-                    "error": {"code": "not_found", "message": "cancel_invocation not implemented"},
+                    "type": ConversationConstants.MSG_TYPE_ERROR,
+                    "conversation_id": conversation_id,
+                    "error": {"code": "not_found", "message": "cancel_conversation not implemented"},
                 })
                 return
 
             try:
-                result = await self._cancel_invocation_fn(context)
+                result = await self._cancel_conversation_fn(context)
                 await websocket.send_json({
-                    "type": InvocationConstants.MSG_TYPE_RESULT,
-                    "invocation_id": invocation_id,
+                    "type": ConversationConstants.MSG_TYPE_RESULT,
+                    "conversation_id": conversation_id,
                     "payload": result,
                 })
-            except InvocationError as exc:
+            except ConversationError as exc:
                 await websocket.send_json({
-                    "type": InvocationConstants.MSG_TYPE_ERROR,
-                    "invocation_id": invocation_id,
+                    "type": ConversationConstants.MSG_TYPE_ERROR,
+                    "conversation_id": conversation_id,
                     "error": {"code": exc.code, "message": exc.message},
                 })
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 self._safe_set_attrs(otel_span, {
-                    InvocationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
-                    InvocationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
+                    ConversationConstants.ATTR_SPAN_ERROR_CODE: "internal_error",
+                    ConversationConstants.ATTR_SPAN_ERROR_MESSAGE: str(exc),
                 })
-                if self._tracing is not None:
-                    self._tracing.record_error(otel_span, exc)
-                logger.error("Error in cancel_invocation %s: %s", invocation_id, exc, exc_info=True)
+                record_error(otel_span, exc)
+                logger.error("Error in cancel_conversation %s: %s", conversation_id, exc, exc_info=True)
                 await websocket.send_json({
-                    "type": InvocationConstants.MSG_TYPE_ERROR,
-                    "invocation_id": invocation_id,
+                    "type": ConversationConstants.MSG_TYPE_ERROR,
+                    "conversation_id": conversation_id,
                     "error": {"code": "internal_error", "message": "Internal server error"},
                 })

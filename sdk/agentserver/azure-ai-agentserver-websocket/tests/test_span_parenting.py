@@ -10,9 +10,9 @@ from unittest.mock import patch
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.invocations import (
-    InvocationAgentServerHost,
-    InvocationContext,
+from azure.ai.agentserver.conversations import (
+    ConversationAgentServerHost,
+    ConversationContext,
 )
 
 
@@ -51,11 +51,11 @@ def _make_server_with_child_span():
     """Server whose handler creates a child span (simulating a framework)."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
         with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-            app = InvocationAgentServerHost()
+            app = ConversationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
 
     @app.invoke_handler
-    async def handle(payload: dict, context: InvocationContext) -> dict:
+    async def handle(payload: dict, context: ConversationContext) -> dict:
         with child_tracer.start_as_current_span("framework_invoke_agent") as _span:
             return {"ok": True}
 
@@ -66,11 +66,11 @@ def _make_streaming_server_with_child_span():
     """Server with streaming response whose handler creates a child span."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
         with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-            app = InvocationAgentServerHost()
+            app = ConversationAgentServerHost()
     child_tracer = trace.get_tracer("test.framework")
 
     @app.invoke_handler
-    async def handle(payload: dict, context: InvocationContext):
+    async def handle(payload: dict, context: ConversationContext):
         with child_tracer.start_as_current_span("framework_invoke_agent"):
             yield {"chunk": "data"}
 
@@ -102,7 +102,7 @@ def test_framework_span_is_child_of_invoke_span():
     agentserver invoke_agent span, not a sibling."""
     server = _make_server_with_child_span()
     client = TestClient(server)
-    with client.websocket_connect("/invocations/ws") as ws:
+    with client.websocket_connect("/conversations/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {}})
         resp = ws.receive_json()
     assert resp["type"] == "result"
@@ -114,7 +114,7 @@ def test_framework_span_is_child_streaming():
     """Same parent-child relationship holds for streaming responses."""
     server = _make_streaming_server_with_child_span()
     client = TestClient(server)
-    with client.websocket_connect("/invocations/ws") as ws:
+    with client.websocket_connect("/conversations/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {}})
         while True:
             resp = ws.receive_json()

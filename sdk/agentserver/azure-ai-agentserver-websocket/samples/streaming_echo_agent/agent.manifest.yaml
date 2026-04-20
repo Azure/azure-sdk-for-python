@@ -1,16 +1,16 @@
-name: echo-agent-invocations-websocket-streaming
+name: echo-agent-conversations-websocket-streaming
 description: >
   A simple echo agent that streams responses word-by-word using the
-  azure-ai-agentserver-invocations SDK with WebSocket streaming.
+  azure-ai-agentserver-conversations SDK with WebSocket streaming.
 metadata:
   tags:
     - AI Agent Hosting
     - Azure AI AgentServer
-    - Invocations Protocol
+    - Conversations Protocol
     - Streaming
 template:
-  name: echo-agent-invocations-streaming
+  name: echo-agent-conversations-streaming
   kind: hosted
   protocols:
-    - protocol: invocations
+    - protocol: conversations
       version: v0.0.1

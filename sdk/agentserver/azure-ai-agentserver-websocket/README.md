@@ -1,13 +1,13 @@
-# Azure AI AgentServerHost Invocations for Python (WebSocket)
+# Azure AI AgentServerHost Conversations for Python (WebSocket)
 
-The `azure-ai-agentserver-invocations` package provides the invocation protocol over **WebSocket long connections** for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) host framework and exposes a single WebSocket endpoint at `/invocations/ws` that supports invoke, get, cancel, and streaming operations.
+The `azure-ai-agentserver-conversations` package provides the conversation protocol over **WebSocket long connections** for Azure AI Hosted Agent containers. It plugs into the [`azure-ai-agentserver-core`](https://pypi.org/project/azure-ai-agentserver-core/) host framework and exposes a single WebSocket endpoint at `/conversations/ws` that supports invoke, get, cancel, and streaming operations.
 
 ## Getting started
 
 ### Install the package
 
 ```bash
-pip install azure-ai-agentserver-invocations
+pip install azure-ai-agentserver-conversations
 ```
 
 This automatically installs `azure-ai-agentserver-core` as a dependency.
@@ -18,33 +18,33 @@ This automatically installs `azure-ai-agentserver-core` as a dependency.
 
 ## Key concepts
 
-### InvocationAgentServerHost
+### ConversationAgentServerHost
 
-`InvocationAgentServerHost` is an `AgentServerHost` subclass that adds a WebSocket endpoint for the invocation protocol. It provides decorator methods for registering handler functions:
+`ConversationAgentServerHost` is an `AgentServerHost` subclass that adds a WebSocket endpoint for the conversation protocol. It provides decorator methods for registering handler functions:
 
 - `@app.invoke_handler` — **Required.** Handles `invoke` actions. Supports both async functions (non-streaming) and async generators (streaming).
-- `@app.get_invocation_handler` — Optional. Handles `get_invocation` actions.
-- `@app.cancel_invocation_handler` — Optional. Handles `cancel_invocation` actions.
+- `@app.get_conversation_handler` — Optional. Handles `get_conversation` actions.
+- `@app.cancel_conversation_handler` — Optional. Handles `cancel_conversation` actions.
 
-### InvocationContext
+### ConversationContext
 
-Handler functions receive an `InvocationContext` object containing:
+Handler functions receive an `ConversationContext` object containing:
 
-- `context.invocation_id` — The invocation ID (echoed from client or auto-generated UUID).
+- `context.conversation_id` — The conversation ID (echoed from client or auto-generated UUID).
 - `context.session_id` — The resolved session ID.
 
-### InvocationError
+### ConversationError
 
-Handlers can raise `InvocationError(code, message)` to return a domain-specific error to the client without exposing internal details.
+Handlers can raise `ConversationError(code, message)` to return a domain-specific error to the client without exposing internal details.
 
 ### WebSocket endpoint
 
-All invocation operations use a single persistent WebSocket connection:
+All conversation operations use a single persistent WebSocket connection:
 
 | Route | Description |
 |---|---|
-| `ws://host:port/invocations/ws` | WebSocket endpoint for all invocation operations |
-| `GET /invocations/docs/openapi.json` | Serve the agent's OpenAPI 3.x spec (HTTP) |
+| `ws://host:port/conversations/ws` | WebSocket endpoint for all conversation operations |
+| `GET /conversations/docs/openapi.json` | Serve the agent's OpenAPI 3.x spec (HTTP) |
 | `GET /readiness` | Health check (HTTP) |
 
 ### Client → Server messages
@@ -52,9 +52,9 @@ All invocation operations use a single persistent WebSocket connection:
 All messages are JSON text frames with an `action` field:
 
 ```json
-{"action": "invoke", "payload": {...}, "invocation_id": "optional", "session_id": "optional"}
-{"action": "get_invocation", "invocation_id": "required"}
-{"action": "cancel_invocation", "invocation_id": "required"}
+{"action": "invoke", "payload": {...}, "conversation_id": "optional", "session_id": "optional"}
+{"action": "get_conversation", "conversation_id": "required"}
+{"action": "cancel_conversation", "conversation_id": "required"}
 {"action": "ping"}
 {"action": "pong"}
 ```
@@ -62,10 +62,10 @@ All messages are JSON text frames with an `action` field:
 ### Server → Client messages
 
 ```json
-{"type": "result", "invocation_id": "...", "session_id": "...", "payload": {...}}
-{"type": "stream_chunk", "invocation_id": "...", "session_id": "...", "payload": {...}}
-{"type": "stream_end", "invocation_id": "...", "session_id": "..."}
-{"type": "error", "invocation_id": "...", "error": {"code": "...", "message": "..."}}
+{"type": "result", "conversation_id": "...", "session_id": "...", "payload": {...}}
+{"type": "stream_chunk", "conversation_id": "...", "session_id": "...", "payload": {...}}
+{"type": "stream_end", "conversation_id": "...", "session_id": "..."}
+{"type": "error", "conversation_id": "...", "error": {"code": "...", "message": "..."}}
 {"type": "ping"}
 {"type": "pong"}
 ```
@@ -75,18 +75,18 @@ All messages are JSON text frames with an `action` field:
 Azure APIM and Azure Load Balancer silently drop idle WebSocket connections after approximately 4 minutes, even though the backend supports 60-minute connections. To prevent this, the server sends periodic `{"type": "ping"}` messages to each connected client.
 
 - **Default interval**: 30 seconds (well within the ~4-minute idle timeout).
-- **Disable**: Pass `ws_ping_interval=0` to `InvocationAgentServerHost()`.
+- **Disable**: Pass `ws_ping_interval=0` to `ConversationAgentServerHost()`.
 - **Custom interval**: Pass any positive integer, e.g. `ws_ping_interval=15`.
 
 Clients should respond with `{"action": "pong"}` when they receive a `{"type": "ping"}` message. Clients may also send `{"action": "ping"}` at any time; the server replies with `{"type": "pong"}`.
 
 ```python
-app = InvocationAgentServerHost(ws_ping_interval=20)  # ping every 20 seconds
+app = ConversationAgentServerHost(ws_ping_interval=20)  # ping every 20 seconds
 ```
 
 ### Session ID resolution
 
-Session IDs group related invocations into a conversation. The SDK resolves the session ID in order:
+Session IDs group related conversations into a session. The SDK resolves the session ID in order:
 
 1. `session_id` field in the WebSocket message
 2. `FOUNDRY_AGENT_SESSION_ID` environment variable
@@ -94,24 +94,24 @@ Session IDs group related invocations into a conversation. The SDK resolves the 
 
 ### Distributed tracing
 
-When tracing is enabled on the `AgentServerHost`, invocation spans are automatically created with GenAI semantic conventions:
+When tracing is enabled on the `AgentServerHost`, conversation spans are automatically created with GenAI semantic conventions:
 
 - **Span name**: `invoke_agent {FOUNDRY_AGENT_NAME}:{FOUNDRY_AGENT_VERSION}`
 - **Span attributes**: `gen_ai.system`, `gen_ai.operation.name`, `gen_ai.response.id`, `gen_ai.conversation.id`, `gen_ai.agent.id`, `gen_ai.agent.name`, `gen_ai.agent.version`
-- **Error tags**: `azure.ai.agentserver.invocations.error.code`, `.error.message`
+- **Error tags**: `azure.ai.agentserver.conversations.error.code`, `.error.message`
 
 ## Examples
 
 ### Simple agent
 
 ```python
-from azure.ai.agentserver.invocations import InvocationAgentServerHost, InvocationContext
+from azure.ai.agentserver.conversations import ConversationAgentServerHost, ConversationContext
 
-app = InvocationAgentServerHost()
+app = ConversationAgentServerHost()
 
 
 @app.invoke_handler
-async def handle(payload: dict, context: InvocationContext) -> dict:
+async def handle(payload: dict, context: ConversationContext) -> dict:
     return {"greeting": f"Hello, {payload['name']}!"}
 
 app.run()
@@ -123,7 +123,7 @@ app.run()
 import asyncio, json, websockets
 
 async def main():
-    async with websockets.connect("ws://localhost:8088/invocations/ws") as ws:
+    async with websockets.connect("ws://localhost:8088/conversations/ws") as ws:
         await ws.send(json.dumps({
             "action": "invoke",
             "payload": {"name": "Alice"}
@@ -144,41 +144,41 @@ asyncio.run(main())
 ```python
 import asyncio
 
-from azure.ai.agentserver.invocations import (
-    InvocationAgentServerHost,
-    InvocationContext,
-    InvocationError,
+from azure.ai.agentserver.conversations import (
+    ConversationAgentServerHost,
+    ConversationContext,
+    ConversationError,
 )
 
 _tasks: dict[str, asyncio.Task] = {}
 _results: dict[str, dict] = {}
 
-app = InvocationAgentServerHost()
+app = ConversationAgentServerHost()
 
 
 @app.invoke_handler
-async def handle(payload: dict, context: InvocationContext) -> dict:
-    task = asyncio.create_task(do_work(context.invocation_id, payload))
-    _tasks[context.invocation_id] = task
-    return {"invocation_id": context.invocation_id, "status": "running"}
+async def handle(payload: dict, context: ConversationContext) -> dict:
+    task = asyncio.create_task(do_work(context.conversation_id, payload))
+    _tasks[context.conversation_id] = task
+    return {"conversation_id": context.conversation_id, "status": "running"}
 
 
-@app.get_invocation_handler
-async def get_invocation(context: InvocationContext) -> dict:
-    if context.invocation_id in _results:
-        return _results[context.invocation_id]
-    if context.invocation_id in _tasks:
-        return {"invocation_id": context.invocation_id, "status": "running"}
-    raise InvocationError("not_found", "Invocation not found")
+@app.get_conversation_handler
+async def get_conversation(context: ConversationContext) -> dict:
+    if context.conversation_id in _results:
+        return _results[context.conversation_id]
+    if context.conversation_id in _tasks:
+        return {"conversation_id": context.conversation_id, "status": "running"}
+    raise ConversationError("not_found", "Conversation not found")
 
 
-@app.cancel_invocation_handler
-async def cancel_invocation(context: InvocationContext) -> dict:
-    if context.invocation_id in _tasks:
-        _tasks[context.invocation_id].cancel()
-        del _tasks[context.invocation_id]
-        return {"invocation_id": context.invocation_id, "status": "cancelled"}
-    raise InvocationError("not_found", "Invocation not found")
+@app.cancel_conversation_handler
+async def cancel_conversation(context: ConversationContext) -> dict:
+    if context.conversation_id in _tasks:
+        _tasks[context.conversation_id].cancel()
+        del _tasks[context.conversation_id]
+        return {"conversation_id": context.conversation_id, "status": "cancelled"}
+    raise ConversationError("not_found", "Conversation not found")
 ```
 
 ### Streaming
@@ -186,13 +186,13 @@ async def cancel_invocation(context: InvocationContext) -> dict:
 Use an async generator to stream chunks back to the client. Each yielded dict is sent as a `stream_chunk` message, followed by a `stream_end` when the generator completes.
 
 ```python
-from azure.ai.agentserver.invocations import InvocationAgentServerHost, InvocationContext
+from azure.ai.agentserver.conversations import ConversationAgentServerHost, ConversationContext
 
-app = InvocationAgentServerHost()
+app = ConversationAgentServerHost()
 
 
 @app.invoke_handler
-async def handle(payload: dict, context: InvocationContext):
+async def handle(payload: dict, context: ConversationContext):
     for word in ["Hello", " ", "world", "!"]:
         yield {"delta": word}
 ```
@@ -203,7 +203,7 @@ async def handle(payload: dict, context: InvocationContext):
 import asyncio, json, websockets
 
 async def main():
-    async with websockets.connect("ws://localhost:8088/invocations/ws") as ws:
+    async with websockets.connect("ws://localhost:8088/conversations/ws") as ws:
         await ws.send(json.dumps({"action": "invoke", "payload": {}}))
         while True:
             msg = json.loads(await ws.recv())
@@ -220,13 +220,13 @@ asyncio.run(main())
 
 ### Multi-turn conversation
 
-Use the `session_id` field to group invocations into a conversation over the same WebSocket connection:
+Use the `session_id` field to group conversations into a session over the same WebSocket connection:
 
 ```python
 import asyncio, json, websockets
 
 async def main():
-    async with websockets.connect("ws://localhost:8088/invocations/ws") as ws:
+    async with websockets.connect("ws://localhost:8088/conversations/ws") as ws:
         # First turn
         await ws.send(json.dumps({
             "action": "invoke",
@@ -248,10 +248,10 @@ asyncio.run(main())
 
 ### Serving an OpenAPI spec
 
-Pass an OpenAPI spec dict to enable the discovery endpoint at `GET /invocations/docs/openapi.json`:
+Pass an OpenAPI spec dict to enable the discovery endpoint at `GET /conversations/docs/openapi.json`:
 
 ```python
-app = InvocationAgentServerHost(openapi_spec={
+app = ConversationAgentServerHost(openapi_spec={
     "openapi": "3.0.3",
     "info": {"title": "My Agent", "version": "1.0.0"},
     "paths": { ... },
@@ -266,11 +266,11 @@ To report an issue with the client library, or request additional features, plea
 
 ## Next steps
 
-Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples) folder for complete working examples:
+Visit the [Samples](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-conversations/samples) folder for complete working examples:
 
 | Sample | Description |
 |---|---|
-| [streaming_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-invocations/samples/streaming_invoke_agent/) | Streaming code-generation tokens via WebSocket |
+| [streaming_invoke_agent](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/agentserver/azure-ai-agentserver-conversations/samples/streaming_invoke_agent/) | Streaming code-generation tokens via WebSocket |
 
 ## Contributing
 

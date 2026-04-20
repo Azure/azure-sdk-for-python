@@ -1,41 +1,41 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for basic server route registration with InvocationAgentServerHost."""
+"""Tests for basic server route registration with ConversationAgentServerHost."""
 import uuid
 
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.invocations import (
-    InvocationAgentServerHost,
-    InvocationContext,
+from azure.ai.agentserver.conversations import (
+    ConversationAgentServerHost,
+    ConversationContext,
 )
 
 from conftest import SAMPLE_OPENAPI_SPEC
 
 
 # ---------------------------------------------------------------------------
-# WebSocket connection /invocations/ws
+# WebSocket connection /conversations/ws
 # ---------------------------------------------------------------------------
 
 def test_websocket_invoke_returns_result(echo_client):
     """Invoke via WebSocket returns a result."""
-    with echo_client.websocket_connect("/invocations/ws") as ws:
+    with echo_client.websocket_connect("/conversations/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {"test": True}})
         resp = ws.receive_json()
     assert resp["type"] == "result"
 
 
 # ---------------------------------------------------------------------------
-# Invocation ID is valid UUID
+# Conversation ID is valid UUID
 # ---------------------------------------------------------------------------
 
-def test_invoke_returns_uuid_invocation_id(echo_client):
-    """Invoke returns a valid UUID invocation ID."""
-    with echo_client.websocket_connect("/invocations/ws") as ws:
+def test_invoke_returns_uuid_conversation_id(echo_client):
+    """Invoke returns a valid UUID conversation ID."""
+    with echo_client.websocket_connect("/conversations/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {}})
         resp = ws.receive_json()
-    inv_id = resp["invocation_id"]
+    inv_id = resp["conversation_id"]
     parsed = uuid.UUID(inv_id)
     assert str(parsed) == inv_id
 
@@ -45,8 +45,8 @@ def test_invoke_returns_uuid_invocation_id(echo_client):
 # ---------------------------------------------------------------------------
 
 def test_get_openapi_spec_returns_404_when_not_set(no_spec_client):
-    """GET /invocations/docs/openapi.json returns 404 when no spec registered."""
-    resp = no_spec_client.get("/invocations/docs/openapi.json")
+    """GET /conversations/docs/openapi.json returns 404 when no spec registered."""
+    resp = no_spec_client.get("/conversations/docs/openapi.json")
     assert resp.status_code == 404
 
 
@@ -55,27 +55,27 @@ def test_get_openapi_spec_returns_404_when_not_set(no_spec_client):
 # ---------------------------------------------------------------------------
 
 def test_get_openapi_spec_returns_spec_when_registered():
-    """GET /invocations/docs/openapi.json returns the spec when registered."""
-    app = InvocationAgentServerHost(openapi_spec=SAMPLE_OPENAPI_SPEC)
+    """GET /conversations/docs/openapi.json returns the spec when registered."""
+    app = ConversationAgentServerHost(openapi_spec=SAMPLE_OPENAPI_SPEC)
 
     @app.invoke_handler
-    async def handle(payload: dict, context: InvocationContext) -> dict:
+    async def handle(payload: dict, context: ConversationContext) -> dict:
         return {"ok": True}
 
     client = TestClient(app)
-    resp = client.get("/invocations/docs/openapi.json")
+    resp = client.get("/conversations/docs/openapi.json")
     assert resp.status_code == 200
     assert resp.json() == SAMPLE_OPENAPI_SPEC
 
 
 # ---------------------------------------------------------------------------
-# get_invocation returns not_found error by default
+# get_conversation returns not_found error by default
 # ---------------------------------------------------------------------------
 
-def test_get_invocation_returns_not_found_default(echo_client):
-    """get_invocation without handler returns not_found error."""
-    with echo_client.websocket_connect("/invocations/ws") as ws:
-        ws.send_json({"action": "get_invocation", "invocation_id": "some-id"})
+def test_get_conversation_returns_not_found_default(echo_client):
+    """get_conversation without handler returns not_found error."""
+    with echo_client.websocket_connect("/conversations/ws") as ws:
+        ws.send_json({"action": "get_conversation", "conversation_id": "some-id"})
         resp = ws.receive_json()
     assert resp["type"] == "error"
     assert resp["error"]["code"] == "not_found"
@@ -85,10 +85,10 @@ def test_get_invocation_returns_not_found_default(echo_client):
 # cancel returns not_found error by default
 # ---------------------------------------------------------------------------
 
-def test_cancel_invocation_returns_not_found_default(echo_client):
-    """cancel_invocation without handler returns not_found error."""
-    with echo_client.websocket_connect("/invocations/ws") as ws:
-        ws.send_json({"action": "cancel_invocation", "invocation_id": "some-id"})
+def test_cancel_conversation_returns_not_found_default(echo_client):
+    """cancel_conversation without handler returns not_found error."""
+    with echo_client.websocket_connect("/conversations/ws") as ws:
+        ws.send_json({"action": "cancel_conversation", "conversation_id": "some-id"})
         resp = ws.receive_json()
     assert resp["type"] == "error"
     assert resp["error"]["code"] == "not_found"

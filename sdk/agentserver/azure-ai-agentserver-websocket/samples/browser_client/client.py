@@ -2,8 +2,8 @@
 
 Usage::
 
-    python serve_browser_client.py
-    python serve_browser_client.py --port 3000
+    python client.py
+    python client.py --port 3000
 """
 import argparse
 import http.server

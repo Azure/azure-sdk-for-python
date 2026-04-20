@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Echo Agent WebSocket Client</title>
+<title>Echo Agent Client</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #1e1e2e; color: #cdd6f4; height: 100vh; display: flex; flex-direction: column; }
@@ -31,14 +31,25 @@
   .input-bar textarea { flex: 1; background: #313244; border: 1px solid #45475a; color: #cdd6f4; border-radius: 8px; padding: 10px 14px; font-size: 14px; font-family: inherit; resize: none; height: 44px; }
   .input-bar textarea:focus { outline: none; border-color: #cba6f7; }
   #sendBtn { background: #89b4fa; color: #1e1e2e; }
+  /* Mode switcher */
+  .mode-switcher { display: flex; align-items: center; gap: 6px; }
+  .mode-switcher label { font-size: 13px; color: #a6adc8; cursor: pointer; padding: 6px 12px; border-radius: 6px; border: 1px solid #45475a; transition: all .15s; user-select: none; }
+  .mode-switcher input[type="radio"] { display: none; }
+  .mode-switcher input[type="radio"]:checked + label { background: #cba6f7; color: #1e1e2e; border-color: #cba6f7; font-weight: 600; }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Echo Agent WebSocket Client</h1>
+  <h1>Echo Agent Client</h1>
+  <div class="mode-switcher">
+    <input type="radio" name="mode" id="modeWs" value="websocket" checked>
+    <label for="modeWs">WebSocket</label>
+    <input type="radio" name="mode" id="modeHttp" value="http">
+    <label for="modeHttp">HTTP (SSE)</label>
+  </div>
   <div class="connection-bar">
-    <input id="urlInput" type="text" value="ws://localhost:8088/invocations/ws" placeholder="ws://host:port/invocations/ws">
+    <input id="urlInput" type="text" value="ws://localhost:8088/conversations/ws" placeholder="ws://host:port/conversations/ws">
     <button id="connectBtn">Connect</button>
     <button id="disconnectBtn" disabled>Disconnect</button>
     <span class="status"><span id="statusDot" class="dot disconnected"></span><span id="statusText">Disconnected</span></span>
@@ -62,9 +73,44 @@
   const chat = document.getElementById("chat");
   const messageInput = document.getElementById("messageInput");
   const sendBtn = document.getElementById("sendBtn");
+  const modeWs = document.getElementById("modeWs");
+  const modeHttp = document.getElementById("modeHttp");
 
   let ws = null;
   let currentAgentBubble = null;
+  let httpAbortController = null;
+
+  function getMode() {
+    return modeHttp.checked ? "http" : "websocket";
+  }
+
+  // --- Mode switching ---
+  function onModeChange() {
+    // Disconnect any existing WebSocket
+    if (ws) { ws.close(); ws = null; }
+    cleanup();
+
+    if (getMode() === "http") {
+      urlInput.value = "http://localhost:8088/conversations";
+      urlInput.placeholder = "http://host:port/conversations";
+      connectBtn.style.display = "none";
+      disconnectBtn.style.display = "none";
+      setStatus("connected");
+      setInputEnabled(true);
+      addMessage("Switched to HTTP (SSE) mode", "system");
+    } else {
+      urlInput.value = "ws://localhost:8088/conversations/ws";
+      urlInput.placeholder = "ws://host:port/conversations/ws";
+      connectBtn.style.display = "";
+      disconnectBtn.style.display = "";
+      setStatus("disconnected");
+      setInputEnabled(false);
+      addMessage("Switched to WebSocket mode", "system");
+    }
+  }
+
+  modeWs.addEventListener("change", onModeChange);
+  modeHttp.addEventListener("change", onModeChange);
 
   function setStatus(state) {
     statusDot.className = "dot " + state;
@@ -86,7 +132,9 @@
     if (enabled) messageInput.focus();
   }
 
+  // --- WebSocket ---
   function doConnect() {
+    if (getMode() !== "websocket") return;
     const url = urlInput.value.trim();
     if (!url) return;
     setStatus("connecting");
@@ -158,22 +206,108 @@
   function cleanup() {
     ws = null;
     currentAgentBubble = null;
-    setStatus("disconnected");
-    connectBtn.disabled = false;
-    disconnectBtn.disabled = true;
-    setInputEnabled(false);
+    if (getMode() === "websocket") {
+      setStatus("disconnected");
+      connectBtn.disabled = false;
+      disconnectBtn.disabled = true;
+      setInputEnabled(false);
+    }
   }
 
+  // --- HTTP SSE ---
+  async function doHttpSend(text) {
+    const url = urlInput.value.trim();
+    if (!url) return;
+
+    setInputEnabled(false);
+    currentAgentBubble = null;
+    httpAbortController = new AbortController();
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text }),
+        signal: httpAbortController.signal,
+      });
+
+      if (!response.ok) {
+        addMessage("HTTP error: " + response.status, "system");
+        setInputEnabled(true);
+        return;
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        // Parse SSE lines
+        const lines = buffer.split("\n");
+        buffer = lines.pop(); // keep incomplete line in buffer
+
+        let eventType = null;
+        for (const line of lines) {
+          if (line.startsWith("event: ")) {
+            eventType = line.slice(7).trim();
+          } else if (line.startsWith("data: ")) {
+            const data = line.slice(6);
+            if (eventType === "done") {
+              currentAgentBubble = null;
+              addMessage("— stream complete —", "system");
+              setInputEnabled(true);
+              return;
+            }
+            try {
+              const parsed = JSON.parse(data);
+              const token = parsed.token || "";
+              if (!currentAgentBubble) {
+                currentAgentBubble = addMessage("", "agent");
+              }
+              currentAgentBubble.textContent += token + " ";
+              chat.scrollTop = chat.scrollHeight;
+            } catch { /* ignore parse errors */ }
+            eventType = null;
+          } else if (line === "") {
+            eventType = null;
+          }
+        }
+      }
+
+      // Stream ended without explicit done event
+      if (currentAgentBubble) {
+        currentAgentBubble = null;
+        addMessage("— stream complete —", "system");
+      }
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        addMessage("Request error: " + err.message, "system");
+      }
+    }
+    setInputEnabled(true);
+  }
+
+  // --- Send (both modes) ---
   function doSend() {
     const text = messageInput.value.trim();
-    if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
+    if (!text) return;
     addMessage(text, "user");
-    ws.send(JSON.stringify({
-      action: "invoke",
-      payload: { message: text }
-    }));
     messageInput.value = "";
-    setInputEnabled(false);
+
+    if (getMode() === "http") {
+      doHttpSend(text);
+    } else {
+      if (!ws || ws.readyState !== WebSocket.OPEN) return;
+      ws.send(JSON.stringify({
+        action: "invoke",
+        payload: { message: text }
+      }));
+      setInputEnabled(false);
+    }
   }
 
   connectBtn.addEventListener("click", doConnect);

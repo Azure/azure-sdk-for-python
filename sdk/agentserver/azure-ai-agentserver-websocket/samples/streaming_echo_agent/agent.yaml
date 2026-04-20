@@ -1,7 +1,7 @@
 kind: hosted
 name: echo-agent-streaming
 protocols:
-  - protocol: invocations
+  - protocol: conversations
     version: v0.0.1
 resources:
   cpu: "0.25"

@@ -1,14 +1,14 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for varied payloads with InvocationAgentServerHost over WebSocket."""
+"""Tests for varied payloads with ConversationAgentServerHost over WebSocket."""
 import base64
 
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.invocations import (
-    InvocationAgentServerHost,
-    InvocationContext,
+from azure.ai.agentserver.conversations import (
+    ConversationAgentServerHost,
+    ConversationContext,
 )
 
 
@@ -16,12 +16,12 @@ from azure.ai.agentserver.invocations import (
 # Helper: echo agent with content type tracking
 # ---------------------------------------------------------------------------
 
-def _make_content_type_echo_agent() -> InvocationAgentServerHost:
+def _make_content_type_echo_agent() -> ConversationAgentServerHost:
     """Agent that echoes payload and notes the content_type field."""
-    app = InvocationAgentServerHost()
+    app = ConversationAgentServerHost()
 
     @app.invoke_handler
-    async def handle(payload: dict, context: InvocationContext) -> dict:
+    async def handle(payload: dict, context: ConversationContext) -> dict:
         return {
             "echo": payload,
             "received_content_type": payload.get("content_type", "unknown"),
@@ -30,12 +30,12 @@ def _make_content_type_echo_agent() -> InvocationAgentServerHost:
     return app
 
 
-def _make_sse_agent() -> InvocationAgentServerHost:
+def _make_sse_agent() -> ConversationAgentServerHost:
     """Agent that returns streaming chunks."""
-    app = InvocationAgentServerHost()
+    app = ConversationAgentServerHost()
 
     @app.invoke_handler
-    async def handle(payload: dict, context: InvocationContext):
+    async def handle(payload: dict, context: ConversationContext):
         for i in range(3):
             yield {"event": i}
 
@@ -51,7 +51,7 @@ def test_png_payload():
     server = _make_content_type_echo_agent()
     client = TestClient(server)
     fake_png = b"\x89PNG\r\n\x1a\n" + b"\x00" * 100
-    with client.websocket_connect("/invocations/ws") as ws:
+    with client.websocket_connect("/conversations/ws") as ws:
         ws.send_json({
             "action": "invoke",
             "payload": {
@@ -70,7 +70,7 @@ def test_jpeg_payload():
     server = _make_content_type_echo_agent()
     client = TestClient(server)
     fake_jpeg = b"\xff\xd8\xff\xe0" + b"\x00" * 100
-    with client.websocket_connect("/invocations/ws") as ws:
+    with client.websocket_connect("/conversations/ws") as ws:
         ws.send_json({
             "action": "invoke",
             "payload": {
@@ -88,7 +88,7 @@ def test_wav_payload():
     server = _make_content_type_echo_agent()
     client = TestClient(server)
     fake_wav = b"RIFF" + b"\x00" * 100
-    with client.websocket_connect("/invocations/ws") as ws:
+    with client.websocket_connect("/conversations/ws") as ws:
         ws.send_json({
             "action": "invoke",
             "payload": {
@@ -105,7 +105,7 @@ def test_text_plain_payload():
     """text/plain content type payload is accepted."""
     server = _make_content_type_echo_agent()
     client = TestClient(server)
-    with client.websocket_connect("/invocations/ws") as ws:
+    with client.websocket_connect("/conversations/ws") as ws:
         ws.send_json({
             "action": "invoke",
             "payload": {
@@ -124,14 +124,14 @@ def test_text_plain_payload():
 
 def test_params_in_payload():
     """Arbitrary parameters are accessible in the handler payload."""
-    app = InvocationAgentServerHost()
+    app = ConversationAgentServerHost()
 
     @app.invoke_handler
-    async def handle(payload: dict, context: InvocationContext) -> dict:
+    async def handle(payload: dict, context: ConversationContext) -> dict:
         return {"name": payload.get("name", "unknown")}
 
     client = TestClient(app)
-    with client.websocket_connect("/invocations/ws") as ws:
+    with client.websocket_connect("/conversations/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {"name": "Alice"}})
         resp = ws.receive_json()
     assert resp["type"] == "result"
@@ -146,7 +146,7 @@ def test_streaming_chunks():
     """Streaming response sends multiple chunks."""
     server = _make_sse_agent()
     client = TestClient(server)
-    with client.websocket_connect("/invocations/ws") as ws:
+    with client.websocket_connect("/conversations/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {}})
         chunks = []
         while True:
@@ -166,10 +166,10 @@ def test_streaming_chunks():
 
 def test_health_endpoint_returns_200():
     """GET /readiness returns 200 with healthy status."""
-    app = InvocationAgentServerHost()
+    app = ConversationAgentServerHost()
 
     @app.invoke_handler
-    async def handle(payload: dict, context: InvocationContext) -> dict:
+    async def handle(payload: dict, context: ConversationContext) -> dict:
         return {"ok": True}
 
     client = TestClient(app)
