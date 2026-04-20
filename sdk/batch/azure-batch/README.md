@@ -480,7 +480,7 @@ poller = client.begin_reboot_node(
     pool_id="my-pool",
     node_id="node1",
     models.BatchNodeRebootOptions(
-        node_reboot_kind=models._enums.BatchNodeRebootKind.TERMINATE
+        node_reboot_kind=models.BatchNodeRebootKind.TERMINATE
     )
 )
 result = poller.result()
@@ -494,7 +494,7 @@ poller = client.begin_reboot_node(
     pool_id="my-pool",
     node_id="node1",
     models.BatchNodeRebootOptions(
-        node_reboot_kind=models._enums.BatchNodeRebootKind.REQUEUE
+        node_reboot_kind=models.BatchNodeRebootKind.REQUEUE
     ),
     polling_interval=5
 )
