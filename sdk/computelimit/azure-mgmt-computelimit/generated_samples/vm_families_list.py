@@ -15,7 +15,7 @@ from azure.mgmt.computelimit import ComputeLimitMgmtClient
     pip install azure-identity
     pip install azure-mgmt-computelimit
 # USAGE
-    python features_get.py
+    python vm_families_list.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.features.get(
+    response = client.vm_families.list_by_subscription_location_resource(
         location="eastus",
-        feature_name="VmCategoryQuota",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: 2026-04-30/Features_Get.json
+# x-ms-original-file: 2026-04-30/VmFamilies_List.json
 if __name__ == "__main__":
     main()

@@ -15,16 +15,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeLimitMgmtFeaturesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestComputeLimitMgmtVmFamiliesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeLimitMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_features_get(self, resource_group):
-        response = await self.client.features.get(
+    async def test_vm_families_get(self, resource_group):
+        response = await self.client.vm_families.get(
             location="str",
-            feature_name="str",
+            vm_family_name="str",
         )
 
         # please add some check logic here by yourself
@@ -32,36 +32,10 @@ class TestComputeLimitMgmtFeaturesOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_features_list_by_subscription_location_resource(self, resource_group):
-        response = self.client.features.list_by_subscription_location_resource(
+    async def test_vm_families_list_by_subscription_location_resource(self, resource_group):
+        response = self.client.vm_families.list_by_subscription_location_resource(
             location="str",
         )
         result = [r async for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_features_begin_enable(self, resource_group):
-        response = await (
-            await self.client.features.begin_enable(
-                location="str",
-                feature_name="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_features_begin_disable(self, resource_group):
-        response = await (
-            await self.client.features.begin_disable(
-                location="str",
-                feature_name="str",
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
         # please add some check logic here by yourself
         # ...

@@ -14,16 +14,16 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestComputeLimitMgmtFeaturesOperations(AzureMgmtRecordedTestCase):
+class TestComputeLimitMgmtVmFamiliesOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(ComputeLimitMgmtClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_features_get(self, resource_group):
-        response = self.client.features.get(
+    def test_vm_families_get(self, resource_group):
+        response = self.client.vm_families.get(
             location="str",
-            feature_name="str",
+            vm_family_name="str",
         )
 
         # please add some check logic here by yourself
@@ -31,32 +31,10 @@ class TestComputeLimitMgmtFeaturesOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_features_list_by_subscription_location_resource(self, resource_group):
-        response = self.client.features.list_by_subscription_location_resource(
+    def test_vm_families_list_by_subscription_location_resource(self, resource_group):
+        response = self.client.vm_families.list_by_subscription_location_resource(
             location="str",
         )
         result = [r for r in response]
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_features_begin_enable(self, resource_group):
-        response = self.client.features.begin_enable(
-            location="str",
-            feature_name="str",
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_features_begin_disable(self, resource_group):
-        response = self.client.features.begin_disable(
-            location="str",
-            feature_name="str",
-        ).result()  # call '.result()' to poll until service return final result
-
         # please add some check logic here by yourself
         # ...

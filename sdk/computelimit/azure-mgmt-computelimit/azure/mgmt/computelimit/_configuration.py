@@ -33,8 +33,8 @@ class ComputeLimitMgmtClientConfiguration:  # pylint: disable=too-many-instance-
     :param cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :type cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-03-20".
-     Default value is "2026-03-20". Note that overriding this default value may result in
+    :keyword api_version: The API version to use for this operation. Known values are "2026-04-30".
+     Default value is "2026-04-30". Note that overriding this default value may result in
      unsupported behavior.
     :paramtype api_version: str
     """
@@ -47,7 +47,7 @@ class ComputeLimitMgmtClientConfiguration:  # pylint: disable=too-many-instance-
         cloud_setting: Optional["AzureClouds"] = None,
         **kwargs: Any
     ) -> None:
-        api_version: str = kwargs.pop("api_version", "2026-03-20")
+        api_version: str = kwargs.pop("api_version", "2026-04-30")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")

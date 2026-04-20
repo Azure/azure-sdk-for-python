@@ -17,6 +17,8 @@
         "azure.mgmt.computelimit.models.SharedLimit": "Microsoft.ComputeLimit.SharedLimit",
         "azure.mgmt.computelimit.models.SharedLimitProperties": "Microsoft.ComputeLimit.SharedLimitProperties",
         "azure.mgmt.computelimit.models.SystemData": "Azure.ResourceManager.CommonTypes.SystemData",
+        "azure.mgmt.computelimit.models.VmFamily": "Microsoft.ComputeLimit.VmFamily",
+        "azure.mgmt.computelimit.models.VmFamilyProperties": "Microsoft.ComputeLimit.VmFamilyProperties",
         "azure.mgmt.computelimit.models.Origin": "Azure.ResourceManager.CommonTypes.Origin",
         "azure.mgmt.computelimit.models.ActionType": "Azure.ResourceManager.CommonTypes.ActionType",
         "azure.mgmt.computelimit.models.CreatedByType": "Azure.ResourceManager.CommonTypes.createdByType",
@@ -45,6 +47,12 @@
         "azure.mgmt.computelimit.operations.FeaturesOperations.list_by_subscription_location_resource": "Microsoft.ComputeLimit.Features.listBySubscriptionLocationResource",
         "azure.mgmt.computelimit.aio.operations.FeaturesOperations.list_by_subscription_location_resource": "Microsoft.ComputeLimit.Features.listBySubscriptionLocationResource",
         "azure.mgmt.computelimit.operations.FeaturesOperations.begin_enable": "Microsoft.ComputeLimit.Features.enable",
-        "azure.mgmt.computelimit.aio.operations.FeaturesOperations.begin_enable": "Microsoft.ComputeLimit.Features.enable"
+        "azure.mgmt.computelimit.aio.operations.FeaturesOperations.begin_enable": "Microsoft.ComputeLimit.Features.enable",
+        "azure.mgmt.computelimit.operations.FeaturesOperations.begin_disable": "Microsoft.ComputeLimit.Features.disable",
+        "azure.mgmt.computelimit.aio.operations.FeaturesOperations.begin_disable": "Microsoft.ComputeLimit.Features.disable",
+        "azure.mgmt.computelimit.operations.VmFamiliesOperations.get": "Microsoft.ComputeLimit.VmFamilies.get",
+        "azure.mgmt.computelimit.aio.operations.VmFamiliesOperations.get": "Microsoft.ComputeLimit.VmFamilies.get",
+        "azure.mgmt.computelimit.operations.VmFamiliesOperations.list_by_subscription_location_resource": "Microsoft.ComputeLimit.VmFamilies.listBySubscriptionLocationResource",
+        "azure.mgmt.computelimit.aio.operations.VmFamiliesOperations.list_by_subscription_location_resource": "Microsoft.ComputeLimit.VmFamilies.listBySubscriptionLocationResource"
     }
 }
