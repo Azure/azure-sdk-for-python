@@ -7,6 +7,7 @@
 #### Breaking Changes
 
 #### Bugs Fixed
+* Fixed bug where `CosmosClient` construction with AAD credentials would crash at startup if the semantic reranking inference endpoint environment variable was not set, even when semantic reranking was not being used. The inference service is now lazily initialized on first use. See [PR 46243](https://github.com/Azure/azure-sdk-for-python/pull/46243)
 
 #### Other Changes
 * Enhanced telemetry logging to include cosmos specific attributes and added a sample on how to use head sampling to reduce telemetry volume. See [PR 45343](https://github.com/Azure/azure-sdk-for-python/pull/45343)
