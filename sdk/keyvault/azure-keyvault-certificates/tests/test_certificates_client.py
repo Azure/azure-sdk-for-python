@@ -8,7 +8,7 @@ import logging
 import time
 from unittest.mock import Mock, patch
 
-from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError, ServiceRequestError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from devtools_testutils import recorded_by_proxy
 from azure.keyvault.certificates import (
@@ -845,7 +845,7 @@ def test_policy_expected_errors_for_create_cert():
         client.begin_create_certificate("...", policy=policy)
     except ValueError:
         pytest.fail("begin_create_certificate should not raise ValueError for san_ip_addresses-only policy")
-    except Exception:
+    except (HttpResponseError, ServiceRequestError):
         pass  # Expected: network/auth error since we are using a fake client
 
     # san_uris alone should be accepted (no ValueError)
@@ -854,7 +854,7 @@ def test_policy_expected_errors_for_create_cert():
         client.begin_create_certificate("...", policy=policy)
     except ValueError:
         pytest.fail("begin_create_certificate should not raise ValueError for san_uris-only policy")
-    except Exception:
+    except (HttpResponseError, ServiceRequestError):
         pass  # Expected: network/auth error since we are using a fake client
 
 
