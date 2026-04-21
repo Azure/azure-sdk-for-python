@@ -48,6 +48,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01/TrustedAccessRoleBindings_CreateOrUpdate.json
+# x-ms-original-file: 2026-02-02-preview/TrustedAccessRoleBindings_CreateOrUpdate.json
 if __name__ == "__main__":
     main()
