@@ -2652,11 +2652,21 @@ def _update_metric_value(
     metric_value: Any,
     logger: logging.Logger,
 ) -> Tuple[str, str, str]:
-    """Update metric dictionary with the appropriate field based on metric key.
+    """Update metric dictionary with the appropriate field based on metric key suffix.
 
-    This method processes a single metric key-value pair and updates the metric dictionary
-    with the appropriate field assignment based on the key pattern. It handles various
-    metric types including scores, results, reasons, thresholds, and sample data.
+    Processes a single metric key-value pair and routes it to the correct output field
+    based on the key's suffix pattern. The suffix-to-field mapping is:
+
+    - ``*_score`` / ``score``           → ``metric_dict["score"]``
+    - ``passed``                        → ``metric_dict["passed"]``
+    - ``*_result`` / ``*_label``        → ``metric_dict["label"]`` (+ derives ``passed`` for azure_ai_evaluator)
+    - ``*_reason`` (not *_finish_reason) → ``metric_dict["reason"]``
+    - ``*_threshold``                   → ``metric_dict["threshold"]``
+    - ``*_status`` / ``status``         → ``metric_dict["status"]`` (evaluator-reported execution status)
+    - ``*_properties`` / ``properties`` → ``metric_dict["properties"]`` (must be dict; non-dict values are
+      logged at INFO level and dropped)
+    - ``*_finish_reason`` / ``*_model`` / ``*_sample_*`` / ``*_*_tokens`` → nested under ``metric_dict["sample"]``
+    - Unrecognized keys that don't match known suffixes → ``metric_dict[metric_key]``
 
     :param criteria_type: Type of the evaluation criteria (e.g. 'azure_ai_evaluator')
     :type criteria_type: str
@@ -2673,23 +2683,30 @@ def _update_metric_value(
     :return: Tuple of (result_name, result_name_child_level, result_name_nested_child_level, derived_passed)
     :rtype: Tuple[str, str, str]
 
-    Example Input:
-        metric_dict = {}
-        metric_key = "coherence_score"
-        metric_value = 4.5
-
-    Example Output:
+    Example — score key:
+        >>> _update_metric_value("quality", {}, "coherence_score", "coherence", 4.5, logger)
         metric_dict becomes {"score": 4.5}
         Returns: ("score", None, None, None)
 
-    Example Input:
-        metric_dict = {}
-        metric_key = "coherence_result"
-        metric_value = "pass"
-
-    Example Output:
+    Example — label key (azure_ai_evaluator derives passed):
+        >>> _update_metric_value("azure_ai_evaluator", {}, "coherence_result", "coherence", "pass", logger)
         metric_dict becomes {"label": "pass", "passed": True}
         Returns: ("label", None, None, True)
+
+    Example — status key:
+        >>> _update_metric_value("quality", {}, "coherence_status", "coherence", "completed", logger)
+        metric_dict becomes {"status": "completed"}
+        Returns: ("status", None, None, None)
+
+    Example — properties key (dict value):
+        >>> _update_metric_value("quality", {}, "coherence_properties", "coherence", {"k": "v"}, logger)
+        metric_dict becomes {"properties": {"k": "v"}}
+        Returns: ("properties", None, None, None)
+
+    Example — properties key (non-dict value, dropped with log):
+        >>> _update_metric_value("quality", {}, "coherence_properties", "coherence", "bad", logger)
+        metric_dict unchanged; logs INFO "Evaluator returned 'properties' as str instead of dict; ignoring."
+        Returns: (None, None, None, None)
     """
     result_name = None
     result_name_child_level = None
@@ -2707,7 +2724,7 @@ def _update_metric_value(
         result_name = "label"
         if criteria_type == "azure_ai_evaluator":
             if metric_value is None:
-                passed = None
+                passed = False
             else:
                 passed = str(metric_value).lower() in ["pass", "true"]
             metric_dict["passed"] = passed

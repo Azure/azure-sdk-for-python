@@ -1447,6 +1447,61 @@ class TestEvaluate:
             "str",
         )
 
+    def test_convert_results_skipped_evaluator(self):
+        """Test that skipped evaluator status propagates to result_counts and per_testing_criteria."""
+        import logging
+
+        logger = logging.getLogger("test_logger")
+
+        # A row where one evaluator completed and another was skipped
+        skipped_results = {
+            "metrics": {},
+            "rows": [
+                {
+                    "inputs.query": "test query",
+                    "outputs.coherence.coherence_score": 4.0,
+                    "outputs.coherence.coherence_status": "completed",
+                    "outputs.violence.violence_score": math.nan,
+                    "outputs.violence.violence_status": "skipped",
+                }
+            ],
+            "studio_url": None,
+        }
+
+        _convert_results_to_aoai_evaluation_results(
+            results=skipped_results,
+            logger=logger,
+            eval_run_id="run1",
+            eval_id="eval1",
+            evaluators={
+                "coherence": lambda **kwargs: {"score": 1},
+                "violence": lambda **kwargs: {"score": 1},
+            },
+            eval_meta_data={
+                "testing_criteria": [
+                    {"name": "coherence", "type": "quality", "metrics": ["score"]},
+                    {"name": "violence", "type": "azure_ai_evaluator", "metrics": ["score"]},
+                ]
+            },
+        )
+
+        summary = skipped_results["_evaluation_summary"]
+
+        # Row-level: coherence is score-only (no passed), violence is skipped
+        # skipped_count > 0 fires before else clause → row classified as skipped
+        assert summary["result_counts"]["total"] == 1
+        assert summary["result_counts"]["skipped"] == 1
+
+        # Per-criteria level: violence should show 1 skipped
+        per_criteria = {c["testing_criteria"]: c for c in summary["per_testing_criteria_results"]}
+        assert per_criteria["violence"]["skipped"] == 1
+        assert per_criteria["violence"]["passed"] == 0
+
+        # Verify the skipped evaluator result item has status="skipped"
+        row = skipped_results["_evaluation_results_list"][0]
+        violence_result = [r for r in row["results"] if r["metric"] == "violence"][0]
+        assert violence_result["status"] == "skipped"
+
     @patch(
         "azure.ai.evaluation._evaluate._evaluate._map_names_to_builtins",
         return_value={},
@@ -2143,11 +2198,11 @@ class TestUpdateMetricValueStatusAndProperties:
         assert "score" not in result
         assert result.get("properties") == {"a": 1}
 
-    def test_label_none_sets_passed_none(self):
-        """When _label/_result value is None, passed must be set to None."""
+    def test_label_none_sets_passed_false(self):
+        """When _label/_result value is None, passed must be set to False (preserves original behavior)."""
         result = self._call("fluency_label", None)
         assert result.get("label") is None
-        assert result.get("passed") is None
+        assert result.get("passed") is False
 
     def test_label_pass_sets_passed_true(self):
         """When _label value is 'Pass', passed must be True."""
