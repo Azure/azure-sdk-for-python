@@ -292,6 +292,7 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 }
             )
             response_dict = {
+                self._result_key: score,
                 f"{self._result_key}_score": score,
                 f"{self._result_key}_result": score_result,
                 f"{self._result_key}_passed": score_result == "pass",
