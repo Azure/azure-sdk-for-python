@@ -51,6 +51,7 @@
         "azure.mgmt.storagemover.models.S3WithHmacEndpointProperties": "Microsoft.StorageMover.S3WithHmacEndpointProperties",
         "azure.mgmt.storagemover.models.S3WithHmacEndpointUpdateProperties": "Microsoft.StorageMover.S3WithHmacEndpointUpdateProperties",
         "azure.mgmt.storagemover.models.ScheduleInfo": "Microsoft.StorageMover.ScheduleInfo",
+        "azure.mgmt.storagemover.models.SchedulerTime": "Microsoft.StorageMover.SchedulerTime",
         "azure.mgmt.storagemover.models.SmbMountEndpointProperties": "Microsoft.StorageMover.SmbMountEndpointProperties",
         "azure.mgmt.storagemover.models.SmbMountEndpointUpdateProperties": "Microsoft.StorageMover.SmbMountEndpointUpdateProperties",
         "azure.mgmt.storagemover.models.SourceEndpoint": "Microsoft.StorageMover.SourceEndpoint",

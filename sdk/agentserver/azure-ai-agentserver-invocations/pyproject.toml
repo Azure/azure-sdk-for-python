@@ -21,7 +21,7 @@ classifiers = [
 keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
 
 dependencies = [
-    "azure-ai-agentserver-core>=2.0.0b1",
+    "azure-ai-agentserver-core>=2.0.0b2",
 ]
 
 [dependency-groups]
