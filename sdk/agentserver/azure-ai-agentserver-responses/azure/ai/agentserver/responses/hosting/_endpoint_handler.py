@@ -329,9 +329,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :return: Headers dict with ``x-agent-session-id`` when available.
         :rtype: dict[str, str]
         """
-        sid = session_id or (
-            getattr(getattr(self._host, "config", None), "session_id", "") or ""
-        )
+        sid = session_id or (getattr(getattr(self._host, "config", None), "session_id", "") or "")
         headers = dict(self._response_headers)
         if sid:
             headers["x-agent-session-id"] = sid
@@ -515,9 +513,75 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 user_key=ctx.user_isolation_key,
                 chat_key=ctx.chat_isolation_key,
             ),
+            prefetched_history_ids=ctx.prefetched_history_ids,
         )
         context.is_shutdown_requested = self._shutdown_requested.is_set()
         return context
+
+    async def _prefetch_history_ids(
+        self,
+        ctx: _ExecutionContext,
+        *,
+        span: "CreateSpan",
+        agent_session_id: str | None,
+    ) -> Response | None:
+        """Eagerly validate conversation references and prefetch history IDs.
+
+        Calls ``provider.get_history_item_ids()`` when the request carries
+        ``previous_response_id`` or ``conversation_id``.  A nonexistent
+        reference surfaces as a client-facing error *before* the handler is
+        invoked.  On success the fetched IDs are cached on *ctx* and its
+        ``ResponseContext`` so that ``get_history()`` skips the redundant
+        provider call.
+
+        :param ctx: The execution context for the current request.
+        :type ctx: _ExecutionContext
+        :keyword span: Active observability span.
+        :paramtype span: CreateSpan
+        :keyword agent_session_id: Resolved session ID for response headers.
+        :paramtype agent_session_id: str | None
+        :return: An error ``Response`` when validation fails, or ``None`` on success.
+        :rtype: Response | None
+        """
+        if self._provider is None or (not ctx.previous_response_id and not ctx.conversation_id):
+            return None
+
+        _hdrs = self._session_headers(agent_session_id)
+        try:
+            _isolation = ctx.context.isolation if ctx.context else None
+            prefetched = await self._provider.get_history_item_ids(
+                ctx.previous_response_id,
+                ctx.conversation_id,
+                self._runtime_options.default_fetch_history_count,
+                isolation=_isolation,
+            )
+            ctx.prefetched_history_ids = prefetched
+            if ctx.context is not None:
+                ctx.context._prefetched_history_ids = prefetched  # pylint: disable=protected-access
+            return None
+        except FoundryResourceNotFoundError as exc:
+            span.end(exc)
+            if exc.response_body is not None:
+                return JSONResponse(exc.response_body, status_code=404, headers=_hdrs)
+            return _not_found(str(ctx.previous_response_id or ctx.conversation_id), _hdrs)
+        except FoundryBadRequestError as exc:
+            span.end(exc)
+            if exc.response_body is not None:
+                return JSONResponse(exc.response_body, status_code=400, headers=_hdrs)
+            return _invalid_request(str(exc), _hdrs)
+        except FoundryApiError as exc:
+            span.end(exc)
+            if exc.response_body is not None:
+                return JSONResponse(exc.response_body, status_code=500, headers=_hdrs)
+            return _error_response(exc, _hdrs)
+        except Exception as exc:  # pylint: disable=broad-exception-caught
+            logger.error(
+                "Failed to validate conversation references for response %s",
+                ctx.response_id,
+                exc_info=exc,
+            )
+            span.end(exc)
+            return _error_response(exc, _hdrs)
 
     # ------------------------------------------------------------------
     # Route handlers
@@ -596,6 +660,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             ctx.user_isolation_key is not None,
             ctx.chat_isolation_key is not None,
         )
+
+        # Eagerly validate conversation references before the handler runs.
+        prefetch_error = await self._prefetch_history_ids(ctx, span=span, agent_session_id=agent_session_id)
+        if prefetch_error is not None:
+            return prefetch_error
 
         # Extract X-Request-Id header for request ID propagation (truncated to 256 chars).
         request_id = extract_request_id(request.headers)
@@ -793,7 +862,11 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         record = await self._runtime_state.get(response_id)
         if record is None:
             return await self._handle_get_fallback(
-                request, response_id, stream_replay_param, _isolation, _hdrs,
+                request,
+                response_id,
+                stream_replay_param,
+                _isolation,
+                _hdrs,
             )
 
         # Chat isolation enforcement on in-flight response
@@ -917,7 +990,10 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
             # Stream provider fallback: replay persisted SSE events when runtime state is gone.
             replay_response = await self._try_replay_persisted_stream(
-                request, response_id, isolation=_isolation, headers=_hdrs,
+                request,
+                response_id,
+                isolation=_isolation,
+                headers=_hdrs,
             )
             if replay_response is not None:
                 return replay_response
@@ -955,7 +1031,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             except FoundryApiError as exc:
                 logger.error(
                     "Storage API error for GET SSE replay response_id=%s: %s",
-                    response_id, exc, exc_info=True,
+                    response_id,
+                    exc,
+                    exc_info=True,
                 )
                 return _error_response(exc, _hdrs)
             except Exception:  # pylint: disable=broad-exception-caught
@@ -1088,39 +1166,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             if await self._runtime_state.is_deleted(response_id):
                 return _not_found(response_id, _hdrs)
 
-            try:
-                await self._provider.delete_response(response_id, isolation=_isolation)
-                # Clean up persisted stream events
-                if self._stream_provider is not None:
-                    try:
-                        await self._stream_provider.delete_stream_events(response_id, isolation=_isolation)
-                    except Exception:  # pylint: disable=broad-exception-caught
-                        logger.debug(
-                            "Best-effort stream event delete failed for response_id=%s",
-                            response_id,
-                            exc_info=True,
-                        )
-                # Mark as deleted in runtime state so subsequent requests get 404
-                await self._runtime_state.mark_deleted(response_id)
-                logger.info("Deleted response %s", response_id)
-                return JSONResponse(
-                    {"id": response_id, "object": "response", "deleted": True},
-                    status_code=200,
-                    headers=_hdrs,
-                )
-            except FoundryResourceNotFoundError:
-                pass  # Fall through to 404 below
-            except FoundryBadRequestError as exc:
-                return _invalid_request(str(exc), _hdrs, param="response_id")
-            except FoundryApiError as exc:
-                logger.error("Storage API error for DELETE response_id=%s: %s", response_id, exc, exc_info=True)
-                return _error_response(exc, _hdrs)
-            except Exception:  # pylint: disable=broad-exception-caught
-                logger.debug(
-                    "Provider fallback failed for DELETE response_id=%s",
-                    response_id,
-                    exc_info=True,
-                )
+            result = await self._provider_delete_response(response_id, _isolation, _hdrs)
+            if result is not None:
+                return result
 
             return _not_found(response_id, _hdrs)
 
@@ -1143,6 +1191,15 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
 
         deleted = await self._runtime_state.delete(response_id)
         if not deleted:
+            # Race: the background task's eager eviction (try_evict) removed
+            # the record between our get() and delete() calls. Eviction for
+            # terminal responses typically happens after a provider
+            # persistence attempt, but persistence is best-effort and may not
+            # have succeeded, so delegate to the provider path as a fallback.
+            if record.mode_flags.store:
+                result = await self._provider_delete_response(response_id, _isolation, _hdrs)
+                if result is not None:
+                    return result
             return _not_found(response_id, _hdrs)
 
         if record.mode_flags.store:
@@ -1170,6 +1227,67 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             status_code=200,
             headers=_hdrs,
         )
+
+    async def _provider_delete_response(
+        self,
+        response_id: str,
+        isolation: "IsolationContext",
+        headers: dict[str, str],
+    ) -> Response | None:
+        """Delete a response from the durable provider (storage).
+
+        Used by :meth:`handle_delete` in both the provider-fallback path
+        (record already evicted from memory) and the eviction-race recovery
+        path (record evicted between ``get()`` and ``delete()``).
+
+        Returns a :class:`Response` on success or on a deterministic error
+        (bad request, API error).  Returns ``None`` when the provider
+        reports the response as not found **or** when an unexpected error
+        occurs (logged at DEBUG), so the caller can fall through to 404.
+
+        :param response_id: The response ID to delete.
+        :type response_id: str
+        :param isolation: Isolation context extracted from the request.
+        :type isolation: IsolationContext
+        :param headers: Session headers to include on the response.
+        :type headers: dict[str, str]
+        :return: A success/error response, or ``None`` if not found.
+        :rtype: Response | None
+        """
+        try:
+            await self._provider.delete_response(response_id, isolation=isolation)
+            # Clean up persisted stream events
+            if self._stream_provider is not None:
+                try:
+                    await self._stream_provider.delete_stream_events(response_id, isolation=isolation)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.debug(
+                        "Best-effort stream event delete failed for response_id=%s",
+                        response_id,
+                        exc_info=True,
+                    )
+            # Mark as deleted in runtime state so subsequent requests get 404
+            await self._runtime_state.mark_deleted(response_id)
+            logger.info("Deleted response %s via provider", response_id)
+            return JSONResponse(
+                {"id": response_id, "object": "response", "deleted": True},
+                status_code=200,
+                headers=headers,
+            )
+        except (FoundryResourceNotFoundError, KeyError):
+            return None  # Caller falls through to 404
+        except FoundryBadRequestError as exc:
+            return _invalid_request(str(exc), headers, param="response_id")
+        except FoundryApiError as exc:
+            logger.error("Storage API error for DELETE response_id=%s: %s", response_id, exc, exc_info=True)
+            return _error_response(exc, headers)
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug(
+                "Provider fallback failed for DELETE response_id=%s",
+                response_id,
+                exc_info=True,
+            )
+            return None
 
     async def handle_cancel(self, request: Request) -> Response:
         """Route handler for ``POST /responses/{response_id}/cancel``.
@@ -1356,9 +1474,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         before = request.query_params.get("before")
 
         try:
-            items = await self._provider.get_input_items(
-                response_id, limit=100, ascending=True, isolation=_isolation
-            )
+            items = await self._provider.get_input_items(response_id, limit=100, ascending=True, isolation=_isolation)
         except ValueError:
             return _deleted_response(response_id, _hdrs)
         except FoundryResourceNotFoundError:

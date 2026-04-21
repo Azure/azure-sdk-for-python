@@ -115,7 +115,16 @@ def configure_observability(
     resolved_level = _config.resolve_log_level(log_level)
     root = logging.getLogger()
     root.setLevel(resolved_level)
-    if not any(getattr(h, _CONSOLE_HANDLER_ATTR, False) for h in root.handlers):
+    # Only add a console handler if root doesn't already have one.
+    # Check for our sentinel-marked handler AND any existing StreamHandler
+    # (e.g. from user's logging.basicConfig() or framework setup) to
+    # prevent duplicate output on stderr.
+    _has_console = any(
+        getattr(h, _CONSOLE_HANDLER_ATTR, False)
+        or (isinstance(h, logging.StreamHandler) and not isinstance(h, logging.FileHandler))
+        for h in root.handlers
+    )
+    if not _has_console:
         _console = logging.StreamHandler()
         _console.setFormatter(logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s"))
         setattr(_console, _CONSOLE_HANDLER_ATTR, True)

@@ -1,6 +1,18 @@
 # Release History
 
-## 1.16.5 (Unreleased)
+## 1.16.6 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+- Fixed multi-turn red team attacks (`RedTeamingAttack`-based strategies like `MultiTurn`) failing silently with PyRIT 0.11. Two bugs were patched at the SDK level: (1) `RedTeamingAttack._setup_async` raised `RuntimeError: Conversation already exists` because it seeded prepended conversation messages before calling `set_system_prompt`; now patched per-instance on the adversarial chat target to tolerate existing conversation history. (2) `RedTeamingAttack._generate_next_prompt_async` returned `context.next_message` without calling `.duplicate_message()`, causing `sqlite3.IntegrityError: UNIQUE constraint failed: PromptMemoryEntries.id` on the second turn; now patched at module load with an idempotent wrapper that duplicates the message before returning.
+
+### Other Changes
+
+## 1.16.5 (2026-04-08)
 
 ### Features Added
 

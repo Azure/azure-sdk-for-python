@@ -53,6 +53,40 @@ if TYPE_CHECKING:
 logger = logging.getLogger("azure.ai.agentserver")
 
 
+async def _resolve_input_items_for_persistence(
+    context: "ResponseContext | None",
+    fallback_items: list[generated_models.OutputItem] | None,
+) -> list[generated_models.OutputItem] | None:
+    """Resolve ``item_reference`` inputs via the provider before persisting.
+
+    When the caller's input includes ``ItemReferenceParam`` entries (references
+    to previously-stored items), this function batch-resolves them through the
+    provider and returns concrete :class:`OutputItem` instances suitable for
+    storage.  If reference resolution is unavailable (no provider or failure),
+    falls back to *fallback_items* — the pre-expanded list that already has
+    references stripped.
+
+    :param context: The :class:`ResponseContext` for this request.
+    :type context: ResponseContext | None
+    :param fallback_items: Pre-expanded input items (references dropped).
+    :type fallback_items: list[OutputItem] | None
+    :return: Resolved output items, or ``None`` if the list is empty.
+    :rtype: list[OutputItem] | None
+    """
+    if context is not None:
+        try:
+            resolved = await context._get_input_items_for_persistence()  # pylint: disable=protected-access
+            if resolved:
+                return list(resolved)
+            return None
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug(
+                "item_reference resolution failed; falling back to pre-expanded items",
+                exc_info=True,
+            )
+    return list(fallback_items) if fallback_items else None
+
+
 def _check_first_event_contract(normalized: generated_models.ResponseStreamEvent, response_id: str) -> str | None:
     """Return an error message if the first handler event violates FR-006/FR-007, else None.
 
@@ -297,8 +331,9 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                                 if record.previous_response_id
                                 else None
                             )
+                            _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
                             await provider.create_response(
-                                _response_obj, record.input_items or None, _history_ids, isolation=_isolation
+                                _response_obj, _resolved_items, _history_ids, isolation=_isolation
                             )
                             _provider_created = True
                         except Exception:  # pylint: disable=broad-exception-caught
@@ -308,6 +343,16 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                                 exc_info=True,
                             )
                     record.response_created_signal.set()
+                    # Yield to the event loop so run_background's
+                    # ``await signal.wait()`` can resume and capture the
+                    # in_progress snapshot *before* the handler continues
+                    # to terminal state.  Without this, handlers that yield
+                    # events synchronously (no await between yields) can
+                    # run to completion — including transition_to("completed"),
+                    # persistence, and eager eviction — in a single
+                    # uninterrupted coroutine run, causing the POST response
+                    # to return "completed" instead of "in_progress".
+                    await asyncio.sleep(0)
                 else:
                     # Track output_item.added events for FR-008a
                     _item_added = generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
@@ -428,23 +473,22 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
             record.response.background = record.mode_flags.background
         # Persist terminal state update via provider (bg non-stream: update after runner completes)
         if store and provider is not None and record.status not in {"cancelled"} and record.response is not None:
+            _isolation = context.isolation if context else None
             try:
                 if _provider_created:
-                    await provider.update_response(record.response)
+                    await provider.update_response(record.response, isolation=_isolation)
                 else:
                     # Response was never created (handler yielded nothing or
                     # failed before response.created) — create instead of update.
-                    _isolation = context.isolation if context else None
-                    await provider.create_response(
-                        record.response, record.input_items or None, None, isolation=_isolation
-                    )
+                    _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
+                    await provider.create_response(record.response, _resolved_items, None, isolation=_isolation)
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning(
                     "Best-effort provider persist failed at finalization (response_id=%s)",
                     response_id,
                     exc_info=True,
                 )
-        # Eager eviction: free memory once terminal state is persisted (or store=False).
+        # Eager eviction: free memory once terminal state is reached (or store=False).
         if runtime_state is not None and record.is_terminal:
             await runtime_state.try_evict(response_id)
 
@@ -725,8 +769,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 if ctx.previous_response_id
                 else None
             )
+            _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
             await self._provider.create_response(
-                _initial_response_obj, ctx.input_items or None, _history_ids, isolation=_isolation
+                _initial_response_obj, _resolved_items, _history_ids, isolation=_isolation
             )
 
     async def _process_handler_events(  # pylint: disable=too-many-return-statements
@@ -1060,9 +1105,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 # generated by ``_build_events`` are saved when the handler yielded nothing.
                 if record.status != "cancelled" and self._stream_provider is not None and events:
                     try:
-                        await self._stream_provider.save_stream_events(
-                            ctx.response_id, events, isolation=_isolation
-                        )
+                        await self._stream_provider.save_stream_events(ctx.response_id, events, isolation=_isolation)
                     except Exception:  # pylint: disable=broad-exception-caught
                         logger.warning(
                             "Best-effort stream event persistence failed (response_id=%s)",
@@ -1078,7 +1121,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     await record.subject.complete()
                 except Exception:  # pylint: disable=broad-exception-caught
                     pass  # best effort
-            # Eager eviction: free memory once terminal state is persisted.
+            # Eager eviction: free memory once terminal state is reached.
             if record.is_terminal:
                 await self._runtime_state.try_evict(ctx.response_id)
             return
@@ -1157,9 +1200,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     if ctx.previous_response_id
                     else None
                 )
+                _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
                 await self._provider.create_response(
                     generated_models.ResponseObject(response_payload),
-                    ctx.input_items or None,
+                    _resolved_items,
                     _history_ids,
                     isolation=_isolation,
                 )
@@ -1173,9 +1217,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # Persist SSE events for replay after eager eviction (bg+stream only).
             if ctx.background and self._stream_provider is not None and events:
                 try:
-                    await self._stream_provider.save_stream_events(
-                        ctx.response_id, events, isolation=_isolation
-                    )
+                    await self._stream_provider.save_stream_events(ctx.response_id, events, isolation=_isolation)
                 except Exception:  # pylint: disable=broad-exception-caught
                     logger.warning(
                         "Best-effort stream event persistence failed (response_id=%s)",
@@ -1185,7 +1227,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
         ctx.span.end(state.captured_error)
 
-        # Eager eviction: free memory once terminal state is persisted (or store=False).
+        # Eager eviction: free memory once terminal state is reached (or store=False).
         if execution.is_terminal:
             await self._runtime_state.try_evict(ctx.response_id)
 
@@ -1226,9 +1268,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         """
         new_stream_counter()
         state = _PipelineState()
-        _handler_name = (
-            getattr(self._create_fn, "__qualname__", None)
-            or getattr(self._create_fn, "__name__", "unknown")
+        _handler_name = getattr(self._create_fn, "__qualname__", None) or getattr(
+            self._create_fn, "__name__", "unknown"
         )
         logger.info("Invoking handler %s for response %s", _handler_name, ctx.response_id)
         handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
@@ -1394,9 +1435,8 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :raises _HandlerError: If the handler raises during iteration.
         """
         state = _PipelineState()
-        _handler_name = (
-            getattr(self._create_fn, "__qualname__", None)
-            or getattr(self._create_fn, "__name__", "unknown")
+        _handler_name = getattr(self._create_fn, "__qualname__", None) or getattr(
+            self._create_fn, "__name__", "unknown"
         )
         logger.info("Invoking handler %s for response %s", _handler_name, ctx.response_id)
         handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
@@ -1472,9 +1512,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     if ctx.previous_response_id
                     else None
                 )
+                _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
                 await self._provider.create_response(
                     _response_obj,
-                    ctx.input_items or None,
+                    _resolved_items,
                     _history_ids,
                     isolation=_isolation,
                 )

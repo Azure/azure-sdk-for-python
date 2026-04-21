@@ -24,6 +24,8 @@ logger = logging.getLogger("azure.ai.agentserver")
 # Correlation headers to extract and log
 _CLIENT_REQUEST_ID_HEADER = "x-ms-client-request-id"
 _SERVER_REQUEST_ID_HEADER = "x-ms-request-id"
+_X_REQUEST_ID_HEADER = "x-request-id"
+_APIM_REQUEST_ID_HEADER = "apim-request-id"
 
 # Isolation headers — log presence only, never values
 _USER_ISOLATION_HEADER = "x-agent-user-isolation-key"
@@ -104,7 +106,8 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
             elapsed_ms = (time.monotonic() - start) * 1000
             logger.warning(
                 "Foundry storage %s %s failed after %.1fms "
-                "(client-request-id=%s, has_user_isolation_key=%s, has_chat_isolation_key=%s)",
+                "(x-ms-client-request-id=%s, "
+                "has_user_isolation_key=%s, has_chat_isolation_key=%s)",
                 method,
                 url,
                 elapsed_ms,
@@ -119,11 +122,15 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
         http_response = cast(HttpResponse, response.http_response)
         status_code = http_response.status_code
         server_request_id = http_response.headers.get(_SERVER_REQUEST_ID_HEADER, "")
+        x_request_id = http_response.headers.get(_X_REQUEST_ID_HEADER, "")
+        apim_request_id = http_response.headers.get(_APIM_REQUEST_ID_HEADER, "")
 
         log_level = logging.INFO if 200 <= status_code < 400 else logging.WARNING
         logger.log(
             log_level,
-            "Foundry storage %s %s -> %d (%.1fms, client-request-id=%s, request-id=%s, "
+            "Foundry storage %s %s -> %d (%.1fms, "
+            "x-ms-client-request-id=%s, x-ms-request-id=%s, "
+            "x-request-id=%s, apim-request-id=%s, "
             "has_user_isolation_key=%s, has_chat_isolation_key=%s)",
             method,
             url,
@@ -131,6 +138,8 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
             elapsed_ms,
             client_request_id,
             server_request_id,
+            x_request_id,
+            apim_request_id,
             has_user_isolation_key,
             has_chat_isolation_key,
         )

@@ -54,6 +54,30 @@ async def test_logging_policy_logs_successful_request(caplog: pytest.LogCaptureF
 
 
 @pytest.mark.asyncio
+async def test_logging_policy_logs_response_correlation_headers(caplog: pytest.LogCaptureFixture) -> None:
+    """x-request-id and apim-request-id from the response are logged for tracing."""
+    policy = FoundryStorageLoggingPolicy()
+    resp_headers = {
+        "x-ms-request-id": "ms-req-789",
+        "x-request-id": "trace-id-abc123",
+        "apim-request-id": "apim-456",
+    }
+    next_policy = AsyncMock()
+    next_policy.send = AsyncMock(return_value=_make_response(200, headers=resp_headers))
+    policy.next = next_policy
+
+    request = _make_request("POST", "https://storage.example.com/responses")
+
+    with caplog.at_level(logging.INFO, logger="azure.ai.agentserver"):
+        await policy.send(request)
+
+    msg = caplog.records[0].message
+    assert "x-ms-request-id=ms-req-789" in msg
+    assert "x-request-id=trace-id-abc123" in msg
+    assert "apim-request-id=apim-456" in msg
+
+
+@pytest.mark.asyncio
 async def test_logging_policy_logs_error_response_at_warning(caplog: pytest.LogCaptureFixture) -> None:
     policy = FoundryStorageLoggingPolicy()
     next_policy = AsyncMock()
@@ -179,8 +203,7 @@ class TestMaskStorageUrl:
 
     def test_masks_host_and_project_path(self) -> None:
         result = _mask_storage_url(
-            "https://acct.services.ai.azure.com/api/projects/myproj"
-            "/storage/responses/resp_123?api-version=2025-01-01"
+            "https://acct.services.ai.azure.com/api/projects/myproj/storage/responses/resp_123?api-version=2025-01-01"
         )
         assert result == "***/storage/responses/resp_123?api-version=2025-01-01"
         assert "acct.services.ai.azure.com" not in result
