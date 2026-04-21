@@ -23,73 +23,73 @@ async def flow_side_effect(timeout, **kwargs):
         total_params = 2
         correct_params = 2
         llm_output = {
-            "chain_of_thought": "All parameters are properly grounded, have correct types, and follow the required format.",
-            "details": {
+            "reason": "All parameters are properly grounded, have correct types, and follow the required format.",
+            "properties": {
                 "total_parameters_passed": total_params,
                 "correct_parameters_passed": correct_params,
                 "incorrect_parameters": [],
             },
-            "result": 1,  # PASS
+            "score": 1,  # PASS
         }
     elif "missing_required" in str(query).lower():
         # Missing required parameters
         total_params = 1
         correct_params = 1
         llm_output = {
-            "chain_of_thought": "Missing required parameter 'location' for weather function.",
-            "details": {
+            "reason": "Missing required parameter 'location' for weather function.",
+            "properties": {
                 "total_parameters_passed": total_params,
                 "correct_parameters_passed": correct_params,
                 "incorrect_parameters": ["Missing required parameter: location"],
             },
-            "result": 0,  # FAIL
+            "score": 0,  # FAIL
         }
     elif "wrong_type" in str(query).lower():
         # Wrong parameter type
         total_params = 2
         correct_params = 1
         llm_output = {
-            "chain_of_thought": "Parameter 'temperature' should be number but received string.",
-            "details": {
+            "reason": "Parameter 'temperature' should be number but received string.",
+            "properties": {
                 "total_parameters_passed": total_params,
                 "correct_parameters_passed": correct_params,
                 "incorrect_parameters": ["Parameter 'temperature' has wrong type: expected number, got string"],
             },
-            "result": 0,  # FAIL
+            "score": 0,  # FAIL
         }
     elif "ungrounded" in str(query).lower():
         # Ungrounded parameters
         total_params = 2
         correct_params = 1
         llm_output = {
-            "chain_of_thought": "Parameter 'location' value 'Mars' is not grounded in conversation history.",
-            "details": {
+            "reason": "Parameter 'location' value 'Mars' is not grounded in conversation history.",
+            "properties": {
                 "total_parameters_passed": total_params,
                 "correct_parameters_passed": correct_params,
                 "incorrect_parameters": ["Parameter 'location' value not grounded in conversation history"],
             },
-            "result": 0,  # FAIL
+            "score": 0,  # FAIL
         }
     elif "unexpected_param" in str(query).lower():
         # Unexpected parameters
         total_params = 3
         correct_params = 2
         llm_output = {
-            "chain_of_thought": "Unexpected parameter 'extra_param' not defined in tool definition.",
-            "details": {
+            "reason": "Unexpected parameter 'extra_param' not defined in tool definition.",
+            "properties": {
                 "total_parameters_passed": total_params,
                 "correct_parameters_passed": correct_params,
                 "incorrect_parameters": ["Unexpected parameter: extra_param"],
             },
-            "result": 0,  # FAIL
+            "score": 0,  # FAIL
         }
     elif "mixed_errors" in str(query).lower():
         # Multiple errors
         total_params = 4
         correct_params = 1
         llm_output = {
-            "chain_of_thought": "Multiple parameter errors found.",
-            "details": {
+            "reason": "Multiple parameter errors found.",
+            "properties": {
                 "total_parameters_passed": total_params,
                 "correct_parameters_passed": correct_params,
                 "incorrect_parameters": [
@@ -98,27 +98,27 @@ async def flow_side_effect(timeout, **kwargs):
                     "Unexpected parameter: extra_param",
                 ],
             },
-            "result": 0,  # FAIL
+            "score": 0,  # FAIL
         }
     elif "invalid_result" in str(query).lower():
         # Return invalid result to trigger exception
         llm_output = {
-            "chain_of_thought": "This should trigger an exception.",
-            "details": {"total_parameters_passed": 1, "correct_parameters_passed": 1, "incorrect_parameters": []},
-            "result": 5,  # Invalid result
+            "reason": "This should trigger an exception.",
+            "properties": {"total_parameters_passed": 1, "correct_parameters_passed": 1, "incorrect_parameters": []},
+            "score": 5,  # Invalid result
         }
     else:
         # Default case - all correct
         total_params = 1
         correct_params = 1
         llm_output = {
-            "chain_of_thought": "Default evaluation - parameters are correct.",
-            "details": {
+            "reason": "Default evaluation - parameters are correct.",
+            "properties": {
                 "total_parameters_passed": total_params,
                 "correct_parameters_passed": correct_params,
                 "incorrect_parameters": [],
             },
-            "result": 1,  # PASS
+            "score": 1,  # PASS
         }
 
     # Return in the format expected by _do_eval: wrapped in llm_output key
@@ -178,10 +178,10 @@ class TestToolInputAccuracyEvaluator:
 
         key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
-        assert key in result
+        assert f"{key}_score" in result
         assert f"{key}_passed" in result
         assert f"{key}_reason" in result
-        assert result[key] == 1
+        assert result[f"{key}_score"] == 1
         assert result[f"{key}_passed"] is True
         assert f"{key}_properties" in result
         assert result[f"{key}_properties"]["parameter_extraction_accuracy"] == 100.0
@@ -225,7 +225,7 @@ class TestToolInputAccuracyEvaluator:
 
         key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
-        assert result[key] == 0
+        assert result[f"{key}_score"] == 0
         assert result[f"{key}_passed"] is False
         assert "missing required parameter" in result[f"{key}_reason"].lower()
         assert f"{key}_properties" in result
@@ -270,7 +270,7 @@ class TestToolInputAccuracyEvaluator:
 
         key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
-        assert result[key] == 0
+        assert result[f"{key}_score"] == 0
         assert result[f"{key}_passed"] is False
         assert "number" in result[f"{key}_reason"].lower() and "string" in result[f"{key}_reason"].lower()
         assert f"{key}_properties" in result
@@ -315,7 +315,7 @@ class TestToolInputAccuracyEvaluator:
 
         key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
-        assert result[key] == 0
+        assert result[f"{key}_score"] == 0
         assert result[f"{key}_passed"] is False
         assert "not grounded" in result[f"{key}_reason"].lower()
         assert f"{key}_properties" in result
@@ -360,7 +360,7 @@ class TestToolInputAccuracyEvaluator:
 
         key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
-        assert result[key] == 0
+        assert result[f"{key}_score"] == 0
         assert result[f"{key}_passed"] is False
         assert "unexpected parameter" in result[f"{key}_reason"].lower()
         assert f"{key}_properties" in result
@@ -406,7 +406,7 @@ class TestToolInputAccuracyEvaluator:
 
         key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
-        assert result[key] == 0
+        assert result[f"{key}_score"] == 0
         assert result[f"{key}_passed"] is False
         assert (
             "multiple" in result[f"{key}_reason"].lower()
@@ -435,8 +435,8 @@ class TestToolInputAccuracyEvaluator:
 
         key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
-        assert result[key] == 1
-        assert result[f"{key}_passed"] is True
+        assert result[f"{key}_score"] is None
+        assert result[f"{key}_passed"] is None
         assert (
             "not applicable" in result[f"{key}_reason"].lower()
             and _ToolInputAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE in result[f"{key}_reason"]
@@ -499,8 +499,8 @@ class TestToolInputAccuracyEvaluator:
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
         key = _ToolInputAccuracyEvaluator._KEY_PREFIX
-        assert result[key] == 1
-        assert result[f"{key}_passed"] is True
+        assert result[f"{key}_score"] is None
+        assert result[f"{key}_passed"] is None
         assert (
             "not applicable" in result[f"{key}_reason"].lower()
             and _ToolInputAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE in result[f"{key}_reason"]
@@ -540,7 +540,7 @@ class TestToolInputAccuracyEvaluator:
         with pytest.raises(EvaluationException) as exc_info:
             evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        assert "Invalid result value" in str(exc_info.value)
+        assert "Invalid score value" in str(exc_info.value)
 
     def test_evaluate_no_response(self, mock_model_config):
         """Test evaluation when no response is provided."""
@@ -633,7 +633,7 @@ class TestToolInputAccuracyEvaluator:
 
         key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
-        assert key in result
+        assert f"{key}_score" in result
         assert f"{key}_passed" in result
 
     def test_evaluate_with_single_tool_definition(self, mock_model_config):
