@@ -2,5 +2,9 @@
   "AssetsRepo": "Azure/azure-sdk-assets",
   "AssetsRepoPrefixPath": "python",
   "TagPrefix": "python/evaluation/azure-ai-evaluation",
+<<<<<<< mohessie/standardize_output_schema
   "Tag": "python/evaluation/azure-ai-evaluation_22915ad1f5"
+=======
+  "Tag": "python/evaluation/azure-ai-evaluation_67d91b0617"
+>>>>>>> main
 }
