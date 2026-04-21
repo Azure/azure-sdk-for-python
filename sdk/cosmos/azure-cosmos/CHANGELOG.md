@@ -1,5 +1,16 @@
 ## Release History
 
+### 4.16.0b3 (Unreleased)
+
+#### Features Added
+
+#### Breaking Changes
+
+#### Bugs Fixed
+* Fixed bug where `CosmosClient` construction with AAD credentials would crash at startup if the semantic reranking inference endpoint environment variable was not set, even when semantic reranking was not being used. The inference service is now lazily initialized on first use. See [PR 46243](https://github.com/Azure/azure-sdk-for-python/pull/46243)
+
+#### Other Changes
+
 ### 4.16.0b2 (2026-04-04)
 
 #### Bugs Fixed
