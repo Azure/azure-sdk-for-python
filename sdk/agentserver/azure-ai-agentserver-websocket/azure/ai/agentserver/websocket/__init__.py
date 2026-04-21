@@ -1,17 +1,17 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Conversations protocol for Azure AI Hosted Agents.
+"""Websocket protocol for Azure AI Hosted Agents.
 
-This package provides an conversation protocol host as a subclass of
+This package provides an websocket protocol host as a subclass of
 :class:`~azure.ai.agentserver.core.AgentServerHost`.
 
 Quick start::
 
-    from azure.ai.agentserver.conversations import ConversationAgentServerHost
+    from azure.ai.agentserver.websocket import WebsocketAgentServerHost
     from starlette.responses import JSONResponse
 
-    app = ConversationAgentServerHost()
+    app = WebsocketAgentServerHost()
 
     @app.invoke_handler
     async def handle(request):
@@ -21,8 +21,8 @@ Quick start::
 """
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
-from ._conversation import ConversationAgentServerHost, ConversationContext, ConversationError
+from ._websocket import WebsocketAgentServerHost, WebsocketContext, WebsocketError
 from ._version import VERSION
 
-__all__ = ["ConversationAgentServerHost", "ConversationContext", "ConversationError"]
+__all__ = ["WebsocketAgentServerHost", "WebsocketContext", "WebsocketError"]
 __version__ = VERSION

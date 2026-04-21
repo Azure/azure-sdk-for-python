@@ -7,20 +7,20 @@ import asyncio
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.conversations import (
-    ConversationAgentServerHost,
-    ConversationContext,
+from azure.ai.agentserver.websocket import (
+    WebsocketAgentServerHost,
+    WebsocketContext,
 )
 
 
 # ---------------------------------------------------------------------------
-# ConversationAgentServerHost no longer accepts request_timeout
+# WebsocketAgentServerHost no longer accepts request_timeout
 # ---------------------------------------------------------------------------
 
 def test_no_request_timeout_parameter():
-    """ConversationAgentServerHost no longer accepts request_timeout."""
+    """WebsocketAgentServerHost no longer accepts request_timeout."""
     with pytest.raises(TypeError):
-        ConversationAgentServerHost(request_timeout=10)
+        WebsocketAgentServerHost(request_timeout=10)
 
 
 # ---------------------------------------------------------------------------
@@ -29,15 +29,15 @@ def test_no_request_timeout_parameter():
 
 def test_slow_invoke_completes():
     """Without timeout, handler runs to completion."""
-    app = ConversationAgentServerHost()
+    app = WebsocketAgentServerHost()
 
     @app.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         await asyncio.sleep(0.1)
         return {"status": "done"}
 
     client = TestClient(app)
-    with client.websocket_connect("/conversations/ws") as ws:
+    with client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {}})
         resp = ws.receive_json()
     assert resp["type"] == "result"

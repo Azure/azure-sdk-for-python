@@ -1,16 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for graceful shutdown with ConversationAgentServerHost."""
+"""Tests for graceful shutdown with WebsocketAgentServerHost."""
 import asyncio
 import logging
 
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.conversations import (
-    ConversationAgentServerHost,
-    ConversationContext,
+from azure.ai.agentserver.websocket import (
+    WebsocketAgentServerHost,
+    WebsocketContext,
 )
 
 
@@ -18,13 +18,13 @@ from azure.ai.agentserver.conversations import (
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _make_server_with_shutdown(**kwargs) -> tuple[ConversationAgentServerHost, list]:
-    """Create ConversationAgentServerHost with a tracked shutdown handler."""
-    server = ConversationAgentServerHost(**kwargs)
+def _make_server_with_shutdown(**kwargs) -> tuple[WebsocketAgentServerHost, list]:
+    """Create WebsocketAgentServerHost with a tracked shutdown handler."""
+    server = WebsocketAgentServerHost(**kwargs)
     calls: list[str] = []
 
     @server.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         return {"ok": True}
 
     @server.shutdown_handler
@@ -46,10 +46,10 @@ def test_shutdown_handler_registered():
 
 def test_shutdown_handler_not_registered():
     """Without @shutdown_handler, _shutdown_fn is None."""
-    app = ConversationAgentServerHost()
+    app = WebsocketAgentServerHost()
 
     @app.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         return {"ok": True}
 
     assert app._shutdown_fn is None
@@ -100,11 +100,11 @@ async def test_shutdown_handler_called_on_lifespan_exit():
 @pytest.mark.asyncio
 async def test_shutdown_handler_timeout(caplog):
     """Shutdown handler that exceeds timeout is warned about."""
-    server = ConversationAgentServerHost(graceful_shutdown_timeout=1)
+    server = WebsocketAgentServerHost(graceful_shutdown_timeout=1)
     calls: list[str] = []
 
     @server.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         return {"ok": True}
 
     @server.shutdown_handler
@@ -126,10 +126,10 @@ async def test_shutdown_handler_timeout(caplog):
 @pytest.mark.asyncio
 async def test_shutdown_handler_exception(caplog):
     """Shutdown handler that raises is caught and logged."""
-    app = ConversationAgentServerHost()
+    app = WebsocketAgentServerHost()
 
     @app.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         return {"ok": True}
 
     @app.shutdown_handler
@@ -148,19 +148,19 @@ async def test_shutdown_handler_exception(caplog):
 
 def test_default_graceful_shutdown_timeout():
     """Default graceful shutdown timeout is 30 seconds."""
-    app = ConversationAgentServerHost()
+    app = WebsocketAgentServerHost()
     assert app._graceful_shutdown_timeout == 30
 
 
 def test_custom_graceful_shutdown_timeout():
     """Custom graceful_shutdown_timeout is stored."""
-    server = ConversationAgentServerHost(graceful_shutdown_timeout=60)
+    server = WebsocketAgentServerHost(graceful_shutdown_timeout=60)
     assert server._graceful_shutdown_timeout == 60
 
 
 def test_zero_graceful_shutdown_timeout():
     """Zero timeout disables the drain period."""
-    server = ConversationAgentServerHost(graceful_shutdown_timeout=0)
+    server = WebsocketAgentServerHost(graceful_shutdown_timeout=0)
     assert server._graceful_shutdown_timeout == 0
 
 
@@ -183,14 +183,14 @@ def test_health_endpoint_during_operation():
 
 def test_no_shutdown_handler_is_noop():
     """Without a shutdown handler, WebSocket and lifespan work fine."""
-    app = ConversationAgentServerHost()
+    app = WebsocketAgentServerHost()
 
     @app.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         return {"ok": True}
 
     client = TestClient(app)
-    with client.websocket_connect("/conversations/ws") as ws:
+    with client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {}})
         resp = ws.receive_json()
         assert resp["type"] == "result"
@@ -204,7 +204,7 @@ def test_multiple_requests_before_shutdown():
     """Multiple requests can be served on the same WebSocket connection."""
     server, _ = _make_server_with_shutdown()
     client = TestClient(server)
-    with client.websocket_connect("/conversations/ws") as ws:
+    with client.websocket_connect("/websocket/ws") as ws:
         for i in range(5):
             ws.send_json({"action": "invoke", "payload": {"idx": i}})
             resp = ws.receive_json()

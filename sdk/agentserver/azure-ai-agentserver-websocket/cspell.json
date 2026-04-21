@@ -7,7 +7,7 @@
         "caplog",
         "genai",
         "hypercorn",
-        "conversations",
+        "websocket",
         "openapi",
         "paramtype",
         "pytestmark",

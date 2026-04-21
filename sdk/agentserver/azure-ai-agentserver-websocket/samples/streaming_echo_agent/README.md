@@ -1,17 +1,17 @@
 **IMPORTANT!** All samples and other resources made available in this GitHub repository ("samples") are designed to assist in accelerating development of agents, solutions, and agent workflows for various scenarios. Review all provided resources and carefully test output behavior in the context of your use case. AI responses may be inaccurate and AI actions should be monitored with human oversight.
 
-# Echo Agent — Conversations (WebSocket) + Invocations (HTTP SSE) Streaming
+# Echo Agent — Websocket (WebSocket) + Invocations (HTTP SSE) Streaming
 
-This sample demonstrates a minimal echo agent that combines [azure-ai-agentserver-conversations](https://pypi.org/project/azure-ai-agentserver-conversations/) (WebSocket) and [azure-ai-agentserver-invocations](https://pypi.org/project/azure-ai-agentserver-invocations/) (HTTP SSE) on a single server, streaming responses word-by-word. It supports **two communication modes**:
+This sample demonstrates a minimal echo agent that combines [azure-ai-agentserver-websocket](https://pypi.org/project/azure-ai-agentserver-websocket/) (WebSocket) and [azure-ai-agentserver-invocations](https://pypi.org/project/azure-ai-agentserver-invocations/) (HTTP SSE) on a single server, streaming responses word-by-word. It supports **two communication modes**:
 
-- **WebSocket** — persistent connection at `ws://localhost:8088/conversations/ws`
+- **WebSocket** — persistent connection at `ws://localhost:8088/websocket/ws`
 - **HTTP SSE** — stateless POST at `http://localhost:8088/invocations`
 
 ## How It Works
 
 The agent receives user input and echoes it back with a `🔊 Echo:` prefix. Each word is streamed as a separate token chunk.
 
-- **WebSocket mode** (Conversations protocol): tokens are sent as `stream_chunk` messages, followed by a `stream_end` signal.
+- **WebSocket mode** (Websocket protocol): tokens are sent as `stream_chunk` messages, followed by a `stream_end` signal.
 - **HTTP SSE mode** (Invocations protocol): tokens are sent as `data:` lines per the Server-Sent Events spec, followed by an `event: done` signal.
 
 ## Running Locally
@@ -43,7 +43,7 @@ Using the `websockets` library:
 import asyncio, json, websockets
 
 async def main():
-    async with websockets.connect("ws://localhost:8088/conversations/ws") as ws:
+    async with websockets.connect("ws://localhost:8088/websocket/ws") as ws:
         await ws.send(json.dumps({
             "action": "invoke",
             "payload": {"message": "Hello world!"}

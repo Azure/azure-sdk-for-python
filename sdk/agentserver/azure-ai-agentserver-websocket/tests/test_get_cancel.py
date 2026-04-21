@@ -1,13 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for get_conversation and cancel_conversation actions over WebSocket."""
+"""Tests for get_websocket and cancel_websocket actions over WebSocket."""
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.conversations import (
-    ConversationAgentServerHost,
-    ConversationContext,
-    ConversationError,
+from azure.ai.agentserver.websocket import (
+    WebsocketAgentServerHost,
+    WebsocketContext,
+    WebsocketError,
 )
 
 
@@ -16,13 +16,13 @@ from azure.ai.agentserver.conversations import (
 # ---------------------------------------------------------------------------
 
 def test_get_after_invoke_returns_stored_result(async_storage_client):
-    """get_conversation after invoke returns the stored result."""
-    with async_storage_client.websocket_connect("/conversations/ws") as ws:
+    """get_websocket after invoke returns the stored result."""
+    with async_storage_client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {"key": "stored-data"}})
         invoke_resp = ws.receive_json()
-        inv_id = invoke_resp["conversation_id"]
+        inv_id = invoke_resp["websocket_id"]
 
-        ws.send_json({"action": "get_conversation", "conversation_id": inv_id})
+        ws.send_json({"action": "get_websocket", "websocket_id": inv_id})
         get_resp = ws.receive_json()
 
     assert get_resp["type"] == "result"
@@ -34,9 +34,9 @@ def test_get_after_invoke_returns_stored_result(async_storage_client):
 # ---------------------------------------------------------------------------
 
 def test_get_unknown_id_returns_error(async_storage_client):
-    """get_conversation with unknown ID returns error."""
-    with async_storage_client.websocket_connect("/conversations/ws") as ws:
-        ws.send_json({"action": "get_conversation", "conversation_id": "unknown-id-12345"})
+    """get_websocket with unknown ID returns error."""
+    with async_storage_client.websocket_connect("/websocket/ws") as ws:
+        ws.send_json({"action": "get_websocket", "websocket_id": "unknown-id-12345"})
         resp = ws.receive_json()
     assert resp["type"] == "error"
     assert resp["error"]["code"] == "not_found"
@@ -47,13 +47,13 @@ def test_get_unknown_id_returns_error(async_storage_client):
 # ---------------------------------------------------------------------------
 
 def test_cancel_after_invoke_returns_cancelled(async_storage_client):
-    """cancel_conversation after invoke returns cancelled status."""
-    with async_storage_client.websocket_connect("/conversations/ws") as ws:
+    """cancel_websocket after invoke returns cancelled status."""
+    with async_storage_client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {"key": "cancel-me"}})
         invoke_resp = ws.receive_json()
-        inv_id = invoke_resp["conversation_id"]
+        inv_id = invoke_resp["websocket_id"]
 
-        ws.send_json({"action": "cancel_conversation", "conversation_id": inv_id})
+        ws.send_json({"action": "cancel_websocket", "websocket_id": inv_id})
         cancel_resp = ws.receive_json()
 
     assert cancel_resp["type"] == "result"
@@ -65,9 +65,9 @@ def test_cancel_after_invoke_returns_cancelled(async_storage_client):
 # ---------------------------------------------------------------------------
 
 def test_cancel_unknown_id_returns_error(async_storage_client):
-    """cancel_conversation with unknown ID returns error."""
-    with async_storage_client.websocket_connect("/conversations/ws") as ws:
-        ws.send_json({"action": "cancel_conversation", "conversation_id": "unknown-id-12345"})
+    """cancel_websocket with unknown ID returns error."""
+    with async_storage_client.websocket_connect("/websocket/ws") as ws:
+        ws.send_json({"action": "cancel_websocket", "websocket_id": "unknown-id-12345"})
         resp = ws.receive_json()
     assert resp["type"] == "error"
     assert resp["error"]["code"] == "not_found"
@@ -78,16 +78,16 @@ def test_cancel_unknown_id_returns_error(async_storage_client):
 # ---------------------------------------------------------------------------
 
 def test_get_after_cancel_returns_error(async_storage_client):
-    """get_conversation after cancel returns error (data removed)."""
-    with async_storage_client.websocket_connect("/conversations/ws") as ws:
+    """get_websocket after cancel returns error (data removed)."""
+    with async_storage_client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {"key": "temp"}})
         invoke_resp = ws.receive_json()
-        inv_id = invoke_resp["conversation_id"]
+        inv_id = invoke_resp["websocket_id"]
 
-        ws.send_json({"action": "cancel_conversation", "conversation_id": inv_id})
+        ws.send_json({"action": "cancel_websocket", "websocket_id": inv_id})
         ws.receive_json()  # consume cancel response
 
-        ws.send_json({"action": "get_conversation", "conversation_id": inv_id})
+        ws.send_json({"action": "get_websocket", "websocket_id": inv_id})
         get_resp = ws.receive_json()
 
     assert get_resp["type"] == "error"
@@ -98,21 +98,21 @@ def test_get_after_cancel_returns_error(async_storage_client):
 # GET error returns internal_error
 # ---------------------------------------------------------------------------
 
-def test_get_conversation_error_returns_internal_error():
-    """get_conversation handler raising an exception returns internal_error."""
-    app = ConversationAgentServerHost()
+def test_get_websocket_error_returns_internal_error():
+    """get_websocket handler raising an exception returns internal_error."""
+    app = WebsocketAgentServerHost()
 
     @app.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         return {"ok": True}
 
-    @app.get_conversation_handler
-    async def get_handler(context: ConversationContext) -> dict:
+    @app.get_websocket_handler
+    async def get_handler(context: WebsocketContext) -> dict:
         raise RuntimeError("get failed")
 
     client = TestClient(app)
-    with client.websocket_connect("/conversations/ws") as ws:
-        ws.send_json({"action": "get_conversation", "conversation_id": "some-id"})
+    with client.websocket_connect("/websocket/ws") as ws:
+        ws.send_json({"action": "get_websocket", "websocket_id": "some-id"})
         resp = ws.receive_json()
     assert resp["type"] == "error"
     assert resp["error"]["code"] == "internal_error"
@@ -122,21 +122,21 @@ def test_get_conversation_error_returns_internal_error():
 # Cancel error returns internal_error
 # ---------------------------------------------------------------------------
 
-def test_cancel_conversation_error_returns_internal_error():
-    """cancel_conversation handler raising an exception returns internal_error."""
-    app = ConversationAgentServerHost()
+def test_cancel_websocket_error_returns_internal_error():
+    """cancel_websocket handler raising an exception returns internal_error."""
+    app = WebsocketAgentServerHost()
 
     @app.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         return {"ok": True}
 
-    @app.cancel_conversation_handler
-    async def cancel_handler(context: ConversationContext) -> dict:
+    @app.cancel_websocket_handler
+    async def cancel_handler(context: WebsocketContext) -> dict:
         raise RuntimeError("cancel failed")
 
     client = TestClient(app)
-    with client.websocket_connect("/conversations/ws") as ws:
-        ws.send_json({"action": "cancel_conversation", "conversation_id": "some-id"})
+    with client.websocket_connect("/websocket/ws") as ws:
+        ws.send_json({"action": "cancel_websocket", "websocket_id": "some-id"})
         resp = ws.receive_json()
     assert resp["type"] == "error"
     assert resp["error"]["code"] == "internal_error"

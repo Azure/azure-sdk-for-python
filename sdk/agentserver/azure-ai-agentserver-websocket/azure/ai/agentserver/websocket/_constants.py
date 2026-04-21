@@ -3,10 +3,10 @@
 # ---------------------------------------------------------
 
 
-class ConversationConstants:
-    """Conversation protocol constants.
+class WebsocketConstants:
+    """Websocket protocol constants.
 
-    Protocol-specific constants for the WebSocket conversation protocol.
+    Protocol-specific constants for the WebSocket websocket protocol.
     """
 
     # WebSocket message types (server → client)
@@ -19,8 +19,8 @@ class ConversationConstants:
 
     # WebSocket actions (client → server)
     ACTION_INVOKE = "invoke"
-    ACTION_GET_CONVERSATION = "get_conversation"
-    ACTION_CANCEL_CONVERSATION = "cancel_conversation"
+    ACTION_GET_WEBSOCKET = "get_websocket"
+    ACTION_CANCEL_WEBSOCKET = "cancel_websocket"
     ACTION_PING = "ping"
     ACTION_PONG = "pong"
 
@@ -28,7 +28,7 @@ class ConversationConstants:
     DEFAULT_WS_PING_INTERVAL = 30  # seconds
 
     # Span attribute keys
-    ATTR_SPAN_CONVERSATION_ID = "azure.ai.agentserver.conversations.conversation_id"
-    ATTR_SPAN_SESSION_ID = "azure.ai.agentserver.conversations.session_id"
-    ATTR_SPAN_ERROR_CODE = "azure.ai.agentserver.conversations.error.code"
-    ATTR_SPAN_ERROR_MESSAGE = "azure.ai.agentserver.conversations.error.message"
+    ATTR_SPAN_WEBSOCKET_ID = "azure.ai.agentserver.websocket.websocket_id"
+    ATTR_SPAN_SESSION_ID = "azure.ai.agentserver.websocket.session_id"
+    ATTR_SPAN_ERROR_CODE = "azure.ai.agentserver.websocket.error.code"
+    ATTR_SPAN_ERROR_MESSAGE = "azure.ai.agentserver.websocket.error.message"

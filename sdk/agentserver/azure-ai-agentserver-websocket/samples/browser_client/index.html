@@ -49,7 +49,7 @@
     <label for="modeHttp">HTTP (SSE)</label>
   </div>
   <div class="connection-bar">
-    <input id="urlInput" type="text" value="ws://localhost:8088/conversations/ws" placeholder="ws://host:port/...">
+    <input id="urlInput" type="text" value="ws://localhost:8088/websocket/ws" placeholder="ws://host:port/...">
     <button id="connectBtn">Connect</button>
     <button id="disconnectBtn" disabled>Disconnect</button>
     <span class="status"><span id="statusDot" class="dot disconnected"></span><span id="statusText">Disconnected</span></span>
@@ -99,8 +99,8 @@
       setInputEnabled(true);
       addMessage("Switched to HTTP (SSE) mode", "system");
     } else {
-      urlInput.value = "ws://localhost:8088/conversations/ws";
-      urlInput.placeholder = "ws://host:port/conversations/ws";  
+      urlInput.value = "ws://localhost:8088/websocket/ws";
+      urlInput.placeholder = "ws://host:port/websocket/ws";  
       connectBtn.style.display = "";
       disconnectBtn.style.display = "";
       setStatus("disconnected");

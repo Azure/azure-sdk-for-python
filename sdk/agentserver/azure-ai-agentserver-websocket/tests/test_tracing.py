@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Tests for OpenTelemetry tracing in the WebSocket conversations protocol."""
+"""Tests for OpenTelemetry tracing in the WebSocket websocket protocol."""
 import os
 import uuid
 from unittest.mock import patch
@@ -9,10 +9,10 @@ from unittest.mock import patch
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.conversations import (
-    ConversationAgentServerHost,
-    ConversationContext,
-    ConversationError,
+from azure.ai.agentserver.websocket import (
+    WebsocketAgentServerHost,
+    WebsocketContext,
+    WebsocketError,
 )
 
 
@@ -68,13 +68,13 @@ def _get_spans():
 # ---------------------------------------------------------------------------
 
 def _make_tracing_server(**kwargs):
-    """Create an ConversationAgentServerHost with tracing enabled."""
+    """Create an WebsocketAgentServerHost with tracing enabled."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
         with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-            server = ConversationAgentServerHost(**kwargs)
+            server = WebsocketAgentServerHost(**kwargs)
 
     @server.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         return {"echo": payload}
 
     return server
@@ -84,27 +84,27 @@ def _make_tracing_server_with_get_cancel(**kwargs):
     """Create a tracing-enabled server with get/cancel handlers."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
         with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-            server = ConversationAgentServerHost(**kwargs)
+            server = WebsocketAgentServerHost(**kwargs)
 
     store: dict[str, dict] = {}
 
     @server.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
-        store[context.conversation_id] = payload
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
+        store[context.websocket_id] = payload
         return {"stored": True}
 
-    @server.get_conversation_handler
-    async def get_handler(context: ConversationContext) -> dict:
-        if context.conversation_id in store:
-            return {"data": store[context.conversation_id]}
-        raise ConversationError("not_found", "Not found")
+    @server.get_websocket_handler
+    async def get_handler(context: WebsocketContext) -> dict:
+        if context.websocket_id in store:
+            return {"data": store[context.websocket_id]}
+        raise WebsocketError("not_found", "Not found")
 
-    @server.cancel_conversation_handler
-    async def cancel_handler(context: ConversationContext) -> dict:
-        if context.conversation_id in store:
-            del store[context.conversation_id]
+    @server.cancel_websocket_handler
+    async def cancel_handler(context: WebsocketContext) -> dict:
+        if context.websocket_id in store:
+            del store[context.websocket_id]
             return {"status": "cancelled"}
-        raise ConversationError("not_found", "Not found")
+        raise WebsocketError("not_found", "Not found")
 
     return server
 
@@ -113,10 +113,10 @@ def _make_failing_tracing_server(**kwargs):
     """Create a tracing-enabled server whose handler raises."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
         with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-            server = ConversationAgentServerHost(**kwargs)
+            server = WebsocketAgentServerHost(**kwargs)
 
     @server.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         raise ValueError("tracing error test")
 
     return server
@@ -126,10 +126,10 @@ def _make_streaming_tracing_server(**kwargs):
     """Create a tracing-enabled server with streaming response."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
         with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-            server = ConversationAgentServerHost(**kwargs)
+            server = WebsocketAgentServerHost(**kwargs)
 
     @server.invoke_handler
-    async def handle(payload: dict, context: ConversationContext):
+    async def handle(payload: dict, context: WebsocketContext):
         yield {"chunk": 1}
         yield {"chunk": 2}
 
@@ -145,14 +145,14 @@ def test_tracing_disabled_by_default():
     if _MODULE_EXPORTER:
         _MODULE_EXPORTER.clear()
 
-    app = ConversationAgentServerHost()
+    app = WebsocketAgentServerHost()
 
     @app.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         return {"ok": True}
 
     client = TestClient(app)
-    with client.websocket_connect("/conversations/ws") as ws:
+    with client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {}})
         ws.receive_json()
 
@@ -169,7 +169,7 @@ def test_tracing_enabled_creates_invoke_span():
     """Tracing enabled creates a span named 'invoke_agent'."""
     server = _make_tracing_server()
     client = TestClient(server)
-    with client.websocket_connect("/conversations/ws") as ws:
+    with client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {}})
         ws.receive_json()
 
@@ -187,7 +187,7 @@ def test_invoke_error_records_exception():
     """When handler raises, the span records the exception."""
     server = _make_failing_tracing_server()
     client = TestClient(server)
-    with client.websocket_connect("/conversations/ws") as ws:
+    with client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {}})
         resp = ws.receive_json()
     assert resp["type"] == "error"
@@ -203,37 +203,37 @@ def test_invoke_error_records_exception():
 # GET/cancel create spans
 # ---------------------------------------------------------------------------
 
-def test_get_conversation_creates_span():
-    """get_conversation creates a span."""
+def test_get_websocket_creates_span():
+    """get_websocket creates a span."""
     server = _make_tracing_server_with_get_cancel()
     client = TestClient(server)
-    with client.websocket_connect("/conversations/ws") as ws:
+    with client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {"key": "data"}})
         invoke_resp = ws.receive_json()
-        inv_id = invoke_resp["conversation_id"]
+        inv_id = invoke_resp["websocket_id"]
 
-        ws.send_json({"action": "get_conversation", "conversation_id": inv_id})
+        ws.send_json({"action": "get_websocket", "websocket_id": inv_id})
         ws.receive_json()
 
     spans = _get_spans()
-    get_spans = [s for s in spans if "get_conversation" in s.name]
+    get_spans = [s for s in spans if "get_websocket" in s.name]
     assert len(get_spans) >= 1
 
 
-def test_cancel_conversation_creates_span():
-    """cancel_conversation creates a span."""
+def test_cancel_websocket_creates_span():
+    """cancel_websocket creates a span."""
     server = _make_tracing_server_with_get_cancel()
     client = TestClient(server)
-    with client.websocket_connect("/conversations/ws") as ws:
+    with client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {"key": "data"}})
         invoke_resp = ws.receive_json()
-        inv_id = invoke_resp["conversation_id"]
+        inv_id = invoke_resp["websocket_id"]
 
-        ws.send_json({"action": "cancel_conversation", "conversation_id": inv_id})
+        ws.send_json({"action": "cancel_websocket", "websocket_id": inv_id})
         ws.receive_json()
 
     spans = _get_spans()
-    cancel_spans = [s for s in spans if "cancel_conversation" in s.name]
+    cancel_spans = [s for s in spans if "cancel_websocket" in s.name]
     assert len(cancel_spans) >= 1
 
 
@@ -245,14 +245,14 @@ def test_tracing_via_appinsights_env_var():
     """Tracing is enabled when APPLICATIONINSIGHTS_CONNECTION_STRING is set."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
         with patch("azure.ai.agentserver.core._tracing.TracingHelper._setup_azure_monitor"):
-            app = ConversationAgentServerHost()
+            app = WebsocketAgentServerHost()
 
     @app.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         return {"ok": True}
 
     client = TestClient(app)
-    with client.websocket_connect("/conversations/ws") as ws:
+    with client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {}})
         ws.receive_json()
 
@@ -271,17 +271,17 @@ def test_no_tracing_when_no_endpoints():
     env.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
     env.pop("OTEL_EXPORTER_OTLP_ENDPOINT", None)
     with patch.dict(os.environ, env, clear=True):
-        app = ConversationAgentServerHost()
+        app = WebsocketAgentServerHost()
 
     @app.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         return {"ok": True}
 
     if _MODULE_EXPORTER:
         _MODULE_EXPORTER.clear()
 
     client = TestClient(app)
-    with client.websocket_connect("/conversations/ws") as ws:
+    with client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {}})
         ws.receive_json()
 
@@ -298,7 +298,7 @@ def test_streaming_creates_span():
     """Streaming response creates and completes a span."""
     server = _make_streaming_tracing_server()
     client = TestClient(server)
-    with client.websocket_connect("/conversations/ws") as ws:
+    with client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {}})
         # Consume all streaming messages
         while True:
@@ -319,7 +319,7 @@ def test_genai_attributes_on_invoke_span():
     """Invoke span has GenAI semantic convention attributes."""
     server = _make_tracing_server()
     client = TestClient(server)
-    with client.websocket_connect("/conversations/ws") as ws:
+    with client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({"action": "invoke", "payload": {}})
         ws.receive_json()
 
@@ -337,11 +337,11 @@ def test_genai_attributes_on_invoke_span():
 # Session ID in gen_ai.conversation.id
 # ---------------------------------------------------------------------------
 
-def test_session_id_in_conversation_id():
+def test_session_id_in_websocket_id():
     """Session ID is set as gen_ai.conversation.id on invoke span."""
     server = _make_tracing_server()
     client = TestClient(server)
-    with client.websocket_connect("/conversations/ws") as ws:
+    with client.websocket_connect("/websocket/ws") as ws:
         ws.send_json({
             "action": "invoke",
             "session_id": "test-session",

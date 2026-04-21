@@ -1,16 +1,16 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-"""Shared fixtures and factory functions for conversations WebSocket tests."""
+"""Shared fixtures and factory functions for websocket WebSocket tests."""
 from typing import Any
 
 import pytest
 from starlette.testclient import TestClient
 
-from azure.ai.agentserver.conversations import (
-    ConversationAgentServerHost,
-    ConversationContext,
-    ConversationError,
+from azure.ai.agentserver.websocket import (
+    WebsocketAgentServerHost,
+    WebsocketContext,
+    WebsocketError,
 )
 
 
@@ -22,7 +22,7 @@ SAMPLE_OPENAPI_SPEC: dict[str, Any] = {
     "openapi": "3.0.0",
     "info": {"title": "Echo Agent", "version": "1.0.0"},
     "paths": {
-        "/conversations": {
+        "/websocket": {
             "post": {
                 "requestBody": {
                     "required": True,
@@ -64,72 +64,72 @@ SAMPLE_OPENAPI_SPEC: dict[str, Any] = {
 # ---------------------------------------------------------------------------
 
 
-def _make_echo_agent(**kwargs: Any) -> ConversationAgentServerHost:
-    """Create an ConversationAgentServerHost whose invoke handler echoes the payload."""
-    app = ConversationAgentServerHost(**kwargs)
+def _make_echo_agent(**kwargs: Any) -> WebsocketAgentServerHost:
+    """Create an WebsocketAgentServerHost whose invoke handler echoes the payload."""
+    app = WebsocketAgentServerHost(**kwargs)
 
     @app.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
-        return {"echo": payload, "conversation_id": context.conversation_id}
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
+        return {"echo": payload, "websocket_id": context.websocket_id}
 
     return app
 
 
-def _make_streaming_agent(**kwargs: Any) -> ConversationAgentServerHost:
-    """Create an ConversationAgentServerHost whose invoke handler yields 3 JSON chunks."""
-    app = ConversationAgentServerHost(**kwargs)
+def _make_streaming_agent(**kwargs: Any) -> WebsocketAgentServerHost:
+    """Create an WebsocketAgentServerHost whose invoke handler yields 3 JSON chunks."""
+    app = WebsocketAgentServerHost(**kwargs)
 
     @app.invoke_handler
-    async def handle(payload: dict, context: ConversationContext):
+    async def handle(payload: dict, context: WebsocketContext):
         for i in range(3):
             yield {"chunk": i}
 
     return app
 
 
-def _make_async_storage_agent(**kwargs: Any) -> ConversationAgentServerHost:
-    """Create an ConversationAgentServerHost with get/cancel handlers and in-memory store."""
-    app = ConversationAgentServerHost(**kwargs)
+def _make_async_storage_agent(**kwargs: Any) -> WebsocketAgentServerHost:
+    """Create an WebsocketAgentServerHost with get/cancel handlers and in-memory store."""
+    app = WebsocketAgentServerHost(**kwargs)
     store: dict[str, dict] = {}
 
     @app.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
-        store[context.conversation_id] = payload
-        return {"stored": True, "conversation_id": context.conversation_id}
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
+        store[context.websocket_id] = payload
+        return {"stored": True, "websocket_id": context.websocket_id}
 
-    @app.get_conversation_handler
-    async def get_handler(context: ConversationContext) -> dict:
-        if context.conversation_id not in store:
-            raise ConversationError("not_found", "Not found")
-        return {"data": store[context.conversation_id]}
+    @app.get_websocket_handler
+    async def get_handler(context: WebsocketContext) -> dict:
+        if context.websocket_id not in store:
+            raise WebsocketError("not_found", "Not found")
+        return {"data": store[context.websocket_id]}
 
-    @app.cancel_conversation_handler
-    async def cancel_handler(context: ConversationContext) -> dict:
-        if context.conversation_id not in store:
-            raise ConversationError("not_found", "Not found")
-        del store[context.conversation_id]
+    @app.cancel_websocket_handler
+    async def cancel_handler(context: WebsocketContext) -> dict:
+        if context.websocket_id not in store:
+            raise WebsocketError("not_found", "Not found")
+        del store[context.websocket_id]
         return {"status": "cancelled"}
 
     return app
 
 
-def _make_validated_agent() -> ConversationAgentServerHost:
-    """Create an ConversationAgentServerHost with OpenAPI spec."""
-    app = ConversationAgentServerHost(openapi_spec=SAMPLE_OPENAPI_SPEC)
+def _make_validated_agent() -> WebsocketAgentServerHost:
+    """Create an WebsocketAgentServerHost with OpenAPI spec."""
+    app = WebsocketAgentServerHost(openapi_spec=SAMPLE_OPENAPI_SPEC)
 
     @app.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         return {"reply": f"echo: {payload['message']}"}
 
     return app
 
 
-def _make_failing_agent(**kwargs: Any) -> ConversationAgentServerHost:
-    """Create an ConversationAgentServerHost whose handler raises ValueError."""
-    app = ConversationAgentServerHost(**kwargs)
+def _make_failing_agent(**kwargs: Any) -> WebsocketAgentServerHost:
+    """Create an WebsocketAgentServerHost whose handler raises ValueError."""
+    app = WebsocketAgentServerHost(**kwargs)
 
     @app.invoke_handler
-    async def handle(payload: dict, context: ConversationContext) -> dict:
+    async def handle(payload: dict, context: WebsocketContext) -> dict:
         raise ValueError("something went wrong")
 
     return app

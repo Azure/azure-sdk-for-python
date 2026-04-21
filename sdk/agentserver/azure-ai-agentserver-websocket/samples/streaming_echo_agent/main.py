@@ -5,7 +5,7 @@
 Echoes user input back as a stream, sending each word as a separate token chunk.
 Supports two communication modes:
 
-- **WebSocket** at ``ws://localhost:8088/conversations/ws``
+- **WebSocket** at ``ws://localhost:8088/websocket/ws``
 - **HTTP SSE** at ``POST http://localhost:8088/invocations``
 
 **Server** (this file)::
@@ -17,7 +17,7 @@ Supports two communication modes:
     import asyncio, json, websockets
 
     async def main():
-        async with websockets.connect("ws://localhost:8088/conversations/ws") as ws:
+        async with websockets.connect("ws://localhost:8088/websocket/ws") as ws:
             await ws.send(json.dumps({
                 "action": "invoke",
                 "payload": {"message": "Hello world!"}
@@ -50,7 +50,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.requests import Request
 from starlette.responses import Response, StreamingResponse
 
-from azure.ai.agentserver.conversations import ConversationAgentServerHost, ConversationContext
+from azure.ai.agentserver.websocket import WebsocketAgentServerHost, WebsocketContext
 from azure.ai.agentserver.invocations import InvocationAgentServerHost
 
 ECHO_PREFIX = "🔊 Echo: "
@@ -70,12 +70,12 @@ async def echo_tokens(message: str) -> AsyncGenerator[dict, None]:
 
 
 # ---------------------------------------------------------------------------InvocationAgentServerHost
-# Combined host — Conversations (WebSocket) + Invocations (HTTP/SSE)
+# Combined host — Websocket (WebSocket) + Invocations (HTTP/SSE)
 # ---------------------------------------------------------------------------
 
 
-class EchoAgentHost(ConversationAgentServerHost, InvocationAgentServerHost):
-    """Combined host supporting both Invocations (HTTP/SSE) and Conversations (WebSocket).
+class EchoAgentHost(WebsocketAgentServerHost, InvocationAgentServerHost):
+    """Combined host supporting both Invocations (HTTP/SSE) and Websocket (WebSocket).
 
     Both parent classes store their handler in ``_invoke_fn`` with incompatible
     signatures, so we keep a separate ``_http_invoke_fn`` for the invocations
@@ -148,20 +148,20 @@ async def handle_http_invoke(request: Request) -> Response:
 
 
 # ---------------------------------------------------------------------------
-# WebSocket conversation endpoint (via azure-ai-agentserver-websocket)
+# WebSocket websocket endpoint (via azure-ai-agentserver-websocket)
 # ---------------------------------------------------------------------------
 
 
 @app.invoke_handler
 async def handle_invoke(
-    payload: dict, context: ConversationContext  # pylint: disable=unused-argument
+    payload: dict, context: WebsocketContext  # pylint: disable=unused-argument
 ) -> AsyncGenerator[dict, None]:
     """WebSocket streaming handler — each chunk is a ``stream_chunk`` message.
 
     :param payload: The client request payload.
     :type payload: dict
-    :param context: Conversation context with IDs.
-    :type context: ConversationContext
+    :param context: Websocket context with IDs.
+    :type context: WebsocketContext
     """
     message = payload.get(
         "message", "Hello! Send me a message and I'll echo it back.")
