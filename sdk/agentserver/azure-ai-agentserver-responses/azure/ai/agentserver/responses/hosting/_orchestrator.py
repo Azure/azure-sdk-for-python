@@ -584,8 +584,11 @@ def _make_ephemeral_record(ctx: "_ExecutionContext", state: "_PipelineState") ->
     metadata needed to drive the persistence attempt and track failure state.
 
     :param ctx: Current execution context.
+    :type ctx: _ExecutionContext
     :param state: Mutable pipeline state.
+    :type state: _PipelineState
     :return: A new ResponseExecution suitable for persistence tracking.
+    :rtype: ResponseExecution
     """
     record = ResponseExecution(
         response_id=ctx.response_id,
@@ -798,8 +801,11 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         ``record`` snapshot/status in place.
 
         :param ctx: Current execution context.
+        :type ctx: _ExecutionContext
         :param state: Mutable pipeline state.
+        :type state: _PipelineState
         :param record: The execution record to update.
+        :type record: ResponseExecution
         """
         storage_error_response = _build_failed_response(
             ctx.response_id,
@@ -1031,7 +1037,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 execution.persistence_failed = True
                 execution.persistence_exception = persist_exc
 
-    async def _process_handler_events(  # pylint: disable=too-many-return-statements
+    async def _process_handler_events(  # pylint: disable=too-many-return-statements,too-many-branches
         self,
         ctx: _ExecutionContext,
         state: _PipelineState,
