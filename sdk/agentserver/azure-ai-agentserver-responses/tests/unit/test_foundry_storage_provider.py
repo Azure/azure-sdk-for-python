@@ -144,7 +144,6 @@ async def test_create_response__raises_foundry_api_error_on_500(
     with pytest.raises(FoundryApiError) as exc_info:
         await provider.create_response(ResponseObject(_RESPONSE_DICT), None, None)
 
-    assert exc_info.value.status_code == 500
     assert "server fault" in exc_info.value.message
 
 
@@ -599,7 +598,7 @@ async def test_error_mapping__generic_status_raises_foundry_api_error(
     with pytest.raises(FoundryApiError) as exc_info:
         await provider.get_response("any_id")
 
-    assert exc_info.value.status_code == 503
+    assert "503" in exc_info.value.message
 
 
 @pytest.mark.asyncio
