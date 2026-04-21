@@ -57,6 +57,9 @@ param(
 
 Install-ModuleIfNotInstalled "powershell-yaml" "0.4.7" | Import-Module
 
+$loadedModule = Get-Module powershell-yaml
+Write-Host "powershell-yaml version loaded: $($loadedModule.Version) from $($loadedModule.ModuleBase)"
+
 Set-StrictMode -Version 3
 
 function GetPackageNode($package) {
