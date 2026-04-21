@@ -7,8 +7,6 @@ description: Guide SDK users through setting up their Python environment for Azu
 
 Set up your Python environment to use the Azure AI Content Understanding SDK and run samples.
 
-> **Note:** This skill is for SDK users who want to run samples and use the SDK. For SDK development, see the `sdkinternal-py-setup` skill.
-
 > **[COPILOT INTERACTION MODEL]:** This skill is designed to be interactive. At each step marked with **[ASK USER]**, pause execution and prompt the user for input or confirmation before proceeding. Do NOT silently skip these prompts. Use the `ask_questions` tool when available.
 
 ## Prerequisites
@@ -84,8 +82,8 @@ which python  # Linux/macOS
 
 > **[ASK USER] Installation mode:**
 > Ask the user: "How would you like to install the SDK?"
-> - **Option A: PyPI install (recommended)** — Installs the latest published version from PyPI. Best for running samples and using the SDK.
-> - **Option B: Local editable install (for development)** — Installs from the local source code. Changes you make are reflected immediately without reinstalling.
+> - **Option A: PyPI install (recommended)** — Installs the latest published version from PyPI. Best for running samples and developing Content Understanding-based solutions using the SDK.
+> - **Option B: Local editable install (for SDK contribution)** — Use this only when you are contributing to the Content Understanding SDK. Installs from local source code; changes are reflected immediately without reinstalling.
 
 **Option A: PyPI install (recommended):**
 ```bash
@@ -93,7 +91,7 @@ pip install azure-ai-contentunderstanding
 pip install -r dev_requirements.txt
 ```
 
-**Option B: Local editable install (for development):**
+**Option B: Local editable install (for Content Understanding SDK contribution):**
 ```bash
 pip install -e .
 pip install -r dev_requirements.txt

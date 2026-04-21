@@ -13,6 +13,32 @@ Use the client library for Azure AI Content Understanding to:
 
 [Source code][python_cu_src] | [Package (PyPI)][python_cu_pypi] | [Product documentation][python_cu_product_docs] | [Samples][python_cu_samples]
 
+## Table of Contents
+
+- [Getting started](#getting-started)
+  - [Install the package](#install-the-package)
+  - [Prerequisites](#prerequisites)
+  - [Configuring Microsoft Foundry resource](#configuring-microsoft-foundry-resource)
+  - [Authenticate the client](#authenticate-the-client)
+- [Key concepts](#key-concepts)
+  - [Prebuilt analyzers](#prebuilt-analyzers)
+  - [Custom analyzers](#custom-analyzers)
+  - [Content types](#content-types)
+  - [Asynchronous operations](#asynchronous-operations)
+  - [Main classes](#main-classes)
+  - [Thread safety](#thread-safety)
+- [Examples](#examples)
+  - [Running the samples](#running-the-samples)
+  - [Example code](#example-code)
+- [Troubleshooting](#troubleshooting)
+- [GitHub Copilot Skills](#github-copilot-skills)
+  - [Available Skills](#available-skills)
+  - [Using Skills in VS Code](#using-skills-in-vs-code)
+  - [Troubleshooting Skill Selection](#troubleshooting-skill-selection)
+- [Next steps](#next-steps)
+- [Running tests](#running-tests)
+- [Contributing](#contributing)
+
 ## Getting started
 
 ### Install the package
@@ -545,9 +571,10 @@ This package includes [GitHub Copilot][github_copilot] skills under `.github/ski
 
 ### Using Skills in VS Code
 
-1. Open this repository in VS Code with [GitHub Copilot][github_copilot] installed
-2. Open Copilot Chat from the Chat view or Command Palette
-3. Ask a question related to Content Understanding; Copilot can use the relevant skill when appropriate
+1. In VS Code, open the package folder `sdk/contentunderstanding/azure-ai-contentunderstanding` (File → Open Folder). This is required for VS Code to discover the skills in `.github/skills/`.
+2. Ensure [GitHub Copilot][github_copilot] is installed and activated
+3. Open Copilot Chat from the Chat view or Command Palette
+4. Ask a question related to Content Understanding; Copilot can use the relevant skill when appropriate
 
 **Example prompts:**
 - *"Set up my Python environment for Content Understanding"* → likely uses `cu-sdk-setup`

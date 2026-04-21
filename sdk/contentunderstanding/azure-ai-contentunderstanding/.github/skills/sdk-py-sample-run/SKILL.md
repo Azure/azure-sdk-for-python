@@ -170,7 +170,10 @@ python sample_analyze_url_async.py
 
 > **[ASK USER] Sample result:**
 > After running the sample, ask: "Did the sample run successfully?"
-> - If yes: "Would you like to run another sample, or are you all set?"
+> - If yes:
+>   - Show the terminal command to re-run this sample directly (e.g., `cd samples && python sample_analyze_url.py` or `cd samples && python async_samples/sample_analyze_url_async.py`)
+>   - Briefly explain the key code concepts demonstrated in this sample (e.g., client creation, analyzer selection, result processing, content type casting)
+>   - Then ask: "Would you like to run another sample, or are you all set?"
 > - If no: Help troubleshoot using the Troubleshooting section below. Common issues include missing `.env` configuration, inactive venv, or model defaults not configured.
 
 > **[ASK USER] Run another?:**
