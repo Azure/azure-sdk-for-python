@@ -179,6 +179,17 @@ class verifytypes(Check):
                     logger.info(f"{subdirectory} is not checked into main, nothing to compare.")
                     return 1
 
+                # If verifytypes was disabled on main, there's no known-good type-completeness
+                # baseline to compare against — running pyright on main code that's never been
+                # type-checked can fail in opaque ways (see #46426). Skip the comparison.
+                main_package_dir = os.path.join(os.getcwd(), subdirectory)
+                if not is_check_enabled(main_package_dir, "verifytypes"):
+                    logger.info(
+                        "verifytypes is disabled on main for this package; skipping "
+                        "comparison with main. (The PR is enabling the check for the first time.)"
+                    )
+                    return 1
+
                 os.chdir(subdirectory)
 
                 # --no-deps: we only want the main-branch version of *this* package; dependencies
