@@ -73,6 +73,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         client_headers: dict[str, str] | None = None,
         query_parameters: dict[str, str] | None = None,
         isolation: IsolationContext | None = None,
+        prefetched_history_ids: list[str] | None = None,
     ) -> None:
         self.response_id = response_id
         self.mode_flags = mode_flags
@@ -95,6 +96,7 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
         self._input_items_resolved_cache: Sequence[Item] | None = None
         self._input_items_unresolved_cache: Sequence[Item] | None = None
         self._history_cache: Sequence[OutputItem] | None = None
+        self._prefetched_history_ids: list[str] | None = prefetched_history_ids
 
     async def get_input_items(self, *, resolve_references: bool = True) -> Sequence[Item]:
         """Return the caller's input items as :class:`Item` subtypes.
@@ -228,6 +230,10 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
     async def get_history(self) -> Sequence[OutputItem]:
         """Resolve and cache conversation history items via the provider.
 
+        When prefetched history IDs are available (from eager validation),
+        the provider's ``get_history_item_ids`` call is skipped and only
+        ``get_items`` is invoked to materialise the items.
+
         :returns: A tuple of conversation history items.
         :rtype: Sequence[OutputItem]
         """
@@ -238,12 +244,21 @@ class ResponseContext:  # pylint: disable=too-many-instance-attributes
             self._history_cache = ()
             return self._history_cache
 
-        item_ids = await self._provider.get_history_item_ids(
-            self._previous_response_id,
-            self.conversation_id,
-            self._history_limit,
-            isolation=self.isolation,
-        )
+        # No conversation context — nothing to look up.
+        if not self._previous_response_id and not self.conversation_id:
+            self._history_cache = ()
+            return self._history_cache
+
+        # Use eagerly-prefetched IDs when available; otherwise call provider.
+        if self._prefetched_history_ids is not None:
+            item_ids = self._prefetched_history_ids
+        else:
+            item_ids = await self._provider.get_history_item_ids(
+                self._previous_response_id,
+                self.conversation_id,
+                self._history_limit,
+                isolation=self.isolation,
+            )
         if not item_ids:
             self._history_cache = ()
             return self._history_cache

@@ -1,6 +1,23 @@
 # Release History
 
-## 1.0.0b1 (Unreleased)
+## 1.0.0b3 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b2 (2026-04-17)
+
+### Features Added
+
+- Startup configuration logging — `InvocationAgentServerHost` logs whether an OpenAPI spec is configured at INFO level during construction.
+- Inbound request logging — `InboundRequestLoggingMiddleware` from `azure-ai-agentserver-core` is now wired automatically by `AgentServerHost`. All inbound HTTP requests are logged at INFO level (start) and at INFO or WARNING level (completion) with method, path, status code, duration, and correlation headers.
+
+## 1.0.0b1 (2026-04-14)
 
 ### Features Added
 
