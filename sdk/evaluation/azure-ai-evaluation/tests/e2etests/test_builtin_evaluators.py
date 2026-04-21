@@ -118,10 +118,14 @@ class TestBuiltInEvaluators:
             response="Tokyo is the capital of Japan.",
         )
         assert score is not None
-        assert "rouge_precision" in score and "rouge_recall" in score and "rouge_f1_score" in score
-        assert 0 <= score["rouge_precision"] <= 1
-        assert 0 <= score["rouge_recall"] <= 1
-        assert 0 <= score["rouge_f1_score"] <= 1
+        assert "rouge_score" in score
+        assert "rouge_properties" in score
+        properties = score["rouge_properties"]
+        assert "rouge_precision" in properties and "rouge_recall" in properties and "rouge_f1_score" in properties
+        assert 0 <= properties["rouge_precision"] <= 1
+        assert 0 <= properties["rouge_recall"] <= 1
+        assert 0 <= properties["rouge_f1_score"] <= 1
+        assert 0 <= score["rouge_score"] <= 1
 
     def test_quality_evaluator_fluency(self, sanitized_model_config, simple_conversation):
         eval_fn = FluencyEvaluator(sanitized_model_config)

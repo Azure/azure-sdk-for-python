@@ -70,11 +70,10 @@ class TestBuiltInEvaluators:
             ground_truth="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements.",
         )
         assert result["similarity_score"] == 1
-        assert len(result) == 7
+        assert len(result) == 6
         # Verify all expected keys are present
         assert set(result.keys()) == {
             "similarity_score",
-            "similarity_result",
             "similarity_passed",
             "similarity_reason",
             "similarity_status",

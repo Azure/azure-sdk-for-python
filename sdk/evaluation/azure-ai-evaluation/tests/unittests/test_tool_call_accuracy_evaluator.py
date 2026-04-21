@@ -128,11 +128,11 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        key = ToolCallAccuracyEvaluator._KEY_PREFIX
         assert result is not None
-        assert f"{key}_score" in result and f"{key}_result" in result and f"{key}_threshold" in result
+        assert f"{key}_score" in result and f"{key}_passed" in result and f"{key}_threshold" in result
         assert result[f"{key}_score"] == 3.0  # Mixed good/bad gets score 3
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_passed"] is True
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 1 correct calls."
@@ -190,11 +190,11 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        key = ToolCallAccuracyEvaluator._KEY_PREFIX
         assert result is not None
-        assert f"{key}_score" in result and f"{key}_result" in result and f"{key}_threshold" in result
+        assert f"{key}_score" in result and f"{key}_passed" in result and f"{key}_threshold" in result
         assert result[f"{key}_score"] == 1.0  # All bad gets score 1
-        assert result[f"{key}_result"] == "fail"
+        assert result[f"{key}_passed"] is False
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 0 correct calls."
@@ -252,11 +252,11 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        key = ToolCallAccuracyEvaluator._KEY_PREFIX
         assert result is not None
-        assert f"{key}_score" in result and f"{key}_result" in result and f"{key}_threshold" in result
+        assert f"{key}_score" in result and f"{key}_passed" in result and f"{key}_threshold" in result
         assert result[f"{key}_score"] == 5.0  # All good gets score 5
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_passed"] is True
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 2 tool calls with 2 correct calls."
@@ -335,10 +335,10 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        key = ToolCallAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[f"{key}_score"] is None
-        assert result[f"{key}_result"] == "not_applicable"
+        assert result[f"{key}_passed"] is None
         assert result[f"{key}_status"] == "skipped"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert (
@@ -378,11 +378,11 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        key = ToolCallAccuracyEvaluator._KEY_PREFIX
         assert result is not None
-        assert f"{key}_score" in result and f"{key}_result" in result and f"{key}_threshold" in result
+        assert f"{key}_score" in result and f"{key}_passed" in result and f"{key}_threshold" in result
         assert result[f"{key}_score"] == 5.0  # All good gets score 5
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_passed"] is True
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert f"{key}_reason" in result
         assert result[f"{key}_reason"] == "Evaluated 1 tool calls with 1 correct calls."
@@ -443,10 +443,10 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        key = ToolCallAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[f"{key}_score"] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_bing_grounding(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -475,10 +475,10 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        key = ToolCallAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[f"{key}_score"] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_file_search(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -505,10 +505,10 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        key = ToolCallAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[f"{key}_score"] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_azure_ai_search(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -535,10 +535,10 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        key = ToolCallAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[f"{key}_score"] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_fabric_dataagent(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -565,10 +565,10 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        key = ToolCallAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[f"{key}_score"] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_code_interpreter(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -597,10 +597,10 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        key = ToolCallAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[f"{key}_score"] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_sharepoint_grounding(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -627,10 +627,10 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        key = ToolCallAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[f"{key}_score"] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_open_api(self, mock_model_config):
         evaluator = ToolCallAccuracyEvaluator(model_config=mock_model_config)
@@ -728,10 +728,10 @@ class TestToolCallAccuracyEvaluator:
         ]
         result = evaluator(query=query, tool_calls=tool_calls, tool_definitions=tool_definitions)
 
-        key = ToolCallAccuracyEvaluator._RESULT_KEY
+        key = ToolCallAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[f"{key}_score"] == 5.0
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_passed"] is True
 
     def test_evaluate_missing_query(self, mock_model_config):
         """Test that evaluator raises exception when query is None or missing."""
@@ -770,3 +770,4 @@ class TestToolCallAccuracyEvaluator:
             evaluator(tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         assert "Query is a required input" in str(exc_info.value)
+

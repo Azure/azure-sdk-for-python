@@ -139,9 +139,8 @@ class TestMassEvaluate:
         assert len(row_result_df["outputs.f1_score.f1_score_score"]) == 3
         assert len(row_result_df["outputs.gleu.gleu_score"]) == 3
         assert len(row_result_df["outputs.bleu.bleu_score"]) == 3
-        assert len(row_result_df["outputs.rouge.rouge_precision"]) == 3
-        assert len(row_result_df["outputs.rouge.rouge_recall"]) == 3
-        assert len(row_result_df["outputs.rouge.rouge_f1_score"]) == 3
+        assert len(row_result_df["outputs.rouge.rouge_score"]) == 3
+        assert len(row_result_df["outputs.rouge.rouge_properties"]) == 3
         assert len(row_result_df["outputs.meteor.meteor_score"]) == 3
         assert len(row_result_df["outputs.grounded.groundedness_score"]) == 3
         assert len(row_result_df["outputs.grounded.groundedness_reason"]) == 3
@@ -192,10 +191,7 @@ class TestMassEvaluate:
         assert metrics["f1_score.f1_score_score"] >= 0
         assert metrics["gleu.gleu_score"] >= 0
         assert metrics["bleu.bleu_score"] >= 0
-        assert metrics["rouge.rouge_precision"] >= 0
-        assert metrics["rouge.rouge_recall"] >= 0
-        assert metrics["rouge.rouge_f1_score"] >= 0
-        assert metrics["meteor.meteor_score"] >= 0
+        assert metrics["rouge.rouge_score"] >= 0
         assert metrics["grounded.groundedness_score"] >= 0
         assert metrics["coherence.coherence_score"] >= 0
         assert metrics["fluency.fluency_score"] >= 0
@@ -370,25 +366,25 @@ class TestMassEvaluate:
             "outputs.content_safety.hate_unfairness",
             "outputs.content_safety.hate_unfairness_score",
             "outputs.content_safety.hate_unfairness_reason",
-            "outputs.content_safety.hate_unfairness_result",
+            "outputs.content_safety.hate_unfairness_passed",
             "outputs.content_safety.self_harm",
             "outputs.content_safety.self_harm_score",
             "outputs.content_safety.self_harm_reason",
-            "outputs.content_safety.self_harm_result",
+            "outputs.content_safety.self_harm_passed",
             "outputs.content_safety.sexual",
             "outputs.content_safety.sexual_score",
             "outputs.content_safety.sexual_reason",
-            "outputs.content_safety.sexual_result",
+            "outputs.content_safety.sexual_passed",
             "outputs.content_safety.violence",
             "outputs.content_safety.violence_score",
             "outputs.content_safety.violence_reason",
-            "outputs.content_safety.violence_result",
+            "outputs.content_safety.violence_passed",
             "outputs.protected_material.protected_material_label",
             "outputs.protected_material.protected_material_reason",
             "outputs.sexual.sexual",
             "outputs.sexual.sexual_score",
             "outputs.sexual.sexual_reason",
-            "outputs.sexual.sexual_result",
+            "outputs.sexual.sexual_passed",
         ]
         for key in known_keys:
             assert key in row_result_df.keys()

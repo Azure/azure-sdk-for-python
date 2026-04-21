@@ -133,7 +133,7 @@ class TestToolInputAccuracyEvaluator:
         """Test that the evaluator initializes correctly."""
         evaluator = _ToolInputAccuracyEvaluator(model_config=mock_model_config)
         assert evaluator is not None
-        assert evaluator._RESULT_KEY == "tool_input_accuracy"
+        assert evaluator._RESULT_KEY == "tool_input_accuracy_score"
 
     def test_evaluate_all_correct_parameters(self, mock_model_config):
         """Test evaluation when all parameters are correct."""
@@ -176,15 +176,15 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
+        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert key in result
-        assert f"{key}_result" in result
+        assert f"{key}_passed" in result
         assert f"{key}_reason" in result
         assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
-        assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 100.0
+        assert result[f"{key}_passed"] is True
+        assert f"{key}_properties" in result
+        assert result[f"{key}_properties"]["parameter_extraction_accuracy"] == 100.0
 
     def test_evaluate_missing_required_parameters(self, mock_model_config):
         """Test evaluation when required parameters are missing."""
@@ -223,13 +223,13 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
+        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
+        assert result[f"{key}_passed"] is False
         assert "missing required parameter" in result[f"{key}_reason"].lower()
-        assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 100.0  # 1/1 correct param
+        assert f"{key}_properties" in result
+        assert result[f"{key}_properties"]["parameter_extraction_accuracy"] == 100.0  # 1/1 correct param
 
     def test_evaluate_wrong_parameter_type(self, mock_model_config):
         """Test evaluation when parameters have wrong types."""
@@ -268,13 +268,13 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
+        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
+        assert result[f"{key}_passed"] is False
         assert "number" in result[f"{key}_reason"].lower() and "string" in result[f"{key}_reason"].lower()
-        assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 50.0  # 1/2 correct params
+        assert f"{key}_properties" in result
+        assert result[f"{key}_properties"]["parameter_extraction_accuracy"] == 50.0  # 1/2 correct params
 
     def test_evaluate_ungrounded_parameters(self, mock_model_config):
         """Test evaluation when parameters are not grounded in conversation."""
@@ -313,13 +313,13 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
+        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
+        assert result[f"{key}_passed"] is False
         assert "not grounded" in result[f"{key}_reason"].lower()
-        assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 50.0  # 1/2 correct params
+        assert f"{key}_properties" in result
+        assert result[f"{key}_properties"]["parameter_extraction_accuracy"] == 50.0  # 1/2 correct params
 
     def test_evaluate_unexpected_parameters(self, mock_model_config):
         """Test evaluation when unexpected parameters are provided."""
@@ -358,13 +358,13 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
+        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
+        assert result[f"{key}_passed"] is False
         assert "unexpected parameter" in result[f"{key}_reason"].lower()
-        assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 66.67  # 2/3 correct params
+        assert f"{key}_properties" in result
+        assert result[f"{key}_properties"]["parameter_extraction_accuracy"] == 66.67  # 2/3 correct params
 
     def test_evaluate_mixed_errors(self, mock_model_config):
         """Test evaluation with multiple types of errors."""
@@ -404,15 +404,15 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
+        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[key] == 0
-        assert result[f"{key}_result"] == "fail"
+        assert result[f"{key}_passed"] is False
         assert (
-            "multiple" in result[f"{key}_reason"].lower() or len(result[f"{key}_details"]["incorrect_parameters"]) >= 2
+            "multiple" in result[f"{key}_reason"].lower() or len(result[f"{key}_properties"]["incorrect_parameters"]) >= 2
         )
-        assert f"{key}_details" in result
-        assert result[f"{key}_details"]["parameter_extraction_accuracy"] == 25.0  # 1/4 correct params
+        assert f"{key}_properties" in result
+        assert result[f"{key}_properties"]["parameter_extraction_accuracy"] == 25.0  # 1/4 correct params
 
     def test_evaluate_no_tool_calls(self, mock_model_config):
         """Test evaluation when no tool calls are present."""
@@ -432,10 +432,10 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
+        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_passed"] is True
         assert (
             "not applicable" in result[f"{key}_reason"].lower()
             and _ToolInputAccuracyEvaluator._NO_TOOL_CALLS_MESSAGE in result[f"{key}_reason"]
@@ -497,9 +497,9 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
+        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result[key] == 1
-        assert result[f"{key}_result"] == "pass"
+        assert result[f"{key}_passed"] is True
         assert (
             "not applicable" in result[f"{key}_reason"].lower()
             and _ToolInputAccuracyEvaluator._TOOL_DEFINITIONS_MISSING_MESSAGE in result[f"{key}_reason"]
@@ -630,10 +630,10 @@ class TestToolInputAccuracyEvaluator:
 
         result = evaluator(query=query, response=response, tool_definitions=tool_definitions)
 
-        key = _ToolInputAccuracyEvaluator._RESULT_KEY
+        key = _ToolInputAccuracyEvaluator._KEY_PREFIX
         assert result is not None
         assert key in result
-        assert f"{key}_result" in result
+        assert f"{key}_passed" in result
 
     def test_evaluate_with_single_tool_definition(self, mock_model_config):
         """Test evaluation with a single tool definition (not in list format)."""
@@ -713,3 +713,4 @@ class TestToolInputAccuracyEvaluator:
             evaluator(response=response, tool_definitions=tool_definitions)
 
         assert "Query is a required input" in str(exc_info.value)
+

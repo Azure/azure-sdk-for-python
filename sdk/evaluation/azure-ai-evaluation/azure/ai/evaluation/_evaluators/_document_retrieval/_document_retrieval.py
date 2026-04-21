@@ -213,16 +213,12 @@ class DocumentRetrievalEvaluator(EvaluatorBase):
 
         for metric_name, metric_value in metrics.items():
             if metric_name in self._threshold_metrics.keys():
-                result[f"{metric_name}_passed"] = (
-                    metric_value >= self._threshold_metrics[metric_name]
-                )
+                result[f"{metric_name}_passed"] = metric_value >= self._threshold_metrics[metric_name]
                 result[f"{metric_name}_threshold"] = self._threshold_metrics[metric_name]
                 result[f"{metric_name}_higher_is_better"] = True
 
             elif metric_name in self._threshold_holes.keys():
-                result[f"{metric_name}_passed"] = (
-                    metric_value <= self._threshold_holes[metric_name]
-                )
+                result[f"{metric_name}_passed"] = metric_value <= self._threshold_holes[metric_name]
                 result[f"{metric_name}_threshold"] = self._threshold_holes[metric_name]
                 result[f"{metric_name}_higher_is_better"] = False
 
