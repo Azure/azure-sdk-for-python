@@ -588,6 +588,8 @@ class Model(_MyMutableMapping):
     # label whether current class's _attr_to_rest_field has been calculated
     # could not see _attr_to_rest_field directly because subclass inherits it from parent class
     _calculated: set[str] = set()
+    _attr_to_rest_field: typing.ClassVar[dict[str, "_RestField"]]
+    _backcompat_attr_to_rest_field: typing.ClassVar[dict[str, "_RestField"]]
 
     def __init__(self, *args: typing.Any, **kwargs: typing.Any) -> None:
         class_name = self.__class__.__name__
@@ -687,8 +689,8 @@ class Model(_MyMutableMapping):
                     rf._type = rf._get_deserialize_callable_from_annotation(annotations.get(attr, None))
                 if not rf._rest_name_input:
                     rf._rest_name_input = attr
-            cls._attr_to_rest_field: dict[str, _RestField] = dict(attr_to_rest_field.items())
-            cls._backcompat_attr_to_rest_field: dict[str, _RestField] = {
+            cls._attr_to_rest_field = dict(attr_to_rest_field.items())
+            cls._backcompat_attr_to_rest_field = {
                 Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
                 for attr, rf in cls._attr_to_rest_field.items()
             }
