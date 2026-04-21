@@ -1,5 +1,21 @@
 # Release History
 
+## 2.0.0 (2026-6-06)
+
+### Features Added
+
+- GA release of Azure AI Translator Text Translation SDK version 2.0.0.
+- Updated to stable API version 2026-06-06.
+- Added `TranslationTone` and `TranslationGender` enums for type-safe tone and gender options.
+
+### Breaking Changes
+
+- Removed `grade` parameter from translation options.
+
+### Other Changes
+
+- Simplified client constructor and internal authentication handling.
+
 ## 2.0.0b1 (2026-01-08)
 
 ### Features Added
