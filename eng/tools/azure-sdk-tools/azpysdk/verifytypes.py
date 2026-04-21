@@ -188,7 +188,7 @@ class verifytypes(Check):
 
                 os.chdir(subdirectory)
 
-                command = get_pip_command(python_executable) + ["install", ".", "--force-reinstall", "--no-deps"]
+                command = get_pip_command(python_executable) + ["install", ".", "--force-reinstall"]
 
                 # When using uv, add --no-sources to ignore [tool.uv.sources] relative paths
                 # that can't resolve in a sparse checkout, and --python to target the correct venv.
