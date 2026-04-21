@@ -17,6 +17,7 @@ with dotted tool names), we own the entire MCP interaction and register
 tools as regular Copilot SDK custom tools.
 """
 import asyncio
+import base64
 import json
 import logging
 import pathlib
@@ -35,6 +36,25 @@ logger.info("Toolbox module loaded: %s", _TOOLBOX_BUILD_TAG)
 _FOUNDRY_TOOLBOX_FEATURE_HEADER = "Toolboxes=V1Preview"
 _FOUNDRY_TOOLBOX_SERVER_KEY = "foundry-toolbox"
 _FOUNDRY_SCOPE = "https://ai.azure.com/.default"
+
+
+def _describe_token(token: str) -> str:
+    """Decode JWT claims (without verification) to identify the caller."""
+    try:
+        payload = token.split(".")[1]
+        # JWT base64 needs padding
+        payload += "=" * (4 - len(payload) % 4)
+        claims = json.loads(base64.urlsafe_b64decode(payload))
+        return (
+            f"oid={claims.get('oid', '?')} "
+            f"appid={claims.get('appid', claims.get('azp', '?'))} "
+            f"sub={claims.get('sub', '?')} "
+            f"tid={claims.get('tid', '?')} "
+            f"upn={claims.get('upn', claims.get('unique_name', '?'))} "
+            f"idtyp={claims.get('idtyp', '?')}"
+        )
+    except Exception:
+        return "<unable to decode token>"
 
 
 # ---------------------------------------------------------------------------
@@ -187,9 +207,14 @@ class McpBridge:
         """
         auth_method = "credential" if self._credential else "static-header"
         has_auth = "Authorization" in self._headers
+        token_info = ""
+        if has_auth:
+            bearer = self._headers.get("Authorization", "")
+            if bearer.startswith("Bearer "):
+                token_info = _describe_token(bearer[7:])
         logger.info(
-            "MCP initialize: endpoint=%r (len=%d) auth_method=%s has_auth=%s",
-            self._endpoint, len(self._endpoint), auth_method, has_auth,
+            "MCP initialize: endpoint=%r (len=%d) auth_method=%s has_auth=%s identity=[%s]",
+            self._endpoint, len(self._endpoint), auth_method, has_auth, token_info,
         )
 
         async def _do_init(c: httpx.AsyncClient) -> str:
