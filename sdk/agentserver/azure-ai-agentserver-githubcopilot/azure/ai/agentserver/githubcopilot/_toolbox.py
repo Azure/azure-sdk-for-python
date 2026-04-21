@@ -29,7 +29,7 @@ from copilot.tools import Tool, ToolResult
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
 # Canary — proves which version of _toolbox.py is deployed.
-_TOOLBOX_BUILD_TAG = "toolbox-v2-diag-headers"
+_TOOLBOX_BUILD_TAG = "toolbox-v3-shared-client"
 logger.info("Toolbox module loaded: %s", _TOOLBOX_BUILD_TAG)
 
 _FOUNDRY_TOOLBOX_FEATURE_HEADER = "Toolboxes=V1Preview"
@@ -179,9 +179,10 @@ class McpBridge:
             headers["mcp-session-id"] = self._session_id
         return headers
 
-    async def initialize(self) -> str:
+    async def initialize(self, client: Optional[httpx.AsyncClient] = None) -> str:
         """Send MCP ``initialize`` + ``notifications/initialized``.
 
+        :param client: Optional shared HTTP client for connection affinity.
         :returns: The server name from the MCP ``initialize`` response.
         """
         auth_method = "credential" if self._credential else "static-header"
@@ -191,8 +192,8 @@ class McpBridge:
             self._endpoint, len(self._endpoint), auth_method, has_auth,
         )
 
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            resp = await client.post(
+        async def _do_init(c: httpx.AsyncClient) -> str:
+            resp = await c.post(
                 self._endpoint,
                 headers=self._headers,
                 json={
@@ -220,24 +221,30 @@ class McpBridge:
             self._session_id = resp.headers.get("mcp-session-id")
 
             # Send initialized notification
-            await client.post(
+            await c.post(
                 self._endpoint,
                 headers=self._request_headers(),
                 json={"jsonrpc": "2.0", "method": "notifications/initialized"},
             )
 
-        return (
-            data.get("result", {}).get("serverInfo", {}).get("name", "unknown")
-        )
+            return data.get("result", {}).get("serverInfo", {}).get("name", "unknown")
 
-    async def list_tools(self) -> List[Dict[str, Any]]:
-        """Call ``tools/list`` and return the tools array."""
+        if client is not None:
+            return await _do_init(client)
+        async with httpx.AsyncClient(timeout=60.0) as c:
+            return await _do_init(c)
+
+    async def list_tools(self, client: Optional[httpx.AsyncClient] = None) -> List[Dict[str, Any]]:
+        """Call ``tools/list`` and return the tools array.
+
+        :param client: Optional shared HTTP client for connection affinity.
+        """
         req_headers = self._request_headers()
         auth_method = "credential" if self._credential else "static-header"
         has_auth = "Authorization" in req_headers
 
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            resp = await client.post(
+        async def _do_list(c: httpx.AsyncClient) -> List[Dict[str, Any]]:
+            resp = await c.post(
                 self._endpoint,
                 headers=req_headers,
                 json={
@@ -275,6 +282,11 @@ class McpBridge:
                     diag,
                 )
             return tools
+
+        if client is not None:
+            return await _do_list(client)
+        async with httpx.AsyncClient(timeout=60.0) as c:
+            return await _do_list(c)
 
     async def call_tool(self, name: str, arguments: Dict[str, Any]) -> str:
         """Call ``tools/call`` and return the text result.
@@ -461,8 +473,12 @@ async def connect_toolbox(
         h.setdefault("Foundry-Features", _FOUNDRY_TOOLBOX_FEATURE_HEADER)
 
     bridge = McpBridge(endpoint, h, credential=credential)
-    server_name = await bridge.initialize()
-    mcp_tools = await bridge.list_tools()
+
+    # Use a single HTTP client for initialize + list_tools to maintain
+    # connection affinity through load balancers (e.g. Envoy).
+    async with httpx.AsyncClient(timeout=60.0) as client:
+        server_name = await bridge.initialize(client=client)
+        mcp_tools = await bridge.list_tools(client=client)
     sdk_tools = _make_copilot_tools(bridge, mcp_tools)
 
     display = name or server_name
