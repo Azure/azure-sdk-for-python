@@ -22,7 +22,7 @@ pip install azure-batch azure-identity
 ### Prerequisites
 * An Azure subscription. If you don't have one, [create an account for free][azure_sub]
 * A [Batch account][azure_batch] with a linked [Storage account][azure_storage]
-* Python 3.9 or later. For more details, please see the [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy)
+* Python 3.9 or later.
 
 ### Authenticate the client
 
@@ -47,7 +47,7 @@ client = BatchClient(
 
 #### Authenticate with Shared Key Credentials
 
-You can also use Shared Key authentication to sign into your Batch account. This method uses your Batch account access keys to authenticate Azure commands for the Batch service. 
+You can also use Shared Key authentication to sign into your Batch account. This method uses your Batch account access keys to authenticate Azure commands for the Batch service.
 
 ```python
 from azure.core.credentials import AzureNamedKeyCredential
@@ -135,7 +135,7 @@ pool = batch_client.pool.create(
                 "userAssignedIdentities": {
                     "/subscriptions/"+SUBSCRIPTION_ID+"/resourceGroups/"+GROUP_NAME+"/providers/Microsoft.ManagedIdentity/userAssignedIdentities/"+"Your Identity Name": {}
                 }
-            
+
             }
         }
 )
@@ -161,7 +161,7 @@ vm_config = models.VirtualMachineConfiguration(
 
 pool_spec = models.BatchPoolCreateOptions(
     id="my-pool",
-    vm_size="standard_d2_v2", 
+    vm_size="standard_d2_v2",
     target_dedicated_nodes=1,
     virtual_machine_configuration=vm_config
 )
@@ -391,7 +391,7 @@ task1 = models.BatchTaskCreateOptions(id="task1", command_line='cmd /c "echo hel
 task2 = models.BatchTaskCreateOptions(id="task2", command_line='cmd /c "echo hello world"')
 task3 = models.BatchTaskCreateOptions(id="task3", command_line='cmd /c "echo hello world"')
 
-task_group = models.BatchTaskGroup(values_property=[task1, task2, task3])
+task_group = models.BatchTaskGroup(task_values=[task1, task2, task3])
 result = client.create_task_collection(job_id="my-job", task_collection=task_group)
 ```
 
