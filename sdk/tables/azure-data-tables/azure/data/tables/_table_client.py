@@ -528,11 +528,11 @@ class TableClient(TablesBaseClient):
         :rtype: An iterator of custom entity type.
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
-        if kwargs.pop("query_filter", None) is not None:
+        if "query_filter" in kwargs or "parameters" in kwargs:
             raise ValueError(
-                "'query_filter' is not supported for 'list_entities'. Use 'query_entities' for server-side filtering."
+                "'query_filter' and 'parameters' are not supported for 'list_entities'. "
+                "Use 'query_entities' for server-side filtering."
             )
-        kwargs.pop("parameters", None)
 
         if select and not isinstance(select, str):
             select = ",".join(select)
