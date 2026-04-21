@@ -7,6 +7,7 @@
 from io import BytesIO
 
 import pytest
+from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import (
     BlobBlock,
     BlobClient,
@@ -80,7 +81,10 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         token_credential = self.get_credential(BlobServiceClient)
         self.bsc = BlobServiceClient(self.account_url(account_name, "blob"), token_credential, logging_enable=True)
         self.container = self.bsc.get_container_client(self.get_resource_name('utcontainer'))
-        self.container.create_container()
+        try:
+            self.container.create_container()
+        except ResourceExistsError:
+            pass
 
     def teardown_method(self, _):
         if self.container:
@@ -505,3 +509,61 @@ class TestStorageContentValidation(StorageRecordedTestCase):
 
         result += stream.readall()
         assert result == data
+
+    @BlobPreparer()
+    @pytest.mark.parametrize('a', [True, 'md5', 'crc64'])  # a: validate_content
+    @GenericTestProxyParametrize1()
+    @recorded_by_proxy
+    def test_content_validation_with_retry(self, a, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+
+        # Setup with retry enabled
+        token_credential = self.get_credential(BlobServiceClient)
+        self.bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            token_credential,
+            retry_total=1,
+            initial_backoff=0.1,
+            increment_base=0.1,
+            logging_enable=True
+        )
+        self.container = self.bsc.get_container_client(self.get_resource_name('utcontainer'))
+        try:
+            self.container.create_container()
+        except ResourceExistsError:
+            pass
+        blob = self.container.get_blob_client(self._get_blob_reference())
+        data = b'abc' * 512
+
+        # Determine the appropriate assert methods based on validation mode
+        upload_assert_method = assert_content_crc64 if a == 'crc64' else assert_content_md5
+        download_assert_method = assert_structured_message_get if a == 'crc64' else assert_content_md5_get
+
+        # Test upload with retry
+        upload_call_count = 0
+        def upload_hook_fail_once(response):
+            nonlocal upload_call_count
+            upload_call_count += 1
+            # Assert content validation headers are present on both attempts
+            upload_assert_method(response)
+            if upload_call_count == 1:
+                response.http_response.status_code = 408  # Request Timeout - triggers retry
+
+        blob.upload_blob(data, validate_content=a, overwrite=True, raw_response_hook=upload_hook_fail_once)
+        assert upload_call_count == 2  # Original + retry
+        assert blob.download_blob().read() == data
+
+        # Test download with retry
+        download_call_count = 0
+        def download_hook_fail_once(response):
+            nonlocal download_call_count
+            download_call_count += 1
+            # Assert content validation headers are present on both attempts
+            download_assert_method(response)
+            if download_call_count == 1:
+                response.http_response.status_code = 408  # Request Timeout - triggers retry
+
+        downloader = blob.download_blob(validate_content=a, raw_response_hook=download_hook_fail_once)
+        content = downloader.read()
+        assert download_call_count == 2  # Original + retry
+        assert content == data
