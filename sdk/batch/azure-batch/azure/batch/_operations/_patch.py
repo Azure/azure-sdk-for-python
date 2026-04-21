@@ -1560,7 +1560,7 @@ class _TaskWorkflowManager:
                         results_queue.appendleft(task_result)
 
     def task_collection_thread_handler(self, results_queue):
-        """Main method for worker to run
+        """Main method for worker to run fast
 
         Pops a chunk of tasks off the collection of pending tasks to be added and submits them to be added.
 
