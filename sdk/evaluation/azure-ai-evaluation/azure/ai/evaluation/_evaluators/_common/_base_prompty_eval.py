@@ -453,6 +453,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
         :rtype: Dict[str, Union[str, float, None]]
         """
         return {
+            f"{self._result_key}": None,
             f"{self._result_key}_score": None,
             f"{self._result_key}_result": "not_applicable",
             f"{self._result_key}_passed": None,
