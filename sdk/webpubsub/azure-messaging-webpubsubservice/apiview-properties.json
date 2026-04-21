@@ -3,7 +3,9 @@
     "CrossLanguageDefinitionId": {
         "azure.messaging.webpubsubservice.models.AddToGroupsRequest": "WebPubSubService.AddToGroupsRequest",
         "azure.messaging.webpubsubservice.models.ClientTokenResponse": "WebPubSubService.ClientTokenResponse",
+        "azure.messaging.webpubsubservice.models.ErrorDetail": "WebPubSubService.ErrorDetail",
         "azure.messaging.webpubsubservice.models.GroupMember": "WebPubSubService.GroupMember",
+        "azure.messaging.webpubsubservice.models.InnerError": "WebPubSubService.InnerError",
         "azure.messaging.webpubsubservice.models.RemoveFromGroupsRequest": "WebPubSubService.RemoveFromGroupsRequest",
         "azure.messaging.webpubsubservice.models.ResponseContentType": "WebPubSubService.ResponseContentType",
         "azure.messaging.webpubsubservice.models.WebPubSubClientType": "WebPubSubService.WebPubSubClientType",

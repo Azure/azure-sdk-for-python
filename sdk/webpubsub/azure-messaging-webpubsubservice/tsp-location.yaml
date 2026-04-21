@@ -1,4 +1,4 @@
 directory: specification/webpubsub/data-plane/WebPubSub
-commit: 12a75a4910e5d84677a598473cf4e4d9d0a6d5fa
-repo: MoChilia/azure-rest-api-specs
+commit: 8ea36809e83ff5cb79618942fab105f909cf8a53
+repo: Azure/azure-rest-api-specs
 additionalDirectories: []

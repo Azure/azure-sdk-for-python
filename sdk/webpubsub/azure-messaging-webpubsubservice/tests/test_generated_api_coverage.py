@@ -47,9 +47,7 @@ class TestGeneratedApiCoverage(WebpubsubTest):
     @recorded_by_proxy
     def test_add_connections_to_groups(self, webpubsub_connection_string):
         client = self.create_client(connection_string=webpubsub_connection_string, hub="apicoverage")
-        client.add_connections_to_groups(
-            groups_to_add={"filter": "userId eq 'nobody'", "groups": ["group1", "group2"]}
-        )
+        client.add_connections_to_groups(groups_to_add={"filter": "userId eq 'nobody'", "groups": ["group1", "group2"]})
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy
@@ -157,17 +155,13 @@ class TestGeneratedApiCoverage(WebpubsubTest):
     def test_grant_permission_not_found(self, webpubsub_connection_string):
         client = self.create_client(connection_string=webpubsub_connection_string, hub="apicoverage")
         with pytest.raises(ResourceNotFoundError):
-            client.grant_permission(
-                permission="sendToGroup", connection_id="fake-connection-id", target_name="group1"
-            )
+            client.grant_permission(permission="sendToGroup", connection_id="fake-connection-id", target_name="group1")
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy
     def test_revoke_permission_with_fake_connection_id(self, webpubsub_connection_string):
         client = self.create_client(connection_string=webpubsub_connection_string, hub="apicoverage")
-        client.revoke_permission(
-            permission="sendToGroup", connection_id="fake-connection-id", target_name="group1"
-        )
+        client.revoke_permission(permission="sendToGroup", connection_id="fake-connection-id", target_name="group1")
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy

@@ -26,7 +26,7 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
     def test_add_connections_to_groups(self, webpubsubservice_endpoint):
         client = self.create_client(endpoint=webpubsubservice_endpoint)
         response = client.add_connections_to_groups(
-            groups_to_add={"filter": "str", "groups": ["str"]},
+            groups_to_add={"groups": ["str"], "filter": "str"},
         )
 
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestWebPubSubService(WebPubSubServiceClientTestBase):
     def test_remove_connections_from_groups(self, webpubsubservice_endpoint):
         client = self.create_client(endpoint=webpubsubservice_endpoint)
         response = client.remove_connections_from_groups(
-            groups_to_remove={"filter": "str", "groups": ["str"]},
+            groups_to_remove={"groups": ["str"], "filter": "str"},
         )
 
         # please add some check logic here by yourself

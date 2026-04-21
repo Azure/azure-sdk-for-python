@@ -11,7 +11,6 @@ from testcase import WebpubsubPowerShellPreparer
 from testcase_async import WebpubsubAsyncTest
 
 
-@pytest.mark.live_test_only
 class TestGeneratedApiCoverageAsync(WebpubsubAsyncTest):
     """Recorded async tests that make real HTTP requests for all generated APIs.
 

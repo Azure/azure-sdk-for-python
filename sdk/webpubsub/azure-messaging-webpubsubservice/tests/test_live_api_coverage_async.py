@@ -29,7 +29,9 @@ class TestLiveApiCoverageAsync(WebpubsubAsyncTest):
 
     @WebpubsubPowerShellPreparer()
     @recorded_by_proxy_async
-    async def test_live_api_coverage_all_apis_and_parameters_async(self, webpubsub_endpoint, webpubsub_connection_string):
+    async def test_live_api_coverage_all_apis_and_parameters_async(
+        self, webpubsub_endpoint, webpubsub_connection_string
+    ):
         if not getattr(self, "is_live", False):
             pytest.skip("Live WebSocket coverage test is skipped in playback mode")
 

@@ -24,6 +24,8 @@ class MessageContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ResponseContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Content type for response headers (closed union for HTTP compliance)."""
 
+    TEXT_PLAIN = "text/plain"
+    """Content Type 'text/plain'."""
     APPLICATION_JSON = "application/json"
     """Content Type 'application/json'."""
     TEXT_JSON = "text/json"

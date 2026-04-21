@@ -80,7 +80,9 @@ class TestLiveApiCoverage(WebpubsubTest):
             assert client.user_exists(user_id=user_id)
             assert client.group_exists(group=group_1)
 
-            client.send_to_all(message={"kind": "json"}, content_type="application/json", excluded=[connection_id, "fake-conn-id"])
+            client.send_to_all(
+                message={"kind": "json"}, content_type="application/json", excluded=[connection_id, "fake-conn-id"]
+            )
             client.send_to_all(message="plain", content_type="text/plain", filter=f"userId eq '{user_id}'")
             client.send_to_all(message=b"binary", content_type="application/octet-stream")
 

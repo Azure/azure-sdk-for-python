@@ -54,7 +54,7 @@ from ..._operations._operations import (
     build_web_pub_sub_service_revoke_permission_request,
     build_web_pub_sub_service_user_exists_request,
 )
-from ..._utils.model_base import SdkJSONEncoder, _deserialize
+from ..._utils.model_base import SdkJSONEncoder, _deserialize, _failsafe_deserialize
 from ..._utils.utils import ClientMixinABC, raise_if_not_implemented
 from .._configuration import WebPubSubServiceClientConfiguration
 
@@ -120,7 +120,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -239,7 +243,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -296,7 +304,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -326,9 +338,8 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         :keyword group: Groups that the connection will join when it connects. Default value is None.
         :paramtype group: list[str]
         :keyword client_type: The type of client. Case-insensitive. If not set, it's "Default". For Web
-         PubSub for Socket.IO, only the default value is supported. For Web PubSub, the
-         valid values are 'Default' and 'MQTT'. Known values are: "Default" and "MQTT". Default value
-         is None.
+         PubSub for Socket.IO, only the default value is supported. For Web PubSub, the valid values are
+         'Default' and 'MQTT'. Known values are: "Default" and "MQTT". Default value is None.
         :paramtype client_type: str or ~azure.messaging.webpubsubservice.models.WebPubSubClientType
         :return: ClientTokenResponse. The ClientTokenResponse is compatible with MutableMapping
         :rtype: ~azure.messaging.webpubsubservice.models.ClientTokenResponse
@@ -378,7 +389,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
                 except (StreamConsumedError, StreamClosedError):
                     pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         response_headers = {}
         response_headers["content-type"] = self._deserialize("str", response.headers.get("content-type"))
@@ -510,7 +525,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -564,7 +583,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -615,7 +638,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -667,7 +694,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -719,7 +750,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -781,7 +816,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -806,12 +845,10 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
          the connections in a group are returned. Default value is None.
         :paramtype top: int
         :keyword continuation_token_parameter: A token that allows the client to retrieve the next page
-         of results. This
-         parameter is provided by the service in the response of a previous request when
-         there are additional results to be fetched. Clients should include the
-         continuationToken in the next request to receive the subsequent page of data.
-         If this parameter is omitted, the server will return the first page of results. Default value
-         is None.
+         of results. This parameter is provided by the service in the response of a previous request
+         when there are additional results to be fetched. Clients should include the continuationToken
+         in the next request to receive the subsequent page of data. If this parameter is omitted, the
+         server will return the first page of results. Default value is None.
         :paramtype continuation_token_parameter: str
         :return: An iterator like instance of GroupMember
         :rtype:
@@ -895,7 +932,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response)
+                error = _failsafe_deserialize(
+                    _models.ErrorDetail,
+                    response,
+                )
+                raise HttpResponseError(response=response, model=error)
 
             return pipeline_response
 
@@ -951,7 +992,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1006,7 +1051,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1030,8 +1079,8 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         :param connection_id: Target connection Id. Required.
         :type connection_id: str
         :keyword target_name: The meaning of the target depends on the specific permission. For
-         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for
-         the group name. Default value is None.
+         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
+         Default value is None.
         :paramtype target_name: str
         :return: None
         :rtype: None
@@ -1073,7 +1122,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1097,8 +1150,8 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         :param connection_id: Target connection Id. Required.
         :type connection_id: str
         :keyword target_name: The meaning of the target depends on the specific permission. For
-         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for
-         the group name. Default value is None.
+         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
+         Default value is None.
         :paramtype target_name: str
         :return: bool
         :rtype: bool
@@ -1140,7 +1193,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1165,8 +1222,8 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
         :param connection_id: Target connection Id. Required.
         :type connection_id: str
         :keyword target_name: The meaning of the target depends on the specific permission. For
-         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for
-         the group name. Default value is None.
+         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
+         Default value is None.
         :paramtype target_name: str
         :return: None
         :rtype: None
@@ -1208,7 +1265,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1259,7 +1320,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200, 404]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1320,7 +1385,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1371,7 +1440,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1426,7 +1499,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
@@ -1481,7 +1558,11 @@ class _WebPubSubServiceClientOperationsMixin(  # pylint: disable=abstract-class-
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
+            error = _failsafe_deserialize(
+                _models.ErrorDetail,
+                response,
+            )
+            raise HttpResponseError(response=response, model=error)
 
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
