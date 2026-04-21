@@ -1219,7 +1219,7 @@ def build_private_link_scoped_resources_list_by_private_link_scope_request(  # p
 
 
 def build_private_link_scope_operation_status_get_request(  # pylint: disable=name-too-long
-    resource_group_name: str, async_operation_id: str, subscription_id: str, **kwargs: Any
+    async_operation_id: str, resource_group_name: str, subscription_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -1230,9 +1230,9 @@ def build_private_link_scope_operation_status_get_request(  # pylint: disable=na
     # Construct URL
     _url = "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/privateLinkScopeOperationStatuses/{asyncOperationId}"
     path_format_arguments = {
-        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
-        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
         "asyncOperationId": _SERIALIZER.url("async_operation_id", async_operation_id, "str"),
+        "resourceGroupName": _SERIALIZER.url("resource_group_name", resource_group_name, "str"),
+        "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -1810,9 +1810,7 @@ def build_metrics_list_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_service_diagnostic_settings_get_request(  # pylint: disable=name-too-long
-    resource_uri: str, **kwargs: Any
-) -> HttpRequest:
+def build_diagnostic_settings_get_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -1836,7 +1834,7 @@ def build_service_diagnostic_settings_get_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_service_diagnostic_settings_create_or_update_request(  # pylint: disable=name-too-long
+def build_diagnostic_settings_create_or_update_request(  # pylint: disable=name-too-long
     resource_uri: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1865,9 +1863,7 @@ def build_service_diagnostic_settings_create_or_update_request(  # pylint: disab
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_service_diagnostic_settings_update_request(  # pylint: disable=name-too-long
-    resource_uri: str, **kwargs: Any
-) -> HttpRequest:
+def build_diagnostic_settings_update_request(resource_uri: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -7880,15 +7876,15 @@ class PrivateLinkScopeOperationStatusOperations:  # pylint: disable=name-too-lon
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def get(self, resource_group_name: str, async_operation_id: str, **kwargs: Any) -> _models.OperationStatus:
+    def get(self, async_operation_id: str, resource_group_name: str, **kwargs: Any) -> _models.OperationStatus:
         """Get the status of an azure asynchronous operation associated with a private link scope
         operation.
 
+        :param async_operation_id: The operation Id. Required.
+        :type async_operation_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param async_operation_id: The operation Id. Required.
-        :type async_operation_id: str
         :return: OperationStatus. The OperationStatus is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitor.models.OperationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -7908,8 +7904,8 @@ class PrivateLinkScopeOperationStatusOperations:  # pylint: disable=name-too-lon
         cls: ClsType[_models.OperationStatus] = kwargs.pop("cls", None)
 
         _request = build_private_link_scope_operation_status_get_request(
-            resource_group_name=resource_group_name,
             async_operation_id=async_operation_id,
+            resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -10146,14 +10142,14 @@ class MetricsOperations:
         return deserialized  # type: ignore
 
 
-class ServiceDiagnosticSettingsOperations:
+class DiagnosticSettingsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.monitor.MonitorManagementClient`'s
-        :attr:`service_diagnostic_settings` attribute.
+        :attr:`diagnostic_settings` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -10190,7 +10186,7 @@ class ServiceDiagnosticSettingsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
         cls: ClsType[_models.ServiceDiagnosticSettingsResource] = kwargs.pop("cls", None)
 
-        _request = build_service_diagnostic_settings_get_request(
+        _request = build_diagnostic_settings_get_request(
             resource_uri=resource_uri,
             api_version=api_version,
             headers=_headers,
@@ -10344,7 +10340,7 @@ class ServiceDiagnosticSettingsOperations:
         else:
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_service_diagnostic_settings_create_or_update_request(
+        _request = build_diagnostic_settings_create_or_update_request(
             resource_uri=resource_uri,
             api_version=api_version,
             content_type=content_type,
@@ -10511,7 +10507,7 @@ class ServiceDiagnosticSettingsOperations:
         else:
             _content = json.dumps(service_diagnostic_settings_resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_service_diagnostic_settings_update_request(
+        _request = build_diagnostic_settings_update_request(
             resource_uri=resource_uri,
             api_version=api_version,
             content_type=content_type,

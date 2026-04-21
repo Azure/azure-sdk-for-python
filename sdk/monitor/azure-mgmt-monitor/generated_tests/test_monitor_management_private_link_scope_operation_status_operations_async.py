@@ -23,8 +23,8 @@ class TestMonitorManagementPrivateLinkScopeOperationStatusOperationsAsync(AzureM
     @recorded_by_proxy_async
     async def test_private_link_scope_operation_status_get(self, resource_group):
         response = await self.client.private_link_scope_operation_status.get(
-            resource_group_name=resource_group.name,
             async_operation_id="str",
+            resource_group_name=resource_group.name,
             api_version="2023-06-01-preview",
         )
 

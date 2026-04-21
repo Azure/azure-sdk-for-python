@@ -15,7 +15,7 @@
     "Microsoft.ScheduledQueryRule": "2025-01-01-preview",
     "Microsoft.ServiceDiagnosticsSettings": "2016-09-01"
   },
-  "commit": "b1bd45b756c427737bbe418611df2aa6142b694a",
+  "commit": "a84387a2f3d35272577b28159c2b253092e47361",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "typespec_src": "specification/monitor/resource-manager/Microsoft.Insights/Insights",
   "emitterVersion": "0.61.3"

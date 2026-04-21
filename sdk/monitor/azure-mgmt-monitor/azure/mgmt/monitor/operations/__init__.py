@@ -29,7 +29,7 @@ from ._operations import TenantActivityLogsOperations  # type: ignore
 from ._operations import MetricDefinitionsOperations  # type: ignore
 from ._operations import MetricNamespacesOperations  # type: ignore
 from ._operations import MetricsOperations  # type: ignore
-from ._operations import ServiceDiagnosticSettingsOperations  # type: ignore
+from ._operations import DiagnosticSettingsOperations  # type: ignore
 from ._operations import AlertRuleIncidentsOperations  # type: ignore
 from ._operations import LogProfilesOperations  # type: ignore
 from ._operations import ActivityLogAlertsOperations  # type: ignore
@@ -61,7 +61,7 @@ __all__ = [
     "MetricDefinitionsOperations",
     "MetricNamespacesOperations",
     "MetricsOperations",
-    "ServiceDiagnosticSettingsOperations",
+    "DiagnosticSettingsOperations",
     "AlertRuleIncidentsOperations",
     "LogProfilesOperations",
     "ActivityLogAlertsOperations",

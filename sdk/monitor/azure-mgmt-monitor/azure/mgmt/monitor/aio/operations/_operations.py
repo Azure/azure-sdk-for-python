@@ -87,6 +87,9 @@ from ...operations._operations import (
     build_data_collection_rules_list_by_resource_group_request,
     build_data_collection_rules_list_by_subscription_request,
     build_data_collection_rules_update_request,
+    build_diagnostic_settings_create_or_update_request,
+    build_diagnostic_settings_get_request,
+    build_diagnostic_settings_update_request,
     build_event_categories_list_request,
     build_log_profiles_create_or_update_request,
     build_log_profiles_delete_request,
@@ -134,9 +137,6 @@ from ...operations._operations import (
     build_scheduled_query_rules_list_by_resource_group_request,
     build_scheduled_query_rules_list_by_subscription_request,
     build_scheduled_query_rules_update_request,
-    build_service_diagnostic_settings_create_or_update_request,
-    build_service_diagnostic_settings_get_request,
-    build_service_diagnostic_settings_update_request,
     build_tenant_activity_logs_list_request,
 )
 from .._configuration import MonitorManagementClientConfiguration
@@ -5009,15 +5009,15 @@ class PrivateLinkScopeOperationStatusOperations:  # pylint: disable=name-too-lon
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, resource_group_name: str, async_operation_id: str, **kwargs: Any) -> _models.OperationStatus:
+    async def get(self, async_operation_id: str, resource_group_name: str, **kwargs: Any) -> _models.OperationStatus:
         """Get the status of an azure asynchronous operation associated with a private link scope
         operation.
 
+        :param async_operation_id: The operation Id. Required.
+        :type async_operation_id: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param async_operation_id: The operation Id. Required.
-        :type async_operation_id: str
         :return: OperationStatus. The OperationStatus is compatible with MutableMapping
         :rtype: ~azure.mgmt.monitor.models.OperationStatus
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -5037,8 +5037,8 @@ class PrivateLinkScopeOperationStatusOperations:  # pylint: disable=name-too-lon
         cls: ClsType[_models.OperationStatus] = kwargs.pop("cls", None)
 
         _request = build_private_link_scope_operation_status_get_request(
-            resource_group_name=resource_group_name,
             async_operation_id=async_operation_id,
+            resource_group_name=resource_group_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -7275,14 +7275,14 @@ class MetricsOperations:
         return deserialized  # type: ignore
 
 
-class ServiceDiagnosticSettingsOperations:
+class DiagnosticSettingsOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.monitor.aio.MonitorManagementClient`'s
-        :attr:`service_diagnostic_settings` attribute.
+        :attr:`diagnostic_settings` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
@@ -7319,7 +7319,7 @@ class ServiceDiagnosticSettingsOperations:
         api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-09-01"))
         cls: ClsType[_models.ServiceDiagnosticSettingsResource] = kwargs.pop("cls", None)
 
-        _request = build_service_diagnostic_settings_get_request(
+        _request = build_diagnostic_settings_get_request(
             resource_uri=resource_uri,
             api_version=api_version,
             headers=_headers,
@@ -7473,7 +7473,7 @@ class ServiceDiagnosticSettingsOperations:
         else:
             _content = json.dumps(parameters, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_service_diagnostic_settings_create_or_update_request(
+        _request = build_diagnostic_settings_create_or_update_request(
             resource_uri=resource_uri,
             api_version=api_version,
             content_type=content_type,
@@ -7640,7 +7640,7 @@ class ServiceDiagnosticSettingsOperations:
         else:
             _content = json.dumps(service_diagnostic_settings_resource, cls=SdkJSONEncoder, exclude_readonly=True)  # type: ignore
 
-        _request = build_service_diagnostic_settings_update_request(
+        _request = build_diagnostic_settings_update_request(
             resource_uri=resource_uri,
             api_version=api_version,
             content_type=content_type,

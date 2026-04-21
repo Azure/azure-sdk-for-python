@@ -14,14 +14,14 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestMonitorManagementServiceDiagnosticSettingsOperations(AzureMgmtRecordedTestCase):
+class TestMonitorManagementDiagnosticSettingsOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
         self.client = self.create_mgmt_client(MonitorManagementClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_service_diagnostic_settings_get(self, resource_group):
-        response = self.client.service_diagnostic_settings.get(
+    def test_diagnostic_settings_get(self, resource_group):
+        response = self.client.diagnostic_settings.get(
             resource_uri="str",
             api_version="2016-09-01",
         )
@@ -31,8 +31,8 @@ class TestMonitorManagementServiceDiagnosticSettingsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_service_diagnostic_settings_create_or_update(self, resource_group):
-        response = self.client.service_diagnostic_settings.create_or_update(
+    def test_diagnostic_settings_create_or_update(self, resource_group):
+        response = self.client.diagnostic_settings.create_or_update(
             resource_uri="str",
             parameters={
                 "location": "str",
@@ -71,8 +71,8 @@ class TestMonitorManagementServiceDiagnosticSettingsOperations(AzureMgmtRecorded
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_service_diagnostic_settings_update(self, resource_group):
-        response = self.client.service_diagnostic_settings.update(
+    def test_diagnostic_settings_update(self, resource_group):
+        response = self.client.diagnostic_settings.update(
             resource_uri="str",
             service_diagnostic_settings_resource={
                 "properties": {

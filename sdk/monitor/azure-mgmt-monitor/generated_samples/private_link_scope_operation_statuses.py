@@ -31,8 +31,8 @@ def main():
     )
 
     response = client.private_link_scope_operation_status.get(
-        resource_group_name="MyResourceGroup",
         async_operation_id="713192d7-503f-477a-9cfe-4efc3ee2bd11",
+        resource_group_name="MyResourceGroup",
     )
     print(response)
 
