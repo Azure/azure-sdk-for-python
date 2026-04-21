@@ -2,7 +2,436 @@
 
 ## 8.0.0b3 (2026-04-21)
 
-skip changelog generation
+### Features Added
+
+  - Client `MonitorManagementClient` added method `send_request`
+  - Client `MonitorManagementClient` added operation group `scheduled_query_rule`
+  - Model `ActionGroupPatchBody` added property `identity`
+  - Model `ActionGroupPatchBody` added property `properties`
+  - Model `ActionGroupResource` added property `properties`
+  - Model `ActionGroupResource` added property `identity`
+  - Model `ActionGroupResource` added property `system_data`
+  - Model `ActivityLogAlertResource` added property `properties`
+  - Model `ActivityLogAlertResource` added property `system_data`
+  - Model `AlertRulePatchObject` added property `properties`
+  - Model `AutomationRunbookReceiver` added property `managed_identity`
+  - Model `AutoscaleNotification` added property `operation`
+  - Model `AutoscaleSettingResource` added property `properties`
+  - Model `AutoscaleSettingResourcePatch` added property `properties`
+  - Model `AzureFunctionReceiver` added property `managed_identity`
+  - Model `Condition` added property `criterion_type`
+  - Model `Condition` added property `alert_sensitivity`
+  - Model `Condition` added property `ignore_data_before`
+  - Model `Condition` added property `min_recurrence_count`
+  - Enum `ConditionOperator` added member `GREATER_OR_LESS_THAN`
+  - Model `DataCollectionEndpointResource` added property `properties`
+  - Model `DataCollectionEndpointResource` added property `sku`
+  - Model `DataCollectionRule` added property `direct_data_sources`
+  - Model `DataCollectionRule` added property `ingestion_quotas`
+  - Model `DataCollectionRuleAssociationProxyOnlyResource` added property `properties`
+  - Model `DataCollectionRuleDataSources` added property `performance_counters_o_tel`
+  - Model `DataCollectionRuleDataSources` added property `otel_logs`
+  - Model `DataCollectionRuleDataSources` added property `otel_traces`
+  - Model `DataCollectionRuleDataSources` added property `otel_metrics`
+  - Model `DataCollectionRuleDataSources` added property `etw_providers`
+  - Model `DataCollectionRuleReferences` added property `application_insights`
+  - Model `DataCollectionRuleResource` added property `properties`
+  - Model `DataCollectionRuleResource` added property `sku`
+  - Model `DataCollectionRuleResourceProperties` added property `direct_data_sources`
+  - Model `DataCollectionRuleResourceProperties` added property `ingestion_quotas`
+  - Model `DataSourcesSpec` added property `performance_counters_o_tel`
+  - Model `DataSourcesSpec` added property `otel_logs`
+  - Model `DataSourcesSpec` added property `otel_traces`
+  - Model `DataSourcesSpec` added property `otel_metrics`
+  - Model `DataSourcesSpec` added property `etw_providers`
+  - Model `Dimension` added property `values_property`
+  - Model `EventHubReceiver` added property `managed_identity`
+  - Enum `Kind` added member `SIMPLE_LOG_ALERT`
+  - Enum `KnownAgentSettingName` added member `TAGS`
+  - Model `LogProfileResource` added property `properties`
+  - Model `LogProfileResourcePatch` added property `properties`
+  - Model `LogicAppReceiver` added property `managed_identity`
+  - Model `MetricAlertResource` added property `properties`
+  - Model `MetricAlertResource` added property `identity`
+  - Model `MetricAlertResource` added property `system_data`
+  - Model `MetricAlertResourcePatch` added property `identity`
+  - Model `MetricAlertResourcePatch` added property `properties`
+  - Model `MetricDimension` added property `values_property`
+  - Enum `Odatatype` added member `MICROSOFT_AZURE_MONITOR_PROM_QL_CRITERIA`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `PrivateLinkResource` added property `system_data`
+  - Model `PrivateLinkResourceListResult` added property `next_link`
+  - Model `PrometheusForwarderDataSource` added property `custom_vm_scrape_config`
+  - Model `ProxyResource` added property `system_data`
+  - Model `ReferencesSpec` added property `application_insights`
+  - Model `ScaleRuleMetricDimension` added property `values_property`
+  - Model `ScheduledQueryRuleResource` added property `properties`
+  - Model `ScheduledQueryRuleResourcePatch` added property `properties`
+  - Model `SingleMetricBaseline` added property `properties`
+  - Model `WebhookReceiver` added property `managed_identity`
+  - Added model `AccessRule`
+  - Added enum `AccessRuleDirection`
+  - Added model `AccessRuleProperties`
+  - Added model `AccessRulePropertiesSubscription`
+  - Added model `ActionGroupPatch`
+  - Added model `ActivityLogAlertActionGroup`
+  - Added model `ActivityLogAlertErrorResponse`
+  - Added model `AlertRulePatchProperties`
+  - Added model `AlertRuleProperties`
+  - Added model `ApplicationInsights`
+  - Added model `AutoscaleSetting`
+  - Added model `CommonErrorResponse`
+  - Added model `DataCollectionEndpointResourceSku`
+  - Added model `DataCollectionRuleDirectDataSources`
+  - Added model `DataCollectionRuleIngestionQuotas`
+  - Added model `DataCollectionRuleResourceSku`
+  - Added model `DirectDataSourcesSpec`
+  - Added model `DynamicPromQLCriteria`
+  - Added model `EtwProviderDataSource`
+  - Added model `ExtensionResource`
+  - Added model `IngestionQuotas`
+  - Added model `IngestionQuotasLogs`
+  - Added enum `IssueType`
+  - Added enum `KnownEtwProviderDataSourceLogLevel`
+  - Added enum `KnownEtwProviderType`
+  - Added enum `KnownOtelLogsDataSourceStreams`
+  - Added enum `KnownOtelLogsDirectDataSourceStreams`
+  - Added enum `KnownOtelTracesDataSourceStreams`
+  - Added enum `KnownOtelTracesDirectDataSourceStreams`
+  - Added enum `KnownPerformanceCountersOTelDataSourceStreams`
+  - Added model `LocalizableString`
+  - Added model `LogProfileProperties`
+  - Added model `LogsQuotaSpec`
+  - Added model `MetricAlertErrorResponse`
+  - Added model `MetricAlertProperties`
+  - Added model `MetricAlertPropertiesPatch`
+  - Added model `MetricBaselinesProperties`
+  - Added model `MultiPromQLCriteria`
+  - Added model `NetworkSecurityPerimeter`
+  - Added model `NetworkSecurityPerimeterConfiguration`
+  - Added model `NetworkSecurityPerimeterConfigurationProperties`
+  - Added enum `NetworkSecurityPerimeterConfigurationProvisioningState`
+  - Added model `NetworkSecurityProfile`
+  - Added enum `OperationType`
+  - Added model `OtelDataSourceResourceAttributeRouting`
+  - Added model `OtelLogsDataSource`
+  - Added model `OtelLogsDataSourceResourceAttributeRouting`
+  - Added model `OtelLogsDirectDataSource`
+  - Added model `OtelMetricsDataSource`
+  - Added model `OtelMetricsDataSourceResourceAttributeRouting`
+  - Added model `OtelMetricsDirectDataSource`
+  - Added model `OtelTracesDataSource`
+  - Added model `OtelTracesDataSourceResourceAttributeRouting`
+  - Added model `OtelTracesDirectDataSource`
+  - Added model `PerformanceCountersOTelDataSource`
+  - Added enum `PrivateLinkScopeProvisioningState`
+  - Added model `PromQLCriteria`
+  - Added model `ProvisioningIssue`
+  - Added model `ProvisioningIssueProperties`
+  - Added model `QueryFailingPeriods`
+  - Added model `ResolveConfiguration`
+  - Added model `ResourceAssociation`
+  - Added enum `ResourceAssociationAccessMode`
+  - Added model `ScheduledQueryRuleProperties`
+  - Added enum `ScopedResourceKind`
+  - Added enum `ScopedResourceProvisioningState`
+  - Added model `ServiceDiagnosticSettings`
+  - Added model `ServiceDiagnosticSettingsResource`
+  - Added model `ServiceDiagnosticSettingsResourcePatch`
+  - Added enum `Severity`
+  - Added model `Sku`
+  - Added enum `SkuTier`
+  - Added model `StaticPromQLCriteria`
+  - Model `ActionGroupsOperations` added method `begin_reconcile_nsp`
+  - Model `ActionGroupsOperations` added method `get_nsp`
+  - Model `ActionGroupsOperations` added method `list_nsp`
+  - Model `DataCollectionEndpointsOperations` added method `begin_reconcile_nsp`
+  - Model `DataCollectionEndpointsOperations` added method `get_nsp`
+  - Model `DataCollectionEndpointsOperations` added method `list_nsp`
+  - Model `DataCollectionRuleAssociationsOperations` added parameter `skip_token` in method `list_by_rule`
+  - Model `DataCollectionRuleAssociationsOperations` added parameter `top` in method `list_by_rule`
+  - Model `PrivateLinkScopedResourcesOperations` added parameter `kind` in method `list_by_private_link_scope`
+  - Added model `ScheduledQueryRuleOperations`
+
+### Breaking Changes
+
+  - Deleted or renamed client operation group `MonitorManagementClient.operations`
+  - Deleted or renamed client operation group `MonitorManagementClient.diagnostic_settings_category`
+  - Deleted or renamed client operation group `MonitorManagementClient.tenant_action_groups`
+  - Deleted or renamed client operation group `MonitorManagementClient.vm_insights`
+  - Client `MonitorManagementClient` deleted or renamed instance variable `url`
+  - Deleted or renamed client method `MonitorManagementClient.begin_create_notifications_at_tenant_action_group_resource_level`
+  - Deleted or renamed client method `MonitorManagementClient.get_test_notifications_at_tenant_action_group_resource_level`
+  - Model `ActionGroup` deleted or renamed its instance variable `action_group_id`
+  - Model `ActionGroup` deleted or renamed its instance variable `webhook_properties`
+  - Model `ActionGroupPatchBody` deleted or renamed its instance variable `enabled`
+  - Model `ActionGroupResource` deleted or renamed its instance variable `group_short_name`
+  - Model `ActionGroupResource` deleted or renamed its instance variable `enabled`
+  - Model `ActionGroupResource` deleted or renamed its instance variable `email_receivers`
+  - Model `ActionGroupResource` deleted or renamed its instance variable `sms_receivers`
+  - Model `ActionGroupResource` deleted or renamed its instance variable `webhook_receivers`
+  - Model `ActionGroupResource` deleted or renamed its instance variable `itsm_receivers`
+  - Model `ActionGroupResource` deleted or renamed its instance variable `azure_app_push_receivers`
+  - Model `ActionGroupResource` deleted or renamed its instance variable `automation_runbook_receivers`
+  - Model `ActionGroupResource` deleted or renamed its instance variable `voice_receivers`
+  - Model `ActionGroupResource` deleted or renamed its instance variable `logic_app_receivers`
+  - Model `ActionGroupResource` deleted or renamed its instance variable `azure_function_receivers`
+  - Model `ActionGroupResource` deleted or renamed its instance variable `arm_role_receivers`
+  - Model `ActionGroupResource` deleted or renamed its instance variable `event_hub_receivers`
+  - Model `ActionGroupResource` deleted or renamed its instance variable `incident_receivers`
+  - Model `ActivityLogAlertResource` deleted or renamed its instance variable `scopes`
+  - Model `ActivityLogAlertResource` deleted or renamed its instance variable `condition`
+  - Model `ActivityLogAlertResource` deleted or renamed its instance variable `actions`
+  - Model `ActivityLogAlertResource` deleted or renamed its instance variable `enabled`
+  - Model `ActivityLogAlertResource` deleted or renamed its instance variable `description`
+  - Model `AlertRulePatchObject` deleted or renamed its instance variable `enabled`
+  - Model `AutoscaleSettingResource` deleted or renamed its instance variable `profiles`
+  - Model `AutoscaleSettingResource` deleted or renamed its instance variable `notifications`
+  - Model `AutoscaleSettingResource` deleted or renamed its instance variable `enabled`
+  - Model `AutoscaleSettingResource` deleted or renamed its instance variable `predictive_autoscale_policy`
+  - Model `AutoscaleSettingResource` deleted or renamed its instance variable `name_properties_name`
+  - Model `AutoscaleSettingResource` deleted or renamed its instance variable `target_resource_uri`
+  - Model `AutoscaleSettingResource` deleted or renamed its instance variable `target_resource_location`
+  - Model `AutoscaleSettingResourcePatch` deleted or renamed its instance variable `profiles`
+  - Model `AutoscaleSettingResourcePatch` deleted or renamed its instance variable `notifications`
+  - Model `AutoscaleSettingResourcePatch` deleted or renamed its instance variable `enabled`
+  - Model `AutoscaleSettingResourcePatch` deleted or renamed its instance variable `predictive_autoscale_policy`
+  - Model `AutoscaleSettingResourcePatch` deleted or renamed its instance variable `name`
+  - Model `AutoscaleSettingResourcePatch` deleted or renamed its instance variable `target_resource_uri`
+  - Model `AutoscaleSettingResourcePatch` deleted or renamed its instance variable `target_resource_location`
+  - Model `DataCollectionEndpointResource` deleted or renamed its instance variable `description`
+  - Model `DataCollectionEndpointResource` deleted or renamed its instance variable `immutable_id`
+  - Model `DataCollectionEndpointResource` deleted or renamed its instance variable `configuration_access`
+  - Model `DataCollectionEndpointResource` deleted or renamed its instance variable `logs_ingestion`
+  - Model `DataCollectionEndpointResource` deleted or renamed its instance variable `metrics_ingestion`
+  - Model `DataCollectionEndpointResource` deleted or renamed its instance variable `network_acls`
+  - Model `DataCollectionEndpointResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `DataCollectionEndpointResource` deleted or renamed its instance variable `private_link_scoped_resources`
+  - Model `DataCollectionEndpointResource` deleted or renamed its instance variable `failover_configuration`
+  - Model `DataCollectionEndpointResource` deleted or renamed its instance variable `metadata`
+  - Model `DataCollectionRuleAssociationProxyOnlyResource` deleted or renamed its instance variable `description`
+  - Model `DataCollectionRuleAssociationProxyOnlyResource` deleted or renamed its instance variable `data_collection_rule_id`
+  - Model `DataCollectionRuleAssociationProxyOnlyResource` deleted or renamed its instance variable `data_collection_endpoint_id`
+  - Model `DataCollectionRuleAssociationProxyOnlyResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `DataCollectionRuleAssociationProxyOnlyResource` deleted or renamed its instance variable `metadata`
+  - Model `DataCollectionRuleResource` deleted or renamed its instance variable `description`
+  - Model `DataCollectionRuleResource` deleted or renamed its instance variable `immutable_id`
+  - Model `DataCollectionRuleResource` deleted or renamed its instance variable `data_collection_endpoint_id`
+  - Model `DataCollectionRuleResource` deleted or renamed its instance variable `metadata`
+  - Model `DataCollectionRuleResource` deleted or renamed its instance variable `endpoints`
+  - Model `DataCollectionRuleResource` deleted or renamed its instance variable `references`
+  - Model `DataCollectionRuleResource` deleted or renamed its instance variable `agent_settings`
+  - Model `DataCollectionRuleResource` deleted or renamed its instance variable `stream_declarations`
+  - Model `DataCollectionRuleResource` deleted or renamed its instance variable `data_sources`
+  - Model `DataCollectionRuleResource` deleted or renamed its instance variable `destinations`
+  - Model `DataCollectionRuleResource` deleted or renamed its instance variable `data_flows`
+  - Model `DataCollectionRuleResource` deleted or renamed its instance variable `provisioning_state`
+  - Model `Dimension` deleted or renamed its instance variable `values`
+  - Model `ErrorDetail` deleted or renamed its instance variable `details`
+  - Model `LogProfileResource` deleted or renamed its instance variable `storage_account_id`
+  - Model `LogProfileResource` deleted or renamed its instance variable `service_bus_rule_id`
+  - Model `LogProfileResource` deleted or renamed its instance variable `locations`
+  - Model `LogProfileResource` deleted or renamed its instance variable `categories`
+  - Model `LogProfileResource` deleted or renamed its instance variable `retention_policy`
+  - Model `LogProfileResourcePatch` deleted or renamed its instance variable `storage_account_id`
+  - Model `LogProfileResourcePatch` deleted or renamed its instance variable `service_bus_rule_id`
+  - Model `LogProfileResourcePatch` deleted or renamed its instance variable `locations`
+  - Model `LogProfileResourcePatch` deleted or renamed its instance variable `categories`
+  - Model `LogProfileResourcePatch` deleted or renamed its instance variable `retention_policy`
+  - Model `LogSettings` deleted or renamed its instance variable `category_group`
+  - Model `MetricAlertResource` deleted or renamed its instance variable `description`
+  - Model `MetricAlertResource` deleted or renamed its instance variable `severity`
+  - Model `MetricAlertResource` deleted or renamed its instance variable `enabled`
+  - Model `MetricAlertResource` deleted or renamed its instance variable `scopes`
+  - Model `MetricAlertResource` deleted or renamed its instance variable `evaluation_frequency`
+  - Model `MetricAlertResource` deleted or renamed its instance variable `window_size`
+  - Model `MetricAlertResource` deleted or renamed its instance variable `target_resource_type`
+  - Model `MetricAlertResource` deleted or renamed its instance variable `target_resource_region`
+  - Model `MetricAlertResource` deleted or renamed its instance variable `criteria`
+  - Model `MetricAlertResource` deleted or renamed its instance variable `auto_mitigate`
+  - Model `MetricAlertResource` deleted or renamed its instance variable `actions`
+  - Model `MetricAlertResource` deleted or renamed its instance variable `last_updated_time`
+  - Model `MetricAlertResource` deleted or renamed its instance variable `is_migrated`
+  - Model `MetricAlertResourcePatch` deleted or renamed its instance variable `description`
+  - Model `MetricAlertResourcePatch` deleted or renamed its instance variable `severity`
+  - Model `MetricAlertResourcePatch` deleted or renamed its instance variable `enabled`
+  - Model `MetricAlertResourcePatch` deleted or renamed its instance variable `scopes`
+  - Model `MetricAlertResourcePatch` deleted or renamed its instance variable `evaluation_frequency`
+  - Model `MetricAlertResourcePatch` deleted or renamed its instance variable `window_size`
+  - Model `MetricAlertResourcePatch` deleted or renamed its instance variable `target_resource_type`
+  - Model `MetricAlertResourcePatch` deleted or renamed its instance variable `target_resource_region`
+  - Model `MetricAlertResourcePatch` deleted or renamed its instance variable `criteria`
+  - Model `MetricAlertResourcePatch` deleted or renamed its instance variable `auto_mitigate`
+  - Model `MetricAlertResourcePatch` deleted or renamed its instance variable `actions`
+  - Model `MetricAlertResourcePatch` deleted or renamed its instance variable `last_updated_time`
+  - Model `MetricAlertResourcePatch` deleted or renamed its instance variable `is_migrated`
+  - Model `MetricDimension` deleted or renamed its instance variable `values`
+  - Model `MetricSettings` deleted or renamed its instance variable `category`
+  - Model `ScaleRuleMetricDimension` deleted or renamed its instance variable `values`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `created_with_api_version`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `is_legacy_log_analytics_rule`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `description`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `display_name`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `severity`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `enabled`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `scopes`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `evaluation_frequency`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `window_size`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `override_query_time_range`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `target_resource_types`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `criteria`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `mute_actions_duration`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `actions`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `is_workspace_alerts_storage_configured`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `check_workspace_alerts_storage_configured`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `skip_query_validation`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `auto_mitigate`
+  - Model `ScheduledQueryRuleResource` deleted or renamed its instance variable `resolve_configuration`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `created_with_api_version`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `is_legacy_log_analytics_rule`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `description`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `display_name`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `severity`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `enabled`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `scopes`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `evaluation_frequency`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `window_size`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `override_query_time_range`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `target_resource_types`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `criteria`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `mute_actions_duration`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `actions`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `is_workspace_alerts_storage_configured`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `check_workspace_alerts_storage_configured`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `skip_query_validation`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `auto_mitigate`
+  - Model `ScheduledQueryRuleResourcePatch` deleted or renamed its instance variable `resolve_configuration`
+  - Model `SingleMetricBaseline` deleted or renamed its instance variable `timespan`
+  - Model `SingleMetricBaseline` deleted or renamed its instance variable `interval`
+  - Model `SingleMetricBaseline` deleted or renamed its instance variable `namespace`
+  - Model `SingleMetricBaseline` deleted or renamed its instance variable `baselines`
+  - Deleted or renamed model `ActionDetailAutoGenerated`
+  - Deleted or renamed model `ActionGroupList`
+  - Deleted or renamed model `ActionGroupPatchBodyAutoGenerated`
+  - Deleted or renamed model `AlertRuleList`
+  - Deleted or renamed model `AutoscaleSettingResourceCollection`
+  - Deleted or renamed model `AzureAppPushReceiverAutoGenerated`
+  - Deleted or renamed model `AzureResource`
+  - Deleted or renamed model `AzureResourceAutoGenerated`
+  - Deleted or renamed model `CategoryType`
+  - Deleted or renamed model `DataCollectionEndpointResourceSystemData`
+  - Deleted or renamed model `DataCollectionRuleAssociationProxyOnlyResourceSystemData`
+  - Deleted or renamed model `DataCollectionRuleResourceSystemData`
+  - Deleted or renamed model `DataContainer`
+  - Deleted or renamed model `DataStatus`
+  - Deleted or renamed model `DefaultErrorResponse`
+  - Deleted or renamed model `DiagnosticSettingsCategoryResource`
+  - Deleted or renamed model `DiagnosticSettingsCategoryResourceCollection`
+  - Deleted or renamed model `DiagnosticSettingsResource`
+  - Deleted or renamed model `DiagnosticSettingsResourceCollection`
+  - Deleted or renamed model `EmailReceiverAutoGenerated`
+  - Deleted or renamed model `Error`
+  - Deleted or renamed model `ErrorDetailAutoGenerated2`
+  - Deleted or renamed model `ErrorResponseAutoGenerated2`
+  - Deleted or renamed model `ErrorResponseAutoGenerated3`
+  - Deleted or renamed model `ErrorResponseAutoGenerated4`
+  - Deleted or renamed model `ErrorResponseAutoGenerated5`
+  - Deleted or renamed model `EventCategoryCollection`
+  - Deleted or renamed model `EventDataCollection`
+  - Deleted or renamed model `LogProfileCollection`
+  - Deleted or renamed model `MetricAlertResourceCollection`
+  - Deleted or renamed model `MetricBaselinesResponse`
+  - Deleted or renamed model `MetricDefinitionCollection`
+  - Deleted or renamed model `MetricNamespaceCollection`
+  - Deleted or renamed model `MicrosoftCommonCommonErrorResponse`
+  - Deleted or renamed model `MicrosoftCommonErrorContract`
+  - Deleted or renamed model `MicrosoftCommonErrorDetail`
+  - Deleted or renamed model `MicrosoftCommonErrorDetailAdditionalInfoItem`
+  - Deleted or renamed model `MicrosoftCommonErrorResponse`
+  - Deleted or renamed model `MicrosoftCommonErrorResponseError`
+  - Deleted or renamed model `MicrosoftCommonErrorResponseErrorAdditionalInfoItem`
+  - Deleted or renamed model `MicrosoftCommonLocalizableString`
+  - Deleted or renamed model `MicrosoftCommonRetentionPolicy`
+  - Deleted or renamed model `OnboardingStatus`
+  - Deleted or renamed model `Operation`
+  - Deleted or renamed model `OperationDisplay`
+  - Deleted or renamed model `ProxyResourceAutoGenerated`
+  - Deleted or renamed model `ResourceAutoGenerated`
+  - Deleted or renamed model `ResourceAutoGenerated2`
+  - Deleted or renamed model `ResponseWithError`
+  - Deleted or renamed model `ScheduledQueryRuleResourceCollection`
+  - Deleted or renamed model `SmsReceiverAutoGenerated`
+  - Deleted or renamed model `SubscriptionScopeMetricDefinitionCollection`
+  - Deleted or renamed model `TenantActionGroupList`
+  - Deleted or renamed model `TenantActionGroupResource`
+  - Deleted or renamed model `TenantNotificationRequestBody`
+  - Deleted or renamed model `TestNotificationDetailsResponseAutoGenerated`
+  - Deleted or renamed model `TrackedResourceAutoGenerated`
+  - Deleted or renamed model `VMInsightsOnboardingStatus`
+  - Deleted or renamed model `VoiceReceiverAutoGenerated`
+  - Deleted or renamed model `WebhookReceiverAutoGenerated`
+  - Deleted or renamed model `WorkspaceInfo`
+  - Method `ActivityLogsOperations.list` changed its parameter `select` from `positional_or_keyword` to `keyword_only`
+  - Method `BaselinesOperations.list` changed its parameter `metricnames` from `positional_or_keyword` to `keyword_only`
+  - Method `BaselinesOperations.list` changed its parameter `metricnamespace` from `positional_or_keyword` to `keyword_only`
+  - Method `BaselinesOperations.list` changed its parameter `timespan` from `positional_or_keyword` to `keyword_only`
+  - Method `BaselinesOperations.list` changed its parameter `interval` from `positional_or_keyword` to `keyword_only`
+  - Method `BaselinesOperations.list` changed its parameter `aggregation` from `positional_or_keyword` to `keyword_only`
+  - Method `BaselinesOperations.list` changed its parameter `sensitivities` from `positional_or_keyword` to `keyword_only`
+  - Method `BaselinesOperations.list` changed its parameter `result_type` from `positional_or_keyword` to `keyword_only`
+  - Method `DataCollectionRulesOperations.delete` parameter `delete_associations` changed default value from `bool` to `none`
+  - Method `DataCollectionRulesOperations.delete` changed its parameter `delete_associations` from `positional_or_keyword` to `keyword_only`
+  - Method `DiagnosticSettingsOperations.create_or_update` deleted or renamed its parameter `name` of kind `positional_or_keyword`
+  - Method `DiagnosticSettingsOperations.get` deleted or renamed its parameter `name` of kind `positional_or_keyword`
+  - Deleted or renamed method `DiagnosticSettingsOperations.delete`
+  - Deleted or renamed method `DiagnosticSettingsOperations.list`
+  - Method `MetricDefinitionsOperations.list` changed its parameter `metricnamespace` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricDefinitionsOperations.list_at_subscription_scope` changed its parameter `region` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricDefinitionsOperations.list_at_subscription_scope` changed its parameter `metricnamespace` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricNamespacesOperations.list` changed its parameter `start_time` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list` changed its parameter `timespan` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list` changed its parameter `interval` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list` changed its parameter `metricnames` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list` changed its parameter `aggregation` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list` changed its parameter `result_type` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list` changed its parameter `metricnamespace` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list` changed its parameter `auto_adjust_timegrain` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list` changed its parameter `validate_dimensions` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list` changed its parameter `rollupby` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope` changed its parameter `region` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope` changed its parameter `timespan` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope` changed its parameter `interval` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope` changed its parameter `metricnames` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope` changed its parameter `aggregation` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope` changed its parameter `result_type` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope` changed its parameter `metricnamespace` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope` changed its parameter `auto_adjust_timegrain` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope` changed its parameter `validate_dimensions` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope` changed its parameter `rollupby` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope_post` changed its parameter `region` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope_post` changed its parameter `timespan` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope_post` changed its parameter `interval` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope_post` changed its parameter `metricnames` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope_post` changed its parameter `aggregation` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope_post` changed its parameter `orderby` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope_post` changed its parameter `result_type` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope_post` changed its parameter `metricnamespace` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope_post` changed its parameter `auto_adjust_timegrain` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope_post` changed its parameter `validate_dimensions` from `positional_or_keyword` to `keyword_only`
+  - Method `MetricsOperations.list_at_subscription_scope_post` changed its parameter `rollupby` from `positional_or_keyword` to `keyword_only`
+  - Method `PredictiveMetricOperations.get` changed its parameter `timespan` from `positional_or_keyword` to `keyword_only`
+  - Method `PredictiveMetricOperations.get` changed its parameter `interval` from `positional_or_keyword` to `keyword_only`
+  - Method `PredictiveMetricOperations.get` changed its parameter `metric_namespace` from `positional_or_keyword` to `keyword_only`
+  - Method `PredictiveMetricOperations.get` changed its parameter `metric_name` from `positional_or_keyword` to `keyword_only`
+  - Method `PredictiveMetricOperations.get` changed its parameter `aggregation` from `positional_or_keyword` to `keyword_only`
+  - Method `TenantActivityLogsOperations.list` changed its parameter `select` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed model `DiagnosticSettingsCategoryOperations`
+  - Deleted or renamed model `Operations`
+  - Deleted or renamed model `TenantActionGroupsOperations`
+  - Deleted or renamed model `VMInsightsOperations`
+  - Method `MetricsOperations.list_at_subscription_scope_post` re-ordered its parameters from `['self', 'region', 'timespan', 'interval', 'metricnames', 'aggregation', 'top', 'orderby', 'filter', 'result_type', 'metricnamespace', 'auto_adjust_timegrain', 'validate_dimensions', 'rollupby', 'body', 'kwargs']` to `['self', 'body', 'region', 'timespan', 'interval', 'metricnames', 'aggregation', 'top', 'orderby', 'filter', 'result_type', 'metricnamespace', 'auto_adjust_timegrain', 'validate_dimensions', 'rollupby', 'kwargs']`
 
 ## 8.0.0b2 (2025-11-16)
 
