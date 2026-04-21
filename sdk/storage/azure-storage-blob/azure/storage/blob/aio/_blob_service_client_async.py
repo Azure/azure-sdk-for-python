@@ -118,7 +118,7 @@ class BlobServiceClient(  # type: ignore [misc]
         account_url: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None, 
+        ] = None,
         **kwargs: Any,
     ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
@@ -162,7 +162,7 @@ class BlobServiceClient(  # type: ignore [misc]
         conn_str: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None, 
+        ] = None,
         **kwargs: Any,
     ) -> Self:
         """Create BlobServiceClient from a Connection String.

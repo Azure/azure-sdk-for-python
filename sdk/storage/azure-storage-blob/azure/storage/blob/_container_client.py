@@ -124,7 +124,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         container_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None, 
+        ] = None,
         **kwargs: Any,
     ) -> None:
         parsed_url, sas_token = _parse_url(account_url=account_url, container_name=container_name)
@@ -168,7 +168,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         container_url: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None, 
+        ] = None,
         **kwargs: Any,
     ) -> Self:
         """Create ContainerClient from a container url.
@@ -224,7 +224,7 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pyli
         container_name: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]
-        ] = None, 
+        ] = None,
         **kwargs: Any,
     ) -> Self:
         """Create ContainerClient from a Connection String.

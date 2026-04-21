@@ -27,7 +27,7 @@ async def upload_blob_to_url(
     data: Union[Iterable[AnyStr], IO[AnyStr]],
     credential: Optional[
         Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-    ] = None, 
+    ] = None,
     **kwargs: Any,
 ) -> Dict[str, Any]:
     """Upload data to a given URL
@@ -94,7 +94,7 @@ async def download_blob_from_url(
     output: str,
     credential: Optional[
         Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-    ] = None, 
+    ] = None,
     **kwargs: Any,
 ) -> None:
     """Download the contents of a blob to a local file or stream.

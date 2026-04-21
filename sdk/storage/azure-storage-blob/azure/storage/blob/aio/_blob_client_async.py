@@ -183,7 +183,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None, 
+        ] = None,
         **kwargs: Any,
     ) -> None:
         kwargs["retry_policy"] = kwargs.get("retry_policy") or ExponentialRetry(**kwargs)
@@ -243,7 +243,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         blob_url: str,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None, 
+        ] = None,
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         **kwargs: Any,
     ) -> Self:
@@ -299,7 +299,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         snapshot: Optional[Union[str, Dict[str, Any]]] = None,
         credential: Optional[
             Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "AsyncTokenCredential"]
-        ] = None, 
+        ] = None,
         **kwargs: Any,
     ) -> Self:
         """Create BlobClient from a Connection String.
@@ -822,7 +822,7 @@ class BlobClient(  # type: ignore [misc] # pylint: disable=too-many-public-metho
         blob_format: Optional[Union["DelimitedTextDialect", "DelimitedJsonDialect", "QuickQueryDialect", str]] = None,
         output_format: Optional[
             Union["DelimitedTextDialect", "DelimitedJsonDialect", "QuickQueryDialect", List["ArrowDialect"], str]
-        ] = None, 
+        ] = None,
         lease: Optional[Union[BlobLeaseClient, str]] = None,
         if_modified_since: Optional[datetime] = None,
         if_unmodified_since: Optional[datetime] = None,
