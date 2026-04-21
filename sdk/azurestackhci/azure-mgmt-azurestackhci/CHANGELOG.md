@@ -1,5 +1,9 @@
 # Release History
 
+## 8.1.0 (2026-04-12)
+
+tool can't generate changelog for this release, please update manually.
+
 ## 8.0.0 (2026-03-31)
 
 ### Features Added
