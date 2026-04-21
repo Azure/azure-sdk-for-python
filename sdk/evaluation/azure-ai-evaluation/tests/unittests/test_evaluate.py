@@ -2445,11 +2445,7 @@ class TestCalculateAoaiEvaluationSummary:
 
     def test_score_only_row_classified_as_passed(self):
         """Score-only evaluator (passed=None, status='completed') falls into else → passed."""
-        rows = [
-            self._make_row(
-                [self._make_result(name="similarity", passed=None, status="completed", score=0.85)]
-            )
-        ]
+        rows = [self._make_row([self._make_result(name="similarity", passed=None, status="completed", score=0.85)])]
         summary = _calculate_aoai_evaluation_summary(rows, logging.getLogger("test"), None)
         c = summary["result_counts"]
         assert c["total"] == 1
@@ -2484,19 +2480,28 @@ class TestGetMetricFromCriteria:
 
     def test_xpia_prefix_match_single_metric(self):
         """XPIA sub-metric variants match via prefix fallback."""
-        assert _get_metric_from_criteria("tc", "xpia_manipulated_content_result", ["xpia_manipulated_content"]) == "xpia_manipulated_content"
+        assert (
+            _get_metric_from_criteria("tc", "xpia_manipulated_content_result", ["xpia_manipulated_content"])
+            == "xpia_manipulated_content"
+        )
 
     def test_xpia_prefix_ordering_uses_longest_match(self):
         """With full indirect_attack metric list, longer metric names match before shorter ones."""
         full_list = ["xpia", "xpia_manipulated_content", "xpia_intrusion", "xpia_information_gathering"]
-        assert _get_metric_from_criteria("indirect_attack", "xpia_manipulated_content_result", full_list) == "xpia_manipulated_content"
+        assert (
+            _get_metric_from_criteria("indirect_attack", "xpia_manipulated_content_result", full_list)
+            == "xpia_manipulated_content"
+        )
         assert _get_metric_from_criteria("indirect_attack", "xpia_intrusion_reason", full_list) == "xpia_intrusion"
         assert _get_metric_from_criteria("indirect_attack", "xpia_result", full_list) == "xpia"
 
     def test_xpia_direct_match_in_full_list(self):
         """XPIA sub-metric names that are in the list should direct-match."""
         full_list = ["xpia", "xpia_manipulated_content", "xpia_intrusion", "xpia_information_gathering"]
-        assert _get_metric_from_criteria("indirect_attack", "xpia_manipulated_content", full_list) == "xpia_manipulated_content"
+        assert (
+            _get_metric_from_criteria("indirect_attack", "xpia_manipulated_content", full_list)
+            == "xpia_manipulated_content"
+        )
         assert _get_metric_from_criteria("indirect_attack", "xpia", full_list) == "xpia"
 
     def test_fallback_to_criteria_name(self):
