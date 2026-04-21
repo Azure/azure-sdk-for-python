@@ -25,6 +25,25 @@ def _safe_tqdm_write(msg: str) -> None:
         tqdm.write(msg.encode(sys.stdout.encoding or "utf-8", errors="replace").decode(sys.stdout.encoding or "utf-8"))
 
 
+def _is_affected_pyrit_version() -> bool:
+    """Return True if the installed PyRIT version contains the bugs these patches work around.
+
+    The bugs targeted by ``_patch_set_system_prompt_for_prepended_conversations`` and
+    ``_patch_red_teaming_attack_duplicate_message`` were introduced in PyRIT 0.11. If a future
+    PyRIT release fixes the bugs (or changes the method semantics/signature), we should not silently
+    keep patching — that would risk masking a real fix or breaking on a renamed/refactored method.
+    """
+    try:
+        from importlib.metadata import version as _pkg_version, PackageNotFoundError
+    except ImportError:  # pragma: no cover - importlib.metadata is stdlib on 3.8+
+        return False
+    try:
+        installed = _pkg_version("pyrit")
+    except PackageNotFoundError:
+        return False
+    return installed.startswith("0.11.")
+
+
 def _patch_set_system_prompt_for_prepended_conversations(target, logger) -> None:
     """Patch ``set_system_prompt`` on a PromptChatTarget instance to tolerate existing conversations.
 
@@ -41,6 +60,8 @@ def _patch_set_system_prompt_for_prepended_conversations(target, logger) -> None
     inserts the system message into memory even when prior messages exist, instead of raising.
     Scope is limited to the instance passed in (no global monkey-patch of PyRIT classes).
     """
+    if not _is_affected_pyrit_version():
+        return
     try:
         from pyrit.models import MessagePiece
     except ImportError:
@@ -91,6 +112,8 @@ def _patch_red_teaming_attack_duplicate_message() -> None:
     This patch wraps the method so the returned message always carries fresh piece ids.
     The patch is idempotent and applied once at SDK module load.
     """
+    if not _is_affected_pyrit_version():
+        return
     try:
         from pyrit.executor.attack.multi_turn.red_teaming import RedTeamingAttack
     except ImportError:
