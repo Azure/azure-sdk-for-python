@@ -3,10 +3,9 @@ from urllib.parse import urlparse
 
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
-from azure.mgmt.authorization import AuthorizationManagementClient
-from azure.mgmt.authorization.models import RoleAssignmentCreateParameters
+from azure.mgmt.authorization import AuthorizationManagementClient, models as authorization_models
 from azure.mgmt.resource import ResourceManagementClient
-from azure.ai.projects.models import AgentDetails, AgentVersionDetails
+from azure.ai.projects.models import AgentVersionDetails
 
 AZURE_AI_USER_ROLE_DEFINITION_GUID = "53ca6127-db72-4b80-b1b0-d745d6d5456d"
 
@@ -72,11 +71,12 @@ def _ensure_agent_identity_rbac_with_role_id(
     except ResourceNotFoundError:
         pass
 
-    parameters = RoleAssignmentCreateParameters(
+    properties = authorization_models.RoleAssignmentProperties(
         role_definition_id=role_definition_id,
         principal_id=principal_id,
-        principal_type="ServicePrincipal",
+        principal_type=authorization_models.PrincipalType.SERVICE_PRINCIPAL,
     )
+    parameters = authorization_models.RoleAssignmentCreateParameters(properties=properties)
     try:
         authorization_client.role_assignments.create(scope_resource_id, role_assignment_name, parameters)
         print(f"Assigned Azure AI User role to principal {principal_id} at scope {scope_resource_id}.")
