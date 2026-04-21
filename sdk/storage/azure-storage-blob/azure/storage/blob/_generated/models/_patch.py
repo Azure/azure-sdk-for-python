@@ -158,7 +158,9 @@ def _patched_deserialize(cls, data: Any, content_type: Optional[str] = None) -> 
     """
     if content_type and "xml" in content_type.lower():
         if isinstance(data, (bytes, str)):
-            data = ET.fromstring(data)
+            parser = ET.XMLParser()
+            parser.feed(data if isinstance(data, str) else data.decode("utf-8"))
+            data = parser.close()
         return cls(data)
     return _deserialize(cls, data)
 
@@ -176,7 +178,9 @@ def _patched_from_dict(
     """
     if content_type and "xml" in content_type.lower():
         if isinstance(data, (bytes, str)):
-            data = ET.fromstring(data)
+            parser = ET.XMLParser()
+            parser.feed(data if isinstance(data, str) else data.decode("utf-8"))
+            data = parser.close()
         return cls(data)
     return _deserialize(cls, data)
 
