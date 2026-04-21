@@ -3,9 +3,13 @@ parameters:
 
 steps:
   # Using built-in Azure DevOps tasks can result in auto-retrieval of packages like pip from pypi.
-  # Override the PIP_INDEX_URL ASAP so that these auto-restores do not fail in isolated networks.
+  # Set a default PIP_INDEX_URL ASAP so that these auto-restores do not fail in isolated networks.
   - pwsh: |
-      Write-Host "##vso[task.setvariable variable=PIP_INDEX_URL]https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+      if (-not $env:PIP_INDEX_URL) {
+        Write-Host "##vso[task.setvariable variable=PIP_INDEX_URL]https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+      } else {
+        Write-Host "PIP_INDEX_URL is already set; preserving existing value."
+      }
     displayName: 'Use Public Feed'
 
   - task: UsePythonVersion@0
