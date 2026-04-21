@@ -97,7 +97,8 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
 
     _PROMPTY_FILE_NO_QUERY = "groundedness_without_query.prompty"
     _PROMPTY_FILE_WITH_QUERY = "groundedness_with_query.prompty"
-    _RESULT_KEY = "groundedness"
+    _KEY_PREFIX = "groundedness"
+    _RESULT_KEY = f"{_KEY_PREFIX}_score"
     _OPTIONAL_PARAMS = ["query"]
     _SUPPORTED_TOOLS = ["file_search"]
 
@@ -131,6 +132,7 @@ class GroundednessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
+            key_prefix=self._KEY_PREFIX,
             threshold=threshold,
             credential=credential,
             _higher_is_better=self._higher_is_better,

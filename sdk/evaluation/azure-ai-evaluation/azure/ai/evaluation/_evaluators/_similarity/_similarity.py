@@ -75,7 +75,8 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
     # Constants must be defined within eval's directory to be save/loadable
 
     _PROMPTY_FILE = "similarity.prompty"
-    _RESULT_KEY = "similarity"
+    _KEY_PREFIX = "similarity"
+    _RESULT_KEY = f"{_KEY_PREFIX}_score"
 
     id = "azureai://built-in/evaluators/similarity"
     """Evaluator identifier, experimental and to be used only with evaluation in cloud."""
@@ -90,6 +91,7 @@ class SimilarityEvaluator(PromptyEvaluatorBase):
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
+            key_prefix=self._KEY_PREFIX,
             threshold=threshold,
             credential=credential,
             _higher_is_better=self._higher_is_better,

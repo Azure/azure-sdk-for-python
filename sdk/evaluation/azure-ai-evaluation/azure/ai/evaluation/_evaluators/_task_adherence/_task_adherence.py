@@ -63,7 +63,8 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "task_adherence.prompty"
-    _RESULT_KEY = "task_adherence"
+    _KEY_PREFIX = "task_adherence"
+    _RESULT_KEY = f"{_KEY_PREFIX}_score"
     _OPTIONAL_PARAMS = ["tool_definitions"]
 
     _DEFAULT_TASK_ADHERENCE_SCORE = 0
@@ -86,6 +87,7 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
+            key_prefix=self._KEY_PREFIX,
             credential=credential,
             _higher_is_better=True,
             **kwargs,
@@ -253,12 +255,12 @@ class TaskAdherenceEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             llm_properties.update(self._get_token_metadata(prompty_output_dict))
 
             return {
-                f"{self._result_key}_score": score,
-                f"{self._result_key}_passed": score_result == "pass",
-                f"{self._result_key}_reason": reasoning,
-                f"{self._result_key}_status": "completed",
-                f"{self._result_key}_threshold": self._threshold,
-                f"{self._result_key}_properties": llm_properties,
+                self._result_key: score,
+                f"{self._key_prefix}_passed": score_result == "pass",
+                f"{self._key_prefix}_reason": reasoning,
+                f"{self._key_prefix}_status": "completed",
+                f"{self._key_prefix}_threshold": self._threshold,
+                f"{self._key_prefix}_properties": llm_properties,
             }
 
         raise EvaluationException(

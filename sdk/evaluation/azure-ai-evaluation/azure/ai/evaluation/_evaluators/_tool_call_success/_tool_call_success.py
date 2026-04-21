@@ -60,7 +60,8 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "tool_call_success.prompty"
-    _RESULT_KEY = "tool_call_success"
+    _KEY_PREFIX = "tool_call_success"
+    _RESULT_KEY = f"{_KEY_PREFIX}_score"
     _OPTIONAL_PARAMS = ["tool_definitions"]
 
     _validator: ValidatorInterface
@@ -85,6 +86,7 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
+            key_prefix=self._KEY_PREFIX,
             threshold=1,
             credential=credential,
             _higher_is_better=True,
@@ -225,12 +227,12 @@ class _ToolCallSuccessEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             reason = llm_output.get("reason", "")
             llm_properties.update(self._get_token_metadata(prompty_output_dict))
             return {
-                f"{self._result_key}_score": score,
-                f"{self._result_key}_passed": success_result == "pass",
-                f"{self._result_key}_reason": reason,
-                f"{self._result_key}_status": "completed",
-                f"{self._result_key}_threshold": self._threshold,
-                f"{self._result_key}_properties": llm_properties,
+                self._result_key: score,
+                f"{self._key_prefix}_passed": success_result == "pass",
+                f"{self._key_prefix}_reason": reason,
+                f"{self._key_prefix}_status": "completed",
+                f"{self._key_prefix}_threshold": self._threshold,
+                f"{self._key_prefix}_properties": llm_properties,
             }
         raise EvaluationException(
             message="Evaluator returned invalid output.",

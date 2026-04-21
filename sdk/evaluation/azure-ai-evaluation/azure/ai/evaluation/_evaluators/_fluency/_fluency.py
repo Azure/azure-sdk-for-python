@@ -69,7 +69,8 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
     """
 
     _PROMPTY_FILE = "fluency.prompty"
-    _RESULT_KEY = "fluency"
+    _KEY_PREFIX = "fluency"
+    _RESULT_KEY = f"{_KEY_PREFIX}_score"
 
     _validator: ValidatorInterface
 
@@ -93,6 +94,7 @@ class FluencyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
             model_config=model_config,
             prompty_file=prompty_path,
             result_key=self._RESULT_KEY,
+            key_prefix=self._KEY_PREFIX,
             threshold=threshold,
             credential=credential,
             _higher_is_better=self._higher_is_better,
