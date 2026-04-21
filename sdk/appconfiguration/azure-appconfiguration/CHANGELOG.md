@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fixed a crash when the caller lacks data plane roles. The service returns HTTP 403 with an empty response body; previously this caused a `JSONDecodeError` during error deserialization. Now 403 is mapped to `HttpResponseError` and raised immediately, and a defensive `try/except` guards against other unmapped status codes that may also return empty bodies.
+
 ### Other Changes
 
 ## 1.8.0 (2026-01-26)
