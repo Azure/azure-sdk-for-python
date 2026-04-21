@@ -28,6 +28,10 @@ from copilot.tools import Tool, ToolResult
 
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
+# Canary — proves which version of _toolbox.py is deployed.
+_TOOLBOX_BUILD_TAG = "toolbox-v2-diag-headers"
+logger.info("Toolbox module loaded: %s", _TOOLBOX_BUILD_TAG)
+
 _FOUNDRY_TOOLBOX_FEATURE_HEADER = "Toolboxes=V1Preview"
 _FOUNDRY_TOOLBOX_SERVER_KEY = "foundry-toolbox"
 _FOUNDRY_SCOPE = "https://ai.azure.com/.default"
@@ -92,7 +96,8 @@ def discover_mcp_servers(
         headers = server.setdefault("headers", {})
         if "Authorization" not in headers:
             headers["_auto_auth"] = True
-        url = server.get("url", "")
+        url = server.get("url", "").strip()
+        server["url"] = url
         if "/toolboxes/" in url and "Foundry-Features" not in headers:
             headers["Foundry-Features"] = _FOUNDRY_TOOLBOX_FEATURE_HEADER
 
@@ -179,6 +184,13 @@ class McpBridge:
 
         :returns: The server name from the MCP ``initialize`` response.
         """
+        auth_method = "credential" if self._credential else "static-header"
+        has_auth = "Authorization" in self._headers
+        logger.info(
+            "MCP initialize: endpoint=%r (len=%d) auth_method=%s has_auth=%s",
+            self._endpoint, len(self._endpoint), auth_method, has_auth,
+        )
+
         async with httpx.AsyncClient(timeout=60.0) as client:
             resp = await client.post(
                 self._endpoint,
@@ -197,6 +209,12 @@ class McpBridge:
                     },
                 },
             )
+            diag_keys = ("x-ms-request-id", "x-ms-client-request-id", "x-request-id", "apim-request-id")
+            diag = {k: resp.headers[k] for k in diag_keys if k in resp.headers}
+            logger.info(
+                "MCP initialize response: status=%d diagnostics=%s",
+                resp.status_code, diag,
+            )
             resp.raise_for_status()
             data = resp.json()
             self._session_id = resp.headers.get("mcp-session-id")
@@ -214,10 +232,14 @@ class McpBridge:
 
     async def list_tools(self) -> List[Dict[str, Any]]:
         """Call ``tools/list`` and return the tools array."""
+        req_headers = self._request_headers()
+        auth_method = "credential" if self._credential else "static-header"
+        has_auth = "Authorization" in req_headers
+
         async with httpx.AsyncClient(timeout=60.0) as client:
             resp = await client.post(
                 self._endpoint,
-                headers=self._request_headers(),
+                headers=req_headers,
                 json={
                     "jsonrpc": "2.0",
                     "id": self._next_id(),
@@ -225,16 +247,32 @@ class McpBridge:
                     "params": {},
                 },
             )
+            # Capture diagnostic headers before raising
+            diag_keys = ("x-ms-request-id", "x-ms-client-request-id", "x-request-id", "apim-request-id")
+            diag = {k: resp.headers[k] for k in diag_keys if k in resp.headers}
+            logger.info(
+                "MCP tools/list response: status=%d auth_method=%s has_auth=%s "
+                "session_id=%s diagnostics=%s",
+                resp.status_code, auth_method, has_auth,
+                self._session_id, diag,
+            )
             resp.raise_for_status()
             data = resp.json()
             if "error" in data:
-                logger.warning("MCP tools/list error: %s", data["error"])
+                logger.warning("MCP tools/list error: %s diagnostics=%s", data["error"], diag)
             tools = data.get("result", {}).get("tools", [])
             if not tools:
                 logger.warning(
-                    "MCP tools/list returned 0 tools. Response keys: %s, result keys: %s",
+                    "MCP tools/list returned 0 tools. url=%s "
+                    "Response keys: %s, result keys: %s, "
+                    "full_response=%s, all_response_headers=%s, "
+                    "diagnostics=%s",
+                    self._endpoint,
                     list(data.keys()),
                     list(data.get("result", {}).keys()),
+                    json.dumps(data),
+                    dict(resp.headers),
+                    diag,
                 )
             return tools
 
@@ -411,6 +449,7 @@ async def connect_toolbox(
     """
     h = dict(headers or {})
     h.setdefault("Content-Type", "application/json")
+    endpoint = endpoint.strip()
 
     # Auto-inject auth from credential if not already set
     if "Authorization" not in h and credential is not None:
