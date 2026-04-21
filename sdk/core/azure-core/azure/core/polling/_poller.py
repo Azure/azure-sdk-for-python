@@ -30,6 +30,9 @@ from typing import TypeVar, Generic, Any, Callable, Optional, Tuple, List
 from azure.core.exceptions import AzureError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.common import with_current_context
+
+
+
 from ._utils import _encode_continuation_token, _decode_continuation_token
 
 
@@ -42,8 +45,7 @@ _LOGGER = logging.getLogger(__name__)
 class PollingMethod(Generic[PollingReturnType_co]):
     """ABC class for polling method."""
 
-    def initialize(
-        self,
+    def initialize(self,
         client: Any,
         initial_response: Any,
         deserialization_callback: DeserializationCallbackType,

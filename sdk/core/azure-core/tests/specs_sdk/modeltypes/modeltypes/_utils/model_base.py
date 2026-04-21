@@ -25,6 +25,8 @@ import xml.etree.ElementTree as ET
 from collections.abc import MutableMapping
 from typing_extensions import Self
 import isodate
+
+
 from azure.core.exceptions import DeserializationError
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline import PipelineResponse
@@ -42,14 +44,17 @@ _T = typing.TypeVar("_T")
 TYPE_HANDLER_REGISTRY = TypeHandlerRegistry()
 
 
-def _timedelta_as_isostr(td: timedelta) -> str:
-    """Converts a datetime.timedelta object into an ISO 8601 formatted string, e.g. 'P4DT12H30M05S'
+def _timedelta_as_isostr(td: timedelta):
+    """Converts a datetime.timedelta object into an ISO 8601 formatted string, e.g. 'P4DT12H30M05S' ISO 8601 formatted string, e.g. 'P4DT12H30M05S' , e.g. 'P4DT12H30M05S' , e.g. 'P4DT12H30M05S' , e.g. 'P4DT12H30M05S' , e.g. 'P4DT12H30M05S' , e.g. 'P4DT12H30M05S' , e.g. 'P4DT12H30M05S' , e.g. 'P4DT12H30M05S' , e.g. 'P4DT12H30M05S'
+    ISO 8601 formatted string, e.g. 'P4DT12H30M05S'
+    ISO 8601 formatted string, e.g. 'P4DT12H30M05S'
 
-    Function adapted from the Tin Can Python project: https://github.com/RusticiSoftware/TinCanPython
 
-    :param timedelta td: The timedelta to convert
-    :rtype: str
-    :return: ISO8601 version of this timedelta
+       Function adapted from the Tin Can Python project: https://github.com/RusticiSoftware/TinCanPython
+
+       :param timedelta td: The timedelta to convert
+       :rtype: str
+       :return: ISO8601 version of this timedelta
     """
 
     # Split seconds to larger units
