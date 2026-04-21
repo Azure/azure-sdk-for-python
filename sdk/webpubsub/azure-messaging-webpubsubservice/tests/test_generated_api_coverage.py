@@ -15,7 +15,7 @@ class TestGeneratedApiCoverage(WebpubsubTest):
 
     APIs that require a live WebSocket connection (send_to_connection, close_connection,
     add/remove_connection_to/from_group, grant/revoke_permission, add_user_to_group) are covered in
-    test_live_coverage.py instead.
+    test_live_api_coverage.py instead.
     """
 
     @WebpubsubPowerShellPreparer()
