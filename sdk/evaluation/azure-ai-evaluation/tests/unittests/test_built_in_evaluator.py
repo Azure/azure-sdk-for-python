@@ -70,7 +70,7 @@ class TestBuiltInEvaluators:
             ground_truth="Tokyo is Japan's capital, known for its blend of traditional culture and technological advancements.",
         )
         assert result["similarity_score"] == 1
-        assert len(result) == 6
+        assert len(result) == 8
         # Verify all expected keys are present
         assert set(result.keys()) == {
             "similarity_score",
@@ -79,6 +79,9 @@ class TestBuiltInEvaluators:
             "similarity_status",
             "similarity_threshold",
             "similarity_properties",
+            # Backward-compatibility keys
+            "similarity_result",
+            "similarity",
         }
 
     def test_retrieval_evaluator_keys(self, mock_model_config):

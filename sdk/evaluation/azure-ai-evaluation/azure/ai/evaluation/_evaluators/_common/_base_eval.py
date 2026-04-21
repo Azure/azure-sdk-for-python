@@ -34,6 +34,7 @@ from azure.ai.evaluation._exceptions import (
 from azure.ai.evaluation._common.utils import remove_optional_singletons
 from azure.ai.evaluation._constants import (
     _AggregationType,
+    EVALUATION_PASS_FAIL_MAPPING,
 )
 from azure.ai.evaluation._model_configurations import Conversation
 from azure.ai.evaluation._common._experimental import experimental
@@ -648,6 +649,26 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                                 result[passed_key] = float(score_value) <= threshold_value
             except Exception as e:
                 logger.warning(f"Error calculating binary result: {e}")
+            # Backward-compatibility shim: emit legacy "{prefix}_result" (pass/fail string)
+            # alongside new "{prefix}_passed" (bool), and legacy "{prefix}" alongside
+            # new "{prefix}_score". TODO: remove once downstream consumers are migrated.
+            try:
+                for key in list(result.keys()):
+                    if key.endswith("_passed"):
+                        base_key = key[: -len("_passed")]
+                        legacy_result_key = f"{base_key}_result"
+                        if legacy_result_key not in result:
+                            passed_value = result[key]
+                            if isinstance(passed_value, bool):
+                                result[legacy_result_key] = EVALUATION_PASS_FAIL_MAPPING[passed_value]
+                            else:
+                                result[legacy_result_key] = passed_value
+                    elif key.endswith("_score"):
+                        base_key = key[: -len("_score")]
+                        if base_key and base_key not in result:
+                            result[base_key] = result[key]
+            except Exception as e:
+                logger.warning(f"Error adding backward-compatibility keys: {e}")
             per_turn_results.append(result)
         # Return results as-is if only one result was produced.
 
