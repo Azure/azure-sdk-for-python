@@ -55,13 +55,14 @@ class TextTranslationClient(ServiceClientGenerated):
 
     Combinations of endpoint and credential values:
 
-    - endpoint + AzureKeyCredential - custom domain translator endpoint
-    - endpoint + AzureKeyCredential + region - global translator endpoint with regional resource
-    - endpoint + TokenCredential - regional endpoint with token authentication
-    - endpoint + None - on-prem container (no authentication)
-    - AzureKeyCredential only - global translator endpoint with global Translator resource (uses default endpoint)
-    - TokenCredential only - global translator endpoint with token authentication (uses default endpoint)
-    - TokenCredential + region + resource_id - global translator endpoint with regional Translator resource
+    - (no args) - global endpoint, no auth (get_languages only)
+    - endpoint only - custom endpoint or container, no auth
+    - AzureKeyCredential + region - global endpoint with subscription key
+    - TokenCredential + audience - global endpoint with Cognitive Services token
+    - TokenCredential + resource_id - global endpoint with Entra ID (global resource)
+    - TokenCredential + region + resource_id - global endpoint with Entra ID (regional resource)
+    - endpoint + AzureKeyCredential - custom endpoint with subscription key
+    - endpoint + TokenCredential - custom endpoint with Entra ID
 
     :param endpoint: Supported Text Translation endpoints (protocol and hostname, for example:
      https://api.cognitive.microsofttranslator.com). Defaults to the global translator endpoint.
@@ -69,9 +70,9 @@ class TextTranslationClient(ServiceClientGenerated):
     :param credential: Credential used to authenticate with the Translator service. Optional for
      unauthenticated operations like get_languages.
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential or None
-    :param region: Azure region of the Translator resource, required when using global endpoint with regional resource.
+    :param region: Azure region of the Translator resource. Required for AzureKeyCredential, optional for Entra ID regional resources.
     :type region: str or None
-    :param resource_id: Azure resource ID, required with TokenCredential when using global endpoint with regional resource.
+    :param resource_id: Azure resource ID for Entra ID authentication. Required when using TokenCredential with global endpoint.
     :type resource_id: str or None
     :param audience: Scopes of the credentials.
     :type audience: str or None
@@ -91,8 +92,9 @@ class TextTranslationClient(ServiceClientGenerated):
         api_version: str = "2026-06-06",
         **kwargs: Any,
     ) -> None:
-        if resource_id and not region:
-            raise ValueError("'region' must be provided when 'resource_id' is specified.")
+        # Validate credential + region/resource_id combinations
+        if region and credential is not None and not isinstance(credential, AzureKeyCredential) and not resource_id:
+            raise ValueError("'resource_id' must be provided when using TokenCredential with 'region'.")
 
         translation_endpoint = get_translation_endpoint(endpoint, api_version)
 
