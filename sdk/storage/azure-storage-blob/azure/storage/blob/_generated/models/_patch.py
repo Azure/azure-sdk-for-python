@@ -211,7 +211,7 @@ _Model.enable_additional_properties_sending = classmethod(_patched_enable_additi
 _Model.is_xml_model = classmethod(_patched_is_xml_model)
 
 
-__all__: List[str] = []
+__all__: List[str] = ["_Model"]
 
 
 def patch_sdk():
