@@ -8,11 +8,9 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-import datetime
-import xml.etree.ElementTree as ET
-from typing import Any, Callable, List, Optional
+from typing import List
 
-from .._utils.model_base import Model as _Model, rest_field, _MyMutableMapping, _RestField, _deserialize
+from .._utils.model_base import Model as _Model, _MyMutableMapping, _RestField
 
 
 def _patched_getattr(self, name):
@@ -99,7 +97,7 @@ _MyMutableMapping.__getattribute__ = _patched_getattribute
 _Model.__new__ = _patched_new
 
 
-__all__: List[str] = ["_Model"]
+__all__: List[str] = []
 
 
 def patch_sdk():
