@@ -18,7 +18,6 @@ jobs:
         "JobId=azsdk-${{ github.run_id }}-${{ github.run_number }}-${{ github.run_attempt }}",
       ]
     if: |
-      toJson(github.event.check_run.pull_requests) != '[]' &&
       github.event.check_run.check_suite.app.name == 'Azure Pipelines' && (
       contains(github.event.check_run.name, 'Build Build') ||
       contains(github.event.check_run.name, 'Build Analyze') ||
@@ -32,5 +31,7 @@ jobs:
       - name: Create APIView Comment on PR
         run: |
           . "eng/common/scripts/Helpers/ApiView-Helpers.ps1"
-          Set-ApiViewCommentForRelatedIssues -HeadCommitish ${{ github.event.check_run.head_sha }} -AuthToken ${{ secrets.GITHUB_TOKEN }}
+          Set-ApiViewCommentForRelatedIssues -HeadCommitish ${{ github.event.check_run.head_sha }} -AuthToken ${{ secrets.GITHUB_TOKEN }} -GitHubActionRunUrl $env:GITHUB_ACTION_RUN_URL
         shell: pwsh
+        env:
+          GITHUB_ACTION_RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

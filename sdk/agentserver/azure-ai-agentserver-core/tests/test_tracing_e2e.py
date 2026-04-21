@@ -43,7 +43,7 @@ _RESPONSE_ID_ATTR = "gen_ai.response.id"
 def _flush_provider():
     """Force-flush all span processors so live exporters send data to App Insights.
 
-    ``AgentServerHost.__init__`` calls ``configure_tracing()`` which sets up
+    ``AgentServerHost.__init__`` calls ``configure_observability()`` which sets up
     the global ``TracerProvider`` with the Azure Monitor exporter.  We just
     flush whatever the current global provider is.
     """

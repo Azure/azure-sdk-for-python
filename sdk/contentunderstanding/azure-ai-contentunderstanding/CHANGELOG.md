@@ -1,5 +1,10 @@
 # Release History
 
+## 1.1.0 (2026-04-20)
+
+### Features Added
+- Added `usage` property on `AnalyzeLROPoller` and `AnalyzeAsyncLROPoller` to surface billing and token consumption details (`UsageDetails`) returned by the REST API.
+
 ## 1.0.1 (2026-03-06)
 
 ### Bugs Fixed
