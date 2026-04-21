@@ -176,6 +176,13 @@ class verifytypes(Check):
 
                 command = get_pip_command(python_executable) + ["install", ".", "--force-reinstall"]
 
+                # When using uv, add --no-sources to ignore [tool.uv.sources] relative paths
+                # that can't resolve in a sparse checkout, and --python to target the correct venv.
+                if command[0] == "uv":
+                    command += ["--no-sources"]
+                    if python_executable:
+                        command += ["--python", python_executable]
+
                 subprocess.check_call(command, stdout=subprocess.DEVNULL)
             finally:
                 os.chdir(cwd)  # allow temp dir to be deleted

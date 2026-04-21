@@ -17,33 +17,31 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Optional. The name of the model deployment to use for evaluation.
+    2) FOUNDRY_MODEL_NAME - Optional. The name of the model deployment to use for evaluation.
 
 """
 
 import os
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
-from azure.ai.projects.models import EvaluatorCategory, EvaluatorDefinitionType
+import time
+from pprint import pprint
 
+from dotenv import load_dotenv
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
     SourceFileContentContent,
 )
 from openai.types.eval_create_params import DataSourceConfigCustom
-
-import time
-from pprint import pprint
-
-from dotenv import load_dotenv
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
+from azure.ai.projects.models import TestingCriterionAzureAIEvaluator, EvaluatorCategory, EvaluatorDefinitionType
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME")
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME")
 
 with (
     DefaultAzureCredential() as credential,
@@ -100,38 +98,36 @@ with (
     )
 
     data_source_config = DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string"},
-                    "response": {"type": "string"},
-                    "ground_truth": {"type": "string"},
-                },
-                "required": [],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "query": {"type": "string"},
+                "response": {"type": "string"},
+                "ground_truth": {"type": "string"},
             },
-            "include_sample_schema": True,
-        }
+            "required": [],
+        },
+        include_sample_schema=True,
     )
 
     testing_criteria = [
-        {
-            "type": "azure_ai_evaluator",
-            "name": "my_custom_evaluator_code",
-            "evaluator_name": "my_custom_evaluator_code",
-            "initialization_parameters": {
+        TestingCriterionAzureAIEvaluator(
+            type="azure_ai_evaluator",
+            name="my_custom_evaluator_code",
+            evaluator_name="my_custom_evaluator_code",
+            initialization_parameters={
                 "deployment_name": f"{model_deployment_name}",
                 "pass_threshold": 0.5,
             },
-        }
+        )
     ]
 
     print("Creating evaluation")
     eval_object = client.evals.create(
         name="label model test with inline data",
         data_source_config=data_source_config,
-        testing_criteria=testing_criteria,  # type: ignore
+        testing_criteria=testing_criteria,
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
@@ -189,7 +185,7 @@ with (
 
     while True:
         run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-        if run.status == "completed" or run.status == "failed":
+        if run.status in ("completed", "failed"):
             output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
             pprint(output_items)
             print(f"Evaluation run Report URL: {run.report_url}")
