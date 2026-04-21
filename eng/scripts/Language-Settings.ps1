@@ -242,8 +242,12 @@ function IsPythonPackageVersionPublished($pkgId, $pkgVersion)
     }
 
     $pipOutput = pip $pipArgs 2>&1
+    $pipExitCode = $LASTEXITCODE
+    # Reset $LASTEXITCODE so a non-zero pip exit code doesn't leak out and cause
+    # the PowerShell ADO task to report failure after the script finishes.
+    $global:LASTEXITCODE = 0
 
-    if ($LASTEXITCODE -eq 0)
+    if ($pipExitCode -eq 0)
     {
       Write-Host "Package $pkgId==$pkgVersion was found on the package index."
       return $True
