@@ -188,7 +188,7 @@ Provide a summary:
 
 > **⚠️ REQUIRED when a GitHub issue URL was provided:** You MUST create a pull request after validating fixes. This is not optional.
 
-Create a pull request with a descriptive title and body referencing the issue. Include what was fixed and confirm all Sphinx documentation checks pass.
+Create a pull request with a descriptive title and body referencing the issue. Include what was fixed and confirm all Sphinx documentation checks pass. The PR title should follow the format: "fix(<package-name>): Resolve sphinx errors (#<issue-number>)".
 
 ## Notes
 
