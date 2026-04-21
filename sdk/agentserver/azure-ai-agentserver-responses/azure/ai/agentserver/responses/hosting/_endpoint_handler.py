@@ -640,6 +640,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             hook=self._runtime_options.create_span_hook,
         )
         captured_error: Exception | None = None
+        scope_request_id = _get_scope_request_id(request)
 
         try:
             payload = await request.json()
@@ -649,7 +650,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             logger.error("Failed to parse/validate create request", exc_info=exc)
             captured_error = exc
             span.end(captured_error)
-            return _error_response(exc, self._session_headers())
+            return _error_response(exc, self._session_headers(), request_id=scope_request_id)
 
         try:
             response_id, agent_reference = _resolve_identity_fields(
@@ -660,7 +661,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             logger.error("Failed to resolve identity fields", exc_info=exc)
             captured_error = exc
             span.end(captured_error)
-            return _error_response(exc, self._session_headers())
+            return _error_response(exc, self._session_headers(), request_id=scope_request_id)
 
         # B39: Resolve session ID
         config_session_id = getattr(getattr(self._host, "config", None), "session_id", "") or ""

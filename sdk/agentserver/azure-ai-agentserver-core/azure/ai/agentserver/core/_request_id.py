@@ -55,13 +55,20 @@ class RequestIdMiddleware:
         request_id = _resolve_request_id(raw_headers)
 
         # Store in scope state for downstream access.
-        if "state" not in scope:
-            scope["state"] = {}
-        scope["state"][REQUEST_ID_STATE_KEY] = request_id
+        state = scope.get("state")
+        if not isinstance(state, MutableMapping):
+            state = {}
+            scope["state"] = state
+        state[REQUEST_ID_STATE_KEY] = request_id
 
         async def _send_with_request_id(message: MutableMapping[str, Any]) -> None:
             if message["type"] == "http.response.start":
-                headers = list(message.get("headers", []))
+                # Filter any existing x-request-id to avoid duplicates, then add ours.
+                headers = [
+                    (name, value)
+                    for name, value in message.get("headers", [])
+                    if name.lower() != b"x-request-id"
+                ]
                 headers.append((b"x-request-id", request_id.encode()))
                 message = {**message, "headers": headers}
             await send(message)

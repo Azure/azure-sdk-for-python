@@ -300,7 +300,7 @@ def _api_error(
     :keyword param: Optional parameter name associated with the error.
     :keyword status_code: HTTP status code for the response.
     :keyword error_type: The error type category.
-    :keyword request_id: Resolved ``x-request-id`` value to embed in ``additional_info``.
+    :keyword request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
     :return: A JSONResponse containing the error payload.
     :rtype: JSONResponse
     """
@@ -317,7 +317,7 @@ def error_response(error: Exception, headers: dict[str, str], request_id: str | 
     :type error: Exception
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
-    :param request_id: Resolved ``x-request-id`` value to embed in ``additional_info``.
+    :param request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
     :type request_id: str | None
     :return: A JSONResponse with the appropriate status code and error payload.
     :rtype: JSONResponse
@@ -344,7 +344,7 @@ def not_found_response(
     :type response_id: str
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
-    :param request_id: Resolved ``x-request-id`` value to embed in ``additional_info``.
+    :param request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
     :type request_id: str | None
     :return: A 404 JSONResponse.
     :rtype: JSONResponse
@@ -370,7 +370,7 @@ def invalid_request_response(
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
     :keyword param: Optional parameter name associated with the error.
-    :keyword request_id: Resolved ``x-request-id`` value to embed in ``additional_info``.
+    :keyword request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
     :return: A 400 JSONResponse.
     :rtype: JSONResponse
     """
@@ -397,7 +397,7 @@ def invalid_parameters_response(
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
     :keyword param: Optional parameter name associated with the error.
-    :keyword request_id: Resolved ``x-request-id`` value to embed in ``additional_info``.
+    :keyword request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
     :return: A 400 JSONResponse.
     :rtype: JSONResponse
     """
@@ -422,7 +422,7 @@ def invalid_mode_response(
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
     :keyword param: Optional parameter name associated with the error.
-    :keyword request_id: Resolved ``x-request-id`` value to embed in ``additional_info``.
+    :keyword request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
     :return: A 400 JSONResponse.
     :rtype: JSONResponse
     """
@@ -441,7 +441,7 @@ def service_unavailable_response(
     :type message: str
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
-    :param request_id: Resolved ``x-request-id`` value to embed in ``additional_info``.
+    :param request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
     :type request_id: str | None
     :return: A 503 JSONResponse.
     :rtype: JSONResponse
@@ -466,7 +466,7 @@ def deleted_response(response_id: str, headers: dict[str, str], request_id: str 
     :type response_id: str
     :param headers: HTTP headers to include in the response.
     :type headers: dict[str, str]
-    :param request_id: Resolved ``x-request-id`` value to embed in ``additional_info``.
+    :param request_id: Resolved ``x-request-id`` value to embed in ``error.additionalInfo``.
     :type request_id: str | None
     :return: A 404 JSONResponse.
     :rtype: JSONResponse
@@ -489,7 +489,7 @@ def _enrich_error_payload(payload: dict[str, Any], request_id: str) -> None:
     if not isinstance(error, dict):
         return
     additional_info = error.get("additionalInfo")
-    if additional_info is None:
+    if not isinstance(additional_info, dict):
         additional_info = {}
         error["additionalInfo"] = additional_info
     if "request_id" not in additional_info:

@@ -723,7 +723,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         state.validator.validate_next(normalized)
         if state.bg_record is not None:
             state.bg_record.apply_event(normalized, state.handler_events)
-            if state.bg_record.subject is not None:
+            # Defer subject.publish for terminal events — the buffer-then-persist
+            # pattern may replace the terminal event on persistence failure.  The
+            # resolved terminal is published by _persist_and_resolve_terminal.
+            if state.bg_record.subject is not None and normalized.get("type") not in self._TERMINAL_SSE_TYPES:
                 await state.bg_record.subject.publish(normalized)
         return normalized
 
@@ -810,17 +813,33 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
             "response": storage_error_response.as_dict(),
         }
+
+        # Determine the sequence_number: reuse the original pending terminal's
+        # sequence_number (in-place replacement) to avoid gaps.
+        original_pending = state.pending_terminal
+        replacement_index = -1
+        replacement_seq = len(state.handler_events)
+        if original_pending is not None:
+            for idx, evt in enumerate(state.handler_events):
+                if evt is original_pending:
+                    replacement_index = idx
+                    replacement_seq = int(evt.get("sequence_number", idx))
+                    break
+
         coerced = _coerce_handler_event(replacement_event)
         replacement_normalized = _apply_stream_event_defaults(
             coerced,
             response_id=ctx.response_id,
             agent_reference=ctx.agent_reference,
             model=ctx.model,
-            sequence_number=len(state.handler_events),
+            sequence_number=replacement_seq,
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
         )
-        state.handler_events.append(replacement_normalized)
+        if replacement_index >= 0:
+            state.handler_events[replacement_index] = replacement_normalized
+        else:
+            state.handler_events.append(replacement_normalized)
         state.pending_terminal = replacement_normalized
         record.set_response_snapshot(storage_error_response)
         # Force status to failed — bypass transition_to since the record may
@@ -925,6 +944,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     record.persistence_failed = True
                     record.persistence_exception = persist_exc
                     self._apply_storage_error_replacement(ctx, state, record)
+
+        # Publish the resolved terminal event to the subject for replay subscribers.
+        # This is deferred from _normalize_and_append to ensure subscribers see the
+        # correct terminal (original on success, storage_error replacement on failure).
+        if state.bg_record is not None and state.bg_record.subject is not None and state.pending_terminal is not None:
+            await state.bg_record.subject.publish(state.pending_terminal)
 
         return state.pending_terminal
 
@@ -1190,6 +1215,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # (same shape as B8 pre-creation errors) — no response.created is yielded.
             if state.bg_record is not None and state.bg_record.persistence_failed:
                 state.captured_error = state.bg_record.persistence_exception or RuntimeError("Phase 1 create failed")
+                # Evict the in-memory record so GET/replay cannot observe an
+                # in-progress response when §3.3 requires no response.created.
+                await self._runtime_state.try_evict(ctx.response_id)
                 yield construct_event_model(
                     {
                         "type": "error",
@@ -1735,13 +1763,16 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 record.status = "failed"  # type: ignore[assignment]
 
         # Eager eviction: free memory once terminal state is persisted (or store=False).
-        # Skip eviction when persistence failed — the in-memory record is the
-        # only remaining source of truth for GET.
+        # Skip eviction when persistence failed — sync failures are handled below
+        # where we evict before raising HTTP 500.
         if record.is_terminal and not record.persistence_failed:
             await self._runtime_state.try_evict(ctx.response_id)
 
         # §3.1: For sync mode, persistence failure surfaces as HTTP 500.
+        # The client never receives a response_id on 500, so evict the record
+        # to avoid unbounded memory growth during storage outages.
         if record.persistence_failed:
+            await self._runtime_state.try_evict(ctx.response_id)
             ctx.span.end(record.persistence_exception)
             raise _HandlerError(
                 record.persistence_exception or RuntimeError("Persistence failed")

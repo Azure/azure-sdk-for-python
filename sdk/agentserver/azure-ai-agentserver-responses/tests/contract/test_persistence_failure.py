@@ -424,13 +424,13 @@ class TestBgStreamPhase1CreateFails:
         # Should NOT contain response.created (Phase 1 failed before yielding it)
         assert "response.created" not in event_types, f"Unexpected response.created in {event_types}"
 
-        # Should contain a standalone error event
+        # Should contain a standalone error event with the expected storage failure payload
         assert "error" in event_types, f"Expected standalone error event, got {event_types}"
-
-        # Extract response_id from the error if possible, then verify GET returns 404
-        # The response_id comes from the request — we need to verify it's not found
         error_event = next(e for e in events if e["type"] == "error")
-        assert error_event is not None
+        error_data = error_event.get("data", {})
+        error = error_data.get("error", error_data)
+        assert isinstance(error, dict), f"Unexpected error payload: {error_data}"
+        assert error.get("code") == "storage_error", f"Unexpected error code: {error}"
 
 
 # ═══════════════════════════════════════════════════════════════════════════════

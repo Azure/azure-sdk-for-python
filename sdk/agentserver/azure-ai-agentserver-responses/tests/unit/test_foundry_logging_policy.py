@@ -196,8 +196,8 @@ async def test_logging_policy_logs_isolation_header_absence(caplog: pytest.LogCa
 
 
 @pytest.mark.asyncio
-async def test_logging_policy_failure_logs_isolation_header_presence(caplog: pytest.LogCaptureFixture) -> None:
-    """Isolation presence is also logged on transport failure."""
+async def test_logging_policy_transport_failure_omits_isolation_flags(caplog: pytest.LogCaptureFixture) -> None:
+    """Transport failure ERROR log is minimal and omits isolation flags."""
     policy = FoundryStorageLoggingPolicy()
     next_policy = AsyncMock()
     next_policy.send = AsyncMock(side_effect=ConnectionError("oops"))
