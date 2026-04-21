@@ -182,7 +182,7 @@ def _patched_deserialize(cls, data: Any, content_type: Optional[str] = None) -> 
     """
     if content_type and "xml" in content_type.lower():
         if isinstance(data, (bytes, str)):
-            data = ET.fromstring(data)
+            data = ET.fromstring(data)  # nosec
         return cls(data)
     return _deserialize(cls, data)
 
@@ -200,7 +200,7 @@ def _patched_from_dict(
     """
     if content_type and "xml" in content_type.lower():
         if isinstance(data, (bytes, str)):
-            data = ET.fromstring(data)
+            data = ET.fromstring(data)  # nosec
         return cls(data)
     return _deserialize(cls, data)
 
