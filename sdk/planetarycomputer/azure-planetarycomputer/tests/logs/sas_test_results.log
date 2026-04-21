@@ -1,102 +1,30 @@
-2026-04-21 10:39:36,904 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:36,904 - test_sas - INFO - TEST: test_01_get_token_with_default_duration
-2026-04-21 10:39:36,904 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:36,904 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
-2026-04-21 10:39:36,904 - test_sas - INFO - Input - collection_id: naip
-2026-04-21 10:39:36,905 - test_sas - INFO - Calling: get_token(collection_id=naip)
-2026-04-21 10:39:36,910 - test_sas - INFO - Response type: <class 'azure.planetarycomputer.models._models.SharedAccessSignatureToken'>
-2026-04-21 10:39:36,911 - test_sas - INFO - Response: {'msft:expiry': '2026-04-22T09:33:26Z', 'token': 'Sanitized'}
-2026-04-21 10:39:36,911 - test_sas - INFO - Response as_dict: {'msft:expiry': '2026-04-22T09:33:26Z', 'token': 'Sanitized'}
-2026-04-21 10:39:36,911 - test_sas - INFO - Test PASSED
+2026-04-21 11:33:53,751 - test_sas - INFO - ================================================================================
+2026-04-21 11:33:53,752 - test_sas - INFO - TEST: test_04_signed_href_can_download_asset
+2026-04-21 11:33:53,752 - test_sas - INFO - ================================================================================
+2026-04-21 11:33:53,752 - test_sas - INFO - Input - endpoint: https://stablecat.gjehh4bsh5hdeegx.uksouth.geocatalog.ppe.spatio.azure-test.net
+2026-04-21 11:33:53,752 - test_sas - INFO - Input - collection_id: naip
+2026-04-21 11:33:53,974 - test_sas - INFO - Getting collection...
+2026-04-21 11:33:56,335 - test_sas - INFO - Thumbnail HREF: https://jihuztdatasa.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png
+2026-04-21 11:33:56,336 - test_sas - INFO - Calling: get_sign(href=https://jihuztdatasa.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png)
+2026-04-21 11:33:57,020 - test_sas - INFO - Signed HREF: https://jihuztdatasa.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png?st=2026-04-20T10%3A33%3A56Z&se=2026-04-22T10%3A33%3A56Z&sp=rl&sv=2025-01-05&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-04-21T10%3A33%3A55Z&ske=2026-04-28T10%3A32%3A55Z&sks=b&skv=2025-01-05&sig=xgkaBVMGztmjZejIj9g%2BEW%2B/G4XMiU/mu9W0W42Gyc0%3D
+2026-04-21 11:33:57,020 - test_sas - INFO - Attempting to download asset (live mode)...
+2026-04-21 11:33:57,528 - test_sas - INFO - Download status code: 200
+2026-04-21 11:33:57,528 - test_sas - INFO - Content length: 75 bytes
+2026-04-21 11:33:57,528 - test_sas - INFO - Content-Type: application/octet-stream
+2026-04-21 11:33:57,529 - test_sas - INFO - Test PASSED
 
-2026-04-21 10:39:36,925 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:36,925 - test_sas - INFO - TEST: test_02_get_token_with_custom_duration
-2026-04-21 10:39:36,925 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:36,925 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
-2026-04-21 10:39:36,925 - test_sas - INFO - Input - collection_id: naip
-2026-04-21 10:39:36,925 - test_sas - INFO - Input - duration_in_minutes: 60
-2026-04-21 10:39:36,925 - test_sas - INFO - Calling: get_token(collection_id=naip, duration_in_minutes=60)
-2026-04-21 10:39:36,930 - test_sas - INFO - Response type: <class 'azure.planetarycomputer.models._models.SharedAccessSignatureToken'>
-2026-04-21 10:39:36,930 - test_sas - INFO - Response: {'msft:expiry': '2026-04-21T10:33:27Z', 'token': 'Sanitized'}
-2026-04-21 10:39:36,930 - test_sas - INFO - Response as_dict: {'msft:expiry': '2026-04-21T10:33:27Z', 'token': 'Sanitized'}
-2026-04-21 10:39:36,931 - test_sas - INFO - Test PASSED
-
-2026-04-21 10:39:36,946 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:36,946 - test_sas - INFO - TEST: test_03_get_sign_with_collection_thumbnail
-2026-04-21 10:39:36,946 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:36,946 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
-2026-04-21 10:39:36,946 - test_sas - INFO - Input - collection_id: naip
-2026-04-21 10:39:36,946 - test_sas - INFO - Getting collection...
-2026-04-21 10:39:36,959 - test_sas - INFO - Original HREF: https://SANITIZED.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png
-2026-04-21 10:39:36,959 - test_sas - INFO - Calling: get_sign(href=https://SANITIZED.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png)
-2026-04-21 10:39:36,963 - test_sas - INFO - Response type: <class 'azure.planetarycomputer.models._models.SharedAccessSignatureSignedLink'>
-2026-04-21 10:39:36,963 - test_sas - INFO - Response: {'msft:expiry': '2026-04-22T09:33:28Z', 'href': 'https://SANITIZED.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-04-21T09%3A33%3A25Z&ske=2026-04-28T09%3A32%3A25Z&sks=b&skv=2025-01-05&sig=Sanitized'}
-2026-04-21 10:39:36,963 - test_sas - INFO - Response as_dict: {'msft:expiry': '2026-04-22T09:33:28Z', 'href': 'https://SANITIZED.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-04-21T09%3A33%3A25Z&ske=2026-04-28T09%3A32%3A25Z&sks=b&skv=2025-01-05&sig=Sanitized'}
-2026-04-21 10:39:36,963 - test_sas - INFO - Signed HREF: https://SANITIZED.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-04-21T09%3A33%3A25Z&ske=2026-04-28T09%3A32%3A25Z&sks=b&skv=2025-01-05&sig=Sanitized
-2026-04-21 10:39:36,963 - test_sas - INFO - HREF changed: True
-2026-04-21 10:39:36,963 - test_sas - INFO - Has query params: True
-2026-04-21 10:39:36,963 - test_sas - INFO - Has sig param: True
-2026-04-21 10:39:36,964 - test_sas - INFO - Test PASSED
-
-2026-04-21 10:39:36,974 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:36,975 - test_sas - INFO - TEST: test_05_revoke_token
-2026-04-21 10:39:36,975 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:36,975 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
-2026-04-21 10:39:36,975 - test_sas - INFO - Input - collection_id: naip
-2026-04-21 10:39:36,975 - test_sas - INFO - Step 1: Generating SAS token...
-2026-04-21 10:39:36,980 - test_sas - INFO - Token generated: Sanitized...
-2026-04-21 10:39:36,980 - test_sas - INFO - Step 2: Revoking token...
-2026-04-21 10:39:36,984 - test_sas - INFO - Token revoked successfully (no exception thrown)
-2026-04-21 10:39:36,984 - test_sas - INFO - Test PASSED
-
-2026-04-21 10:39:36,993 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:36,993 - test_sas - INFO - TEST: test_01_get_token_with_default_duration
-2026-04-21 10:39:36,993 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:36,993 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
-2026-04-21 10:39:36,993 - test_sas - INFO - Input - collection_id: naip
-2026-04-21 10:39:36,994 - test_sas - INFO - Calling: get_token(collection_id=naip)
-2026-04-21 10:39:37,000 - test_sas - INFO - Response type: <class 'azure.planetarycomputer.models._models.SharedAccessSignatureToken'>
-2026-04-21 10:39:37,000 - test_sas - INFO - Response: {'msft:expiry': '2026-04-22T09:33:31Z', 'token': 'Sanitized'}
-2026-04-21 10:39:37,001 - test_sas - INFO - Response as_dict: {'msft:expiry': '2026-04-22T09:33:31Z', 'token': 'Sanitized'}
-2026-04-21 10:39:37,001 - test_sas - INFO - Test PASSED
-
-2026-04-21 10:39:37,011 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:37,011 - test_sas - INFO - TEST: test_02_get_token_with_custom_duration
-2026-04-21 10:39:37,011 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:37,011 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
-2026-04-21 10:39:37,011 - test_sas - INFO - Input - collection_id: naip
-2026-04-21 10:39:37,011 - test_sas - INFO - Input - duration_in_minutes: 60
-2026-04-21 10:39:37,011 - test_sas - INFO - Calling: get_token(collection_id=naip, duration_in_minutes=60)
-2026-04-21 10:39:37,016 - test_sas - INFO - Response type: <class 'azure.planetarycomputer.models._models.SharedAccessSignatureToken'>
-2026-04-21 10:39:37,017 - test_sas - INFO - Response: {'msft:expiry': '2026-04-21T10:33:33Z', 'token': 'Sanitized'}
-2026-04-21 10:39:37,017 - test_sas - INFO - Response as_dict: {'msft:expiry': '2026-04-21T10:33:33Z', 'token': 'Sanitized'}
-2026-04-21 10:39:37,017 - test_sas - INFO - Test PASSED
-
-2026-04-21 10:39:37,026 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:37,027 - test_sas - INFO - TEST: test_03_get_sign_with_collection_thumbnail
-2026-04-21 10:39:37,027 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:37,027 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
-2026-04-21 10:39:37,027 - test_sas - INFO - Input - collection_id: naip
-2026-04-21 10:39:37,027 - test_sas - INFO - Getting collection...
-2026-04-21 10:39:37,036 - test_sas - INFO - Original HREF: https://SANITIZED.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png
-2026-04-21 10:39:37,037 - test_sas - INFO - Calling: get_sign(href=https://SANITIZED.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png)
-2026-04-21 10:39:37,040 - test_sas - INFO - Response type: <class 'azure.planetarycomputer.models._models.SharedAccessSignatureSignedLink'>
-2026-04-21 10:39:37,040 - test_sas - INFO - Response: {'msft:expiry': '2026-04-22T09:33:34Z', 'href': 'https://SANITIZED.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-04-21T09%3A33%3A30Z&ske=2026-04-28T09%3A32%3A30Z&sks=b&skv=2025-01-05&sig=Sanitized'}
-2026-04-21 10:39:37,040 - test_sas - INFO - Response as_dict: {'msft:expiry': '2026-04-22T09:33:34Z', 'href': 'https://SANITIZED.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-04-21T09%3A33%3A30Z&ske=2026-04-28T09%3A32%3A30Z&sks=b&skv=2025-01-05&sig=Sanitized'}
-2026-04-21 10:39:37,040 - test_sas - INFO - Signed HREF: https://SANITIZED.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png?st=Sanitized&se=Sanitized&sp=rl&sv=Sanitized&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-04-21T09%3A33%3A30Z&ske=2026-04-28T09%3A32%3A30Z&sks=b&skv=2025-01-05&sig=Sanitized
-2026-04-21 10:39:37,040 - test_sas - INFO - HREF changed: True
-2026-04-21 10:39:37,040 - test_sas - INFO - Has query params: True
-2026-04-21 10:39:37,040 - test_sas - INFO - Has sig param: True
-2026-04-21 10:39:37,040 - test_sas - INFO - Test PASSED
-
-2026-04-21 10:39:37,053 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:37,053 - test_sas - INFO - TEST: test_05_revoke_token
-2026-04-21 10:39:37,053 - test_sas - INFO - ================================================================================
-2026-04-21 10:39:37,054 - test_sas - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
-2026-04-21 10:39:37,054 - test_sas - INFO - Input - collection_id: naip
-2026-04-21 10:39:37,054 - test_sas - INFO - Step 1: Generating SAS token...
-2026-04-21 10:39:37,063 - test_sas - INFO - Token generated: Sanitized...
-2026-04-21 10:39:37,063 - test_sas - INFO - Step 2: Revoking token...
-2026-04-21 10:39:37,066 - test_sas - INFO - Token revoked successfully (no exception thrown)
-2026-04-21 10:39:37,066 - test_sas - INFO - Test PASSED
+2026-04-21 11:33:57,827 - test_sas - INFO - ================================================================================
+2026-04-21 11:33:57,827 - test_sas - INFO - TEST: test_04_signed_href_can_download_asset
+2026-04-21 11:33:57,827 - test_sas - INFO - ================================================================================
+2026-04-21 11:33:57,827 - test_sas - INFO - Input - endpoint: https://stablecat.gjehh4bsh5hdeegx.uksouth.geocatalog.ppe.spatio.azure-test.net
+2026-04-21 11:33:57,828 - test_sas - INFO - Input - collection_id: naip
+2026-04-21 11:33:57,942 - test_sas - INFO - Getting collection...
+2026-04-21 11:33:58,946 - test_sas - INFO - Thumbnail HREF: https://jihuztdatasa.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png
+2026-04-21 11:33:58,947 - test_sas - INFO - Calling: get_sign(href=https://jihuztdatasa.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png)
+2026-04-21 11:33:59,025 - test_sas - INFO - Signed HREF: https://jihuztdatasa.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png?st=2026-04-20T10%3A33%3A59Z&se=2026-04-22T10%3A33%3A59Z&sp=rl&sv=2025-01-05&sr=c&skoid=fff67d55-f141-45bc-9972-65e021a426ad&sktid=72f988bf-86f1-41af-91ab-2d7cd011db47&skt=2026-04-21T10%3A33%3A55Z&ske=2026-04-28T10%3A32%3A55Z&sks=b&skv=2025-01-05&sig=mbULY6xuCrb2Fl%2B/u5wHGJPnAcJCBgCfZYAw%2BW1IdXg%3D
+2026-04-21 11:33:59,025 - test_sas - INFO - Attempting to download asset (live mode)...
+2026-04-21 11:33:59,391 - test_sas - INFO - Download status code: 200
+2026-04-21 11:33:59,391 - test_sas - INFO - Content length: 75 bytes
+2026-04-21 11:33:59,391 - test_sas - INFO - Content-Type: application/octet-stream
+2026-04-21 11:33:59,391 - test_sas - INFO - Test PASSED
 

@@ -218,7 +218,6 @@ class TestPlanetaryComputerSas(PlanetaryComputerProClientTestBase):
 
         test_logger.info("Test PASSED\n")
 
-    @pytest.mark.skip(reason="PPE managed storage SAS token authentication fails with 403")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
     def test_04_signed_href_can_download_asset(self, planetarycomputer_endpoint, planetarycomputer_collection_id):

@@ -719,14 +719,14 @@ class TestPlanetaryComputerStacSpecificationAsync(PlanetaryComputerProClientTest
 
         await self.close_client()
 
-    @pytest.mark.skip(reason="Service re-processes all assets during replace; derived assets not found in managed storage")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
     async def test_13_replace_stac_item(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
         """Test replacing an existing STAC item.
 
-        This demonstrates using begin_replace_item to update an existing item's properties.
-        The item must already exist in the collection.
+        After creation, the service copies assets into managed storage and rewrites hrefs.
+        For replace to work, we must rewrite asset hrefs back to the original public source
+        URLs, since the service re-ingests all assets during replace.
         """
         logger.info("=" * 80)
         logger.info("TEST: Replace STAC Item")
@@ -734,23 +734,31 @@ class TestPlanetaryComputerStacSpecificationAsync(PlanetaryComputerProClientTest
 
         client = self.create_client(endpoint=planetarycomputer_endpoint)
         collection_id = planetarycomputer_collection_id
+        item_id = "ga_m_3308421_se_16_060_20211114_test"
 
-        # Get an existing item from the collection to replace
-        items_response = await client.stac.get_item_collection(collection_id=collection_id, limit=1)
-        assert len(items_response.features) > 0, "Collection must have at least one item to test replace"
-
-        existing_item = items_response.features[0]
-        item_id = existing_item.id
-        logger.info(f"Using existing item for replace test: {item_id}")
+        # Original public source URL used when the item was created in test_10
+        original_image_href = "https://naipeuwest.blob.core.windows.net/naip/v002/ga/2021/ga_060cm_2021/33084/m_3308421_se_16_060_20211114.tif"
 
         # Get the full item
         stac_item = await client.stac.get_item(collection_id=collection_id, item_id=item_id)
         assert stac_item is not None, "Item should be retrievable"
+        logger.info(f"Using test item for replace test: {item_id}")
 
-        # Modify a property
+        # Build the replacement item dict
         stac_item_dict = stac_item.as_dict() if hasattr(stac_item, "as_dict") else dict(stac_item)
         original_platform = stac_item_dict.get("properties", {}).get("platform", None)
         stac_item_dict["properties"]["platform"] = "Imagery Updated via Replace Test"
+
+        # Rewrite asset hrefs back to original public source URLs
+        # The service re-ingests assets during replace, so hrefs must be accessible
+        stac_item_dict["assets"] = {
+            "image": {
+                "href": original_image_href,
+                "type": "image/tiff; application=geotiff; profile=cloud-optimized",
+                "roles": ["data"],
+                "title": "RGBIR COG tile",
+            }
+        }
 
         updated_stac_item = StacItem(stac_item_dict)
 
@@ -772,7 +780,7 @@ class TestPlanetaryComputerStacSpecificationAsync(PlanetaryComputerProClientTest
         logger.info(f"Verified replaced item, platform: {platform}")
         assert platform == "Imagery Updated via Replace Test", f"Expected updated platform, got '{platform}'"
 
-        # Restore original value
+        # Restore original value (also with original hrefs)
         if original_platform is not None:
             stac_item_dict["properties"]["platform"] = original_platform
         else:
@@ -781,7 +789,7 @@ class TestPlanetaryComputerStacSpecificationAsync(PlanetaryComputerProClientTest
         restore_poller = await client.stac.begin_replace_item(
             collection_id=collection_id, item_id=item_id, body=restore_item, polling=True
         )
-        await restore_poller.result()
+        await replace_poller.result()
         logger.info(f"Restored original item {item_id}")
 
         logger.info(f"Successfully verified replace operation for item {item_id}")
