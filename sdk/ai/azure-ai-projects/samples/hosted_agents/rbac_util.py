@@ -1,6 +1,4 @@
 import uuid
-from contextlib import contextmanager
-from typing import Iterator
 from urllib.parse import urlparse
 
 from azure.core.credentials import TokenCredential
@@ -90,20 +88,18 @@ def _ensure_agent_identity_rbac_with_role_id(
         return False, role_assignment_name
 
 
-@contextmanager
 def ensure_agent_identity_rbac(
     agent: AgentVersionDetails,
     credential: TokenCredential,
     subscription_id: str,
     foundry_project_endpoint: str,
-) -> Iterator[None]:
+) -> None:
     """Ensure the hosted agent identity has Azure AI User role on the Azure AI account.
 
     This resolves the Azure AI account resource ID from the Foundry project endpoint,
     reads the hosted agent managed identity principal ID from ``agent``, and
     creates a deterministic role assignment for the Azure AI User role if one does not
-    already exist. If this function creates the role assignment, it deletes it when
-    exiting the context manager.
+    already exist.
 
     :param agent: Agent version details containing ``instance_identity``.
     :type agent: ~azure.ai.projects.models.AgentVersionDetails
@@ -127,23 +123,10 @@ def ensure_agent_identity_rbac(
     project_name = foundry_project_endpoint.rstrip("/").split("/api/projects/")[1].split("/")[0]
     scope_resource_id = _resolve_ai_account_resource_id(credential, account_name, project_name, subscription_id)
 
-    created, role_assignment_name = _ensure_agent_identity_rbac_with_role_id(
+    _ensure_agent_identity_rbac_with_role_id(
         credential=credential,
         principal_id=principal_id,
         scope_resource_id=scope_resource_id,
         subscription_id=subscription_id,
         role_id=AZURE_AI_USER_ROLE_DEFINITION_GUID,
     )
-
-    try:
-        yield
-    finally:
-        if not created:
-            return
-
-        authorization_client = AuthorizationManagementClient(credential, subscription_id)
-        try:
-            authorization_client.role_assignments.delete(scope_resource_id, role_assignment_name)
-            print(f"Removed Azure AI User role assignment for principal {principal_id}.")
-        except ResourceNotFoundError:
-            pass

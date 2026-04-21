@@ -24,25 +24,17 @@ USAGE:
     Set these environment variables with your own values:
     1) FOUNDRY_PROJECT_ENDPOINT - The Azure AI Project endpoint, as found in the Overview
        page of your Microsoft Foundry portal.
-    2) FOUNDRY_AGENT_CONTAINER_IMAGE - The Hosted Agent container image in the format '<registry>/<repository>[:<tag>|@<digest>]'
-     3) FOUNDRY_PROJECTS_AZURE_SUBSCRIPTION_ID - Azure subscription ID where the
-         Azure AI account and project are deployed.
+    2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent.
 
-    You can build and push an example image from
-    `samples/hosted_agents/assets/responses-echo-agent` and use that image value
-    for `FOUNDRY_AGENT_CONTAINER_IMAGE`.
+    If you don't have a Hosted Agent, run `sample_create_hosted_agent.py` first
+    to create one as a prerequisite.
 
 SDK FUNCTIONS:
-    - project_client.agents.create_version: creates an agent version (via create_agent context manager).
-    - ensure_agent_identity_rbac: sets up RBAC for the agent's managed identity (context manager).
-    - project_client.beta.agents.create_session: creates a session for the agent (via create_session context manager).
+    - project_client.agents.list_versions: resolves the active version for the existing hosted agent.
+    - project_client.beta.agents.create_session: creates a session for the agent.
     - project_client.beta.agents.get_session: retrieves a session by ID.
     - project_client.beta.agents.list_sessions: lists sessions for an agent.
-
-CLEANUP FUNCTIONS (called on context manager exit in reverse order):
-    - project_client.beta.agents.delete_session: deletes the session.
-    - authorization_client.role_assignments.delete: removes the RBAC role assignment (only if this sample created it).
-    - project_client.agents.delete_version: deletes the agent version.
+    - project_client.beta.agents.delete_session: deletes a session by ID.
 """
 
 import os
@@ -52,15 +44,13 @@ from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 
 from azure.ai.projects import AIProjectClient
-from hosted_agents_util import create_agent, create_session
-from rbac_util import ensure_agent_identity_rbac
+from azure.ai.projects.models import VersionRefIndicator
+from hosted_agents_util import get_latest_active_agent_version
 
 load_dotenv()
 
 endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
-image = os.environ["FOUNDRY_AGENT_CONTAINER_IMAGE"]
-subscription_id = os.environ["FOUNDRY_PROJECTS_AZURE_SUBSCRIPTION_ID"]
-agent_name = "MySessionHostedAgent"
+agent_name = os.environ["FOUNDRY_HOSTED_AGENT_NAME"]
 isolation_key = "sample-isolation-key"
 
 with (
@@ -70,15 +60,15 @@ with (
         credential=credential,
         allow_preview=True,
     ) as project_client,
-    create_agent(project_client, agent_name, image) as agent,
-    ensure_agent_identity_rbac(
-        agent=agent,
-        credential=credential,
-        subscription_id=subscription_id,
-        foundry_project_endpoint=endpoint,
-    ),
-    create_session(project_client, agent_name, agent.version, isolation_key=isolation_key) as session,
 ):
+    agent = get_latest_active_agent_version(project_client, agent_name)
+    session = project_client.beta.agents.create_session(
+        agent_name=agent_name,
+        isolation_key=isolation_key,
+        version_indicator=VersionRefIndicator(agent_version=agent.version),
+    )
+    print(f"Created session (id: {session.agent_session_id}, status: {session.status})")
+
     # Retrieve the session by its ID
     fetched = project_client.beta.agents.get_session(
         agent_name=agent_name,
@@ -92,3 +82,10 @@ with (
     print("Sessions:")
     for item in sessions:
         print(f"  - {item.agent_session_id} (status: {item.status})")
+
+    project_client.beta.agents.delete_session(
+        agent_name=agent_name,
+        session_id=session.agent_session_id,
+        isolation_key=isolation_key,
+    )
+    print(f"Deleted session (id: {session.agent_session_id})")
