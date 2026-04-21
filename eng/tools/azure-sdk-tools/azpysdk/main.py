@@ -93,13 +93,19 @@ def build_parser() -> argparse.ArgumentParser:
         default="**",
         help="Glob pattern for packages. Defaults to '**', but will match patterns below CWD if a value is provided.",
     )
-    # allow --isolate to be specified after the subcommand as well
+    # allow --isolate and --pypi to be specified after the subcommand as well
     # use SUPPRESS so the subparser default doesn't overwrite a value set by the global parser
     common.add_argument(
         "--isolate",
         action="store_true",
         default=argparse.SUPPRESS,
         help="If set, run in an isolated virtual environment.",
+    )
+    common.add_argument(
+        "--pypi",
+        action="store_true",
+        default=argparse.SUPPRESS,
+        help="Use PyPI directly instead of the CFS (Central Feed Services) feed.",
     )
     common.add_argument(
         "--python",
