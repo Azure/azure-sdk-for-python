@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python get_metric_alert_query.py
+    python get_tenant_action_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,16 +28,17 @@ from azure.mgmt.monitor import MonitorManagementClient
 def main():
     client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="14ddf0c5-77c5-4b53-84f6-e1fa43ad68f7",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.metric_alerts.get(
-        resource_group_name="gigtest",
-        rule_name="chiricutin",
+    response = client.tenant_action_groups.get(
+        management_group_id="72f988bf-86f1-41af-91ab-2d7cd011db47",
+        tenant_action_group_name="testTenantActionGroup",
+        x_ms_client_tenant_id="72f988bf-86f1-41af-91ab-2d7cd011db47",
     )
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2024-03-01-preview/examples/getMetricAlertQuery.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/preview/2023-05-01-preview/examples/getTenantActionGroup.json
 if __name__ == "__main__":
     main()

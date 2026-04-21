@@ -26,7 +26,7 @@ class TestMonitorManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             scope_name="str",
             private_endpoint_connection_name="str",
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,14 +45,14 @@ class TestMonitorManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtRe
                     "name": "str",
                     "privateEndpoint": {"id": "str"},
                     "privateLinkServiceConnectionState": {
+                        "actionsRequired": "str",
                         "description": "str",
                         "status": "str",
-                        "actionsRequired": "str",
                     },
                     "provisioningState": "str",
                     "type": "str",
                 },
-                api_version="2019-10-17-preview",
+                api_version="2021-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -67,7 +67,7 @@ class TestMonitorManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtRe
                 resource_group_name=resource_group.name,
                 scope_name="str",
                 private_endpoint_connection_name="str",
-                api_version="2019-10-17-preview",
+                api_version="2021-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -77,11 +77,11 @@ class TestMonitorManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtRe
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_private_endpoint_connections_list_by_private_link_scope(self, resource_group):
-        response = self.client.private_endpoint_connections.list_by_private_link_scope(
+        response = await self.client.private_endpoint_connections.list_by_private_link_scope(
             resource_group_name=resource_group.name,
             scope_name="str",
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         )
-        result = [r async for r in response]
+
         # please add some check logic here by yourself
         # ...

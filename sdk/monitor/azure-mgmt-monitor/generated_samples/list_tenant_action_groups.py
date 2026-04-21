@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python get_guest_diagnostic_settings_association.py
+    python list_tenant_action_groups.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -31,13 +31,14 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.guest_diagnostics_settings_association.get(
-        resource_uri="subscriptions/8498f01b-8064-4e37-856e-318f3c6c685f/resourceGroups/healthsystem/providers/Microsoft.Compute/virtualMachines/eastussojai",
-        association_name="healthSystemMachineConfigAssociation",
+    response = client.tenant_action_groups.list_by_management_group_id(
+        management_group_id="72f988bf-86f1-41af-91ab-2d7cd011db47",
+        x_ms_client_tenant_id="72f988bf-86f1-41af-91ab-2d7cd011db47",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2018-06-01-preview/examples/getGuestDiagnosticSettingsAssociation.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/preview/2023-05-01-preview/examples/listTenantActionGroups.json
 if __name__ == "__main__":
     main()

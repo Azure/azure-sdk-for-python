@@ -26,7 +26,6 @@ from .operations import (
     ActivityLogsOperations,
     AlertRuleIncidentsOperations,
     AutoscaleSettingsOperations,
-    AzureMonitorWorkspacesOperations,
     BaselinesOperations,
     DataCollectionEndpointsOperations,
     DataCollectionRuleAssociationsOperations,
@@ -34,15 +33,12 @@ from .operations import (
     DiagnosticSettingsCategoryOperations,
     DiagnosticSettingsOperations,
     EventCategoriesOperations,
-    GuestDiagnosticsSettingsAssociationOperations,
-    GuestDiagnosticsSettingsOperations,
     LogProfilesOperations,
     MetricAlertsOperations,
     MetricAlertsStatusOperations,
     MetricDefinitionsOperations,
     MetricNamespacesOperations,
     MetricsOperations,
-    MonitorOperationsOperations,
     Operations,
     PredictiveMetricOperations,
     PrivateEndpointConnectionsOperations,
@@ -51,10 +47,10 @@ from .operations import (
     PrivateLinkScopedResourcesOperations,
     PrivateLinkScopesOperations,
     ScheduledQueryRulesOperations,
-    ServiceDiagnosticSettingsOperations,
-    SubscriptionDiagnosticSettingsOperations,
+    TenantActionGroupsOperations,
     TenantActivityLogsOperations,
     VMInsightsOperations,
+    _MonitorManagementClientOperationsMixin,
 )
 
 if TYPE_CHECKING:
@@ -62,58 +58,50 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class MonitorManagementClient(
+    _MonitorManagementClientOperationsMixin
+):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Monitor Management Client.
 
     :ivar action_groups: ActionGroupsOperations operations
     :vartype action_groups: azure.mgmt.monitor.operations.ActionGroupsOperations
-    :ivar activity_log_alerts: ActivityLogAlertsOperations operations
-    :vartype activity_log_alerts: azure.mgmt.monitor.operations.ActivityLogAlertsOperations
-    :ivar activity_logs: ActivityLogsOperations operations
-    :vartype activity_logs: azure.mgmt.monitor.operations.ActivityLogsOperations
-    :ivar tenant_activity_logs: TenantActivityLogsOperations operations
-    :vartype tenant_activity_logs: azure.mgmt.monitor.operations.TenantActivityLogsOperations
-    :ivar alert_rule_incidents: AlertRuleIncidentsOperations operations
-    :vartype alert_rule_incidents: azure.mgmt.monitor.operations.AlertRuleIncidentsOperations
+    :ivar metric_definitions: MetricDefinitionsOperations operations
+    :vartype metric_definitions: azure.mgmt.monitor.operations.MetricDefinitionsOperations
+    :ivar metrics: MetricsOperations operations
+    :vartype metrics: azure.mgmt.monitor.operations.MetricsOperations
+    :ivar metric_namespaces: MetricNamespacesOperations operations
+    :vartype metric_namespaces: azure.mgmt.monitor.operations.MetricNamespacesOperations
     :ivar autoscale_settings: AutoscaleSettingsOperations operations
     :vartype autoscale_settings: azure.mgmt.monitor.operations.AutoscaleSettingsOperations
     :ivar predictive_metric: PredictiveMetricOperations operations
     :vartype predictive_metric: azure.mgmt.monitor.operations.PredictiveMetricOperations
-    :ivar baselines: BaselinesOperations operations
-    :vartype baselines: azure.mgmt.monitor.operations.BaselinesOperations
+    :ivar operations: Operations operations
+    :vartype operations: azure.mgmt.monitor.operations.Operations
+    :ivar alert_rule_incidents: AlertRuleIncidentsOperations operations
+    :vartype alert_rule_incidents: azure.mgmt.monitor.operations.AlertRuleIncidentsOperations
+    :ivar log_profiles: LogProfilesOperations operations
+    :vartype log_profiles: azure.mgmt.monitor.operations.LogProfilesOperations
     :ivar diagnostic_settings: DiagnosticSettingsOperations operations
     :vartype diagnostic_settings: azure.mgmt.monitor.operations.DiagnosticSettingsOperations
     :ivar diagnostic_settings_category: DiagnosticSettingsCategoryOperations operations
     :vartype diagnostic_settings_category:
      azure.mgmt.monitor.operations.DiagnosticSettingsCategoryOperations
+    :ivar tenant_action_groups: TenantActionGroupsOperations operations
+    :vartype tenant_action_groups: azure.mgmt.monitor.operations.TenantActionGroupsOperations
     :ivar event_categories: EventCategoriesOperations operations
     :vartype event_categories: azure.mgmt.monitor.operations.EventCategoriesOperations
-    :ivar guest_diagnostics_settings: GuestDiagnosticsSettingsOperations operations
-    :vartype guest_diagnostics_settings:
-     azure.mgmt.monitor.operations.GuestDiagnosticsSettingsOperations
-    :ivar guest_diagnostics_settings_association: GuestDiagnosticsSettingsAssociationOperations
-     operations
-    :vartype guest_diagnostics_settings_association:
-     azure.mgmt.monitor.operations.GuestDiagnosticsSettingsAssociationOperations
-    :ivar log_profiles: LogProfilesOperations operations
-    :vartype log_profiles: azure.mgmt.monitor.operations.LogProfilesOperations
+    :ivar tenant_activity_logs: TenantActivityLogsOperations operations
+    :vartype tenant_activity_logs: azure.mgmt.monitor.operations.TenantActivityLogsOperations
+    :ivar activity_logs: ActivityLogsOperations operations
+    :vartype activity_logs: azure.mgmt.monitor.operations.ActivityLogsOperations
+    :ivar baselines: BaselinesOperations operations
+    :vartype baselines: azure.mgmt.monitor.operations.BaselinesOperations
     :ivar metric_alerts: MetricAlertsOperations operations
     :vartype metric_alerts: azure.mgmt.monitor.operations.MetricAlertsOperations
     :ivar metric_alerts_status: MetricAlertsStatusOperations operations
     :vartype metric_alerts_status: azure.mgmt.monitor.operations.MetricAlertsStatusOperations
-    :ivar metric_definitions: MetricDefinitionsOperations operations
-    :vartype metric_definitions: azure.mgmt.monitor.operations.MetricDefinitionsOperations
-    :ivar metric_namespaces: MetricNamespacesOperations operations
-    :vartype metric_namespaces: azure.mgmt.monitor.operations.MetricNamespacesOperations
-    :ivar metrics: MetricsOperations operations
-    :vartype metrics: azure.mgmt.monitor.operations.MetricsOperations
-    :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.monitor.operations.Operations
     :ivar scheduled_query_rules: ScheduledQueryRulesOperations operations
     :vartype scheduled_query_rules: azure.mgmt.monitor.operations.ScheduledQueryRulesOperations
-    :ivar service_diagnostic_settings: ServiceDiagnosticSettingsOperations operations
-    :vartype service_diagnostic_settings:
-     azure.mgmt.monitor.operations.ServiceDiagnosticSettingsOperations
     :ivar vm_insights: VMInsightsOperations operations
     :vartype vm_insights: azure.mgmt.monitor.operations.VMInsightsOperations
     :ivar private_link_scopes: PrivateLinkScopesOperations operations
@@ -129,14 +117,8 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
     :ivar private_link_scoped_resources: PrivateLinkScopedResourcesOperations operations
     :vartype private_link_scoped_resources:
      azure.mgmt.monitor.operations.PrivateLinkScopedResourcesOperations
-    :ivar subscription_diagnostic_settings: SubscriptionDiagnosticSettingsOperations operations
-    :vartype subscription_diagnostic_settings:
-     azure.mgmt.monitor.operations.SubscriptionDiagnosticSettingsOperations
-    :ivar azure_monitor_workspaces: AzureMonitorWorkspacesOperations operations
-    :vartype azure_monitor_workspaces:
-     azure.mgmt.monitor.operations.AzureMonitorWorkspacesOperations
-    :ivar monitor_operations: MonitorOperationsOperations operations
-    :vartype monitor_operations: azure.mgmt.monitor.operations.MonitorOperationsOperations
+    :ivar activity_log_alerts: ActivityLogAlertsOperations operations
+    :vartype activity_log_alerts: azure.mgmt.monitor.operations.ActivityLogAlertsOperations
     :ivar data_collection_endpoints: DataCollectionEndpointsOperations operations
     :vartype data_collection_endpoints:
      azure.mgmt.monitor.operations.DataCollectionEndpointsOperations
@@ -205,14 +187,11 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.action_groups = ActionGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.activity_log_alerts = ActivityLogAlertsOperations(
+        self.metric_definitions = MetricDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.activity_logs = ActivityLogsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.tenant_activity_logs = TenantActivityLogsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.alert_rule_incidents = AlertRuleIncidentsOperations(
+        self.metrics = MetricsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.metric_namespaces = MetricNamespacesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.autoscale_settings = AutoscaleSettingsOperations(
@@ -221,39 +200,33 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
         self.predictive_metric = PredictiveMetricOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.baselines = BaselinesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.alert_rule_incidents = AlertRuleIncidentsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.log_profiles = LogProfilesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.diagnostic_settings = DiagnosticSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.diagnostic_settings_category = DiagnosticSettingsCategoryOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.tenant_action_groups = TenantActionGroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.event_categories = EventCategoriesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.guest_diagnostics_settings = GuestDiagnosticsSettingsOperations(
+        self.tenant_activity_logs = TenantActivityLogsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.guest_diagnostics_settings_association = GuestDiagnosticsSettingsAssociationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.log_profiles = LogProfilesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.activity_logs = ActivityLogsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.baselines = BaselinesOperations(self._client, self._config, self._serialize, self._deserialize)
         self.metric_alerts = MetricAlertsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.metric_alerts_status = MetricAlertsStatusOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.metric_definitions = MetricDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.metric_namespaces = MetricNamespacesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.metrics = MetricsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.scheduled_query_rules = ScheduledQueryRulesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.service_diagnostic_settings = ServiceDiagnosticSettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.vm_insights = VMInsightsOperations(self._client, self._config, self._serialize, self._deserialize)
@@ -272,13 +245,7 @@ class MonitorManagementClient:  # pylint: disable=client-accepts-api-version-key
         self.private_link_scoped_resources = PrivateLinkScopedResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.subscription_diagnostic_settings = SubscriptionDiagnosticSettingsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.azure_monitor_workspaces = AzureMonitorWorkspacesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.monitor_operations = MonitorOperationsOperations(
+        self.activity_log_alerts = ActivityLogAlertsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.data_collection_endpoints = DataCollectionEndpointsOperations(

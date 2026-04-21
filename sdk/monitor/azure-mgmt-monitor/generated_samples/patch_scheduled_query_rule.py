@@ -39,6 +39,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2023-12-01/examples/patchScheduledQueryRule.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/stable/2023-12-01/examples/patchScheduledQueryRule.json
 if __name__ == "__main__":
     main()

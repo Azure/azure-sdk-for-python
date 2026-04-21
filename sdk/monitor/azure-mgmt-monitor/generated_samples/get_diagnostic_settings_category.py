@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2017-05-01-preview/examples/getDiagnosticSettingsCategory.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/preview/2021-05-01-preview/examples/getDiagnosticSettingsCategory.json
 if __name__ == "__main__":
     main()

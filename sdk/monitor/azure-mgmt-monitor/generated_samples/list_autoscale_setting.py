@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2022-10-01/examples/listAutoscaleSetting.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/stable/2022-10-01/examples/listAutoscaleSetting.json
 if __name__ == "__main__":
     main()

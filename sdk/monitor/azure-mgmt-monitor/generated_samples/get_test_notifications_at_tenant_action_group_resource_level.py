@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python get_subscription_diagnostic_setting.py
+    python get_test_notifications_at_tenant_action_group_resource_level.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,15 +28,18 @@ from azure.mgmt.monitor import MonitorManagementClient
 def main():
     client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="fb9f25f9-5785-4510-a38f-a62f188eb9f8",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.subscription_diagnostic_settings.get(
-        name="mysetting",
+    response = client.get_test_notifications_at_tenant_action_group_resource_level(
+        management_group_id="11111111-1111-1111-1111-111111111111",
+        tenant_action_group_name="testTenantActionGroup",
+        x_ms_client_tenant_id="72f988bf-86f1-41af-91ab-2d7cd011db47",
+        notification_id="11000222191287",
     )
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2017-05-01-preview/examples/getSubscriptionDiagnosticSetting.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/preview/2023-05-01-preview/examples/getTestNotificationsAtTenantActionGroupResourceLevel.json
 if __name__ == "__main__":
     main()

@@ -156,6 +156,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2022-10-01/examples/patchAutoscaleSetting.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/stable/2022-10-01/examples/patchAutoscaleSetting.json
 if __name__ == "__main__":
     main()

@@ -22,7 +22,7 @@ class TestMonitorManagementPrivateLinkScopesOperations(AzureMgmtRecordedTestCase
     @recorded_by_proxy
     def test_private_link_scopes_list(self, resource_group):
         response = self.client.private_link_scopes.list(
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestMonitorManagementPrivateLinkScopesOperations(AzureMgmtRecordedTestCase
     def test_private_link_scopes_list_by_resource_group(self, resource_group):
         response = self.client.private_link_scopes.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestMonitorManagementPrivateLinkScopesOperations(AzureMgmtRecordedTestCase
         response = self.client.private_link_scopes.begin_delete(
             resource_group_name=resource_group.name,
             scope_name="str",
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestMonitorManagementPrivateLinkScopesOperations(AzureMgmtRecordedTestCase
         response = self.client.private_link_scopes.get(
             resource_group_name=resource_group.name,
             scope_name="str",
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -70,6 +70,13 @@ class TestMonitorManagementPrivateLinkScopesOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             scope_name="str",
             azure_monitor_private_link_scope_payload={
+                "accessModeSettings": {
+                    "ingestionAccessMode": "str",
+                    "queryAccessMode": "str",
+                    "exclusions": [
+                        {"ingestionAccessMode": "str", "privateEndpointConnectionName": "str", "queryAccessMode": "str"}
+                    ],
+                },
                 "location": "str",
                 "id": "str",
                 "name": "str",
@@ -79,19 +86,27 @@ class TestMonitorManagementPrivateLinkScopesOperations(AzureMgmtRecordedTestCase
                         "name": "str",
                         "privateEndpoint": {"id": "str"},
                         "privateLinkServiceConnectionState": {
+                            "actionsRequired": "str",
                             "description": "str",
                             "status": "str",
-                            "actionsRequired": "str",
                         },
                         "provisioningState": "str",
                         "type": "str",
                     }
                 ],
                 "provisioningState": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -104,7 +119,7 @@ class TestMonitorManagementPrivateLinkScopesOperations(AzureMgmtRecordedTestCase
             resource_group_name=resource_group.name,
             scope_name="str",
             private_link_scope_tags={"tags": {"str": "str"}},
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         )
 
         # please add some check logic here by yourself

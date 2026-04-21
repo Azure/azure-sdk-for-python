@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2023-03-11/examples/DataCollectionRuleAssociationsListByDataCollectionEndpoint.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/stable/2023-03-11/examples/DataCollectionRuleAssociationsListByDataCollectionEndpoint.json
 if __name__ == "__main__":
     main()

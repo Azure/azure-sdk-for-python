@@ -37,16 +37,16 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_delete_request(log_profile_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))
+    accept = _headers.pop("Accept", "application/json")
+
     # Construct URL
-    _url = kwargs.pop(
-        "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}"
-    )
+    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles")
     path_format_arguments = {
-        "logProfileName": _SERIALIZER.url("log_profile_name", log_profile_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
     }
 
@@ -55,7 +55,10 @@ def build_delete_request(log_profile_name: str, subscription_id: str, **kwargs: 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    return HttpRequest(method="DELETE", url=_url, params=_params, **kwargs)
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_request(log_profile_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
@@ -70,8 +73,8 @@ def build_get_request(log_profile_name: str, subscription_id: str, **kwargs: Any
         "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}"
     )
     path_format_arguments = {
-        "logProfileName": _SERIALIZER.url("log_profile_name", log_profile_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "logProfileName": _SERIALIZER.url("log_profile_name", log_profile_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -98,8 +101,8 @@ def build_create_or_update_request(log_profile_name: str, subscription_id: str, 
         "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}"
     )
     path_format_arguments = {
-        "logProfileName": _SERIALIZER.url("log_profile_name", log_profile_name, "str"),
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "logProfileName": _SERIALIZER.url("log_profile_name", log_profile_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -145,7 +148,7 @@ def build_update_request(log_profile_name: str, subscription_id: str, **kwargs: 
     return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
+def build_delete_request(log_profile_name: str, subscription_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -153,9 +156,12 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = kwargs.pop("template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles")
+    _url = kwargs.pop(
+        "template_url", "/subscriptions/{subscriptionId}/providers/Microsoft.Insights/logprofiles/{logProfileName}"
+    )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
+        "logProfileName": _SERIALIZER.url("log_profile_name", log_profile_name, "str"),
     }
 
     _url: str = _url.format(**path_format_arguments)  # type: ignore
@@ -166,7 +172,7 @@ def build_list_request(subscription_id: str, **kwargs: Any) -> HttpRequest:
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 class LogProfilesOperations:
@@ -189,15 +195,19 @@ class LogProfilesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def delete(self, log_profile_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
-        """Deletes the log profile.
+    def list(self, **kwargs: Any) -> ItemPaged["_models.LogProfileResource"]:
+        """List the log profiles.
 
-        :param log_profile_name: The name of the log profile. Required.
-        :type log_profile_name: str
-        :return: None or the result of cls(response)
-        :rtype: None
+        :return: An iterator like instance of either LogProfileResource or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.monitor.models.LogProfileResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))
+        cls: ClsType[_models.LogProfileCollection] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -206,34 +216,50 @@ class LogProfilesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))
-        cls: ClsType[None] = kwargs.pop("cls", None)
+                _request = build_list_request(
+                    subscription_id=self._config.subscription_id,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
 
-        _request = build_delete_request(
-            log_profile_name=log_profile_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
-        _stream = False
-        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        def extract_data(pipeline_response):
+            deserialized = self._deserialize("LogProfileCollection", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, iter(list_of_elem)
 
-        response = pipeline_response.http_response
+        def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            _stream = False
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
+            )
+            response = pipeline_response.http_response
 
-        if cls:
-            return cls(pipeline_response, None, {})  # type: ignore
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.MicrosoftCommonErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def get(self, log_profile_name: str, **kwargs: Any) -> _models.LogProfileResource:
@@ -278,7 +304,7 @@ class LogProfilesOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(
-                _models.ErrorResponse,
+                _models.MicrosoftCommonErrorResponse,
                 pipeline_response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -390,7 +416,11 @@ class LogProfilesOperations:
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response, error_format=ARMErrorFormat)
+            error = self._deserialize.failsafe_deserialize(
+                _models.MicrosoftCommonErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("LogProfileResource", pipeline_response.http_response)
 
@@ -508,7 +538,7 @@ class LogProfilesOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(
-                _models.ErrorResponse,
+                _models.MicrosoftCommonErrorResponse,
                 pipeline_response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -521,19 +551,15 @@ class LogProfilesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(self, **kwargs: Any) -> ItemPaged["_models.LogProfileResource"]:
-        """List the log profiles.
+    def delete(self, log_profile_name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Deletes the log profile.
 
-        :return: An iterator like instance of either LogProfileResource or the result of cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.mgmt.monitor.models.LogProfileResource]
+        :param log_profile_name: The name of the log profile. Required.
+        :type log_profile_name: str
+        :return: None or the result of cls(response)
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))
-        cls: ClsType[_models.LogProfileCollection] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -542,43 +568,35 @@ class LogProfilesOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-                _request = build_list_request(
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                _request.url = self._client.format_url(_request.url)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2016-03-01"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
-            else:
-                _request = HttpRequest("GET", next_link)
-                _request.url = self._client.format_url(_request.url)
-                _request.method = "GET"
-            return _request
+        _request = build_delete_request(
+            log_profile_name=log_profile_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
 
-        def extract_data(pipeline_response):
-            deserialized = self._deserialize("LogProfileCollection", pipeline_response)
-            list_of_elem = deserialized.value
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, iter(list_of_elem)
+        _stream = False
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
 
-        def get_next(next_link=None):
-            _request = prepare_request(next_link)
+        response = pipeline_response.http_response
 
-            _stream = False
-            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.MicrosoftCommonErrorResponse,
+                pipeline_response,
             )
-            response = pipeline_response.http_response
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                raise HttpResponseError(response=response, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return ItemPaged(get_next, extract_data)
+        if cls:
+            return cls(pipeline_response, None, {})  # type: ignore

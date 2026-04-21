@@ -34,9 +34,10 @@ def main():
     response = client.diagnostic_settings_category.list(
         resource_uri="subscriptions/1a66ce04-b633-4a0b-b2bc-a912ec8986a6/resourcegroups/viruela1/providers/microsoft.logic/workflows/viruela6",
     )
-    print(response)
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2017-05-01-preview/examples/listDiagnosticSettingsCategories.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/preview/2021-05-01-preview/examples/listDiagnosticSettingsCategories.json
 if __name__ == "__main__":
     main()

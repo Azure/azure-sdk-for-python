@@ -10,25 +10,32 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
+class AccessMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Access mode types."""
 
-    INTERNAL = "Internal"
+    OPEN = "Open"
+    PRIVATE_ONLY = "PrivateOnly"
 
 
 class AggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The aggregation type of the metric."""
 
     NONE = "None"
+    """None"""
     AVERAGE = "Average"
+    """Average"""
     COUNT = "Count"
+    """Count"""
     MINIMUM = "Minimum"
+    """Minimum"""
     MAXIMUM = "Maximum"
+    """Maximum"""
     TOTAL = "Total"
+    """Total"""
 
 
 class AggregationTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The criteria time aggregation types. Previously undocumented values might be returned."""
+    """the criteria time aggregation types."""
 
     AVERAGE = "Average"
     COUNT = "Count"
@@ -53,8 +60,11 @@ class BaselineSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the sensitivity of the baseline."""
 
     LOW = "Low"
+    """Low"""
     MEDIUM = "Medium"
+    """Medium"""
     HIGH = "High"
+    """High"""
 
 
 class CategoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -68,11 +78,17 @@ class ComparisonOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the operator that is used to compare the metric data and the threshold."""
 
     EQUALS = "Equals"
+    """Equals"""
     NOT_EQUALS = "NotEquals"
+    """NotEquals"""
     GREATER_THAN = "GreaterThan"
+    """GreaterThan"""
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
+    """GreaterThanOrEqual"""
     LESS_THAN = "LessThan"
+    """LessThan"""
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
+    """LessThanOrEqual"""
 
 
 class ConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -95,18 +111,10 @@ class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class CriterionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the type of threshold criteria. Previously undocumented values might be returned."""
+    """Specifies the type of threshold criteria."""
 
     STATIC_THRESHOLD_CRITERION = "StaticThresholdCriterion"
     DYNAMIC_THRESHOLD_CRITERION = "DynamicThresholdCriterion"
-
-
-class DataSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Datasource kind."""
-
-    PERFORMANCE_COUNTER = "PerformanceCounter"
-    ETW_PROVIDERS = "ETWProviders"
-    WINDOWS_EVENT_LOGS = "WindowsEventLogs"
 
 
 class DataStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -127,9 +135,7 @@ class DimensionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DynamicThresholdOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operator used to compare the metric value against the threshold. Previously undocumented
-    values might be returned.
-    """
+    """The operator used to compare the metric value against the threshold."""
 
     GREATER_THAN = "GreaterThan"
     LESS_THAN = "LessThan"
@@ -138,7 +144,7 @@ class DynamicThresholdOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class DynamicThresholdSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The extent of deviation required to trigger an alert. This will affect how tight the threshold
-    is to the metric series pattern. Previously undocumented values might be returned.
+    is to the metric series pattern.
     """
 
     LOW = "Low"
@@ -150,17 +156,15 @@ class EventLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the event level."""
 
     CRITICAL = "Critical"
+    """Critical"""
     ERROR = "Error"
+    """Error"""
     WARNING = "Warning"
+    """Warning"""
     INFORMATIONAL = "Informational"
+    """Informational"""
     VERBOSE = "Verbose"
-
-
-class GuestDiagnosticSettingsOsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Operating system type for the configuration."""
-
-    WINDOWS = "Windows"
-    LINUX = "Linux"
+    """Verbose"""
 
 
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -171,6 +175,12 @@ class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NONE = "None"
 
 
+class IncidentManagementService(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The incident management service type."""
+
+    ICM = "Icm"
+
+
 class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the type of scheduled query rule. The default is LogAlert."""
 
@@ -179,9 +189,7 @@ class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class KnownAgentSettingName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The name of the setting.
-    Must be part of the list of supported settings.
-    """
+    """The name of the setting. Must be part of the list of supported settings."""
 
     MAX_DISK_QUOTA_IN_MB = "MaxDiskQuotaInMB"
     USE_TIME_RECEIVED_FOR_FORWARDED_EVENTS = "UseTimeReceivedForForwardedEvents"
@@ -197,10 +205,11 @@ class KnownColumnDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BOOLEAN = "boolean"
     DATETIME = "datetime"
     DYNAMIC = "dynamic"
-    INT_ENUM = "int"
 
 
-class KnownDataCollectionEndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class KnownDataCollectionEndpointProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The resource provisioning state. This property is READ-ONLY."""
 
     CREATING = "Creating"
@@ -218,7 +227,9 @@ class KnownDataCollectionEndpointResourceKind(str, Enum, metaclass=CaseInsensiti
     WINDOWS = "Windows"
 
 
-class KnownDataCollectionRuleAssociationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class KnownDataCollectionRuleAssociationProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The resource provisioning state."""
 
     CREATING = "Creating"
@@ -285,7 +296,9 @@ class KnownLogFilesDataSourceFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta
     TEXT = "text"
 
 
-class KnownLogFileTextSettingsRecordStartTimestampFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class KnownLogFileTextSettingsRecordStartTimestampFormat(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """One of the supported timestamp formats."""
 
     ISO8601 = "ISO 8601"
@@ -306,7 +319,9 @@ class KnownPerfCounterDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnum
     MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
 
 
-class KnownPrometheusForwarderDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class KnownPrometheusForwarderDataSourceStreams(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """KnownPrometheusForwarderDataSourceStreams."""
 
     MICROSOFT_PROMETHEUS_METRICS = "Microsoft-PrometheusMetrics"
@@ -388,7 +403,9 @@ class KnownWindowsEventLogDataSourceStreams(str, Enum, metaclass=CaseInsensitive
     MICROSOFT_EVENT = "Microsoft-Event"
 
 
-class KnownWindowsFirewallLogsDataSourceProfileFilter(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class KnownWindowsFirewallLogsDataSourceProfileFilter(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """KnownWindowsFirewallLogsDataSourceProfileFilter."""
 
     DOMAIN = "Domain"
@@ -411,21 +428,32 @@ class MetricAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The aggregation type of the metric."""
 
     NONE = "None"
+    """None"""
     AVERAGE = "Average"
+    """Average"""
     COUNT = "Count"
+    """Count"""
     MINIMUM = "Minimum"
+    """Minimum"""
     MAXIMUM = "Maximum"
+    """Maximum"""
     TOTAL = "Total"
+    """Total"""
 
 
 class MetricClass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The class of the metric."""
 
     AVAILABILITY = "Availability"
+    """Availability"""
     TRANSACTIONS = "Transactions"
+    """Transactions"""
     ERRORS = "Errors"
+    """Errors"""
     LATENCY = "Latency"
+    """Latency"""
     SATURATION = "Saturation"
+    """Saturation"""
 
 
 class MetricResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -434,17 +462,24 @@ class MetricResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     DATA = "Data"
+    """Data"""
     METADATA = "Metadata"
+    """Metadata"""
 
 
 class MetricStatisticType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the metric statistic type. How the metrics from multiple instances are combined."""
 
     AVERAGE = "Average"
+    """Average"""
     MIN = "Min"
+    """Min"""
     MAX = "Max"
+    """Max"""
     SUM = "Sum"
+    """Sum"""
     COUNT = "Count"
+    """Count"""
 
 
 class MetricUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -483,12 +518,15 @@ class NamespaceClassification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Kind of namespace."""
 
     PLATFORM = "Platform"
+    """Platform"""
     CUSTOM = "Custom"
+    """Custom"""
     QOS = "Qos"
+    """Qos"""
 
 
 class Odatatype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the type of the alert criteria. Previously undocumented values might be returned."""
+    """specifies the type of the alert criteria."""
 
     MICROSOFT_AZURE_MONITOR_SINGLE_RESOURCE_MULTIPLE_METRIC_CRITERIA = (
         "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
@@ -499,7 +537,6 @@ class Odatatype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MICROSOFT_AZURE_MONITOR_WEBTEST_LOCATION_AVAILABILITY_CRITERIA = (
         "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
     )
-    MICROSOFT_AZURE_MONITOR_PROM_QL_CRITERIA = "Microsoft.Azure.Monitor.PromQLCriteria"
 
 
 class OnboardingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -513,7 +550,7 @@ class OnboardingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The criteria operator. Previously undocumented values might be returned."""
+    """the criteria operator."""
 
     EQUALS = "Equals"
     GREATER_THAN = "GreaterThan"
@@ -522,25 +559,20 @@ class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
 
 
-class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system".
-    """
-
-    USER = "user"
-    SYSTEM = "system"
-    USER_SYSTEM = "user,system"
-
-
 class PredictiveAutoscalePolicyScaleMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the predictive autoscale mode."""
 
     DISABLED = "Disabled"
+    """Disabled"""
     FORECAST_ONLY = "ForecastOnly"
+    """ForecastOnly"""
     ENABLED = "Enabled"
+    """Enabled"""
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -555,25 +587,6 @@ class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiv
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
-
-
-class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state of the Azure Monitor Workspace. Set to Succeeded if everything is
-    healthy.
-    """
-
-    CREATING = "Creating"
-    SUCCEEDED = "Succeeded"
-    DELETING = "Deleting"
-    FAILED = "Failed"
-    CANCELED = "Canceled"
-
-
-class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets allow or disallow public network access to Azure Monitor Workspace."""
-
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
 
 
 class ReceiverStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -594,28 +607,41 @@ class RecurrenceFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     NONE = "None"
+    """None"""
     SECOND = "Second"
+    """Second"""
     MINUTE = "Minute"
+    """Minute"""
     HOUR = "Hour"
+    """Hour"""
     DAY = "Day"
+    """Day"""
     WEEK = "Week"
+    """Week"""
     MONTH = "Month"
+    """Month"""
     YEAR = "Year"
+    """Year"""
 
 
 class ResultType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ResultType."""
 
     DATA = "Data"
+    """Data"""
     METADATA = "Metadata"
+    """Metadata"""
 
 
 class ScaleDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the scale direction. Whether the scaling action increases or decreases the number of instances."""
 
     NONE = "None"
+    """None"""
     INCREASE = "Increase"
+    """Increase"""
     DECREASE = "Decrease"
+    """Decrease"""
 
 
 class ScaleRuleMetricDimensionOperationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -624,24 +650,22 @@ class ScaleRuleMetricDimensionOperationType(str, Enum, metaclass=CaseInsensitive
     """
 
     EQUALS = "Equals"
+    """Equals"""
     NOT_EQUALS = "NotEquals"
+    """NotEquals"""
 
 
 class ScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """the type of action that should occur when the scale rule fires."""
 
     CHANGE_COUNT = "ChangeCount"
+    """ChangeCount"""
     PERCENT_CHANGE_COUNT = "PercentChangeCount"
+    """PercentChangeCount"""
     EXACT_COUNT = "ExactCount"
+    """ExactCount"""
     SERVICE_ALLOWED_NEXT_VALUE = "ServiceAllowedNextValue"
-
-
-class SinkConfigurationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SinkConfigurationKind."""
-
-    EVENT_HUB = "EventHub"
-    APPLICATION_INSIGHTS = "ApplicationInsights"
-    LOG_ANALYTICS = "LogAnalytics"
+    """ServiceAllowedNextValue"""
 
 
 class TimeAggregation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -660,8 +684,14 @@ class TimeAggregationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """
 
     AVERAGE = "Average"
+    """Average"""
     MINIMUM = "Minimum"
+    """Minimum"""
     MAXIMUM = "Maximum"
+    """Maximum"""
     TOTAL = "Total"
+    """Total"""
     COUNT = "Count"
+    """Count"""
     LAST = "Last"
+    """Last"""

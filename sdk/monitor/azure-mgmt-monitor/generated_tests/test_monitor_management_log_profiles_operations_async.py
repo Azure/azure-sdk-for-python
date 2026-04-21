@@ -21,12 +21,11 @@ class TestMonitorManagementLogProfilesOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_log_profiles_delete(self, resource_group):
-        response = await self.client.log_profiles.delete(
-            log_profile_name="str",
+    async def test_log_profiles_list(self, resource_group):
+        response = self.client.log_profiles.list(
             api_version="2016-03-01",
         )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...
 
@@ -55,6 +54,14 @@ class TestMonitorManagementLogProfilesOperationsAsync(AzureMgmtRecordedTestCase)
                 "name": "str",
                 "serviceBusRuleId": "str",
                 "storageAccountId": "str",
+                "systemData": {
+                    "createdAt": "2020-02-20 00:00:00",
+                    "createdBy": "str",
+                    "createdByType": "str",
+                    "lastModifiedAt": "2020-02-20 00:00:00",
+                    "lastModifiedBy": "str",
+                    "lastModifiedByType": "str",
+                },
                 "tags": {"str": "str"},
                 "type": "str",
             },
@@ -85,10 +92,11 @@ class TestMonitorManagementLogProfilesOperationsAsync(AzureMgmtRecordedTestCase)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_log_profiles_list(self, resource_group):
-        response = self.client.log_profiles.list(
+    async def test_log_profiles_delete(self, resource_group):
+        response = await self.client.log_profiles.delete(
+            log_profile_name="str",
             api_version="2016-03-01",
         )
-        result = [r async for r in response]
+
         # please add some check logic here by yourself
         # ...

@@ -21,12 +21,34 @@ class TestMonitorManagementAutoscaleSettingsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_autoscale_settings_list_by_subscription(self, resource_group):
+        response = self.client.autoscale_settings.list_by_subscription(
+            api_version="2022-10-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_autoscale_settings_list_by_resource_group(self, resource_group):
         response = self.client.autoscale_settings.list_by_resource_group(
             resource_group_name=resource_group.name,
             api_version="2022-10-01",
         )
         result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
+    async def test_autoscale_settings_get(self, resource_group):
+        response = await self.client.autoscale_settings.get(
+            resource_group_name=resource_group.name,
+            autoscale_setting_name="str",
+            api_version="2022-10-01",
+        )
+
         # please add some check logic here by yourself
         # ...
 
@@ -109,30 +131,6 @@ class TestMonitorManagementAutoscaleSettingsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_autoscale_settings_delete(self, resource_group):
-        response = await self.client.autoscale_settings.delete(
-            resource_group_name=resource_group.name,
-            autoscale_setting_name="str",
-            api_version="2022-10-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_autoscale_settings_get(self, resource_group):
-        response = await self.client.autoscale_settings.get(
-            resource_group_name=resource_group.name,
-            autoscale_setting_name="str",
-            api_version="2022-10-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
     async def test_autoscale_settings_update(self, resource_group):
         response = await self.client.autoscale_settings.update(
             resource_group_name=resource_group.name,
@@ -199,10 +197,12 @@ class TestMonitorManagementAutoscaleSettingsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_autoscale_settings_list_by_subscription(self, resource_group):
-        response = self.client.autoscale_settings.list_by_subscription(
+    async def test_autoscale_settings_delete(self, resource_group):
+        response = await self.client.autoscale_settings.delete(
+            resource_group_name=resource_group.name,
+            autoscale_setting_name="str",
             api_version="2022-10-01",
         )
-        result = [r async for r in response]
+
         # please add some check logic here by yourself
         # ...

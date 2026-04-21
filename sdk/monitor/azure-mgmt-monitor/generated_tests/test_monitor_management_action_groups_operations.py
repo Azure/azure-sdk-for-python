@@ -64,6 +64,14 @@ class TestMonitorManagementActionGroupsOperations(AzureMgmtRecordedTestCase):
                 ],
                 "groupShortName": "str",
                 "id": "str",
+                "incidentReceivers": [
+                    {
+                        "connection": {"id": "str", "name": "str"},
+                        "incidentManagementService": "str",
+                        "mappings": {"str": "str"},
+                        "name": "str",
+                    }
+                ],
                 "itsmReceivers": [
                     {
                         "connectionId": "str",
@@ -93,7 +101,7 @@ class TestMonitorManagementActionGroupsOperations(AzureMgmtRecordedTestCase):
                     }
                 ],
             },
-            api_version="2023-01-01",
+            api_version="2023-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -105,7 +113,7 @@ class TestMonitorManagementActionGroupsOperations(AzureMgmtRecordedTestCase):
         response = self.client.action_groups.get(
             resource_group_name=resource_group.name,
             action_group_name="str",
-            api_version="2023-01-01",
+            api_version="2023-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -117,7 +125,7 @@ class TestMonitorManagementActionGroupsOperations(AzureMgmtRecordedTestCase):
         response = self.client.action_groups.delete(
             resource_group_name=resource_group.name,
             action_group_name="str",
-            api_version="2023-01-01",
+            api_version="2023-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -130,7 +138,7 @@ class TestMonitorManagementActionGroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             action_group_name="str",
             action_group_patch={"enabled": True, "tags": {"str": "str"}},
-            api_version="2023-01-01",
+            api_version="2023-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -179,6 +187,14 @@ class TestMonitorManagementActionGroupsOperations(AzureMgmtRecordedTestCase):
                         "useCommonAlertSchema": False,
                     }
                 ],
+                "incidentReceivers": [
+                    {
+                        "connection": {"id": "str", "name": "str"},
+                        "incidentManagementService": "str",
+                        "mappings": {"str": "str"},
+                        "name": "str",
+                    }
+                ],
                 "itsmReceivers": [
                     {
                         "connectionId": "str",
@@ -205,7 +221,7 @@ class TestMonitorManagementActionGroupsOperations(AzureMgmtRecordedTestCase):
                     }
                 ],
             },
-            api_version="2023-01-01",
+            api_version="2023-09-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -218,7 +234,7 @@ class TestMonitorManagementActionGroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             action_group_name="str",
             notification_id="str",
-            api_version="2023-01-01",
+            api_version="2023-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -228,7 +244,7 @@ class TestMonitorManagementActionGroupsOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_action_groups_list_by_subscription_id(self, resource_group):
         response = self.client.action_groups.list_by_subscription_id(
-            api_version="2023-01-01",
+            api_version="2023-09-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -239,7 +255,7 @@ class TestMonitorManagementActionGroupsOperations(AzureMgmtRecordedTestCase):
     def test_action_groups_list_by_resource_group(self, resource_group):
         response = self.client.action_groups.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2023-01-01",
+            api_version="2023-09-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -252,7 +268,7 @@ class TestMonitorManagementActionGroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             action_group_name="str",
             enable_request={"receiverName": "str"},
-            api_version="2023-01-01",
+            api_version="2023-09-01-preview",
         )
 
         # please add some check logic here by yourself

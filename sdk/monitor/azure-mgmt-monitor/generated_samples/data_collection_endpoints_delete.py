@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2023-03-11/examples/DataCollectionEndpointsDelete.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/stable/2023-03-11/examples/DataCollectionEndpointsDelete.json
 if __name__ == "__main__":
     main()

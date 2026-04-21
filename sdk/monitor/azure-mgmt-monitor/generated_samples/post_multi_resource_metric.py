@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python azure_monitor_workspaces_delete.py
+    python post_multi_resource_metric.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,15 +28,15 @@ from azure.mgmt.monitor import MonitorManagementClient
 def main():
     client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="703362b3-f278-4e4b-9179-c76eaf41ffc2",
+        subscription_id="92d2a2d8-b514-432d-8cc9-a5f9272630d5",
     )
 
-    client.azure_monitor_workspaces.begin_delete(
-        resource_group_name="myResourceGroup",
-        azure_monitor_workspace_name="myAzureMonitorWorkspace",
-    ).result()
+    response = client.metrics.list_at_subscription_scope_post(
+        region="westus2",
+    )
+    print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Monitor/stable/2023-04-03/examples/AzureMonitorWorkspacesDelete.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/stable/2024-02-01/examples/PostMultiResourceMetric.json
 if __name__ == "__main__":
     main()

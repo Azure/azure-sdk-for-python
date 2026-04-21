@@ -58,7 +58,7 @@ def build_get_request(
     # Construct URL
     _url = kwargs.pop(
         "template_url",
-        "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics",
+        "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics",
     )
     path_format_arguments = {
         "subscriptionId": _SERIALIZER.url("subscription_id", subscription_id, "str", min_length=1),
@@ -71,12 +71,12 @@ def build_get_request(
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     _params["timespan"] = _SERIALIZER.query("timespan", timespan, "str")
     _params["interval"] = _SERIALIZER.query("interval", interval, "duration")
     _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
     _params["metricName"] = _SERIALIZER.query("metric_name", metric_name, "str")
     _params["aggregation"] = _SERIALIZER.query("aggregation", aggregation, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")

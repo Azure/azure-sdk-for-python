@@ -20,6 +20,17 @@ class TestMonitorManagementMetricsOperations(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
+    def test_metrics_list(self, resource_group):
+        response = self.client.metrics.list(
+            resource_uri="str",
+            api_version="2024-02-01",
+        )
+
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy
     def test_metrics_list_at_subscription_scope(self, resource_group):
         response = self.client.metrics.list_at_subscription_scope(
             region="str",
@@ -34,17 +45,6 @@ class TestMonitorManagementMetricsOperations(AzureMgmtRecordedTestCase):
     def test_metrics_list_at_subscription_scope_post(self, resource_group):
         response = self.client.metrics.list_at_subscription_scope_post(
             region="str",
-            api_version="2024-02-01",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_metrics_list(self, resource_group):
-        response = self.client.metrics.list(
-            resource_uri="str",
             api_version="2024-02-01",
         )
 

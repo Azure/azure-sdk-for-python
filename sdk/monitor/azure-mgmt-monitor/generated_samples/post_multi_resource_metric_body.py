@@ -37,6 +37,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2024-02-01/examples/PostMultiResourceMetricBody.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/stable/2024-02-01/examples/PostMultiResourceMetricBody.json
 if __name__ == "__main__":
     main()

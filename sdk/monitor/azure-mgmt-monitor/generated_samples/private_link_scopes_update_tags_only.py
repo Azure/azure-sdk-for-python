@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python delete_guest_diagnostic_settings_association.py
+    python private_link_scopes_update_tags_only.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,15 +28,17 @@ from azure.mgmt.monitor import MonitorManagementClient
 def main():
     client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="subid",
     )
 
-    client.guest_diagnostics_settings_association.delete(
-        resource_uri="subscriptions/8498f01b-8064-4e37-856e-318f3c6c685f/resourceGroups/healthsystem/providers/Microsoft.Compute/virtualMachines/eastussojai",
-        association_name="healthSystemMachineConfigAssociation",
+    response = client.private_link_scopes.update_tags(
+        resource_group_name="my-resource-group",
+        scope_name="my-privatelinkscope",
+        private_link_scope_tags={"tags": {"str": "str"}},
     )
+    print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2018-06-01-preview/examples/deleteGuestDiagnosticSettingsAssociation.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/preview/2021-07-01-preview/examples/PrivateLinkScopesUpdateTagsOnly.json
 if __name__ == "__main__":
     main()

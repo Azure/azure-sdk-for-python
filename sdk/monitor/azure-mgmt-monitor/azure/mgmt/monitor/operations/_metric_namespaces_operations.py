@@ -133,7 +133,7 @@ class MetricNamespacesOperations:
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, iter(list_of_elem)
+            return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             _request = prepare_request(next_link)
@@ -147,7 +147,7 @@ class MetricNamespacesOperations:
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
                 error = self._deserialize.failsafe_deserialize(
-                    _models.ErrorResponse,
+                    _models.MicrosoftCommonErrorResponse,
                     pipeline_response,
                 )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)

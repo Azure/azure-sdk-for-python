@@ -9,6 +9,7 @@ from collections.abc import MutableMapping
 from typing import Any, Callable, Optional, TypeVar
 
 from azure.core import AsyncPipelineClient
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -19,6 +20,7 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -75,7 +77,7 @@ class DiagnosticSettingsCategoryOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-05-01-preview"))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
         cls: ClsType[_models.DiagnosticSettingsCategoryResource] = kwargs.pop("cls", None)
 
         _request = build_get_request(
@@ -109,16 +111,24 @@ class DiagnosticSettingsCategoryOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace_async
-    async def list(self, resource_uri: str, **kwargs: Any) -> _models.DiagnosticSettingsCategoryResourceCollection:
+    @distributed_trace
+    def list(self, resource_uri: str, **kwargs: Any) -> AsyncItemPaged["_models.DiagnosticSettingsCategoryResource"]:
         """Lists the diagnostic settings categories for the specified resource.
 
         :param resource_uri: The identifier of the resource. Required.
         :type resource_uri: str
-        :return: DiagnosticSettingsCategoryResourceCollection or the result of cls(response)
-        :rtype: ~azure.mgmt.monitor.models.DiagnosticSettingsCategoryResourceCollection
+        :return: An iterator like instance of either DiagnosticSettingsCategoryResource or the result
+         of cls(response)
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.monitor.models.DiagnosticSettingsCategoryResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))
+        cls: ClsType[_models.DiagnosticSettingsCategoryResourceCollection] = kwargs.pop("cls", None)
+
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -127,40 +137,47 @@ class DiagnosticSettingsCategoryOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        def prepare_request(next_link=None):
+            if not next_link:
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2017-05-01-preview"))
-        cls: ClsType[_models.DiagnosticSettingsCategoryResourceCollection] = kwargs.pop("cls", None)
+                _request = build_list_request(
+                    resource_uri=resource_uri,
+                    api_version=api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                _request.url = self._client.format_url(_request.url)
 
-        _request = build_list_request(
-            resource_uri=resource_uri,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
+            else:
+                _request = HttpRequest("GET", next_link)
+                _request.url = self._client.format_url(_request.url)
+                _request.method = "GET"
+            return _request
 
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize("DiagnosticSettingsCategoryResourceCollection", pipeline_response)
+            list_of_elem = deserialized.value
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return None, AsyncList(list_of_elem)
 
-        response = pipeline_response.http_response
+        async def get_next(next_link=None):
+            _request = prepare_request(next_link)
 
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _models.ErrorResponse,
-                pipeline_response,
+            _stream = False
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                _request, stream=_stream, **kwargs
             )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+            response = pipeline_response.http_response
 
-        deserialized = self._deserialize(
-            "DiagnosticSettingsCategoryResourceCollection", pipeline_response.http_response
-        )
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
+                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
+            return pipeline_response
 
-        return deserialized  # type: ignore
+        return AsyncItemPaged(get_next, extract_data)

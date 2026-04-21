@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2022-10-01/examples/deleteAutoscaleSetting.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/stable/2022-10-01/examples/deleteAutoscaleSetting.json
 if __name__ == "__main__":
     main()

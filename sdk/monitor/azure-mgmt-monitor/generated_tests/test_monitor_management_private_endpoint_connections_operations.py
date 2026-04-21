@@ -25,7 +25,7 @@ class TestMonitorManagementPrivateEndpointConnectionsOperations(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             scope_name="str",
             private_endpoint_connection_name="str",
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -42,11 +42,11 @@ class TestMonitorManagementPrivateEndpointConnectionsOperations(AzureMgmtRecorde
                 "id": "str",
                 "name": "str",
                 "privateEndpoint": {"id": "str"},
-                "privateLinkServiceConnectionState": {"description": "str", "status": "str", "actionsRequired": "str"},
+                "privateLinkServiceConnectionState": {"actionsRequired": "str", "description": "str", "status": "str"},
                 "provisioningState": "str",
                 "type": "str",
             },
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -59,7 +59,7 @@ class TestMonitorManagementPrivateEndpointConnectionsOperations(AzureMgmtRecorde
             resource_group_name=resource_group.name,
             scope_name="str",
             private_endpoint_connection_name="str",
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -71,8 +71,8 @@ class TestMonitorManagementPrivateEndpointConnectionsOperations(AzureMgmtRecorde
         response = self.client.private_endpoint_connections.list_by_private_link_scope(
             resource_group_name=resource_group.name,
             scope_name="str",
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...

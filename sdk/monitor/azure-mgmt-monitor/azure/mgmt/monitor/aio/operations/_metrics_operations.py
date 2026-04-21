@@ -58,7 +58,144 @@ class MetricsOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def list_at_subscription_scope(
+    async def list(  # pylint: disable=too-many-locals
+        self,
+        resource_uri: str,
+        timespan: Optional[str] = None,
+        interval: Optional[str] = None,
+        metricnames: Optional[str] = None,
+        aggregation: Optional[str] = None,
+        top: Optional[int] = None,
+        orderby: Optional[str] = None,
+        filter: Optional[str] = None,
+        result_type: Optional[Union[str, _models.ResultType]] = None,
+        metricnamespace: Optional[str] = None,
+        auto_adjust_timegrain: Optional[bool] = None,
+        validate_dimensions: Optional[bool] = None,
+        rollupby: Optional[str] = None,
+        **kwargs: Any
+    ) -> _models.Response:
+        """**Lists the metric values for a resource**. This API used the `default ARM throttling limits
+        <https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/request-limits-and-throttling>`_.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource.
+         Required.
+        :type resource_uri: str
+        :param timespan: The timespan of the query. It is a string with the following format
+         'startDateTime_ISO/endDateTime_ISO'. Default value is None.
+        :type timespan: str
+        :param interval: The interval (i.e. timegrain) of the query in ISO 8601 duration format.
+         Defaults to PT1M. Special case for 'FULL' value that returns single datapoint for entire time
+         span requested.
+         *Examples: PT15M, PT1H, P1D, FULL*. Default value is None.
+        :type interval: str
+        :param metricnames: The names of the metrics (comma separated) to retrieve. Limit 20 metrics.
+         Default value is None.
+        :type metricnames: str
+        :param aggregation: The list of aggregation types (comma separated) to retrieve.
+         *Examples: average, minimum, maximum*. Default value is None.
+        :type aggregation: str
+        :param top: The maximum number of records to retrieve per resource ID in the request.
+         Valid only if filter is specified.
+         Defaults to 10. Default value is None.
+        :type top: int
+        :param orderby: The aggregation to use for sorting results and the direction of the sort.
+         Only one order can be specified.
+         *Examples: sum asc*. Default value is None.
+        :type orderby: str
+        :param filter: The **$filter** is used to reduce the set of metric data returned.\\
+         :code:`<br>`Example:\\ :code:`<br>`Metric contains metadata A, B and C.\\ :code:`<br>`- Return
+         all time series of C where A = a1 and B = b1 or b2\\ :code:`<br>`\\ **$filter=A eq ‘a1’ and B
+         eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\\ :code:`<br>`- Invalid variant:\\ :code:`<br>`\\
+         **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\\ :code:`<br>`This is invalid
+         because the logical or operator cannot separate two different metadata names.\\ :code:`<br>`-
+         Return all time series where A = a1, B = b1 and C = c1:\\ :code:`<br>`\\ **$filter=A eq ‘a1’
+         and B eq ‘b1’ and C eq ‘c1’**\\ :code:`<br>`- Return all time series where A = a1\\
+         :code:`<br>`\\ **$filter=A eq ‘a1’ and B eq ‘\\ *’ and C eq ‘*\\ ’**. Default value is None.
+        :type filter: str
+        :param result_type: Reduces the set of data collected. The syntax allowed depends on the
+         operation. See the operation's description for details. Known values are: "Data" and
+         "Metadata". Default value is None.
+        :type result_type: str or ~azure.mgmt.monitor.models.ResultType
+        :param metricnamespace: Metric namespace where the metrics you want reside. Default value is
+         None.
+        :type metricnamespace: str
+        :param auto_adjust_timegrain: When set to true, if the timespan passed in is not supported by
+         this metric, the API will return the result using the closest supported timespan. When set to
+         false, an error is returned for invalid timespan parameters. Defaults to false. Default value
+         is None.
+        :type auto_adjust_timegrain: bool
+        :param validate_dimensions: When set to false, invalid filter parameter values will be ignored.
+         When set to true, an error is returned for invalid filter parameters. Defaults to true. Default
+         value is None.
+        :type validate_dimensions: bool
+        :param rollupby: Dimension name(s) to rollup results by. For example if you only want to see
+         metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
+         separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
+         and Tacoma rolled up into one timeseries. Default value is None.
+        :type rollupby: str
+        :return: Response or the result of cls(response)
+        :rtype: ~azure.mgmt.monitor.models.Response
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map: MutableMapping = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
+        cls: ClsType[_models.Response] = kwargs.pop("cls", None)
+
+        _request = build_list_request(
+            resource_uri=resource_uri,
+            timespan=timespan,
+            interval=interval,
+            metricnames=metricnames,
+            aggregation=aggregation,
+            top=top,
+            orderby=orderby,
+            filter=filter,
+            result_type=result_type,
+            metricnamespace=metricnamespace,
+            auto_adjust_timegrain=auto_adjust_timegrain,
+            validate_dimensions=validate_dimensions,
+            rollupby=rollupby,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        _request.url = self._client.format_url(_request.url)
+
+        _stream = False
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(
+                _models.MicrosoftCommonCommonErrorResponse,
+                pipeline_response,
+            )
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        deserialized = self._deserialize("Response", pipeline_response.http_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
+
+        return deserialized  # type: ignore
+
+    @distributed_trace_async
+    async def list_at_subscription_scope(  # pylint: disable=too-many-locals
         self,
         region: str,
         timespan: Optional[str] = None,
@@ -182,7 +319,7 @@ class MetricsOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(
-                _models.ErrorContract,
+                _models.MicrosoftCommonErrorContract,
                 pipeline_response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
@@ -274,7 +411,7 @@ class MetricsOperations:
          separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
          and Tacoma rolled up into one timeseries. Default value is None.
         :type rollupby: str
-        :param body: Parameters serialized in the body. Default value is None.
+        :param body: The request body. Default value is None.
         :type body: ~azure.mgmt.monitor.models.SubscriptionScopeMetricsRequestBodyParameters
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
@@ -364,7 +501,7 @@ class MetricsOperations:
          separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
          and Tacoma rolled up into one timeseries. Default value is None.
         :type rollupby: str
-        :param body: Parameters serialized in the body. Default value is None.
+        :param body: The request body. Default value is None.
         :type body: IO[bytes]
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -375,7 +512,7 @@ class MetricsOperations:
         """
 
     @distributed_trace_async
-    async def list_at_subscription_scope_post(
+    async def list_at_subscription_scope_post(  # pylint: disable=too-many-locals
         self,
         region: str,
         timespan: Optional[str] = None,
@@ -452,8 +589,8 @@ class MetricsOperations:
          separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
          and Tacoma rolled up into one timeseries. Default value is None.
         :type rollupby: str
-        :param body: Parameters serialized in the body. Is either a
-         SubscriptionScopeMetricsRequestBodyParameters type or a IO[bytes] type. Default value is None.
+        :param body: The request body. Is either a SubscriptionScopeMetricsRequestBodyParameters type
+         or a IO[bytes] type. Default value is None.
         :type body: ~azure.mgmt.monitor.models.SubscriptionScopeMetricsRequestBodyParameters or
          IO[bytes]
         :return: Response or the result of cls(response)
@@ -521,143 +658,7 @@ class MetricsOperations:
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(
-                _models.ErrorContract,
-                pipeline_response,
-            )
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        deserialized = self._deserialize("Response", pipeline_response.http_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    @distributed_trace_async
-    async def list(
-        self,
-        resource_uri: str,
-        timespan: Optional[str] = None,
-        interval: Optional[str] = None,
-        metricnames: Optional[str] = None,
-        aggregation: Optional[str] = None,
-        top: Optional[int] = None,
-        orderby: Optional[str] = None,
-        filter: Optional[str] = None,
-        result_type: Optional[Union[str, _models.ResultType]] = None,
-        metricnamespace: Optional[str] = None,
-        auto_adjust_timegrain: Optional[bool] = None,
-        validate_dimensions: Optional[bool] = None,
-        rollupby: Optional[str] = None,
-        **kwargs: Any
-    ) -> _models.Response:
-        """**Lists the metric values for a resource**. This API used the `default ARM throttling limits
-        <https://learn.microsoft.com/en-us/azure/azure-resource-manager/management/request-limits-and-throttling>`_.
-
-        :param resource_uri: The identifier of the resource. Required.
-        :type resource_uri: str
-        :param timespan: The timespan of the query. It is a string with the following format
-         'startDateTime_ISO/endDateTime_ISO'. Default value is None.
-        :type timespan: str
-        :param interval: The interval (i.e. timegrain) of the query in ISO 8601 duration format.
-         Defaults to PT1M. Special case for 'FULL' value that returns single datapoint for entire time
-         span requested.
-         *Examples: PT15M, PT1H, P1D, FULL*. Default value is None.
-        :type interval: str
-        :param metricnames: The names of the metrics (comma separated) to retrieve. Limit 20 metrics.
-         Default value is None.
-        :type metricnames: str
-        :param aggregation: The list of aggregation types (comma separated) to retrieve.
-         *Examples: average, minimum, maximum*. Default value is None.
-        :type aggregation: str
-        :param top: The maximum number of records to retrieve per resource ID in the request.
-         Valid only if filter is specified.
-         Defaults to 10. Default value is None.
-        :type top: int
-        :param orderby: The aggregation to use for sorting results and the direction of the sort.
-         Only one order can be specified.
-         *Examples: sum asc*. Default value is None.
-        :type orderby: str
-        :param filter: The **$filter** is used to reduce the set of metric data returned.\\
-         :code:`<br>`Example:\\ :code:`<br>`Metric contains metadata A, B and C.\\ :code:`<br>`- Return
-         all time series of C where A = a1 and B = b1 or b2\\ :code:`<br>`\\ **$filter=A eq ‘a1’ and B
-         eq ‘b1’ or B eq ‘b2’ and C eq ‘*’**\\ :code:`<br>`- Invalid variant:\\ :code:`<br>`\\
-         **$filter=A eq ‘a1’ and B eq ‘b1’ and C eq ‘*’ or B = ‘b2’**\\ :code:`<br>`This is invalid
-         because the logical or operator cannot separate two different metadata names.\\ :code:`<br>`-
-         Return all time series where A = a1, B = b1 and C = c1:\\ :code:`<br>`\\ **$filter=A eq ‘a1’
-         and B eq ‘b1’ and C eq ‘c1’**\\ :code:`<br>`- Return all time series where A = a1\\
-         :code:`<br>`\\ **$filter=A eq ‘a1’ and B eq ‘\\ *’ and C eq ‘*\\ ’**. Default value is None.
-        :type filter: str
-        :param result_type: Reduces the set of data collected. The syntax allowed depends on the
-         operation. See the operation's description for details. Known values are: "Data" and
-         "Metadata". Default value is None.
-        :type result_type: str or ~azure.mgmt.monitor.models.ResultType
-        :param metricnamespace: Metric namespace where the metrics you want reside. Default value is
-         None.
-        :type metricnamespace: str
-        :param auto_adjust_timegrain: When set to true, if the timespan passed in is not supported by
-         this metric, the API will return the result using the closest supported timespan. When set to
-         false, an error is returned for invalid timespan parameters. Defaults to false. Default value
-         is None.
-        :type auto_adjust_timegrain: bool
-        :param validate_dimensions: When set to false, invalid filter parameter values will be ignored.
-         When set to true, an error is returned for invalid filter parameters. Defaults to true. Default
-         value is None.
-        :type validate_dimensions: bool
-        :param rollupby: Dimension name(s) to rollup results by. For example if you only want to see
-         metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
-         separate values for each city, you can specify 'RollUpBy=City' to see the results for Seattle
-         and Tacoma rolled up into one timeseries. Default value is None.
-        :type rollupby: str
-        :return: Response or the result of cls(response)
-        :rtype: ~azure.mgmt.monitor.models.Response
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map: MutableMapping = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
-        cls: ClsType[_models.Response] = kwargs.pop("cls", None)
-
-        _request = build_list_request(
-            resource_uri=resource_uri,
-            timespan=timespan,
-            interval=interval,
-            metricnames=metricnames,
-            aggregation=aggregation,
-            top=top,
-            orderby=orderby,
-            filter=filter,
-            result_type=result_type,
-            metricnamespace=metricnamespace,
-            auto_adjust_timegrain=auto_adjust_timegrain,
-            validate_dimensions=validate_dimensions,
-            rollupby=rollupby,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        _request.url = self._client.format_url(_request.url)
-
-        _stream = False
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            _request, stream=_stream, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(
-                _models.ErrorResponseAutoGenerated4,
+                _models.MicrosoftCommonErrorContract,
                 pipeline_response,
             )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)

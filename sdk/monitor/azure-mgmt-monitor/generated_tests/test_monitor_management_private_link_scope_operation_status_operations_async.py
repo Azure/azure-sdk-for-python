@@ -25,7 +25,7 @@ class TestMonitorManagementPrivateLinkScopeOperationStatusOperationsAsync(AzureM
         response = await self.client.private_link_scope_operation_status.get(
             async_operation_id="str",
             resource_group_name=resource_group.name,
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         )
 
         # please add some check logic here by yourself

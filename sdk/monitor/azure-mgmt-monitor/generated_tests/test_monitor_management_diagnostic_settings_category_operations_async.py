@@ -25,7 +25,7 @@ class TestMonitorManagementDiagnosticSettingsCategoryOperationsAsync(AzureMgmtRe
         response = await self.client.diagnostic_settings_category.get(
             resource_uri="str",
             name="str",
-            api_version="2017-05-01-preview",
+            api_version="2021-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -34,10 +34,10 @@ class TestMonitorManagementDiagnosticSettingsCategoryOperationsAsync(AzureMgmtRe
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_diagnostic_settings_category_list(self, resource_group):
-        response = await self.client.diagnostic_settings_category.list(
+        response = self.client.diagnostic_settings_category.list(
             resource_uri="str",
-            api_version="2017-05-01-preview",
+            api_version="2021-05-01-preview",
         )
-
+        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

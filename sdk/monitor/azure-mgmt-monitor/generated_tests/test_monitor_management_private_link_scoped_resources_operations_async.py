@@ -26,7 +26,7 @@ class TestMonitorManagementPrivateLinkScopedResourcesOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             scope_name="str",
             name="str",
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -45,9 +45,17 @@ class TestMonitorManagementPrivateLinkScopedResourcesOperationsAsync(AzureMgmtRe
                     "linkedResourceId": "str",
                     "name": "str",
                     "provisioningState": "str",
+                    "systemData": {
+                        "createdAt": "2020-02-20 00:00:00",
+                        "createdBy": "str",
+                        "createdByType": "str",
+                        "lastModifiedAt": "2020-02-20 00:00:00",
+                        "lastModifiedBy": "str",
+                        "lastModifiedByType": "str",
+                    },
                     "type": "str",
                 },
-                api_version="2019-10-17-preview",
+                api_version="2021-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -62,7 +70,7 @@ class TestMonitorManagementPrivateLinkScopedResourcesOperationsAsync(AzureMgmtRe
                 resource_group_name=resource_group.name,
                 scope_name="str",
                 name="str",
-                api_version="2019-10-17-preview",
+                api_version="2021-07-01-preview",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -75,7 +83,7 @@ class TestMonitorManagementPrivateLinkScopedResourcesOperationsAsync(AzureMgmtRe
         response = self.client.private_link_scoped_resources.list_by_private_link_scope(
             resource_group_name=resource_group.name,
             scope_name="str",
-            api_version="2019-10-17-preview",
+            api_version="2021-07-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself

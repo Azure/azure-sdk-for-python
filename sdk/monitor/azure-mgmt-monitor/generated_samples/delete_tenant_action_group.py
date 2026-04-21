@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python create_or_update_subscription_diagnostic_setting.py
+    python delete_tenant_action_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,24 +28,16 @@ from azure.mgmt.monitor import MonitorManagementClient
 def main():
     client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="fb9f25f9-5785-4510-a38f-a62f188eb9f8",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.subscription_diagnostic_settings.create_or_update(
-        name="ds4",
-        parameters={
-            "properties": {
-                "eventHubAuthorizationRuleId": "/subscriptions/fb9f25f9-5785-4510-a38f-a62f188eb9f8/resourceGroups/montest/providers/microsoft.eventhub/namespaces/mynamespace/eventhubs/myeventhub/authorizationrules/myrule",
-                "eventHubName": "myeventhub",
-                "logs": [{"category": "Security", "enabled": True}],
-                "storageAccountId": "/subscriptions/df602c9c-7aa0-407d-a6fb-eb20c8bd1192/resourceGroups/apptest/providers/Microsoft.Storage/storageAccounts/appteststorage1",
-                "workspaceId": "",
-            }
-        },
+    client.tenant_action_groups.delete(
+        management_group_id="72f988bf-86f1-41af-91ab-2d7cd011db47",
+        tenant_action_group_name="testTenantActionGroup",
+        x_ms_client_tenant_id="72f988bf-86f1-41af-91ab-2d7cd011db47",
     )
-    print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/preview/2017-05-01-preview/examples/createOrUpdateSubscriptionDiagnosticSetting.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/preview/2023-05-01-preview/examples/deleteTenantActionGroup.json
 if __name__ == "__main__":
     main()

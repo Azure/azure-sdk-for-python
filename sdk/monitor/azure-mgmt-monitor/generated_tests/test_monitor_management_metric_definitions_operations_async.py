@@ -21,9 +21,9 @@ class TestMonitorManagementMetricDefinitionsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_metric_definitions_list_at_subscription_scope(self, resource_group):
-        response = self.client.metric_definitions.list_at_subscription_scope(
-            region="str",
+    async def test_metric_definitions_list(self, resource_group):
+        response = self.client.metric_definitions.list(
+            resource_uri="str",
             api_version="2024-02-01",
         )
         result = [r async for r in response]
@@ -32,9 +32,9 @@ class TestMonitorManagementMetricDefinitionsOperationsAsync(AzureMgmtRecordedTes
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_metric_definitions_list(self, resource_group):
-        response = self.client.metric_definitions.list(
-            resource_uri="str",
+    async def test_metric_definitions_list_at_subscription_scope(self, resource_group):
+        response = self.client.metric_definitions.list_at_subscription_scope(
+            region="str",
             api_version="2024-02-01",
         )
         result = [r async for r in response]

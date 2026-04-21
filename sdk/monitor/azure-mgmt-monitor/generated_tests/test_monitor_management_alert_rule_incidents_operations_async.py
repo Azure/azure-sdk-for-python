@@ -21,6 +21,18 @@ class TestMonitorManagementAlertRuleIncidentsOperationsAsync(AzureMgmtRecordedTe
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_alert_rule_incidents_list_by_alert_rule(self, resource_group):
+        response = self.client.alert_rule_incidents.list_by_alert_rule(
+            resource_group_name=resource_group.name,
+            rule_name="str",
+            api_version="2016-03-01",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_alert_rule_incidents_get(self, resource_group):
         response = await self.client.alert_rule_incidents.get(
             resource_group_name=resource_group.name,
@@ -29,17 +41,5 @@ class TestMonitorManagementAlertRuleIncidentsOperationsAsync(AzureMgmtRecordedTe
             api_version="2016-03-01",
         )
 
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_alert_rule_incidents_list_by_alert_rule(self, resource_group):
-        response = self.client.alert_rule_incidents.list_by_alert_rule(
-            resource_group_name=resource_group.name,
-            rule_name="str",
-            api_version="2016-03-01",
-        )
-        result = [r async for r in response]
         # please add some check logic here by yourself
         # ...

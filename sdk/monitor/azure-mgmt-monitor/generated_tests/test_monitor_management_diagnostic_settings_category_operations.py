@@ -24,7 +24,7 @@ class TestMonitorManagementDiagnosticSettingsCategoryOperations(AzureMgmtRecorde
         response = self.client.diagnostic_settings_category.get(
             resource_uri="str",
             name="str",
-            api_version="2017-05-01-preview",
+            api_version="2021-05-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -35,8 +35,8 @@ class TestMonitorManagementDiagnosticSettingsCategoryOperations(AzureMgmtRecorde
     def test_diagnostic_settings_category_list(self, resource_group):
         response = self.client.diagnostic_settings_category.list(
             resource_uri="str",
-            api_version="2017-05-01-preview",
+            api_version="2021-05-01-preview",
         )
-
+        result = [r for r in response]
         # please add some check logic here by yourself
         # ...

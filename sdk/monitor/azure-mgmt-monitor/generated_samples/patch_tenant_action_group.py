@@ -16,7 +16,7 @@ from azure.mgmt.monitor import MonitorManagementClient
     pip install azure-identity
     pip install azure-mgmt-monitor
 # USAGE
-    python azure_monitor_workspaces_list_by_resource_group.py
+    python patch_tenant_action_group.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,16 +28,18 @@ from azure.mgmt.monitor import MonitorManagementClient
 def main():
     client = MonitorManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="703362b3-f278-4e4b-9179-c76eaf41ffc2",
+        subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.azure_monitor_workspaces.list_by_resource_group(
-        resource_group_name="myResourceGroup",
+    response = client.tenant_action_groups.update(
+        management_group_id="72f988bf-86f1-41af-91ab-2d7cd011db47",
+        tenant_action_group_name="testTenantActionGroup",
+        x_ms_client_tenant_id="72f988bf-86f1-41af-91ab-2d7cd011db47",
+        tenant_action_group_patch={"properties": {"enabled": False}, "tags": {"key1": "value1", "key2": "value2"}},
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Monitor/stable/2023-04-03/examples/AzureMonitorWorkspacesListByResourceGroup.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/preview/2023-05-01-preview/examples/patchTenantActionGroup.json
 if __name__ == "__main__":
     main()

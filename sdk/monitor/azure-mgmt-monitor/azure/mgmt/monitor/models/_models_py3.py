@@ -18,6 +18,113 @@ if TYPE_CHECKING:
 JSON = MutableMapping[str, Any]
 
 
+class AccessModeSettings(_serialization.Model):
+    """Properties that define the scope private link mode settings.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar query_access_mode: Specifies the default access mode of queries through associated
+     private endpoints in scope. If not specified default value is 'Open'. You can override this
+     default setting for a specific private endpoint connection by adding an exclusion in the
+     'exclusions' array. Required. Known values are: "Open" and "PrivateOnly".
+    :vartype query_access_mode: str or ~azure.mgmt.monitor.models.AccessMode
+    :ivar ingestion_access_mode: Specifies the default access mode of ingestion through associated
+     private endpoints in scope. If not specified default value is 'Open'. You can override this
+     default setting for a specific private endpoint connection by adding an exclusion in the
+     'exclusions' array. Required. Known values are: "Open" and "PrivateOnly".
+    :vartype ingestion_access_mode: str or ~azure.mgmt.monitor.models.AccessMode
+    :ivar exclusions: List of exclusions that override the default access mode settings for
+     specific private endpoint connections.
+    :vartype exclusions: list[~azure.mgmt.monitor.models.AccessModeSettingsExclusion]
+    """
+
+    _validation = {
+        "query_access_mode": {"required": True},
+        "ingestion_access_mode": {"required": True},
+    }
+
+    _attribute_map = {
+        "query_access_mode": {"key": "queryAccessMode", "type": "str"},
+        "ingestion_access_mode": {"key": "ingestionAccessMode", "type": "str"},
+        "exclusions": {"key": "exclusions", "type": "[AccessModeSettingsExclusion]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        query_access_mode: Union[str, "_models.AccessMode"],
+        ingestion_access_mode: Union[str, "_models.AccessMode"],
+        exclusions: Optional[list["_models.AccessModeSettingsExclusion"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword query_access_mode: Specifies the default access mode of queries through associated
+         private endpoints in scope. If not specified default value is 'Open'. You can override this
+         default setting for a specific private endpoint connection by adding an exclusion in the
+         'exclusions' array. Required. Known values are: "Open" and "PrivateOnly".
+        :paramtype query_access_mode: str or ~azure.mgmt.monitor.models.AccessMode
+        :keyword ingestion_access_mode: Specifies the default access mode of ingestion through
+         associated private endpoints in scope. If not specified default value is 'Open'. You can
+         override this default setting for a specific private endpoint connection by adding an exclusion
+         in the 'exclusions' array. Required. Known values are: "Open" and "PrivateOnly".
+        :paramtype ingestion_access_mode: str or ~azure.mgmt.monitor.models.AccessMode
+        :keyword exclusions: List of exclusions that override the default access mode settings for
+         specific private endpoint connections.
+        :paramtype exclusions: list[~azure.mgmt.monitor.models.AccessModeSettingsExclusion]
+        """
+        super().__init__(**kwargs)
+        self.query_access_mode = query_access_mode
+        self.ingestion_access_mode = ingestion_access_mode
+        self.exclusions = exclusions
+
+
+class AccessModeSettingsExclusion(_serialization.Model):
+    """Properties that define the scope private link mode settings exclusion item. This setting
+    applies to a specific private endpoint connection and overrides the default settings for that
+    private endpoint connection.
+
+    :ivar private_endpoint_connection_name: The private endpoint connection name associated to the
+     private endpoint on which we want to apply the specific access mode settings.
+    :vartype private_endpoint_connection_name: str
+    :ivar query_access_mode: Specifies the access mode of queries through the specified private
+     endpoint connection in the exclusion. Known values are: "Open" and "PrivateOnly".
+    :vartype query_access_mode: str or ~azure.mgmt.monitor.models.AccessMode
+    :ivar ingestion_access_mode: Specifies the access mode of ingestion through the specified
+     private endpoint connection in the exclusion. Known values are: "Open" and "PrivateOnly".
+    :vartype ingestion_access_mode: str or ~azure.mgmt.monitor.models.AccessMode
+    """
+
+    _attribute_map = {
+        "private_endpoint_connection_name": {"key": "privateEndpointConnectionName", "type": "str"},
+        "query_access_mode": {"key": "queryAccessMode", "type": "str"},
+        "ingestion_access_mode": {"key": "ingestionAccessMode", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        private_endpoint_connection_name: Optional[str] = None,
+        query_access_mode: Optional[Union[str, "_models.AccessMode"]] = None,
+        ingestion_access_mode: Optional[Union[str, "_models.AccessMode"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword private_endpoint_connection_name: The private endpoint connection name associated to
+         the private endpoint on which we want to apply the specific access mode settings.
+        :paramtype private_endpoint_connection_name: str
+        :keyword query_access_mode: Specifies the access mode of queries through the specified private
+         endpoint connection in the exclusion. Known values are: "Open" and "PrivateOnly".
+        :paramtype query_access_mode: str or ~azure.mgmt.monitor.models.AccessMode
+        :keyword ingestion_access_mode: Specifies the access mode of ingestion through the specified
+         private endpoint connection in the exclusion. Known values are: "Open" and "PrivateOnly".
+        :paramtype ingestion_access_mode: str or ~azure.mgmt.monitor.models.AccessMode
+        """
+        super().__init__(**kwargs)
+        self.private_endpoint_connection_name = private_endpoint_connection_name
+        self.query_access_mode = query_access_mode
+        self.ingestion_access_mode = ingestion_access_mode
+
+
 class ActionDetail(_serialization.Model):
     """The action detail.
 
@@ -76,6 +183,66 @@ class ActionDetail(_serialization.Model):
         self.sub_state = sub_state
         self.send_time = send_time
         self.detail = detail
+
+
+class ActionDetailAutoGenerated(_serialization.Model):
+    """The action detail.
+
+    :ivar mechanism_type: The mechanism type.
+    :vartype mechanism_type: str
+    :ivar name: The name of the action.
+    :vartype name: str
+    :ivar status: The status of the action.
+    :vartype status: str
+    :ivar sub_state: The substatus of the action.
+    :vartype sub_state: str
+    :ivar send_time: The send time.
+    :vartype send_time: str
+    :ivar message: The detail of the friendly error message.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "mechanism_type": {"key": "mechanismType", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "sub_state": {"key": "subState", "type": "str"},
+        "send_time": {"key": "sendTime", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        mechanism_type: Optional[str] = None,
+        name: Optional[str] = None,
+        status: Optional[str] = None,
+        sub_state: Optional[str] = None,
+        send_time: Optional[str] = None,
+        message: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword mechanism_type: The mechanism type.
+        :paramtype mechanism_type: str
+        :keyword name: The name of the action.
+        :paramtype name: str
+        :keyword status: The status of the action.
+        :paramtype status: str
+        :keyword sub_state: The substatus of the action.
+        :paramtype sub_state: str
+        :keyword send_time: The send time.
+        :paramtype send_time: str
+        :keyword message: The detail of the friendly error message.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.mechanism_type = mechanism_type
+        self.name = name
+        self.status = status
+        self.sub_state = sub_state
+        self.send_time = send_time
+        self.message = message
 
 
 class ActionGroup(_serialization.Model):
@@ -169,6 +336,34 @@ class ActionGroupPatchBody(_serialization.Model):
         :paramtype tags: dict[str, str]
         :keyword enabled: Indicates whether this action group is enabled. If an action group is not
          enabled, then none of its actions will be activated.
+        :paramtype enabled: bool
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.enabled = enabled
+
+
+class ActionGroupPatchBodyAutoGenerated(_serialization.Model):
+    """A tenant action group object for the body of patch operations.
+
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar enabled: Indicates whether this tenant action group is enabled. If a tenant action group
+     is not enabled, then none of its actions will be activated.
+    :vartype enabled: bool
+    """
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+    }
+
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, enabled: bool = True, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword enabled: Indicates whether this tenant action group is enabled. If a tenant action
+         group is not enabled, then none of its actions will be activated.
         :paramtype enabled: bool
         """
         super().__init__(**kwargs)
@@ -274,6 +469,8 @@ class ActionGroupResource(AzureResource):
     :vartype arm_role_receivers: list[~azure.mgmt.monitor.models.ArmRoleReceiver]
     :ivar event_hub_receivers: The list of event hub receivers that are part of this action group.
     :vartype event_hub_receivers: list[~azure.mgmt.monitor.models.EventHubReceiver]
+    :ivar incident_receivers: The list of incident receivers that are part of this action group.
+    :vartype incident_receivers: list[~azure.mgmt.monitor.models.IncidentReceiver]
     """
 
     _validation = {
@@ -306,6 +503,7 @@ class ActionGroupResource(AzureResource):
         "azure_function_receivers": {"key": "properties.azureFunctionReceivers", "type": "[AzureFunctionReceiver]"},
         "arm_role_receivers": {"key": "properties.armRoleReceivers", "type": "[ArmRoleReceiver]"},
         "event_hub_receivers": {"key": "properties.eventHubReceivers", "type": "[EventHubReceiver]"},
+        "incident_receivers": {"key": "properties.incidentReceivers", "type": "[IncidentReceiver]"},
     }
 
     def __init__(
@@ -326,6 +524,7 @@ class ActionGroupResource(AzureResource):
         azure_function_receivers: Optional[list["_models.AzureFunctionReceiver"]] = None,
         arm_role_receivers: Optional[list["_models.ArmRoleReceiver"]] = None,
         event_hub_receivers: Optional[list["_models.EventHubReceiver"]] = None,
+        incident_receivers: Optional[list["_models.IncidentReceiver"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -368,6 +567,8 @@ class ActionGroupResource(AzureResource):
         :keyword event_hub_receivers: The list of event hub receivers that are part of this action
          group.
         :paramtype event_hub_receivers: list[~azure.mgmt.monitor.models.EventHubReceiver]
+        :keyword incident_receivers: The list of incident receivers that are part of this action group.
+        :paramtype incident_receivers: list[~azure.mgmt.monitor.models.IncidentReceiver]
         """
         super().__init__(location=location, tags=tags, **kwargs)
         self.group_short_name = group_short_name
@@ -383,6 +584,7 @@ class ActionGroupResource(AzureResource):
         self.azure_function_receivers = azure_function_receivers
         self.arm_role_receivers = arm_role_receivers
         self.event_hub_receivers = event_hub_receivers
+        self.incident_receivers = incident_receivers
 
 
 class ActionList(_serialization.Model):
@@ -593,9 +795,8 @@ class AdxDestination(_serialization.Model):
     :vartype database_name: str
     :ivar ingestion_uri: The ingestion uri of the Adx resource.
     :vartype ingestion_uri: str
-    :ivar name: A friendly name for the destination.
-     This name should be unique across all destinations (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the destination. This name should be unique across all
+     destinations (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -623,9 +824,8 @@ class AdxDestination(_serialization.Model):
         :paramtype resource_id: str
         :keyword database_name: The name of the database to which data will be ingested.
         :paramtype database_name: str
-        :keyword name: A friendly name for the destination.
-         This name should be unique across all destinations (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the destination. This name should be unique across all
+         destinations (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -638,9 +838,8 @@ class AdxDestination(_serialization.Model):
 class AgentSetting(_serialization.Model):
     """A setting used to control an agent behavior on a host machine.
 
-    :ivar name: The name of the setting.
-     Must be part of the list of supported settings. Known values are: "MaxDiskQuotaInMB" and
-     "UseTimeReceivedForForwardedEvents".
+    :ivar name: The name of the setting. Must be part of the list of supported settings. Known
+     values are: "MaxDiskQuotaInMB" and "UseTimeReceivedForForwardedEvents".
     :vartype name: str or ~azure.mgmt.monitor.models.KnownAgentSettingName
     :ivar value: The value of the setting.
     :vartype value: str
@@ -659,9 +858,8 @@ class AgentSetting(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword name: The name of the setting.
-         Must be part of the list of supported settings. Known values are: "MaxDiskQuotaInMB" and
-         "UseTimeReceivedForForwardedEvents".
+        :keyword name: The name of the setting. Must be part of the list of supported settings. Known
+         values are: "MaxDiskQuotaInMB" and "UseTimeReceivedForForwardedEvents".
         :paramtype name: str or ~azure.mgmt.monitor.models.KnownAgentSettingName
         :keyword value: The value of the setting.
         :paramtype value: str
@@ -719,11 +917,10 @@ class AlertRuleAllOfCondition(_serialization.Model):
 
 class AlertRuleLeafCondition(_serialization.Model):
     """An Activity Log Alert rule condition that is met by comparing the field and value of an
-    Activity Log event.
-    This condition must contain 'field' and either 'equals' or 'containsAny'.
+    Activity Log event. This condition must contain 'field' and either 'equals' or 'containsAny'.
 
-    :ivar field: The name of the Activity Log event's field that this condition will examine.
-     The possible values for this field are (case-insensitive): 'resourceId', 'category', 'caller',
+    :ivar field: The name of the Activity Log event's field that this condition will examine. The
+     possible values for this field are (case-insensitive): 'resourceId', 'category', 'caller',
      'level', 'operationName', 'resourceGroup', 'resourceProvider', 'status', 'subStatus',
      'resourceType', or anything beginning with 'properties'.
     :vartype field: str
@@ -782,8 +979,8 @@ class AlertRuleAnyOfOrLeafCondition(AlertRuleLeafCondition):
         *Please note, 'field', 'equals' and 'containsAny' should **not** be set in an AnyOf
     Condition.*.
 
-    :ivar field: The name of the Activity Log event's field that this condition will examine.
-     The possible values for this field are (case-insensitive): 'resourceId', 'category', 'caller',
+    :ivar field: The name of the Activity Log event's field that this condition will examine. The
+     possible values for this field are (case-insensitive): 'resourceId', 'category', 'caller',
      'level', 'operationName', 'resourceGroup', 'resourceProvider', 'status', 'subStatus',
      'resourceType', or anything beginning with 'properties'.
     :vartype field: str
@@ -1203,26 +1400,20 @@ class AutoscaleProfile(_serialization.Model):
 
 
 class Resource(_serialization.Model):
-    """The autoscale setting resource.
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Azure resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Gets or sets a list of key value pairs that describe the resource. These tags can
-     be used in viewing and grouping this resource (across resource groups). A maximum of 15 tags
-     can be provided for a resource. Each tag must have a key no greater in length than 128
-     characters and a value no greater in length than 256 characters.
-    :vartype tags: dict[str, str]
-    :ivar system_data: The system metadata related to the response.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.monitor.models.SystemData
     """
 
@@ -1230,7 +1421,6 @@ class Resource(_serialization.Model):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "location": {"required": True},
         "system_data": {"readonly": True},
     }
 
@@ -1238,52 +1428,94 @@ class Resource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
         "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
-        :keyword tags: Gets or sets a list of key value pairs that describe the resource. These tags
-         can be used in viewing and grouping this resource (across resource groups). A maximum of 15
-         tags can be provided for a resource. Each tag must have a key no greater in length than 128
-         characters and a value no greater in length than 256 characters.
-        :paramtype tags: dict[str, str]
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
         self.id: Optional[str] = None
         self.name: Optional[str] = None
         self.type: Optional[str] = None
-        self.location = location
-        self.tags = tags
         self.system_data: Optional["_models.SystemData"] = None
 
 
-class AutoscaleSettingResource(Resource):
+class TrackedResource(Resource):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+    }
+
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
+        self.tags = tags
+        self.location = location
+
+
+class AutoscaleSettingResource(TrackedResource):
     """The autoscale setting resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Azure resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Gets or sets a list of key value pairs that describe the resource. These tags can
-     be used in viewing and grouping this resource (across resource groups). A maximum of 15 tags
-     can be provided for a resource. Each tag must have a key no greater in length than 128
-     characters and a value no greater in length than 256 characters.
-    :vartype tags: dict[str, str]
-    :ivar system_data: The system metadata related to the response.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.monitor.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar profiles: the collection of automatic scaling profiles that specify different scaling
      parameters for different time periods. A maximum of 20 profiles can be specified. Required.
     :vartype profiles: list[~azure.mgmt.monitor.models.AutoscaleProfile]
@@ -1308,8 +1540,8 @@ class AutoscaleSettingResource(Resource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "location": {"required": True},
         "system_data": {"readonly": True},
+        "location": {"required": True},
         "profiles": {"required": True, "max_items": 20, "min_items": 0},
     }
 
@@ -1317,9 +1549,9 @@ class AutoscaleSettingResource(Resource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
         "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "profiles": {"key": "properties.profiles", "type": "[AutoscaleProfile]"},
         "notifications": {"key": "properties.notifications", "type": "[AutoscaleNotification]"},
         "enabled": {"key": "properties.enabled", "type": "bool"},
@@ -1347,13 +1579,10 @@ class AutoscaleSettingResource(Resource):
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
-        :keyword tags: Gets or sets a list of key value pairs that describe the resource. These tags
-         can be used in viewing and grouping this resource (across resource groups). A maximum of 15
-         tags can be provided for a resource. Each tag must have a key no greater in length than 128
-         characters and a value no greater in length than 256 characters.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword profiles: the collection of automatic scaling profiles that specify different scaling
          parameters for different time periods. A maximum of 20 profiles can be specified. Required.
         :paramtype profiles: list[~azure.mgmt.monitor.models.AutoscaleProfile]
@@ -1373,7 +1602,7 @@ class AutoscaleSettingResource(Resource):
          should be added to.
         :paramtype target_resource_location: str
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.profiles = profiles
         self.notifications = notifications
         self.enabled = enabled
@@ -1388,9 +1617,9 @@ class AutoscaleSettingResourceCollection(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar value: the values for the autoscale setting resources. Required.
+    :ivar value: The AutoscaleSettingResource items on this page. Required.
     :vartype value: list[~azure.mgmt.monitor.models.AutoscaleSettingResource]
-    :ivar next_link: URL to get the next set of results.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -1407,9 +1636,9 @@ class AutoscaleSettingResourceCollection(_serialization.Model):
         self, *, value: list["_models.AutoscaleSettingResource"], next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
-        :keyword value: the values for the autoscale setting resources. Required.
+        :keyword value: The AutoscaleSettingResource items on this page. Required.
         :paramtype value: list[~azure.mgmt.monitor.models.AutoscaleSettingResource]
-        :keyword next_link: URL to get the next set of results.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -1541,6 +1770,41 @@ class AzureAppPushReceiver(_serialization.Model):
         self.email_address = email_address
 
 
+class AzureAppPushReceiverAutoGenerated(_serialization.Model):
+    """The Azure mobile App push notification receiver.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the Azure mobile app push receiver. Names must be unique across all
+     receivers within a tenant action group. Required.
+    :vartype name: str
+    :ivar email_address: The email address registered for the Azure mobile app. Required.
+    :vartype email_address: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "email_address": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "email_address": {"key": "emailAddress", "type": "str"},
+    }
+
+    def __init__(self, *, name: str, email_address: str, **kwargs: Any) -> None:
+        """
+        :keyword name: The name of the Azure mobile app push receiver. Names must be unique across all
+         receivers within a tenant action group. Required.
+        :paramtype name: str
+        :keyword email_address: The email address registered for the Azure mobile app. Required.
+        :paramtype email_address: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.email_address = email_address
+
+
 class AzureFunctionReceiver(_serialization.Model):
     """An azure function receiver.
 
@@ -1608,9 +1872,8 @@ class AzureFunctionReceiver(_serialization.Model):
 class AzureMonitorMetricsDestination(_serialization.Model):
     """Azure Monitor Metrics destination.
 
-    :ivar name: A friendly name for the destination.
-     This name should be unique across all destinations (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the destination. This name should be unique across all
+     destinations (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -1620,32 +1883,69 @@ class AzureMonitorMetricsDestination(_serialization.Model):
 
     def __init__(self, *, name: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword name: A friendly name for the destination.
-         This name should be unique across all destinations (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the destination. This name should be unique across all
+         destinations (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
         self.name = name
 
 
-class PrivateLinkScopesResource(_serialization.Model):
-    """An azure resource object.
+class ResourceAutoGenerated(_serialization.Model):
+    """Common fields that are returned in the response for all Azure Resource Manager resources.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+
+
+class TrackedResourceAutoGenerated(ResourceAutoGenerated):
+    """The resource model definition for an Azure Resource Manager tracked top level resource which
+    has 'tags' and a 'location'.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Azure resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     """
 
     _validation = {
@@ -1659,42 +1959,43 @@ class PrivateLinkScopesResource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         """
         super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.location = location
         self.tags = tags
+        self.location = location
 
 
-class AzureMonitorPrivateLinkScope(PrivateLinkScopesResource):
+class AzureMonitorPrivateLinkScope(TrackedResourceAutoGenerated):
     """An Azure Monitor PrivateLinkScope definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Azure resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar system_data: System data.
+    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
     :ivar provisioning_state: Current state of this PrivateLinkScope: whether or not is has been
      provisioned within the resource group it is defined. Users cannot change this value but are
      able to read from it. Values will include Provisioning ,Succeeded, Canceled and Failed.
@@ -1702,6 +2003,8 @@ class AzureMonitorPrivateLinkScope(PrivateLinkScopesResource):
     :ivar private_endpoint_connections: List of private endpoint connections.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.monitor.models.PrivateEndpointConnection]
+    :ivar access_mode_settings: Access mode settings. Required.
+    :vartype access_mode_settings: ~azure.mgmt.monitor.models.AccessModeSettings
     """
 
     _validation = {
@@ -1709,33 +2012,48 @@ class AzureMonitorPrivateLinkScope(PrivateLinkScopesResource):
         "name": {"readonly": True},
         "type": {"readonly": True},
         "location": {"required": True},
+        "system_data": {"readonly": True},
         "provisioning_state": {"readonly": True},
         "private_endpoint_connections": {"readonly": True},
+        "access_mode_settings": {"required": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
         "private_endpoint_connections": {
             "key": "properties.privateEndpointConnections",
             "type": "[PrivateEndpointConnection]",
         },
+        "access_mode_settings": {"key": "properties.accessModeSettings", "type": "AccessModeSettings"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        location: str,
+        access_mode_settings: "_models.AccessModeSettings",
+        tags: Optional[dict[str, str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword access_mode_settings: Access mode settings. Required.
+        :paramtype access_mode_settings: ~azure.mgmt.monitor.models.AccessModeSettings
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
         self.provisioning_state: Optional[str] = None
         self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
+        self.access_mode_settings = access_mode_settings
 
 
 class AzureMonitorPrivateLinkScopeListResult(_serialization.Model):
@@ -1772,439 +2090,6 @@ class AzureMonitorPrivateLinkScopeListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
-
-
-class AzureMonitorWorkspace(_serialization.Model):
-    """Properties of an Azure Monitor Workspace.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar account_id: The immutable Id of the Azure Monitor Workspace. This property is read-only.
-    :vartype account_id: str
-    :ivar metrics: Properties related to the metrics container in the Azure Monitor Workspace.
-    :vartype metrics: ~azure.mgmt.monitor.models.AzureMonitorWorkspaceMetrics
-    :ivar provisioning_state: The provisioning state of the Azure Monitor Workspace. Set to
-     Succeeded if everything is healthy. Known values are: "Creating", "Succeeded", "Deleting",
-     "Failed", and "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.monitor.models.ProvisioningState
-    :ivar default_ingestion_settings: The Data Collection Rule and Endpoint used for ingestion by
-     default.
-    :vartype default_ingestion_settings:
-     ~azure.mgmt.monitor.models.AzureMonitorWorkspaceDefaultIngestionSettings
-    :ivar private_endpoint_connections: List of private endpoint connections.
-    :vartype private_endpoint_connections:
-     list[~azure.mgmt.monitor.models.PrivateEndpointConnectionAutoGenerated]
-    :ivar public_network_access: Gets or sets allow or disallow public network access to Azure
-     Monitor Workspace. Known values are: "Enabled" and "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.monitor.models.PublicNetworkAccess
-    """
-
-    _validation = {
-        "account_id": {"readonly": True},
-        "metrics": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "default_ingestion_settings": {"readonly": True},
-        "private_endpoint_connections": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "account_id": {"key": "accountId", "type": "str"},
-        "metrics": {"key": "metrics", "type": "AzureMonitorWorkspaceMetrics"},
-        "provisioning_state": {"key": "provisioningState", "type": "str"},
-        "default_ingestion_settings": {
-            "key": "defaultIngestionSettings",
-            "type": "AzureMonitorWorkspaceDefaultIngestionSettings",
-        },
-        "private_endpoint_connections": {
-            "key": "privateEndpointConnections",
-            "type": "[PrivateEndpointConnectionAutoGenerated]",
-        },
-        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
-    }
-
-    def __init__(
-        self, *, public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword public_network_access: Gets or sets allow or disallow public network access to Azure
-         Monitor Workspace. Known values are: "Enabled" and "Disabled".
-        :paramtype public_network_access: str or ~azure.mgmt.monitor.models.PublicNetworkAccess
-        """
-        super().__init__(**kwargs)
-        self.account_id: Optional[str] = None
-        self.metrics: Optional["_models.AzureMonitorWorkspaceMetrics"] = None
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.default_ingestion_settings: Optional["_models.AzureMonitorWorkspaceDefaultIngestionSettings"] = None
-        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnectionAutoGenerated"]] = None
-        self.public_network_access = public_network_access
-
-
-class IngestionSettings(_serialization.Model):
-    """Settings for data ingestion.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar data_collection_rule_resource_id: The Azure resource Id of the default data collection
-     rule for this Azure Monitor Workspace.
-    :vartype data_collection_rule_resource_id: str
-    :ivar data_collection_endpoint_resource_id: The Azure resource Id of the default data
-     collection endpoint for this Azure Monitor Workspace.
-    :vartype data_collection_endpoint_resource_id: str
-    """
-
-    _validation = {
-        "data_collection_rule_resource_id": {"readonly": True},
-        "data_collection_endpoint_resource_id": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "data_collection_rule_resource_id": {"key": "dataCollectionRuleResourceId", "type": "str"},
-        "data_collection_endpoint_resource_id": {"key": "dataCollectionEndpointResourceId", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.data_collection_rule_resource_id: Optional[str] = None
-        self.data_collection_endpoint_resource_id: Optional[str] = None
-
-
-class AzureMonitorWorkspaceDefaultIngestionSettings(IngestionSettings):  # pylint: disable=name-too-long
-    """The Data Collection Rule and Endpoint used for ingestion by default.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar data_collection_rule_resource_id: The Azure resource Id of the default data collection
-     rule for this Azure Monitor Workspace.
-    :vartype data_collection_rule_resource_id: str
-    :ivar data_collection_endpoint_resource_id: The Azure resource Id of the default data
-     collection endpoint for this Azure Monitor Workspace.
-    :vartype data_collection_endpoint_resource_id: str
-    """
-
-
-class Metrics(_serialization.Model):
-    """Properties related to the metrics container in the Azure Monitor Workspace.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar prometheus_query_endpoint: The Prometheus query endpoint for the Azure Monitor Workspace.
-    :vartype prometheus_query_endpoint: str
-    :ivar internal_id: An internal identifier for the metrics container. Only to be used by the
-     system.
-    :vartype internal_id: str
-    """
-
-    _validation = {
-        "prometheus_query_endpoint": {"readonly": True},
-        "internal_id": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "prometheus_query_endpoint": {"key": "prometheusQueryEndpoint", "type": "str"},
-        "internal_id": {"key": "internalId", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.prometheus_query_endpoint: Optional[str] = None
-        self.internal_id: Optional[str] = None
-
-
-class AzureMonitorWorkspaceMetrics(Metrics):
-    """Properties related to the metrics container in the Azure Monitor Workspace.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar prometheus_query_endpoint: The Prometheus query endpoint for the Azure Monitor Workspace.
-    :vartype prometheus_query_endpoint: str
-    :ivar internal_id: An internal identifier for the metrics container. Only to be used by the
-     system.
-    :vartype internal_id: str
-    """
-
-
-class ResourceAutoGenerated8(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.system_data: Optional["_models.SystemData"] = None
-
-
-class TrackedResource(ResourceAutoGenerated8):
-    """The resource model definition for an Azure Resource Manager tracked top level resource which
-    has 'tags' and a 'location'.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-    }
-
-    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.location = location
-
-
-class AzureMonitorWorkspaceResource(TrackedResource):
-    """An Azure Monitor Workspace definition.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar location: The geo-location where the resource lives. Required.
-    :vartype location: str
-    :ivar etag: Resource entity tag (ETag).
-    :vartype etag: str
-    :ivar account_id: The immutable Id of the Azure Monitor Workspace. This property is read-only.
-    :vartype account_id: str
-    :ivar metrics: Properties related to the metrics container in the Azure Monitor Workspace.
-    :vartype metrics: ~azure.mgmt.monitor.models.AzureMonitorWorkspaceMetrics
-    :ivar provisioning_state: The provisioning state of the Azure Monitor Workspace. Set to
-     Succeeded if everything is healthy. Known values are: "Creating", "Succeeded", "Deleting",
-     "Failed", and "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.monitor.models.ProvisioningState
-    :ivar default_ingestion_settings: The Data Collection Rule and Endpoint used for ingestion by
-     default.
-    :vartype default_ingestion_settings:
-     ~azure.mgmt.monitor.models.AzureMonitorWorkspaceDefaultIngestionSettings
-    :ivar private_endpoint_connections: List of private endpoint connections.
-    :vartype private_endpoint_connections:
-     list[~azure.mgmt.monitor.models.PrivateEndpointConnectionAutoGenerated]
-    :ivar public_network_access: Gets or sets allow or disallow public network access to Azure
-     Monitor Workspace. Known values are: "Enabled" and "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.monitor.models.PublicNetworkAccess
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "location": {"required": True},
-        "etag": {"readonly": True},
-        "account_id": {"readonly": True},
-        "metrics": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-        "default_ingestion_settings": {"readonly": True},
-        "private_endpoint_connections": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "location": {"key": "location", "type": "str"},
-        "etag": {"key": "etag", "type": "str"},
-        "account_id": {"key": "properties.accountId", "type": "str"},
-        "metrics": {"key": "properties.metrics", "type": "AzureMonitorWorkspaceMetrics"},
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-        "default_ingestion_settings": {
-            "key": "properties.defaultIngestionSettings",
-            "type": "AzureMonitorWorkspaceDefaultIngestionSettings",
-        },
-        "private_endpoint_connections": {
-            "key": "properties.privateEndpointConnections",
-            "type": "[PrivateEndpointConnectionAutoGenerated]",
-        },
-        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword location: The geo-location where the resource lives. Required.
-        :paramtype location: str
-        :keyword public_network_access: Gets or sets allow or disallow public network access to Azure
-         Monitor Workspace. Known values are: "Enabled" and "Disabled".
-        :paramtype public_network_access: str or ~azure.mgmt.monitor.models.PublicNetworkAccess
-        """
-        super().__init__(tags=tags, location=location, **kwargs)
-        self.etag: Optional[str] = None
-        self.account_id: Optional[str] = None
-        self.metrics: Optional["_models.AzureMonitorWorkspaceMetrics"] = None
-        self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.default_ingestion_settings: Optional["_models.AzureMonitorWorkspaceDefaultIngestionSettings"] = None
-        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnectionAutoGenerated"]] = None
-        self.public_network_access = public_network_access
-
-
-class AzureMonitorWorkspaceResourceForUpdate(_serialization.Model):
-    """Definition of ARM tracked top level resource properties for the Update operation.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-
-
-class AzureMonitorWorkspaceResourceListResult(_serialization.Model):
-    """A pageable list of resources.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: A list of resources. Required.
-    :vartype value: list[~azure.mgmt.monitor.models.AzureMonitorWorkspaceResource]
-    :ivar next_link: The URL to use for getting the next set of results.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[AzureMonitorWorkspaceResource]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, value: list["_models.AzureMonitorWorkspaceResource"], next_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: A list of resources. Required.
-        :paramtype value: list[~azure.mgmt.monitor.models.AzureMonitorWorkspaceResource]
-        :keyword next_link: The URL to use for getting the next set of results.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class AzureMonitorWorkspaceResourceProperties(AzureMonitorWorkspace):
-    """Resource properties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar account_id: The immutable Id of the Azure Monitor Workspace. This property is read-only.
-    :vartype account_id: str
-    :ivar metrics: Properties related to the metrics container in the Azure Monitor Workspace.
-    :vartype metrics: ~azure.mgmt.monitor.models.AzureMonitorWorkspaceMetrics
-    :ivar provisioning_state: The provisioning state of the Azure Monitor Workspace. Set to
-     Succeeded if everything is healthy. Known values are: "Creating", "Succeeded", "Deleting",
-     "Failed", and "Canceled".
-    :vartype provisioning_state: str or ~azure.mgmt.monitor.models.ProvisioningState
-    :ivar default_ingestion_settings: The Data Collection Rule and Endpoint used for ingestion by
-     default.
-    :vartype default_ingestion_settings:
-     ~azure.mgmt.monitor.models.AzureMonitorWorkspaceDefaultIngestionSettings
-    :ivar private_endpoint_connections: List of private endpoint connections.
-    :vartype private_endpoint_connections:
-     list[~azure.mgmt.monitor.models.PrivateEndpointConnectionAutoGenerated]
-    :ivar public_network_access: Gets or sets allow or disallow public network access to Azure
-     Monitor Workspace. Known values are: "Enabled" and "Disabled".
-    :vartype public_network_access: str or ~azure.mgmt.monitor.models.PublicNetworkAccess
-    """
 
 
 class BaselineMetadata(_serialization.Model):
@@ -2246,7 +2131,7 @@ class ColumnDefinition(_serialization.Model):
     :ivar name: The name of the column.
     :vartype name: str
     :ivar type: The type of the column data. Known values are: "string", "int", "long", "real",
-     "boolean", "datetime", "dynamic", and "int".
+     "boolean", "datetime", and "dynamic".
     :vartype type: str or ~azure.mgmt.monitor.models.KnownColumnDefinitionType
     """
 
@@ -2266,7 +2151,7 @@ class ColumnDefinition(_serialization.Model):
         :keyword name: The name of the column.
         :paramtype name: str
         :keyword type: The type of the column data. Known values are: "string", "int", "long", "real",
-         "boolean", "datetime", "dynamic", and "int".
+         "boolean", "datetime", and "dynamic".
         :paramtype type: str or ~azure.mgmt.monitor.models.KnownColumnDefinitionType
         """
         super().__init__(**kwargs)
@@ -3189,9 +3074,8 @@ class DataCollectionRule(_serialization.Model):
     :vartype agent_settings: ~azure.mgmt.monitor.models.DataCollectionRuleAgentSettings
     :ivar stream_declarations: Declaration of custom streams used in this rule.
     :vartype stream_declarations: dict[str, ~azure.mgmt.monitor.models.StreamDeclaration]
-    :ivar data_sources: The specification of data sources.
-     This property is optional and can be omitted if the rule is meant to be used via direct calls
-     to the provisioned endpoint.
+    :ivar data_sources: The specification of data sources. This property is optional and can be
+     omitted if the rule is meant to be used via direct calls to the provisioned endpoint.
     :vartype data_sources: ~azure.mgmt.monitor.models.DataCollectionRuleDataSources
     :ivar destinations: The specification of destinations.
     :vartype destinations: ~azure.mgmt.monitor.models.DataCollectionRuleDestinations
@@ -3250,9 +3134,8 @@ class DataCollectionRule(_serialization.Model):
         :paramtype agent_settings: ~azure.mgmt.monitor.models.DataCollectionRuleAgentSettings
         :keyword stream_declarations: Declaration of custom streams used in this rule.
         :paramtype stream_declarations: dict[str, ~azure.mgmt.monitor.models.StreamDeclaration]
-        :keyword data_sources: The specification of data sources.
-         This property is optional and can be omitted if the rule is meant to be used via direct calls
-         to the provisioned endpoint.
+        :keyword data_sources: The specification of data sources. This property is optional and can be
+         omitted if the rule is meant to be used via direct calls to the provisioned endpoint.
         :paramtype data_sources: ~azure.mgmt.monitor.models.DataCollectionRuleDataSources
         :keyword destinations: The specification of destinations.
         :paramtype destinations: ~azure.mgmt.monitor.models.DataCollectionRuleDestinations
@@ -3621,9 +3504,8 @@ class DataSourcesSpec(_serialization.Model):
 
 
 class DataCollectionRuleDataSources(DataSourcesSpec):
-    """The specification of data sources.
-    This property is optional and can be omitted if the rule is meant to be used via direct calls
-    to the provisioned endpoint.
+    """The specification of data sources. This property is optional and can be omitted if the rule is
+    meant to be used via direct calls to the provisioned endpoint.
 
     :ivar performance_counters: The list of performance counter data source configurations.
     :vartype performance_counters: list[~azure.mgmt.monitor.models.PerfCounterDataSource]
@@ -3894,9 +3776,8 @@ class DataCollectionRuleResource(_serialization.Model):
     :vartype agent_settings: ~azure.mgmt.monitor.models.DataCollectionRuleAgentSettings
     :ivar stream_declarations: Declaration of custom streams used in this rule.
     :vartype stream_declarations: dict[str, ~azure.mgmt.monitor.models.StreamDeclaration]
-    :ivar data_sources: The specification of data sources.
-     This property is optional and can be omitted if the rule is meant to be used via direct calls
-     to the provisioned endpoint.
+    :ivar data_sources: The specification of data sources. This property is optional and can be
+     omitted if the rule is meant to be used via direct calls to the provisioned endpoint.
     :vartype data_sources: ~azure.mgmt.monitor.models.DataCollectionRuleDataSources
     :ivar destinations: The specification of destinations.
     :vartype destinations: ~azure.mgmt.monitor.models.DataCollectionRuleDestinations
@@ -3982,9 +3863,8 @@ class DataCollectionRuleResource(_serialization.Model):
         :paramtype agent_settings: ~azure.mgmt.monitor.models.DataCollectionRuleAgentSettings
         :keyword stream_declarations: Declaration of custom streams used in this rule.
         :paramtype stream_declarations: dict[str, ~azure.mgmt.monitor.models.StreamDeclaration]
-        :keyword data_sources: The specification of data sources.
-         This property is optional and can be omitted if the rule is meant to be used via direct calls
-         to the provisioned endpoint.
+        :keyword data_sources: The specification of data sources. This property is optional and can be
+         omitted if the rule is meant to be used via direct calls to the provisioned endpoint.
         :paramtype data_sources: ~azure.mgmt.monitor.models.DataCollectionRuleDataSources
         :keyword destinations: The specification of destinations.
         :paramtype destinations: ~azure.mgmt.monitor.models.DataCollectionRuleDestinations
@@ -4096,9 +3976,8 @@ class DataCollectionRuleResourceProperties(DataCollectionRule):
     :vartype agent_settings: ~azure.mgmt.monitor.models.DataCollectionRuleAgentSettings
     :ivar stream_declarations: Declaration of custom streams used in this rule.
     :vartype stream_declarations: dict[str, ~azure.mgmt.monitor.models.StreamDeclaration]
-    :ivar data_sources: The specification of data sources.
-     This property is optional and can be omitted if the rule is meant to be used via direct calls
-     to the provisioned endpoint.
+    :ivar data_sources: The specification of data sources. This property is optional and can be
+     omitted if the rule is meant to be used via direct calls to the provisioned endpoint.
     :vartype data_sources: ~azure.mgmt.monitor.models.DataCollectionRuleDataSources
     :ivar destinations: The specification of destinations.
     :vartype destinations: ~azure.mgmt.monitor.models.DataCollectionRuleDestinations
@@ -4242,9 +4121,8 @@ class DataImportSources(_serialization.Model):
 class EventHubDataSource(_serialization.Model):
     """EventHubDataSource.
 
-    :ivar name: A friendly name for the data source.
-     This name should be unique across all data sources (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the data source. This name should be unique across all data
+     sources (regardless of type) within the data collection rule.
     :vartype name: str
     :ivar consumer_group: Event Hub consumer group name.
     :vartype consumer_group: str
@@ -4267,9 +4145,8 @@ class EventHubDataSource(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword name: A friendly name for the data source.
-         This name should be unique across all data sources (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the data source. This name should be unique across all data
+         sources (regardless of type) within the data collection rule.
         :paramtype name: str
         :keyword consumer_group: Event Hub consumer group name.
         :paramtype consumer_group: str
@@ -4285,104 +4162,14 @@ class EventHubDataSource(_serialization.Model):
 class DataImportSourcesEventHub(EventHubDataSource):
     """Definition of Event Hub configuration.
 
-    :ivar name: A friendly name for the data source.
-     This name should be unique across all data sources (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the data source. This name should be unique across all data
+     sources (regardless of type) within the data collection rule.
     :vartype name: str
     :ivar consumer_group: Event Hub consumer group name.
     :vartype consumer_group: str
     :ivar stream: The stream to collect from EventHub.
     :vartype stream: str
     """
-
-
-class DataSource(_serialization.Model):
-    """Data source object contains configuration to collect telemetry and one or more sinks to send
-    that telemetry data to.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar kind: Datasource kind. Required. Known values are: "PerformanceCounter", "ETWProviders",
-     and "WindowsEventLogs".
-    :vartype kind: str or ~azure.mgmt.monitor.models.DataSourceKind
-    :ivar configuration: Required.
-    :vartype configuration: ~azure.mgmt.monitor.models.DataSourceConfiguration
-    :ivar sinks: Required.
-    :vartype sinks: list[~azure.mgmt.monitor.models.SinkConfiguration]
-    """
-
-    _validation = {
-        "kind": {"required": True},
-        "configuration": {"required": True},
-        "sinks": {"required": True},
-    }
-
-    _attribute_map = {
-        "kind": {"key": "kind", "type": "str"},
-        "configuration": {"key": "configuration", "type": "DataSourceConfiguration"},
-        "sinks": {"key": "sinks", "type": "[SinkConfiguration]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        kind: Union[str, "_models.DataSourceKind"],
-        configuration: "_models.DataSourceConfiguration",
-        sinks: list["_models.SinkConfiguration"],
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword kind: Datasource kind. Required. Known values are: "PerformanceCounter",
-         "ETWProviders", and "WindowsEventLogs".
-        :paramtype kind: str or ~azure.mgmt.monitor.models.DataSourceKind
-        :keyword configuration: Required.
-        :paramtype configuration: ~azure.mgmt.monitor.models.DataSourceConfiguration
-        :keyword sinks: Required.
-        :paramtype sinks: list[~azure.mgmt.monitor.models.SinkConfiguration]
-        """
-        super().__init__(**kwargs)
-        self.kind = kind
-        self.configuration = configuration
-        self.sinks = sinks
-
-
-class DataSourceConfiguration(_serialization.Model):
-    """DataSourceConfiguration.
-
-    :ivar providers: ETW providers configuration.
-    :vartype providers: list[~azure.mgmt.monitor.models.EtwProviderConfiguration]
-    :ivar perf_counters: Performance counter configuration.
-    :vartype perf_counters: list[~azure.mgmt.monitor.models.PerformanceCounterConfiguration]
-    :ivar event_logs: Windows event logs configuration.
-    :vartype event_logs: list[~azure.mgmt.monitor.models.EventLogConfiguration]
-    """
-
-    _attribute_map = {
-        "providers": {"key": "providers", "type": "[EtwProviderConfiguration]"},
-        "perf_counters": {"key": "perfCounters", "type": "[PerformanceCounterConfiguration]"},
-        "event_logs": {"key": "eventLogs", "type": "[EventLogConfiguration]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        providers: Optional[list["_models.EtwProviderConfiguration"]] = None,
-        perf_counters: Optional[list["_models.PerformanceCounterConfiguration"]] = None,
-        event_logs: Optional[list["_models.EventLogConfiguration"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword providers: ETW providers configuration.
-        :paramtype providers: list[~azure.mgmt.monitor.models.EtwProviderConfiguration]
-        :keyword perf_counters: Performance counter configuration.
-        :paramtype perf_counters: list[~azure.mgmt.monitor.models.PerformanceCounterConfiguration]
-        :keyword event_logs: Windows event logs configuration.
-        :paramtype event_logs: list[~azure.mgmt.monitor.models.EventLogConfiguration]
-        """
-        super().__init__(**kwargs)
-        self.providers = providers
-        self.perf_counters = perf_counters
-        self.event_logs = event_logs
 
 
 class DataSourcesSpecDataImports(DataImportSources):
@@ -4393,86 +4180,92 @@ class DataSourcesSpecDataImports(DataImportSources):
     """
 
 
+class DefaultErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.monitor.models.ErrorDetailAutoGenerated
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetailAutoGenerated"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetailAutoGenerated"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.monitor.models.ErrorDetailAutoGenerated
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
 class DestinationsSpecAzureMonitorMetrics(AzureMonitorMetricsDestination):
     """Azure Monitor Metrics destination.
 
-    :ivar name: A friendly name for the destination.
-     This name should be unique across all destinations (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the destination. This name should be unique across all
+     destinations (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
 
-class ProxyOnlyResource(_serialization.Model):
-    """A proxy only azure resource object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-
-
-class DiagnosticSettingsCategoryResource(ProxyOnlyResource):
+class DiagnosticSettingsCategoryResource(ResourceAutoGenerated):
     """The diagnostic settings category resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Azure resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: The system metadata related to this resource.
+    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
     :ivar category_type: The type of the diagnostic settings category. Known values are: "Metrics"
      and "Logs".
     :vartype category_type: str or ~azure.mgmt.monitor.models.CategoryType
+    :ivar category_groups: the collection of what category groups are supported.
+    :vartype category_groups: list[str]
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "category_type": {"key": "properties.categoryType", "type": "str"},
+        "category_groups": {"key": "properties.categoryGroups", "type": "[str]"},
     }
 
-    def __init__(self, *, category_type: Optional[Union[str, "_models.CategoryType"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        category_type: Optional[Union[str, "_models.CategoryType"]] = None,
+        category_groups: Optional[list[str]] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword category_type: The type of the diagnostic settings category. Known values are:
          "Metrics" and "Logs".
         :paramtype category_type: str or ~azure.mgmt.monitor.models.CategoryType
+        :keyword category_groups: the collection of what category groups are supported.
+        :paramtype category_groups: list[str]
         """
         super().__init__(**kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
         self.category_type = category_type
+        self.category_groups = category_groups
 
 
 class DiagnosticSettingsCategoryResourceCollection(_serialization.Model):  # pylint: disable=name-too-long
@@ -4495,41 +4288,6 @@ class DiagnosticSettingsCategoryResourceCollection(_serialization.Model):  # pyl
         """
         super().__init__(**kwargs)
         self.value = value
-
-
-class ResourceAutoGenerated(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
 
 
 class DiagnosticSettingsResource(ResourceAutoGenerated):
@@ -4730,9 +4488,8 @@ class MultiMetricCriteria(_serialization.Model):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, JSON]
-    :ivar criterion_type: Specifies the type of threshold criteria. Previously undocumented values
-     might be returned. Required. Known values are: "StaticThresholdCriterion" and
-     "DynamicThresholdCriterion".
+    :ivar criterion_type: Specifies the type of threshold criteria. Required. Known values are:
+     "StaticThresholdCriterion" and "DynamicThresholdCriterion".
     :vartype criterion_type: str or ~azure.mgmt.monitor.models.CriterionType
     :ivar name: Name of the criteria. Required.
     :vartype name: str
@@ -4740,9 +4497,8 @@ class MultiMetricCriteria(_serialization.Model):
     :vartype metric_name: str
     :ivar metric_namespace: Namespace of the metric.
     :vartype metric_namespace: str
-    :ivar time_aggregation: The criteria time aggregation types. Previously undocumented values
-     might be returned. Required. Known values are: "Average", "Count", "Minimum", "Maximum", and
-     "Total".
+    :ivar time_aggregation: the criteria time aggregation types. Required. Known values are:
+     "Average", "Count", "Minimum", "Maximum", and "Total".
     :vartype time_aggregation: str or ~azure.mgmt.monitor.models.AggregationTypeEnum
     :ivar dimensions: List of dimension conditions.
     :vartype dimensions: list[~azure.mgmt.monitor.models.MetricDimension]
@@ -4798,9 +4554,8 @@ class MultiMetricCriteria(_serialization.Model):
         :paramtype metric_name: str
         :keyword metric_namespace: Namespace of the metric.
         :paramtype metric_namespace: str
-        :keyword time_aggregation: The criteria time aggregation types. Previously undocumented values
-         might be returned. Required. Known values are: "Average", "Count", "Minimum", "Maximum", and
-         "Total".
+        :keyword time_aggregation: the criteria time aggregation types. Required. Known values are:
+         "Average", "Count", "Minimum", "Maximum", and "Total".
         :paramtype time_aggregation: str or ~azure.mgmt.monitor.models.AggregationTypeEnum
         :keyword dimensions: List of dimension conditions.
         :paramtype dimensions: list[~azure.mgmt.monitor.models.MetricDimension]
@@ -4827,9 +4582,8 @@ class DynamicMetricCriteria(MultiMetricCriteria):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, JSON]
-    :ivar criterion_type: Specifies the type of threshold criteria. Previously undocumented values
-     might be returned. Required. Known values are: "StaticThresholdCriterion" and
-     "DynamicThresholdCriterion".
+    :ivar criterion_type: Specifies the type of threshold criteria. Required. Known values are:
+     "StaticThresholdCriterion" and "DynamicThresholdCriterion".
     :vartype criterion_type: str or ~azure.mgmt.monitor.models.CriterionType
     :ivar name: Name of the criteria. Required.
     :vartype name: str
@@ -4837,22 +4591,20 @@ class DynamicMetricCriteria(MultiMetricCriteria):
     :vartype metric_name: str
     :ivar metric_namespace: Namespace of the metric.
     :vartype metric_namespace: str
-    :ivar time_aggregation: The criteria time aggregation types. Previously undocumented values
-     might be returned. Required. Known values are: "Average", "Count", "Minimum", "Maximum", and
-     "Total".
+    :ivar time_aggregation: the criteria time aggregation types. Required. Known values are:
+     "Average", "Count", "Minimum", "Maximum", and "Total".
     :vartype time_aggregation: str or ~azure.mgmt.monitor.models.AggregationTypeEnum
     :ivar dimensions: List of dimension conditions.
     :vartype dimensions: list[~azure.mgmt.monitor.models.MetricDimension]
     :ivar skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
      emitted, by causing the metric validation to be skipped.
     :vartype skip_metric_validation: bool
-    :ivar operator: The operator used to compare the metric value against the threshold. Previously
-     undocumented values might be returned. Required. Known values are: "GreaterThan", "LessThan",
-     and "GreaterOrLessThan".
+    :ivar operator: The operator used to compare the metric value against the threshold. Required.
+     Known values are: "GreaterThan", "LessThan", and "GreaterOrLessThan".
     :vartype operator: str or ~azure.mgmt.monitor.models.DynamicThresholdOperator
     :ivar alert_sensitivity: The extent of deviation required to trigger an alert. This will affect
-     how tight the threshold is to the metric series pattern. Previously undocumented values might
-     be returned. Required. Known values are: "Low", "Medium", and "High".
+     how tight the threshold is to the metric series pattern. Required. Known values are: "Low",
+     "Medium", and "High".
     :vartype alert_sensitivity: str or ~azure.mgmt.monitor.models.DynamicThresholdSensitivity
     :ivar failing_periods: The minimum number of violations required within the selected lookback
      time window required to raise an alert. Required.
@@ -4913,9 +4665,8 @@ class DynamicMetricCriteria(MultiMetricCriteria):
         :paramtype metric_name: str
         :keyword metric_namespace: Namespace of the metric.
         :paramtype metric_namespace: str
-        :keyword time_aggregation: The criteria time aggregation types. Previously undocumented values
-         might be returned. Required. Known values are: "Average", "Count", "Minimum", "Maximum", and
-         "Total".
+        :keyword time_aggregation: the criteria time aggregation types. Required. Known values are:
+         "Average", "Count", "Minimum", "Maximum", and "Total".
         :paramtype time_aggregation: str or ~azure.mgmt.monitor.models.AggregationTypeEnum
         :keyword dimensions: List of dimension conditions.
         :paramtype dimensions: list[~azure.mgmt.monitor.models.MetricDimension]
@@ -4923,12 +4674,11 @@ class DynamicMetricCriteria(MultiMetricCriteria):
          yet emitted, by causing the metric validation to be skipped.
         :paramtype skip_metric_validation: bool
         :keyword operator: The operator used to compare the metric value against the threshold.
-         Previously undocumented values might be returned. Required. Known values are: "GreaterThan",
-         "LessThan", and "GreaterOrLessThan".
+         Required. Known values are: "GreaterThan", "LessThan", and "GreaterOrLessThan".
         :paramtype operator: str or ~azure.mgmt.monitor.models.DynamicThresholdOperator
         :keyword alert_sensitivity: The extent of deviation required to trigger an alert. This will
-         affect how tight the threshold is to the metric series pattern. Previously undocumented values
-         might be returned. Required. Known values are: "Low", "Medium", and "High".
+         affect how tight the threshold is to the metric series pattern. Required. Known values are:
+         "Low", "Medium", and "High".
         :paramtype alert_sensitivity: str or ~azure.mgmt.monitor.models.DynamicThresholdSensitivity
         :keyword failing_periods: The minimum number of violations required within the selected
          lookback time window required to raise an alert. Required.
@@ -4951,133 +4701,6 @@ class DynamicMetricCriteria(MultiMetricCriteria):
         self.operator = operator
         self.alert_sensitivity = alert_sensitivity
         self.failing_periods = failing_periods
-        self.ignore_data_before = ignore_data_before
-
-
-class MultiPromQLCriteria(_serialization.Model):
-    """The types of conditions for a multi query metric alert.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    DynamicPromQLCriteria, StaticPromQLCriteria
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar criterion_type: Specifies the type of threshold criteria. Previously undocumented values
-     might be returned. Required. Known values are: "StaticThresholdCriterion" and
-     "DynamicThresholdCriterion".
-    :vartype criterion_type: str or ~azure.mgmt.monitor.models.CriterionType
-    :ivar name: Name of the criteria. Required.
-    :vartype name: str
-    :ivar query: The query used to evaluate the alert rule. Required.
-    :vartype query: str
-    """
-
-    _validation = {
-        "criterion_type": {"required": True},
-        "name": {"required": True},
-        "query": {"required": True},
-    }
-
-    _attribute_map = {
-        "criterion_type": {"key": "criterionType", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "query": {"key": "query", "type": "str"},
-    }
-
-    _subtype_map = {
-        "criterion_type": {
-            "DynamicThresholdCriterion": "DynamicPromQLCriteria",
-            "StaticThresholdCriterion": "StaticPromQLCriteria",
-        }
-    }
-
-    def __init__(self, *, name: str, query: str, **kwargs: Any) -> None:
-        """
-        :keyword name: Name of the criteria. Required.
-        :paramtype name: str
-        :keyword query: The query used to evaluate the alert rule. Required.
-        :paramtype query: str
-        """
-        super().__init__(**kwargs)
-        self.criterion_type: Optional[str] = None
-        self.name = name
-        self.query = query
-
-
-class DynamicPromQLCriteria(MultiPromQLCriteria):
-    """The criterion for dynamic prom query.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar criterion_type: Specifies the type of threshold criteria. Previously undocumented values
-     might be returned. Required. Known values are: "StaticThresholdCriterion" and
-     "DynamicThresholdCriterion".
-    :vartype criterion_type: str or ~azure.mgmt.monitor.models.CriterionType
-    :ivar name: Name of the criteria. Required.
-    :vartype name: str
-    :ivar query: The query used to evaluate the alert rule. Required.
-    :vartype query: str
-    :ivar operator: The operator used to compare the metric value against the threshold. Previously
-     undocumented values might be returned. Required. Known values are: "GreaterThan", "LessThan",
-     and "GreaterOrLessThan".
-    :vartype operator: str or ~azure.mgmt.monitor.models.DynamicThresholdOperator
-    :ivar alert_sensitivity: The extent of deviation required to trigger an alert. This will affect
-     how tight the threshold is to the metric series pattern. Previously undocumented values might
-     be returned. Required. Known values are: "Low", "Medium", and "High".
-    :vartype alert_sensitivity: str or ~azure.mgmt.monitor.models.DynamicThresholdSensitivity
-    :ivar ignore_data_before: Use this option to set the date from which to start learning the
-     metric historical data and calculate the dynamic thresholds (in ISO8601 format).
-    :vartype ignore_data_before: ~datetime.datetime
-    """
-
-    _validation = {
-        "criterion_type": {"required": True},
-        "name": {"required": True},
-        "query": {"required": True},
-        "operator": {"required": True},
-        "alert_sensitivity": {"required": True},
-    }
-
-    _attribute_map = {
-        "criterion_type": {"key": "criterionType", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "query": {"key": "query", "type": "str"},
-        "operator": {"key": "operator", "type": "str"},
-        "alert_sensitivity": {"key": "alertSensitivity", "type": "str"},
-        "ignore_data_before": {"key": "ignoreDataBefore", "type": "iso-8601"},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: str,
-        query: str,
-        operator: Union[str, "_models.DynamicThresholdOperator"],
-        alert_sensitivity: Union[str, "_models.DynamicThresholdSensitivity"],
-        ignore_data_before: Optional[datetime.datetime] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: Name of the criteria. Required.
-        :paramtype name: str
-        :keyword query: The query used to evaluate the alert rule. Required.
-        :paramtype query: str
-        :keyword operator: The operator used to compare the metric value against the threshold.
-         Previously undocumented values might be returned. Required. Known values are: "GreaterThan",
-         "LessThan", and "GreaterOrLessThan".
-        :paramtype operator: str or ~azure.mgmt.monitor.models.DynamicThresholdOperator
-        :keyword alert_sensitivity: The extent of deviation required to trigger an alert. This will
-         affect how tight the threshold is to the metric series pattern. Previously undocumented values
-         might be returned. Required. Known values are: "Low", "Medium", and "High".
-        :paramtype alert_sensitivity: str or ~azure.mgmt.monitor.models.DynamicThresholdSensitivity
-        :keyword ignore_data_before: Use this option to set the date from which to start learning the
-         metric historical data and calculate the dynamic thresholds (in ISO8601 format).
-        :paramtype ignore_data_before: ~datetime.datetime
-        """
-        super().__init__(name=name, query=query, **kwargs)
-        self.criterion_type: str = "DynamicThresholdCriterion"
-        self.operator = operator
-        self.alert_sensitivity = alert_sensitivity
         self.ignore_data_before = ignore_data_before
 
 
@@ -5204,6 +4827,55 @@ class EmailReceiver(_serialization.Model):
         """
         :keyword name: The name of the email receiver. Names must be unique across all receivers within
          an action group. Required.
+        :paramtype name: str
+        :keyword email_address: The email address of this receiver. Required.
+        :paramtype email_address: str
+        :keyword use_common_alert_schema: Indicates whether to use common alert schema.
+        :paramtype use_common_alert_schema: bool
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.email_address = email_address
+        self.use_common_alert_schema = use_common_alert_schema
+        self.status: Optional[Union[str, "_models.ReceiverStatus"]] = None
+
+
+class EmailReceiverAutoGenerated(_serialization.Model):
+    """An email receiver.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the email receiver. Names must be unique across all receivers within a
+     tenant action group. Required.
+    :vartype name: str
+    :ivar email_address: The email address of this receiver. Required.
+    :vartype email_address: str
+    :ivar use_common_alert_schema: Indicates whether to use common alert schema.
+    :vartype use_common_alert_schema: bool
+    :ivar status: The receiver status of the e-mail. Known values are: "NotSpecified", "Enabled",
+     and "Disabled".
+    :vartype status: str or ~azure.mgmt.monitor.models.ReceiverStatus
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "email_address": {"required": True},
+        "status": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "email_address": {"key": "emailAddress", "type": "str"},
+        "use_common_alert_schema": {"key": "useCommonAlertSchema", "type": "bool"},
+        "status": {"key": "status", "type": "str"},
+    }
+
+    def __init__(self, *, name: str, email_address: str, use_common_alert_schema: bool = False, **kwargs: Any) -> None:
+        """
+        :keyword name: The name of the email receiver. Names must be unique across all receivers within
+         a tenant action group. Required.
         :paramtype name: str
         :keyword email_address: The email address of this receiver. Required.
         :paramtype email_address: str
@@ -5345,6 +5017,118 @@ class ErrorContract(_serialization.Model):
 
 
 class ErrorDetail(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.monitor.models.ErrorDetail]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.monitor.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class ErrorDetailAdditionalInfoItem(_serialization.Model):
+    """ErrorDetailAdditionalInfoItem.
+
+    :ivar type: The type of additional information.
+    :vartype type: str
+    :ivar info: The additional information specific to the type.
+    :vartype info: dict[str, any]
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "{object}"},
+    }
+
+    def __init__(self, *, type: Optional[str] = None, info: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
+        """
+        :keyword type: The type of additional information.
+        :paramtype type: str
+        :keyword info: The additional information specific to the type.
+        :paramtype info: dict[str, any]
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.info = info
+
+
+class ErrorDetailAutoGenerated(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.monitor.models.ErrorDetailAutoGenerated]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.monitor.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetailAutoGenerated]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.ErrorDetailAutoGenerated"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class ErrorDetailAutoGenerated2(_serialization.Model):
     """Describes details of an error response.
 
     :ivar code: Unlocalized string which can be used to programmatically identify the error.
@@ -5394,196 +5178,6 @@ class ErrorDetail(_serialization.Model):
         self.additional_info = additional_info
 
 
-class ErrorDetailAdditionalInfoItem(_serialization.Model):
-    """ErrorDetailAdditionalInfoItem.
-
-    :ivar type: The type of additional information.
-    :vartype type: str
-    :ivar info: The additional information specific to the type.
-    :vartype info: dict[str, any]
-    """
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "info": {"key": "info", "type": "{object}"},
-    }
-
-    def __init__(self, *, type: Optional[str] = None, info: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
-        """
-        :keyword type: The type of additional information.
-        :paramtype type: str
-        :keyword info: The additional information specific to the type.
-        :paramtype info: dict[str, any]
-        """
-        super().__init__(**kwargs)
-        self.type = type
-        self.info = info
-
-
-class ErrorDetailAdditionalInfoItemAutoGenerated(_serialization.Model):  # pylint: disable=name-too-long
-    """ErrorDetailAdditionalInfoItemAutoGenerated.
-
-    :ivar type: The type of additional information.
-    :vartype type: str
-    :ivar info: The additional information specific to the type.
-    :vartype info: dict[str, any]
-    """
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "info": {"key": "info", "type": "{object}"},
-    }
-
-    def __init__(self, *, type: Optional[str] = None, info: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
-        """
-        :keyword type: The type of additional information.
-        :paramtype type: str
-        :keyword info: The additional information specific to the type.
-        :paramtype info: dict[str, any]
-        """
-        super().__init__(**kwargs)
-        self.type = type
-        self.info = info
-
-
-class ErrorDetailAutoGenerated(_serialization.Model):
-    """Describes details of an error response.
-
-    :ivar code: Unlocalized string which can be used to programmatically identify the error.
-    :vartype code: str
-    :ivar message: Describes the error in detail and provides debugging information.
-    :vartype message: str
-    :ivar target: The target of the particular error (for example, the name of the property in
-     error).
-    :vartype target: str
-    :ivar additional_info: An array of objects with 'type' and 'info' properties. The schema of
-     'info' is service-specific and dependent on the 'type' string.
-    :vartype additional_info:
-     list[~azure.mgmt.monitor.models.ErrorDetailAdditionalInfoItemAutoGenerated]
-    """
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "additional_info": {"key": "additionalInfo", "type": "[ErrorDetailAdditionalInfoItemAutoGenerated]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        additional_info: Optional[list["_models.ErrorDetailAdditionalInfoItemAutoGenerated"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword code: Unlocalized string which can be used to programmatically identify the error.
-        :paramtype code: str
-        :keyword message: Describes the error in detail and provides debugging information.
-        :paramtype message: str
-        :keyword target: The target of the particular error (for example, the name of the property in
-         error).
-        :paramtype target: str
-        :keyword additional_info: An array of objects with 'type' and 'info' properties. The schema of
-         'info' is service-specific and dependent on the 'type' string.
-        :paramtype additional_info:
-         list[~azure.mgmt.monitor.models.ErrorDetailAdditionalInfoItemAutoGenerated]
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = target
-        self.additional_info = additional_info
-
-
-class ErrorDetailAutoGenerated2(_serialization.Model):
-    """The error detail.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.monitor.models.ErrorDetailAutoGenerated2]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~azure.mgmt.monitor.models.ErrorAdditionalInfo]
-    """
-
-    _validation = {
-        "code": {"readonly": True},
-        "message": {"readonly": True},
-        "target": {"readonly": True},
-        "details": {"readonly": True},
-        "additional_info": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorDetailAutoGenerated2]"},
-        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.code: Optional[str] = None
-        self.message: Optional[str] = None
-        self.target: Optional[str] = None
-        self.details: Optional[list["_models.ErrorDetailAutoGenerated2"]] = None
-        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
-
-
-class ErrorDetailAutoGenerated3(_serialization.Model):
-    """The error detail.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message.
-    :vartype message: str
-    :ivar target: The error target.
-    :vartype target: str
-    :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.monitor.models.ErrorDetailAutoGenerated3]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~azure.mgmt.monitor.models.ErrorAdditionalInfo]
-    """
-
-    _validation = {
-        "code": {"readonly": True},
-        "message": {"readonly": True},
-        "target": {"readonly": True},
-        "details": {"readonly": True},
-        "additional_info": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorDetailAutoGenerated3]"},
-        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.code: Optional[str] = None
-        self.message: Optional[str] = None
-        self.target: Optional[str] = None
-        self.details: Optional[list["_models.ErrorDetailAutoGenerated3"]] = None
-        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
-
-
 class ErrorResponse(_serialization.Model):
     """Describes the format of Error response.
 
@@ -5611,34 +5205,48 @@ class ErrorResponse(_serialization.Model):
 
 
 class ErrorResponseAutoGenerated(_serialization.Model):
-    """The error response.
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar code: The error code.
-    :vartype code: str
-    :ivar message: The error message indicating why the operation failed.
-    :vartype message: str
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.monitor.models.ErrorDetail
     """
 
-    _validation = {
-        "code": {"readonly": True},
-        "message": {"readonly": True},
-    }
-
     _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.monitor.models.ErrorDetail
+        """
         super().__init__(**kwargs)
-        self.code: Optional[str] = None
-        self.message: Optional[str] = None
+        self.error = error
 
 
 class ErrorResponseAutoGenerated2(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.monitor.models.ErrorDetailAutoGenerated
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "ErrorDetailAutoGenerated"},
+    }
+
+    def __init__(self, *, error: Optional["_models.ErrorDetailAutoGenerated"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.monitor.models.ErrorDetailAutoGenerated
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class ErrorResponseAutoGenerated3(_serialization.Model):
     """Describes the format of Error response.
 
     :ivar error:
@@ -5653,26 +5261,6 @@ class ErrorResponseAutoGenerated2(_serialization.Model):
         """
         :keyword error:
         :paramtype error: ~azure.mgmt.monitor.models.ErrorResponseError
-        """
-        super().__init__(**kwargs)
-        self.error = error
-
-
-class ErrorResponseAutoGenerated3(_serialization.Model):
-    """Describes the format of Error response.
-
-    :ivar error:
-    :vartype error: ~azure.mgmt.monitor.models.ErrorResponseErrorAutoGenerated
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "ErrorResponseErrorAutoGenerated"},
-    }
-
-    def __init__(self, *, error: Optional["_models.ErrorResponseErrorAutoGenerated"] = None, **kwargs: Any) -> None:
-        """
-        :keyword error:
-        :paramtype error: ~azure.mgmt.monitor.models.ErrorResponseErrorAutoGenerated
         """
         super().__init__(**kwargs)
         self.error = error
@@ -5723,63 +5311,31 @@ class ErrorResponseAutoGenerated4(_serialization.Model):
 
 
 class ErrorResponseAutoGenerated5(_serialization.Model):
-    """Common error response for all Azure Resource Manager APIs to return error details for failed
-    operations. (This also follows the OData error response format.).
-
-    :ivar error: The error object.
-    :vartype error: ~azure.mgmt.monitor.models.ErrorDetailAutoGenerated2
-    """
-
-    _attribute_map = {
-        "error": {"key": "error", "type": "ErrorDetailAutoGenerated2"},
-    }
-
-    def __init__(self, *, error: Optional["_models.ErrorDetailAutoGenerated2"] = None, **kwargs: Any) -> None:
-        """
-        :keyword error: The error object.
-        :paramtype error: ~azure.mgmt.monitor.models.ErrorDetailAutoGenerated2
-        """
-        super().__init__(**kwargs)
-        self.error = error
-
-
-class ErrorResponseCommon(ErrorResponse):
-    """The resource management error response.
+    """The error response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar code: Error code.
+    :ivar code: The error code.
     :vartype code: str
-    :ivar message: Error message indicating why the operation failed.
+    :ivar message: The error message indicating why the operation failed.
     :vartype message: str
-    :ivar details: The error details.
-    :vartype details: list[~azure.mgmt.monitor.models.ErrorResponseCommon]
-    :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~azure.mgmt.monitor.models.ErrorAdditionalInfo]
     """
 
     _validation = {
-        "details": {"readonly": True},
-        "additional_info": {"readonly": True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
     }
 
     _attribute_map = {
         "code": {"key": "code", "type": "str"},
         "message": {"key": "message", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorResponseCommon]"},
-        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword code: Error code.
-        :paramtype code: str
-        :keyword message: Error message indicating why the operation failed.
-        :paramtype message: str
-        """
-        super().__init__(code=code, message=message, **kwargs)
-        self.details: Optional[list["_models.ErrorResponseCommon"]] = None
-        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
 
 
 class ErrorResponseCommonV2(_serialization.Model):
@@ -5787,17 +5343,17 @@ class ErrorResponseCommonV2(_serialization.Model):
     operations. (This also follows the OData error response format.).
 
     :ivar error: The error object.
-    :vartype error: ~azure.mgmt.monitor.models.ErrorDetailAutoGenerated3
+    :vartype error: ~azure.mgmt.monitor.models.ErrorDetailAutoGenerated
     """
 
     _attribute_map = {
-        "error": {"key": "error", "type": "ErrorDetailAutoGenerated3"},
+        "error": {"key": "error", "type": "ErrorDetailAutoGenerated"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetailAutoGenerated3"] = None, **kwargs: Any) -> None:
+    def __init__(self, *, error: Optional["_models.ErrorDetailAutoGenerated"] = None, **kwargs: Any) -> None:
         """
         :keyword error: The error object.
-        :paramtype error: ~azure.mgmt.monitor.models.ErrorDetailAutoGenerated3
+        :paramtype error: ~azure.mgmt.monitor.models.ErrorDetailAutoGenerated
         """
         super().__init__(**kwargs)
         self.error = error
@@ -5816,7 +5372,7 @@ class ErrorResponseError(_serialization.Model):
     :vartype target: str
     :ivar details: An array of additional nested error response info objects, as described by this
      contract.
-    :vartype details: list[~azure.mgmt.monitor.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.monitor.models.ErrorDetailAutoGenerated2]
     :ivar additional_info: An array of objects with 'type' and 'info' properties. The schema of
      'info' is service-specific and dependent on the 'type' string.
     :vartype additional_info: list[~azure.mgmt.monitor.models.ErrorResponseErrorAdditionalInfoItem]
@@ -5826,7 +5382,7 @@ class ErrorResponseError(_serialization.Model):
         "code": {"key": "code", "type": "str"},
         "message": {"key": "message", "type": "str"},
         "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "details": {"key": "details", "type": "[ErrorDetailAutoGenerated2]"},
         "additional_info": {"key": "additionalInfo", "type": "[ErrorResponseErrorAdditionalInfoItem]"},
     }
 
@@ -5836,7 +5392,7 @@ class ErrorResponseError(_serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[list["_models.ErrorDetail"]] = None,
+        details: Optional[list["_models.ErrorDetailAutoGenerated2"]] = None,
         additional_info: Optional[list["_models.ErrorResponseErrorAdditionalInfoItem"]] = None,
         **kwargs: Any
     ) -> None:
@@ -5851,7 +5407,7 @@ class ErrorResponseError(_serialization.Model):
         :paramtype target: str
         :keyword details: An array of additional nested error response info objects, as described by
          this contract.
-        :paramtype details: list[~azure.mgmt.monitor.models.ErrorDetail]
+        :paramtype details: list[~azure.mgmt.monitor.models.ErrorDetailAutoGenerated2]
         :keyword additional_info: An array of objects with 'type' and 'info' properties. The schema of
          'info' is service-specific and dependent on the 'type' string.
         :paramtype additional_info:
@@ -5891,180 +5447,6 @@ class ErrorResponseErrorAdditionalInfoItem(_serialization.Model):
         self.info = info
 
 
-class ErrorResponseErrorAdditionalInfoItemAutoGenerated(_serialization.Model):  # pylint: disable=name-too-long
-    """ErrorResponseErrorAdditionalInfoItemAutoGenerated.
-
-    :ivar type: The type of additional information.
-    :vartype type: str
-    :ivar info: The additional information specific to the type.
-    :vartype info: dict[str, any]
-    """
-
-    _attribute_map = {
-        "type": {"key": "type", "type": "str"},
-        "info": {"key": "info", "type": "{object}"},
-    }
-
-    def __init__(self, *, type: Optional[str] = None, info: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
-        """
-        :keyword type: The type of additional information.
-        :paramtype type: str
-        :keyword info: The additional information specific to the type.
-        :paramtype info: dict[str, any]
-        """
-        super().__init__(**kwargs)
-        self.type = type
-        self.info = info
-
-
-class ErrorResponseErrorAutoGenerated(_serialization.Model):
-    """ErrorResponseErrorAutoGenerated.
-
-    :ivar code: Unlocalized string which can be used to programmatically identify the error.
-    :vartype code: str
-    :ivar message: Describes the error in detail and provides debugging information. If
-     Accept-Language is set in the request, it must be localized to that language.
-    :vartype message: str
-    :ivar target: The target of the particular error (for example, the name of the property in
-     error).
-    :vartype target: str
-    :ivar details: An array of additional nested error response info objects, as described by this
-     contract.
-    :vartype details: list[~azure.mgmt.monitor.models.ErrorDetailAutoGenerated]
-    :ivar additional_info: An array of objects with 'type' and 'info' properties. The schema of
-     'info' is service-specific and dependent on the 'type' string.
-    :vartype additional_info:
-     list[~azure.mgmt.monitor.models.ErrorResponseErrorAdditionalInfoItemAutoGenerated]
-    """
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-        "target": {"key": "target", "type": "str"},
-        "details": {"key": "details", "type": "[ErrorDetailAutoGenerated]"},
-        "additional_info": {"key": "additionalInfo", "type": "[ErrorResponseErrorAdditionalInfoItemAutoGenerated]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        target: Optional[str] = None,
-        details: Optional[list["_models.ErrorDetailAutoGenerated"]] = None,
-        additional_info: Optional[list["_models.ErrorResponseErrorAdditionalInfoItemAutoGenerated"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword code: Unlocalized string which can be used to programmatically identify the error.
-        :paramtype code: str
-        :keyword message: Describes the error in detail and provides debugging information. If
-         Accept-Language is set in the request, it must be localized to that language.
-        :paramtype message: str
-        :keyword target: The target of the particular error (for example, the name of the property in
-         error).
-        :paramtype target: str
-        :keyword details: An array of additional nested error response info objects, as described by
-         this contract.
-        :paramtype details: list[~azure.mgmt.monitor.models.ErrorDetailAutoGenerated]
-        :keyword additional_info: An array of objects with 'type' and 'info' properties. The schema of
-         'info' is service-specific and dependent on the 'type' string.
-        :paramtype additional_info:
-         list[~azure.mgmt.monitor.models.ErrorResponseErrorAdditionalInfoItemAutoGenerated]
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-        self.target = target
-        self.details = details
-        self.additional_info = additional_info
-
-
-class EtwEventConfiguration(_serialization.Model):
-    """EtwEventConfiguration.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: Required.
-    :vartype name: str
-    :ivar id: Required.
-    :vartype id: int
-    :ivar filter:
-    :vartype filter: str
-    """
-
-    _validation = {
-        "name": {"required": True},
-        "id": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "id": {"key": "id", "type": "int"},
-        "filter": {"key": "filter", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: str,
-        id: int,  # pylint: disable=redefined-builtin
-        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword name: Required.
-        :paramtype name: str
-        :keyword id: Required.
-        :paramtype id: int
-        :keyword filter:
-        :paramtype filter: str
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.id = id
-        self.filter = filter
-
-
-class EtwProviderConfiguration(_serialization.Model):
-    """EtwProviderConfiguration.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Required.
-    :vartype id: str
-    :ivar events: Required.
-    :vartype events: list[~azure.mgmt.monitor.models.EtwEventConfiguration]
-    """
-
-    _validation = {
-        "id": {"required": True},
-        "events": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "events": {"key": "events", "type": "[EtwEventConfiguration]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        events: list["_models.EtwEventConfiguration"],
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword id: Required.
-        :paramtype id: str
-        :keyword events: Required.
-        :paramtype events: list[~azure.mgmt.monitor.models.EtwEventConfiguration]
-        """
-        super().__init__(**kwargs)
-        self.id = id
-        self.events = events
-
-
 class EventCategoryCollection(_serialization.Model):
     """A collection of event categories. Currently possible values are: Administrative, Security,
     ServiceHealth, Alert, Recommendation, Policy.
@@ -6072,7 +5454,9 @@ class EventCategoryCollection(_serialization.Model):
     All required parameters must be populated in order to send to server.
 
     :ivar value: the list that includes the Azure event categories. Required.
-    :vartype value: list[~azure.mgmt.monitor.models.LocalizableString]
+    :vartype value: list[~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -6080,16 +5464,22 @@ class EventCategoryCollection(_serialization.Model):
     }
 
     _attribute_map = {
-        "value": {"key": "value", "type": "[LocalizableString]"},
+        "value": {"key": "value", "type": "[MicrosoftCommonLocalizableString]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: list["_models.LocalizableString"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: list["_models.MicrosoftCommonLocalizableString"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: the list that includes the Azure event categories. Required.
-        :paramtype value: list[~azure.mgmt.monitor.models.LocalizableString]
+        :paramtype value: list[~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
 
 
 class EventData(_serialization.Model):
@@ -6116,9 +5506,9 @@ class EventData(_serialization.Model):
     :vartype correlation_id: str
     :ivar event_name: the event name. This value should not be confused with OperationName. For
      practical purposes, OperationName might be more appealing to end users.
-    :vartype event_name: ~azure.mgmt.monitor.models.LocalizableString
+    :vartype event_name: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
     :ivar category: the event category.
-    :vartype category: ~azure.mgmt.monitor.models.LocalizableString
+    :vartype category: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
     :ivar http_request: the HTTP request info. Usually includes the 'clientRequestId',
      'clientIpAddress' (IP address of the user who initiated the event) and 'method' (HTTP method
      e.g. PUT).
@@ -6129,30 +5519,30 @@ class EventData(_serialization.Model):
     :ivar resource_group_name: the resource group name of the impacted resource.
     :vartype resource_group_name: str
     :ivar resource_provider_name: the resource provider name of the impacted resource.
-    :vartype resource_provider_name: ~azure.mgmt.monitor.models.LocalizableString
+    :vartype resource_provider_name: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
     :ivar resource_id: the resource uri that uniquely identifies the resource that caused this
      event.
     :vartype resource_id: str
     :ivar resource_type: the resource type.
-    :vartype resource_type: ~azure.mgmt.monitor.models.LocalizableString
+    :vartype resource_type: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
     :ivar operation_id: It is usually a GUID shared among the events corresponding to single
      operation. This value should not be confused with EventName.
     :vartype operation_id: str
     :ivar operation_name: the operation name.
-    :vartype operation_name: ~azure.mgmt.monitor.models.LocalizableString
+    :vartype operation_name: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
     :ivar properties: the set of <Key, Value> pairs (usually a Dictionary<String, String>) that
      includes details about the event.
     :vartype properties: dict[str, str]
     :ivar status: a string describing the status of the operation. Some typical values are:
      Started, In progress, Succeeded, Failed, Resolved.
-    :vartype status: ~azure.mgmt.monitor.models.LocalizableString
+    :vartype status: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
     :ivar sub_status: the event sub status. Most of the time, when included, this captures the HTTP
      status code of the REST call. Common values are: OK (HTTP Status Code: 200), Created (HTTP
      Status Code: 201), Accepted (HTTP Status Code: 202), No Content (HTTP Status Code: 204), Bad
      Request(HTTP Status Code: 400), Not Found (HTTP Status Code: 404), Conflict (HTTP Status Code:
      409), Internal Server Error (HTTP Status Code: 500), Service Unavailable (HTTP Status
      Code:503), Gateway Timeout (HTTP Status Code: 504).
-    :vartype sub_status: ~azure.mgmt.monitor.models.LocalizableString
+    :vartype sub_status: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
     :ivar event_timestamp: the timestamp of when the event was generated by the Azure service
      processing the request corresponding the event. It in ISO 8601 format.
     :vartype event_timestamp: ~datetime.datetime
@@ -6202,26 +5592,26 @@ class EventData(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "event_data_id": {"key": "eventDataId", "type": "str"},
         "correlation_id": {"key": "correlationId", "type": "str"},
-        "event_name": {"key": "eventName", "type": "LocalizableString"},
-        "category": {"key": "category", "type": "LocalizableString"},
+        "event_name": {"key": "eventName", "type": "MicrosoftCommonLocalizableString"},
+        "category": {"key": "category", "type": "MicrosoftCommonLocalizableString"},
         "http_request": {"key": "httpRequest", "type": "HttpRequestInfo"},
         "level": {"key": "level", "type": "str"},
         "resource_group_name": {"key": "resourceGroupName", "type": "str"},
-        "resource_provider_name": {"key": "resourceProviderName", "type": "LocalizableString"},
+        "resource_provider_name": {"key": "resourceProviderName", "type": "MicrosoftCommonLocalizableString"},
         "resource_id": {"key": "resourceId", "type": "str"},
-        "resource_type": {"key": "resourceType", "type": "LocalizableString"},
+        "resource_type": {"key": "resourceType", "type": "MicrosoftCommonLocalizableString"},
         "operation_id": {"key": "operationId", "type": "str"},
-        "operation_name": {"key": "operationName", "type": "LocalizableString"},
+        "operation_name": {"key": "operationName", "type": "MicrosoftCommonLocalizableString"},
         "properties": {"key": "properties", "type": "{str}"},
-        "status": {"key": "status", "type": "LocalizableString"},
-        "sub_status": {"key": "subStatus", "type": "LocalizableString"},
+        "status": {"key": "status", "type": "MicrosoftCommonLocalizableString"},
+        "sub_status": {"key": "subStatus", "type": "MicrosoftCommonLocalizableString"},
         "event_timestamp": {"key": "eventTimestamp", "type": "iso-8601"},
         "submission_timestamp": {"key": "submissionTimestamp", "type": "iso-8601"},
         "subscription_id": {"key": "subscriptionId", "type": "str"},
         "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:  # pylint: disable=too-many-locals
+    def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
         self.authorization: Optional["_models.SenderAuthorization"] = None
@@ -6231,19 +5621,19 @@ class EventData(_serialization.Model):
         self.id: Optional[str] = None
         self.event_data_id: Optional[str] = None
         self.correlation_id: Optional[str] = None
-        self.event_name: Optional["_models.LocalizableString"] = None
-        self.category: Optional["_models.LocalizableString"] = None
+        self.event_name: Optional["_models.MicrosoftCommonLocalizableString"] = None
+        self.category: Optional["_models.MicrosoftCommonLocalizableString"] = None
         self.http_request: Optional["_models.HttpRequestInfo"] = None
         self.level: Optional[Union[str, "_models.EventLevel"]] = None
         self.resource_group_name: Optional[str] = None
-        self.resource_provider_name: Optional["_models.LocalizableString"] = None
+        self.resource_provider_name: Optional["_models.MicrosoftCommonLocalizableString"] = None
         self.resource_id: Optional[str] = None
-        self.resource_type: Optional["_models.LocalizableString"] = None
+        self.resource_type: Optional["_models.MicrosoftCommonLocalizableString"] = None
         self.operation_id: Optional[str] = None
-        self.operation_name: Optional["_models.LocalizableString"] = None
+        self.operation_name: Optional["_models.MicrosoftCommonLocalizableString"] = None
         self.properties: Optional[dict[str, str]] = None
-        self.status: Optional["_models.LocalizableString"] = None
-        self.sub_status: Optional["_models.LocalizableString"] = None
+        self.status: Optional["_models.MicrosoftCommonLocalizableString"] = None
+        self.sub_status: Optional["_models.MicrosoftCommonLocalizableString"] = None
         self.event_timestamp: Optional[datetime.datetime] = None
         self.submission_timestamp: Optional[datetime.datetime] = None
         self.subscription_id: Optional[str] = None
@@ -6255,9 +5645,9 @@ class EventDataCollection(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar value: this list that includes the Azure audit logs. Required.
+    :ivar value: The EventData items on this page. Required.
     :vartype value: list[~azure.mgmt.monitor.models.EventData]
-    :ivar next_link: Provides the link to retrieve the next set of events.
+    :ivar next_link: The link to the next page of items.
     :vartype next_link: str
     """
 
@@ -6272,9 +5662,9 @@ class EventDataCollection(_serialization.Model):
 
     def __init__(self, *, value: list["_models.EventData"], next_link: Optional[str] = None, **kwargs: Any) -> None:
         """
-        :keyword value: this list that includes the Azure audit logs. Required.
+        :keyword value: The EventData items on this page. Required.
         :paramtype value: list[~azure.mgmt.monitor.models.EventData]
-        :keyword next_link: Provides the link to retrieve the next set of events.
+        :keyword next_link: The link to the next page of items.
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
@@ -6287,9 +5677,8 @@ class EventHubDestination(_serialization.Model):
 
     :ivar event_hub_resource_id: The resource ID of the event hub.
     :vartype event_hub_resource_id: str
-    :ivar name: A friendly name for the destination.
-     This name should be unique across all destinations (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the destination. This name should be unique across all
+     destinations (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -6304,9 +5693,8 @@ class EventHubDestination(_serialization.Model):
         """
         :keyword event_hub_resource_id: The resource ID of the event hub.
         :paramtype event_hub_resource_id: str
-        :keyword name: A friendly name for the destination.
-         This name should be unique across all destinations (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the destination. This name should be unique across all
+         destinations (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -6319,9 +5707,8 @@ class EventHubDirectDestination(_serialization.Model):
 
     :ivar event_hub_resource_id: The resource ID of the event hub.
     :vartype event_hub_resource_id: str
-    :ivar name: A friendly name for the destination.
-     This name should be unique across all destinations (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the destination. This name should be unique across all
+     destinations (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -6336,9 +5723,8 @@ class EventHubDirectDestination(_serialization.Model):
         """
         :keyword event_hub_resource_id: The resource ID of the event hub.
         :paramtype event_hub_resource_id: str
-        :keyword name: A friendly name for the destination.
-         This name should be unique across all destinations (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the destination. This name should be unique across all
+         destinations (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -6417,50 +5803,16 @@ class EventHubReceiver(_serialization.Model):
         self.subscription_id = subscription_id
 
 
-class EventLogConfiguration(_serialization.Model):
-    """EventLogConfiguration.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar log_name: Required.
-    :vartype log_name: str
-    :ivar filter:
-    :vartype filter: str
-    """
-
-    _validation = {
-        "log_name": {"required": True},
-    }
-
-    _attribute_map = {
-        "log_name": {"key": "logName", "type": "str"},
-        "filter": {"key": "filter", "type": "str"},
-    }
-
-    def __init__(
-        self, *, log_name: str, filter: Optional[str] = None, **kwargs: Any  # pylint: disable=redefined-builtin
-    ) -> None:
-        """
-        :keyword log_name: Required.
-        :paramtype log_name: str
-        :keyword filter:
-        :paramtype filter: str
-        """
-        super().__init__(**kwargs)
-        self.log_name = log_name
-        self.filter = filter
-
-
 class ExtensionDataSource(_serialization.Model):
     """Definition of which data will be collected from a separate VM extension that integrates with
-    the Azure Monitor Agent.
-    Collected from either Windows and Linux machines, depending on which extension is defined.
+    the Azure Monitor Agent. Collected from either Windows and Linux machines, depending on which
+    extension is defined.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar streams: List of streams that this data source will be sent to.
-     A stream indicates what schema will be used for this data and usually what table in Log
-     Analytics the data will be sent to.
+    :ivar streams: List of streams that this data source will be sent to. A stream indicates what
+     schema will be used for this data and usually what table in Log Analytics the data will be sent
+     to.
     :vartype streams: list[str or ~azure.mgmt.monitor.models.KnownExtensionDataSourceStreams]
     :ivar extension_name: The name of the VM extension. Required.
     :vartype extension_name: str
@@ -6469,9 +5821,8 @@ class ExtensionDataSource(_serialization.Model):
     :vartype extension_settings: JSON
     :ivar input_data_sources: The list of data sources this extension needs data from.
     :vartype input_data_sources: list[str]
-    :ivar name: A friendly name for the data source.
-     This name should be unique across all data sources (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the data source. This name should be unique across all data
+     sources (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -6498,9 +5849,9 @@ class ExtensionDataSource(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword streams: List of streams that this data source will be sent to.
-         A stream indicates what schema will be used for this data and usually what table in Log
-         Analytics the data will be sent to.
+        :keyword streams: List of streams that this data source will be sent to. A stream indicates
+         what schema will be used for this data and usually what table in Log Analytics the data will be
+         sent to.
         :paramtype streams: list[str or ~azure.mgmt.monitor.models.KnownExtensionDataSourceStreams]
         :keyword extension_name: The name of the VM extension. Required.
         :paramtype extension_name: str
@@ -6509,9 +5860,8 @@ class ExtensionDataSource(_serialization.Model):
         :paramtype extension_settings: JSON
         :keyword input_data_sources: The list of data sources this extension needs data from.
         :paramtype input_data_sources: list[str]
-        :keyword name: A friendly name for the data source.
-         This name should be unique across all data sources (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the data source. This name should be unique across all data
+         sources (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -6520,383 +5870,6 @@ class ExtensionDataSource(_serialization.Model):
         self.extension_settings = extension_settings
         self.input_data_sources = input_data_sources
         self.name = name
-
-
-class GuestDiagnosticSettingsAssociationList(_serialization.Model):
-    """A list of guest diagnostic settings association.
-
-    :ivar value: The list of guest diagnostic settings association.
-    :vartype value: list[~azure.mgmt.monitor.models.GuestDiagnosticSettingsAssociationResource]
-    :ivar next_link: Provides the link to retrieve the next set of elements.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[GuestDiagnosticSettingsAssociationResource]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[list["_models.GuestDiagnosticSettingsAssociationResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of guest diagnostic settings association.
-        :paramtype value: list[~azure.mgmt.monitor.models.GuestDiagnosticSettingsAssociationResource]
-        :keyword next_link: Provides the link to retrieve the next set of elements.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class ResourceAutoGenerated3(_serialization.Model):
-    """An azure resource object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.location = location
-        self.tags = tags
-
-
-class GuestDiagnosticSettingsAssociationResource(ResourceAutoGenerated3):  # pylint: disable=name-too-long
-    """Virtual machine guest diagnostic settings resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar guest_diagnostic_settings_name: The guest diagnostic settings name. Required.
-    :vartype guest_diagnostic_settings_name: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "location": {"required": True},
-        "guest_diagnostic_settings_name": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "guest_diagnostic_settings_name": {"key": "properties.guestDiagnosticSettingsName", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        guest_diagnostic_settings_name: str,
-        tags: Optional[dict[str, str]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword guest_diagnostic_settings_name: The guest diagnostic settings name. Required.
-        :paramtype guest_diagnostic_settings_name: str
-        """
-        super().__init__(location=location, tags=tags, **kwargs)
-        self.guest_diagnostic_settings_name = guest_diagnostic_settings_name
-
-
-class GuestDiagnosticSettingsAssociationResourcePatch(_serialization.Model):  # pylint: disable=name-too-long
-    """Guest diagnostic setting resource for patch operations.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar guest_diagnostic_settings_name: The guest diagnostic settings name.
-    :vartype guest_diagnostic_settings_name: str
-    """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-        "guest_diagnostic_settings_name": {"key": "properties.guestDiagnosticSettingsName", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[dict[str, str]] = None,
-        guest_diagnostic_settings_name: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword guest_diagnostic_settings_name: The guest diagnostic settings name.
-        :paramtype guest_diagnostic_settings_name: str
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.guest_diagnostic_settings_name = guest_diagnostic_settings_name
-
-
-class GuestDiagnosticSettingsList(_serialization.Model):
-    """A list of guest diagnostic settings.
-
-    :ivar value: The list of guest diagnostic settings.
-    :vartype value: list[~azure.mgmt.monitor.models.GuestDiagnosticSettingsResource]
-    :ivar next_link: Provides the link to retrieve the next set of elements.
-    :vartype next_link: str
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[GuestDiagnosticSettingsResource]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        value: Optional[list["_models.GuestDiagnosticSettingsResource"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The list of guest diagnostic settings.
-        :paramtype value: list[~azure.mgmt.monitor.models.GuestDiagnosticSettingsResource]
-        :keyword next_link: Provides the link to retrieve the next set of elements.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link = next_link
-
-
-class GuestDiagnosticSettingsPatchResource(_serialization.Model):
-    """An diagnostic settings object for the body of patch operations.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar os_type: Operating system type for the configuration. Known values are: "Windows" and
-     "Linux".
-    :vartype os_type: str or ~azure.mgmt.monitor.models.GuestDiagnosticSettingsOsType
-    :ivar data_sources: the array of data source object which are configured to collect and send
-     data.
-    :vartype data_sources: list[~azure.mgmt.monitor.models.DataSource]
-    :ivar proxy_setting:
-    :vartype proxy_setting: str
-    """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-        "os_type": {"key": "properties.osType", "type": "str"},
-        "data_sources": {"key": "properties.dataSources", "type": "[DataSource]"},
-        "proxy_setting": {"key": "properties.proxySetting", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[dict[str, str]] = None,
-        os_type: Optional[Union[str, "_models.GuestDiagnosticSettingsOsType"]] = None,
-        data_sources: Optional[list["_models.DataSource"]] = None,
-        proxy_setting: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword os_type: Operating system type for the configuration. Known values are: "Windows" and
-         "Linux".
-        :paramtype os_type: str or ~azure.mgmt.monitor.models.GuestDiagnosticSettingsOsType
-        :keyword data_sources: the array of data source object which are configured to collect and send
-         data.
-        :paramtype data_sources: list[~azure.mgmt.monitor.models.DataSource]
-        :keyword proxy_setting:
-        :paramtype proxy_setting: str
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.os_type = os_type
-        self.data_sources = data_sources
-        self.proxy_setting = proxy_setting
-
-
-class ResourceAutoGenerated2(_serialization.Model):
-    """An azure resource object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.location = location
-        self.tags = tags
-
-
-class GuestDiagnosticSettingsResource(ResourceAutoGenerated2):
-    """Virtual machine guest diagnostics settings resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar os_type: Operating system type for the configuration. Known values are: "Windows" and
-     "Linux".
-    :vartype os_type: str or ~azure.mgmt.monitor.models.GuestDiagnosticSettingsOsType
-    :ivar data_sources: the array of data source object which are configured to collect and send
-     data.
-    :vartype data_sources: list[~azure.mgmt.monitor.models.DataSource]
-    :ivar proxy_setting:
-    :vartype proxy_setting: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "os_type": {"key": "properties.osType", "type": "str"},
-        "data_sources": {"key": "properties.dataSources", "type": "[DataSource]"},
-        "proxy_setting": {"key": "properties.proxySetting", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-        os_type: Optional[Union[str, "_models.GuestDiagnosticSettingsOsType"]] = None,
-        data_sources: Optional[list["_models.DataSource"]] = None,
-        proxy_setting: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword os_type: Operating system type for the configuration. Known values are: "Windows" and
-         "Linux".
-        :paramtype os_type: str or ~azure.mgmt.monitor.models.GuestDiagnosticSettingsOsType
-        :keyword data_sources: the array of data source object which are configured to collect and send
-         data.
-        :paramtype data_sources: list[~azure.mgmt.monitor.models.DataSource]
-        :keyword proxy_setting:
-        :paramtype proxy_setting: str
-        """
-        super().__init__(location=location, tags=tags, **kwargs)
-        self.os_type = os_type
-        self.data_sources = data_sources
-        self.proxy_setting = proxy_setting
 
 
 class HttpRequestInfo(_serialization.Model):
@@ -6956,11 +5929,11 @@ class Identity(_serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
-    :ivar type: Type of managed service identity. Previously undocumented values might be returned.
-     Required. Known values are: "SystemAssigned", "UserAssigned", and "None".
+    :ivar type: Type of managed service identity. Required. Known values are: "SystemAssigned",
+     "UserAssigned", and "None".
     :vartype type: str or ~azure.mgmt.monitor.models.IdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
-     user identity dictionary key references will be Azure resource ids in the form:
+     user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str, ~azure.mgmt.monitor.models.UserIdentityProperties]
     """
@@ -6986,64 +5959,6 @@ class Identity(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword type: Type of managed service identity. Previously undocumented values might be
-         returned. Required. Known values are: "SystemAssigned", "UserAssigned", and "None".
-        :paramtype type: str or ~azure.mgmt.monitor.models.IdentityType
-        :keyword user_assigned_identities: The list of user identities associated with the resource.
-         The user identity dictionary key references will be Azure resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-        :paramtype user_assigned_identities: dict[str,
-         ~azure.mgmt.monitor.models.UserIdentityProperties]
-        """
-        super().__init__(**kwargs)
-        self.principal_id: Optional[str] = None
-        self.tenant_id: Optional[str] = None
-        self.type = type
-        self.user_assigned_identities = user_assigned_identities
-
-
-class IdentityAutoGenerated(_serialization.Model):
-    """Identity for the resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar principal_id: The principal ID of resource identity.
-    :vartype principal_id: str
-    :ivar tenant_id: The tenant ID of resource.
-    :vartype tenant_id: str
-    :ivar type: Type of managed service identity. Required. Known values are: "SystemAssigned",
-     "UserAssigned", and "None".
-    :vartype type: str or ~azure.mgmt.monitor.models.IdentityType
-    :ivar user_assigned_identities: The list of user identities associated with the resource. The
-     user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :vartype user_assigned_identities: dict[str,
-     ~azure.mgmt.monitor.models.UserIdentityPropertiesAutoGenerated]
-    """
-
-    _validation = {
-        "principal_id": {"readonly": True},
-        "tenant_id": {"readonly": True},
-        "type": {"required": True},
-    }
-
-    _attribute_map = {
-        "principal_id": {"key": "principalId", "type": "str"},
-        "tenant_id": {"key": "tenantId", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserIdentityPropertiesAutoGenerated}"},
-    }
-
-    def __init__(
-        self,
-        *,
-        type: Union[str, "_models.IdentityType"],
-        user_assigned_identities: Optional[dict[str, "_models.UserIdentityPropertiesAutoGenerated"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
         :keyword type: Type of managed service identity. Required. Known values are: "SystemAssigned",
          "UserAssigned", and "None".
         :paramtype type: str or ~azure.mgmt.monitor.models.IdentityType
@@ -7051,7 +5966,7 @@ class IdentityAutoGenerated(_serialization.Model):
          The user identity dictionary key references will be ARM resource ids in the form:
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
-         ~azure.mgmt.monitor.models.UserIdentityPropertiesAutoGenerated]
+         ~azure.mgmt.monitor.models.UserIdentityProperties]
         """
         super().__init__(**kwargs)
         self.principal_id: Optional[str] = None
@@ -7071,9 +5986,8 @@ class IisLogsDataSource(_serialization.Model):
     :vartype log_directories: list[str]
     :ivar transform_kql: The KQL query to transform the data source.
     :vartype transform_kql: str
-    :ivar name: A friendly name for the data source.
-     This name should be unique across all data sources (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the data source. This name should be unique across all data
+     sources (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -7104,9 +6018,8 @@ class IisLogsDataSource(_serialization.Model):
         :paramtype log_directories: list[str]
         :keyword transform_kql: The KQL query to transform the data source.
         :paramtype transform_kql: str
-        :keyword name: A friendly name for the data source.
-         This name should be unique across all data sources (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the data source. This name should be unique across all data
+         sources (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -7165,19 +6078,121 @@ class IncidentListResult(_serialization.Model):
 
     :ivar value: the incident collection.
     :vartype value: list[~azure.mgmt.monitor.models.Incident]
+    :ivar next_link: the URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[Incident]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[list["_models.Incident"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: Optional[list["_models.Incident"]] = None, next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: the incident collection.
         :paramtype value: list[~azure.mgmt.monitor.models.Incident]
+        :keyword next_link: the URL to get the next set of results.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
+
+
+class IncidentReceiver(_serialization.Model):
+    """An Incident receiver.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the Incident receiver. Names must be unique across all receivers within
+     an action group. Required.
+    :vartype name: str
+    :ivar connection: The incident service connection. Required.
+    :vartype connection: ~azure.mgmt.monitor.models.IncidentServiceConnection
+    :ivar incident_management_service: The incident management service type. Required. "Icm"
+    :vartype incident_management_service: str or
+     ~azure.mgmt.monitor.models.IncidentManagementService
+    :ivar mappings: Field mappings for the incident service. Required.
+    :vartype mappings: dict[str, str]
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "connection": {"required": True},
+        "incident_management_service": {"required": True},
+        "mappings": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "connection": {"key": "connection", "type": "IncidentServiceConnection"},
+        "incident_management_service": {"key": "incidentManagementService", "type": "str"},
+        "mappings": {"key": "mappings", "type": "{str}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        connection: "_models.IncidentServiceConnection",
+        incident_management_service: Union[str, "_models.IncidentManagementService"],
+        mappings: dict[str, str],
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the Incident receiver. Names must be unique across all receivers
+         within an action group. Required.
+        :paramtype name: str
+        :keyword connection: The incident service connection. Required.
+        :paramtype connection: ~azure.mgmt.monitor.models.IncidentServiceConnection
+        :keyword incident_management_service: The incident management service type. Required. "Icm"
+        :paramtype incident_management_service: str or
+         ~azure.mgmt.monitor.models.IncidentManagementService
+        :keyword mappings: Field mappings for the incident service. Required.
+        :paramtype mappings: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.connection = connection
+        self.incident_management_service = incident_management_service
+        self.mappings = mappings
+
+
+class IncidentServiceConnection(_serialization.Model):
+    """The connection info for Incident Receiver.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the connection. Required.
+    :vartype name: str
+    :ivar id: GUID value representing the connection ID for the incident management service.
+     Required.
+    :vartype id: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "id": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+    }
+
+    def __init__(self, *, name: str, id: str, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+        """
+        :keyword name: The name of the connection. Required.
+        :paramtype name: str
+        :keyword id: GUID value representing the connection ID for the incident management service.
+         Required.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.id = id
 
 
 class ItsmReceiver(_serialization.Model):
@@ -7246,70 +6261,6 @@ class ItsmReceiver(_serialization.Model):
         self.region = region
 
 
-class LocalizableString(_serialization.Model):
-    """The localizable string class.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: the invariant value. Required.
-    :vartype value: str
-    :ivar localized_value: the locale specific value.
-    :vartype localized_value: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "str"},
-        "localized_value": {"key": "localizedValue", "type": "str"},
-    }
-
-    def __init__(self, *, value: str, localized_value: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword value: the invariant value. Required.
-        :paramtype value: str
-        :keyword localized_value: the locale specific value.
-        :paramtype localized_value: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.localized_value = localized_value
-
-
-class LocalizableStringAutoGenerated(_serialization.Model):
-    """The localizable string class.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: The invariant value. Required.
-    :vartype value: str
-    :ivar localized_value: The display name.
-    :vartype localized_value: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "str"},
-        "localized_value": {"key": "localizedValue", "type": "str"},
-    }
-
-    def __init__(self, *, value: str, localized_value: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword value: The invariant value. Required.
-        :paramtype value: str
-        :keyword localized_value: The display name.
-        :paramtype localized_value: str
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.localized_value = localized_value
-
-
 class LocationSpec(_serialization.Model):
     """LocationSpec.
 
@@ -7355,9 +6306,8 @@ class LogAnalyticsDestination(_serialization.Model):
     :vartype workspace_resource_id: str
     :ivar workspace_id: The Customer ID of the Log Analytics workspace.
     :vartype workspace_id: str
-    :ivar name: A friendly name for the destination.
-     This name should be unique across all destinations (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the destination. This name should be unique across all
+     destinations (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -7377,9 +6327,8 @@ class LogAnalyticsDestination(_serialization.Model):
         """
         :keyword workspace_resource_id: The resource ID of the Log Analytics workspace.
         :paramtype workspace_resource_id: str
-        :keyword name: A friendly name for the destination.
-         This name should be unique across all destinations (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the destination. This name should be unique across all
+         destinations (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -7393,8 +6342,8 @@ class LogFilesDataSource(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar streams: List of streams that this data source will be sent to.
-     A stream indicates what schema will be used for this data source. Required.
+    :ivar streams: List of streams that this data source will be sent to. A stream indicates what
+     schema will be used for this data source. Required.
     :vartype streams: list[str]
     :ivar file_patterns: File Patterns where the log files are located. Required.
     :vartype file_patterns: list[str]
@@ -7404,9 +6353,8 @@ class LogFilesDataSource(_serialization.Model):
     :vartype settings: ~azure.mgmt.monitor.models.LogFilesDataSourceSettings
     :ivar transform_kql: The KQL query to transform the data source.
     :vartype transform_kql: str
-    :ivar name: A friendly name for the data source.
-     This name should be unique across all data sources (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the data source. This name should be unique across all data
+     sources (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -7437,8 +6385,8 @@ class LogFilesDataSource(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword streams: List of streams that this data source will be sent to.
-         A stream indicates what schema will be used for this data source. Required.
+        :keyword streams: List of streams that this data source will be sent to. A stream indicates
+         what schema will be used for this data source. Required.
         :paramtype streams: list[str]
         :keyword file_patterns: File Patterns where the log files are located. Required.
         :paramtype file_patterns: list[str]
@@ -7449,9 +6397,8 @@ class LogFilesDataSource(_serialization.Model):
         :paramtype settings: ~azure.mgmt.monitor.models.LogFilesDataSourceSettings
         :keyword transform_kql: The KQL query to transform the data source.
         :paramtype transform_kql: str
-        :keyword name: A friendly name for the data source.
-         This name should be unique across all data sources (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the data source. This name should be unique across all data
+         sources (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -7601,6 +6548,8 @@ class LogProfileCollection(_serialization.Model):
 
     :ivar value: the values of the log profiles. Required.
     :vartype value: list[~azure.mgmt.monitor.models.LogProfileResource]
+    :ivar next_link: the URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -7609,83 +6558,45 @@ class LogProfileCollection(_serialization.Model):
 
     _attribute_map = {
         "value": {"key": "value", "type": "[LogProfileResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: list["_models.LogProfileResource"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: list["_models.LogProfileResource"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: the values of the log profiles. Required.
         :paramtype value: list[~azure.mgmt.monitor.models.LogProfileResource]
+        :keyword next_link: the URL to get the next set of results.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
 
 
-class ResourceAutoGenerated4(_serialization.Model):
-    """An azure resource object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.location = location
-        self.tags = tags
-
-
-class LogProfileResource(ResourceAutoGenerated4):
+class LogProfileResource(TrackedResource):
     """The log profile resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar id: Azure resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     :ivar storage_account_id: the resource id of the storage account to which you would like to
      send the Activity Log.
     :vartype storage_account_id: str
@@ -7700,13 +6611,14 @@ class LogProfileResource(ResourceAutoGenerated4):
      the user. Some values are: 'Write', 'Delete', and/or 'Action.'. Required.
     :vartype categories: list[str]
     :ivar retention_policy: the retention policy for the events in the log. Required.
-    :vartype retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
+    :vartype retention_policy: ~azure.mgmt.monitor.models.MicrosoftCommonRetentionPolicy
     """
 
     _validation = {
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "location": {"required": True},
         "locations": {"required": True},
         "categories": {"required": True},
@@ -7717,13 +6629,14 @@ class LogProfileResource(ResourceAutoGenerated4):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
         "storage_account_id": {"key": "properties.storageAccountId", "type": "str"},
         "service_bus_rule_id": {"key": "properties.serviceBusRuleId", "type": "str"},
         "locations": {"key": "properties.locations", "type": "[str]"},
         "categories": {"key": "properties.categories", "type": "[str]"},
-        "retention_policy": {"key": "properties.retentionPolicy", "type": "RetentionPolicy"},
+        "retention_policy": {"key": "properties.retentionPolicy", "type": "MicrosoftCommonRetentionPolicy"},
     }
 
     def __init__(
@@ -7732,17 +6645,17 @@ class LogProfileResource(ResourceAutoGenerated4):
         location: str,
         locations: list[str],
         categories: list[str],
-        retention_policy: "_models.RetentionPolicy",
+        retention_policy: "_models.MicrosoftCommonRetentionPolicy",
         tags: Optional[dict[str, str]] = None,
         storage_account_id: Optional[str] = None,
         service_bus_rule_id: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
         :keyword storage_account_id: the resource id of the storage account to which you would like to
          send the Activity Log.
         :paramtype storage_account_id: str
@@ -7757,9 +6670,9 @@ class LogProfileResource(ResourceAutoGenerated4):
          to the user. Some values are: 'Write', 'Delete', and/or 'Action.'. Required.
         :paramtype categories: list[str]
         :keyword retention_policy: the retention policy for the events in the log. Required.
-        :paramtype retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
+        :paramtype retention_policy: ~azure.mgmt.monitor.models.MicrosoftCommonRetentionPolicy
         """
-        super().__init__(location=location, tags=tags, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.storage_account_id = storage_account_id
         self.service_bus_rule_id = service_bus_rule_id
         self.locations = locations
@@ -7786,7 +6699,7 @@ class LogProfileResourcePatch(_serialization.Model):
      the user. Some values are: 'Write', 'Delete', and/or 'Action.'.
     :vartype categories: list[str]
     :ivar retention_policy: the retention policy for the events in the log.
-    :vartype retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
+    :vartype retention_policy: ~azure.mgmt.monitor.models.MicrosoftCommonRetentionPolicy
     """
 
     _attribute_map = {
@@ -7795,7 +6708,7 @@ class LogProfileResourcePatch(_serialization.Model):
         "service_bus_rule_id": {"key": "properties.serviceBusRuleId", "type": "str"},
         "locations": {"key": "properties.locations", "type": "[str]"},
         "categories": {"key": "properties.categories", "type": "[str]"},
-        "retention_policy": {"key": "properties.retentionPolicy", "type": "RetentionPolicy"},
+        "retention_policy": {"key": "properties.retentionPolicy", "type": "MicrosoftCommonRetentionPolicy"},
     }
 
     def __init__(
@@ -7806,7 +6719,7 @@ class LogProfileResourcePatch(_serialization.Model):
         service_bus_rule_id: Optional[str] = None,
         locations: Optional[list[str]] = None,
         categories: Optional[list[str]] = None,
-        retention_policy: Optional["_models.RetentionPolicy"] = None,
+        retention_policy: Optional["_models.MicrosoftCommonRetentionPolicy"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -7826,7 +6739,7 @@ class LogProfileResourcePatch(_serialization.Model):
          to the user. Some values are: 'Write', 'Delete', and/or 'Action.'.
         :paramtype categories: list[str]
         :keyword retention_policy: the retention policy for the events in the log.
-        :paramtype retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
+        :paramtype retention_policy: ~azure.mgmt.monitor.models.MicrosoftCommonRetentionPolicy
         """
         super().__init__(**kwargs)
         self.tags = tags
@@ -7897,79 +6810,30 @@ class LogSettings(_serialization.Model):
         self.retention_policy = retention_policy
 
 
-class LogSettingsAutoGenerated(_serialization.Model):
-    """Part of MultiTenantDiagnosticSettings. Specifies the settings for a particular log.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar category: Name of a Diagnostic Log category for a resource type this setting is applied
-     to. To obtain the list of Diagnostic Log categories for a resource, first perform a GET
-     diagnostic settings operation.
-    :vartype category: str
-    :ivar enabled: a value indicating whether this log is enabled. Required.
-    :vartype enabled: bool
-    :ivar retention_policy: the retention policy for this log.
-    :vartype retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
-    """
-
-    _validation = {
-        "enabled": {"required": True},
-    }
-
-    _attribute_map = {
-        "category": {"key": "category", "type": "str"},
-        "enabled": {"key": "enabled", "type": "bool"},
-        "retention_policy": {"key": "retentionPolicy", "type": "RetentionPolicy"},
-    }
-
-    def __init__(
-        self,
-        *,
-        enabled: bool,
-        category: Optional[str] = None,
-        retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword category: Name of a Diagnostic Log category for a resource type this setting is
-         applied to. To obtain the list of Diagnostic Log categories for a resource, first perform a GET
-         diagnostic settings operation.
-        :paramtype category: str
-        :keyword enabled: a value indicating whether this log is enabled. Required.
-        :paramtype enabled: bool
-        :keyword retention_policy: the retention policy for this log.
-        :paramtype retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
-        """
-        super().__init__(**kwargs)
-        self.category = category
-        self.enabled = enabled
-        self.retention_policy = retention_policy
-
-
 class MetadataValue(_serialization.Model):
     """Represents a metric metadata value.
 
     :ivar name: The name of the metadata.
-    :vartype name: ~azure.mgmt.monitor.models.LocalizableStringAutoGenerated
+    :vartype name: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
     :ivar value: The value of the metadata.
     :vartype value: str
     """
 
     _attribute_map = {
-        "name": {"key": "name", "type": "LocalizableStringAutoGenerated"},
+        "name": {"key": "name", "type": "MicrosoftCommonLocalizableString"},
         "value": {"key": "value", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        name: Optional["_models.LocalizableStringAutoGenerated"] = None,
+        name: Optional["_models.MicrosoftCommonLocalizableString"] = None,
         value: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword name: The name of the metadata.
-        :paramtype name: ~azure.mgmt.monitor.models.LocalizableStringAutoGenerated
+        :paramtype name: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
         :keyword value: The value of the metadata.
         :paramtype value: str
         """
@@ -7989,7 +6853,7 @@ class Metric(_serialization.Model):
     :vartype type: str
     :ivar name: The name and the display name of the metric, i.e. it is localizable string.
      Required.
-    :vartype name: ~azure.mgmt.monitor.models.LocalizableStringAutoGenerated
+    :vartype name: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
     :ivar display_description: Detailed description of this metric.
     :vartype display_description: str
     :ivar error_code: 'Success' or the error details on query failures for this metric.
@@ -8015,7 +6879,7 @@ class Metric(_serialization.Model):
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "name": {"key": "name", "type": "LocalizableStringAutoGenerated"},
+        "name": {"key": "name", "type": "MicrosoftCommonLocalizableString"},
         "display_description": {"key": "displayDescription", "type": "str"},
         "error_code": {"key": "errorCode", "type": "str"},
         "error_message": {"key": "errorMessage", "type": "str"},
@@ -8028,7 +6892,7 @@ class Metric(_serialization.Model):
         *,
         id: str,  # pylint: disable=redefined-builtin
         type: str,
-        name: "_models.LocalizableStringAutoGenerated",
+        name: "_models.MicrosoftCommonLocalizableString",
         unit: Union[str, "_models.MetricUnit"],
         timeseries: list["_models.TimeSeriesElement"],
         display_description: Optional[str] = None,
@@ -8043,7 +6907,7 @@ class Metric(_serialization.Model):
         :paramtype type: str
         :keyword name: The name and the display name of the metric, i.e. it is localizable string.
          Required.
-        :paramtype name: ~azure.mgmt.monitor.models.LocalizableStringAutoGenerated
+        :paramtype name: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
         :keyword display_description: Detailed description of this metric.
         :paramtype display_description: str
         :keyword error_code: 'Success' or the error details on query failures for this metric.
@@ -8071,7 +6935,7 @@ class Metric(_serialization.Model):
 class MetricAlertAction(_serialization.Model):
     """An alert action.
 
-    :ivar action_group_id: The id of the action group to use.
+    :ivar action_group_id: the id of the action group to use.
     :vartype action_group_id: str
     :ivar web_hook_properties: This field allows specifying custom properties, which would be
      appended to the alert payload sent as input to the webhook.
@@ -8091,7 +6955,7 @@ class MetricAlertAction(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword action_group_id: The id of the action group to use.
+        :keyword action_group_id: the id of the action group to use.
         :paramtype action_group_id: str
         :keyword web_hook_properties: This field allows specifying custom properties, which would be
          appended to the alert payload sent as input to the webhook.
@@ -8106,7 +6970,7 @@ class MetricAlertCriteria(_serialization.Model):
     """The rule criteria that defines the conditions of the alert rule.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    MetricAlertMultipleResourceMultipleMetricCriteria, PromQLCriteria,
+    MetricAlertMultipleResourceMultipleMetricCriteria,
     MetricAlertSingleResourceMultipleMetricCriteria, WebtestLocationAvailabilityCriteria
 
     All required parameters must be populated in order to send to server.
@@ -8114,12 +6978,10 @@ class MetricAlertCriteria(_serialization.Model):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, JSON]
-    :ivar odata_type: Specifies the type of the alert criteria. Previously undocumented values
-     might be returned. Required. Known values are:
+    :ivar odata_type: specifies the type of the alert criteria. Required. Known values are:
      "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
-     "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
-     "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria", and
-     "Microsoft.Azure.Monitor.PromQLCriteria".
+     "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria", and
+     "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
     :vartype odata_type: str or ~azure.mgmt.monitor.models.Odatatype
     """
 
@@ -8135,7 +6997,6 @@ class MetricAlertCriteria(_serialization.Model):
     _subtype_map = {
         "odata_type": {
             "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria": "MetricAlertMultipleResourceMultipleMetricCriteria",
-            "Microsoft.Azure.Monitor.PromQLCriteria": "PromQLCriteria",
             "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria": "MetricAlertSingleResourceMultipleMetricCriteria",
             "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria": "WebtestLocationAvailabilityCriteria",
         }
@@ -8160,14 +7021,12 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):  #
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, JSON]
-    :ivar odata_type: Specifies the type of the alert criteria. Previously undocumented values
-     might be returned. Required. Known values are:
+    :ivar odata_type: specifies the type of the alert criteria. Required. Known values are:
      "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
-     "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
-     "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria", and
-     "Microsoft.Azure.Monitor.PromQLCriteria".
+     "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria", and
+     "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
     :vartype odata_type: str or ~azure.mgmt.monitor.models.Odatatype
-    :ivar all_of: The list of multiple metric criteria for this 'all of' operation.
+    :ivar all_of: the list of multiple metric criteria for this 'all of' operation.
     :vartype all_of: list[~azure.mgmt.monitor.models.MultiMetricCriteria]
     """
 
@@ -8192,7 +7051,7 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):  #
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
         :paramtype additional_properties: dict[str, JSON]
-        :keyword all_of: The list of multiple metric criteria for this 'all of' operation.
+        :keyword all_of: the list of multiple metric criteria for this 'all of' operation.
         :paramtype all_of: list[~azure.mgmt.monitor.models.MultiMetricCriteria]
         """
         super().__init__(additional_properties=additional_properties, **kwargs)
@@ -8200,7 +7059,7 @@ class MetricAlertMultipleResourceMultipleMetricCriteria(MetricAlertCriteria):  #
         self.all_of = all_of
 
 
-class ResourceAutoGenerated5(_serialization.Model):
+class ResourceAutoGenerated2(_serialization.Model):
     """An azure resource object.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8217,8 +7076,6 @@ class ResourceAutoGenerated5(_serialization.Model):
     :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar identity: The identity of the resource.
-    :vartype identity: ~azure.mgmt.monitor.models.Identity
     """
 
     _validation = {
@@ -8234,24 +7091,14 @@ class ResourceAutoGenerated5(_serialization.Model):
         "type": {"key": "type", "type": "str"},
         "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
-        "identity": {"key": "identity", "type": "Identity"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.Identity"] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword location: Resource location. Required.
         :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword identity: The identity of the resource.
-        :paramtype identity: ~azure.mgmt.monitor.models.Identity
         """
         super().__init__(**kwargs)
         self.id: Optional[str] = None
@@ -8259,10 +7106,9 @@ class ResourceAutoGenerated5(_serialization.Model):
         self.type: Optional[str] = None
         self.location = location
         self.tags = tags
-        self.identity = identity
 
 
-class MetricAlertResource(ResourceAutoGenerated5):
+class MetricAlertResource(ResourceAutoGenerated2):
     """The metric alert resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8279,51 +7125,42 @@ class MetricAlertResource(ResourceAutoGenerated5):
     :vartype location: str
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar identity: The identity of the resource.
-    :vartype identity: ~azure.mgmt.monitor.models.Identity
-    :ivar description: The description of the metric alert that will be included in the alert
+    :ivar description: the description of the metric alert that will be included in the alert
      email.
     :vartype description: str
     :ivar severity: Alert severity {0, 1, 2, 3, 4}. Required.
     :vartype severity: int
-    :ivar enabled: The flag that indicates whether the metric alert is enabled. Required.
+    :ivar enabled: the flag that indicates whether the metric alert is enabled. Required.
     :vartype enabled: bool
-    :ivar scopes: The list of resource id's that this metric alert is scoped to. You cannot change
+    :ivar scopes: the list of resource id's that this metric alert is scoped to. You cannot change
      the scope of a metric rule based on logs. Required.
     :vartype scopes: list[str]
-    :ivar evaluation_frequency: How often the metric alert is evaluated represented in ISO 8601
+    :ivar evaluation_frequency: how often the metric alert is evaluated represented in ISO 8601
      duration format. Required.
     :vartype evaluation_frequency: ~datetime.timedelta
-    :ivar window_size: The period of time (in ISO 8601 duration format) that is used to monitor
-     alert activity based on the threshold.
+    :ivar window_size: the period of time (in ISO 8601 duration format) that is used to monitor
+     alert activity based on the threshold. Required.
     :vartype window_size: ~datetime.timedelta
-    :ivar target_resource_type: The resource type of the target resource(s) on which the alert is
+    :ivar target_resource_type: the resource type of the target resource(s) on which the alert is
      created/updated. Mandatory if the scope contains a subscription, resource group, or more than
      one resource.
     :vartype target_resource_type: str
-    :ivar target_resource_region: The region of the target resource(s) on which the alert is
+    :ivar target_resource_region: the region of the target resource(s) on which the alert is
      created/updated. Mandatory if the scope contains a subscription, resource group, or more than
      one resource.
     :vartype target_resource_region: str
-    :ivar criteria: Defines the specific alert criteria information. Required.
+    :ivar criteria: defines the specific alert criteria information. Required.
     :vartype criteria: ~azure.mgmt.monitor.models.MetricAlertCriteria
-    :ivar auto_mitigate: The flag that indicates whether the alert should be auto resolved or not.
+    :ivar auto_mitigate: the flag that indicates whether the alert should be auto resolved or not.
      The default is true.
     :vartype auto_mitigate: bool
-    :ivar resolve_configuration: The configuration for how the alert is resolved. Applicable for
-     PromQLCriteria.
-    :vartype resolve_configuration: ~azure.mgmt.monitor.models.ResolveConfiguration
-    :ivar actions: The array of actions that are performed when the alert rule becomes active, and
+    :ivar actions: the array of actions that are performed when the alert rule becomes active, and
      when an alert condition is resolved.
     :vartype actions: list[~azure.mgmt.monitor.models.MetricAlertAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: ~datetime.datetime
-    :ivar is_migrated: The value indicating whether this alert rule is migrated.
+    :ivar is_migrated: the value indicating whether this alert rule is migrated.
     :vartype is_migrated: bool
-    :ivar custom_properties: The properties of an alert payload.
-    :vartype custom_properties: dict[str, str]
-    :ivar action_properties: The properties of an action properties.
-    :vartype action_properties: dict[str, str]
     """
 
     _validation = {
@@ -8335,6 +7172,7 @@ class MetricAlertResource(ResourceAutoGenerated5):
         "enabled": {"required": True},
         "scopes": {"required": True},
         "evaluation_frequency": {"required": True},
+        "window_size": {"required": True},
         "criteria": {"required": True},
         "last_updated_time": {"readonly": True},
         "is_migrated": {"readonly": True},
@@ -8346,7 +7184,6 @@ class MetricAlertResource(ResourceAutoGenerated5):
         "type": {"key": "type", "type": "str"},
         "location": {"key": "location", "type": "str"},
         "tags": {"key": "tags", "type": "{str}"},
-        "identity": {"key": "identity", "type": "Identity"},
         "description": {"key": "properties.description", "type": "str"},
         "severity": {"key": "properties.severity", "type": "int"},
         "enabled": {"key": "properties.enabled", "type": "bool"},
@@ -8357,12 +7194,9 @@ class MetricAlertResource(ResourceAutoGenerated5):
         "target_resource_region": {"key": "properties.targetResourceRegion", "type": "str"},
         "criteria": {"key": "properties.criteria", "type": "MetricAlertCriteria"},
         "auto_mitigate": {"key": "properties.autoMitigate", "type": "bool"},
-        "resolve_configuration": {"key": "properties.resolveConfiguration", "type": "ResolveConfiguration"},
         "actions": {"key": "properties.actions", "type": "[MetricAlertAction]"},
         "last_updated_time": {"key": "properties.lastUpdatedTime", "type": "iso-8601"},
         "is_migrated": {"key": "properties.isMigrated", "type": "bool"},
-        "custom_properties": {"key": "properties.customProperties", "type": "{str}"},
-        "action_properties": {"key": "properties.actionProperties", "type": "{str}"},
     }
 
     def __init__(
@@ -8373,18 +7207,14 @@ class MetricAlertResource(ResourceAutoGenerated5):
         enabled: bool,
         scopes: list[str],
         evaluation_frequency: datetime.timedelta,
+        window_size: datetime.timedelta,
         criteria: "_models.MetricAlertCriteria",
         tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.Identity"] = None,
         description: Optional[str] = None,
-        window_size: Optional[datetime.timedelta] = None,
         target_resource_type: Optional[str] = None,
         target_resource_region: Optional[str] = None,
         auto_mitigate: Optional[bool] = None,
-        resolve_configuration: Optional["_models.ResolveConfiguration"] = None,
         actions: Optional[list["_models.MetricAlertAction"]] = None,
-        custom_properties: Optional[dict[str, str]] = None,
-        action_properties: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -8392,49 +7222,40 @@ class MetricAlertResource(ResourceAutoGenerated5):
         :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword identity: The identity of the resource.
-        :paramtype identity: ~azure.mgmt.monitor.models.Identity
-        :keyword description: The description of the metric alert that will be included in the alert
+        :keyword description: the description of the metric alert that will be included in the alert
          email.
         :paramtype description: str
         :keyword severity: Alert severity {0, 1, 2, 3, 4}. Required.
         :paramtype severity: int
-        :keyword enabled: The flag that indicates whether the metric alert is enabled. Required.
+        :keyword enabled: the flag that indicates whether the metric alert is enabled. Required.
         :paramtype enabled: bool
-        :keyword scopes: The list of resource id's that this metric alert is scoped to. You cannot
+        :keyword scopes: the list of resource id's that this metric alert is scoped to. You cannot
          change the scope of a metric rule based on logs. Required.
         :paramtype scopes: list[str]
-        :keyword evaluation_frequency: How often the metric alert is evaluated represented in ISO 8601
+        :keyword evaluation_frequency: how often the metric alert is evaluated represented in ISO 8601
          duration format. Required.
         :paramtype evaluation_frequency: ~datetime.timedelta
-        :keyword window_size: The period of time (in ISO 8601 duration format) that is used to monitor
-         alert activity based on the threshold.
+        :keyword window_size: the period of time (in ISO 8601 duration format) that is used to monitor
+         alert activity based on the threshold. Required.
         :paramtype window_size: ~datetime.timedelta
-        :keyword target_resource_type: The resource type of the target resource(s) on which the alert
+        :keyword target_resource_type: the resource type of the target resource(s) on which the alert
          is created/updated. Mandatory if the scope contains a subscription, resource group, or more
          than one resource.
         :paramtype target_resource_type: str
-        :keyword target_resource_region: The region of the target resource(s) on which the alert is
+        :keyword target_resource_region: the region of the target resource(s) on which the alert is
          created/updated. Mandatory if the scope contains a subscription, resource group, or more than
          one resource.
         :paramtype target_resource_region: str
-        :keyword criteria: Defines the specific alert criteria information. Required.
+        :keyword criteria: defines the specific alert criteria information. Required.
         :paramtype criteria: ~azure.mgmt.monitor.models.MetricAlertCriteria
-        :keyword auto_mitigate: The flag that indicates whether the alert should be auto resolved or
+        :keyword auto_mitigate: the flag that indicates whether the alert should be auto resolved or
          not. The default is true.
         :paramtype auto_mitigate: bool
-        :keyword resolve_configuration: The configuration for how the alert is resolved. Applicable for
-         PromQLCriteria.
-        :paramtype resolve_configuration: ~azure.mgmt.monitor.models.ResolveConfiguration
-        :keyword actions: The array of actions that are performed when the alert rule becomes active,
+        :keyword actions: the array of actions that are performed when the alert rule becomes active,
          and when an alert condition is resolved.
         :paramtype actions: list[~azure.mgmt.monitor.models.MetricAlertAction]
-        :keyword custom_properties: The properties of an alert payload.
-        :paramtype custom_properties: dict[str, str]
-        :keyword action_properties: The properties of an action properties.
-        :paramtype action_properties: dict[str, str]
         """
-        super().__init__(location=location, tags=tags, identity=identity, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.description = description
         self.severity = severity
         self.enabled = enabled
@@ -8445,18 +7266,15 @@ class MetricAlertResource(ResourceAutoGenerated5):
         self.target_resource_region = target_resource_region
         self.criteria = criteria
         self.auto_mitigate = auto_mitigate
-        self.resolve_configuration = resolve_configuration
         self.actions = actions
         self.last_updated_time: Optional[datetime.datetime] = None
         self.is_migrated: Optional[bool] = None
-        self.custom_properties = custom_properties
-        self.action_properties = action_properties
 
 
 class MetricAlertResourceCollection(_serialization.Model):
     """Represents a collection of alert rule resources.
 
-    :ivar value: The values for the alert rule resources.
+    :ivar value: the values for the alert rule resources.
     :vartype value: list[~azure.mgmt.monitor.models.MetricAlertResource]
     """
 
@@ -8466,7 +7284,7 @@ class MetricAlertResourceCollection(_serialization.Model):
 
     def __init__(self, *, value: Optional[list["_models.MetricAlertResource"]] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The values for the alert rule resources.
+        :keyword value: the values for the alert rule resources.
         :paramtype value: list[~azure.mgmt.monitor.models.MetricAlertResource]
         """
         super().__init__(**kwargs)
@@ -8480,48 +7298,39 @@ class MetricAlertResourcePatch(_serialization.Model):
 
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
-    :ivar identity: The identity of the resource.
-    :vartype identity: ~azure.mgmt.monitor.models.Identity
-    :ivar description: The description of the metric alert that will be included in the alert
+    :ivar description: the description of the metric alert that will be included in the alert
      email.
     :vartype description: str
     :ivar severity: Alert severity {0, 1, 2, 3, 4}.
     :vartype severity: int
-    :ivar enabled: The flag that indicates whether the metric alert is enabled.
+    :ivar enabled: the flag that indicates whether the metric alert is enabled.
     :vartype enabled: bool
-    :ivar scopes: The list of resource id's that this metric alert is scoped to.
+    :ivar scopes: the list of resource id's that this metric alert is scoped to.
     :vartype scopes: list[str]
-    :ivar evaluation_frequency: How often the metric alert is evaluated represented in ISO 8601
+    :ivar evaluation_frequency: how often the metric alert is evaluated represented in ISO 8601
      duration format.
     :vartype evaluation_frequency: ~datetime.timedelta
-    :ivar window_size: The period of time (in ISO 8601 duration format) that is used to monitor
+    :ivar window_size: the period of time (in ISO 8601 duration format) that is used to monitor
      alert activity based on the threshold.
     :vartype window_size: ~datetime.timedelta
-    :ivar target_resource_type: The resource type of the target resource(s) on which the alert is
+    :ivar target_resource_type: the resource type of the target resource(s) on which the alert is
      created/updated. Mandatory for MultipleResourceMultipleMetricCriteria.
     :vartype target_resource_type: str
-    :ivar target_resource_region: The region of the target resource(s) on which the alert is
+    :ivar target_resource_region: the region of the target resource(s) on which the alert is
      created/updated. Mandatory for MultipleResourceMultipleMetricCriteria.
     :vartype target_resource_region: str
-    :ivar criteria: Defines the specific alert criteria information.
+    :ivar criteria: defines the specific alert criteria information.
     :vartype criteria: ~azure.mgmt.monitor.models.MetricAlertCriteria
-    :ivar auto_mitigate: The flag that indicates whether the alert should be auto resolved or not.
+    :ivar auto_mitigate: the flag that indicates whether the alert should be auto resolved or not.
      The default is true.
     :vartype auto_mitigate: bool
-    :ivar resolve_configuration: The configuration for how the alert is resolved. Applicable for
-     PromQLCriteria.
-    :vartype resolve_configuration: ~azure.mgmt.monitor.models.ResolveConfiguration
-    :ivar actions: The array of actions that are performed when the alert rule becomes active, and
+    :ivar actions: the array of actions that are performed when the alert rule becomes active, and
      when an alert condition is resolved.
     :vartype actions: list[~azure.mgmt.monitor.models.MetricAlertAction]
     :ivar last_updated_time: Last time the rule was updated in ISO8601 format.
     :vartype last_updated_time: ~datetime.datetime
-    :ivar is_migrated: The value indicating whether this alert rule is migrated.
+    :ivar is_migrated: the value indicating whether this alert rule is migrated.
     :vartype is_migrated: bool
-    :ivar custom_properties: The properties of an alert payload.
-    :vartype custom_properties: dict[str, str]
-    :ivar action_properties: The properties of an action properties.
-    :vartype action_properties: dict[str, str]
     """
 
     _validation = {
@@ -8531,7 +7340,6 @@ class MetricAlertResourcePatch(_serialization.Model):
 
     _attribute_map = {
         "tags": {"key": "tags", "type": "{str}"},
-        "identity": {"key": "identity", "type": "Identity"},
         "description": {"key": "properties.description", "type": "str"},
         "severity": {"key": "properties.severity", "type": "int"},
         "enabled": {"key": "properties.enabled", "type": "bool"},
@@ -8542,19 +7350,15 @@ class MetricAlertResourcePatch(_serialization.Model):
         "target_resource_region": {"key": "properties.targetResourceRegion", "type": "str"},
         "criteria": {"key": "properties.criteria", "type": "MetricAlertCriteria"},
         "auto_mitigate": {"key": "properties.autoMitigate", "type": "bool"},
-        "resolve_configuration": {"key": "properties.resolveConfiguration", "type": "ResolveConfiguration"},
         "actions": {"key": "properties.actions", "type": "[MetricAlertAction]"},
         "last_updated_time": {"key": "properties.lastUpdatedTime", "type": "iso-8601"},
         "is_migrated": {"key": "properties.isMigrated", "type": "bool"},
-        "custom_properties": {"key": "properties.customProperties", "type": "{str}"},
-        "action_properties": {"key": "properties.actionProperties", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
         tags: Optional[dict[str, str]] = None,
-        identity: Optional["_models.Identity"] = None,
         description: Optional[str] = None,
         severity: Optional[int] = None,
         enabled: Optional[bool] = None,
@@ -8565,57 +7369,44 @@ class MetricAlertResourcePatch(_serialization.Model):
         target_resource_region: Optional[str] = None,
         criteria: Optional["_models.MetricAlertCriteria"] = None,
         auto_mitigate: Optional[bool] = None,
-        resolve_configuration: Optional["_models.ResolveConfiguration"] = None,
         actions: Optional[list["_models.MetricAlertAction"]] = None,
-        custom_properties: Optional[dict[str, str]] = None,
-        action_properties: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
-        :keyword identity: The identity of the resource.
-        :paramtype identity: ~azure.mgmt.monitor.models.Identity
-        :keyword description: The description of the metric alert that will be included in the alert
+        :keyword description: the description of the metric alert that will be included in the alert
          email.
         :paramtype description: str
         :keyword severity: Alert severity {0, 1, 2, 3, 4}.
         :paramtype severity: int
-        :keyword enabled: The flag that indicates whether the metric alert is enabled.
+        :keyword enabled: the flag that indicates whether the metric alert is enabled.
         :paramtype enabled: bool
-        :keyword scopes: The list of resource id's that this metric alert is scoped to.
+        :keyword scopes: the list of resource id's that this metric alert is scoped to.
         :paramtype scopes: list[str]
-        :keyword evaluation_frequency: How often the metric alert is evaluated represented in ISO 8601
+        :keyword evaluation_frequency: how often the metric alert is evaluated represented in ISO 8601
          duration format.
         :paramtype evaluation_frequency: ~datetime.timedelta
-        :keyword window_size: The period of time (in ISO 8601 duration format) that is used to monitor
+        :keyword window_size: the period of time (in ISO 8601 duration format) that is used to monitor
          alert activity based on the threshold.
         :paramtype window_size: ~datetime.timedelta
-        :keyword target_resource_type: The resource type of the target resource(s) on which the alert
+        :keyword target_resource_type: the resource type of the target resource(s) on which the alert
          is created/updated. Mandatory for MultipleResourceMultipleMetricCriteria.
         :paramtype target_resource_type: str
-        :keyword target_resource_region: The region of the target resource(s) on which the alert is
+        :keyword target_resource_region: the region of the target resource(s) on which the alert is
          created/updated. Mandatory for MultipleResourceMultipleMetricCriteria.
         :paramtype target_resource_region: str
-        :keyword criteria: Defines the specific alert criteria information.
+        :keyword criteria: defines the specific alert criteria information.
         :paramtype criteria: ~azure.mgmt.monitor.models.MetricAlertCriteria
-        :keyword auto_mitigate: The flag that indicates whether the alert should be auto resolved or
+        :keyword auto_mitigate: the flag that indicates whether the alert should be auto resolved or
          not. The default is true.
         :paramtype auto_mitigate: bool
-        :keyword resolve_configuration: The configuration for how the alert is resolved. Applicable for
-         PromQLCriteria.
-        :paramtype resolve_configuration: ~azure.mgmt.monitor.models.ResolveConfiguration
-        :keyword actions: The array of actions that are performed when the alert rule becomes active,
+        :keyword actions: the array of actions that are performed when the alert rule becomes active,
          and when an alert condition is resolved.
         :paramtype actions: list[~azure.mgmt.monitor.models.MetricAlertAction]
-        :keyword custom_properties: The properties of an alert payload.
-        :paramtype custom_properties: dict[str, str]
-        :keyword action_properties: The properties of an action properties.
-        :paramtype action_properties: dict[str, str]
         """
         super().__init__(**kwargs)
         self.tags = tags
-        self.identity = identity
         self.description = description
         self.severity = severity
         self.enabled = enabled
@@ -8626,12 +7417,9 @@ class MetricAlertResourcePatch(_serialization.Model):
         self.target_resource_region = target_resource_region
         self.criteria = criteria
         self.auto_mitigate = auto_mitigate
-        self.resolve_configuration = resolve_configuration
         self.actions = actions
         self.last_updated_time: Optional[datetime.datetime] = None
         self.is_migrated: Optional[bool] = None
-        self.custom_properties = custom_properties
-        self.action_properties = action_properties
 
 
 class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):  # pylint: disable=name-too-long
@@ -8642,12 +7430,10 @@ class MetricAlertSingleResourceMultipleMetricCriteria(MetricAlertCriteria):  # p
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, JSON]
-    :ivar odata_type: Specifies the type of the alert criteria. Previously undocumented values
-     might be returned. Required. Known values are:
+    :ivar odata_type: specifies the type of the alert criteria. Required. Known values are:
      "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
-     "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
-     "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria", and
-     "Microsoft.Azure.Monitor.PromQLCriteria".
+     "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria", and
+     "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
     :vartype odata_type: str or ~azure.mgmt.monitor.models.Odatatype
     :ivar all_of: The list of metric criteria for this 'all of' operation.
     :vartype all_of: list[~azure.mgmt.monitor.models.MetricCriteria]
@@ -8731,7 +7517,7 @@ class MetricAlertStatus(_serialization.Model):
 class MetricAlertStatusCollection(_serialization.Model):
     """Represents a collection of alert rule resources.
 
-    :ivar value: The values for the alert rule resources.
+    :ivar value: the values for the alert rule resources.
     :vartype value: list[~azure.mgmt.monitor.models.MetricAlertStatus]
     """
 
@@ -8741,7 +7527,7 @@ class MetricAlertStatusCollection(_serialization.Model):
 
     def __init__(self, *, value: Optional[list["_models.MetricAlertStatus"]] = None, **kwargs: Any) -> None:
         """
-        :keyword value: The values for the alert rule resources.
+        :keyword value: the values for the alert rule resources.
         :paramtype value: list[~azure.mgmt.monitor.models.MetricAlertStatus]
         """
         super().__init__(**kwargs)
@@ -8753,7 +7539,7 @@ class MetricAlertStatusProperties(_serialization.Model):
 
     :ivar dimensions: An object describing the type of the dimensions.
     :vartype dimensions: dict[str, str]
-    :ivar status: Status value.
+    :ivar status: status value.
     :vartype status: str
     :ivar timestamp: UTC time when the status was checked.
     :vartype timestamp: ~datetime.datetime
@@ -8776,7 +7562,7 @@ class MetricAlertStatusProperties(_serialization.Model):
         """
         :keyword dimensions: An object describing the type of the dimensions.
         :paramtype dimensions: dict[str, str]
-        :keyword status: Status value.
+        :keyword status: status value.
         :paramtype status: str
         :keyword timestamp: UTC time when the status was checked.
         :paramtype timestamp: ~datetime.datetime
@@ -8824,24 +7610,56 @@ class MetricAvailability(_serialization.Model):
         self.retention = retention
 
 
+class MetricBaselinesErrorResponse(_serialization.Model):
+    """Describes the format of Error response.
+
+    :ivar error:
+    :vartype error: ~azure.mgmt.monitor.models.MicrosoftCommonErrorResponseError
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "MicrosoftCommonErrorResponseError"},
+    }
+
+    def __init__(self, *, error: Optional["_models.MicrosoftCommonErrorResponseError"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error:
+        :paramtype error: ~azure.mgmt.monitor.models.MicrosoftCommonErrorResponseError
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
 class MetricBaselinesResponse(_serialization.Model):
     """A list of metric baselines.
 
     :ivar value: The list of metric baselines.
     :vartype value: list[~azure.mgmt.monitor.models.SingleMetricBaseline]
+    :ivar next_link: The URL to get the next set of results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
         "value": {"key": "value", "type": "[SingleMetricBaseline]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[list["_models.SingleMetricBaseline"]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.SingleMetricBaseline"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The list of metric baselines.
         :paramtype value: list[~azure.mgmt.monitor.models.SingleMetricBaseline]
+        :keyword next_link: The URL to get the next set of results.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
 
 
 class MetricCriteria(MultiMetricCriteria):
@@ -8852,9 +7670,8 @@ class MetricCriteria(MultiMetricCriteria):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, JSON]
-    :ivar criterion_type: Specifies the type of threshold criteria. Previously undocumented values
-     might be returned. Required. Known values are: "StaticThresholdCriterion" and
-     "DynamicThresholdCriterion".
+    :ivar criterion_type: Specifies the type of threshold criteria. Required. Known values are:
+     "StaticThresholdCriterion" and "DynamicThresholdCriterion".
     :vartype criterion_type: str or ~azure.mgmt.monitor.models.CriterionType
     :ivar name: Name of the criteria. Required.
     :vartype name: str
@@ -8862,20 +7679,18 @@ class MetricCriteria(MultiMetricCriteria):
     :vartype metric_name: str
     :ivar metric_namespace: Namespace of the metric.
     :vartype metric_namespace: str
-    :ivar time_aggregation: The criteria time aggregation types. Previously undocumented values
-     might be returned. Required. Known values are: "Average", "Count", "Minimum", "Maximum", and
-     "Total".
+    :ivar time_aggregation: the criteria time aggregation types. Required. Known values are:
+     "Average", "Count", "Minimum", "Maximum", and "Total".
     :vartype time_aggregation: str or ~azure.mgmt.monitor.models.AggregationTypeEnum
     :ivar dimensions: List of dimension conditions.
     :vartype dimensions: list[~azure.mgmt.monitor.models.MetricDimension]
     :ivar skip_metric_validation: Allows creating an alert rule on a custom metric that isn't yet
      emitted, by causing the metric validation to be skipped.
     :vartype skip_metric_validation: bool
-    :ivar operator: The criteria operator. Previously undocumented values might be returned.
-     Required. Known values are: "Equals", "GreaterThan", "GreaterThanOrEqual", "LessThan", and
-     "LessThanOrEqual".
+    :ivar operator: the criteria operator. Required. Known values are: "Equals", "GreaterThan",
+     "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
     :vartype operator: str or ~azure.mgmt.monitor.models.Operator
-    :ivar threshold: The criteria threshold value that activates the alert. Required.
+    :ivar threshold: the criteria threshold value that activates the alert. Required.
     :vartype threshold: float
     """
 
@@ -8925,20 +7740,18 @@ class MetricCriteria(MultiMetricCriteria):
         :paramtype metric_name: str
         :keyword metric_namespace: Namespace of the metric.
         :paramtype metric_namespace: str
-        :keyword time_aggregation: The criteria time aggregation types. Previously undocumented values
-         might be returned. Required. Known values are: "Average", "Count", "Minimum", "Maximum", and
-         "Total".
+        :keyword time_aggregation: the criteria time aggregation types. Required. Known values are:
+         "Average", "Count", "Minimum", "Maximum", and "Total".
         :paramtype time_aggregation: str or ~azure.mgmt.monitor.models.AggregationTypeEnum
         :keyword dimensions: List of dimension conditions.
         :paramtype dimensions: list[~azure.mgmt.monitor.models.MetricDimension]
         :keyword skip_metric_validation: Allows creating an alert rule on a custom metric that isn't
          yet emitted, by causing the metric validation to be skipped.
         :paramtype skip_metric_validation: bool
-        :keyword operator: The criteria operator. Previously undocumented values might be returned.
-         Required. Known values are: "Equals", "GreaterThan", "GreaterThanOrEqual", "LessThan", and
-         "LessThanOrEqual".
+        :keyword operator: the criteria operator. Required. Known values are: "Equals", "GreaterThan",
+         "GreaterThanOrEqual", "LessThan", and "LessThanOrEqual".
         :paramtype operator: str or ~azure.mgmt.monitor.models.Operator
-        :keyword threshold: The criteria threshold value that activates the alert. Required.
+        :keyword threshold: the criteria threshold value that activates the alert. Required.
         :paramtype threshold: float
         """
         super().__init__(
@@ -8966,7 +7779,7 @@ class MetricDefinition(_serialization.Model):
     :ivar namespace: The namespace the metric belongs to.
     :vartype namespace: str
     :ivar name: The name and the display name of the metric, i.e. it is a localizable string.
-    :vartype name: ~azure.mgmt.monitor.models.LocalizableStringAutoGenerated
+    :vartype name: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
     :ivar display_description: Detailed description of this metric.
     :vartype display_description: str
     :ivar category: Custom category name for this metric.
@@ -8991,14 +7804,14 @@ class MetricDefinition(_serialization.Model):
     :vartype id: str
     :ivar dimensions: The name and the display name of the dimension, i.e. it is a localizable
      string.
-    :vartype dimensions: list[~azure.mgmt.monitor.models.LocalizableStringAutoGenerated]
+    :vartype dimensions: list[~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString]
     """
 
     _attribute_map = {
         "is_dimension_required": {"key": "isDimensionRequired", "type": "bool"},
         "resource_id": {"key": "resourceId", "type": "str"},
         "namespace": {"key": "namespace", "type": "str"},
-        "name": {"key": "name", "type": "LocalizableStringAutoGenerated"},
+        "name": {"key": "name", "type": "MicrosoftCommonLocalizableString"},
         "display_description": {"key": "displayDescription", "type": "str"},
         "category": {"key": "category", "type": "str"},
         "metric_class": {"key": "metricClass", "type": "str"},
@@ -9007,7 +7820,7 @@ class MetricDefinition(_serialization.Model):
         "supported_aggregation_types": {"key": "supportedAggregationTypes", "type": "[str]"},
         "metric_availabilities": {"key": "metricAvailabilities", "type": "[MetricAvailability]"},
         "id": {"key": "id", "type": "str"},
-        "dimensions": {"key": "dimensions", "type": "[LocalizableStringAutoGenerated]"},
+        "dimensions": {"key": "dimensions", "type": "[MicrosoftCommonLocalizableString]"},
     }
 
     def __init__(
@@ -9016,7 +7829,7 @@ class MetricDefinition(_serialization.Model):
         is_dimension_required: Optional[bool] = None,
         resource_id: Optional[str] = None,
         namespace: Optional[str] = None,
-        name: Optional["_models.LocalizableStringAutoGenerated"] = None,
+        name: Optional["_models.MicrosoftCommonLocalizableString"] = None,
         display_description: Optional[str] = None,
         category: Optional[str] = None,
         metric_class: Optional[Union[str, "_models.MetricClass"]] = None,
@@ -9025,7 +7838,7 @@ class MetricDefinition(_serialization.Model):
         supported_aggregation_types: Optional[list[Union[str, "_models.AggregationType"]]] = None,
         metric_availabilities: Optional[list["_models.MetricAvailability"]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        dimensions: Optional[list["_models.LocalizableStringAutoGenerated"]] = None,
+        dimensions: Optional[list["_models.MicrosoftCommonLocalizableString"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9036,7 +7849,7 @@ class MetricDefinition(_serialization.Model):
         :keyword namespace: The namespace the metric belongs to.
         :paramtype namespace: str
         :keyword name: The name and the display name of the metric, i.e. it is a localizable string.
-        :paramtype name: ~azure.mgmt.monitor.models.LocalizableStringAutoGenerated
+        :paramtype name: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
         :keyword display_description: Detailed description of this metric.
         :paramtype display_description: str
         :keyword category: Custom category name for this metric.
@@ -9061,7 +7874,7 @@ class MetricDefinition(_serialization.Model):
         :paramtype id: str
         :keyword dimensions: The name and the display name of the dimension, i.e. it is a localizable
          string.
-        :paramtype dimensions: list[~azure.mgmt.monitor.models.LocalizableStringAutoGenerated]
+        :paramtype dimensions: list[~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString]
         """
         super().__init__(**kwargs)
         self.is_dimension_required = is_dimension_required
@@ -9086,6 +7899,8 @@ class MetricDefinitionCollection(_serialization.Model):
 
     :ivar value: The values for the metric definitions. Required.
     :vartype value: list[~azure.mgmt.monitor.models.MetricDefinition]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -9094,15 +7909,21 @@ class MetricDefinitionCollection(_serialization.Model):
 
     _attribute_map = {
         "value": {"key": "value", "type": "[MetricDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: list["_models.MetricDefinition"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: list["_models.MetricDefinition"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The values for the metric definitions. Required.
         :paramtype value: list[~azure.mgmt.monitor.models.MetricDefinition]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
 
 
 class MetricDimension(_serialization.Model):
@@ -9112,9 +7933,9 @@ class MetricDimension(_serialization.Model):
 
     :ivar name: Name of the dimension. Required.
     :vartype name: str
-    :ivar operator: The dimension operator. Only 'Include' and 'Exclude' are supported. Required.
+    :ivar operator: the dimension operator. Only 'Include' and 'Exclude' are supported. Required.
     :vartype operator: str
-    :ivar values: List of dimension values. Required.
+    :ivar values: list of dimension values. Required.
     :vartype values: list[str]
     """
 
@@ -9134,10 +7955,10 @@ class MetricDimension(_serialization.Model):
         """
         :keyword name: Name of the dimension. Required.
         :paramtype name: str
-        :keyword operator: The dimension operator. Only 'Include' and 'Exclude' are supported.
+        :keyword operator: the dimension operator. Only 'Include' and 'Exclude' are supported.
          Required.
         :paramtype operator: str
-        :keyword values: List of dimension values. Required.
+        :keyword values: list of dimension values. Required.
         :paramtype values: list[str]
         """
         super().__init__(**kwargs)
@@ -9206,6 +8027,8 @@ class MetricNamespaceCollection(_serialization.Model):
 
     :ivar value: The values for the metric namespaces. Required.
     :vartype value: list[~azure.mgmt.monitor.models.MetricNamespace]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -9214,15 +8037,21 @@ class MetricNamespaceCollection(_serialization.Model):
 
     _attribute_map = {
         "value": {"key": "value", "type": "[MetricNamespace]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: list["_models.MetricNamespace"], **kwargs: Any) -> None:
+    def __init__(
+        self, *, value: list["_models.MetricNamespace"], next_link: Optional[str] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword value: The values for the metric namespaces. Required.
         :paramtype value: list[~azure.mgmt.monitor.models.MetricNamespace]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
 
 
 class MetricNamespaceName(_serialization.Model):
@@ -9297,52 +8126,6 @@ class MetricSettings(_serialization.Model):
         super().__init__(**kwargs)
         self.time_grain = time_grain
         self.category = category
-        self.enabled = enabled
-        self.retention_policy = retention_policy
-
-
-class MetricSettingsAutoGenerated(_serialization.Model):
-    """Part of MultiTenantDiagnosticSettings. Specifies the settings for a particular metric.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar time_grain: the timegrain of the metric in ISO8601 format. Required.
-    :vartype time_grain: ~datetime.timedelta
-    :ivar enabled: a value indicating whether this timegrain is enabled. Required.
-    :vartype enabled: bool
-    :ivar retention_policy: the retention policy for this timegrain.
-    :vartype retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
-    """
-
-    _validation = {
-        "time_grain": {"required": True},
-        "enabled": {"required": True},
-    }
-
-    _attribute_map = {
-        "time_grain": {"key": "timeGrain", "type": "duration"},
-        "enabled": {"key": "enabled", "type": "bool"},
-        "retention_policy": {"key": "retentionPolicy", "type": "RetentionPolicy"},
-    }
-
-    def __init__(
-        self,
-        *,
-        time_grain: datetime.timedelta,
-        enabled: bool,
-        retention_policy: Optional["_models.RetentionPolicy"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword time_grain: the timegrain of the metric in ISO8601 format. Required.
-        :paramtype time_grain: ~datetime.timedelta
-        :keyword enabled: a value indicating whether this timegrain is enabled. Required.
-        :paramtype enabled: bool
-        :keyword retention_policy: the retention policy for this timegrain.
-        :paramtype retention_policy: ~azure.mgmt.monitor.models.RetentionPolicy
-        """
-        super().__init__(**kwargs)
-        self.time_grain = time_grain
         self.enabled = enabled
         self.retention_policy = retention_policy
 
@@ -9584,6 +8367,331 @@ class MetricValue(_serialization.Model):
         self.count = count
 
 
+class MicrosoftCommonCommonErrorResponse(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.monitor.models.MicrosoftCommonCommonErrorResponse]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.monitor.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[MicrosoftCommonCommonErrorResponse]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.MicrosoftCommonCommonErrorResponse"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class MicrosoftCommonErrorContract(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.monitor.models.MicrosoftCommonCommonErrorResponse
+    """
+
+    _attribute_map = {
+        "error": {"key": "error", "type": "MicrosoftCommonCommonErrorResponse"},
+    }
+
+    def __init__(self, *, error: Optional["_models.MicrosoftCommonCommonErrorResponse"] = None, **kwargs: Any) -> None:
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.monitor.models.MicrosoftCommonCommonErrorResponse
+        """
+        super().__init__(**kwargs)
+        self.error = error
+
+
+class MicrosoftCommonErrorDetail(_serialization.Model):
+    """Describes details of an error response.
+
+    :ivar code: Unlocalized string which can be used to programmatically identify the error.
+    :vartype code: str
+    :ivar message: Describes the error in detail and provides debugging information.
+    :vartype message: str
+    :ivar target: The target of the particular error (for example, the name of the property in
+     error).
+    :vartype target: str
+    :ivar additional_info: An array of objects with 'type' and 'info' properties. The schema of
+     'info' is service-specific and dependent on the 'type' string.
+    :vartype additional_info:
+     list[~azure.mgmt.monitor.models.MicrosoftCommonErrorDetailAdditionalInfoItem]
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "additional_info": {"key": "additionalInfo", "type": "[MicrosoftCommonErrorDetailAdditionalInfoItem]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+        target: Optional[str] = None,
+        additional_info: Optional[list["_models.MicrosoftCommonErrorDetailAdditionalInfoItem"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword code: Unlocalized string which can be used to programmatically identify the error.
+        :paramtype code: str
+        :keyword message: Describes the error in detail and provides debugging information.
+        :paramtype message: str
+        :keyword target: The target of the particular error (for example, the name of the property in
+         error).
+        :paramtype target: str
+        :keyword additional_info: An array of objects with 'type' and 'info' properties. The schema of
+         'info' is service-specific and dependent on the 'type' string.
+        :paramtype additional_info:
+         list[~azure.mgmt.monitor.models.MicrosoftCommonErrorDetailAdditionalInfoItem]
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = target
+        self.additional_info = additional_info
+
+
+class MicrosoftCommonErrorDetailAdditionalInfoItem(_serialization.Model):  # pylint: disable=name-too-long
+    """MicrosoftCommonErrorDetailAdditionalInfoItem.
+
+    :ivar type: The type of additional information.
+    :vartype type: str
+    :ivar info: The additional information specific to the type.
+    :vartype info: dict[str, any]
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "{object}"},
+    }
+
+    def __init__(self, *, type: Optional[str] = None, info: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
+        """
+        :keyword type: The type of additional information.
+        :paramtype type: str
+        :keyword info: The additional information specific to the type.
+        :paramtype info: dict[str, any]
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.info = info
+
+
+class MicrosoftCommonErrorResponse(_serialization.Model):
+    """Describes the format of Error response.
+
+    :ivar code: Error code.
+    :vartype code: str
+    :ivar message: Error message indicating why the operation failed.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword code: Error code.
+        :paramtype code: str
+        :keyword message: Error message indicating why the operation failed.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
+
+
+class MicrosoftCommonErrorResponseError(_serialization.Model):
+    """MicrosoftCommonErrorResponseError.
+
+    :ivar code: Unlocalized string which can be used to programmatically identify the error.
+    :vartype code: str
+    :ivar message: Describes the error in detail and provides debugging information. If
+     Accept-Language is set in the request, it must be localized to that language.
+    :vartype message: str
+    :ivar target: The target of the particular error (for example, the name of the property in
+     error).
+    :vartype target: str
+    :ivar details: An array of additional nested error response info objects, as described by this
+     contract.
+    :vartype details: list[~azure.mgmt.monitor.models.MicrosoftCommonErrorDetail]
+    :ivar additional_info: An array of objects with 'type' and 'info' properties. The schema of
+     'info' is service-specific and dependent on the 'type' string.
+    :vartype additional_info:
+     list[~azure.mgmt.monitor.models.MicrosoftCommonErrorResponseErrorAdditionalInfoItem]
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[MicrosoftCommonErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[MicrosoftCommonErrorResponseErrorAdditionalInfoItem]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        code: Optional[str] = None,
+        message: Optional[str] = None,
+        target: Optional[str] = None,
+        details: Optional[list["_models.MicrosoftCommonErrorDetail"]] = None,
+        additional_info: Optional[list["_models.MicrosoftCommonErrorResponseErrorAdditionalInfoItem"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword code: Unlocalized string which can be used to programmatically identify the error.
+        :paramtype code: str
+        :keyword message: Describes the error in detail and provides debugging information. If
+         Accept-Language is set in the request, it must be localized to that language.
+        :paramtype message: str
+        :keyword target: The target of the particular error (for example, the name of the property in
+         error).
+        :paramtype target: str
+        :keyword details: An array of additional nested error response info objects, as described by
+         this contract.
+        :paramtype details: list[~azure.mgmt.monitor.models.MicrosoftCommonErrorDetail]
+        :keyword additional_info: An array of objects with 'type' and 'info' properties. The schema of
+         'info' is service-specific and dependent on the 'type' string.
+        :paramtype additional_info:
+         list[~azure.mgmt.monitor.models.MicrosoftCommonErrorResponseErrorAdditionalInfoItem]
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
+        self.target = target
+        self.details = details
+        self.additional_info = additional_info
+
+
+class MicrosoftCommonErrorResponseErrorAdditionalInfoItem(_serialization.Model):  # pylint: disable=name-too-long
+    """MicrosoftCommonErrorResponseErrorAdditionalInfoItem.
+
+    :ivar type: The type of additional information.
+    :vartype type: str
+    :ivar info: The additional information specific to the type.
+    :vartype info: dict[str, any]
+    """
+
+    _attribute_map = {
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "{object}"},
+    }
+
+    def __init__(self, *, type: Optional[str] = None, info: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
+        """
+        :keyword type: The type of additional information.
+        :paramtype type: str
+        :keyword info: The additional information specific to the type.
+        :paramtype info: dict[str, any]
+        """
+        super().__init__(**kwargs)
+        self.type = type
+        self.info = info
+
+
+class MicrosoftCommonLocalizableString(_serialization.Model):
+    """The localizable string class.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar value: the invariant value. Required.
+    :vartype value: str
+    :ivar localized_value: the locale specific value.
+    :vartype localized_value: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
+    }
+
+    def __init__(self, *, value: str, localized_value: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: the invariant value. Required.
+        :paramtype value: str
+        :keyword localized_value: the locale specific value.
+        :paramtype localized_value: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.localized_value = localized_value
+
+
+class MicrosoftCommonRetentionPolicy(_serialization.Model):
+    """Specifies the retention policy for the log.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar enabled: a value indicating whether the retention policy is enabled. Required.
+    :vartype enabled: bool
+    :ivar days: the number of days for the retention in days. A value of 0 will retain the events
+     indefinitely. Required.
+    :vartype days: int
+    """
+
+    _validation = {
+        "enabled": {"required": True},
+        "days": {"required": True, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "enabled": {"key": "enabled", "type": "bool"},
+        "days": {"key": "days", "type": "int"},
+    }
+
+    def __init__(self, *, enabled: bool, days: int, **kwargs: Any) -> None:
+        """
+        :keyword enabled: a value indicating whether the retention policy is enabled. Required.
+        :paramtype enabled: bool
+        :keyword days: the number of days for the retention in days. A value of 0 will retain the
+         events indefinitely. Required.
+        :paramtype days: int
+        """
+        super().__init__(**kwargs)
+        self.enabled = enabled
+        self.days = days
+
+
 class MicrosoftFabricDestination(_serialization.Model):
     """Microsoft Fabric destination (non-Azure).
 
@@ -9595,9 +8703,8 @@ class MicrosoftFabricDestination(_serialization.Model):
     :vartype database_name: str
     :ivar ingestion_uri: The ingestion uri of the Microsoft Fabric resource.
     :vartype ingestion_uri: str
-    :ivar name: A friendly name for the destination.
-     This name should be unique across all destinations (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the destination. This name should be unique across all
+     destinations (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -9628,9 +8735,8 @@ class MicrosoftFabricDestination(_serialization.Model):
         :paramtype database_name: str
         :keyword ingestion_uri: The ingestion uri of the Microsoft Fabric resource.
         :paramtype ingestion_uri: str
-        :keyword name: A friendly name for the destination.
-         This name should be unique across all destinations (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the destination. This name should be unique across all
+         destinations (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -9650,9 +8756,8 @@ class MonitoringAccountDestination(_serialization.Model):
     :vartype account_resource_id: str
     :ivar account_id: The immutable ID  of the account.
     :vartype account_id: str
-    :ivar name: A friendly name for the destination.
-     This name should be unique across all destinations (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the destination. This name should be unique across all
+     destinations (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -9670,9 +8775,8 @@ class MonitoringAccountDestination(_serialization.Model):
         """
         :keyword account_resource_id: The resource ID of the monitoring account.
         :paramtype account_resource_id: str
-        :keyword name: A friendly name for the destination.
-         This name should be unique across all destinations (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the destination. This name should be unique across all
+         destinations (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -9718,6 +8822,8 @@ class NotificationRequestBody(_serialization.Model):
     :vartype arm_role_receivers: list[~azure.mgmt.monitor.models.ArmRoleReceiver]
     :ivar event_hub_receivers: The list of event hub receivers that are part of this action group.
     :vartype event_hub_receivers: list[~azure.mgmt.monitor.models.EventHubReceiver]
+    :ivar incident_receivers: The list of incident receivers that are part of this action group.
+    :vartype incident_receivers: list[~azure.mgmt.monitor.models.IncidentReceiver]
     """
 
     _validation = {
@@ -9737,6 +8843,7 @@ class NotificationRequestBody(_serialization.Model):
         "azure_function_receivers": {"key": "azureFunctionReceivers", "type": "[AzureFunctionReceiver]"},
         "arm_role_receivers": {"key": "armRoleReceivers", "type": "[ArmRoleReceiver]"},
         "event_hub_receivers": {"key": "eventHubReceivers", "type": "[EventHubReceiver]"},
+        "incident_receivers": {"key": "incidentReceivers", "type": "[IncidentReceiver]"},
     }
 
     def __init__(
@@ -9754,6 +8861,7 @@ class NotificationRequestBody(_serialization.Model):
         azure_function_receivers: Optional[list["_models.AzureFunctionReceiver"]] = None,
         arm_role_receivers: Optional[list["_models.ArmRoleReceiver"]] = None,
         event_hub_receivers: Optional[list["_models.EventHubReceiver"]] = None,
+        incident_receivers: Optional[list["_models.IncidentReceiver"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9791,6 +8899,8 @@ class NotificationRequestBody(_serialization.Model):
         :keyword event_hub_receivers: The list of event hub receivers that are part of this action
          group.
         :paramtype event_hub_receivers: list[~azure.mgmt.monitor.models.EventHubReceiver]
+        :keyword incident_receivers: The list of incident receivers that are part of this action group.
+        :paramtype incident_receivers: list[~azure.mgmt.monitor.models.IncidentReceiver]
         """
         super().__init__(**kwargs)
         self.alert_type = alert_type
@@ -9805,6 +8915,7 @@ class NotificationRequestBody(_serialization.Model):
         self.azure_function_receivers = azure_function_receivers
         self.arm_role_receivers = arm_role_receivers
         self.event_hub_receivers = event_hub_receivers
+        self.incident_receivers = incident_receivers
 
 
 class Operation(_serialization.Model):
@@ -9833,56 +8944,6 @@ class Operation(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.display = display
-
-
-class OperationAutoGenerated(_serialization.Model):
-    """Details of a REST API operation, returned from the Resource Provider Operations API.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar name: The name of the operation, as per Resource-Based Access Control (RBAC). Examples:
-     "Microsoft.Compute/virtualMachines/write", "Microsoft.Compute/virtualMachines/capture/action".
-    :vartype name: str
-    :ivar is_data_action: Whether the operation applies to data-plane. This is "true" for
-     data-plane operations and "false" for ARM/control-plane operations.
-    :vartype is_data_action: bool
-    :ivar display: Localized display information for this particular operation.
-    :vartype display: ~azure.mgmt.monitor.models.OperationDisplayAutoGenerated
-    :ivar origin: The intended executor of the operation; as in Resource Based Access Control
-     (RBAC) and audit logs UX. Default value is "user,system". Known values are: "user", "system",
-     and "user,system".
-    :vartype origin: str or ~azure.mgmt.monitor.models.Origin
-    :ivar action_type: Enum. Indicates the action type. "Internal" refers to actions that are for
-     internal only APIs. "Internal"
-    :vartype action_type: str or ~azure.mgmt.monitor.models.ActionType
-    """
-
-    _validation = {
-        "name": {"readonly": True},
-        "is_data_action": {"readonly": True},
-        "origin": {"readonly": True},
-        "action_type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "is_data_action": {"key": "isDataAction", "type": "bool"},
-        "display": {"key": "display", "type": "OperationDisplayAutoGenerated"},
-        "origin": {"key": "origin", "type": "str"},
-        "action_type": {"key": "actionType", "type": "str"},
-    }
-
-    def __init__(self, *, display: Optional["_models.OperationDisplayAutoGenerated"] = None, **kwargs: Any) -> None:
-        """
-        :keyword display: Localized display information for this particular operation.
-        :paramtype display: ~azure.mgmt.monitor.models.OperationDisplayAutoGenerated
-        """
-        super().__init__(**kwargs)
-        self.name: Optional[str] = None
-        self.is_data_action: Optional[bool] = None
-        self.display = display
-        self.origin: Optional[Union[str, "_models.Origin"]] = None
-        self.action_type: Optional[Union[str, "_models.ActionType"]] = None
 
 
 class OperationDisplay(_serialization.Model):
@@ -9924,48 +8985,6 @@ class OperationDisplay(_serialization.Model):
         self.operation = operation
 
 
-class OperationDisplayAutoGenerated(_serialization.Model):
-    """Localized display information for this particular operation.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar provider: The localized friendly form of the resource provider name, e.g. "Microsoft
-     Monitoring Insights" or "Microsoft Compute".
-    :vartype provider: str
-    :ivar resource: The localized friendly name of the resource type related to this operation.
-     E.g. "Virtual Machines" or "Job Schedule Collections".
-    :vartype resource: str
-    :ivar operation: The concise, localized friendly name for the operation; suitable for
-     dropdowns. E.g. "Create or Update Virtual Machine", "Restart Virtual Machine".
-    :vartype operation: str
-    :ivar description: The short, localized friendly description of the operation; suitable for
-     tool tips and detailed views.
-    :vartype description: str
-    """
-
-    _validation = {
-        "provider": {"readonly": True},
-        "resource": {"readonly": True},
-        "operation": {"readonly": True},
-        "description": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "provider": {"key": "provider", "type": "str"},
-        "resource": {"key": "resource", "type": "str"},
-        "operation": {"key": "operation", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.provider: Optional[str] = None
-        self.resource: Optional[str] = None
-        self.operation: Optional[str] = None
-        self.description: Optional[str] = None
-
-
 class OperationListResult(_serialization.Model):
     """Result of the request to list Microsoft.Insights operations. It contains a list of operations
     and a URL link to get the next set of results.
@@ -9995,35 +9014,6 @@ class OperationListResult(_serialization.Model):
         self.next_link = next_link
 
 
-class OperationListResultAutoGenerated(_serialization.Model):
-    """A list of REST API operations supported by an Azure Resource Provider. It contains an URL link
-    to get the next set of results.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: List of operations supported by the resource provider.
-    :vartype value: list[~azure.mgmt.monitor.models.OperationAutoGenerated]
-    :ivar next_link: URL to get the next set of operation list results (if there are any).
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[OperationAutoGenerated]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.value: Optional[list["_models.OperationAutoGenerated"]] = None
-        self.next_link: Optional[str] = None
-
-
 class OperationStatus(_serialization.Model):
     """The status of operation.
 
@@ -10038,7 +9028,7 @@ class OperationStatus(_serialization.Model):
     :ivar status: The status of the operation.
     :vartype status: str
     :ivar error: The error detail of the operation if any.
-    :vartype error: ~azure.mgmt.monitor.models.ErrorResponseCommon
+    :vartype error: ~azure.mgmt.monitor.models.ErrorDetailAutoGenerated
     """
 
     _attribute_map = {
@@ -10047,7 +9037,7 @@ class OperationStatus(_serialization.Model):
         "start_time": {"key": "startTime", "type": "iso-8601"},
         "end_time": {"key": "endTime", "type": "iso-8601"},
         "status": {"key": "status", "type": "str"},
-        "error": {"key": "error", "type": "ErrorResponseCommon"},
+        "error": {"key": "error", "type": "ErrorDetailAutoGenerated"},
     }
 
     def __init__(
@@ -10058,7 +9048,7 @@ class OperationStatus(_serialization.Model):
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
         status: Optional[str] = None,
-        error: Optional["_models.ErrorResponseCommon"] = None,
+        error: Optional["_models.ErrorDetailAutoGenerated"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10073,7 +9063,7 @@ class OperationStatus(_serialization.Model):
         :keyword status: The status of the operation.
         :paramtype status: str
         :keyword error: The error detail of the operation if any.
-        :paramtype error: ~azure.mgmt.monitor.models.ErrorResponseCommon
+        :paramtype error: ~azure.mgmt.monitor.models.ErrorDetailAutoGenerated
         """
         super().__init__(**kwargs)
         self.id = id
@@ -10086,26 +9076,24 @@ class OperationStatus(_serialization.Model):
 
 class PerfCounterDataSource(_serialization.Model):
     """Definition of which performance counters will be collected and how they will be collected by
-    this data collection rule.
-    Collected from both Windows and Linux machines where the counter is present.
+    this data collection rule. Collected from both Windows and Linux machines where the counter is
+    present.
 
-    :ivar streams: List of streams that this data source will be sent to.
-     A stream indicates what schema will be used for this data and usually what table in Log
-     Analytics the data will be sent to.
+    :ivar streams: List of streams that this data source will be sent to. A stream indicates what
+     schema will be used for this data and usually what table in Log Analytics the data will be sent
+     to.
     :vartype streams: list[str or ~azure.mgmt.monitor.models.KnownPerfCounterDataSourceStreams]
     :ivar sampling_frequency_in_seconds: The number of seconds between consecutive counter
      measurements (samples).
     :vartype sampling_frequency_in_seconds: int
     :ivar counter_specifiers: A list of specifier names of the performance counters you want to
-     collect.
-     Use a wildcard (*) to collect a counter for all instances.
-     To get a list of performance counters on Windows, run the command 'typeperf'.
+     collect. Use a wildcard (*) to collect a counter for all instances. To get a list of
+     performance counters on Windows, run the command 'typeperf'.
     :vartype counter_specifiers: list[str]
     :ivar transform_kql: The KQL query to transform the data source.
     :vartype transform_kql: str
-    :ivar name: A friendly name for the data source.
-     This name should be unique across all data sources (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the data source. This name should be unique across all data
+     sources (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -10128,23 +9116,21 @@ class PerfCounterDataSource(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword streams: List of streams that this data source will be sent to.
-         A stream indicates what schema will be used for this data and usually what table in Log
-         Analytics the data will be sent to.
+        :keyword streams: List of streams that this data source will be sent to. A stream indicates
+         what schema will be used for this data and usually what table in Log Analytics the data will be
+         sent to.
         :paramtype streams: list[str or ~azure.mgmt.monitor.models.KnownPerfCounterDataSourceStreams]
         :keyword sampling_frequency_in_seconds: The number of seconds between consecutive counter
          measurements (samples).
         :paramtype sampling_frequency_in_seconds: int
         :keyword counter_specifiers: A list of specifier names of the performance counters you want to
-         collect.
-         Use a wildcard (*) to collect a counter for all instances.
-         To get a list of performance counters on Windows, run the command 'typeperf'.
+         collect. Use a wildcard (*) to collect a counter for all instances. To get a list of
+         performance counters on Windows, run the command 'typeperf'.
         :paramtype counter_specifiers: list[str]
         :keyword transform_kql: The KQL query to transform the data source.
         :paramtype transform_kql: str
-        :keyword name: A friendly name for the data source.
-         This name should be unique across all data sources (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the data source. This name should be unique across all data
+         sources (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -10155,45 +9141,6 @@ class PerfCounterDataSource(_serialization.Model):
         self.name = name
 
 
-class PerformanceCounterConfiguration(_serialization.Model):
-    """PerformanceCounterConfiguration.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar name: Required.
-    :vartype name: str
-    :ivar sampling_period: Required.
-    :vartype sampling_period: str
-    :ivar instance:
-    :vartype instance: str
-    """
-
-    _validation = {
-        "name": {"required": True},
-        "sampling_period": {"required": True},
-    }
-
-    _attribute_map = {
-        "name": {"key": "name", "type": "str"},
-        "sampling_period": {"key": "samplingPeriod", "type": "str"},
-        "instance": {"key": "instance", "type": "str"},
-    }
-
-    def __init__(self, *, name: str, sampling_period: str, instance: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword name: Required.
-        :paramtype name: str
-        :keyword sampling_period: Required.
-        :paramtype sampling_period: str
-        :keyword instance:
-        :paramtype instance: str
-        """
-        super().__init__(**kwargs)
-        self.name = name
-        self.sampling_period = sampling_period
-        self.instance = instance
-
-
 class PlatformTelemetryDataSource(_serialization.Model):
     """Definition of platform telemetry data source configuration.
 
@@ -10201,9 +9148,8 @@ class PlatformTelemetryDataSource(_serialization.Model):
 
     :ivar streams: List of platform telemetry streams to collect. Required.
     :vartype streams: list[str]
-    :ivar name: A friendly name for the data source.
-     This name should be unique across all data sources (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the data source. This name should be unique across all data
+     sources (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -10220,9 +9166,8 @@ class PlatformTelemetryDataSource(_serialization.Model):
         """
         :keyword streams: List of platform telemetry streams to collect. Required.
         :paramtype streams: list[str]
-        :keyword name: A friendly name for the data source.
-         This name should be unique across all data sources (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the data source. This name should be unique across all data
+         sources (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -10367,11 +9312,11 @@ class PredictiveValue(_serialization.Model):
 
 
 class PrivateEndpoint(_serialization.Model):
-    """The private endpoint resource.
+    """The Private Endpoint resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: The ARM identifier for private endpoint.
+    :ivar id: The ARM identifier for Private Endpoint.
     :vartype id: str
     """
 
@@ -10389,160 +9334,20 @@ class PrivateEndpoint(_serialization.Model):
         self.id: Optional[str] = None
 
 
-class ProxyResource(_serialization.Model):
-    """An azure resource object.
+class PrivateEndpointConnection(ResourceAutoGenerated):
+    """The Private Endpoint Connection resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-
-
-class PrivateEndpointConnection(ProxyResource):
-    """A private endpoint connection.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar private_endpoint: Private endpoint which the connection belongs to.
-    :vartype private_endpoint: ~azure.mgmt.monitor.models.PrivateEndpointProperty
-    :ivar private_link_service_connection_state: Connection state of the private endpoint
-     connection.
-    :vartype private_link_service_connection_state:
-     ~azure.mgmt.monitor.models.PrivateLinkServiceConnectionStateProperty
-    :ivar provisioning_state: State of the private endpoint connection.
-    :vartype provisioning_state: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "provisioning_state": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpointProperty"},
-        "private_link_service_connection_state": {
-            "key": "properties.privateLinkServiceConnectionState",
-            "type": "PrivateLinkServiceConnectionStateProperty",
-        },
-        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        private_endpoint: Optional["_models.PrivateEndpointProperty"] = None,
-        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionStateProperty"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword private_endpoint: Private endpoint which the connection belongs to.
-        :paramtype private_endpoint: ~azure.mgmt.monitor.models.PrivateEndpointProperty
-        :keyword private_link_service_connection_state: Connection state of the private endpoint
-         connection.
-        :paramtype private_link_service_connection_state:
-         ~azure.mgmt.monitor.models.PrivateLinkServiceConnectionStateProperty
-        """
-        super().__init__(**kwargs)
-        self.private_endpoint = private_endpoint
-        self.private_link_service_connection_state = private_link_service_connection_state
-        self.provisioning_state: Optional[str] = None
-
-
-class ResourceAutoGenerated7(_serialization.Model):
-    """Common fields that are returned in the response for all Azure Resource Manager resources.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
     :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.system_data: Optional["_models.SystemData"] = None
-
-
-class PrivateEndpointConnectionAutoGenerated(ResourceAutoGenerated7):
-    """The private endpoint connection resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Fully qualified resource ID for the resource. E.g.
-     "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}".
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
-    :ivar group_ids: The group ids for the private endpoint resource.
-    :vartype group_ids: list[str]
-    :ivar private_endpoint: The private endpoint resource.
+    :ivar private_endpoint: The resource of private end point.
     :vartype private_endpoint: ~azure.mgmt.monitor.models.PrivateEndpoint
     :ivar private_link_service_connection_state: A collection of information about the state of the
      connection between service consumer and provider.
@@ -10558,8 +9363,6 @@ class PrivateEndpointConnectionAutoGenerated(ResourceAutoGenerated7):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
-        "system_data": {"readonly": True},
-        "group_ids": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -10567,8 +9370,6 @@ class PrivateEndpointConnectionAutoGenerated(ResourceAutoGenerated7):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "group_ids": {"key": "properties.groupIds", "type": "[str]"},
         "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
         "private_link_service_connection_state": {
             "key": "properties.privateLinkServiceConnectionState",
@@ -10585,7 +9386,7 @@ class PrivateEndpointConnectionAutoGenerated(ResourceAutoGenerated7):
         **kwargs: Any
     ) -> None:
         """
-        :keyword private_endpoint: The private endpoint resource.
+        :keyword private_endpoint: The resource of private end point.
         :paramtype private_endpoint: ~azure.mgmt.monitor.models.PrivateEndpoint
         :keyword private_link_service_connection_state: A collection of information about the state of
          the connection between service consumer and provider.
@@ -10593,75 +9394,50 @@ class PrivateEndpointConnectionAutoGenerated(ResourceAutoGenerated7):
          ~azure.mgmt.monitor.models.PrivateLinkServiceConnectionState
         """
         super().__init__(**kwargs)
-        self.group_ids: Optional[list[str]] = None
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None
 
 
 class PrivateEndpointConnectionListResult(_serialization.Model):
-    """A list of private endpoint connections.
+    """List of private endpoint connection associated with the specified storage account.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: Array of results.
+    :ivar value: Array of private endpoint connections.
     :vartype value: list[~azure.mgmt.monitor.models.PrivateEndpointConnection]
-    :ivar next_link: Link to retrieve next page of results.
-    :vartype next_link: str
     """
-
-    _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
-    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
-        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.value: Optional[list["_models.PrivateEndpointConnection"]] = None
-        self.next_link: Optional[str] = None
-
-
-class PrivateEndpointProperty(_serialization.Model):
-    """Private endpoint which the connection belongs to.
-
-    :ivar id: Resource id of the private endpoint.
-    :vartype id: str
-    """
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-    }
-
-    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
+    def __init__(self, *, value: Optional[list["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
-        :keyword id: Resource id of the private endpoint.
-        :paramtype id: str
+        :keyword value: Array of private endpoint connections.
+        :paramtype value: list[~azure.mgmt.monitor.models.PrivateEndpointConnection]
         """
         super().__init__(**kwargs)
-        self.id = id
+        self.value = value
 
 
-class PrivateLinkResource(ProxyResource):
+class PrivateLinkResource(ResourceAutoGenerated):
     """A private link resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Azure resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar group_id: The private link resource group id.
     :vartype group_id: str
     :ivar required_members: The private link resource required member names.
     :vartype required_members: list[str]
+    :ivar required_zone_names: The private link resource Private link DNS zone name.
+    :vartype required_zone_names: list[str]
     """
 
     _validation = {
@@ -10678,41 +9454,38 @@ class PrivateLinkResource(ProxyResource):
         "type": {"key": "type", "type": "str"},
         "group_id": {"key": "properties.groupId", "type": "str"},
         "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, required_zone_names: Optional[list[str]] = None, **kwargs: Any) -> None:
+        """
+        :keyword required_zone_names: The private link resource Private link DNS zone name.
+        :paramtype required_zone_names: list[str]
+        """
         super().__init__(**kwargs)
         self.group_id: Optional[str] = None
         self.required_members: Optional[list[str]] = None
+        self.required_zone_names = required_zone_names
 
 
 class PrivateLinkResourceListResult(_serialization.Model):
     """A list of private link resources.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: Array of results.
+    :ivar value: Array of private link resources.
     :vartype value: list[~azure.mgmt.monitor.models.PrivateLinkResource]
-    :ivar next_link: Link to retrieve next page of results.
-    :vartype next_link: str
     """
-
-    _validation = {
-        "value": {"readonly": True},
-        "next_link": {"readonly": True},
-    }
 
     _attribute_map = {
         "value": {"key": "value", "type": "[PrivateLinkResource]"},
-        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
+    def __init__(self, *, value: Optional[list["_models.PrivateLinkResource"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: Array of private link resources.
+        :paramtype value: list[~azure.mgmt.monitor.models.PrivateLinkResource]
+        """
         super().__init__(**kwargs)
-        self.value: Optional[list["_models.PrivateLinkResource"]] = None
-        self.next_link: Optional[str] = None
+        self.value = value
 
 
 class PrivateLinkScopedResource(_serialization.Model):
@@ -10789,46 +9562,6 @@ class PrivateLinkServiceConnectionState(_serialization.Model):
         self.actions_required = actions_required
 
 
-class PrivateLinkServiceConnectionStateProperty(_serialization.Model):  # pylint: disable=name-too-long
-    """State of the private endpoint connection.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar status: The private link service connection status. Required.
-    :vartype status: str
-    :ivar description: The private link service connection description. Required.
-    :vartype description: str
-    :ivar actions_required: The actions required for private link service connection.
-    :vartype actions_required: str
-    """
-
-    _validation = {
-        "status": {"required": True},
-        "description": {"required": True},
-        "actions_required": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "status": {"key": "status", "type": "str"},
-        "description": {"key": "description", "type": "str"},
-        "actions_required": {"key": "actionsRequired", "type": "str"},
-    }
-
-    def __init__(self, *, status: str, description: str, **kwargs: Any) -> None:
-        """
-        :keyword status: The private link service connection status. Required.
-        :paramtype status: str
-        :keyword description: The private link service connection description. Required.
-        :paramtype description: str
-        """
-        super().__init__(**kwargs)
-        self.status = status
-        self.description = description
-        self.actions_required: Optional[str] = None
-
-
 class PrometheusForwarderDataSource(_serialization.Model):
     """Definition of Prometheus metrics forwarding configuration.
 
@@ -10836,13 +9569,11 @@ class PrometheusForwarderDataSource(_serialization.Model):
     :vartype streams: list[str or
      ~azure.mgmt.monitor.models.KnownPrometheusForwarderDataSourceStreams]
     :ivar label_include_filter: The list of label inclusion filters in the form of label
-     "name-value" pairs.
-     Currently only one label is supported: 'microsoft_metrics_include_label'.
+     "name-value" pairs. Currently only one label is supported: 'microsoft_metrics_include_label'.
      Label values are matched case-insensitively.
     :vartype label_include_filter: dict[str, str]
-    :ivar name: A friendly name for the data source.
-     This name should be unique across all data sources (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the data source. This name should be unique across all data
+     sources (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -10865,13 +9596,11 @@ class PrometheusForwarderDataSource(_serialization.Model):
         :paramtype streams: list[str or
          ~azure.mgmt.monitor.models.KnownPrometheusForwarderDataSourceStreams]
         :keyword label_include_filter: The list of label inclusion filters in the form of label
-         "name-value" pairs.
-         Currently only one label is supported: 'microsoft_metrics_include_label'.
+         "name-value" pairs. Currently only one label is supported: 'microsoft_metrics_include_label'.
          Label values are matched case-insensitively.
         :paramtype label_include_filter: dict[str, str]
-        :keyword name: A friendly name for the data source.
-         This name should be unique across all data sources (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the data source. This name should be unique across all data
+         sources (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -10880,87 +9609,54 @@ class PrometheusForwarderDataSource(_serialization.Model):
         self.name = name
 
 
-class PromQLCriteria(MetricAlertCriteria):
-    """Specifies the PromQL criteria for the metric alert resource.
+class ProxyResource(_serialization.Model):
+    """An azure resource object.
 
-    All required parameters must be populated in order to send to server.
+    Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :vartype additional_properties: dict[str, JSON]
-    :ivar odata_type: Specifies the type of the alert criteria. Previously undocumented values
-     might be returned. Required. Known values are:
-     "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
-     "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
-     "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria", and
-     "Microsoft.Azure.Monitor.PromQLCriteria".
-    :vartype odata_type: str or ~azure.mgmt.monitor.models.Odatatype
-    :ivar failing_periods: Configuration for failing periods in query-based alerts.
-    :vartype failing_periods: ~azure.mgmt.monitor.models.QueryFailingPeriods
-    :ivar all_of: The list of promQL criteria. Alert will be raised when all conditions are met.
-    :vartype all_of: list[~azure.mgmt.monitor.models.MultiPromQLCriteria]
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
     """
 
     _validation = {
-        "odata_type": {"required": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        "additional_properties": {"key": "", "type": "{object}"},
-        "odata_type": {"key": "odata\\.type", "type": "str"},
-        "failing_periods": {"key": "failingPeriods", "type": "QueryFailingPeriods"},
-        "all_of": {"key": "allOf", "type": "[MultiPromQLCriteria]"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        additional_properties: Optional[dict[str, JSON]] = None,
-        failing_periods: Optional["_models.QueryFailingPeriods"] = None,
-        all_of: Optional[list["_models.MultiPromQLCriteria"]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword additional_properties: Unmatched properties from the message are deserialized to this
-         collection.
-        :paramtype additional_properties: dict[str, JSON]
-        :keyword failing_periods: Configuration for failing periods in query-based alerts.
-        :paramtype failing_periods: ~azure.mgmt.monitor.models.QueryFailingPeriods
-        :keyword all_of: The list of promQL criteria. Alert will be raised when all conditions are met.
-        :paramtype all_of: list[~azure.mgmt.monitor.models.MultiPromQLCriteria]
-        """
-        super().__init__(additional_properties=additional_properties, **kwargs)
-        self.odata_type: str = "Microsoft.Azure.Monitor.PromQLCriteria"
-        self.failing_periods = failing_periods
-        self.all_of = all_of
-
-
-class QueryFailingPeriods(_serialization.Model):
-    """Configuration for failing periods in query-based alerts.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar for_property: The amount of time (in ISO 8601 duration format) alert must be active
-     before firing. Required.
-    :vartype for_property: ~datetime.timedelta
-    """
-
-    _validation = {
-        "for_property": {"required": True},
-    }
-
-    _attribute_map = {
-        "for_property": {"key": "for", "type": "duration"},
-    }
-
-    def __init__(self, *, for_property: datetime.timedelta, **kwargs: Any) -> None:
-        """
-        :keyword for_property: The amount of time (in ISO 8601 duration format) alert must be active
-         before firing. Required.
-        :paramtype for_property: ~datetime.timedelta
-        """
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
         super().__init__(**kwargs)
-        self.for_property = for_property
+        self.id: Optional[str] = None
+        self.name: Optional[str] = None
+        self.type: Optional[str] = None
+
+
+class ProxyResourceAutoGenerated(ResourceAutoGenerated):
+    """The resource model definition for a Azure Resource Manager proxy resource. It will not have
+    tags and a location.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    """
 
 
 class Recurrence(_serialization.Model):
@@ -11128,91 +9824,6 @@ class ReferencesSpecEnrichmentData(EnrichmentData):
     """
 
 
-class ResolveConfiguration(_serialization.Model):
-    """ResolveConfiguration.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar auto_resolved: Indicates whether the alert should be auto resolved. Required.
-    :vartype auto_resolved: bool
-    :ivar time_to_resolve: The time (in ISO 8601 duration format) after which the alert should be
-     auto resolved.
-    :vartype time_to_resolve: ~datetime.timedelta
-    """
-
-    _validation = {
-        "auto_resolved": {"required": True},
-    }
-
-    _attribute_map = {
-        "auto_resolved": {"key": "autoResolved", "type": "bool"},
-        "time_to_resolve": {"key": "timeToResolve", "type": "duration"},
-    }
-
-    def __init__(
-        self, *, auto_resolved: bool, time_to_resolve: Optional[datetime.timedelta] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword auto_resolved: Indicates whether the alert should be auto resolved. Required.
-        :paramtype auto_resolved: bool
-        :keyword time_to_resolve: The time (in ISO 8601 duration format) after which the alert should
-         be auto resolved.
-        :paramtype time_to_resolve: ~datetime.timedelta
-        """
-        super().__init__(**kwargs)
-        self.auto_resolved = auto_resolved
-        self.time_to_resolve = time_to_resolve
-
-
-class ResourceAutoGenerated6(_serialization.Model):
-    """An azure resource object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-    }
-
-    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
-        """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.location = location
-        self.tags = tags
-
-
 class ResourceForUpdate(_serialization.Model):
     """Definition of ARM tracked top level resource properties for update operation.
 
@@ -11283,9 +9894,9 @@ class Response(_serialization.Model):
     :vartype timespan: str
     :ivar interval: The interval (window size) for which the metric data was returned in ISO 8601
      duration format with a special case for 'FULL' value that returns single datapoint for entire
-     time span requested (\\ *Examples: PT15M, PT1H, P1D, FULL*\\ ).
-     This may be adjusted and different from what was originally requested if
-     AutoAdjustTimegrain=true is specified. This is not present if a metadata request was made.
+     time span requested (\\ *Examples: PT15M, PT1H, P1D, FULL*\\ ). This may be adjusted and
+     different from what was originally requested if AutoAdjustTimegrain=true is specified. This is
+     not present if a metadata request was made.
     :vartype interval: str
     :ivar namespace: The namespace of the metrics being queried.
     :vartype namespace: str
@@ -11330,9 +9941,9 @@ class Response(_serialization.Model):
         :paramtype timespan: str
         :keyword interval: The interval (window size) for which the metric data was returned in ISO
          8601 duration format with a special case for 'FULL' value that returns single datapoint for
-         entire time span requested (\\ *Examples: PT15M, PT1H, P1D, FULL*\\ ).
-         This may be adjusted and different from what was originally requested if
-         AutoAdjustTimegrain=true is specified. This is not present if a metadata request was made.
+         entire time span requested (\\ *Examples: PT15M, PT1H, P1D, FULL*\\ ). This may be adjusted and
+         different from what was originally requested if AutoAdjustTimegrain=true is specified. This is
+         not present if a metadata request was made.
         :paramtype interval: str
         :keyword namespace: The namespace of the metrics being queried.
         :paramtype namespace: str
@@ -11675,7 +10286,7 @@ class ScheduledQueryRuleResource(_serialization.Model):
      "Microsoft.Storage/storageAccounts".
     :vartype type: str
     :ivar identity: The identity of the resource.
-    :vartype identity: ~azure.mgmt.monitor.models.IdentityAutoGenerated
+    :vartype identity: ~azure.mgmt.monitor.models.Identity
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives. Required.
@@ -11764,7 +10375,7 @@ class ScheduledQueryRuleResource(_serialization.Model):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "identity": {"key": "identity", "type": "IdentityAutoGenerated"},
+        "identity": {"key": "identity", "type": "Identity"},
         "tags": {"key": "tags", "type": "{str}"},
         "location": {"key": "location", "type": "str"},
         "kind": {"key": "kind", "type": "str"},
@@ -11801,7 +10412,7 @@ class ScheduledQueryRuleResource(_serialization.Model):
         self,
         *,
         location: str,
-        identity: Optional["_models.IdentityAutoGenerated"] = None,
+        identity: Optional["_models.Identity"] = None,
         tags: Optional[dict[str, str]] = None,
         kind: Optional[Union[str, "_models.Kind"]] = None,
         description: Optional[str] = None,
@@ -11824,7 +10435,7 @@ class ScheduledQueryRuleResource(_serialization.Model):
     ) -> None:
         """
         :keyword identity: The identity of the resource.
-        :paramtype identity: ~azure.mgmt.monitor.models.IdentityAutoGenerated
+        :paramtype identity: ~azure.mgmt.monitor.models.Identity
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
@@ -11948,7 +10559,7 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar identity: The identity of the resource.
-    :vartype identity: ~azure.mgmt.monitor.models.IdentityAutoGenerated
+    :vartype identity: ~azure.mgmt.monitor.models.Identity
     :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar created_with_api_version: The api-version used when creating this alert rule.
@@ -12015,7 +10626,7 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):
     }
 
     _attribute_map = {
-        "identity": {"key": "identity", "type": "IdentityAutoGenerated"},
+        "identity": {"key": "identity", "type": "Identity"},
         "tags": {"key": "tags", "type": "{str}"},
         "created_with_api_version": {"key": "properties.createdWithApiVersion", "type": "str"},
         "is_legacy_log_analytics_rule": {"key": "properties.isLegacyLogAnalyticsRule", "type": "bool"},
@@ -12047,7 +10658,7 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):
     def __init__(
         self,
         *,
-        identity: Optional["_models.IdentityAutoGenerated"] = None,
+        identity: Optional["_models.Identity"] = None,
         tags: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         display_name: Optional[str] = None,
@@ -12069,7 +10680,7 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):
     ) -> None:
         """
         :keyword identity: The identity of the resource.
-        :paramtype identity: ~azure.mgmt.monitor.models.IdentityAutoGenerated
+        :paramtype identity: ~azure.mgmt.monitor.models.Identity
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword description: The description of the scheduled query rule.
@@ -12145,17 +10756,21 @@ class ScheduledQueryRuleResourcePatch(_serialization.Model):
         self.resolve_configuration = resolve_configuration
 
 
-class ScopedResource(ProxyResource):
+class ScopedResource(ProxyResourceAutoGenerated):
     """A private link scoped resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Azure resource Id.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: System data.
+    :vartype system_data: ~azure.mgmt.monitor.models.SystemData
     :ivar linked_resource_id: The resource id of the scoped Azure monitor resource.
     :vartype linked_resource_id: str
     :ivar provisioning_state: State of the private endpoint connection.
@@ -12166,6 +10781,7 @@ class ScopedResource(ProxyResource):
         "id": {"readonly": True},
         "name": {"readonly": True},
         "type": {"readonly": True},
+        "system_data": {"readonly": True},
         "provisioning_state": {"readonly": True},
     }
 
@@ -12173,6 +10789,7 @@ class ScopedResource(ProxyResource):
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
         "linked_resource_id": {"key": "properties.linkedResourceId", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
@@ -12183,6 +10800,7 @@ class ScopedResource(ProxyResource):
         :paramtype linked_resource_id: str
         """
         super().__init__(**kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
         self.linked_resource_id = linked_resource_id
         self.provisioning_state: Optional[str] = None
 
@@ -12249,189 +10867,6 @@ class SenderAuthorization(_serialization.Model):
         self.action = action
         self.role = role
         self.scope = scope
-
-
-class ServiceDiagnosticSettingsResource(ResourceAutoGenerated6):
-    """Description of a service diagnostic setting.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar location: Resource location. Required.
-    :vartype location: str
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar storage_account_id: The resource ID of the storage account to which you would like to
-     send Diagnostic Logs.
-    :vartype storage_account_id: str
-    :ivar service_bus_rule_id: The service bus rule ID of the service bus namespace in which you
-     would like to have Event Hubs created for streaming Diagnostic Logs. The rule ID is of the
-     format: '{service bus resource ID}/authorizationrules/{key name}'.
-    :vartype service_bus_rule_id: str
-    :ivar event_hub_authorization_rule_id: The resource Id for the event hub namespace
-     authorization rule.
-    :vartype event_hub_authorization_rule_id: str
-    :ivar metrics: the list of metric settings.
-    :vartype metrics: list[~azure.mgmt.monitor.models.MetricSettingsAutoGenerated]
-    :ivar logs: the list of logs settings.
-    :vartype logs: list[~azure.mgmt.monitor.models.LogSettingsAutoGenerated]
-    :ivar workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
-     Analytics workspace to which you would like to send Diagnostic Logs. Example:
-     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
-    :vartype workspace_id: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "location": {"required": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "tags": {"key": "tags", "type": "{str}"},
-        "storage_account_id": {"key": "properties.storageAccountId", "type": "str"},
-        "service_bus_rule_id": {"key": "properties.serviceBusRuleId", "type": "str"},
-        "event_hub_authorization_rule_id": {"key": "properties.eventHubAuthorizationRuleId", "type": "str"},
-        "metrics": {"key": "properties.metrics", "type": "[MetricSettingsAutoGenerated]"},
-        "logs": {"key": "properties.logs", "type": "[LogSettingsAutoGenerated]"},
-        "workspace_id": {"key": "properties.workspaceId", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[dict[str, str]] = None,
-        storage_account_id: Optional[str] = None,
-        service_bus_rule_id: Optional[str] = None,
-        event_hub_authorization_rule_id: Optional[str] = None,
-        metrics: Optional[list["_models.MetricSettingsAutoGenerated"]] = None,
-        logs: Optional[list["_models.LogSettingsAutoGenerated"]] = None,
-        workspace_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword location: Resource location. Required.
-        :paramtype location: str
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword storage_account_id: The resource ID of the storage account to which you would like to
-         send Diagnostic Logs.
-        :paramtype storage_account_id: str
-        :keyword service_bus_rule_id: The service bus rule ID of the service bus namespace in which you
-         would like to have Event Hubs created for streaming Diagnostic Logs. The rule ID is of the
-         format: '{service bus resource ID}/authorizationrules/{key name}'.
-        :paramtype service_bus_rule_id: str
-        :keyword event_hub_authorization_rule_id: The resource Id for the event hub namespace
-         authorization rule.
-        :paramtype event_hub_authorization_rule_id: str
-        :keyword metrics: the list of metric settings.
-        :paramtype metrics: list[~azure.mgmt.monitor.models.MetricSettingsAutoGenerated]
-        :keyword logs: the list of logs settings.
-        :paramtype logs: list[~azure.mgmt.monitor.models.LogSettingsAutoGenerated]
-        :keyword workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
-         Analytics workspace to which you would like to send Diagnostic Logs. Example:
-         /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
-        :paramtype workspace_id: str
-        """
-        super().__init__(location=location, tags=tags, **kwargs)
-        self.storage_account_id = storage_account_id
-        self.service_bus_rule_id = service_bus_rule_id
-        self.event_hub_authorization_rule_id = event_hub_authorization_rule_id
-        self.metrics = metrics
-        self.logs = logs
-        self.workspace_id = workspace_id
-
-
-class ServiceDiagnosticSettingsResourcePatch(_serialization.Model):
-    """Service diagnostic setting resource for patch operations.
-
-    :ivar tags: Resource tags.
-    :vartype tags: dict[str, str]
-    :ivar storage_account_id: The resource ID of the storage account to which you would like to
-     send Diagnostic Logs.
-    :vartype storage_account_id: str
-    :ivar service_bus_rule_id: The service bus rule ID of the service bus namespace in which you
-     would like to have Event Hubs created for streaming Diagnostic Logs. The rule ID is of the
-     format: '{service bus resource ID}/authorizationrules/{key name}'.
-    :vartype service_bus_rule_id: str
-    :ivar event_hub_authorization_rule_id: The resource Id for the event hub namespace
-     authorization rule.
-    :vartype event_hub_authorization_rule_id: str
-    :ivar metrics: the list of metric settings.
-    :vartype metrics: list[~azure.mgmt.monitor.models.MetricSettingsAutoGenerated]
-    :ivar logs: the list of logs settings.
-    :vartype logs: list[~azure.mgmt.monitor.models.LogSettingsAutoGenerated]
-    :ivar workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
-     Analytics workspace to which you would like to send Diagnostic Logs. Example:
-     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
-    :vartype workspace_id: str
-    """
-
-    _attribute_map = {
-        "tags": {"key": "tags", "type": "{str}"},
-        "storage_account_id": {"key": "properties.storageAccountId", "type": "str"},
-        "service_bus_rule_id": {"key": "properties.serviceBusRuleId", "type": "str"},
-        "event_hub_authorization_rule_id": {"key": "properties.eventHubAuthorizationRuleId", "type": "str"},
-        "metrics": {"key": "properties.metrics", "type": "[MetricSettingsAutoGenerated]"},
-        "logs": {"key": "properties.logs", "type": "[LogSettingsAutoGenerated]"},
-        "workspace_id": {"key": "properties.workspaceId", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        tags: Optional[dict[str, str]] = None,
-        storage_account_id: Optional[str] = None,
-        service_bus_rule_id: Optional[str] = None,
-        event_hub_authorization_rule_id: Optional[str] = None,
-        metrics: Optional[list["_models.MetricSettingsAutoGenerated"]] = None,
-        logs: Optional[list["_models.LogSettingsAutoGenerated"]] = None,
-        workspace_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword tags: Resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword storage_account_id: The resource ID of the storage account to which you would like to
-         send Diagnostic Logs.
-        :paramtype storage_account_id: str
-        :keyword service_bus_rule_id: The service bus rule ID of the service bus namespace in which you
-         would like to have Event Hubs created for streaming Diagnostic Logs. The rule ID is of the
-         format: '{service bus resource ID}/authorizationrules/{key name}'.
-        :paramtype service_bus_rule_id: str
-        :keyword event_hub_authorization_rule_id: The resource Id for the event hub namespace
-         authorization rule.
-        :paramtype event_hub_authorization_rule_id: str
-        :keyword metrics: the list of metric settings.
-        :paramtype metrics: list[~azure.mgmt.monitor.models.MetricSettingsAutoGenerated]
-        :keyword logs: the list of logs settings.
-        :paramtype logs: list[~azure.mgmt.monitor.models.LogSettingsAutoGenerated]
-        :keyword workspace_id: The workspace ID (resource ID of a Log Analytics workspace) for a Log
-         Analytics workspace to which you would like to send Diagnostic Logs. Example:
-         /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
-        :paramtype workspace_id: str
-        """
-        super().__init__(**kwargs)
-        self.tags = tags
-        self.storage_account_id = storage_account_id
-        self.service_bus_rule_id = service_bus_rule_id
-        self.event_hub_authorization_rule_id = event_hub_authorization_rule_id
-        self.metrics = metrics
-        self.logs = logs
-        self.workspace_id = workspace_id
 
 
 class SingleBaseline(_serialization.Model):
@@ -12569,33 +11004,6 @@ class SingleMetricBaseline(_serialization.Model):
         self.baselines = baselines
 
 
-class SinkConfiguration(_serialization.Model):
-    """SinkConfiguration.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar kind: Required. Known values are: "EventHub", "ApplicationInsights", and "LogAnalytics".
-    :vartype kind: str or ~azure.mgmt.monitor.models.SinkConfigurationKind
-    """
-
-    _validation = {
-        "kind": {"required": True},
-    }
-
-    _attribute_map = {
-        "kind": {"key": "kind", "type": "str"},
-    }
-
-    def __init__(self, *, kind: Union[str, "_models.SinkConfigurationKind"], **kwargs: Any) -> None:
-        """
-        :keyword kind: Required. Known values are: "EventHub", "ApplicationInsights", and
-         "LogAnalytics".
-        :paramtype kind: str or ~azure.mgmt.monitor.models.SinkConfigurationKind
-        """
-        super().__init__(**kwargs)
-        self.kind = kind
-
-
 class SmsReceiver(_serialization.Model):
     """An SMS receiver.
 
@@ -12646,42 +11054,54 @@ class SmsReceiver(_serialization.Model):
         self.status: Optional[Union[str, "_models.ReceiverStatus"]] = None
 
 
-class StaticPromQLCriteria(MultiPromQLCriteria):
-    """The criterion for static prom query.
+class SmsReceiverAutoGenerated(_serialization.Model):
+    """An SMS receiver.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to server.
 
-    :ivar criterion_type: Specifies the type of threshold criteria. Previously undocumented values
-     might be returned. Required. Known values are: "StaticThresholdCriterion" and
-     "DynamicThresholdCriterion".
-    :vartype criterion_type: str or ~azure.mgmt.monitor.models.CriterionType
-    :ivar name: Name of the criteria. Required.
+    :ivar name: The name of the SMS receiver. Names must be unique across all receivers within a
+     tenant action group. Required.
     :vartype name: str
-    :ivar query: The query used to evaluate the alert rule. Required.
-    :vartype query: str
+    :ivar country_code: The country code of the SMS receiver. Required.
+    :vartype country_code: str
+    :ivar phone_number: The phone number of the SMS receiver. Required.
+    :vartype phone_number: str
+    :ivar status: The status of the receiver. Known values are: "NotSpecified", "Enabled", and
+     "Disabled".
+    :vartype status: str or ~azure.mgmt.monitor.models.ReceiverStatus
     """
 
     _validation = {
-        "criterion_type": {"required": True},
         "name": {"required": True},
-        "query": {"required": True},
+        "country_code": {"required": True},
+        "phone_number": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        "criterion_type": {"key": "criterionType", "type": "str"},
         "name": {"key": "name", "type": "str"},
-        "query": {"key": "query", "type": "str"},
+        "country_code": {"key": "countryCode", "type": "str"},
+        "phone_number": {"key": "phoneNumber", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(self, *, name: str, query: str, **kwargs: Any) -> None:
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs: Any) -> None:
         """
-        :keyword name: Name of the criteria. Required.
+        :keyword name: The name of the SMS receiver. Names must be unique across all receivers within a
+         tenant action group. Required.
         :paramtype name: str
-        :keyword query: The query used to evaluate the alert rule. Required.
-        :paramtype query: str
+        :keyword country_code: The country code of the SMS receiver. Required.
+        :paramtype country_code: str
+        :keyword phone_number: The phone number of the SMS receiver. Required.
+        :paramtype phone_number: str
         """
-        super().__init__(name=name, query=query, **kwargs)
-        self.criterion_type: str = "StaticThresholdCriterion"
+        super().__init__(**kwargs)
+        self.name = name
+        self.country_code = country_code
+        self.phone_number = phone_number
+        self.status: Optional[Union[str, "_models.ReceiverStatus"]] = None
 
 
 class StorageBlob(_serialization.Model):
@@ -12741,9 +11161,8 @@ class StorageBlobDestination(_serialization.Model):
     :vartype container_name: str
     :ivar storage_account_resource_id: The resource ID of the storage account.
     :vartype storage_account_resource_id: str
-    :ivar name: A friendly name for the destination.
-     This name should be unique across all destinations (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the destination. This name should be unique across all
+     destinations (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -12766,9 +11185,8 @@ class StorageBlobDestination(_serialization.Model):
         :paramtype container_name: str
         :keyword storage_account_resource_id: The resource ID of the storage account.
         :paramtype storage_account_resource_id: str
-        :keyword name: A friendly name for the destination.
-         This name should be unique across all destinations (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the destination. This name should be unique across all
+         destinations (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -12784,9 +11202,8 @@ class StorageTableDestination(_serialization.Model):
     :vartype table_name: str
     :ivar storage_account_resource_id: The resource ID of the storage account.
     :vartype storage_account_resource_id: str
-    :ivar name: A friendly name for the destination.
-     This name should be unique across all destinations (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the destination. This name should be unique across all
+     destinations (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -12809,9 +11226,8 @@ class StorageTableDestination(_serialization.Model):
         :paramtype table_name: str
         :keyword storage_account_resource_id: The resource ID of the storage account.
         :paramtype storage_account_resource_id: str
-        :keyword name: A friendly name for the destination.
-         This name should be unique across all destinations (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the destination. This name should be unique across all
+         destinations (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -12840,195 +11256,6 @@ class StreamDeclaration(_serialization.Model):
         self.columns = columns
 
 
-class SubscriptionProxyOnlyResource(_serialization.Model):
-    """A proxy only azure resource object.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar location: Location of the resource.
-    :vartype location: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-    }
-
-    def __init__(self, *, location: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword location: Location of the resource.
-        :paramtype location: str
-        """
-        super().__init__(**kwargs)
-        self.id: Optional[str] = None
-        self.name: Optional[str] = None
-        self.type: Optional[str] = None
-        self.location = location
-
-
-class SubscriptionDiagnosticSettingsResource(SubscriptionProxyOnlyResource):
-    """The subscription diagnostic setting resource.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Azure resource Id.
-    :vartype id: str
-    :ivar name: Azure resource name.
-    :vartype name: str
-    :ivar type: Azure resource type.
-    :vartype type: str
-    :ivar location: Location of the resource.
-    :vartype location: str
-    :ivar storage_account_id: The resource ID of the storage account to which you would like to
-     send Diagnostic Logs.
-    :vartype storage_account_id: str
-    :ivar service_bus_rule_id: The service bus rule Id of the diagnostic setting. This is here to
-     maintain backwards compatibility.
-    :vartype service_bus_rule_id: str
-    :ivar event_hub_authorization_rule_id: The resource Id for the event hub authorization rule.
-    :vartype event_hub_authorization_rule_id: str
-    :ivar event_hub_name: The name of the event hub. If none is specified, the default event hub
-     will be selected.
-    :vartype event_hub_name: str
-    :ivar logs: The list of logs settings.
-    :vartype logs: list[~azure.mgmt.monitor.models.SubscriptionLogSettings]
-    :ivar workspace_id: The full ARM resource ID of the Log Analytics workspace to which you would
-     like to send Diagnostic Logs. Example:
-     /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
-    :vartype workspace_id: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "location": {"key": "location", "type": "str"},
-        "storage_account_id": {"key": "properties.storageAccountId", "type": "str"},
-        "service_bus_rule_id": {"key": "properties.serviceBusRuleId", "type": "str"},
-        "event_hub_authorization_rule_id": {"key": "properties.eventHubAuthorizationRuleId", "type": "str"},
-        "event_hub_name": {"key": "properties.eventHubName", "type": "str"},
-        "logs": {"key": "properties.logs", "type": "[SubscriptionLogSettings]"},
-        "workspace_id": {"key": "properties.workspaceId", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        storage_account_id: Optional[str] = None,
-        service_bus_rule_id: Optional[str] = None,
-        event_hub_authorization_rule_id: Optional[str] = None,
-        event_hub_name: Optional[str] = None,
-        logs: Optional[list["_models.SubscriptionLogSettings"]] = None,
-        workspace_id: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword location: Location of the resource.
-        :paramtype location: str
-        :keyword storage_account_id: The resource ID of the storage account to which you would like to
-         send Diagnostic Logs.
-        :paramtype storage_account_id: str
-        :keyword service_bus_rule_id: The service bus rule Id of the diagnostic setting. This is here
-         to maintain backwards compatibility.
-        :paramtype service_bus_rule_id: str
-        :keyword event_hub_authorization_rule_id: The resource Id for the event hub authorization rule.
-        :paramtype event_hub_authorization_rule_id: str
-        :keyword event_hub_name: The name of the event hub. If none is specified, the default event hub
-         will be selected.
-        :paramtype event_hub_name: str
-        :keyword logs: The list of logs settings.
-        :paramtype logs: list[~azure.mgmt.monitor.models.SubscriptionLogSettings]
-        :keyword workspace_id: The full ARM resource ID of the Log Analytics workspace to which you
-         would like to send Diagnostic Logs. Example:
-         /subscriptions/4b9e8510-67ab-4e9a-95a9-e2f1e570ea9c/resourceGroups/insights-integration/providers/Microsoft.OperationalInsights/workspaces/viruela2.
-        :paramtype workspace_id: str
-        """
-        super().__init__(location=location, **kwargs)
-        self.storage_account_id = storage_account_id
-        self.service_bus_rule_id = service_bus_rule_id
-        self.event_hub_authorization_rule_id = event_hub_authorization_rule_id
-        self.event_hub_name = event_hub_name
-        self.logs = logs
-        self.workspace_id = workspace_id
-
-
-class SubscriptionDiagnosticSettingsResourceCollection(_serialization.Model):  # pylint: disable=name-too-long
-    """Represents a collection of subscription diagnostic settings resources.
-
-    :ivar value: The collection of subscription diagnostic settings resources.
-    :vartype value: list[~azure.mgmt.monitor.models.SubscriptionDiagnosticSettingsResource]
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[SubscriptionDiagnosticSettingsResource]"},
-    }
-
-    def __init__(
-        self, *, value: Optional[list["_models.SubscriptionDiagnosticSettingsResource"]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword value: The collection of subscription diagnostic settings resources.
-        :paramtype value: list[~azure.mgmt.monitor.models.SubscriptionDiagnosticSettingsResource]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-
-
-class SubscriptionLogSettings(_serialization.Model):
-    """Part of Subscription diagnostic setting. Specifies the settings for a particular log.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar category: Name of a Subscription Diagnostic Log category for a resource type this setting
-     is applied to.
-    :vartype category: str
-    :ivar enabled: a value indicating whether this log is enabled. Required.
-    :vartype enabled: bool
-    """
-
-    _validation = {
-        "enabled": {"required": True},
-    }
-
-    _attribute_map = {
-        "category": {"key": "category", "type": "str"},
-        "enabled": {"key": "enabled", "type": "bool"},
-    }
-
-    def __init__(self, *, enabled: bool, category: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword category: Name of a Subscription Diagnostic Log category for a resource type this
-         setting is applied to.
-        :paramtype category: str
-        :keyword enabled: a value indicating whether this log is enabled. Required.
-        :paramtype enabled: bool
-        """
-        super().__init__(**kwargs)
-        self.category = category
-        self.enabled = enabled
-
-
 class SubscriptionScopeMetricDefinition(_serialization.Model):
     """Metric definition class specifies the metadata for a metric.
 
@@ -13039,7 +11266,7 @@ class SubscriptionScopeMetricDefinition(_serialization.Model):
     :ivar namespace: The namespace the metric belongs to.
     :vartype namespace: str
     :ivar name: The name and the display name of the metric, i.e. it is a localizable string.
-    :vartype name: ~azure.mgmt.monitor.models.LocalizableStringAutoGenerated
+    :vartype name: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
     :ivar display_description: Detailed description of this metric.
     :vartype display_description: str
     :ivar category: Custom category name for this metric.
@@ -13065,14 +11292,14 @@ class SubscriptionScopeMetricDefinition(_serialization.Model):
     :vartype id: str
     :ivar dimensions: The name and the display name of the dimension, i.e. it is a localizable
      string.
-    :vartype dimensions: list[~azure.mgmt.monitor.models.LocalizableStringAutoGenerated]
+    :vartype dimensions: list[~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString]
     """
 
     _attribute_map = {
         "is_dimension_required": {"key": "isDimensionRequired", "type": "bool"},
         "resource_id": {"key": "resourceId", "type": "str"},
         "namespace": {"key": "namespace", "type": "str"},
-        "name": {"key": "name", "type": "LocalizableStringAutoGenerated"},
+        "name": {"key": "name", "type": "MicrosoftCommonLocalizableString"},
         "display_description": {"key": "displayDescription", "type": "str"},
         "category": {"key": "category", "type": "str"},
         "metric_class": {"key": "metricClass", "type": "str"},
@@ -13081,7 +11308,7 @@ class SubscriptionScopeMetricDefinition(_serialization.Model):
         "supported_aggregation_types": {"key": "supportedAggregationTypes", "type": "[str]"},
         "metric_availabilities": {"key": "metricAvailabilities", "type": "[MetricAvailability]"},
         "id": {"key": "id", "type": "str"},
-        "dimensions": {"key": "dimensions", "type": "[LocalizableStringAutoGenerated]"},
+        "dimensions": {"key": "dimensions", "type": "[MicrosoftCommonLocalizableString]"},
     }
 
     def __init__(
@@ -13090,7 +11317,7 @@ class SubscriptionScopeMetricDefinition(_serialization.Model):
         is_dimension_required: Optional[bool] = None,
         resource_id: Optional[str] = None,
         namespace: Optional[str] = None,
-        name: Optional["_models.LocalizableStringAutoGenerated"] = None,
+        name: Optional["_models.MicrosoftCommonLocalizableString"] = None,
         display_description: Optional[str] = None,
         category: Optional[str] = None,
         metric_class: Optional[Union[str, "_models.MetricClass"]] = None,
@@ -13099,7 +11326,7 @@ class SubscriptionScopeMetricDefinition(_serialization.Model):
         supported_aggregation_types: Optional[list[Union[str, "_models.MetricAggregationType"]]] = None,
         metric_availabilities: Optional[list["_models.MetricAvailability"]] = None,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        dimensions: Optional[list["_models.LocalizableStringAutoGenerated"]] = None,
+        dimensions: Optional[list["_models.MicrosoftCommonLocalizableString"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -13110,7 +11337,7 @@ class SubscriptionScopeMetricDefinition(_serialization.Model):
         :keyword namespace: The namespace the metric belongs to.
         :paramtype namespace: str
         :keyword name: The name and the display name of the metric, i.e. it is a localizable string.
-        :paramtype name: ~azure.mgmt.monitor.models.LocalizableStringAutoGenerated
+        :paramtype name: ~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString
         :keyword display_description: Detailed description of this metric.
         :paramtype display_description: str
         :keyword category: Custom category name for this metric.
@@ -13136,7 +11363,7 @@ class SubscriptionScopeMetricDefinition(_serialization.Model):
         :paramtype id: str
         :keyword dimensions: The name and the display name of the dimension, i.e. it is a localizable
          string.
-        :paramtype dimensions: list[~azure.mgmt.monitor.models.LocalizableStringAutoGenerated]
+        :paramtype dimensions: list[~azure.mgmt.monitor.models.MicrosoftCommonLocalizableString]
         """
         super().__init__(**kwargs)
         self.is_dimension_required = is_dimension_required
@@ -13161,6 +11388,8 @@ class SubscriptionScopeMetricDefinitionCollection(_serialization.Model):  # pyli
 
     :ivar value: The values for the metric definitions. Required.
     :vartype value: list[~azure.mgmt.monitor.models.SubscriptionScopeMetricDefinition]
+    :ivar next_link: The link to the next page of items.
+    :vartype next_link: str
     """
 
     _validation = {
@@ -13169,15 +11398,25 @@ class SubscriptionScopeMetricDefinitionCollection(_serialization.Model):  # pyli
 
     _attribute_map = {
         "value": {"key": "value", "type": "[SubscriptionScopeMetricDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: list["_models.SubscriptionScopeMetricDefinition"], **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        value: list["_models.SubscriptionScopeMetricDefinition"],
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
         """
         :keyword value: The values for the metric definitions. Required.
         :paramtype value: list[~azure.mgmt.monitor.models.SubscriptionScopeMetricDefinition]
+        :keyword next_link: The link to the next page of items.
+        :paramtype next_link: str
         """
         super().__init__(**kwargs)
         self.value = value
+        self.next_link = next_link
 
 
 class SubscriptionScopeMetricsRequestBodyParameters(_serialization.Model):  # pylint: disable=name-too-long
@@ -13189,8 +11428,7 @@ class SubscriptionScopeMetricsRequestBodyParameters(_serialization.Model):  # py
     :vartype timespan: str
     :ivar interval: The interval (i.e. timegrain) of the query in ISO 8601 duration format.
      Defaults to PT1M. Special case for 'FULL' value that returns single datapoint for entire time
-     span requested.
-     *Examples: PT15M, PT1H, P1D, FULL*.
+     span requested. *Examples: PT15M, PT1H, P1D, FULL*.
     :vartype interval: str
     :ivar metric_names: The names of the metrics (comma separated) to retrieve.
     :vartype metric_names: str
@@ -13206,13 +11444,11 @@ class SubscriptionScopeMetricsRequestBodyParameters(_serialization.Model):  # py
      and B eq ‘b1’ and C eq ‘c1’**\\ :code:`<br>`- Return all time series where A = a1\\
      :code:`<br>`\\ **$filter=A eq ‘a1’ and B eq ‘\\ *’ and C eq ‘*\\ ’**.
     :vartype filter: str
-    :ivar top: The maximum number of records to retrieve.
-     Valid only if $filter is specified.
+    :ivar top: The maximum number of records to retrieve. Valid only if $filter is specified.
      Defaults to 10.
     :vartype top: int
-    :ivar order_by: The aggregation to use for sorting results and the direction of the sort.
-     Only one order can be specified.
-     Examples: sum asc.
+    :ivar order_by: The aggregation to use for sorting results and the direction of the sort. Only
+     one order can be specified. Examples: sum asc.
     :vartype order_by: str
     :ivar roll_up_by: Dimension name(s) to rollup results by. For example if you only want to see
      metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
@@ -13272,8 +11508,7 @@ class SubscriptionScopeMetricsRequestBodyParameters(_serialization.Model):  # py
         :paramtype timespan: str
         :keyword interval: The interval (i.e. timegrain) of the query in ISO 8601 duration format.
          Defaults to PT1M. Special case for 'FULL' value that returns single datapoint for entire time
-         span requested.
-         *Examples: PT15M, PT1H, P1D, FULL*.
+         span requested. *Examples: PT15M, PT1H, P1D, FULL*.
         :paramtype interval: str
         :keyword metric_names: The names of the metrics (comma separated) to retrieve.
         :paramtype metric_names: str
@@ -13289,13 +11524,11 @@ class SubscriptionScopeMetricsRequestBodyParameters(_serialization.Model):  # py
          and B eq ‘b1’ and C eq ‘c1’**\\ :code:`<br>`- Return all time series where A = a1\\
          :code:`<br>`\\ **$filter=A eq ‘a1’ and B eq ‘\\ *’ and C eq ‘*\\ ’**.
         :paramtype filter: str
-        :keyword top: The maximum number of records to retrieve.
-         Valid only if $filter is specified.
+        :keyword top: The maximum number of records to retrieve. Valid only if $filter is specified.
          Defaults to 10.
         :paramtype top: int
         :keyword order_by: The aggregation to use for sorting results and the direction of the sort.
-         Only one order can be specified.
-         Examples: sum asc.
+         Only one order can be specified. Examples: sum asc.
         :paramtype order_by: str
         :keyword roll_up_by: Dimension name(s) to rollup results by. For example if you only want to
          see metric values with a filter like 'City eq Seattle or City eq Tacoma' but don't want to see
@@ -13333,12 +11566,12 @@ class SubscriptionScopeMetricsRequestBodyParameters(_serialization.Model):  # py
 
 
 class SyslogDataSource(_serialization.Model):
-    """Definition of which syslog data will be collected and how it will be collected.
-    Only collected from Linux machines.
+    """Definition of which syslog data will be collected and how it will be collected. Only collected
+    from Linux machines.
 
-    :ivar streams: List of streams that this data source will be sent to.
-     A stream indicates what schema will be used for this data and usually what table in Log
-     Analytics the data will be sent to.
+    :ivar streams: List of streams that this data source will be sent to. A stream indicates what
+     schema will be used for this data and usually what table in Log Analytics the data will be sent
+     to.
     :vartype streams: list[str or ~azure.mgmt.monitor.models.KnownSyslogDataSourceStreams]
     :ivar facility_names: The list of facility names.
     :vartype facility_names: list[str or
@@ -13347,9 +11580,8 @@ class SyslogDataSource(_serialization.Model):
     :vartype log_levels: list[str or ~azure.mgmt.monitor.models.KnownSyslogDataSourceLogLevels]
     :ivar transform_kql: The KQL query to transform the data source.
     :vartype transform_kql: str
-    :ivar name: A friendly name for the data source.
-     This name should be unique across all data sources (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the data source. This name should be unique across all data
+     sources (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -13372,9 +11604,9 @@ class SyslogDataSource(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword streams: List of streams that this data source will be sent to.
-         A stream indicates what schema will be used for this data and usually what table in Log
-         Analytics the data will be sent to.
+        :keyword streams: List of streams that this data source will be sent to. A stream indicates
+         what schema will be used for this data and usually what table in Log Analytics the data will be
+         sent to.
         :paramtype streams: list[str or ~azure.mgmt.monitor.models.KnownSyslogDataSourceStreams]
         :keyword facility_names: The list of facility names.
         :paramtype facility_names: list[str or
@@ -13383,9 +11615,8 @@ class SyslogDataSource(_serialization.Model):
         :paramtype log_levels: list[str or ~azure.mgmt.monitor.models.KnownSyslogDataSourceLogLevels]
         :keyword transform_kql: The KQL query to transform the data source.
         :paramtype transform_kql: str
-        :keyword name: A friendly name for the data source.
-         This name should be unique across all data sources (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the data source. This name should be unique across all data
+         sources (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -13415,6 +11646,224 @@ class TagsResource(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.tags = tags
+
+
+class TenantActionGroupList(_serialization.Model):
+    """A list of tenant action groups.
+
+    :ivar value: The list of tenant action groups.
+    :vartype value: list[~azure.mgmt.monitor.models.TenantActionGroupResource]
+    :ivar next_link: Provides the link to retrieve the next set of elements.
+    :vartype next_link: str
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[TenantActionGroupResource]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.TenantActionGroupResource"]] = None,
+        next_link: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword value: The list of tenant action groups.
+        :paramtype value: list[~azure.mgmt.monitor.models.TenantActionGroupResource]
+        :keyword next_link: Provides the link to retrieve the next set of elements.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
+        self.value = value
+        self.next_link = next_link
+
+
+class TenantActionGroupResource(AzureResource):
+    """A tenant action group resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Azure resource Id.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar location: Resource location. Required.
+    :vartype location: str
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar group_short_name: The short name of the action group. This will be used in SMS messages.
+    :vartype group_short_name: str
+    :ivar enabled: Indicates whether this tenant action group is enabled. If a tenant action group
+     is not enabled, then none of its receivers will receive communications.
+    :vartype enabled: bool
+    :ivar email_receivers: The list of email receivers that are part of this tenant action group.
+    :vartype email_receivers: list[~azure.mgmt.monitor.models.EmailReceiverAutoGenerated]
+    :ivar sms_receivers: The list of SMS receivers that are part of this tenant action group.
+    :vartype sms_receivers: list[~azure.mgmt.monitor.models.SmsReceiverAutoGenerated]
+    :ivar webhook_receivers: The list of webhook receivers that are part of this tenant action
+     group.
+    :vartype webhook_receivers: list[~azure.mgmt.monitor.models.WebhookReceiverAutoGenerated]
+    :ivar azure_app_push_receivers: The list of AzureAppPush receivers that are part of this tenant
+     action group.
+    :vartype azure_app_push_receivers:
+     list[~azure.mgmt.monitor.models.AzureAppPushReceiverAutoGenerated]
+    :ivar voice_receivers: The list of voice receivers that are part of this tenant action group.
+    :vartype voice_receivers: list[~azure.mgmt.monitor.models.VoiceReceiverAutoGenerated]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "group_short_name": {"max_length": 12},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "group_short_name": {"key": "properties.groupShortName", "type": "str"},
+        "enabled": {"key": "properties.enabled", "type": "bool"},
+        "email_receivers": {"key": "properties.emailReceivers", "type": "[EmailReceiverAutoGenerated]"},
+        "sms_receivers": {"key": "properties.smsReceivers", "type": "[SmsReceiverAutoGenerated]"},
+        "webhook_receivers": {"key": "properties.webhookReceivers", "type": "[WebhookReceiverAutoGenerated]"},
+        "azure_app_push_receivers": {
+            "key": "properties.azureAppPushReceivers",
+            "type": "[AzureAppPushReceiverAutoGenerated]",
+        },
+        "voice_receivers": {"key": "properties.voiceReceivers", "type": "[VoiceReceiverAutoGenerated]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        group_short_name: Optional[str] = None,
+        enabled: bool = True,
+        email_receivers: Optional[list["_models.EmailReceiverAutoGenerated"]] = None,
+        sms_receivers: Optional[list["_models.SmsReceiverAutoGenerated"]] = None,
+        webhook_receivers: Optional[list["_models.WebhookReceiverAutoGenerated"]] = None,
+        azure_app_push_receivers: Optional[list["_models.AzureAppPushReceiverAutoGenerated"]] = None,
+        voice_receivers: Optional[list["_models.VoiceReceiverAutoGenerated"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword location: Resource location. Required.
+        :paramtype location: str
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword group_short_name: The short name of the action group. This will be used in SMS
+         messages.
+        :paramtype group_short_name: str
+        :keyword enabled: Indicates whether this tenant action group is enabled. If a tenant action
+         group is not enabled, then none of its receivers will receive communications.
+        :paramtype enabled: bool
+        :keyword email_receivers: The list of email receivers that are part of this tenant action
+         group.
+        :paramtype email_receivers: list[~azure.mgmt.monitor.models.EmailReceiverAutoGenerated]
+        :keyword sms_receivers: The list of SMS receivers that are part of this tenant action group.
+        :paramtype sms_receivers: list[~azure.mgmt.monitor.models.SmsReceiverAutoGenerated]
+        :keyword webhook_receivers: The list of webhook receivers that are part of this tenant action
+         group.
+        :paramtype webhook_receivers: list[~azure.mgmt.monitor.models.WebhookReceiverAutoGenerated]
+        :keyword azure_app_push_receivers: The list of AzureAppPush receivers that are part of this
+         tenant action group.
+        :paramtype azure_app_push_receivers:
+         list[~azure.mgmt.monitor.models.AzureAppPushReceiverAutoGenerated]
+        :keyword voice_receivers: The list of voice receivers that are part of this tenant action
+         group.
+        :paramtype voice_receivers: list[~azure.mgmt.monitor.models.VoiceReceiverAutoGenerated]
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
+        self.group_short_name = group_short_name
+        self.enabled = enabled
+        self.email_receivers = email_receivers
+        self.sms_receivers = sms_receivers
+        self.webhook_receivers = webhook_receivers
+        self.azure_app_push_receivers = azure_app_push_receivers
+        self.voice_receivers = voice_receivers
+
+
+class TenantNotificationRequestBody(_serialization.Model):
+    """The request body which contain contact detail metadata.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar alert_type: The value of the supported alert type. Supported alert type value is:
+     servicehealth. Required.
+    :vartype alert_type: str
+    :ivar email_receivers: The list of email receivers that are part of this action group.
+    :vartype email_receivers: list[~azure.mgmt.monitor.models.EmailReceiverAutoGenerated]
+    :ivar sms_receivers: The list of SMS receivers that are part of this action group.
+    :vartype sms_receivers: list[~azure.mgmt.monitor.models.SmsReceiverAutoGenerated]
+    :ivar webhook_receivers: The list of webhook receivers that are part of this action group.
+    :vartype webhook_receivers: list[~azure.mgmt.monitor.models.WebhookReceiverAutoGenerated]
+    :ivar azure_app_push_receivers: The list of AzureAppPush receivers that are part of this action
+     group.
+    :vartype azure_app_push_receivers:
+     list[~azure.mgmt.monitor.models.AzureAppPushReceiverAutoGenerated]
+    :ivar voice_receivers: The list of voice receivers that are part of this action group.
+    :vartype voice_receivers: list[~azure.mgmt.monitor.models.VoiceReceiverAutoGenerated]
+    """
+
+    _validation = {
+        "alert_type": {"required": True, "max_length": 30},
+    }
+
+    _attribute_map = {
+        "alert_type": {"key": "alertType", "type": "str"},
+        "email_receivers": {"key": "emailReceivers", "type": "[EmailReceiverAutoGenerated]"},
+        "sms_receivers": {"key": "smsReceivers", "type": "[SmsReceiverAutoGenerated]"},
+        "webhook_receivers": {"key": "webhookReceivers", "type": "[WebhookReceiverAutoGenerated]"},
+        "azure_app_push_receivers": {"key": "azureAppPushReceivers", "type": "[AzureAppPushReceiverAutoGenerated]"},
+        "voice_receivers": {"key": "voiceReceivers", "type": "[VoiceReceiverAutoGenerated]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        alert_type: str,
+        email_receivers: Optional[list["_models.EmailReceiverAutoGenerated"]] = None,
+        sms_receivers: Optional[list["_models.SmsReceiverAutoGenerated"]] = None,
+        webhook_receivers: Optional[list["_models.WebhookReceiverAutoGenerated"]] = None,
+        azure_app_push_receivers: Optional[list["_models.AzureAppPushReceiverAutoGenerated"]] = None,
+        voice_receivers: Optional[list["_models.VoiceReceiverAutoGenerated"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword alert_type: The value of the supported alert type. Supported alert type value is:
+         servicehealth. Required.
+        :paramtype alert_type: str
+        :keyword email_receivers: The list of email receivers that are part of this action group.
+        :paramtype email_receivers: list[~azure.mgmt.monitor.models.EmailReceiverAutoGenerated]
+        :keyword sms_receivers: The list of SMS receivers that are part of this action group.
+        :paramtype sms_receivers: list[~azure.mgmt.monitor.models.SmsReceiverAutoGenerated]
+        :keyword webhook_receivers: The list of webhook receivers that are part of this action group.
+        :paramtype webhook_receivers: list[~azure.mgmt.monitor.models.WebhookReceiverAutoGenerated]
+        :keyword azure_app_push_receivers: The list of AzureAppPush receivers that are part of this
+         action group.
+        :paramtype azure_app_push_receivers:
+         list[~azure.mgmt.monitor.models.AzureAppPushReceiverAutoGenerated]
+        :keyword voice_receivers: The list of voice receivers that are part of this action group.
+        :paramtype voice_receivers: list[~azure.mgmt.monitor.models.VoiceReceiverAutoGenerated]
+        """
+        super().__init__(**kwargs)
+        self.alert_type = alert_type
+        self.email_receivers = email_receivers
+        self.sms_receivers = sms_receivers
+        self.webhook_receivers = webhook_receivers
+        self.azure_app_push_receivers = azure_app_push_receivers
+        self.voice_receivers = voice_receivers
 
 
 class TestNotificationDetailsResponse(_serialization.Model):
@@ -13467,6 +11916,65 @@ class TestNotificationDetailsResponse(_serialization.Model):
         :paramtype created_time: str
         :keyword action_details: The list of action detail.
         :paramtype action_details: list[~azure.mgmt.monitor.models.ActionDetail]
+        """
+        super().__init__(**kwargs)
+        self.context = context
+        self.state = state
+        self.completed_time = completed_time
+        self.created_time = created_time
+        self.action_details = action_details
+
+
+class TestNotificationDetailsResponseAutoGenerated(_serialization.Model):  # pylint: disable=name-too-long
+    """The details of the test notification results.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar context: The context info.
+    :vartype context: ~azure.mgmt.monitor.models.Context
+    :ivar state: The overall state. Required.
+    :vartype state: str
+    :ivar completed_time: The completed time.
+    :vartype completed_time: str
+    :ivar created_time: The created time.
+    :vartype created_time: str
+    :ivar action_details: The list of action detail.
+    :vartype action_details: list[~azure.mgmt.monitor.models.ActionDetailAutoGenerated]
+    """
+
+    _validation = {
+        "state": {"required": True},
+    }
+
+    _attribute_map = {
+        "context": {"key": "context", "type": "Context"},
+        "state": {"key": "state", "type": "str"},
+        "completed_time": {"key": "completedTime", "type": "str"},
+        "created_time": {"key": "createdTime", "type": "str"},
+        "action_details": {"key": "actionDetails", "type": "[ActionDetailAutoGenerated]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        state: str,
+        context: Optional["_models.Context"] = None,
+        completed_time: Optional[str] = None,
+        created_time: Optional[str] = None,
+        action_details: Optional[list["_models.ActionDetailAutoGenerated"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword context: The context info.
+        :paramtype context: ~azure.mgmt.monitor.models.Context
+        :keyword state: The overall state. Required.
+        :paramtype state: str
+        :keyword completed_time: The completed time.
+        :paramtype completed_time: str
+        :keyword created_time: The created time.
+        :paramtype created_time: str
+        :keyword action_details: The list of action detail.
+        :paramtype action_details: list[~azure.mgmt.monitor.models.ActionDetailAutoGenerated]
         """
         super().__init__(**kwargs)
         self.context = context
@@ -13699,34 +12207,6 @@ class UserAssignedIdentity(_serialization.Model):
 
 
 class UserIdentityProperties(_serialization.Model):
-    """Properties of the user assigned identity.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal ID of resource identity.
-    :vartype principal_id: str
-    :ivar client_id: The client ID of resource identity.
-    :vartype client_id: str
-    """
-
-    _validation = {
-        "principal_id": {"readonly": True},
-        "client_id": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "principal_id": {"key": "principalId", "type": "str"},
-        "client_id": {"key": "clientId", "type": "str"},
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.principal_id: Optional[str] = None
-        self.client_id: Optional[str] = None
-
-
-class UserIdentityPropertiesAutoGenerated(_serialization.Model):
     """User assigned identity properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -13869,6 +12349,48 @@ class VoiceReceiver(_serialization.Model):
         self.phone_number = phone_number
 
 
+class VoiceReceiverAutoGenerated(_serialization.Model):
+    """A voice receiver.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the voice receiver. Names must be unique across all receivers within a
+     tenant action group. Required.
+    :vartype name: str
+    :ivar country_code: The country code of the voice receiver. Required.
+    :vartype country_code: str
+    :ivar phone_number: The phone number of the voice receiver. Required.
+    :vartype phone_number: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "country_code": {"required": True},
+        "phone_number": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "country_code": {"key": "countryCode", "type": "str"},
+        "phone_number": {"key": "phoneNumber", "type": "str"},
+    }
+
+    def __init__(self, *, name: str, country_code: str, phone_number: str, **kwargs: Any) -> None:
+        """
+        :keyword name: The name of the voice receiver. Names must be unique across all receivers within
+         a tenant action group. Required.
+        :paramtype name: str
+        :keyword country_code: The country code of the voice receiver. Required.
+        :paramtype country_code: str
+        :keyword phone_number: The phone number of the voice receiver. Required.
+        :paramtype phone_number: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.country_code = country_code
+        self.phone_number = phone_number
+
+
 class WebhookNotification(_serialization.Model):
     """Webhook notification of an autoscale event.
 
@@ -13973,6 +12495,82 @@ class WebhookReceiver(_serialization.Model):
         self.tenant_id = tenant_id
 
 
+class WebhookReceiverAutoGenerated(_serialization.Model):
+    """A webhook receiver.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar name: The name of the webhook receiver. Names must be unique across all receivers within
+     a tenant action group. Required.
+    :vartype name: str
+    :ivar service_uri: The URI where webhooks should be sent. Required.
+    :vartype service_uri: str
+    :ivar use_common_alert_schema: Indicates whether to use common alert schema.
+    :vartype use_common_alert_schema: bool
+    :ivar use_aad_auth: Indicates whether or not use AAD authentication.
+    :vartype use_aad_auth: bool
+    :ivar object_id: Indicates the webhook app object Id for aad auth.
+    :vartype object_id: str
+    :ivar identifier_uri: Indicates the identifier uri for aad auth.
+    :vartype identifier_uri: str
+    :ivar tenant_id: Indicates the tenant id for aad auth.
+    :vartype tenant_id: str
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "service_uri": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "service_uri": {"key": "serviceUri", "type": "str"},
+        "use_common_alert_schema": {"key": "useCommonAlertSchema", "type": "bool"},
+        "use_aad_auth": {"key": "useAadAuth", "type": "bool"},
+        "object_id": {"key": "objectId", "type": "str"},
+        "identifier_uri": {"key": "identifierUri", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: str,
+        service_uri: str,
+        use_common_alert_schema: bool = False,
+        use_aad_auth: bool = False,
+        object_id: Optional[str] = None,
+        identifier_uri: Optional[str] = None,
+        tenant_id: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword name: The name of the webhook receiver. Names must be unique across all receivers
+         within a tenant action group. Required.
+        :paramtype name: str
+        :keyword service_uri: The URI where webhooks should be sent. Required.
+        :paramtype service_uri: str
+        :keyword use_common_alert_schema: Indicates whether to use common alert schema.
+        :paramtype use_common_alert_schema: bool
+        :keyword use_aad_auth: Indicates whether or not use AAD authentication.
+        :paramtype use_aad_auth: bool
+        :keyword object_id: Indicates the webhook app object Id for aad auth.
+        :paramtype object_id: str
+        :keyword identifier_uri: Indicates the identifier uri for aad auth.
+        :paramtype identifier_uri: str
+        :keyword tenant_id: Indicates the tenant id for aad auth.
+        :paramtype tenant_id: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.service_uri = service_uri
+        self.use_common_alert_schema = use_common_alert_schema
+        self.use_aad_auth = use_aad_auth
+        self.object_id = object_id
+        self.identifier_uri = identifier_uri
+        self.tenant_id = tenant_id
+
+
 class WebtestLocationAvailabilityCriteria(MetricAlertCriteria):
     """Specifies the metric alert rule criteria for a web test resource.
 
@@ -13981,12 +12579,10 @@ class WebtestLocationAvailabilityCriteria(MetricAlertCriteria):
     :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
     :vartype additional_properties: dict[str, JSON]
-    :ivar odata_type: Specifies the type of the alert criteria. Previously undocumented values
-     might be returned. Required. Known values are:
+    :ivar odata_type: specifies the type of the alert criteria. Required. Known values are:
      "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria",
-     "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria",
-     "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria", and
-     "Microsoft.Azure.Monitor.PromQLCriteria".
+     "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria", and
+     "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria".
     :vartype odata_type: str or ~azure.mgmt.monitor.models.Odatatype
     :ivar web_test_id: The Application Insights web test Id. Required.
     :vartype web_test_id: str
@@ -14042,17 +12638,16 @@ class WindowsEventLogDataSource(_serialization.Model):
     """Definition of which Windows Event Log events will be collected and how they will be collected.
     Only collected from Windows machines.
 
-    :ivar streams: List of streams that this data source will be sent to.
-     A stream indicates what schema will be used for this data and usually what table in Log
-     Analytics the data will be sent to.
+    :ivar streams: List of streams that this data source will be sent to. A stream indicates what
+     schema will be used for this data and usually what table in Log Analytics the data will be sent
+     to.
     :vartype streams: list[str or ~azure.mgmt.monitor.models.KnownWindowsEventLogDataSourceStreams]
     :ivar x_path_queries: A list of Windows Event Log queries in XPATH format.
     :vartype x_path_queries: list[str]
     :ivar transform_kql: The KQL query to transform the data source.
     :vartype transform_kql: str
-    :ivar name: A friendly name for the data source.
-     This name should be unique across all data sources (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the data source. This name should be unique across all data
+     sources (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -14073,18 +12668,17 @@ class WindowsEventLogDataSource(_serialization.Model):
         **kwargs: Any
     ) -> None:
         """
-        :keyword streams: List of streams that this data source will be sent to.
-         A stream indicates what schema will be used for this data and usually what table in Log
-         Analytics the data will be sent to.
+        :keyword streams: List of streams that this data source will be sent to. A stream indicates
+         what schema will be used for this data and usually what table in Log Analytics the data will be
+         sent to.
         :paramtype streams: list[str or
          ~azure.mgmt.monitor.models.KnownWindowsEventLogDataSourceStreams]
         :keyword x_path_queries: A list of Windows Event Log queries in XPATH format.
         :paramtype x_path_queries: list[str]
         :keyword transform_kql: The KQL query to transform the data source.
         :paramtype transform_kql: str
-        :keyword name: A friendly name for the data source.
-         This name should be unique across all data sources (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the data source. This name should be unique across all data
+         sources (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)
@@ -14104,9 +12698,8 @@ class WindowsFirewallLogsDataSource(_serialization.Model):
     :ivar profile_filter: Firewall logs profile filter.
     :vartype profile_filter: list[str or
      ~azure.mgmt.monitor.models.KnownWindowsFirewallLogsDataSourceProfileFilter]
-    :ivar name: A friendly name for the data source.
-     This name should be unique across all data sources (regardless of type) within the data
-     collection rule.
+    :ivar name: A friendly name for the data source. This name should be unique across all data
+     sources (regardless of type) within the data collection rule.
     :vartype name: str
     """
 
@@ -14134,9 +12727,8 @@ class WindowsFirewallLogsDataSource(_serialization.Model):
         :keyword profile_filter: Firewall logs profile filter.
         :paramtype profile_filter: list[str or
          ~azure.mgmt.monitor.models.KnownWindowsFirewallLogsDataSourceProfileFilter]
-        :keyword name: A friendly name for the data source.
-         This name should be unique across all data sources (regardless of type) within the data
-         collection rule.
+        :keyword name: A friendly name for the data source. This name should be unique across all data
+         sources (regardless of type) within the data collection rule.
         :paramtype name: str
         """
         super().__init__(**kwargs)

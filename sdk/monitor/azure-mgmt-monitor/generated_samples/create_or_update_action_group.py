@@ -80,6 +80,22 @@ def main():
                     }
                 ],
                 "groupShortName": "sample",
+                "incidentReceivers": [
+                    {
+                        "connection": {"id": "8be638e7-1419-42d4-a059-437a5f4f4e4e", "name": "IncidentConnection"},
+                        "incidentManagementService": "Icm",
+                        "mappings": {
+                            "icm.automitigationenabled": "true",
+                            "icm.correlationid": "${data.essentials.signalType}://${data.essentials.originAlertId}",
+                            "icm.monitorid": "${data.essentials.alertRule}",
+                            "icm.occurringlocation.environment": "PROD",
+                            "icm.routingid": "${data.essentials.monitoringService}://${data.essentials.signalType}",
+                            "icm.title": "${data.essentials.severity}:${data.essentials.monitorCondition} ${data.essentials.monitoringService}:${data.essentials.signalType} ${data.essentials.alertTargetIds}",
+                            "icm.tsgid": "https://microsoft.com",
+                        },
+                        "name": "IncidentAction",
+                    }
+                ],
                 "itsmReceivers": [
                     {
                         "connectionId": "a3b9076c-ce8e-434e-85b4-aff10cb3c8f1",
@@ -125,6 +141,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/stable/2023-01-01/examples/createOrUpdateActionGroup.json
+# x-ms-original-file: specification/monitor/resource-manager/Microsoft.Insights/Insights/preview/2023-09-01-preview/examples/createOrUpdateActionGroup.json
 if __name__ == "__main__":
     main()
