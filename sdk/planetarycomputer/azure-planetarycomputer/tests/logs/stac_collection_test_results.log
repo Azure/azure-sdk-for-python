@@ -1,0 +1,523 @@
+2026-04-21 10:39:04,688 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:04,688 - test_stac_collection - INFO - TEST: test_01_list_collections
+2026-04-21 10:39:04,688 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:04,689 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:04,749 - test_stac_collection - INFO - Calling: get_collections()
+2026-04-21 10:39:05,129 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.StacCatalogCollections'>
+2026-04-21 10:39:05,129 - test_stac_collection - INFO - Number of collections: 7
+2026-04-21 10:39:05,129 - test_stac_collection - INFO - First collection ID: sentinel-2
+2026-04-21 10:39:05,129 - test_stac_collection - INFO - First collection title: Sentinel-2 Test
+2026-04-21 10:39:05,129 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,165 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,165 - test_stac_collection - INFO - TEST: test_02_get_conformance_class
+2026-04-21 10:39:05,165 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,165 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:05,166 - test_stac_collection - INFO - Calling: get_conformance_class()
+2026-04-21 10:39:05,188 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.StacConformanceClasses'>
+2026-04-21 10:39:05,188 - test_stac_collection - INFO - Response keys: ['conformsTo']
+2026-04-21 10:39:05,189 - test_stac_collection - INFO - Number of conformance classes: 15
+2026-04-21 10:39:05,189 - test_stac_collection - INFO -   1. http://www.opengis.net/spec/cql2/1.0/conf/basic-cql2
+2026-04-21 10:39:05,189 - test_stac_collection - INFO -   2. http://www.opengis.net/spec/cql2/1.0/conf/cql2-json
+2026-04-21 10:39:05,189 - test_stac_collection - INFO -   3. http://www.opengis.net/spec/cql2/1.0/conf/cql2-text
+2026-04-21 10:39:05,189 - test_stac_collection - INFO -   4. http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core
+2026-04-21 10:39:05,189 - test_stac_collection - INFO -   5. http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson
+2026-04-21 10:39:05,189 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,211 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,212 - test_stac_collection - INFO - TEST: test_03_get_collection
+2026-04-21 10:39:05,212 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,212 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:05,212 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:05,212 - test_stac_collection - INFO - Calling: get_collection(collection_id='naip')
+2026-04-21 10:39:05,244 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.StacCollection'>
+2026-04-21 10:39:05,244 - test_stac_collection - INFO - Collection ID: naip
+2026-04-21 10:39:05,244 - test_stac_collection - INFO - Collection Title: NAIP Test Dataset
+2026-04-21 10:39:05,244 - test_stac_collection - INFO - Collection Description: NAIP imagery for SDK testing...
+2026-04-21 10:39:05,244 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,260 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,261 - test_stac_collection - INFO - TEST: test_04_get_partition_type
+2026-04-21 10:39:05,261 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,261 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:05,261 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:05,261 - test_stac_collection - INFO - Calling: get_partition_type(collection_id='naip')
+2026-04-21 10:39:05,269 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.PartitionType'>
+2026-04-21 10:39:05,269 - test_stac_collection - INFO - Partition scheme: PartitionTypeScheme.NONE
+2026-04-21 10:39:05,269 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,283 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,283 - test_stac_collection - INFO - TEST: test_05_list_render_options
+2026-04-21 10:39:05,283 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,283 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:05,283 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:05,283 - test_stac_collection - INFO - Calling: list_render_options(collection_id='naip')
+2026-04-21 10:39:05,293 - test_stac_collection - INFO - Response type: <class 'list'>
+2026-04-21 10:39:05,293 - test_stac_collection - INFO - Number of render options: 2
+2026-04-21 10:39:05,293 - test_stac_collection - INFO - First render option ID: natural-color
+2026-04-21 10:39:05,294 - test_stac_collection - INFO - First render option name: Natural color
+2026-04-21 10:39:05,294 - test_stac_collection - INFO - First render option type: RenderOptionType.RASTER_TILE
+2026-04-21 10:39:05,294 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,308 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,309 - test_stac_collection - INFO - TEST: test_06_get_tile_settings
+2026-04-21 10:39:05,309 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,309 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:05,309 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:05,309 - test_stac_collection - INFO - Calling: get_tile_settings(collection_id='naip')
+2026-04-21 10:39:05,318 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSettings'>
+2026-04-21 10:39:05,318 - test_stac_collection - INFO - Response keys: ['minZoom', 'maxItemsPerTile', 'defaultLocation']
+2026-04-21 10:39:05,318 - test_stac_collection - INFO - Max items per tile: 35
+2026-04-21 10:39:05,318 - test_stac_collection - INFO - Min zoom: 6
+2026-04-21 10:39:05,318 - test_stac_collection - INFO - Default location: None
+2026-04-21 10:39:05,318 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,333 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,333 - test_stac_collection - INFO - TEST: test_07_list_mosaics
+2026-04-21 10:39:05,333 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,333 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:05,333 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:05,334 - test_stac_collection - INFO - Calling: list_mosaics(collection_id='naip')
+2026-04-21 10:39:05,344 - test_stac_collection - INFO - Response type: <class 'list'>
+2026-04-21 10:39:05,344 - test_stac_collection - INFO - Number of mosaics: 2
+2026-04-21 10:39:05,344 - test_stac_collection - INFO - First mosaic ID: default
+2026-04-21 10:39:05,344 - test_stac_collection - INFO - First mosaic name: Default
+2026-04-21 10:39:05,344 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,360 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,360 - test_stac_collection - INFO - TEST: test_08_get_collection_queryables
+2026-04-21 10:39:05,360 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,360 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:05,360 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:05,361 - test_stac_collection - INFO - Calling: get_collection_queryables(collection_id='naip')
+2026-04-21 10:39:05,377 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.QueryableDefinitionsResponse'>
+2026-04-21 10:39:05,377 - test_stac_collection - INFO - Response keys: ['$id', 'type', 'title', '$schema', 'properties', 'additionalProperties']
+2026-04-21 10:39:05,377 - test_stac_collection - INFO - Number of queryables: 4
+2026-04-21 10:39:05,377 - test_stac_collection - INFO -   Queryable 1: id
+2026-04-21 10:39:05,377 - test_stac_collection - INFO -   Queryable 2: datetime
+2026-04-21 10:39:05,377 - test_stac_collection - INFO -   Queryable 3: geometry
+2026-04-21 10:39:05,377 - test_stac_collection - INFO -   Queryable 4: test:property
+2026-04-21 10:39:05,377 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,393 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,393 - test_stac_collection - INFO - TEST: test_09_list_queryables
+2026-04-21 10:39:05,393 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,393 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:05,394 - test_stac_collection - INFO - Calling: list_queryables()
+2026-04-21 10:39:05,407 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.QueryableDefinitionsResponse'>
+2026-04-21 10:39:05,407 - test_stac_collection - INFO - Response keys: ['$id', 'type', 'title', '$schema', 'properties', 'additionalProperties']
+2026-04-21 10:39:05,407 - test_stac_collection - INFO - Number of global queryables: 4
+2026-04-21 10:39:05,407 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,421 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,421 - test_stac_collection - INFO - TEST: test_10_get_collection_configuration
+2026-04-21 10:39:05,421 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,421 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:05,421 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:05,422 - test_stac_collection - INFO - Calling: get_collection_configuration(collection_id='naip')
+2026-04-21 10:39:05,437 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.UserCollectionSettings'>
+2026-04-21 10:39:05,438 - test_stac_collection - INFO - Response keys: ['tileSettings', 'mosaicInfo']
+2026-04-21 10:39:05,438 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,456 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,456 - test_stac_collection - INFO - TEST: test_10a_create_thumbnail_asset
+2026-04-21 10:39:05,456 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,456 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:05,456 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:05,456 - test_stac_collection - INFO - Checking if asset 'thumbnail' already exists and deleting if found...
+2026-04-21 10:39:05,515 - test_stac_collection - INFO - Deleted existing 'thumbnail'
+2026-04-21 10:39:05,515 - test_stac_collection - INFO - Calling: create_collection_asset(collection_id='naip', body={...})
+2026-04-21 10:39:05,530 - test_stac_collection - INFO - Response: {'type': 'Collection', 'id': 'naip', 'stac_version': '1.0.0', 'description': 'NAIP imagery for SDK testing', 'links': [{'rel': 'items', 'type': 'application/geo+json', 'href': 'https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip/items'}, {'rel': 'parent', 'type': 'application/json', 'href': 'https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/'}, {'rel': 'root', 'type': 'application/json', 'href': 'https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/'}, {'rel': 'self', 'type': 'application/json', 'href': 'https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip'}], 'item_assets': {'image': {'type': 'image/tiff; application=geotiff; profile=cloud-optimized', 'roles': ['data'], 'title': 'RGBIR COG tile'}}, 'msft:_created': '2026-04-16T11:51:49.2030049Z', 'msft:_updated': '2026-04-21T09:22:56.272914Z', 'title': 'NAIP Test Dataset', 'extent': {'spatial': {'bbox': [[-85.605165, 30.357851, -80.839729, 35.000659]]}, 'temporal': {'interval': [['2020-01-01T00:00:00Z', '2099-12-31T23:59:59Z']]}}, 'license': 'proprietary', 'assets': {'test-asset': {'href': 'https://SANITIZED.blob.core.windows.net/naip-bf48131e/collection-assets/test-asset/test-asset.txt', 'type': 'text/plain', 'title': 'Test Asset - Updated', 'roles': ['metadata']}, 'thumbnail': {'href': 'https://SANITIZED.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png', 'type': 'image/png', 'title': 'Collection Thumbnail', 'roles': ['thumbnail']}}}
+2026-04-21 10:39:05,534 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,551 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,551 - test_stac_collection - INFO - TEST: test_11_get_collection_thumbnail
+2026-04-21 10:39:05,551 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,551 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:05,551 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:05,573 - test_stac_collection - INFO - Calling: get_collection_thumbnail(collection_id='naip')
+2026-04-21 10:39:05,576 - test_stac_collection - INFO - Response type: <class 'generator'>
+2026-04-21 10:39:05,576 - test_stac_collection - INFO - Thumbnail size: 75 bytes
+2026-04-21 10:39:05,576 - test_stac_collection - INFO - First 16 bytes (hex): 89504e470d0a1a0a0000000d49484452
+2026-04-21 10:39:05,576 - test_stac_collection - INFO - Thumbnail format: PNG
+2026-04-21 10:39:05,576 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,592 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,592 - test_stac_collection - INFO - TEST: test_12_create_render_option
+2026-04-21 10:39:05,592 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,605 - test_stac_collection - INFO - Render option 'test-natural-color' already exists, deleting it first
+2026-04-21 10:39:05,610 - test_stac_collection - INFO - Existing render option deleted
+2026-04-21 10:39:05,610 - test_stac_collection - INFO - Calling: create_render_option(collection_id='naip', body={'id': 'test-natural-color', 'name': 'Test Natural color', 'type': 'raster-tile', 'options': 'assets=image&asset_bidx=image|1,2,3', 'minZoom': 6})
+2026-04-21 10:39:05,617 - test_stac_collection - INFO - Response: {'id': 'test-natural-color', 'name': 'Test Natural color', 'type': 'raster-tile', 'options': 'assets=image&asset_bidx=image|1,2,3', 'minZoom': 6}
+2026-04-21 10:39:05,617 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,630 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,630 - test_stac_collection - INFO - TEST: test_13_get_render_option
+2026-04-21 10:39:05,630 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,630 - test_stac_collection - INFO - Calling: get_render_option(collection_id='naip', render_option_id='test-natural-color')
+2026-04-21 10:39:05,638 - test_stac_collection - INFO - Response: {'id': 'test-natural-color', 'name': 'Test Natural color', 'type': 'raster-tile', 'options': 'assets=image&asset_bidx=image|1,2,3', 'minZoom': 6}
+2026-04-21 10:39:05,638 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,658 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,658 - test_stac_collection - INFO - TEST: test_14_replace_render_option
+2026-04-21 10:39:05,658 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,658 - test_stac_collection - INFO - Calling: create_or_replace_render_option(collection_id='naip', render_option_id='test-natural-color', body={'id': 'test-natural-color', 'name': 'Test Natural color updated', 'description': 'RGB from visual assets - updated', 'type': 'raster-tile', 'options': 'assets=image&asset_bidx=image|1,2,3', 'minZoom': 6})
+2026-04-21 10:39:05,674 - test_stac_collection - INFO - Response: {'id': 'test-natural-color', 'name': 'Test Natural color updated', 'description': 'RGB from visual assets - updated', 'type': 'raster-tile', 'options': 'assets=image&asset_bidx=image|1,2,3', 'minZoom': 6}
+2026-04-21 10:39:05,674 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,690 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,690 - test_stac_collection - INFO - TEST: test_14a_delete_render_option
+2026-04-21 10:39:05,691 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,691 - test_stac_collection - INFO - Creating render option for deletion: test-render-opt-delete
+2026-04-21 10:39:05,717 - test_stac_collection - INFO - Render option created successfully
+2026-04-21 10:39:05,717 - test_stac_collection - INFO - Calling: delete_render_option(collection_id='naip', render_option_id='test-render-opt-delete')
+2026-04-21 10:39:05,725 - test_stac_collection - INFO - Render option deleted successfully
+2026-04-21 10:39:05,730 - test_stac_collection - INFO - Confirmed deletion (404 expected): (ResourceNotFound) Render Option 'test-render-opt-delete' not found for collection 'naip'
+Code: ResourceNotFound
+Message: Render Option 'test-render-opt-delete' not found for collection 'naip'
+2026-04-21 10:39:05,730 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,746 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,746 - test_stac_collection - INFO - TEST: test_15_add_mosaic
+2026-04-21 10:39:05,746 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,758 - test_stac_collection - INFO - Mosaic 'test-mosaic-1' already exists, deleting it first
+2026-04-21 10:39:05,764 - test_stac_collection - INFO - Existing mosaic deleted
+2026-04-21 10:39:05,765 - test_stac_collection - INFO - Calling: add_mosaic(collection_id='naip', body={'id': 'test-mosaic-1', 'name': 'Test Most recent available', 'cql': []})
+2026-04-21 10:39:05,772 - test_stac_collection - INFO - Response: {'id': 'test-mosaic-1', 'name': 'Test Most recent available', 'description': None, 'cql': []}
+2026-04-21 10:39:05,772 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,794 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,799 - test_stac_collection - INFO - TEST: test_16_get_mosaic
+2026-04-21 10:39:05,799 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,800 - test_stac_collection - INFO - Calling: get_mosaic(collection_id='naip', mosaic_id='test-mosaic-1')
+2026-04-21 10:39:05,807 - test_stac_collection - INFO - Response: {'id': 'test-mosaic-1', 'name': 'Test Most recent available', 'description': None, 'cql': []}
+2026-04-21 10:39:05,808 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,825 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,825 - test_stac_collection - INFO - TEST: test_17_replace_mosaic
+2026-04-21 10:39:05,825 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,825 - test_stac_collection - INFO - Calling: create_or_replace_mosaic(collection_id='naip', mosaic_id='test-mosaic-1', body={'id': 'test-mosaic-1', 'name': 'Test Most recent available', 'description': 'Most recent available imagery in this collection - updated', 'cql': []})
+2026-04-21 10:39:05,839 - test_stac_collection - INFO - Response: {'id': 'test-mosaic-1', 'name': 'Test Most recent available', 'description': 'Most recent available imagery in this collection - updated', 'cql': []}
+2026-04-21 10:39:05,839 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,929 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,929 - test_stac_collection - INFO - TEST: test_17a_delete_mosaic
+2026-04-21 10:39:05,929 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,930 - test_stac_collection - INFO - Creating mosaic for deletion: test-mosaic-to-be-deleted
+2026-04-21 10:39:05,968 - test_stac_collection - INFO - Mosaic created successfully
+2026-04-21 10:39:05,968 - test_stac_collection - INFO - Calling: delete_mosaic(collection_id='naip', mosaic_id='test-mosaic-to-be-deleted')
+2026-04-21 10:39:05,972 - test_stac_collection - INFO - Mosaic deleted successfully
+2026-04-21 10:39:05,976 - test_stac_collection - INFO - Confirmed deletion (404 expected): (ResourceNotFound) Mosaic 'test-mosaic-to-be-deleted' not found for collection 'naip'
+Code: ResourceNotFound
+Message: Mosaic 'test-mosaic-to-be-deleted' not found for collection 'naip'
+2026-04-21 10:39:05,976 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:05,993 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,993 - test_stac_collection - INFO - TEST: test_18_replace_partition_type
+2026-04-21 10:39:05,993 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:05,993 - test_stac_collection - INFO - Creating temporary collection: test-partition-type-collection
+2026-04-21 10:39:06,068 - test_stac_collection - INFO - Collection 'test-partition-type-collection' does not exist, proceeding with creation
+2026-04-21 10:39:06,068 - test_stac_collection - INFO - Creating collection using begin_create_collection
+2026-04-21 10:39:06,096 - test_stac_collection - INFO - Temporary collection created
+2026-04-21 10:39:06,096 - test_stac_collection - INFO - Calling: replace_partition_type(collection_id='test-partition-type-collection', body={'scheme': 'year'})
+2026-04-21 10:39:06,107 - test_stac_collection - INFO - Partition type set successfully
+2026-04-21 10:39:06,107 - test_stac_collection - INFO - Deleting temporary collection: test-partition-type-collection
+2026-04-21 10:39:06,118 - test_stac_collection - INFO - Temporary collection deleted
+2026-04-21 10:39:06,118 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,142 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,142 - test_stac_collection - INFO - TEST: test_19_replace_tile_settings
+2026-04-21 10:39:06,142 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,143 - test_stac_collection - INFO - Calling: replace_tile_settings(collection_id='naip', body={'maxItemsPerTile': 35, 'minZoom': 6})
+2026-04-21 10:39:06,155 - test_stac_collection - INFO - Response: {'minZoom': 6, 'maxItemsPerTile': 35, 'defaultLocation': None}
+2026-04-21 10:39:06,155 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,171 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,171 - test_stac_collection - INFO - TEST: test_20_create_queryables
+2026-04-21 10:39:06,171 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,194 - test_stac_collection - INFO - Queryable 'test:property' already exists, deleting it first
+2026-04-21 10:39:06,199 - test_stac_collection - INFO - Existing queryable deleted
+2026-04-21 10:39:06,200 - test_stac_collection - INFO - Calling: create_queryables(collection_id='naip', body=[queryable])
+2026-04-21 10:39:06,207 - test_stac_collection - INFO - Response: [{'name': 'test:property', 'definition': {'data_type': 'number'}, 'create_index': False, 'data_type': 'number'}]
+2026-04-21 10:39:06,208 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,221 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,222 - test_stac_collection - INFO - TEST: test_21_replace_queryable
+2026-04-21 10:39:06,222 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,222 - test_stac_collection - INFO - Calling: create_or_replace_queryable(collection_id='naip', queryable_name='test:property', body=queryable)
+2026-04-21 10:39:06,238 - test_stac_collection - INFO - Response: {'name': 'test:property', 'definition': {'description': 'Test property - updated'}, 'create_index': False, 'data_type': None}
+2026-04-21 10:39:06,238 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,255 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,255 - test_stac_collection - INFO - TEST: test_21a_delete_queryable
+2026-04-21 10:39:06,255 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,255 - test_stac_collection - INFO - Creating queryable for deletion: test:property_to_be_deleted
+2026-04-21 10:39:06,291 - test_stac_collection - INFO - Queryable created successfully
+2026-04-21 10:39:06,291 - test_stac_collection - INFO - Calling: delete_queryable(collection_id='naip', queryable_name='test:property_to_be_deleted')
+2026-04-21 10:39:06,295 - test_stac_collection - INFO - Queryable deleted successfully
+2026-04-21 10:39:06,302 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,323 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,323 - test_stac_collection - INFO - TEST: test_01_list_collections
+2026-04-21 10:39:06,323 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,324 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:06,324 - test_stac_collection - INFO - Calling: get_collections()
+2026-04-21 10:39:06,438 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.StacCatalogCollections'>
+2026-04-21 10:39:06,439 - test_stac_collection - INFO - Number of collections: 7
+2026-04-21 10:39:06,439 - test_stac_collection - INFO - First collection ID: sentinel-2
+2026-04-21 10:39:06,439 - test_stac_collection - INFO - First collection title: Sentinel-2 Test
+2026-04-21 10:39:06,439 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,466 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,466 - test_stac_collection - INFO - TEST: test_02_get_conformance_class
+2026-04-21 10:39:06,466 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,467 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:06,467 - test_stac_collection - INFO - Calling: get_conformance_class()
+2026-04-21 10:39:06,479 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.StacConformanceClasses'>
+2026-04-21 10:39:06,479 - test_stac_collection - INFO - Response keys: ['conformsTo']
+2026-04-21 10:39:06,479 - test_stac_collection - INFO - Number of conformance classes: 15
+2026-04-21 10:39:06,479 - test_stac_collection - INFO -   1. http://www.opengis.net/spec/cql2/1.0/conf/basic-cql2
+2026-04-21 10:39:06,479 - test_stac_collection - INFO -   2. http://www.opengis.net/spec/cql2/1.0/conf/cql2-json
+2026-04-21 10:39:06,479 - test_stac_collection - INFO -   3. http://www.opengis.net/spec/cql2/1.0/conf/cql2-text
+2026-04-21 10:39:06,479 - test_stac_collection - INFO -   4. http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/core
+2026-04-21 10:39:06,479 - test_stac_collection - INFO -   5. http://www.opengis.net/spec/ogcapi-features-1/1.0/conf/geojson
+2026-04-21 10:39:06,479 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,497 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,497 - test_stac_collection - INFO - TEST: test_03_get_collection
+2026-04-21 10:39:06,497 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,497 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:06,497 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:06,498 - test_stac_collection - INFO - Calling: get_collection(collection_id='naip')
+2026-04-21 10:39:06,518 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.StacCollection'>
+2026-04-21 10:39:06,518 - test_stac_collection - INFO - Collection ID: naip
+2026-04-21 10:39:06,518 - test_stac_collection - INFO - Collection Title: NAIP Test Dataset
+2026-04-21 10:39:06,518 - test_stac_collection - INFO - Collection Description: NAIP imagery for SDK testing...
+2026-04-21 10:39:06,518 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,543 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,543 - test_stac_collection - INFO - TEST: test_04_get_partition_type
+2026-04-21 10:39:06,544 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,544 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:06,544 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:06,544 - test_stac_collection - INFO - Calling: get_partition_type(collection_id='naip')
+2026-04-21 10:39:06,552 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.PartitionType'>
+2026-04-21 10:39:06,552 - test_stac_collection - INFO - Partition scheme: PartitionTypeScheme.NONE
+2026-04-21 10:39:06,552 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,574 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,574 - test_stac_collection - INFO - TEST: test_05_list_render_options
+2026-04-21 10:39:06,574 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,574 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:06,575 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:06,575 - test_stac_collection - INFO - Calling: list_render_options(collection_id='naip')
+2026-04-21 10:39:06,588 - test_stac_collection - INFO - Response type: <class 'list'>
+2026-04-21 10:39:06,589 - test_stac_collection - INFO - Number of render options: 2
+2026-04-21 10:39:06,589 - test_stac_collection - INFO - First render option ID: natural-color
+2026-04-21 10:39:06,589 - test_stac_collection - INFO - First render option name: Natural color
+2026-04-21 10:39:06,589 - test_stac_collection - INFO - First render option type: RenderOptionType.RASTER_TILE
+2026-04-21 10:39:06,589 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,604 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,604 - test_stac_collection - INFO - TEST: test_06_get_tile_settings
+2026-04-21 10:39:06,605 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,605 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:06,605 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:06,605 - test_stac_collection - INFO - Calling: get_tile_settings(collection_id='naip')
+2026-04-21 10:39:06,613 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.TileSettings'>
+2026-04-21 10:39:06,614 - test_stac_collection - INFO - Response keys: ['minZoom', 'maxItemsPerTile', 'defaultLocation']
+2026-04-21 10:39:06,614 - test_stac_collection - INFO - Max items per tile: 35
+2026-04-21 10:39:06,614 - test_stac_collection - INFO - Min zoom: 6
+2026-04-21 10:39:06,614 - test_stac_collection - INFO - Default location: None
+2026-04-21 10:39:06,614 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,630 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,630 - test_stac_collection - INFO - TEST: test_07_list_mosaics
+2026-04-21 10:39:06,630 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,630 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:06,630 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:06,631 - test_stac_collection - INFO - Calling: list_mosaics(collection_id='naip')
+2026-04-21 10:39:06,642 - test_stac_collection - INFO - Response type: <class 'list'>
+2026-04-21 10:39:06,642 - test_stac_collection - INFO - Number of mosaics: 2
+2026-04-21 10:39:06,643 - test_stac_collection - INFO - First mosaic ID: default
+2026-04-21 10:39:06,643 - test_stac_collection - INFO - First mosaic name: Default
+2026-04-21 10:39:06,643 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,663 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,663 - test_stac_collection - INFO - TEST: test_08_get_collection_queryables
+2026-04-21 10:39:06,664 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,664 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:06,664 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:06,664 - test_stac_collection - INFO - Calling: get_collection_queryables(collection_id='naip')
+2026-04-21 10:39:06,743 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.QueryableDefinitionsResponse'>
+2026-04-21 10:39:06,743 - test_stac_collection - INFO - Response keys: ['$id', 'type', 'title', '$schema', 'properties', 'additionalProperties']
+2026-04-21 10:39:06,743 - test_stac_collection - INFO - Number of queryables: 4
+2026-04-21 10:39:06,743 - test_stac_collection - INFO -   Queryable 1: id
+2026-04-21 10:39:06,743 - test_stac_collection - INFO -   Queryable 2: datetime
+2026-04-21 10:39:06,743 - test_stac_collection - INFO -   Queryable 3: geometry
+2026-04-21 10:39:06,743 - test_stac_collection - INFO -   Queryable 4: test:property
+2026-04-21 10:39:06,743 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,765 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,765 - test_stac_collection - INFO - TEST: test_09_list_queryables
+2026-04-21 10:39:06,765 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,765 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:06,766 - test_stac_collection - INFO - Calling: list_queryables()
+2026-04-21 10:39:06,785 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.QueryableDefinitionsResponse'>
+2026-04-21 10:39:06,785 - test_stac_collection - INFO - Response keys: ['$id', 'type', 'title', '$schema', 'properties', 'additionalProperties']
+2026-04-21 10:39:06,785 - test_stac_collection - INFO - Number of global queryables: 4
+2026-04-21 10:39:06,785 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,800 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,801 - test_stac_collection - INFO - TEST: test_10_get_collection_configuration
+2026-04-21 10:39:06,801 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,801 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:06,801 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:06,801 - test_stac_collection - INFO - Calling: get_collection_configuration(collection_id='naip')
+2026-04-21 10:39:06,823 - test_stac_collection - INFO - Response type: <class 'azure.planetarycomputer.models._models.UserCollectionSettings'>
+2026-04-21 10:39:06,823 - test_stac_collection - INFO - Response keys: ['tileSettings', 'mosaicInfo']
+2026-04-21 10:39:06,823 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,841 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,841 - test_stac_collection - INFO - TEST: test_10a_create_thumbnail_asset
+2026-04-21 10:39:06,841 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,841 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:06,842 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:06,842 - test_stac_collection - INFO - Checking if asset 'thumbnail' already exists and deleting if found...
+2026-04-21 10:39:06,916 - test_stac_collection - INFO - Deleted existing 'thumbnail'
+2026-04-21 10:39:06,917 - test_stac_collection - INFO - Calling: create_collection_asset(collection_id='naip', body={...})
+2026-04-21 10:39:06,924 - test_stac_collection - INFO - Response: {'type': 'Collection', 'id': 'naip', 'stac_version': '1.0.0', 'description': 'NAIP imagery for SDK testing', 'links': [{'rel': 'items', 'type': 'application/geo+json', 'href': 'https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip/items'}, {'rel': 'parent', 'type': 'application/json', 'href': 'https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/'}, {'rel': 'root', 'type': 'application/json', 'href': 'https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/'}, {'rel': 'self', 'type': 'application/json', 'href': 'https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com/stac/collections/naip'}], 'item_assets': {'image': {'type': 'image/tiff; application=geotiff; profile=cloud-optimized', 'roles': ['data'], 'title': 'RGBIR COG tile'}}, 'msft:_created': '2026-04-16T11:51:49.2030049Z', 'msft:_updated': '2026-04-21T09:24:32.311624Z', 'title': 'NAIP Test Dataset', 'extent': {'spatial': {'bbox': [[-85.605165, 30.357851, -80.839729, 35.000659]]}, 'temporal': {'interval': [['2020-01-01T00:00:00Z', '2099-12-31T23:59:59Z']]}}, 'license': 'proprietary', 'assets': {'test-asset': {'href': 'https://SANITIZED.blob.core.windows.net/naip-bf48131e/collection-assets/test-asset/test-asset.txt', 'type': 'text/plain', 'title': 'Test Asset - Updated', 'roles': ['metadata']}, 'thumbnail': {'href': 'https://SANITIZED.blob.core.windows.net/naip-bf48131e/collection-assets/thumbnail/thumbnail.png', 'type': 'image/png', 'title': 'Collection Thumbnail', 'roles': ['thumbnail']}}}
+2026-04-21 10:39:06,928 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:06,944 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,944 - test_stac_collection - INFO - TEST: test_11_get_collection_thumbnail
+2026-04-21 10:39:06,944 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:06,944 - test_stac_collection - INFO - Input - endpoint: https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com
+2026-04-21 10:39:06,944 - test_stac_collection - INFO - Input - collection_id: naip
+2026-04-21 10:39:06,999 - test_stac_collection - INFO - Calling: get_collection_thumbnail(collection_id='naip')
+2026-04-21 10:39:07,003 - test_stac_collection - INFO - Response type: <class 'async_generator'>
+2026-04-21 10:39:07,003 - test_stac_collection - INFO - Thumbnail size: 75 bytes
+2026-04-21 10:39:07,003 - test_stac_collection - INFO - First 16 bytes (hex): 89504e470d0a1a0a0000000d49484452
+2026-04-21 10:39:07,003 - test_stac_collection - INFO - Thumbnail format: PNG
+2026-04-21 10:39:07,003 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:07,020 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,024 - test_stac_collection - INFO - TEST: test_12_create_render_option
+2026-04-21 10:39:07,024 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,040 - test_stac_collection - INFO - Render option 'test-natural-color' already exists, deleting it first
+2026-04-21 10:39:07,045 - test_stac_collection - INFO - Existing render option deleted
+2026-04-21 10:39:07,045 - test_stac_collection - INFO - Calling: create_render_option(collection_id='naip', body={'id': 'test-natural-color', 'name': 'Test Natural color', 'type': 'raster-tile', 'options': 'assets=image&asset_bidx=image|1,2,3', 'minZoom': 6})
+2026-04-21 10:39:07,053 - test_stac_collection - INFO - Response: {'id': 'test-natural-color', 'name': 'Test Natural color', 'type': 'raster-tile', 'options': 'assets=image&asset_bidx=image|1,2,3', 'minZoom': 6}
+2026-04-21 10:39:07,053 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:07,067 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,067 - test_stac_collection - INFO - TEST: test_13_get_render_option
+2026-04-21 10:39:07,068 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,068 - test_stac_collection - INFO - Calling: get_render_option(collection_id='naip', render_option_id='test-natural-color')
+2026-04-21 10:39:07,077 - test_stac_collection - INFO - Response: {'id': 'test-natural-color', 'name': 'Test Natural color', 'type': 'raster-tile', 'options': 'assets=image&asset_bidx=image|1,2,3', 'minZoom': 6}
+2026-04-21 10:39:07,077 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:07,092 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,092 - test_stac_collection - INFO - TEST: test_14_replace_render_option
+2026-04-21 10:39:07,092 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,092 - test_stac_collection - INFO - Calling: create_or_replace_render_option(collection_id='naip', render_option_id='test-natural-color', body={'id': 'test-natural-color', 'name': 'Test Natural color updated', 'description': 'RGB from visual assets - updated', 'type': 'raster-tile', 'options': 'assets=image&asset_bidx=image|1,2,3', 'minZoom': 6})
+2026-04-21 10:39:07,121 - test_stac_collection - INFO - Response: {'id': 'test-natural-color', 'name': 'Test Natural color updated', 'description': 'RGB from visual assets - updated', 'type': 'raster-tile', 'options': 'assets=image&asset_bidx=image|1,2,3', 'minZoom': 6}
+2026-04-21 10:39:07,121 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:07,140 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,140 - test_stac_collection - INFO - TEST: test_14a_delete_render_option
+2026-04-21 10:39:07,140 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,141 - test_stac_collection - INFO - Creating render option for deletion: test-render-opt-delete
+2026-04-21 10:39:07,171 - test_stac_collection - INFO - Render option created successfully
+2026-04-21 10:39:07,172 - test_stac_collection - INFO - Calling: delete_render_option(collection_id='naip', render_option_id='test-render-opt-delete')
+2026-04-21 10:39:07,176 - test_stac_collection - INFO - Render option deleted successfully
+2026-04-21 10:39:07,180 - test_stac_collection - INFO - Confirmed deletion (404 expected): (ResourceNotFound) Render Option 'test-render-opt-delete' not found for collection 'naip'
+Code: ResourceNotFound
+Message: Render Option 'test-render-opt-delete' not found for collection 'naip'
+2026-04-21 10:39:07,180 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:07,197 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,197 - test_stac_collection - INFO - TEST: test_15_add_mosaic
+2026-04-21 10:39:07,197 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,213 - test_stac_collection - INFO - Mosaic 'test-mosaic-1' already exists, deleting it first
+2026-04-21 10:39:07,216 - test_stac_collection - INFO - Existing mosaic deleted
+2026-04-21 10:39:07,217 - test_stac_collection - INFO - Calling: add_mosaic(collection_id='naip', body={'id': 'test-mosaic-1', 'name': 'Test Most recent available', 'cql': []})
+2026-04-21 10:39:07,222 - test_stac_collection - INFO - Response: {'id': 'test-mosaic-1', 'name': 'Test Most recent available', 'description': None, 'cql': []}
+2026-04-21 10:39:07,223 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:07,236 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,237 - test_stac_collection - INFO - TEST: test_16_get_mosaic
+2026-04-21 10:39:07,237 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,237 - test_stac_collection - INFO - Calling: get_mosaic(collection_id='naip', mosaic_id='test-mosaic-1')
+2026-04-21 10:39:07,246 - test_stac_collection - INFO - Response: {'id': 'test-mosaic-1', 'name': 'Test Most recent available', 'description': None, 'cql': []}
+2026-04-21 10:39:07,247 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:07,261 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,261 - test_stac_collection - INFO - TEST: test_17_replace_mosaic
+2026-04-21 10:39:07,261 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,262 - test_stac_collection - INFO - Calling: create_or_replace_mosaic(collection_id='naip', mosaic_id='test-mosaic-1', body={'id': 'test-mosaic-1', 'name': 'Test Most recent available', 'description': 'Most recent available imagery in this collection - updated', 'cql': []})
+2026-04-21 10:39:07,276 - test_stac_collection - INFO - Response: {'id': 'test-mosaic-1', 'name': 'Test Most recent available', 'description': 'Most recent available imagery in this collection - updated', 'cql': []}
+2026-04-21 10:39:07,276 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:07,291 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,291 - test_stac_collection - INFO - TEST: test_17a_delete_mosaic
+2026-04-21 10:39:07,291 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,292 - test_stac_collection - INFO - Creating mosaic for deletion: test-mosaic-to-be-deleted
+2026-04-21 10:39:07,315 - test_stac_collection - INFO - Mosaic created successfully
+2026-04-21 10:39:07,315 - test_stac_collection - INFO - Calling: delete_mosaic(collection_id='naip', mosaic_id='test-mosaic-to-be-deleted')
+2026-04-21 10:39:07,318 - test_stac_collection - INFO - Mosaic deleted successfully
+2026-04-21 10:39:07,321 - test_stac_collection - INFO - Confirmed deletion (404 expected): (ResourceNotFound) Mosaic 'test-mosaic-to-be-deleted' not found for collection 'naip'
+Code: ResourceNotFound
+Message: Mosaic 'test-mosaic-to-be-deleted' not found for collection 'naip'
+2026-04-21 10:39:07,321 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:07,337 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,337 - test_stac_collection - INFO - TEST: test_18_replace_partition_type
+2026-04-21 10:39:07,337 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:07,338 - test_stac_collection - INFO - Creating temporary collection: test-partition-type-collection
+2026-04-21 10:39:07,440 - test_stac_collection - INFO - Collection 'test-partition-type-collection' does not exist, proceeding with creation
+2026-04-21 10:39:07,440 - test_stac_collection - INFO - Creating collection using begin_create_collection
+2026-04-21 10:39:07,453 - test_stac_collection - INFO - Collection still being deleted, retrying in 5s (attempt 1/12)
+2026-04-21 10:39:12,554 - test_stac_collection - INFO - Collection still being deleted, retrying in 5s (attempt 2/12)
+2026-04-21 10:39:17,577 - test_stac_collection - INFO - Collection still being deleted, retrying in 5s (attempt 3/12)
+2026-04-21 10:39:22,589 - test_stac_collection - INFO - Collection still being deleted, retrying in 5s (attempt 4/12)
+2026-04-21 10:39:27,610 - test_stac_collection - INFO - Collection still being deleted, retrying in 5s (attempt 5/12)
+2026-04-21 10:39:32,651 - test_stac_collection - INFO - Temporary collection created
+2026-04-21 10:39:32,652 - test_stac_collection - INFO - Calling: replace_partition_type(collection_id='test-partition-type-collection', body={'scheme': 'year'})
+2026-04-21 10:39:32,662 - test_stac_collection - INFO - Partition type set successfully
+2026-04-21 10:39:32,662 - test_stac_collection - INFO - Deleting temporary collection: test-partition-type-collection
+2026-04-21 10:39:32,671 - test_stac_collection - INFO - Temporary collection deleted
+2026-04-21 10:39:32,671 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:32,739 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:32,739 - test_stac_collection - INFO - TEST: test_19_replace_tile_settings
+2026-04-21 10:39:32,740 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:32,741 - test_stac_collection - INFO - Calling: replace_tile_settings(collection_id='naip', body={'maxItemsPerTile': 35, 'minZoom': 6})
+2026-04-21 10:39:32,752 - test_stac_collection - INFO - Response: {'minZoom': 6, 'maxItemsPerTile': 35, 'defaultLocation': None}
+2026-04-21 10:39:32,752 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:32,808 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:32,809 - test_stac_collection - INFO - TEST: test_20_create_queryables
+2026-04-21 10:39:32,809 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:32,820 - test_stac_collection - INFO - Queryable 'test:property' already exists, deleting it first
+2026-04-21 10:39:32,824 - test_stac_collection - INFO - Existing queryable deleted
+2026-04-21 10:39:32,824 - test_stac_collection - INFO - Calling: create_queryables(collection_id='naip', body=[queryable])
+2026-04-21 10:39:32,828 - test_stac_collection - INFO - Response: [{'name': 'test:property', 'definition': {'data_type': 'number'}, 'create_index': False, 'data_type': 'number'}]
+2026-04-21 10:39:32,828 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:32,847 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:32,847 - test_stac_collection - INFO - TEST: test_21_replace_queryable
+2026-04-21 10:39:32,847 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:32,848 - test_stac_collection - INFO - Calling: create_or_replace_queryable(collection_id='naip', queryable_name='test:property', body=queryable)
+2026-04-21 10:39:32,859 - test_stac_collection - INFO - Response: {'name': 'test:property', 'definition': {'description': 'Test property - updated'}, 'create_index': False, 'data_type': None}
+2026-04-21 10:39:32,859 - test_stac_collection - INFO - Test PASSED
+
+2026-04-21 10:39:32,883 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:32,883 - test_stac_collection - INFO - TEST: test_21a_delete_queryable
+2026-04-21 10:39:32,883 - test_stac_collection - INFO - ================================================================================
+2026-04-21 10:39:32,883 - test_stac_collection - INFO - Creating queryable for deletion: test:property_to_be_deleted
+2026-04-21 10:39:32,900 - test_stac_collection - INFO - Queryable created successfully
+2026-04-21 10:39:32,900 - test_stac_collection - INFO - Calling: delete_queryable(collection_id='naip', queryable_name='test:property_to_be_deleted')
+2026-04-21 10:39:32,904 - test_stac_collection - INFO - Queryable deleted successfully
+2026-04-21 10:39:32,910 - test_stac_collection - INFO - Test PASSED
+

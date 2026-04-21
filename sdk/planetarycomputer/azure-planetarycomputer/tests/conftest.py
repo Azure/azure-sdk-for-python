@@ -82,8 +82,9 @@ def add_sanitizers(test_proxy):
     fake_endpoint = "https://Sanitized.sanitized_label.sanitized_location.geocatalog.spatio.azure.com"
 
     # Replace any real geocatalog hostname with our standardized fake value
+    # Covers both .azure.com and .azure-test.net (PPE) domains
     add_uri_regex_sanitizer(
-        regex=r"https?://[a-zA-Z0-9\-\.]+\.geocatalog\.[a-zA-Z0-9\-\.]+\.azure\.com",
+        regex=r"https?://[a-zA-Z0-9\-\.]+\.geocatalog\.[a-zA-Z0-9\-\.]+\.azure(?:-test)?\.(?:com|net)",
         value=fake_endpoint,
     )
     add_uri_regex_sanitizer(regex=r"https?://[a-zA-Z0-9\-\.]+\.geocatalog\.azure\.com", value=fake_endpoint)
