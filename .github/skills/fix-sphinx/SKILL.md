@@ -186,7 +186,9 @@ Provide a summary:
 
 ### Step 10: Create Pull Request
 
-Create a pull request with a descriptive title and body referencing the issue (if applicable). Include what was fixed and confirm all Sphinx documentation checks pass.
+> **⚠️ REQUIRED when a GitHub issue URL was provided:** You MUST create a pull request after validating fixes. This is not optional.
+
+Create a pull request with a descriptive title and body referencing the issue. Include what was fixed and confirm all Sphinx documentation checks pass.
 
 ## Notes
 
