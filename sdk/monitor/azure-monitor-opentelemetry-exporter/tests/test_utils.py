@@ -834,3 +834,47 @@ class TestUtils(unittest.TestCase):
     def test_is_any_synthetic_source_none(self):
         properties = {"http.user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
         self.assertFalse(_utils._is_any_synthetic_source(properties))
+
+    # _is_status_code_success tests
+
+    def test_is_status_code_success_none(self):
+        self.assertFalse(_utils._is_status_code_success(None))
+        self.assertIsInstance(_utils._is_status_code_success(None), bool)
+
+    def test_is_status_code_success_zero(self):
+        self.assertFalse(_utils._is_status_code_success(0))
+        self.assertIsInstance(_utils._is_status_code_success(0), bool)
+
+    def test_is_status_code_success_200(self):
+        self.assertTrue(_utils._is_status_code_success(200))
+        self.assertTrue(_utils._is_status_code_success(200, is_trace=True))
+
+    def test_is_status_code_success_4xx_metrics(self):
+        self.assertFalse(_utils._is_status_code_success(400))
+        self.assertFalse(_utils._is_status_code_success(404))
+        self.assertFalse(_utils._is_status_code_success(499))
+
+    def test_is_status_code_success_4xx_trace(self):
+        self.assertFalse(_utils._is_status_code_success(400, is_trace=True))
+        self.assertFalse(_utils._is_status_code_success(404, is_trace=True))
+        self.assertFalse(_utils._is_status_code_success(499, is_trace=True))
+
+    def test_is_status_code_success_5xx_metrics(self):
+        # Metrics: 5xx is failure (code >= 400)
+        self.assertFalse(_utils._is_status_code_success(500))
+        self.assertFalse(_utils._is_status_code_success(503))
+
+    def test_is_status_code_success_5xx_trace(self):
+        # Trace: 5xx is NOT failure (only 4xx range is failure)
+        self.assertTrue(_utils._is_status_code_success(500, is_trace=True))
+        self.assertTrue(_utils._is_status_code_success(503, is_trace=True))
+
+    def test_is_status_code_success_3xx(self):
+        self.assertTrue(_utils._is_status_code_success(301))
+        self.assertTrue(_utils._is_status_code_success(301, is_trace=True))
+
+    def test_is_status_code_success_returns_bool(self):
+        self.assertIsInstance(_utils._is_status_code_success(200), bool)
+        self.assertIsInstance(_utils._is_status_code_success(0), bool)
+        self.assertIsInstance(_utils._is_status_code_success(None), bool)
+        self.assertIsInstance(_utils._is_status_code_success(500, is_trace=True), bool)

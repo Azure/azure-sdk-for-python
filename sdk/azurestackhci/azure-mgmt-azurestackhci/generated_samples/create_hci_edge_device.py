@@ -58,6 +58,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: 2026-02-01/CreateHciEdgeDevice.json
+# x-ms-original-file: 2026-04-01-preview/CreateHciEdgeDevice.json
 if __name__ == "__main__":
     main()
