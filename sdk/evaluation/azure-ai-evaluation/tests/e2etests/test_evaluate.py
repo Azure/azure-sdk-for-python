@@ -382,7 +382,9 @@ class TestEvaluate:
         assert row_result_df.shape[0] == len(input_data)
         assert "outputs.f1_score.f1_score_score" in row_result_df.columns.to_list()
         assert "f1_score.f1_score_score" in metrics.keys()
-        assert metrics.get("f1_score.f1_score_score") == list_mean_nan_safe(row_result_df["outputs.f1_score.f1_score_score"])
+        assert metrics.get("f1_score.f1_score_score") == list_mean_nan_safe(
+            row_result_df["outputs.f1_score.f1_score_score"]
+        )
         assert row_result_df["outputs.f1_score.f1_score_score"][2] == 1
         assert result["studio_url"] is not None
 

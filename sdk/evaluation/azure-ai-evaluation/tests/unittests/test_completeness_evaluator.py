@@ -9,7 +9,7 @@ async def completeness_response1_async_mock():
     return {
         "llm_output": {
             "score": 1,
-            "reason": "The response is fully incomplete because it does not provide the answer (\"Tokyo\") at all.",
+            "reason": 'The response is fully incomplete because it does not provide the answer ("Tokyo") at all.',
             "properties": {},
         },
         "input_token_count": 1354,

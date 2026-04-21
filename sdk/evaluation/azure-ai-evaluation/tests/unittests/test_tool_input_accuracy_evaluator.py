@@ -409,7 +409,8 @@ class TestToolInputAccuracyEvaluator:
         assert result[key] == 0
         assert result[f"{key}_passed"] is False
         assert (
-            "multiple" in result[f"{key}_reason"].lower() or len(result[f"{key}_properties"]["incorrect_parameters"]) >= 2
+            "multiple" in result[f"{key}_reason"].lower()
+            or len(result[f"{key}_properties"]["incorrect_parameters"]) >= 2
         )
         assert f"{key}_properties" in result
         assert result[f"{key}_properties"]["parameter_extraction_accuracy"] == 25.0  # 1/4 correct params
@@ -713,4 +714,3 @@ class TestToolInputAccuracyEvaluator:
             evaluator(response=response, tool_definitions=tool_definitions)
 
         assert "Query is a required input" in str(exc_info.value)
-

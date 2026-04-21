@@ -312,4 +312,3 @@ class TestToolSelectionEvaluator:
             evaluator(tool_calls=tool_calls, tool_definitions=tool_definitions)
 
         assert "Query is a required input" in str(exc_info.value)
-
