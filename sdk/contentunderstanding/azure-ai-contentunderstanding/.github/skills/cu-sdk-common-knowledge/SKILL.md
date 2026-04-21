@@ -1,5 +1,5 @@
 ---
-name: sdk-common-knowledge
+name: cu-sdk-common-knowledge
 description: Domain knowledge for Azure AI Content Understanding. Use this skill to answer questions about Content Understanding concepts, analyzers, field schemas, API operations, and SDK usage. Always consult official documentation before answering.
 ---
 
@@ -44,4 +44,4 @@ Always read the relevant page (via `fetch_webpage`) before answering if the refe
 ## Related Skills
 
 - `cu-sdk-setup` — Set up Python environment and run samples
-- `sdk-py-sample-run` — Run specific samples interactively
+- `cu-sdk-py-sample-run` — Run specific samples interactively
