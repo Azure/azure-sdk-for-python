@@ -5,10 +5,13 @@
 ### Features Added
 
 - Added support for per-operation `http_logging_level` overrides in `HttpLoggingPolicy`. #44115
+- Introduced the keyword argument `allowed_query_params` to `DistributedTracingPolicy` and `HttpLoggingPolicy` to allow users to specify additional URL query parameters that should not be redacted in span attributes or logs. #46482
 
 ### Breaking Changes
 
 ### Bugs Fixed
+
+- URL attributes in HTTP tracing spans will now have query parameters sanitized by default. #46482
 
 ### Other Changes
 

@@ -34,16 +34,16 @@ class _FixedOffset(datetime.tzinfo):
     def __init__(self, offset):
         self.__offset = datetime.timedelta(minutes=offset)
 
-    def utcoffset(self, dt):
+    def utcoffset(self, dt):  # pylint: disable=unused-argument
         return self.__offset
 
-    def tzname(self, dt):
+    def tzname(self, dt):  # pylint: disable=unused-argument
         return str(self.__offset.total_seconds() / 3600)
 
     def __repr__(self):
         return "<FixedOffset {}>".format(self.tzname(None))
 
-    def dst(self, dt):
+    def dst(self, dt):  # pylint: disable=unused-argument
         return datetime.timedelta(0)
 
 
@@ -163,6 +163,64 @@ class CaseInsensitiveDict(MutableMapping[str, Any]):
 
     def __repr__(self) -> str:
         return str(dict(self.items()))
+
+
+class CaseInsensitiveSet(set):
+    """A set that stores values in their original form but performs
+    case-insensitive lookups via a pre-computed lowercase cache.
+
+    The cache is rebuilt only when the set is mutated, not on every lookup.
+
+    :param iterable: Initial values for the set.
+    :type iterable: iterable[str]
+    """
+
+    def __init__(self, data: Optional[Iterable[str]] = None) -> None:
+        self._lower_cache: set = set()
+        self.update(data or [])
+
+    def __contains__(self, item):
+        return item.lower() in self._lower_cache
+
+    def _find_original(self, item):
+        # Find the original-cased value stored in the set for a case-insensitive match.
+        item_lower = item.lower()
+        for stored in self:
+            if stored.lower() == item_lower:
+                return stored
+        return None
+
+    def add(self, item):
+        if item.lower() not in self._lower_cache:
+            super().add(item)
+            self._lower_cache.add(item.lower())
+
+    def discard(self, item):
+        original = self._find_original(item)
+        if original is not None:
+            super().discard(original)
+            self._lower_cache.discard(item.lower())
+
+    def remove(self, item):
+        original = self._find_original(item)
+        if original is None:
+            raise KeyError(item)
+        super().remove(original)
+        self._lower_cache.discard(item.lower())
+
+    def update(self, *others):
+        for other in others:
+            for item in other:
+                self.add(item)
+
+    def clear(self):
+        super().clear()
+        self._lower_cache = set()
+
+    def pop(self):
+        result = super().pop()
+        self._lower_cache.discard(result.lower())
+        return result
 
 
 def get_running_async_lock() -> AsyncContextManager:
