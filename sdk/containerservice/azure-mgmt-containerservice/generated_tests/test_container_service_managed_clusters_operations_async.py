@@ -259,13 +259,14 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         },
                         "autoUpgradeProfile": {"nodeOSUpgradeChannel": "str", "upgradeChannel": "str"},
                         "azureMonitorProfile": {
+                            "appMonitoring": {"autoInstrumentation": {"enabled": bool}},
                             "metrics": {
                                 "enabled": bool,
                                 "kubeStateMetrics": {
                                     "metricAnnotationsAllowList": "str",
                                     "metricLabelsAllowlist": "str",
                                 },
-                            }
+                            },
                         },
                         "azurePortalFQDN": "str",
                         "bootstrapProfile": {"artifactSource": "str", "containerRegistryId": "str"},
@@ -276,6 +277,7 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         "enableRBAC": bool,
                         "fqdn": "str",
                         "fqdnSubdomain": "str",
+                        "hostedSystemProfile": {"enabled": bool, "nodeSubnetID": "str", "systemNodeSubnetID": "str"},
                         "httpProxyConfig": {
                             "enabled": bool,
                             "httpProxy": "str",
@@ -285,12 +287,14 @@ class TestContainerServiceManagedClustersOperationsAsync(AzureMgmtRecordedTestCa
                         },
                         "identityProfile": {"str": {"clientId": "str", "objectId": "str", "resourceId": "str"}},
                         "ingressProfile": {
+                            "gatewayAPI": {"installation": "str"},
                             "webAppRouting": {
                                 "dnsZoneResourceIds": ["str"],
                                 "enabled": bool,
+                                "gatewayAPIImplementations": {"appRoutingIstio": {"mode": "str"}},
                                 "identity": {"clientId": "str", "objectId": "str", "resourceId": "str"},
                                 "nginx": {"defaultIngressControllerType": "str"},
-                            }
+                            },
                         },
                         "kubernetesVersion": "str",
                         "linuxProfile": {"adminUsername": "str", "ssh": {"publicKeys": [{"keyData": "str"}]}},

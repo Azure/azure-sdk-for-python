@@ -27,6 +27,8 @@ EXCLUDED_PACKAGES = [
     "azure-loganalytics",
 ]
 
+DISALLOWED_FILENAMES = {"api.md"}
+
 
 def unzip_file_to_directory(path_to_zip_file: str, extract_location: str) -> str:
     if path_to_zip_file.endswith(".zip"):
@@ -57,6 +59,16 @@ def extract_whl(dist_dir, version):
     return extract_location
 
 
+def verify_whl_files(extract_location: str) -> bool:
+    # Check if any files in the whl match the disallowed file names
+    for current_root, _, files in os.walk(extract_location):
+        for file_name in files:
+            if file_name.lower() in DISALLOWED_FILENAMES:
+                logger.error(f"Found disallowed file {file_name} in whl at {current_root}")
+                return False
+    return True
+
+
 def verify_whl_root_directory(
     dist_dir: str,
     expected_top_level_module: str,
@@ -74,6 +86,10 @@ def verify_whl_root_directory(
 
     # This method ensures root directory in whl is the directory indicated by our top level namespace
     extract_location = extract_whl(dist_dir, version)
+
+    if not verify_whl_files(extract_location):
+        return False
+
     root_folders = os.listdir(extract_location)
 
     # check for non 'azure' folder as root folder
@@ -276,7 +292,13 @@ class verify_whl(Check):
                 os.chdir(parsed.folder)
             package_dir = parsed.folder
             package_name = parsed.name
-            executable, staging_directory = self.get_executable(args.isolate, args.command, sys.executable, package_dir)
+            executable, staging_directory = self.get_executable(
+                args.isolate,
+                args.command,
+                sys.executable,
+                package_dir,
+                python_version=getattr(args, "python_version", None),
+            )
             logger.info(f"Processing {package_name} for verify_whl check")
 
             top_level_module = parsed.namespace.split(".")[0]
