@@ -74,7 +74,7 @@ Ask: "Do you have an existing virtual environment path, or should I create 'env'
 # Activate the provided virtual environment (e.g., env, venv)
 .\<venv-name>\Scripts\Activate.ps1
 
-# If creating new virtual environment (Python 3.9+):
+# If creating new virtual environment
 python -m venv env
 .\env\Scripts\Activate.ps1
 ```
@@ -93,8 +93,6 @@ pip install -r dev_requirements.txt
 # Install the package in editable mode (within activated venv)
 pip install -e .
 ```
-
-**Important:** Use Python 3.9 compatible environment for mypy checks.
 
 ### Step 3: Identify Target Files (within activated venv)
 
@@ -196,7 +194,7 @@ Create a pull request with a descriptive title and body referencing the issue. I
 
 - Always read the existing code to understand type annotation patterns before making changes
 - Prefer following existing patterns over adding new complex types
-- Use Python 3.9+ compatible type hints (use `Optional[X]` instead of `X | None`)
+- Use Python 3.10+ compatible type hints (use `Optional[X]` instead of `X | None`)
 - If unsure about a fix, mark it for manual review
 - Some errors may require architectural changes - don't force fixes
 - Test the code after fixing to ensure functionality is preserved
