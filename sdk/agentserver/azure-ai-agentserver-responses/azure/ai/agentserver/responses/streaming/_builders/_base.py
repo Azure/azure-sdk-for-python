@@ -159,9 +159,7 @@ class BaseOutputItemBuilder:
 class OutputItemBuilder(BaseOutputItemBuilder):
     """Generic output-item builder for item types without dedicated scoped builders."""
 
-    def emit_added(
-        self, item: generated_models.OutputItem
-    ) -> generated_models.ResponseOutputItemAddedEvent:
+    def emit_added(self, item: generated_models.OutputItem) -> generated_models.ResponseOutputItemAddedEvent:
         """Emit an ``output_item.added`` event for a generic item.
 
         :param item: The output item model instance.
@@ -171,9 +169,7 @@ class OutputItemBuilder(BaseOutputItemBuilder):
         """
         return self._emit_added(item.as_dict())
 
-    def emit_done(
-        self, item: generated_models.OutputItem
-    ) -> generated_models.ResponseOutputItemDoneEvent:
+    def emit_done(self, item: generated_models.OutputItem) -> generated_models.ResponseOutputItemDoneEvent:
         """Emit an ``output_item.done`` event for a generic item.
 
         :param item: The completed output item model instance.
