@@ -70,7 +70,7 @@ from ...operations._operations import (
     build_horizon_db_replicas_update_request,
     build_operations_list_request,
 )
-from .._configuration import HorizonDbClientConfiguration
+from .._configuration import HorizonDBMgmtClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -84,14 +84,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.horizondb.aio.HorizonDbClient`'s
+        :class:`~azure.mgmt.horizondb.aio.HorizonDBMgmtClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: HorizonDbClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: HorizonDBMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -191,14 +191,14 @@ class HorizonDbClustersOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.horizondb.aio.HorizonDbClient`'s
+        :class:`~azure.mgmt.horizondb.aio.HorizonDBMgmtClient`'s
         :attr:`horizon_db_clusters` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: HorizonDbClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: HorizonDBMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1055,14 +1055,14 @@ class HorizonDbPoolsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.horizondb.aio.HorizonDbClient`'s
+        :class:`~azure.mgmt.horizondb.aio.HorizonDBMgmtClient`'s
         :attr:`horizon_db_pools` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: HorizonDbClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: HorizonDBMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -1247,14 +1247,14 @@ class HorizonDbReplicasOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.horizondb.aio.HorizonDbClient`'s
+        :class:`~azure.mgmt.horizondb.aio.HorizonDBMgmtClient`'s
         :attr:`horizon_db_replicas` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: HorizonDbClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: HorizonDBMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2107,14 +2107,14 @@ class HorizonDbFirewallRulesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.horizondb.aio.HorizonDbClient`'s
+        :class:`~azure.mgmt.horizondb.aio.HorizonDBMgmtClient`'s
         :attr:`horizon_db_firewall_rules` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: HorizonDbClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: HorizonDBMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -2703,14 +2703,14 @@ class HorizonDbPrivateEndpointConnectionsOperations:  # pylint: disable=name-too
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.horizondb.aio.HorizonDbClient`'s
+        :class:`~azure.mgmt.horizondb.aio.HorizonDBMgmtClient`'s
         :attr:`horizon_db_private_endpoint_connections` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: HorizonDbClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: HorizonDBMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3265,14 +3265,14 @@ class HorizonDbPrivateLinkResourcesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.horizondb.aio.HorizonDbClient`'s
+        :class:`~azure.mgmt.horizondb.aio.HorizonDBMgmtClient`'s
         :attr:`horizon_db_private_link_resources` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: HorizonDbClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: HorizonDBMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3459,14 +3459,14 @@ class HorizonDbParameterGroupsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.horizondb.aio.HorizonDbClient`'s
+        :class:`~azure.mgmt.horizondb.aio.HorizonDBMgmtClient`'s
         :attr:`horizon_db_parameter_groups` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: HorizonDbClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: HorizonDBMgmtClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

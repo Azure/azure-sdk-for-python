@@ -36,11 +36,11 @@ With above configuration, client can be authenticated by following code:
 
 ```python
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.horizondb import HorizonDbClient
+from azure.mgmt.horizondb import HorizonDBMgmtClient
 import os
 
 sub_id = os.getenv("AZURE_SUBSCRIPTION_ID")
-client = HorizonDbClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
+client = HorizonDBMgmtClient(credential=DefaultAzureCredential(), subscription_id=sub_id)
 ```
 
 ## Examples

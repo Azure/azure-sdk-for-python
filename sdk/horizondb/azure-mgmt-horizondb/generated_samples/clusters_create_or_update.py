@@ -9,7 +9,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.horizondb import HorizonDbClient
+from azure.mgmt.horizondb import HorizonDBMgmtClient
 
 """
 # PREREQUISITES
@@ -26,7 +26,7 @@ from azure.mgmt.horizondb import HorizonDbClient
 
 
 def main():
-    client = HorizonDbClient(
+    client = HorizonDBMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

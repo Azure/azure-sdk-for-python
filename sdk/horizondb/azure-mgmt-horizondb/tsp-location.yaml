@@ -1,4 +1,4 @@
 directory: specification/horizondb/resource-manager/Microsoft.HorizonDb/HorizonDb
-commit: f6e1fbd6268be7712bf96a516ba846f7d42e2baa
+commit: 6ac841ec30b3333ba3efcf11edef182a4a0f6393
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 

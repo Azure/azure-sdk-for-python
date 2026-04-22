@@ -17,7 +17,7 @@ from azure.mgmt.core import ARMPipelineClient
 from azure.mgmt.core.policies import ARMAutoResourceProviderRegistrationPolicy
 from azure.mgmt.core.tools import get_arm_endpoints
 
-from ._configuration import HorizonDbClientConfiguration
+from ._configuration import HorizonDBMgmtClientConfiguration
 from ._utils.serialization import Deserializer, Serializer
 from .operations import (
     HorizonDbClustersOperations,
@@ -35,7 +35,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class HorizonDbClient:  # pylint: disable=too-many-instance-attributes
+class HorizonDBMgmtClient:  # pylint: disable=too-many-instance-attributes
     """Azure Resource Provider API for managing HorizonDb clusters, pools, replicas, and firewall
     rules.
 
@@ -92,7 +92,7 @@ class HorizonDbClient:  # pylint: disable=too-many-instance-attributes
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
-        self._config = HorizonDbClientConfiguration(
+        self._config = HorizonDBMgmtClientConfiguration(
             credential=credential,
             subscription_id=subscription_id,
             base_url=cast(str, base_url),

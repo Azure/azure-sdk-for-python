@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.horizondb.aio import HorizonDbClient
+from azure.mgmt.horizondb.aio import HorizonDBMgmtClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,18 +15,18 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestHorizonDbHorizonDbReplicasOperationsAsync(AzureMgmtRecordedTestCase):
+class TestHorizonDBMgmtHorizonDbFirewallRulesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(HorizonDbClient, is_async=True)
+        self.client = self.create_mgmt_client(HorizonDBMgmtClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_horizon_db_replicas_get(self, resource_group):
-        response = await self.client.horizon_db_replicas.get(
+    async def test_horizon_db_firewall_rules_get(self, resource_group):
+        response = await self.client.horizon_db_firewall_rules.get(
             resource_group_name=resource_group.name,
             cluster_name="str",
             pool_name="str",
-            replica_name="str",
+            firewall_rule_name="str",
         )
 
         # please add some check logic here by yourself
@@ -34,8 +34,8 @@ class TestHorizonDbHorizonDbReplicasOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_horizon_db_replicas_list(self, resource_group):
-        response = self.client.horizon_db_replicas.list(
+    async def test_horizon_db_firewall_rules_list(self, resource_group):
+        response = self.client.horizon_db_firewall_rules.list(
             resource_group_name=resource_group.name,
             cluster_name="str",
             pool_name="str",
@@ -46,22 +46,21 @@ class TestHorizonDbHorizonDbReplicasOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_horizon_db_replicas_begin_create_or_update(self, resource_group):
+    async def test_horizon_db_firewall_rules_begin_create_or_update(self, resource_group):
         response = await (
-            await self.client.horizon_db_replicas.begin_create_or_update(
+            await self.client.horizon_db_firewall_rules.begin_create_or_update(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 pool_name="str",
-                replica_name="str",
+                firewall_rule_name="str",
                 resource={
                     "id": "str",
                     "name": "str",
                     "properties": {
-                        "availabilityZone": "str",
-                        "fullyQualifiedDomainName": "str",
+                        "endIpAddress": "str",
+                        "startIpAddress": "str",
+                        "description": "str",
                         "provisioningState": "str",
-                        "role": "str",
-                        "status": "str",
                     },
                     "systemData": {
                         "createdAt": "2020-02-20 00:00:00",
@@ -81,29 +80,13 @@ class TestHorizonDbHorizonDbReplicasOperationsAsync(AzureMgmtRecordedTestCase):
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_horizon_db_replicas_begin_update(self, resource_group):
+    async def test_horizon_db_firewall_rules_begin_delete(self, resource_group):
         response = await (
-            await self.client.horizon_db_replicas.begin_update(
+            await self.client.horizon_db_firewall_rules.begin_delete(
                 resource_group_name=resource_group.name,
                 cluster_name="str",
                 pool_name="str",
-                replica_name="str",
-                properties={"properties": {"role": "str"}},
-            )
-        ).result()  # call '.result()' to poll until service return final result
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_horizon_db_replicas_begin_delete(self, resource_group):
-        response = await (
-            await self.client.horizon_db_replicas.begin_delete(
-                resource_group_name=resource_group.name,
-                cluster_name="str",
-                pool_name="str",
-                replica_name="str",
+                firewall_rule_name="str",
             )
         ).result()  # call '.result()' to poll until service return final result
 
