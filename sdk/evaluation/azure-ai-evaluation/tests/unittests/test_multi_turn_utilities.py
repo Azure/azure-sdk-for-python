@@ -22,7 +22,7 @@ from azure.ai.evaluation._exceptions import EvaluationException, ErrorTarget
 class TestEvaluationLevel:
     def test_values(self):
         assert EvaluationLevel.CONVERSATION.value == "conversation"
-        assert EvaluationLevel.TRACE.value == "trace"
+        assert EvaluationLevel.TURN.value == "turn"
 
     def test_is_str_enum(self):
         assert isinstance(EvaluationLevel.CONVERSATION, str)
@@ -30,7 +30,7 @@ class TestEvaluationLevel:
 
     def test_from_value(self):
         assert EvaluationLevel("conversation") == EvaluationLevel.CONVERSATION
-        assert EvaluationLevel("trace") == EvaluationLevel.TRACE
+        assert EvaluationLevel("turn") == EvaluationLevel.TURN
 
 
 # endregion
@@ -71,9 +71,9 @@ class TestResolveEvaluationLevel:
         result = _resolve_evaluation_level("conversation", ErrorTarget.EVALUATE)
         assert result == EvaluationLevel.CONVERSATION
 
-    def test_valid_string_trace(self):
-        result = _resolve_evaluation_level("trace", ErrorTarget.EVALUATE)
-        assert result == EvaluationLevel.TRACE
+    def test_valid_string_turn(self):
+        result = _resolve_evaluation_level("turn", ErrorTarget.EVALUATE)
+        assert result == EvaluationLevel.TURN
 
     def test_invalid_string_raises(self):
         with pytest.raises(EvaluationException) as exc_info:

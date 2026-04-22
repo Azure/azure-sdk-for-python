@@ -65,11 +65,11 @@ class EvaluationLevel(str, Enum):
     """Supported evaluation levels for multi-turn evaluators.
 
     - ``CONVERSATION``: Force conversation-level evaluation using the multi-turn path.
-    - ``TRACE``: Force trace-level evaluation using the single-turn query/response path.
+    - ``TURN``: Force turn-level evaluation using the single-turn query/response path.
     """
 
     CONVERSATION = "conversation"
-    TRACE = "trace"
+    TURN = "turn"
 
 
 class Tasks:
