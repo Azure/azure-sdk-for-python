@@ -413,6 +413,10 @@ def _format_time_range(start_ms: int, end_ms: int) -> str:
 def _format_pages(content: "AnalysisContent") -> Any:
     """Return a pages value: int for single page, string for range, or *None*.
 
+    Uses the actual ``pages`` list when available to produce an accurate
+    representation (e.g. ``"2-3, 5"`` instead of ``"2-5"`` when page 4 is
+    absent).  Falls back to ``start_page_number`` / ``end_page_number``.
+
     :param content: The analysis content to extract page info from.
     :type content: ~azure.ai.contentunderstanding.models.AnalysisContent
     """
@@ -420,6 +424,14 @@ def _format_pages(content: "AnalysisContent") -> Any:
 
     if not isinstance(content, DocumentContent):
         return None
+
+    # Prefer actual page numbers from the pages list
+    if content.pages:
+        nums = sorted(p.page_number for p in content.pages if p.page_number is not None)
+        if nums:
+            return _compress_page_numbers(nums)
+
+    # Fallback to start/end range
     start = content.start_page_number
     end = content.end_page_number
     if start is None or end is None:
@@ -427,6 +439,33 @@ def _format_pages(content: "AnalysisContent") -> Any:
     if start == end:
         return start
     return f"{start}-{end}"
+
+
+def _compress_page_numbers(nums: "List[int]") -> Any:
+    """Compress a sorted list of page numbers into a compact string.
+
+    Examples: ``[1] -> 1``, ``[1,2,3] -> "1-3"``, ``[2,3,5] -> "2-3, 5"``.
+
+    :param nums: Sorted list of page numbers.
+    :type nums: list[int]
+    """
+    if not nums:
+        return None
+    if len(nums) == 1:
+        return nums[0]
+
+    ranges: List[str] = []
+    start = nums[0]
+    prev = nums[0]
+    for n in nums[1:]:
+        if n == prev + 1:
+            prev = n
+        else:
+            ranges.append(str(start) if start == prev else f"{start}-{prev}")
+            start = n
+            prev = n
+    ranges.append(str(start) if start == prev else f"{start}-{prev}")
+    return ", ".join(ranges)
 
 
 def _format_warnings(
