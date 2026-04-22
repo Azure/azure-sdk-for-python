@@ -69,6 +69,8 @@ def build_image(staging_dir: Path, acr: str, name: str, tag: str) -> str:
     full_image = f"{acr}.azurecr.io/{name}:{tag}"
     print(f"Building {full_image} via ACR Tasks...")
 
+    is_win = sys.platform == "win32"
+
     cmd = ["az", "acr", "build",
            "--registry", acr,
            "--image", f"{name}:{tag}",
@@ -76,16 +78,29 @@ def build_image(staging_dir: Path, acr: str, name: str, tag: str) -> str:
            "--file", str(staging_dir / "Dockerfile"),
            str(staging_dir)]
 
-    is_win = sys.platform == "win32"
-    env = {**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"} if is_win else None
-    proc = subprocess.Popen(
-        cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-        encoding="utf-8", errors="replace", shell=is_win, env=env,
-    )
-    for line in proc.stdout:
-        sys.stdout.write(line)
-        sys.stdout.flush()
-    returncode = proc.wait()
+    if is_win:
+        # Skip log streaming on Windows to avoid colorama + cp1252 encoding crash.
+        cmd.insert(3, "--no-logs")
+        print("  (Windows: using --no-logs to avoid encoding issues)")
+        env = {**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUTF8": "1"}
+        result = subprocess.run(
+            cmd, capture_output=True, encoding="utf-8", errors="replace",
+            shell=True, env=env,
+        )
+        if result.stdout:
+            sys.stdout.write(result.stdout)
+        if result.stderr:
+            sys.stderr.write(result.stderr)
+        returncode = result.returncode
+    else:
+        proc = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+            encoding="utf-8", errors="replace",
+        )
+        for line in proc.stdout:
+            sys.stdout.write(line)
+            sys.stdout.flush()
+        returncode = proc.wait()
 
     if returncode != 0:
         print("\nWarning: az acr build returned non-zero exit code.", file=sys.stderr)

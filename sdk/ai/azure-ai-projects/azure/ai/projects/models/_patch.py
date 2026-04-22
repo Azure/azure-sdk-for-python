@@ -8,7 +8,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 
-from typing import List, Dict, Mapping, Optional, Any, Tuple
+from typing import Final, FrozenSet, List, Dict, Mapping, Optional, Any, Tuple
 from azure.core.polling import LROPoller, AsyncLROPoller, PollingMethod, AsyncPollingMethod
 from azure.core.polling.base_polling import (
     LROBasePolling,
@@ -16,8 +16,63 @@ from azure.core.polling.base_polling import (
     _raise_if_bad_http_status_and_method,
 )
 from azure.core.polling.async_base_polling import AsyncLROBasePolling
+from ._patch_evaluation_typeddicts import (
+    AzureAIAgentTargetParam,
+    AzureAIBenchmarkPreviewEvalRunDataSource,
+    AzureAIDataSourceConfig,
+    AzureAIModelTargetParam,
+    AzureAIResponsesEvalRunDataSource,
+    EvalCsvFileIdSource,
+    EvalCsvRunDataSource,
+    TestingCriterionAzureAIEvaluator,
+    ModelSamplingConfigParam,
+    RedTeamEvalRunDataSource,
+    ResponseRetrievalItemGenerationParams,
+    TargetCompletionEvalRunDataSource,
+    ToolDescriptionParam,
+    TracesPreviewEvalRunDataSource,
+)
 from ._models import CustomCredential as CustomCredentialGenerated
 from ..models import MemoryStoreUpdateCompletedResult, MemoryStoreUpdateResult
+from ._enums import _FoundryFeaturesOptInKeys, _AgentDefinitionOptInKeys
+
+_FOUNDRY_FEATURES_HEADER_NAME: Final[str] = "Foundry-Features"
+"""The HTTP header name used to opt in to Foundry preview features."""
+
+_BETA_OPERATION_FEATURE_HEADERS: Final[dict] = {
+    "evaluation_taxonomies": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
+    "evaluators": _FoundryFeaturesOptInKeys.EVALUATIONS_V1_PREVIEW.value,
+    "insights": _FoundryFeaturesOptInKeys.INSIGHTS_V1_PREVIEW.value,
+    "memory_stores": _FoundryFeaturesOptInKeys.MEMORY_STORES_V1_PREVIEW.value,
+    "red_teams": _FoundryFeaturesOptInKeys.RED_TEAMS_V1_PREVIEW.value,
+    "schedules": _FoundryFeaturesOptInKeys.SCHEDULES_V1_PREVIEW.value,
+    "toolboxes": _FoundryFeaturesOptInKeys.TOOLBOXES_V1_PREVIEW.value,
+    "skills": _FoundryFeaturesOptInKeys.SKILLS_V1_PREVIEW.value,
+    "agents": ",".join(
+        [
+            _AgentDefinitionOptInKeys.HOSTED_AGENTS_V1_PREVIEW.value,
+            _AgentDefinitionOptInKeys.AGENT_ENDPOINT_V1_PREVIEW.value,
+        ]
+    ),
+}
+"""Foundry-Features header values keyed by beta sub-client property name."""
+
+
+def _has_header_case_insensitive(headers: Any, header_name: str) -> bool:
+    """Return True if headers already contains the provided header name.
+
+    :param headers: The headers mapping to search.
+    :type headers: Any
+    :param header_name: The header name to look for (case-insensitive).
+    :type header_name: str
+    :return: True if the header is present, False otherwise.
+    :rtype: bool
+    """
+    try:
+        header_name_lower = header_name.lower()
+        return any(str(key).lower() == header_name_lower for key in headers)
+    except Exception:  # pylint: disable=broad-except
+        return False
 
 
 class CustomCredential(CustomCredentialGenerated, discriminator="CustomKeys"):
@@ -64,11 +119,11 @@ class CustomCredential(CustomCredentialGenerated, discriminator="CustomKeys"):
             self.credential_keys = {}
 
 
-_FINISHED = frozenset(["completed", "superseded", "failed"])
-_FAILED = frozenset(["failed"])
+_FINISHED: Final[FrozenSet[str]] = frozenset(["completed", "superseded", "failed"])
+_FAILED: Final[FrozenSet[str]] = frozenset(["failed"])
 
 
-class UpdateMemoriesLROPollingMethod(LROBasePolling):
+class _UpdateMemoriesLROPollingMethod(LROBasePolling):
     """A custom polling method implementation for Memory Store updates."""
 
     @property
@@ -139,7 +194,7 @@ class UpdateMemoriesLROPollingMethod(LROBasePolling):
             _raise_if_bad_http_status_and_method(self._pipeline_response.http_response)
 
 
-class AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
+class _AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
     """A custom polling method implementation for Memory Store updates."""
 
     @property
@@ -213,7 +268,7 @@ class AsyncUpdateMemoriesLROPollingMethod(AsyncLROBasePolling):
 class UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
     """Custom LROPoller for Memory Store update operations."""
 
-    _polling_method: "UpdateMemoriesLROPollingMethod"
+    _polling_method: "_UpdateMemoriesLROPollingMethod"
 
     @property
     def update_id(self) -> str:
@@ -263,7 +318,7 @@ class UpdateMemoriesLROPoller(LROPoller[MemoryStoreUpdateCompletedResult]):
 class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResult]):
     """Custom AsyncLROPoller for Memory Store update operations."""
 
-    _polling_method: "AsyncUpdateMemoriesLROPollingMethod"
+    _polling_method: "_AsyncUpdateMemoriesLROPollingMethod"
 
     @property
     def update_id(self) -> str:
@@ -314,11 +369,23 @@ class AsyncUpdateMemoriesLROPoller(AsyncLROPoller[MemoryStoreUpdateCompletedResu
 
 
 __all__: List[str] = [
-    "CustomCredential",
-    "UpdateMemoriesLROPollingMethod",
-    "AsyncUpdateMemoriesLROPollingMethod",
-    "UpdateMemoriesLROPoller",
     "AsyncUpdateMemoriesLROPoller",
+    "AzureAIAgentTargetParam",
+    "AzureAIBenchmarkPreviewEvalRunDataSource",
+    "AzureAIDataSourceConfig",
+    "AzureAIModelTargetParam",
+    "AzureAIResponsesEvalRunDataSource",
+    "CustomCredential",
+    "EvalCsvFileIdSource",
+    "EvalCsvRunDataSource",
+    "TestingCriterionAzureAIEvaluator",
+    "ModelSamplingConfigParam",
+    "RedTeamEvalRunDataSource",
+    "ResponseRetrievalItemGenerationParams",
+    "TargetCompletionEvalRunDataSource",
+    "ToolDescriptionParam",
+    "TracesPreviewEvalRunDataSource",
+    "UpdateMemoriesLROPoller",
 ]  # Add all objects you want publicly available to users at this package level
 
 

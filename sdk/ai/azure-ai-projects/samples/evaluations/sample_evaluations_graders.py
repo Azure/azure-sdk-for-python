@@ -18,29 +18,34 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
+    2) FOUNDRY_MODEL_NAME - Required. The name of the model deployment to use for evaluation.
 """
 
 import os
-
-from azure.identity import DefaultAzureCredential
-from azure.ai.projects import AIProjectClient
 import time
+from typing import Any, List
 from pprint import pprint
+from dotenv import load_dotenv
 from openai.types.evals.create_eval_jsonl_run_data_source_param import (
     CreateEvalJSONLRunDataSourceParam,
     SourceFileContent,
     SourceFileContentContent,
 )
-from openai.types.eval_create_params import DataSourceConfigCustom
-from dotenv import load_dotenv
+from openai.types.graders import StringCheckGraderParam
+from openai.types.eval_create_params import (
+    DataSourceConfigCustom,
+    TestingCriterionLabelModel,
+    TestingCriterionTextSimilarity,
+)
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")
 
 with (
     DefaultAzureCredential() as credential,
@@ -49,53 +54,51 @@ with (
 ):
 
     data_source_config = DataSourceConfigCustom(
-        {
-            "type": "custom",
-            "item_schema": {
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string"},
-                    "response": {"type": "string"},
-                    "context": {"type": "string"},
-                    "ground_truth": {"type": "string"},
-                },
-                "required": [],
+        type="custom",
+        item_schema={
+            "type": "object",
+            "properties": {
+                "query": {"type": "string"},
+                "response": {"type": "string"},
+                "context": {"type": "string"},
+                "ground_truth": {"type": "string"},
             },
-            "include_sample_schema": True,
-        }
+            "required": [],
+        },
+        include_sample_schema=True,
     )
 
-    testing_criteria = [
-        {
-            "type": "label_model",
-            "model": model_deployment_name,
-            "input": [
+    testing_criteria: List[Any] = [
+        TestingCriterionLabelModel(
+            type="label_model",
+            model=model_deployment_name,
+            input=[
                 {
                     "role": "developer",
                     "content": "Classify the sentiment of the following statement as one of 'positive', 'neutral', or 'negative'",
                 },
                 {"role": "user", "content": "Statement: {{item.query}}"},
             ],
-            "passing_labels": ["positive", "neutral"],
-            "labels": ["positive", "neutral", "negative"],
-            "name": "label_grader",
-        },
-        {
-            "type": "text_similarity",
-            "input": "{{item.ground_truth}}",
-            "evaluation_metric": "bleu",
-            "reference": "{{item.response}}",
-            "pass_threshold": 1,
-            "name": "text_check_grader",
-        },
-        {
-            "type": "string_check",
-            "input": "{{item.ground_truth}}",
-            "reference": "{{item.ground_truth}}",
-            "operation": "eq",
-            "name": "string_check_grader",
-        },
-        {
+            passing_labels=["positive", "neutral"],
+            labels=["positive", "neutral", "negative"],
+            name="label_grader",
+        ),
+        TestingCriterionTextSimilarity(
+            type="text_similarity",
+            input="{{item.ground_truth}}",
+            evaluation_metric="bleu",
+            reference="{{item.response}}",
+            pass_threshold=1,
+            name="text_check_grader",
+        ),
+        StringCheckGraderParam(
+            type="string_check",
+            input="{{item.ground_truth}}",
+            reference="{{item.ground_truth}}",
+            operation="eq",
+            name="string_check_grader",
+        ),
+        {  # TODO: Use TestingCriterionScoreModel once the image_tag issue is resolved
             "type": "score_model",
             "name": "score",
             "model": model_deployment_name,
@@ -115,7 +118,7 @@ with (
     eval_object = client.evals.create(
         name="OpenAI graders test",
         data_source_config=data_source_config,
-        testing_criteria=testing_criteria,  # type: ignore
+        testing_criteria=testing_criteria,
     )
     print(f"Evaluation created (id: {eval_object.id}, name: {eval_object.name})")
 
@@ -180,7 +183,7 @@ with (
 
     while True:
         run = client.evals.runs.retrieve(run_id=eval_run_response.id, eval_id=eval_object.id)
-        if run.status == "completed" or run.status == "failed":
+        if run.status in ("completed", "failed"):
             output_items = list(client.evals.runs.output_items.list(run_id=run.id, eval_id=eval_object.id))
             pprint(output_items)
             print(f"Eval Run Report URL: {run.report_url}")

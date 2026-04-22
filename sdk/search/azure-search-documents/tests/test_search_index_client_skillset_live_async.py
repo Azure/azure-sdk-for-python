@@ -87,7 +87,6 @@ class TestSearchClientSkillsets(AzureRecordedTestCase):
         assert result.skills[3].minimum_precision == 0.5
 
         assert len(await client.get_skillsets()) == 1
-        await client.reset_skills(result, [x.name for x in result.skills])
 
     async def _test_get_skillset(self, client):
         name = "test-ss-get"

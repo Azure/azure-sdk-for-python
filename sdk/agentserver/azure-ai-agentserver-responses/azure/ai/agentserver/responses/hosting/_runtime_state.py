@@ -71,6 +71,66 @@ class _RuntimeState:
             self._deleted_response_ids.add(response_id)
             return True
 
+    _TERMINAL_STATUSES = frozenset({"completed", "failed", "cancelled", "incomplete"})
+
+    async def try_evict(self, response_id: str) -> bool:
+        """Evict a terminal record from in-memory state to free memory.
+
+        Unlike :meth:`delete`, eviction does **not** mark the response as
+        deleted — it simply removes the runtime record so that subsequent
+        requests fall through to the durable provider (storage).
+
+        Only records in a terminal status are evicted.  Non-terminal records
+        are left untouched so that in-flight operations remain correct.
+
+        :param response_id: The response ID to evict.
+        :type response_id: str
+        :return: ``True`` if the record was evicted, ``False`` otherwise.
+        :rtype: bool
+        """
+        async with self._lock:
+            record = self._records.get(response_id)
+            if record is None:
+                return False
+            if record.status not in self._TERMINAL_STATUSES:
+                return False
+            del self._records[response_id]
+            return True
+
+    async def mark_deleted(self, response_id: str) -> None:
+        """Mark a response ID as deleted without requiring a runtime record.
+
+        Used by the delete handler's provider fallback path when the record
+        has already been evicted from memory but still exists in durable storage.
+
+        :param response_id: The response ID to mark as deleted.
+        :type response_id: str
+        :return: None
+        :rtype: None
+        """
+        async with self._lock:
+            self._deleted_response_ids.add(response_id)
+
+    @staticmethod
+    def check_chat_isolation(stored_key: str | None, request_chat_key: str | None) -> bool:
+        """Check whether the request chat key matches the creation-time key.
+
+        Returns ``True`` if the request is allowed, ``False`` if it should be
+        rejected as not-found to prevent cross-chat information leakage.
+
+        No enforcement when the response was created without a key (backward compat).
+
+        :param stored_key: The chat isolation key stored at creation time, or ``None``.
+        :type stored_key: str | None
+        :param request_chat_key: The chat key from the incoming request, or ``None``.
+        :type request_chat_key: str | None
+        :return: ``True`` if allowed, ``False`` if isolation mismatch.
+        :rtype: bool
+        """
+        if stored_key is None:
+            return True  # No enforcement when created without a key
+        return stored_key == request_chat_key
+
     async def get_input_items(self, response_id: str) -> list[OutputItem]:
         """Retrieve the full input item chain for a response, including ancestors.
 
@@ -136,8 +196,13 @@ class _RuntimeState:
             result.setdefault("response_id", execution.response_id)
             result.setdefault("object", "response")
             result["status"] = execution.status
+            # S-038 / S-040: forcibly stamp session & conversation on every snapshot
+            if execution.agent_session_id is not None:
+                result["agent_session_id"] = execution.agent_session_id
+            if execution.conversation_id is not None:
+                result["conversation"] = {"id": execution.conversation_id}
             return strip_nulls(result)
-        return {
+        snapshot: dict[str, Any] = {
             "id": execution.response_id,
             "response_id": execution.response_id,
             "object": "response",
@@ -147,3 +212,9 @@ class _RuntimeState:
             "model": execution.initial_model,
             "agent_reference": deepcopy(execution.initial_agent_reference) or {},
         }
+        # S-038 / S-040: forcibly stamp session & conversation on fallback path
+        if execution.agent_session_id is not None:
+            snapshot["agent_session_id"] = execution.agent_session_id
+        if execution.conversation_id is not None:
+            snapshot["conversation"] = {"id": execution.conversation_id}
+        return snapshot

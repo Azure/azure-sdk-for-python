@@ -7,6 +7,8 @@
 ### Breaking Changes
 
 ### Bugs Fixed
+- Fix `success` field on HTTP request telemetry resolving to an integer instead of a boolean when no status code is present
+  ([#46311](https://github.com/Azure/azure-sdk-for-python/pull/46311))
 
 ### Other Changes
 
