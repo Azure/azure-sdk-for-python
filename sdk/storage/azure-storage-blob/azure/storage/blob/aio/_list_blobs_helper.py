@@ -263,7 +263,10 @@ class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
         content_type = response_headers.get("Content-Type", "")
         location_mode = getattr(pipeline_response.http_response, "location_mode", None)
         if _ARROW_CONTENT_TYPE in content_type:
-            raw_bytes = b"".join(deserialized)
+            chunks = []
+            async for chunk in deserialized:
+                chunks.append(chunk)
+            raw_bytes = b"".join(chunks)
             next_marker, blob_items = _parse_arrow_response(raw_bytes, self.container)
             self._arrow_response = (next_marker, blob_items)
             return location_mode, raw_bytes
