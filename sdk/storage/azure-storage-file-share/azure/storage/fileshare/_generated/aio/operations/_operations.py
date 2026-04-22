@@ -678,6 +678,7 @@ class DirectoryOperations:
         response_headers["x-ms-request-server-encrypted"] = self._deserialize(
             "bool", response.headers.get("x-ms-request-server-encrypted")
         )
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-client-request-id"] = self._deserialize(
@@ -1199,7 +1200,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         self,
         optional_body: Optional[bytes] = None,
         *,
-        content_length: int,
+        file_content_length: int,
         timeout: Optional[int] = None,
         file_content_type: Optional[str] = None,
         file_content_encoding: Optional[str] = None,
@@ -1224,7 +1225,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         nfs_file_type: Optional[Union[str, _models.NfsFileType]] = None,
         content_md5: Optional[bytes] = None,
         file_property_semantics: Optional[Union[str, _models.FilePropertySemantics]] = None,
-        optional_content_length: Optional[int] = None,
+        content_length: Optional[int] = None,
         structured_body_type: Optional[str] = None,
         structured_content_length: Optional[int] = None,
         **kwargs: Any
@@ -1233,10 +1234,8 @@ class FileOperations:  # pylint: disable=too-many-public-methods
 
         :param optional_body: Initial data. Default value is None.
         :type optional_body: bytes
-        :keyword content_length: Specifies the number of bytes being transmitted in the request body.
-         When the x-ms-write header is set to clear, the value of this header must be set to zero.
-         Required.
-        :paramtype content_length: int
+        :keyword file_content_length: Specifies the maximum size for the file, up to 4 TB. Required.
+        :paramtype file_content_length: int
         :keyword timeout: The timeout parameter is expressed in seconds. Default value is None.
         :paramtype timeout: int
         :keyword file_content_type: Sets the MIME content type of the file. The default type is
@@ -1311,9 +1310,10 @@ class FileOperations:  # pylint: disable=too-many-public-methods
          "Restore". Default value is None.
         :paramtype file_property_semantics: str or
          ~azure.storage.fileshare.models.FilePropertySemantics
-        :keyword optional_content_length: Optional. Specifies the content length of the file. Default
-         value is None.
-        :paramtype optional_content_length: int
+        :keyword content_length: Specifies the number of bytes being transmitted in the request body.
+         When the x-ms-write header is set to clear, the value of this header must be set to zero.".
+         Default value is None.
+        :paramtype content_length: int
         :keyword structured_body_type: Specifies the response content should be returned as a
          structured message and specifies the message schema version and properties. Default value is
          None.
@@ -1347,7 +1347,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         _content = optional_body
 
         _request = build_file_create_request(
-            content_length=content_length,
+            file_content_length=file_content_length,
             timeout=timeout,
             file_content_type=file_content_type,
             file_content_encoding=file_content_encoding,
@@ -1372,7 +1372,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
             nfs_file_type=nfs_file_type,
             content_md5=content_md5,
             file_property_semantics=file_property_semantics,
-            optional_content_length=optional_content_length,
+            content_length=content_length,
             structured_body_type=structured_body_type,
             structured_content_length=structured_content_length,
             file_type=file_type,
@@ -2092,6 +2092,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         response_headers["x-ms-request-server-encrypted"] = self._deserialize(
             "bool", response.headers.get("x-ms-request-server-encrypted")
         )
+        response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
         response_headers["x-ms-version"] = self._deserialize("str", response.headers.get("x-ms-version"))
         response_headers["x-ms-request-id"] = self._deserialize("str", response.headers.get("x-ms-request-id"))
         response_headers["x-ms-client-request-id"] = self._deserialize(
@@ -2717,6 +2718,7 @@ class FileOperations:  # pylint: disable=too-many-public-methods
         response_headers = {}
         response_headers["ETag"] = self._deserialize("str", response.headers.get("ETag"))
         response_headers["Last-Modified"] = self._deserialize("rfc-1123", response.headers.get("Last-Modified"))
+        response_headers["Content-MD5"] = self._deserialize("bytearray", response.headers.get("Content-MD5"))
         response_headers["x-ms-content-crc64"] = self._deserialize(
             "bytearray", response.headers.get("x-ms-content-crc64")
         )
@@ -4393,7 +4395,7 @@ class ShareOperations:
         response_headers["x-ms-lease-status"] = self._deserialize("str", response.headers.get("x-ms-lease-status"))
         response_headers["x-ms-access-tier"] = self._deserialize("str", response.headers.get("x-ms-access-tier"))
         response_headers["x-ms-access-tier-change-time"] = self._deserialize(
-            "str", response.headers.get("x-ms-access-tier-change-time")
+            "rfc-1123", response.headers.get("x-ms-access-tier-change-time")
         )
         response_headers["x-ms-access-tier-transition-state"] = self._deserialize(
             "str", response.headers.get("x-ms-access-tier-transition-state")

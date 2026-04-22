@@ -1939,10 +1939,10 @@ class StorageServiceProperties(_Model):
     :ivar minute_metrics: A summary of request statistics grouped by API in minute aggregates for
      files.
     :vartype minute_metrics: ~azure.storage.fileshare._generated.models.Metrics
-    :ivar cors: The set of CORS rules.
-    :vartype cors: ~azure.storage.fileshare._generated.models.CorsRule
     :ivar protocol: Protocol settings.
     :vartype protocol: ~azure.storage.fileshare._generated.models.ShareProtocolSettings
+    :ivar cors: The set of CORS rules.
+    :vartype cors: ~azure.storage.fileshare._generated.models.CorsRule
     """
 
     hour_metrics: Optional["_models.Metrics"] = rest_field(
@@ -1957,16 +1957,16 @@ class StorageServiceProperties(_Model):
         xml={"attribute": False, "name": "MinuteMetrics", "text": False, "unwrapped": False},
     )
     """A summary of request statistics grouped by API in minute aggregates for files."""
-    cors: Optional[list["_models.CorsRule"]] = rest_field(
-        visibility=["read", "create", "update", "delete", "query"],
-        xml={"attribute": False, "itemsName": "CorsRule", "name": "Cors", "text": False, "unwrapped": False},
-    )
-    """The set of CORS rules."""
     protocol: Optional["_models.ShareProtocolSettings"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"],
         xml={"attribute": False, "name": "ProtocolSettings", "text": False, "unwrapped": False},
     )
     """Protocol settings."""
+    cors: Optional[list["_models.CorsRule"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"],
+        xml={"attribute": False, "itemsName": "CorsRule", "name": "Cors", "text": False, "unwrapped": False},
+    )
+    """The set of CORS rules."""
 
     _xml = {"attribute": False, "name": "StorageServiceProperties", "text": False, "unwrapped": False}
 
@@ -1976,8 +1976,8 @@ class StorageServiceProperties(_Model):
         *,
         hour_metrics: Optional["_models.Metrics"] = None,
         minute_metrics: Optional["_models.Metrics"] = None,
-        cors: Optional[list["_models.CorsRule"]] = None,
         protocol: Optional["_models.ShareProtocolSettings"] = None,
+        cors: Optional[list["_models.CorsRule"]] = None,
     ) -> None: ...
 
     @overload
