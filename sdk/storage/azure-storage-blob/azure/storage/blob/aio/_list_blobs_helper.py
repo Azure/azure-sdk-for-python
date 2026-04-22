@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import asyncio
 
 from typing import Callable, List, Optional
 from urllib.parse import unquote
@@ -258,7 +259,7 @@ class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
         self._deserializer = deserializer
         self._arrow_response = None
 
-    def _arrow_cls(self, pipeline_response, deserialized, response_headers):
+    async def _arrow_cls(self, pipeline_response, deserialized, response_headers):
         content_type = response_headers.get("Content-Type", "")
         location_mode = getattr(pipeline_response.http_response, "location_mode", None)
         if _ARROW_CONTENT_TYPE in content_type:
@@ -266,21 +267,24 @@ class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
             next_marker, blob_items = _parse_arrow_response(raw_bytes, self.container)
             self._arrow_response = (next_marker, blob_items)
             return location_mode, raw_bytes
-        if hasattr(pipeline_response.http_response, "load_body"):
-            pipeline_response.http_response.load_body()
+        if hasattr(pipeline_response.http_response, "read"):
+            await pipeline_response.http_response.read()
         xml_response = self._deserializer("ListBlobsFlatSegmentResponse", pipeline_response.http_response)
         self._arrow_response = None
         return location_mode, xml_response
 
     async def _get_next_cb(self, continuation_token):
         try:
-            return await self._command(
+            result = await self._command(
                 prefix=self.prefix,
                 marker=continuation_token or None,
                 maxresults=self.results_per_page,
                 cls=self._arrow_cls,
                 use_location=self.location_mode,
             )
+            if asyncio.iscoroutine(result):
+                return await result
+            return result
         except HttpResponseError as error:
             process_storage_error(error)
 

@@ -491,8 +491,8 @@ class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
             next_marker, blob_items = _parse_arrow_response(raw_bytes, self.container)
             self._arrow_response = (next_marker, blob_items)
             return location_mode, raw_bytes
-        if hasattr(pipeline_response.http_response, "load_body"):
-            pipeline_response.http_response.load_body()
+        if hasattr(pipeline_response.http_response, "read"):
+            pipeline_response.http_response.read()
         xml_response = self._deserializer("ListBlobsFlatSegmentResponse", pipeline_response.http_response)
         self._arrow_response = None
         return location_mode, xml_response
