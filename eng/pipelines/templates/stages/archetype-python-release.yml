@@ -198,6 +198,13 @@ stages:
                 artifact: ${{parameters.ArtifactName}}
                 timeoutInMinutes: 5
 
+              - template: /eng/pipelines/templates/steps/auth-dev-feed.yml
+                parameters:
+                  DevFeedName: ${{ parameters.DevFeedName }}
+                  EnableTwineAuth: false
+                  EnablePipAuth: true
+                  EnableUvAuth: false
+
               - task: UsePythonVersion@0
                 inputs:
                   versionSpec: '3.9'
