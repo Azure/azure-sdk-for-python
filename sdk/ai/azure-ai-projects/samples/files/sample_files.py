@@ -16,20 +16,21 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry portal.
     2) FILE_PATH - Optional. Path to the file to upload. Defaults to the `data` folder.
 """
 
 import os
-from azure.identity import DefaultAzureCredential
-from dotenv import load_dotenv
-from azure.ai.projects import AIProjectClient
 from pathlib import Path
+
+from dotenv import load_dotenv
+from azure.identity import DefaultAzureCredential
+from azure.ai.projects import AIProjectClient
 
 load_dotenv()
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
 script_dir = Path(__file__).parent
 file_path = os.environ.get("FILE_PATH", os.path.join(script_dir, "data", "test_file.jsonl"))
 

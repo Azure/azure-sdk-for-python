@@ -201,6 +201,15 @@ class Format(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Return exec format kubeconfig. This format requires kubelogin binary in the path."""
 
 
+class GatewayAPIIstioEnabled(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Whether to enable Istio as a Gateway API implementation for managed ingress with App Routing."""
+
+    ENABLED = "Enabled"
+    """Enables managed ingress via the Gateway API using a sidecar-less Istio controlplane."""
+    DISABLED = "Disabled"
+    """Disables the sidecar-less istio control plane for managed ingress via the Gateway API."""
+
+
 class GPUDriver(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Whether to install GPU drivers. When it's not specified, default is Install."""
 
@@ -435,6 +444,20 @@ class ManagedClusterSKUTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     for production use cases."""
 
 
+class ManagedGatewayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Configuration for the managed Gateway API installation. If not specified, the default is
+    'Disabled'. See `https://aka.ms/k8s-gateway-api <https://aka.ms/k8s-gateway-api>`_ for more
+    details.
+    """
+
+    DISABLED = "Disabled"
+    """Gateway API CRDs will not be reconciled on your cluster."""
+    STANDARD = "Standard"
+    """Gateway API CRDs from the standard release channel will be reconciled onto your cluster. See
+    `https://aka.ms/gateway-api-versions <https://aka.ms/gateway-api-versions>`_ to see which
+    bundle will be installed for your Kubernetes version."""
+
+
 class NamespaceProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current provisioning state of the namespace."""
 
@@ -641,6 +664,10 @@ class OSSKU(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Use Ubuntu2204 as the OS for node images, however, Ubuntu 22.04 may not be supported for all
     nodepools. For limitations and supported kubernetes versions, see
     `https://aka.ms/aks/supported-ubuntu-versions <https://aka.ms/aks/supported-ubuntu-versions>`_."""
+    WINDOWS2025 = "Windows2025"
+    """Use Windows2025 as the OS for node images. Unsupported for system node pools. Windows2025
+    supports Windows2022 and Windows 2025 containers; it cannot run Windows2019 containers and vice
+    versa."""
     UBUNTU2404 = "Ubuntu2404"
     """Use Ubuntu2404 as the OS for node images, however, Ubuntu 24.04 may not be supported for all
     nodepools. For limitations and supported kubernetes versions, see see

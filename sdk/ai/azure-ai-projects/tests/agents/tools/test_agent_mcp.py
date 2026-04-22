@@ -9,8 +9,8 @@ import pytest
 from test_base import TestBase, servicePreparer
 from devtools_testutils import is_live_and_not_recording
 from devtools_testutils import recorded_by_proxy, RecordedTransport
-from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
 from openai.types.responses.response_input_param import McpApprovalResponse, ResponseInputParam
+from azure.ai.projects.models import PromptAgentDefinition, MCPTool, Tool
 
 
 class TestAgentMCP(TestBase):
@@ -48,7 +48,7 @@ class TestAgentMCP(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,
@@ -179,7 +179,7 @@ class TestAgentMCP(TestBase):
         DELETE /agents/{agent_name}/versions/{agent_version} project_client.agents.delete_version()
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         with (
             self.create_client(operation_group="agents", **kwargs) as project_client,

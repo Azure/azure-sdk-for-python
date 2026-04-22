@@ -1,8 +1,20 @@
 # Release History
 
-## 12.25.0b1 (Unreleased)
+## 12.26.0b1 (Unreleased)
 
 ### Features Added
+
+## 12.25.0b1 (2026-04-01)
+
+### Features Added
+- Added support for service version 2026-06-06.
+- Added support for connection strings and `account_url`s to accept URLs with `-ipv6` and `-dualstack` suffixes 
+for `DataLakeServiceClient`, `FileSystemClient`, `DataLakeDirectoryClient`, and `DataLakeFileClient`.
+- Added support for `DataLakeDirectoryClient` and `DataLakeFileClient`'s `set_tags` and `get_tags` APIs
+to conditionally set and get tags associated with a directory or file client, respectively.
+
+### Other Changes
+- Consolidated the behavior of `max_concurrency=None` by defaulting to the shared `DEFAULT_MAX_CONCURRENCY` constant.
 
 ## 12.24.0b1 (2026-01-27)
 

@@ -94,6 +94,9 @@ Most samples support additional command-line arguments. For example:
 
 ```bash
 python basic_voice_assistant_async.py --model gpt-4o-realtime-preview --voice alloy
+
+# With telemetry tracing
+python basic_voice_assistant_async.py --enable-tracing
 ```
 
 Use the `--help` flag to see all available options:
@@ -104,9 +107,35 @@ python basic_voice_assistant_async.py --help
 
 ## Sample descriptions
 
-- **basic_voice_assistant_async.py**: 🌟 **[Featured Sample]** Complete async voice assistant demonstrating real-time conversation, interruption handling, and server VAD. Perfect starting point for voice applications. See "BASIC_VOICE_ASSISTANT.md" for detailed documentation.
+- **basic_voice_assistant_async.py**: 🌟 **[Featured Sample]** Complete async voice assistant demonstrating real-time conversation, interruption handling, and server VAD. Supports optional OpenTelemetry tracing via `--enable-tracing`. Perfect starting point for voice applications. See "BASIC_VOICE_ASSISTANT.md" for detailed documentation.
 - **agent_v2_sample.py**: Demonstrates how to connect to an Azure AI Foundry agent using the `AgentSessionConfig` TypedDict. Shows the new pattern where agents are configured at connection time rather than as tools in the session. Features callback-based audio streaming, sequence number based interrupt handling, and conversation logging.
 - **async_function_calling_sample.py**: Demonstrates async function calling capabilities with the VoiceLive SDK, showing how to handle function calls from the AI model.
+
+### Telemetry samples
+
+These samples are in the `telemetry/` folder and demonstrate OpenTelemetry-based tracing:
+
+| Sample | Description |
+|---|---|
+| `sample_voicelive_with_console_tracing.py` | Basic tracing with console output. All connection, send, and receive operations produce OpenTelemetry spans printed to stdout. |
+| `sample_voicelive_with_azure_monitor_tracing.py` | Traces exported to Azure Monitor / Application Insights. View results in the "Tracing" tab. |
+| `sample_voicelive_with_console_tracing_custom_attributes.py` | Adds custom `SpanProcessor` to inject application-specific attributes (session ID, etc.) into every span. |
+| `sample_voicelive_with_content_recording.py` | Enables content recording to capture full message payloads in span events. Useful for debugging; may contain personal data. |
+
+**Prerequisites for telemetry samples:**
+
+```bash
+# Console tracing
+pip install azure-ai-voicelive opentelemetry-sdk azure-core-tracing-opentelemetry
+
+# Azure Monitor tracing
+pip install azure-ai-voicelive azure-monitor-opentelemetry
+
+# OTLP export (e.g., Aspire dashboard)
+pip install opentelemetry-exporter-otlp-proto-grpc
+```
+
+Set `AZURE_EXPERIMENTAL_ENABLE_GENAI_TRACING=true` to enable tracing.
 
 ## Troubleshooting
 

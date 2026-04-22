@@ -221,6 +221,7 @@
     "consts",
     "contoso",
     "contosodataset",
+    "contosowidgetmanager",
     "centralus",
     "centraluseuap",
     "creds",
@@ -260,6 +261,7 @@
     "engsys",
     "entra",
     "envname",
+    "esrp",
     "evals",
     "fastmcp",
     "fileno",
@@ -2194,6 +2196,10 @@
     {
       "filename": ".github/**/ml/**",
       "words": ["envml", "paginators"]
+    },
+    {
+      "filename": "sdk/agentserver/azure-ai-agentserver-githubcopilot/**",
+      "words": ["RAPI", "BYOK", "byok", "NCUS", "ncusacr", "fstring", "ename", "valeriepham", "coreai", "Vnext", "PYTHONIOENCODING"]
     }
   ],
   "allowCompoundWords": true

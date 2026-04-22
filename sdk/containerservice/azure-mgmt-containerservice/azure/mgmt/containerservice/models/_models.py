@@ -732,7 +732,7 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", and "Ubuntu2404".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -954,7 +954,7 @@ class AgentPoolManagedClusterAgentPoolProfileProperties(_Model):  # pylint: disa
     """Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is Linux. The
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
      is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"CBLMariner\",
-     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", and \"Ubuntu2404\"."""
+     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\", and \"Ubuntu2404\"."""
     max_count: Optional[int] = rest_field(name="maxCount", visibility=["read", "create", "update", "delete", "query"])
     """The maximum number of nodes for auto-scaling."""
     min_count: Optional[int] = rest_field(name="minCount", visibility=["read", "create", "update", "delete", "query"])
@@ -3661,6 +3661,7 @@ class ManagedCluster(TrackedResource):
         "node_provisioning_profile",
         "bootstrap_profile",
         "ai_toolchain_operator_profile",
+        "hosted_system_profile",
         "status",
     ]
 
@@ -4021,7 +4022,7 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", and "Ubuntu2404".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -4243,7 +4244,7 @@ class ManagedClusterAgentPoolProfileProperties(_Model):
     """Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is Linux. The
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
      is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"CBLMariner\",
-     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", and \"Ubuntu2404\"."""
+     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\", and \"Ubuntu2404\"."""
     max_count: Optional[int] = rest_field(name="maxCount", visibility=["read", "create", "update", "delete", "query"])
     """The maximum number of nodes for auto-scaling."""
     min_count: Optional[int] = rest_field(name="minCount", visibility=["read", "create", "update", "delete", "query"])
@@ -4576,7 +4577,7 @@ class ManagedClusterAgentPoolProfile(ManagedClusterAgentPoolProfileProperties):
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", and "Ubuntu2404".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar max_count: The maximum number of nodes for auto-scaling.
     :vartype max_count: int
@@ -4924,6 +4925,40 @@ class ManagedClusterAPIServerAccessProfile(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ManagedClusterAppRoutingIstio(_Model):
+    """Configuration for using a sidecar-less Istio control plane for managed ingress via the Gateway
+    API with App Routing. See `https://aka.ms/gateway-on-istio <https://aka.ms/gateway-on-istio>`_
+    for information on using Istio for ingress via the Gateway API.
+
+    :ivar mode: Whether to enable Istio as a Gateway API implementation for managed ingress with
+     App Routing. Known values are: "Enabled" and "Disabled".
+    :vartype mode: str or ~azure.mgmt.containerservice.models.GatewayAPIIstioEnabled
+    """
+
+    mode: Optional[Union[str, "_models.GatewayAPIIstioEnabled"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Whether to enable Istio as a Gateway API implementation for managed ingress with App Routing.
+     Known values are: \"Enabled\" and \"Disabled\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        mode: Optional[Union[str, "_models.GatewayAPIIstioEnabled"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ManagedClusterAutoUpgradeProfile(_Model):
     """Auto upgrade profile for a managed cluster.
 
@@ -4979,6 +5014,12 @@ class ManagedClusterAzureMonitorProfile(_Model):
      and configure additional scraping for custom targets. See aka.ms/AzureManagedPrometheus for an
      overview.
     :vartype metrics: ~azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileMetrics
+    :ivar app_monitoring: Application Monitoring Profile for Kubernetes Application Container.
+     Collects application logs, metrics and traces through auto-instrumentation of the application
+     using Azure Monitor OpenTelemetry based SDKs. See aka.ms/AzureMonitorApplicationMonitoring for
+     an overview.
+    :vartype app_monitoring:
+     ~azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileAppMonitoring
     """
 
     metrics: Optional["_models.ManagedClusterAzureMonitorProfileMetrics"] = rest_field(
@@ -4988,12 +5029,92 @@ class ManagedClusterAzureMonitorProfile(_Model):
      out-of-the-box Kubernetes infrastructure metrics to send to an Azure Monitor Workspace and
      configure additional scraping for custom targets. See aka.ms/AzureManagedPrometheus for an
      overview."""
+    app_monitoring: Optional["_models.ManagedClusterAzureMonitorProfileAppMonitoring"] = rest_field(
+        name="appMonitoring", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Application Monitoring Profile for Kubernetes Application Container. Collects application logs,
+     metrics and traces through auto-instrumentation of the application using Azure Monitor
+     OpenTelemetry based SDKs. See aka.ms/AzureMonitorApplicationMonitoring for an overview."""
 
     @overload
     def __init__(
         self,
         *,
         metrics: Optional["_models.ManagedClusterAzureMonitorProfileMetrics"] = None,
+        app_monitoring: Optional["_models.ManagedClusterAzureMonitorProfileAppMonitoring"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedClusterAzureMonitorProfileAppMonitoring(_Model):  # pylint: disable=name-too-long
+    """Application Monitoring profile for AKS.
+
+    :ivar auto_instrumentation: Application Monitoring auto-instrumentation for AKS. Deploys a
+     webhook that auto-instruments workloads with Microsoft OpenTelemetry Distros to collect
+     OpenTelemetry metrics, logs, and traces. See `https://aka.ms/AKSAppMonitoringDocs
+     <https://aka.ms/AKSAppMonitoringDocs>`_ and `https://aka.ms/AzureMonitorApplicationMonitoring
+     <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
+    :vartype auto_instrumentation:
+     ~azure.mgmt.containerservice.models.ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation
+    """
+
+    auto_instrumentation: Optional["_models.ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation"] = (
+        rest_field(name="autoInstrumentation", visibility=["read", "create", "update", "delete", "query"])
+    )
+    """Application Monitoring auto-instrumentation for AKS. Deploys a webhook that auto-instruments
+     workloads with Microsoft OpenTelemetry Distros to collect OpenTelemetry metrics, logs, and
+     traces. See `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
+     `https://aka.ms/AzureMonitorApplicationMonitoring
+     <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        auto_instrumentation: Optional[
+            "_models.ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation"
+        ] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedClusterAzureMonitorProfileAppMonitoringAutoInstrumentation(_Model):  # pylint: disable=name-too-long
+    """Application Monitoring auto-instrumentation for AKS. Deploys a webhook that auto-instruments
+    workloads with Microsoft OpenTelemetry Distros to collect OpenTelemetry metrics, logs, and
+    traces. See `https://aka.ms/AKSAppMonitoringDocs <https://aka.ms/AKSAppMonitoringDocs>`_ and
+    `https://aka.ms/AzureMonitorApplicationMonitoring
+    <https://aka.ms/AzureMonitorApplicationMonitoring>`_ for an overview.
+
+    :ivar enabled: Indicates if Application Monitoring Auto-instrumentation is enabled or not.
+    :vartype enabled: bool
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Indicates if Application Monitoring Auto-instrumentation is enabled or not."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
     ) -> None: ...
 
     @overload
@@ -5177,6 +5298,64 @@ class ManagedClusterCostAnalysis(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ManagedClusterHostedSystemProfile(_Model):
+    """Settings for hosted system addons.
+
+    :ivar enabled: Whether to enable hosted system addons for the cluster.
+    :vartype enabled: bool
+    :ivar system_node_subnet_id: The ID of the subnet that will be joined by system nodes managed
+     and hosted by AKS for running critical system addons. This ID must be provided together with
+     ``nodeSubnetID`` and ``apiserverAccessProfile.subnetId``, and all three subnet IDs must belong
+     to the same VNet. If you don’t specify it, AKS will create a subnet in the managed resource
+     group using a default /26 CIDR.
+    :vartype system_node_subnet_id: str
+    :ivar node_subnet_id: The ID of the subnet that will be joined by worker nodes managed by node
+     auto provisioner for running workload pods in your tenant. This must be provided together with
+     ``systemNodeSubnetID`` and ``apiserverAccessProfile.subnetId``, and all three subnet IDs must
+     be in the same VNet. If you don’t specify it, AKS will create a subnet in the managed resource
+     group using a default /16 CIDR.
+    :vartype node_subnet_id: str
+    """
+
+    enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """Whether to enable hosted system addons for the cluster."""
+    system_node_subnet_id: Optional[str] = rest_field(
+        name="systemNodeSubnetID", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ID of the subnet that will be joined by system nodes managed and hosted by AKS for running
+     critical system addons. This ID must be provided together with ``nodeSubnetID`` and
+     ``apiserverAccessProfile.subnetId``, and all three subnet IDs must belong to the same VNet. If
+     you don’t specify it, AKS will create a subnet in the managed resource group using a default
+     /26 CIDR."""
+    node_subnet_id: Optional[str] = rest_field(
+        name="nodeSubnetID", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """The ID of the subnet that will be joined by worker nodes managed by node auto provisioner for
+     running workload pods in your tenant. This must be provided together with
+     ``systemNodeSubnetID`` and ``apiserverAccessProfile.subnetId``, and all three subnet IDs must
+     be in the same VNet. If you don’t specify it, AKS will create a subnet in the managed resource
+     group using a default /16 CIDR."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        enabled: Optional[bool] = None,
+        system_node_subnet_id: Optional[str] = None,
+        node_subnet_id: Optional[str] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class ManagedClusterHTTPProxyConfig(_Model):
     """Cluster HTTP proxy configuration.
 
@@ -5311,6 +5490,9 @@ class ManagedClusterIngressProfile(_Model):
      <https://learn.microsoft.com/en-us/azure/aks/app-routing?tabs=default%2Cdeploy-app-default>`_.
     :vartype web_app_routing:
      ~azure.mgmt.containerservice.models.ManagedClusterIngressProfileWebAppRouting
+    :ivar gateway_api: Settings for the managed Gateway API installation.
+    :vartype gateway_api:
+     ~azure.mgmt.containerservice.models.ManagedClusterIngressProfileGatewayConfiguration
     """
 
     web_app_routing: Optional["_models.ManagedClusterIngressProfileWebAppRouting"] = rest_field(
@@ -5320,12 +5502,53 @@ class ManagedClusterIngressProfile(_Model):
      this feature at
      `https://learn.microsoft.com/en-us/azure/aks/app-routing?tabs=default%2Cdeploy-app-default
      <https://learn.microsoft.com/en-us/azure/aks/app-routing?tabs=default%2Cdeploy-app-default>`_."""
+    gateway_api: Optional["_models.ManagedClusterIngressProfileGatewayConfiguration"] = rest_field(
+        name="gatewayAPI", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Settings for the managed Gateway API installation."""
 
     @overload
     def __init__(
         self,
         *,
         web_app_routing: Optional["_models.ManagedClusterIngressProfileWebAppRouting"] = None,
+        gateway_api: Optional["_models.ManagedClusterIngressProfileGatewayConfiguration"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedClusterIngressProfileGatewayConfiguration(_Model):  # pylint: disable=name-too-long
+    """Configuration for managed Gateway API CRDs. See `https://aka.ms/k8s-gateway-api
+    <https://aka.ms/k8s-gateway-api>`_ for more details.
+
+    :ivar installation: Configuration for the managed Gateway API installation. If not specified,
+     the default is 'Disabled'. See `https://aka.ms/k8s-gateway-api
+     <https://aka.ms/k8s-gateway-api>`_ for more details. Known values are: "Disabled" and
+     "Standard".
+    :vartype installation: str or ~azure.mgmt.containerservice.models.ManagedGatewayType
+    """
+
+    installation: Optional[Union[str, "_models.ManagedGatewayType"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for the managed Gateway API installation. If not specified, the default is
+     'Disabled'. See `https://aka.ms/k8s-gateway-api <https://aka.ms/k8s-gateway-api>`_ for more
+     details. Known values are: \"Disabled\" and \"Standard\"."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        installation: Optional[Union[str, "_models.ManagedGatewayType"]] = None,
     ) -> None: ...
 
     @overload
@@ -5377,6 +5600,11 @@ class ManagedClusterIngressProfileWebAppRouting(_Model):  # pylint: disable=name
 
     :ivar enabled: Whether to enable the Application Routing add-on.
     :vartype enabled: bool
+    :ivar gateway_api_implementations: Configurations for Gateway API providers to be used for
+     managed ingress with App Routing. See `https://aka.ms/k8s-gateway-api
+     <https://aka.ms/k8s-gateway-api>`_ for more information on the Gateway API.
+    :vartype gateway_api_implementations:
+     ~azure.mgmt.containerservice.models.ManagedClusterWebAppRoutingGatewayAPIImplementations
     :ivar dns_zone_resource_ids: Resource IDs of the DNS zones to be associated with the
      Application Routing add-on. Used only when Application Routing add-on is enabled. Public and
      private DNS zones can be in different resource groups, but all public DNS zones must be in the
@@ -5396,6 +5624,12 @@ class ManagedClusterIngressProfileWebAppRouting(_Model):  # pylint: disable=name
 
     enabled: Optional[bool] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """Whether to enable the Application Routing add-on."""
+    gateway_api_implementations: Optional["_models.ManagedClusterWebAppRoutingGatewayAPIImplementations"] = rest_field(
+        name="gatewayAPIImplementations", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configurations for Gateway API providers to be used for managed ingress with App Routing. See
+     `https://aka.ms/k8s-gateway-api <https://aka.ms/k8s-gateway-api>`_ for more information on the
+     Gateway API."""
     dns_zone_resource_ids: Optional[list[str]] = rest_field(
         name="dnsZoneResourceIds", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -5421,6 +5655,7 @@ class ManagedClusterIngressProfileWebAppRouting(_Model):  # pylint: disable=name
         self,
         *,
         enabled: Optional[bool] = None,
+        gateway_api_implementations: Optional["_models.ManagedClusterWebAppRoutingGatewayAPIImplementations"] = None,
         dns_zone_resource_ids: Optional[list[str]] = None,
         nginx: Optional["_models.ManagedClusterIngressProfileNginx"] = None,
     ) -> None: ...
@@ -6352,6 +6587,11 @@ class ManagedClusterProperties(_Model):
      cluster.
     :vartype ai_toolchain_operator_profile:
      ~azure.mgmt.containerservice.models.ManagedClusterAIToolchainOperatorProfile
+    :ivar hosted_system_profile: Settings for hosted system addons. For more information, see
+     `https://aka.ms/aks/automatic/systemcomponents
+     <https://aka.ms/aks/automatic/systemcomponents>`_.
+    :vartype hosted_system_profile:
+     ~azure.mgmt.containerservice.models.ManagedClusterHostedSystemProfile
     :ivar status: Contains read-only information about the Managed Cluster.
     :vartype status: ~azure.mgmt.containerservice.models.ManagedClusterStatus
     """
@@ -6545,6 +6785,12 @@ class ManagedClusterProperties(_Model):
         name="aiToolchainOperatorProfile", visibility=["read", "create", "update", "delete", "query"]
     )
     """AI toolchain operator settings that apply to the whole cluster."""
+    hosted_system_profile: Optional["_models.ManagedClusterHostedSystemProfile"] = rest_field(
+        name="hostedSystemProfile", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Settings for hosted system addons. For more information, see
+     `https://aka.ms/aks/automatic/systemcomponents
+     <https://aka.ms/aks/automatic/systemcomponents>`_."""
     status: Optional["_models.ManagedClusterStatus"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -6590,6 +6836,7 @@ class ManagedClusterProperties(_Model):
         node_provisioning_profile: Optional["_models.ManagedClusterNodeProvisioningProfile"] = None,
         bootstrap_profile: Optional["_models.ManagedClusterBootstrapProfile"] = None,
         ai_toolchain_operator_profile: Optional["_models.ManagedClusterAIToolchainOperatorProfile"] = None,
+        hosted_system_profile: Optional["_models.ManagedClusterHostedSystemProfile"] = None,
         status: Optional["_models.ManagedClusterStatus"] = None,
     ) -> None: ...
 
@@ -7423,6 +7670,41 @@ class ManagedClusterUpgradeProfileProperties(_Model):
         *,
         control_plane_profile: "_models.ManagedClusterPoolUpgradeProfile",
         agent_pool_profiles: list["_models.ManagedClusterPoolUpgradeProfile"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ManagedClusterWebAppRoutingGatewayAPIImplementations(_Model):  # pylint: disable=name-too-long
+    """Configurations for Gateway API providers to be used for managed ingress with App Routing.
+
+    :ivar app_routing_istio: Configuration for using a sidecar-less Istio control plane for managed
+     ingress via the Gateway API with App Routing. See `https://aka.ms/gateway-on-istio
+     <https://aka.ms/gateway-on-istio>`_ for information on using Istio for ingress via the Gateway
+     API.
+    :vartype app_routing_istio: ~azure.mgmt.containerservice.models.ManagedClusterAppRoutingIstio
+    """
+
+    app_routing_istio: Optional["_models.ManagedClusterAppRoutingIstio"] = rest_field(
+        name="appRoutingIstio", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Configuration for using a sidecar-less Istio control plane for managed ingress via the Gateway
+     API with App Routing. See `https://aka.ms/gateway-on-istio <https://aka.ms/gateway-on-istio>`_
+     for information on using Istio for ingress via the Gateway API."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        app_routing_istio: Optional["_models.ManagedClusterAppRoutingIstio"] = None,
     ) -> None: ...
 
     @overload
@@ -8977,7 +9259,7 @@ class SnapshotProperties(_Model):
     :ivar os_sku: Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is
      Linux. The default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >=
      1.25 if OSType is Windows. Known values are: "Ubuntu", "AzureLinux", "AzureLinux3",
-     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", and "Ubuntu2404".
+     "CBLMariner", "Windows2019", "Windows2022", "Ubuntu2204", "Windows2025", and "Ubuntu2404".
     :vartype os_sku: str or ~azure.mgmt.containerservice.models.OSSKU
     :ivar vm_size: The size of the VM.
     :vartype vm_size: str
@@ -9003,7 +9285,7 @@ class SnapshotProperties(_Model):
     """Specifies the OS SKU used by the agent pool. The default is Ubuntu if OSType is Linux. The
      default is Windows2019 when Kubernetes <= 1.24 or Windows2022 when Kubernetes >= 1.25 if OSType
      is Windows. Known values are: \"Ubuntu\", \"AzureLinux\", \"AzureLinux3\", \"CBLMariner\",
-     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", and \"Ubuntu2404\"."""
+     \"Windows2019\", \"Windows2022\", \"Ubuntu2204\", \"Windows2025\", and \"Ubuntu2404\"."""
     vm_size: Optional[str] = rest_field(name="vmSize", visibility=["read"])
     """The size of the VM."""
     enable_fips: Optional[bool] = rest_field(name="enableFIPS", visibility=["read"])
