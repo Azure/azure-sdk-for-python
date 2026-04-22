@@ -1,6 +1,6 @@
 # Release History
 
-## 2.2.0b2 (2026-04-02)
+## 2.2.0b2 (2026-04-22)
 
 ### Features Added
 
@@ -16,6 +16,7 @@
   - Added model `ArmProxyResource`
   - Added model `ClusterPropertiesUpdateParameters`
   - Added enum `CreatedByType`
+  - Added model `PatchProxyResource`
   - Added model `TrackedResource`
 
 ### Breaking Changes
@@ -87,6 +88,7 @@
   - Deleted or renamed model `ApplicationResourceList`
   - Deleted or renamed model `ApplicationTypeResourceList`
   - Deleted or renamed model `ApplicationTypeVersionResourceList`
+  - Deleted or renamed model `ProxyResource`
   - Deleted or renamed model `ServiceResourceList`
   - Deleted or renamed model `VMSizesResult`
 

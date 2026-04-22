@@ -186,72 +186,67 @@ class ApplicationMetricDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ProxyResource(_Model):
-    """The resource model definition for proxy-only resource.
+class Resource(_Model):
+    """Resource.
 
-    :ivar id: Azure resource identifier.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
-    :ivar location: It will be deprecated in New API, resource location depends on the parent
-     resource.
-    :vartype location: str
-    :ivar tags: Azure resource tags.
-    :vartype tags: dict[str, str]
-    :ivar etag: Azure resource etag.
-    :vartype etag: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
     :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
     """
 
     id: Optional[str] = rest_field(visibility=["read"])
-    """Azure resource identifier."""
+    """Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
     name: Optional[str] = rest_field(visibility=["read"])
-    """Azure resource name."""
+    """The name of the resource."""
     type: Optional[str] = rest_field(visibility=["read"])
-    """Azure resource type."""
-    location: Optional[str] = rest_field(visibility=["read", "create"])
-    """It will be deprecated in New API, resource location depends on the parent resource."""
-    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create"])
-    """Azure resource tags."""
-    etag: Optional[str] = rest_field(visibility=["read"])
-    """Azure resource etag."""
-    system_data: Optional["_models.SystemData"] = rest_field(
-        name="systemData", visibility=["read", "create", "update", "delete", "query"]
-    )
-    """Metadata pertaining to creation and last modification of the resource."""
-
-    @overload
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[dict[str, str]] = None,
-        system_data: Optional["_models.SystemData"] = None,
-    ) -> None: ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]) -> None:
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
+     \"Microsoft.Storage/storageAccounts\"."""
+    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
+    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
 
 
-class ApplicationResource(ProxyResource):
+class ArmProxyResource(Resource):
+    """Proxy Resource.
+
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+    :vartype id: str
+    :ivar name: The name of the resource.
+    :vartype name: str
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
+    """
+
+
+class ApplicationResource(ArmProxyResource):
     """The application resource.
 
-    :ivar id: Azure resource identifier.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
+    :ivar properties: The application resource properties.
+    :vartype properties: ~azure.mgmt.servicefabric.models.ApplicationResourceProperties
     :ivar location: It will be deprecated in New API, resource location depends on the parent
      resource.
     :vartype location: str
@@ -259,10 +254,6 @@ class ApplicationResource(ProxyResource):
     :vartype tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
-    :ivar properties: The application resource properties.
-    :vartype properties: ~azure.mgmt.servicefabric.models.ApplicationResourceProperties
     :ivar identity: The managed service identities assigned to this resource.
     :vartype identity: ~azure.mgmt.servicefabric.models.ManagedIdentity
     """
@@ -271,6 +262,12 @@ class ApplicationResource(ProxyResource):
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The application resource properties."""
+    location: Optional[str] = rest_field(visibility=["read", "create"])
+    """It will be deprecated in New API, resource location depends on the parent resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create"])
+    """Azure resource tags."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """Azure resource etag."""
     identity: Optional["_models.ManagedIdentity"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
@@ -293,10 +290,9 @@ class ApplicationResource(ProxyResource):
     def __init__(
         self,
         *,
+        properties: Optional["_models.ApplicationResourceProperties"] = None,
         location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
-        system_data: Optional["_models.SystemData"] = None,
-        properties: Optional["_models.ApplicationResourceProperties"] = None,
         identity: Optional["_models.ManagedIdentity"] = None,
     ) -> None: ...
 
@@ -488,7 +484,64 @@ class ApplicationResourceProperties(ApplicationResourceUpdateProperties):
         super().__init__(*args, **kwargs)
 
 
-class ApplicationResourceUpdate(ProxyResource):
+class PatchProxyResource(_Model):
+    """The resource model definition for proxy-only resource.
+
+    :ivar id: Azure resource identifier.
+    :vartype id: str
+    :ivar name: Azure resource name.
+    :vartype name: str
+    :ivar type: Azure resource type.
+    :vartype type: str
+    :ivar location: It will be deprecated in New API, resource location depends on the parent
+     resource.
+    :vartype location: str
+    :ivar tags: Azure resource tags.
+    :vartype tags: dict[str, str]
+    :ivar etag: Azure resource etag.
+    :vartype etag: str
+    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
+    """
+
+    id: Optional[str] = rest_field(visibility=["read"])
+    """Azure resource identifier."""
+    name: Optional[str] = rest_field(visibility=["read"])
+    """Azure resource name."""
+    type: Optional[str] = rest_field(visibility=["read"])
+    """Azure resource type."""
+    location: Optional[str] = rest_field(visibility=["read", "create"])
+    """It will be deprecated in New API, resource location depends on the parent resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create"])
+    """Azure resource tags."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """Azure resource etag."""
+    system_data: Optional["_models.SystemData"] = rest_field(
+        name="systemData", visibility=["read", "create", "update", "delete", "query"]
+    )
+    """Metadata pertaining to creation and last modification of the resource."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[dict[str, str]] = None,
+        system_data: Optional["_models.SystemData"] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ApplicationResourceUpdate(PatchProxyResource):
     """The application resource for patch operations.
 
     :ivar id: Azure resource identifier.
@@ -565,15 +618,22 @@ class ApplicationResourceUpdate(ProxyResource):
             super().__setattr__(key, value)
 
 
-class ApplicationTypeResource(ProxyResource):
+class ApplicationTypeResource(ArmProxyResource):
     """The application type name resource.
 
-    :ivar id: Azure resource identifier.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
+    :ivar properties: The application type name properties.
+    :vartype properties: ~azure.mgmt.servicefabric.models.ApplicationTypeResourceProperties
     :ivar location: It will be deprecated in New API, resource location depends on the parent
      resource.
     :vartype location: str
@@ -581,16 +641,18 @@ class ApplicationTypeResource(ProxyResource):
     :vartype tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
-    :ivar properties: The application type name properties.
-    :vartype properties: ~azure.mgmt.servicefabric.models.ApplicationTypeResourceProperties
     """
 
     properties: Optional["_models.ApplicationTypeResourceProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The application type name properties."""
+    location: Optional[str] = rest_field(visibility=["read", "create"])
+    """It will be deprecated in New API, resource location depends on the parent resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create"])
+    """Azure resource tags."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """Azure resource etag."""
 
     __flattened_items = ["provisioning_state"]
 
@@ -598,10 +660,9 @@ class ApplicationTypeResource(ProxyResource):
     def __init__(
         self,
         *,
+        properties: Optional["_models.ApplicationTypeResourceProperties"] = None,
         location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
-        system_data: Optional["_models.SystemData"] = None,
-        properties: Optional["_models.ApplicationTypeResourceProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -645,15 +706,22 @@ class ApplicationTypeResourceProperties(_Model):
     """The current deployment or provisioning state, which only appears in the response."""
 
 
-class ApplicationTypeVersionResource(ProxyResource):
+class ApplicationTypeVersionResource(ArmProxyResource):
     """An application type version resource for the specified application type name resource.
 
-    :ivar id: Azure resource identifier.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
+    :ivar properties: The properties of the application type version resource.
+    :vartype properties: ~azure.mgmt.servicefabric.models.ApplicationTypeVersionResourceProperties
     :ivar location: It will be deprecated in New API, resource location depends on the parent
      resource.
     :vartype location: str
@@ -661,16 +729,18 @@ class ApplicationTypeVersionResource(ProxyResource):
     :vartype tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
-    :ivar properties: The properties of the application type version resource.
-    :vartype properties: ~azure.mgmt.servicefabric.models.ApplicationTypeVersionResourceProperties
     """
 
     properties: Optional["_models.ApplicationTypeVersionResourceProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The properties of the application type version resource."""
+    location: Optional[str] = rest_field(visibility=["read", "create"])
+    """It will be deprecated in New API, resource location depends on the parent resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create"])
+    """Azure resource tags."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """Azure resource etag."""
 
     __flattened_items = ["provisioning_state", "app_package_url", "default_parameter_list"]
 
@@ -678,10 +748,9 @@ class ApplicationTypeVersionResource(ProxyResource):
     def __init__(
         self,
         *,
+        properties: Optional["_models.ApplicationTypeVersionResourceProperties"] = None,
         location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
-        system_data: Optional["_models.SystemData"] = None,
-        properties: Optional["_models.ApplicationTypeVersionResourceProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -968,51 +1037,6 @@ class ArmApplicationHealthPolicy(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class Resource(_Model):
-    """Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
-    """
-
-    id: Optional[str] = rest_field(visibility=["read"])
-    """Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}."""
-    name: Optional[str] = rest_field(visibility=["read"])
-    """The name of the resource."""
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The type of the resource. E.g. \"Microsoft.Compute/virtualMachines\" or
-     \"Microsoft.Storage/storageAccounts\"."""
-    system_data: Optional["_models.SystemData"] = rest_field(name="systemData", visibility=["read"])
-    """Azure Resource Manager metadata containing createdBy and modifiedBy information."""
-
-
-class ArmProxyResource(Resource):
-    """Proxy Resource.
-
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
-    """
 
 
 class ArmRollingUpgradeMonitoringPolicy(_Model):
@@ -3446,15 +3470,22 @@ class ServicePlacementPolicyDescription(_Model):
         super().__init__(*args, **kwargs)
 
 
-class ServiceResource(ProxyResource):
+class ServiceResource(ArmProxyResource):
     """The service resource.
 
-    :ivar id: Azure resource identifier.
+    :ivar id: Fully qualified resource ID for the resource. Ex -
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :vartype id: str
-    :ivar name: Azure resource name.
+    :ivar name: The name of the resource.
     :vartype name: str
-    :ivar type: Azure resource type.
+    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+     "Microsoft.Storage/storageAccounts".
     :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
+    :ivar properties: The service resource properties.
+    :vartype properties: ~azure.mgmt.servicefabric.models.ServiceResourceProperties
     :ivar location: It will be deprecated in New API, resource location depends on the parent
      resource.
     :vartype location: str
@@ -3462,25 +3493,26 @@ class ServiceResource(ProxyResource):
     :vartype tags: dict[str, str]
     :ivar etag: Azure resource etag.
     :vartype etag: str
-    :ivar system_data: Metadata pertaining to creation and last modification of the resource.
-    :vartype system_data: ~azure.mgmt.servicefabric.models.SystemData
-    :ivar properties: The service resource properties.
-    :vartype properties: ~azure.mgmt.servicefabric.models.ServiceResourceProperties
     """
 
     properties: Optional["_models.ServiceResourceProperties"] = rest_field(
         visibility=["read", "create", "update", "delete", "query"]
     )
     """The service resource properties."""
+    location: Optional[str] = rest_field(visibility=["read", "create"])
+    """It will be deprecated in New API, resource location depends on the parent resource."""
+    tags: Optional[dict[str, str]] = rest_field(visibility=["read", "create"])
+    """Azure resource tags."""
+    etag: Optional[str] = rest_field(visibility=["read"])
+    """Azure resource etag."""
 
     @overload
     def __init__(
         self,
         *,
+        properties: Optional["_models.ServiceResourceProperties"] = None,
         location: Optional[str] = None,
         tags: Optional[dict[str, str]] = None,
-        system_data: Optional["_models.SystemData"] = None,
-        properties: Optional["_models.ServiceResourceProperties"] = None,
     ) -> None: ...
 
     @overload
@@ -3671,7 +3703,7 @@ class ServiceResourceProperties(ServiceResourcePropertiesBase):
         super().__init__(*args, **kwargs)
 
 
-class ServiceResourceUpdate(ProxyResource):
+class ServiceResourceUpdate(PatchProxyResource):
     """The service resource for patch operations.
 
     :ivar id: Azure resource identifier.
