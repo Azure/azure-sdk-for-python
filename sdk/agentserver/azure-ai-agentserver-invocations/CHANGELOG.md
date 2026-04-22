@@ -1,14 +1,10 @@
 # Release History
 
-## 1.0.0b3 (Unreleased)
+## 1.0.0b3 (2026-04-22)
 
 ### Features Added
 
 - All HTTP responses now include an `x-request-id` header for request correlation, inherited from `RequestIdMiddleware` in `azure-ai-agentserver-core>=2.0.0b3`. The value is resolved from the OpenTelemetry trace ID, an incoming `x-request-id` header, or a generated UUID.
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 

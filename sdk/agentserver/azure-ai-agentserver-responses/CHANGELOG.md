@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0b5 (2026-04-22)
 
 ### Features Added
 
@@ -8,8 +8,6 @@
 - Added `RequestIdMiddleware` (in `azure-ai-agentserver-core`) that sets the `x-request-id` response header on every HTTP response. Value is resolved in priority order: OTEL trace ID → incoming `x-request-id` header → new UUID.
 - Error responses (4xx/5xx) with a JSON `error` body are automatically enriched with `error.additionalInfo.request_id` matching the `x-request-id` response header, enabling client-side error correlation.
 - Foundry storage logging now includes the `traceparent` header (W3C distributed trace ID) in all log messages, enabling correlation between SDK log entries and backend distributed traces.
-
-### Breaking Changes
 
 ### Bugs Fixed
 
