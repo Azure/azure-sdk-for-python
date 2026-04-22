@@ -422,11 +422,6 @@ class StorageResponseHook(HTTPPolicy):
 
 
 def _prepare_content_validation(request: "PipelineRequest") -> None:
-    """Shared request-side logic for content validation.
-
-    Pops 'validate_content' from options, sets up headers/streams for MD5 or CRC64
-    validation, and stores the validation mode in the request context.
-    """
     validate_content = request.context.options.pop("validate_content", False)
     if not validate_content:
         return
@@ -480,11 +475,6 @@ def _validate_content_response(
     response: "PipelineResponse",
     decoder_cls: type,
 ) -> None:
-    """Shared response-side logic for content validation.
-
-    Checks MD5 or CRC64 validation on the response. For CRC64 GET responses, patches
-    ``stream_download`` to wrap the iterator in the given *decoder_cls*.
-    """
     validate_content = response.context.get("validate_content", False)
     if not validate_content:
         return
@@ -631,8 +621,8 @@ class StorageRetryPolicy(HTTPPolicy):
         }
 
     def get_backoff_time(
-        self, settings: Dict[str, Any]
-    ) -> float:  # pylint: disable=unused-argument
+        self, settings: Dict[str, Any]  # pylint: disable=unused-argument
+    ) -> float:
         """Formula for computing the current backoff.
         Should be calculated by child class.
 

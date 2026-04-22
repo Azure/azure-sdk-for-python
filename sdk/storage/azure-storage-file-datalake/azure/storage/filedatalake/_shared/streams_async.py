@@ -110,7 +110,7 @@ class AsyncStructuredMessageDecoder(
         return data
 
     async def read(self, size: int = -1) -> bytes:
-        if self.closed:
+        if self.closed:  # pylint: disable=using-constant-test
             raise ValueError("Stream is closed")
 
         if size == 0 or self._message_offset >= self.message_length:
