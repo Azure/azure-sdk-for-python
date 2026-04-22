@@ -226,20 +226,6 @@ class TestResolveFields:
         resolved = _resolve_fields(fields)
         assert "Addr" not in resolved
 
-    def test_array_items_with_none_filtered(self):
-        fields = {
-            "Tags": ArrayField(
-                type="array",
-                value_array=[
-                    StringField(type="string", value_string="a"),
-                    StringField(type="string", value_string=None),
-                    StringField(type="string", value_string="b"),
-                ],
-            )
-        }
-        resolved = _resolve_fields(fields)
-        assert resolved["Tags"] == ["a", "b"]
-
     def test_empty_fields_dict(self):
         assert _resolve_fields({}) == {}
 

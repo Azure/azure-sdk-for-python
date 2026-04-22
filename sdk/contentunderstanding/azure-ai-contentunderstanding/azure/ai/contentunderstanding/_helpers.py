@@ -166,12 +166,7 @@ def _resolve_field_value(
     if isinstance(field, ArrayField):
         arr = field.value_array
         if arr:
-            items = []
-            for item in arr:
-                val = _resolve_field_value(item)
-                if val is not None:
-                    items.append(val)
-            return items
+            return [_resolve_field_value(item) for item in arr]
         return None
 
     # Leaf field — use the .value convenience property
