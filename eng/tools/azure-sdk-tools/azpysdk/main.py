@@ -194,16 +194,17 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         os.environ["UV_DEFAULT_INDEX"] = "https://pypi.org/simple/"
         logger.info("Installing from PyPI (--pypi flag set)")
     else:
-        using_cfs = False
         if not os.environ.get("PIP_INDEX_URL"):
             os.environ["PIP_INDEX_URL"] = CFS_INDEX_URL
-            using_cfs = True
         if not os.environ.get("UV_DEFAULT_INDEX"):
             os.environ["UV_DEFAULT_INDEX"] = CFS_INDEX_URL
-            using_cfs = True
 
-        if using_cfs:
-            logger.info("Installing from CFS feed: %s", CFS_INDEX_URL)
+        # Log the feed being used
+        if os.environ.get("TOX_PIP_IMPL", None) == "uv":
+            logger.info("Installing from feed: %s", os.environ.get("UV_DEFAULT_INDEX"))
+        else:
+            logger.info("Installing from feed: %s", os.environ.get("PIP_INDEX_URL"))
+
     # --python requires both --isolate and uv
     python_version = getattr(args, "python_version", None)
     if python_version:
