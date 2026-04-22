@@ -514,7 +514,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
             return cast(
                 Dict[str, Any],
                 await self._client.file.create(
-                    content_length=size,
+                    file_content_length=size,
                     metadata=metadata,
                     file_attributes=str(file_attributes) if file_attributes is not None else file_attributes,
                     file_creation_time=_datetime_to_str(file_creation_time),
@@ -524,7 +524,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, StorageAccountHostsMixin): 
                     file_permission_key=permission_key,
                     **file_http_headers,
                     optional_body=data,
-                    optional_content_length=len(data) if data is not None else None,
+                    content_length=len(data) if data is not None else None,
                     lease_id=access_conditions,
                     headers=headers,
                     timeout=timeout,
