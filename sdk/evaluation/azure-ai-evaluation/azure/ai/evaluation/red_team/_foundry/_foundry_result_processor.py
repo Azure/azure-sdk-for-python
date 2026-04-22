@@ -11,6 +11,8 @@ from typing import Any, Dict, List, Optional
 from pyrit.models import AttackOutcome, AttackResult
 from pyrit.scenario import DatasetConfiguration
 
+from azure.ai.evaluation.red_team._utils.objective_utils import extract_risk_subtype
+
 
 def _get_attack_type_name(attack_identifier) -> str:
     """Extract attack type name from attack_identifier regardless of form.
@@ -84,6 +86,10 @@ class FoundryResultProcessor:
         self.dataset_config = dataset_config
         self.risk_category = risk_category
         self._context_lookup: Dict[str, Dict[str, Any]] = {}
+        # Fallback lookup: maps objective seed text -> prompt_group_id.
+        # Used when PyRIT does not propagate prompt_group_id onto conversation
+        # message pieces (see ADO 4792144).
+        self._objective_text_lookup: Dict[str, str] = {}
         self._build_context_lookup()
 
     def _read_context_content(self, seed) -> str:
@@ -153,6 +159,8 @@ class FoundryResultProcessor:
                     "metadata": objective_seed.metadata or {},
                     "objective": objective_seed.value,
                 }
+                if objective_seed.value:
+                    self._objective_text_lookup[str(objective_seed.value).strip()] = str(group_id)
 
     def to_jsonl(self, output_path: str) -> str:
         """Convert scenario results to JSONL format.
@@ -261,10 +269,14 @@ class FoundryResultProcessor:
             if contexts:
                 entry["context"] = json.dumps({"contexts": contexts})
 
-            # Add risk_sub_type if present in metadata
+            # Add risk_sub_type if present in metadata.
+            # Production metadata is nested as metadata["target_harms"][*]["risk-subtype"]
+            # (see ADO 4792144). The legacy flat metadata["risk_subtype"] form
+            # is retained as a fallback for backward compatibility.
             metadata = context_data.get("metadata", {})
-            if metadata.get("risk_subtype"):
-                entry["risk_sub_type"] = metadata["risk_subtype"]
+            risk_sub_type = extract_risk_subtype(context_data) or metadata.get("risk_subtype")
+            if risk_sub_type:
+                entry["risk_sub_type"] = risk_sub_type
 
             # Add attack success based on outcome
             if attack_result.outcome == AttackOutcome.SUCCESS:
@@ -319,6 +331,22 @@ class FoundryResultProcessor:
                 group_id = piece.labels.get("prompt_group_id")
                 if group_id:
                     return str(group_id)
+
+        # Fallback for ADO 4792144: PyRIT does not always propagate
+        # prompt_group_id onto conversation message pieces. Match the
+        # first user-turn text against the objective text lookup so we
+        # can still recover context_data and risk_sub_type.
+        if self._objective_text_lookup:
+            for piece in conversation_pieces:
+                role = getattr(piece, "api_role", None) or str(getattr(piece, "role", ""))
+                if role != "user":
+                    continue
+                text = getattr(piece, "original_value", None) or getattr(piece, "converted_value", None)
+                if not text:
+                    continue
+                group_id = self._objective_text_lookup.get(str(text).strip())
+                if group_id:
+                    return group_id
 
         return None
 

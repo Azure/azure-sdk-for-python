@@ -91,6 +91,10 @@ class RAIServiceScorer(TrueFalseScorer):
         self.dataset_config = dataset_config
         self._use_legacy_endpoint = use_legacy_endpoint
         self._context_lookup: Dict[str, Dict[str, Any]] = {}
+        # Fallback lookup: maps objective seed text -> prompt_group_id.
+        # Used when PyRIT does not propagate prompt_group_id onto message
+        # pieces (see ADO 4792144).
+        self._objective_text_lookup: Dict[str, str] = {}
 
         # Build context lookup from dataset config if provided
         if dataset_config:
@@ -131,8 +135,13 @@ class RAIServiceScorer(TrueFalseScorer):
                 continue
 
             # Find context seeds (non-objective seeds with context metadata)
+            # and an objective seed (for the text-based fallback lookup).
             context_data = []
+            objective_seed = None
             for seed in seed_group.seeds:
+                seed_class = seed.__class__.__name__
+                if seed_class == "SeedObjective":
+                    objective_seed = seed
                 if hasattr(seed, "metadata") and seed.metadata:
                     if seed.metadata.get("is_context") or seed.metadata.get("is_attack_vehicle"):
                         # Read content from file if binary_path, otherwise use value directly
@@ -148,6 +157,8 @@ class RAIServiceScorer(TrueFalseScorer):
             self._context_lookup[str(group_id)] = {
                 "contexts": context_data,
             }
+            if objective_seed and getattr(objective_seed, "value", None):
+                self._objective_text_lookup[str(objective_seed.value).strip()] = str(group_id)
 
     async def _score_piece_async(
         self,
@@ -367,6 +378,19 @@ class RAIServiceScorer(TrueFalseScorer):
             if prompt_group_id and str(prompt_group_id) in self._context_lookup:
                 contexts = self._context_lookup[str(prompt_group_id)].get("contexts", [])
                 return " ".join(c.get("content", "") for c in contexts if c)
+
+        # Fallback for ADO 4792144: when PyRIT does not propagate
+        # prompt_group_id onto the piece, attempt to recover it by matching
+        # the user-turn text against the objective text lookup. The piece
+        # passed here is typically the assistant response, so we walk back
+        # to its conversation's user prompt via memory if available.
+        if self._objective_text_lookup:
+            text = getattr(piece, "original_value", None) or getattr(piece, "converted_value", None)
+            if text:
+                group_id = self._objective_text_lookup.get(str(text).strip())
+                if group_id and group_id in self._context_lookup:
+                    contexts = self._context_lookup[group_id].get("contexts", [])
+                    return " ".join(c.get("content", "") for c in contexts if c)
 
         return ""
 
