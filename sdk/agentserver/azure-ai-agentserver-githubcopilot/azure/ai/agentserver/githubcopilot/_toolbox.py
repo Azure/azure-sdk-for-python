@@ -30,7 +30,7 @@ from copilot.tools import Tool, ToolResult
 logger = logging.getLogger("azure.ai.agentserver.githubcopilot")
 
 # Canary — proves which version of _toolbox.py is deployed.
-_TOOLBOX_BUILD_TAG = "toolbox-v3-shared-client"
+_TOOLBOX_BUILD_TAG = "toolbox-v4-persistent-client"
 logger.info("Toolbox module loaded: %s", _TOOLBOX_BUILD_TAG)
 
 _FOUNDRY_TOOLBOX_FEATURE_HEADER = "Toolboxes=V1Preview"
@@ -182,6 +182,8 @@ class McpBridge:
         self._session_id: Optional[str] = None
         self._req_id = 0
         self._credential = credential
+        # Single persistent client for connection affinity through load balancers.
+        self._client = httpx.AsyncClient(timeout=60.0)
 
     def _next_id(self) -> int:
         self._req_id += 1
@@ -199,10 +201,9 @@ class McpBridge:
             headers["mcp-session-id"] = self._session_id
         return headers
 
-    async def initialize(self, client: Optional[httpx.AsyncClient] = None) -> str:
+    async def initialize(self) -> str:
         """Send MCP ``initialize`` + ``notifications/initialized``.
 
-        :param client: Optional shared HTTP client for connection affinity.
         :returns: The server name from the MCP ``initialize`` response.
         """
         auth_method = "credential" if self._credential else "static-header"
@@ -217,101 +218,86 @@ class McpBridge:
             self._endpoint, len(self._endpoint), auth_method, has_auth, token_info,
         )
 
-        async def _do_init(c: httpx.AsyncClient) -> str:
-            resp = await c.post(
-                self._endpoint,
-                headers=self._headers,
-                json={
-                    "jsonrpc": "2.0",
-                    "id": self._next_id(),
-                    "method": "initialize",
-                    "params": {
-                        "protocolVersion": "2025-03-26",
-                        "capabilities": {},
-                        "clientInfo": {
-                            "name": "agentserver-toolbox-bridge",
-                            "version": "1.0.0",
-                        },
+        resp = await self._client.post(
+            self._endpoint,
+            headers=self._headers,
+            json={
+                "jsonrpc": "2.0",
+                "id": self._next_id(),
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": "2025-03-26",
+                    "capabilities": {},
+                    "clientInfo": {
+                        "name": "agentserver-toolbox-bridge",
+                        "version": "1.0.0",
                     },
                 },
-            )
-            diag_keys = ("x-ms-request-id", "x-ms-client-request-id", "x-request-id", "apim-request-id")
-            diag = {k: resp.headers[k] for k in diag_keys if k in resp.headers}
-            logger.info(
-                "MCP initialize response: status=%d diagnostics=%s",
-                resp.status_code, diag,
-            )
-            resp.raise_for_status()
-            data = resp.json()
-            self._session_id = resp.headers.get("mcp-session-id")
+            },
+        )
+        diag_keys = ("x-ms-request-id", "x-ms-client-request-id", "x-request-id", "apim-request-id")
+        diag = {k: resp.headers[k] for k in diag_keys if k in resp.headers}
+        logger.info(
+            "MCP initialize response: status=%d diagnostics=%s",
+            resp.status_code, diag,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        self._session_id = resp.headers.get("mcp-session-id")
 
-            # Send initialized notification
-            await c.post(
-                self._endpoint,
-                headers=self._request_headers(),
-                json={"jsonrpc": "2.0", "method": "notifications/initialized"},
-            )
+        # Send initialized notification
+        await self._client.post(
+            self._endpoint,
+            headers=self._request_headers(),
+            json={"jsonrpc": "2.0", "method": "notifications/initialized"},
+        )
 
-            return data.get("result", {}).get("serverInfo", {}).get("name", "unknown")
+        return data.get("result", {}).get("serverInfo", {}).get("name", "unknown")
 
-        if client is not None:
-            return await _do_init(client)
-        async with httpx.AsyncClient(timeout=60.0) as c:
-            return await _do_init(c)
-
-    async def list_tools(self, client: Optional[httpx.AsyncClient] = None) -> List[Dict[str, Any]]:
-        """Call ``tools/list`` and return the tools array.
-
-        :param client: Optional shared HTTP client for connection affinity.
-        """
+    async def list_tools(self) -> List[Dict[str, Any]]:
+        """Call ``tools/list`` and return the tools array."""
         req_headers = self._request_headers()
         auth_method = "credential" if self._credential else "static-header"
         has_auth = "Authorization" in req_headers
 
-        async def _do_list(c: httpx.AsyncClient) -> List[Dict[str, Any]]:
-            resp = await c.post(
+        resp = await self._client.post(
+            self._endpoint,
+            headers=req_headers,
+            json={
+                "jsonrpc": "2.0",
+                "id": self._next_id(),
+                "method": "tools/list",
+                "params": {},
+            },
+        )
+        # Capture diagnostic headers before raising
+        diag_keys = ("x-ms-request-id", "x-ms-client-request-id", "x-request-id", "apim-request-id")
+        diag = {k: resp.headers[k] for k in diag_keys if k in resp.headers}
+        logger.info(
+            "MCP tools/list response: status=%d auth_method=%s has_auth=%s "
+            "session_id=%s diagnostics=%s",
+            resp.status_code, auth_method, has_auth,
+            self._session_id, diag,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        if "error" in data:
+            logger.warning("MCP tools/list error: %s diagnostics=%s", data["error"], diag)
+        tools = data.get("result", {}).get("tools", [])
+        if not tools:
+            logger.warning(
+                "MCP tools/list returned 0 tools. url=%s "
+                "Response keys: %s, result keys: %s, "
+                "full_response=%s, all_response_headers=%s, "
+                "diagnostics=%s",
                 self._endpoint,
-                headers=req_headers,
-                json={
-                    "jsonrpc": "2.0",
-                    "id": self._next_id(),
-                    "method": "tools/list",
-                    "params": {},
-                },
+                list(data.keys()),
+                list(data.get("result", {}).keys()),
+                json.dumps(data),
+                dict(resp.headers),
+                diag,
             )
-            # Capture diagnostic headers before raising
-            diag_keys = ("x-ms-request-id", "x-ms-client-request-id", "x-request-id", "apim-request-id")
-            diag = {k: resp.headers[k] for k in diag_keys if k in resp.headers}
-            logger.info(
-                "MCP tools/list response: status=%d auth_method=%s has_auth=%s "
-                "session_id=%s diagnostics=%s",
-                resp.status_code, auth_method, has_auth,
-                self._session_id, diag,
-            )
-            resp.raise_for_status()
-            data = resp.json()
-            if "error" in data:
-                logger.warning("MCP tools/list error: %s diagnostics=%s", data["error"], diag)
-            tools = data.get("result", {}).get("tools", [])
-            if not tools:
-                logger.warning(
-                    "MCP tools/list returned 0 tools. url=%s "
-                    "Response keys: %s, result keys: %s, "
-                    "full_response=%s, all_response_headers=%s, "
-                    "diagnostics=%s",
-                    self._endpoint,
-                    list(data.keys()),
-                    list(data.get("result", {}).keys()),
-                    json.dumps(data),
-                    dict(resp.headers),
-                    diag,
-                )
-            return tools
-
-        if client is not None:
-            return await _do_list(client)
-        async with httpx.AsyncClient(timeout=60.0) as c:
-            return await _do_list(c)
+        return tools
 
     async def call_tool(self, name: str, arguments: Dict[str, Any]) -> str:
         """Call ``tools/call`` and return the text result.
@@ -321,19 +307,18 @@ class McpBridge:
         :returns: Formatted text result.
         """
         logger.info("MCP tools/call: %s args=%s", name, list(arguments.keys()))
-        async with httpx.AsyncClient(timeout=60.0) as client:
-            resp = await client.post(
-                self._endpoint,
-                headers=self._request_headers(),
-                json={
-                    "jsonrpc": "2.0",
-                    "id": self._next_id(),
-                    "method": "tools/call",
-                    "params": {"name": name, "arguments": arguments},
-                },
-            )
-            resp.raise_for_status()
-            data = resp.json()
+        resp = await self._client.post(
+            self._endpoint,
+            headers=self._request_headers(),
+            json={
+                "jsonrpc": "2.0",
+                "id": self._next_id(),
+                "method": "tools/call",
+                "params": {"name": name, "arguments": arguments},
+            },
+        )
+        resp.raise_for_status()
+        data = resp.json()
         if "error" in data:
             err = data["error"]
             logger.warning("MCP tools/call error for %s: %s", name, err)
@@ -342,8 +327,8 @@ class McpBridge:
         return _format_tool_result(result)
 
     async def close(self) -> None:
-        """No-op — HTTP clients are created per-request to avoid event loop issues."""
-        pass
+        """Close the persistent HTTP client."""
+        await self._client.aclose()
 
 
 # ---------------------------------------------------------------------------
@@ -498,12 +483,8 @@ async def connect_toolbox(
         h.setdefault("Foundry-Features", _FOUNDRY_TOOLBOX_FEATURE_HEADER)
 
     bridge = McpBridge(endpoint, h, credential=credential)
-
-    # Use a single HTTP client for initialize + list_tools to maintain
-    # connection affinity through load balancers (e.g. Envoy).
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        server_name = await bridge.initialize(client=client)
-        mcp_tools = await bridge.list_tools(client=client)
+    server_name = await bridge.initialize()
+    mcp_tools = await bridge.list_tools()
     sdk_tools = _make_copilot_tools(bridge, mcp_tools)
 
     display = name or server_name
