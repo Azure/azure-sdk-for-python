@@ -1479,6 +1479,7 @@ class ResultProcessor:
             "passed": passed,
             "failed": failed,
             "errored": errored,
+            "skipped": 0,
         }
 
     @staticmethod

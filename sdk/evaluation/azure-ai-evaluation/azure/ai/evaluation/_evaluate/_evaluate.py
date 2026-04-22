@@ -2651,7 +2651,7 @@ def _update_metric_value(
     metric: str,
     metric_value: Any,
     logger: logging.Logger,
-) -> Tuple[str, str, str]:
+) -> Tuple[Optional[str], Optional[str], Optional[str], Optional[bool]]:
     """Update metric dictionary with the appropriate field based on metric key suffix.
 
     Processes a single metric key-value pair and routes it to the correct output field
@@ -2681,7 +2681,7 @@ def _update_metric_value(
     :param logger: Logger instance for warnings/errors
     :type logger: logging.Logger
     :return: Tuple of (result_name, result_name_child_level, result_name_nested_child_level, derived_passed)
-    :rtype: Tuple[str, str, str]
+    :rtype: Tuple[Optional[str], Optional[str], Optional[str], Optional[bool]]
 
     Example — score key:
         >>> _update_metric_value("quality", {}, "coherence_score", "coherence", 4.5, logger)
