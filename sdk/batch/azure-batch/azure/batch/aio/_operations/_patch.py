@@ -1177,7 +1177,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         return _models.BatchCreateTaskCollectionResult(result_values=submitted_tasks)
 
     @distributed_trace
-    async def get_node_file(
+    async def download_node_file(
         self,
         pool_id: str,
         node_id: str,
@@ -1234,7 +1234,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             }
         )
         kwargs["stream"] = True
-        return await super().get_node_file(*args, **kwargs)
+        return await super().download_node_file(*args, **kwargs)
 
     @distributed_trace
     async def get_node_file_properties(

@@ -1385,7 +1385,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         return get_response
 
     @distributed_trace
-    def get_task_file(
+    def download_task_file(
         self,
         job_id: str,
         task_id: str,
@@ -1443,7 +1443,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             }
         )
         kwargs["stream"] = True
-        return super().get_task_file(*args, **kwargs)
+        return super().download_task_file(*args, **kwargs)
 
 
 def patch_sdk():

@@ -277,8 +277,8 @@
         "azure.batch.aio.BatchClient.reactivate_task": "Client.BatchClient.reactivateTask",
         "azure.batch.BatchClient.delete_task_file": "Client.BatchClient.deleteTaskFile",
         "azure.batch.aio.BatchClient.delete_task_file": "Client.BatchClient.deleteTaskFile",
-        "azure.batch.BatchClient.get_task_file": "Client.BatchClient.getTaskFile",
-        "azure.batch.aio.BatchClient.get_task_file": "Client.BatchClient.getTaskFile",
+        "azure.batch.BatchClient.download_task_file": "Client.BatchClient.getTaskFile",
+        "azure.batch.aio.BatchClient.download_task_file": "Client.BatchClient.getTaskFile",
         "azure.batch.BatchClient.list_task_files": "Client.BatchClient.listTaskFiles",
         "azure.batch.aio.BatchClient.list_task_files": "Client.BatchClient.listTaskFiles",
         "azure.batch.BatchClient.create_node_user": "Client.BatchClient.createNodeUser",
@@ -305,8 +305,8 @@
         "azure.batch.aio.BatchClient.list_node_extensions": "Client.BatchClient.listNodeExtensions",
         "azure.batch.BatchClient.delete_node_file": "Client.BatchClient.deleteNodeFile",
         "azure.batch.aio.BatchClient.delete_node_file": "Client.BatchClient.deleteNodeFile",
-        "azure.batch.BatchClient.get_node_file": "Client.BatchClient.getNodeFile",
-        "azure.batch.aio.BatchClient.get_node_file": "Client.BatchClient.getNodeFile",
+        "azure.batch.BatchClient.download_node_file": "Client.BatchClient.getNodeFile",
+        "azure.batch.aio.BatchClient.download_node_file": "Client.BatchClient.getNodeFile",
         "azure.batch.BatchClient.list_node_files": "Client.BatchClient.listNodeFiles",
         "azure.batch.aio.BatchClient.list_node_files": "Client.BatchClient.listNodeFiles"
     }
