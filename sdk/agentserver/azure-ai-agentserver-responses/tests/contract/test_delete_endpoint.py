@@ -42,7 +42,7 @@ def _delayed_response_handler(request: Any, context: Any, cancellation_signal: A
 
 def _build_client(handler: Any | None = None) -> TestClient:
     app = ResponsesAgentServerHost()
-    app.create_handler(handler or _noop_response_handler)
+    app.response_handler(handler or _noop_response_handler)
     return TestClient(app)
 
 
@@ -111,7 +111,7 @@ def test_delete__deletes_stored_completed_response() -> None:
     assert delete_response.status_code == 200
     payload = delete_response.json()
     assert payload.get("id") == response_id
-    assert payload.get("object") == "response.deleted"
+    assert payload.get("object") == "response"
     assert payload.get("deleted") is True
 
 
@@ -135,16 +135,21 @@ def test_delete__returns_400_for_background_in_flight_response() -> None:
     assert delete_response.status_code == 400
     payload = delete_response.json()
     assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
     assert payload["error"].get("message") == "Cannot delete an in-flight response."
 
 
 def test_delete__returns_404_for_unknown_response_id() -> None:
-    client = _build_client()
+    from azure.ai.agentserver.responses._id_generator import IdGenerator
 
-    delete_response = client.delete("/responses/resp_does_not_exist")
+    client = _build_client()
+    unknown_id = IdGenerator.new_response_id()
+
+    delete_response = client.delete(f"/responses/{unknown_id}")
     assert delete_response.status_code == 404
     payload = delete_response.json()
     assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
 
 
 def test_delete__returns_404_for_store_false_response() -> None:
@@ -167,9 +172,11 @@ def test_delete__returns_404_for_store_false_response() -> None:
     assert delete_response.status_code == 404
     payload = delete_response.json()
     assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
 
 
-def test_delete__get_returns_400_after_deletion() -> None:
+def test_delete__get_returns_404_after_deletion() -> None:
+    """Post-delete: GET on a deleted response returns 404 per spec."""
     client = _build_client()
 
     create_response = client.post(
@@ -189,10 +196,10 @@ def test_delete__get_returns_400_after_deletion() -> None:
     assert delete_response.status_code == 200
 
     get_response = client.get(f"/responses/{response_id}")
-    assert get_response.status_code == 400
+    assert get_response.status_code == 404
     payload = get_response.json()
     assert payload["error"].get("type") == "invalid_request_error"
-    assert "deleted" in (payload["error"].get("message") or "").lower()
+    assert payload["error"].get("code") == "invalid_request_error"
 
 
 def test_delete__cancel_returns_404_after_deletion() -> None:
@@ -218,6 +225,7 @@ def test_delete__cancel_returns_404_after_deletion() -> None:
     assert cancel_response.status_code == 404
     payload = cancel_response.json()
     assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
 
 
 def _make_blocking_sync_response_handler(started_gate: EventGate, release_gate: threading.Event):
@@ -244,7 +252,7 @@ def test_delete__returns_404_for_non_bg_in_flight_response() -> None:
     release_gate = threading.Event()
     handler = _make_blocking_sync_response_handler(started_gate, release_gate)
     app = ResponsesAgentServerHost()
-    app.create_handler(handler)
+    app.response_handler(handler)
     client = TestClient(app)
     response_id = IdGenerator.new_response_id()
 
@@ -315,7 +323,7 @@ def test_delete__deletes_stored_failed_response() -> None:
     assert delete_response.status_code == 200
     payload = delete_response.json()
     assert payload.get("id") == response_id
-    assert payload.get("object") == "response.deleted"
+    assert payload.get("object") == "response"
     assert payload.get("deleted") is True
 
 
@@ -349,7 +357,7 @@ def test_delete__deletes_stored_incomplete_response() -> None:
     assert delete_response.status_code == 200
     payload = delete_response.json()
     assert payload.get("id") == response_id
-    assert payload.get("object") == "response.deleted"
+    assert payload.get("object") == "response"
     assert payload.get("deleted") is True
 
 
@@ -386,7 +394,7 @@ def test_delete__deletes_stored_cancelled_response() -> None:
     assert delete_response.status_code == 200
     payload = delete_response.json()
     assert payload.get("id") == response_id
-    assert payload.get("object") == "response.deleted"
+    assert payload.get("object") == "response"
     assert payload.get("deleted") is True
 
 
@@ -423,6 +431,7 @@ def test_delete__second_delete_returns_404() -> None:
     )
     payload = second_delete.json()
     assert payload["error"].get("type") == "invalid_request_error"
+    assert payload["error"].get("code") == "invalid_request_error"
 
 
 def test_delete__deletes_completed_background_response() -> None:
@@ -462,6 +471,6 @@ def test_delete__deletes_completed_background_response() -> None:
     payload = delete.json()
     assert payload["id"] == response_id
     assert payload["deleted"] is True
-    assert payload.get("object") in {"response.deleted", "response"}, (
-        f"DELETE result must include a recognised object type, got: {payload.get('object')}"
+    assert payload.get("object") == "response", (
+        f"DELETE result must have object='response', got: {payload.get('object')}"
     )

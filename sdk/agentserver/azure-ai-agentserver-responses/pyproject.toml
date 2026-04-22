@@ -18,10 +18,10 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "azure-ai-agentserver-core>=2.0.0b1",
+    "azure-ai-agentserver-core>=2.0.0b2",
     "azure-core>=1.30.0",
     "isodate>=0.6.1",
-    "aiohttp>=3.10.0",
+    "aiohttp>=3.10.0,<4.0.0",
 ]
 keywords = ["azure", "azure sdk"]
 
@@ -73,3 +73,7 @@ pythonpath = ["."]
 azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
 azure-core = { path = "../../core/azure-core" }
 azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }
+
+[tool.azure-sdk-build]
+verifytypes = false
+latestdependency = false

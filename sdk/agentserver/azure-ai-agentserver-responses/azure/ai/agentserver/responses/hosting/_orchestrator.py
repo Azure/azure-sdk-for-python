@@ -33,7 +33,6 @@ from ..models.runtime import (
 )
 from ..store._base import ResponseProviderProtocol, ResponseStreamProviderProtocol
 from ..streaming._helpers import (
-    EVENT_TYPE,
     _apply_stream_event_defaults,
     _build_events,
     _coerce_handler_event,
@@ -52,6 +51,40 @@ if TYPE_CHECKING:
 
 
 logger = logging.getLogger("azure.ai.agentserver")
+
+
+async def _resolve_input_items_for_persistence(
+    context: "ResponseContext | None",
+    fallback_items: list[generated_models.OutputItem] | None,
+) -> list[generated_models.OutputItem] | None:
+    """Resolve ``item_reference`` inputs via the provider before persisting.
+
+    When the caller's input includes ``ItemReferenceParam`` entries (references
+    to previously-stored items), this function batch-resolves them through the
+    provider and returns concrete :class:`OutputItem` instances suitable for
+    storage.  If reference resolution is unavailable (no provider or failure),
+    falls back to *fallback_items* — the pre-expanded list that already has
+    references stripped.
+
+    :param context: The :class:`ResponseContext` for this request.
+    :type context: ResponseContext | None
+    :param fallback_items: Pre-expanded input items (references dropped).
+    :type fallback_items: list[OutputItem] | None
+    :return: Resolved output items, or ``None`` if the list is empty.
+    :rtype: list[OutputItem] | None
+    """
+    if context is not None:
+        try:
+            resolved = await context._get_input_items_for_persistence()  # pylint: disable=protected-access
+            if resolved:
+                return list(resolved)
+            return None
+        except Exception:  # pylint: disable=broad-exception-caught
+            logger.debug(
+                "item_reference resolution failed; falling back to pre-expanded items",
+                exc_info=True,
+            )
+    return list(fallback_items) if fallback_items else None
 
 
 def _check_first_event_contract(normalized: generated_models.ResponseStreamEvent, response_id: str) -> str | None:
@@ -126,8 +159,8 @@ async def _iter_with_winddown(
 
 _OUTPUT_ITEM_EVENT_TYPES: frozenset[str] = frozenset(
     {
-        EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value,
-        EVENT_TYPE.RESPONSE_OUTPUT_ITEM_DONE.value,
+        generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value,
+        generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_DONE.value,
     }
 )
 
@@ -135,11 +168,11 @@ _OUTPUT_ITEM_EVENT_TYPES: frozenset[str] = frozenset(
 # Used by FR-008a output manipulation detection.
 _RESPONSE_SNAPSHOT_TYPES: frozenset[str] = frozenset(
     {
-        EVENT_TYPE.RESPONSE_IN_PROGRESS.value,
-        EVENT_TYPE.RESPONSE_COMPLETED.value,
-        EVENT_TYPE.RESPONSE_FAILED.value,
-        EVENT_TYPE.RESPONSE_INCOMPLETE.value,
-        EVENT_TYPE.RESPONSE_QUEUED.value,
+        generated_models.ResponseStreamEventType.RESPONSE_IN_PROGRESS.value,
+        generated_models.ResponseStreamEventType.RESPONSE_COMPLETED.value,
+        generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+        generated_models.ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
+        generated_models.ResponseStreamEventType.RESPONSE_QUEUED.value,
     }
 )
 
@@ -181,6 +214,7 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
     agent_session_id: str | None = None,
     conversation_id: str | None = None,
     history_limit: int = 100,
+    runtime_state: _RuntimeState | None = None,
 ) -> None:
     """Execute a non-stream handler in the background and update the execution record.
 
@@ -214,6 +248,8 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
     :keyword type conversation_id: str | None
     :keyword history_limit: Maximum number of history items to include.
     :keyword type history_limit: int
+    :keyword runtime_state: Runtime state tracker for eager eviction after persist.
+    :keyword type runtime_state: _RuntimeState | None
     :return: None
     :rtype: None
     """
@@ -295,8 +331,9 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                                 if record.previous_response_id
                                 else None
                             )
+                            _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
                             await provider.create_response(
-                                _response_obj, record.input_items or None, _history_ids, isolation=_isolation
+                                _response_obj, _resolved_items, _history_ids, isolation=_isolation
                             )
                             _provider_created = True
                         except Exception:  # pylint: disable=broad-exception-caught
@@ -306,9 +343,20 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
                                 exc_info=True,
                             )
                     record.response_created_signal.set()
+                    # Yield to the event loop so run_background's
+                    # ``await signal.wait()`` can resume and capture the
+                    # in_progress snapshot *before* the handler continues
+                    # to terminal state.  Without this, handlers that yield
+                    # events synchronously (no await between yields) can
+                    # run to completion — including transition_to("completed"),
+                    # persistence, and eager eviction — in a single
+                    # uninterrupted coroutine run, causing the POST response
+                    # to return "completed" instead of "in_progress".
+                    await asyncio.sleep(0)
                 else:
                     # Track output_item.added events for FR-008a
-                    if normalized.get("type") == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
+                    _item_added = generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED
+                    if normalized.get("type") == _item_added.value:
                         output_item_count += 1
 
                     # FR-008a: detect direct Output manipulation on response.* events
@@ -401,6 +449,9 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
             agent_session_id=agent_session_id,
             conversation_id=conversation_id,
         )
+        # Stamp background so the provider fallback can enforce B1 checks
+        # after eager eviction removes the in-memory record.
+        response_payload["background"] = record.mode_flags.background
 
         resolved_status = response_payload.get("status")
         if record.status != "cancelled":
@@ -415,24 +466,31 @@ async def _run_background_non_stream(  # pylint: disable=too-many-locals,too-man
     finally:
         # Always unblock run_background (idempotent if already set)
         record.response_created_signal.set()
+        # Stamp mode flags so the provider fallback can enforce B1/B2 checks
+        # after eager eviction removes the in-memory record.  This covers
+        # all code paths (normal completion, handler failure, cancellation).
+        if record.response is not None:
+            record.response.background = record.mode_flags.background
         # Persist terminal state update via provider (bg non-stream: update after runner completes)
         if store and provider is not None and record.status not in {"cancelled"} and record.response is not None:
+            _isolation = context.isolation if context else None
             try:
                 if _provider_created:
-                    await provider.update_response(record.response)
+                    await provider.update_response(record.response, isolation=_isolation)
                 else:
                     # Response was never created (handler yielded nothing or
                     # failed before response.created) — create instead of update.
-                    _isolation = context.isolation if context else None
-                    await provider.create_response(
-                        record.response, record.input_items or None, None, isolation=_isolation
-                    )
+                    _resolved_items = await _resolve_input_items_for_persistence(context, record.input_items)
+                    await provider.create_response(record.response, _resolved_items, None, isolation=_isolation)
             except Exception:  # pylint: disable=broad-exception-caught
                 logger.warning(
                     "Best-effort provider persist failed at finalization (response_id=%s)",
                     response_id,
                     exc_info=True,
                 )
+        # Eager eviction: free memory once terminal state is reached (or store=False).
+        if runtime_state is not None and record.is_terminal:
+            await runtime_state.try_evict(response_id)
 
 
 def _refresh_background_status(record: ResponseExecution) -> None:
@@ -510,9 +568,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
 
     _TERMINAL_SSE_TYPES: frozenset[str] = frozenset(
         {
-            EVENT_TYPE.RESPONSE_COMPLETED.value,
-            EVENT_TYPE.RESPONSE_FAILED.value,
-            EVENT_TYPE.RESPONSE_INCOMPLETE.value,
+            generated_models.ResponseStreamEventType.RESPONSE_COMPLETED.value,
+            generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
+            generated_models.ResponseStreamEventType.RESPONSE_INCOMPLETE.value,
         }
     )
 
@@ -619,7 +677,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :rtype: ResponseStreamEvent
         """
         cancel_event: dict[str, Any] = {
-            "type": EVENT_TYPE.RESPONSE_FAILED.value,
+            "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
             "response": _build_cancelled_response(ctx.response_id, ctx.agent_reference, ctx.model).as_dict(),
         }
         return await self._normalize_and_append(ctx, state, cancel_event)
@@ -640,7 +698,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :rtype: ResponseStreamEvent
         """
         failed_event: dict[str, Any] = {
-            "type": EVENT_TYPE.RESPONSE_FAILED.value,
+            "type": generated_models.ResponseStreamEventType.RESPONSE_FAILED.value,
             "response": {
                 "id": ctx.response_id,
                 "object": "response",
@@ -675,6 +733,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
         )
+        # Stamp mode flags so the provider fallback can enforce B1/B2 checks
+        # after eager eviction removes the in-memory record.
+        initial_payload["background"] = True
         initial_status = initial_payload.get("status")
         if not isinstance(initial_status, str):
             initial_status = "in_progress"
@@ -685,6 +746,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             cancel_signal=ctx.cancellation_signal,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
+            chat_isolation_key=ctx.chat_isolation_key,
         )
         execution.set_response_snapshot(generated_models.ResponseObject(initial_payload))
         execution.subject = _ResponseEventSubject()
@@ -705,8 +769,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 if ctx.previous_response_id
                 else None
             )
+            _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
             await self._provider.create_response(
-                _initial_response_obj, ctx.input_items or None, _history_ids, isolation=_isolation
+                _initial_response_obj, _resolved_items, _history_ids, isolation=_isolation
             )
 
     async def _process_handler_events(  # pylint: disable=too-many-return-statements
@@ -899,7 +964,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                 # appended to the state machine before we emit response.failed.
                 _pre_coerced = _coerce_handler_event(raw)
                 _pre_type = _pre_coerced.get("type", "")
-                if _pre_type == EVENT_TYPE.RESPONSE_OUTPUT_ITEM_ADDED.value:
+                if _pre_type == generated_models.ResponseStreamEventType.RESPONSE_OUTPUT_ITEM_ADDED.value:
                     output_item_count += 1
                 if _pre_type in _RESPONSE_SNAPSHOT_TYPES:
                     _pre_response = _pre_coerced.get("response") or {}
@@ -976,6 +1041,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         # --- Path A: BG with pre-existing record (normal bg+stream completion) ---
         if ctx.background and ctx.store and state.bg_record is not None:
             record = state.bg_record
+            events: list[generated_models.ResponseStreamEvent] = []
 
             # B11: When status is already "cancelled" (set by the cancel endpoint),
             # skip snapshot/status update — cancellation always wins.  But still
@@ -1022,6 +1088,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             # Always persist — including cancelled state — so the durable store
             # reflects the final status.
             if record.mode_flags.store and record.response is not None:
+                # Stamp mode flags so the provider fallback can enforce B1/B2 checks
+                # after eager eviction removes the in-memory record.
+                record.response.background = record.mode_flags.background
                 _isolation = ctx.context.isolation if ctx.context else None
                 try:
                     await self._provider.update_response(record.response, isolation=_isolation)
@@ -1031,12 +1100,12 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         ctx.response_id,
                         exc_info=True,
                     )
-                # Persist SSE events for replay after process restart (not needed for cancelled)
-                if record.status != "cancelled" and self._stream_provider is not None and state.handler_events:
+                # Persist SSE events for replay after process restart (not needed for cancelled).
+                # Use ``events`` (not ``state.handler_events``) so that fallback events
+                # generated by ``_build_events`` are saved when the handler yielded nothing.
+                if record.status != "cancelled" and self._stream_provider is not None and events:
                     try:
-                        await self._stream_provider.save_stream_events(
-                            ctx.response_id, state.handler_events, isolation=_isolation
-                        )
+                        await self._stream_provider.save_stream_events(ctx.response_id, events, isolation=_isolation)
                     except Exception:  # pylint: disable=broad-exception-caught
                         logger.warning(
                             "Best-effort stream event persistence failed (response_id=%s)",
@@ -1052,6 +1121,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     await record.subject.complete()
                 except Exception:  # pylint: disable=broad-exception-caught
                     pass  # best effort
+            # Eager eviction: free memory once terminal state is reached.
+            if record.is_terminal:
+                await self._runtime_state.try_evict(ctx.response_id)
             return
 
         # --- Path B: No pre-existing record ---
@@ -1084,6 +1156,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
         )
+        # Stamp background so the provider fallback can enforce B1 checks
+        # after eager eviction removes the in-memory record.
+        response_payload["background"] = ctx.background
         resolved_status = response_payload.get("status")
         final_status: ResponseStatus = (
             cast(ResponseStatus, resolved_status) if isinstance(resolved_status, str) else "completed"
@@ -1105,13 +1180,16 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             cancel_signal=ctx.cancellation_signal if ctx.background else None,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
+            chat_isolation_key=ctx.chat_isolation_key,
         )
         execution.set_response_snapshot(generated_models.ResponseObject(response_payload))
         await self._runtime_state.add(execution)
 
         if ctx.store:
+            _isolation = ctx.context.isolation if ctx.context else None
             try:
-                _isolation = ctx.context.isolation if ctx.context else None
                 _history_ids = (
                     await self._provider.get_history_item_ids(
                         ctx.previous_response_id,
@@ -1122,9 +1200,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     if ctx.previous_response_id
                     else None
                 )
+                _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
                 await self._provider.create_response(
                     generated_models.ResponseObject(response_payload),
-                    ctx.input_items or None,
+                    _resolved_items,
                     _history_ids,
                     isolation=_isolation,
                 )
@@ -1135,7 +1214,22 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     exc_info=True,
                 )
 
+            # Persist SSE events for replay after eager eviction (bg+stream only).
+            if ctx.background and self._stream_provider is not None and events:
+                try:
+                    await self._stream_provider.save_stream_events(ctx.response_id, events, isolation=_isolation)
+                except Exception:  # pylint: disable=broad-exception-caught
+                    logger.warning(
+                        "Best-effort stream event persistence failed (response_id=%s)",
+                        ctx.response_id,
+                        exc_info=True,
+                    )
+
         ctx.span.end(state.captured_error)
+
+        # Eager eviction: free memory once terminal state is reached (or store=False).
+        if execution.is_terminal:
+            await self._runtime_state.try_evict(ctx.response_id)
 
     # ------------------------------------------------------------------
     # Public execution methods
@@ -1174,6 +1268,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         """
         new_stream_counter()
         state = _PipelineState()
+        _handler_name = getattr(self._create_fn, "__qualname__", None) or getattr(
+            self._create_fn, "__name__", "unknown"
+        )
+        logger.info("Invoking handler %s for response %s", _handler_name, ctx.response_id)
         handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
 
         # Helper: route to the right finalize method based on the request semantics
@@ -1337,6 +1435,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
         :raises _HandlerError: If the handler raises during iteration.
         """
         state = _PipelineState()
+        _handler_name = getattr(self._create_fn, "__qualname__", None) or getattr(
+            self._create_fn, "__name__", "unknown"
+        )
+        logger.info("Invoking handler %s for response %s", _handler_name, ctx.response_id)
         handler_iterator = self._create_fn(ctx.parsed, ctx.context, ctx.cancellation_signal)
         # _process_handler_events handles all error paths (B8, S-035, S-015, B11).
         # run_sync only needs to exhaust the generator for state.handler_events side-effects.
@@ -1371,6 +1473,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             agent_session_id=ctx.agent_session_id,
             conversation_id=ctx.conversation_id,
         )
+        # Stamp background so the provider fallback can enforce B1 checks
+        # after eager eviction removes the in-memory record.
+        response_payload["background"] = ctx.background
         resolved_status = response_payload.get("status")
         status = cast(ResponseStatus, resolved_status) if isinstance(resolved_status, str) else "completed"
 
@@ -1381,6 +1486,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             input_items=deepcopy(ctx.input_items),
             previous_response_id=ctx.previous_response_id,
             response_context=ctx.context,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
+            chat_isolation_key=ctx.chat_isolation_key,
         )
         record.set_response_snapshot(generated_models.ResponseObject(response_payload))
 
@@ -1404,9 +1512,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     if ctx.previous_response_id
                     else None
                 )
+                _resolved_items = await _resolve_input_items_for_persistence(ctx.context, ctx.input_items)
                 await self._provider.create_response(
                     _response_obj,
-                    ctx.input_items or None,
+                    _resolved_items,
                     _history_ids,
                     isolation=_isolation,
                 )
@@ -1416,6 +1525,10 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                     ctx.response_id,
                     exc_info=True,
                 )
+
+        # Eager eviction: free memory once terminal state is persisted (or store=False).
+        if record.is_terminal:
+            await self._runtime_state.try_evict(ctx.response_id)
 
         ctx.span.end(None)
         return _RuntimeState.to_snapshot(record)
@@ -1444,6 +1557,9 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
             cancel_signal=ctx.cancellation_signal,
             initial_model=ctx.model,
             initial_agent_reference=ctx.agent_reference,
+            agent_session_id=ctx.agent_session_id,
+            conversation_id=ctx.conversation_id,
+            chat_isolation_key=ctx.chat_isolation_key,
         )
 
         # Register so GET can observe in-flight state
@@ -1473,6 +1589,7 @@ class _ResponseOrchestrator:  # pylint: disable=too-many-instance-attributes
                         agent_session_id=ctx.agent_session_id,
                         conversation_id=ctx.conversation_id,
                         history_limit=self._runtime_options.default_fetch_history_count,
+                        runtime_state=self._runtime_state,
                     )
             except asyncio.CancelledError:
                 pass  # event-loop teardown; background work already done
