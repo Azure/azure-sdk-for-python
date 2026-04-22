@@ -1373,7 +1373,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         return get_response
 
     @distributed_trace
-    async def get_task_file(
+    async def download_task_file(
         self,
         job_id: str,
         task_id: str,
@@ -1431,7 +1431,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             }
         )
         kwargs["stream"] = True
-        return await super().get_task_file(*args, **kwargs)
+        return await super().download_task_file(*args, **kwargs)
 
 
 class _TaskWorkflowManager:
