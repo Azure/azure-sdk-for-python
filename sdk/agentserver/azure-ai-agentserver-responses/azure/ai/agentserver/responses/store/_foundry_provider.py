@@ -14,6 +14,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
 
 from .._version import VERSION
+from .._platform_headers import CHAT_ISOLATION_KEY, USER_ISOLATION_KEY
 from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-defined]
 from ._foundry_errors import raise_for_storage_error
 from ._foundry_logging_policy import FoundryStorageLoggingPolicy
@@ -33,8 +34,6 @@ if TYPE_CHECKING:
 
 _FOUNDRY_TOKEN_SCOPE = "https://ai.azure.com/.default"
 _JSON_CONTENT_TYPE = "application/json; charset=utf-8"
-_USER_ISOLATION_HEADER = "x-agent-user-isolation-key"
-_CHAT_ISOLATION_HEADER = "x-agent-chat-isolation-key"
 
 
 class _ServerVersionUserAgentPolicy(SansIOHTTPPolicy):  # type: ignore[type-arg]
@@ -79,9 +78,9 @@ def _apply_isolation_headers(request: HttpRequest, isolation: IsolationContext |
     if isolation is None:
         return
     if isolation.user_key is not None:
-        request.headers[_USER_ISOLATION_HEADER] = isolation.user_key
+        request.headers[USER_ISOLATION_KEY] = isolation.user_key
     if isolation.chat_key is not None:
-        request.headers[_CHAT_ISOLATION_HEADER] = isolation.chat_key
+        request.headers[CHAT_ISOLATION_KEY] = isolation.chat_key
 
 
 class FoundryStorageProvider:
