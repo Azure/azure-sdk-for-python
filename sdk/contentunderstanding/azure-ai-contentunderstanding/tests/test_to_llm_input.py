@@ -226,6 +226,34 @@ class TestResolveFields:
         resolved = _resolve_fields(fields)
         assert "Addr" not in resolved
 
+    def test_nested_object_within_object(self):
+        """Object containing another object: BillingAddress → Street → {Name, Number}."""
+        fields = {
+            "BillingAddress": ObjectField(
+                type="object",
+                value_object={
+                    "City": StringField(type="string", value_string="Redmond"),
+                    "Street": ObjectField(
+                        type="object",
+                        value_object={
+                            "Name": StringField(type="string", value_string="Main St"),
+                            "Number": IntegerField(type="integer", value_integer=123),
+                        },
+                    ),
+                },
+            )
+        }
+        resolved = _resolve_fields(fields)
+        assert resolved == {
+            "BillingAddress": {
+                "City": "Redmond",
+                "Street": {
+                    "Name": "Main St",
+                    "Number": 123,
+                },
+            }
+        }
+
     def test_empty_fields_dict(self):
         assert _resolve_fields({}) == {}
 
