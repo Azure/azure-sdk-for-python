@@ -73,6 +73,10 @@ async def upload_data_chunks(
     if parallel and "modified_access_conditions" in kwargs:
         # Access conditions do not work with parallelism
         kwargs["modified_access_conditions"] = None
+    if parallel:
+        # Access conditions do not work with parallelism
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
 
     uploader = uploader_class(
         service=service,
@@ -119,6 +123,10 @@ async def upload_substream_blocks(
     if parallel and "modified_access_conditions" in kwargs:
         # Access conditions do not work with parallelism
         kwargs["modified_access_conditions"] = None
+    if parallel:
+        # Access conditions do not work with parallelism
+        kwargs.pop("etag", None)
+        kwargs.pop("match_condition", None)
     uploader = uploader_class(
         service=service,
         total_size=total_size,
