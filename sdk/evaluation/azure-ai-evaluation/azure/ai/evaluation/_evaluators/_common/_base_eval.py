@@ -637,17 +637,28 @@ class EvaluatorBase(ABC, Generic[T_EvalValue]):
                                 category=ErrorCategory.INVALID_VALUE,
                             )
 
-                        result[threshold_key] = threshold_value
-                        if self._higher_is_better:
-                            if float(score_value) >= threshold_value:
-                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
+                        # For boolean scoring (0/1): derive passed directly from score
+                        # instead of comparing against a threshold designed for wider scales.
+                        if float(score_value) in (0.0, 1.0) and float(threshold_value) > 1:
+                            result[threshold_key] = threshold_value
+                            if self._higher_is_better:
+                                # desirable_direction=increase: 1=pass, 0=fail
+                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[float(score_value) == 1.0]
                             else:
-                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
+                                # desirable_direction=decrease: 0=pass, 1=fail
+                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[float(score_value) == 0.0]
                         else:
-                            if float(score_value) <= threshold_value:
-                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
+                            result[threshold_key] = threshold_value
+                            if self._higher_is_better:
+                                if float(score_value) >= threshold_value:
+                                    result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
+                                else:
+                                    result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
                             else:
-                                result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
+                                if float(score_value) <= threshold_value:
+                                    result[result_key] = EVALUATION_PASS_FAIL_MAPPING[True]
+                                else:
+                                    result[result_key] = EVALUATION_PASS_FAIL_MAPPING[False]
             except Exception as e:
                 logger.warning(f"Error calculating binary result: {e}")
             per_turn_results.append(result)

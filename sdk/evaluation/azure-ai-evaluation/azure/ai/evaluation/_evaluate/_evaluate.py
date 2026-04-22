@@ -2018,7 +2018,7 @@ def _extract_testing_criteria_metadata(
     criteria_name_types_from_meta = _extract_criteria_name_types(eval_meta_data)
 
     for criteria_name, evaluator in evaluators.items():
-        criteria_type, evaluator_name, metrics, inverse_metrics = _determine_criteria_type_and_metrics(
+        criteria_type, evaluator_name, metrics, inverse_metrics, is_boolean = _determine_criteria_type_and_metrics(
             criteria_name, evaluator, criteria_name_types_from_meta, evaluator_config, logger, eval_id, eval_run_id
         )
         is_inverse = len(metrics) > 0 and all(
@@ -2029,6 +2029,7 @@ def _extract_testing_criteria_metadata(
             "evaluator_name": evaluator_name,
             "metrics": metrics,
             "is_inverse": is_inverse,
+            "is_boolean": is_boolean,
         }
         # Propagate pass_threshold from evaluator config so result events can include it
         if evaluator_config and criteria_name in evaluator_config:
@@ -2084,7 +2085,7 @@ def _determine_criteria_type_and_metrics(
     logger: logging.Logger,
     eval_id: Optional[str],
     eval_run_id: Optional[str],
-) -> Tuple[Optional[str], Optional[str], List[str], List[str]]:
+) -> Tuple[Optional[str], Optional[str], List[str], List[str], bool]:
     """
     Determine criteria type and metrics for a given evaluator.
 
@@ -2099,18 +2100,18 @@ def _determine_criteria_type_and_metrics(
     }
 
     Output example:
-    ("azure_ai_evaluator", "builtin.violence", ["violence"], [])
+    ("azure_ai_evaluator", "builtin.violence", ["violence"], [], False)
     """
     if criteria_name in criteria_name_types_from_meta:
         result = _extract_from_metadata(
             criteria_name, criteria_name_types_from_meta, evaluator_config, logger, eval_id, eval_run_id
         )
     elif isinstance(evaluator, AzureOpenAIGrader):
-        result = evaluator._type, "", [criteria_name], []  # pylint: disable=protected-access
+        result = evaluator._type, "", [criteria_name], [], False  # pylint: disable=protected-access
     elif isinstance(evaluator, EvaluatorBase):
-        result = _extract_from_evaluator_base(evaluator, criteria_name)
+        result = (*_extract_from_evaluator_base(evaluator, criteria_name), False)
     else:
-        result = "unknown", "", [criteria_name], []
+        result = "unknown", "", [criteria_name], [], False
     return result
 
 
@@ -2149,10 +2150,11 @@ def _extract_from_metadata(
 
     metrics = []
     inverse_metrics = []
+    is_boolean = False
     if current_evaluator_metrics and len(current_evaluator_metrics) > 0:
         metrics.extend(current_evaluator_metrics)
     elif _has_evaluator_definition(evaluator_config, criteria_name):
-        metrics, inverse_metrics = _extract_metrics_from_definition(evaluator_config[criteria_name])
+        metrics, inverse_metrics, is_boolean = _extract_metrics_from_definition(evaluator_config[criteria_name])
     elif evaluator_name:
         metrics = _extract_metrics_from_evaluator_name(
             evaluator_name, criteria_name, criteria_type, logger, eval_id, eval_run_id
@@ -2160,7 +2162,7 @@ def _extract_from_metadata(
     else:
         metrics.append(criteria_name)
 
-    return (criteria_type, evaluator_name, metrics, inverse_metrics)
+    return (criteria_type, evaluator_name, metrics, inverse_metrics, is_boolean)
 
 
 def _has_evaluator_definition(evaluator_config: Optional[Dict[str, EvaluatorConfig]], criteria_name: str) -> bool:
@@ -2191,7 +2193,7 @@ def _has_evaluator_definition(evaluator_config: Optional[Dict[str, EvaluatorConf
     )
 
 
-def _extract_metrics_from_definition(testing_criteria_config: Dict[str, Any]) -> Tuple[List[str], List[str]]:
+def _extract_metrics_from_definition(testing_criteria_config: Dict[str, Any]) -> Tuple[List[str], List[str], bool]:
     """
     Extract metrics from evaluator definition.
 
@@ -2209,15 +2211,21 @@ def _extract_metrics_from_definition(testing_criteria_config: Dict[str, Any]) ->
     }
 
     Output example:
-    (["violence", "violence_score"], [])
+    (["violence", "violence_score"], [], True)
     """
     inverse_metrics = []
+    is_boolean = False
     if evaluator_definition := testing_criteria_config.get("_evaluator_definition"):
         metric_config_detail = evaluator_definition.get("metrics")
         if metric_config_detail and isinstance(metric_config_detail, dict) and len(metric_config_detail) > 0:
             inverse_metrics = _get_metrics_need_extra_reverse(metric_config_detail)
-            return list(metric_config_detail.keys()), inverse_metrics
-    return [], []
+            # Check if any metric is boolean type
+            is_boolean = any(
+                isinstance(v, dict) and v.get("type") == "boolean"
+                for v in metric_config_detail.values()
+            )
+            return list(metric_config_detail.keys()), inverse_metrics, is_boolean
+    return [], [], is_boolean
 
 
 def _extract_metrics_from_evaluator_name(
@@ -2514,6 +2522,7 @@ def _process_criteria_metrics(
     expected_metrics = testing_criteria_metadata.get(criteria_name, {}).get("metrics", [])
     criteria_type = testing_criteria_metadata.get(criteria_name, {}).get("type", "")
     is_inverse = testing_criteria_metadata.get(criteria_name, {}).get("is_inverse", False)
+    is_boolean = testing_criteria_metadata.get(criteria_name, {}).get("is_boolean", False)
 
     if _is_none_or_nan(criteria_type) or _is_none_or_nan(criteria_name):
         logger.warning(
@@ -2538,7 +2547,7 @@ def _process_criteria_metrics(
 
     for metric, metric_values in result_per_metric.items():
         result_obj = _create_result_object(
-            criteria_name, metric, metric_values, criteria_type, is_inverse, logger, eval_id, eval_run_id
+            criteria_name, metric, metric_values, criteria_type, is_inverse, is_boolean, logger, eval_id, eval_run_id
         )
         results.append(result_obj)
 
@@ -2842,6 +2851,7 @@ def _create_result_object(
     metric_values: Dict[str, Any],
     criteria_type: str,
     is_inverse: bool,
+    is_boolean: bool,
     logger: logging.Logger,
     eval_id: Optional[str],
     eval_run_id: Optional[str],
@@ -2849,7 +2859,7 @@ def _create_result_object(
     """Create a result object for AOAI format.
 
     This method constructs a standardized AOAI evaluation result object from
-    metric values, handling inverse metrics and proper field assignments.
+    metric values, handling inverse metrics, boolean scoring, and proper field assignments.
 
     :param criteria_name: Name of the evaluation criteria (e.g. 'coherence')
     :type criteria_name: str
@@ -2861,6 +2871,8 @@ def _create_result_object(
     :type criteria_type: str
     :param is_inverse: Whether this is an inverse metric that should be inverted
     :type is_inverse: bool
+    :param is_boolean: Whether this metric uses boolean scoring (0/1)
+    :type is_boolean: bool
     :param logger: Logger instance for warnings and debug messages
     :type logger: logging.Logger
     :param eval_id: Optional evaluation ID for debugging context
@@ -2912,6 +2924,13 @@ def _create_result_object(
     # Handle decrease boolean metrics
     if is_inverse:
         score, label, passed = _adjust_for_inverse_metric(label)
+    # Handle boolean scoring: derive passed from score (0=false, 1=true)
+    # For is_inverse (desirable_direction=decrease), the inversion is already handled above.
+    elif is_boolean and passed is None and score is not None and not _is_none_or_nan(score):
+        try:
+            passed = bool(int(float(score)))
+        except (ValueError, TypeError):
+            pass
 
     # Create result object
     result_obj = {
