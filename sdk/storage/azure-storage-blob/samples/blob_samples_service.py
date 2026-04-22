@@ -51,7 +51,8 @@ class BlobServiceSamples(object):
         from azure.storage.blob import BlobAnalyticsLogging, Metrics, CorsRule, RetentionPolicy
 
         # Create logging settings
-        logging = BlobAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        logging = BlobAnalyticsLogging(
+            read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Create metrics for requests statistics
         hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
