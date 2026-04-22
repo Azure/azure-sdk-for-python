@@ -770,10 +770,10 @@
 /sdk/servicefabric/    @QingChenmsft @samedder
 
 # PRLabel: %Speech Transcription
-/sdk/cognitiveservices/azure-ai-transcription/    @amber-yujueWang @rhurey @xitzhang
+/sdk/transcription/azure-ai-transcription/    @amber-yujueWang @rhurey @xitzhang @pankopon @emilyjiji
 
 # ServiceLabel: %Speech Transcription
-# ServiceOwners: @amber-yujueWang @rhurey @xitzhang
+# ServiceOwners: @amber-yujueWang @rhurey @xitzhang @pankopon @emilyjiji
 
 # PRLabel: %Storage
 /sdk/storage/    @annatisch @jalauzon-msft @vincenttran-msft @weirongw23-msft
