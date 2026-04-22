@@ -22,9 +22,9 @@ from azure.storage.blob import DelimitedTextDialect as BlobDelimitedTextDialect
 from azure.storage.blob import LeaseProperties as BlobLeaseProperties
 from azure.storage.blob import ResourceTypes as BlobResourceTypes
 from azure.storage.blob import UserDelegationKey as BlobUserDelegationKey
-from azure.storage.blob._generated.models import (
+from azure.storage.blob import (
     CorsRule as GenCorsRule,
-    Logging as GenLogging,
+    BlobAnalyticsLogging as GenLogging,
     Metrics as GenMetrics,
     RetentionPolicy as GenRetentionPolicy,
     StaticWebsite as GenStaticWebsite,
@@ -58,7 +58,7 @@ class RetentionPolicy(GenRetentionPolicy):
         All data older than this value will be deleted."""
 
     def __init__(self, enabled: bool = False, days: Optional[int] = None) -> None:
-        super(RetentionPolicy, self).__init__(enabled=enabled, days=days, allow_permanent_delete=None)
+        super(RetentionPolicy, self).__init__(enabled=enabled, days=days)
         if self.enabled and (self.days is None):
             raise ValueError("If policy is enabled, 'days' must be specified.")
 
