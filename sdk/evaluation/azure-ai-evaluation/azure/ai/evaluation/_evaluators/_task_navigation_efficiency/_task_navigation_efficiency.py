@@ -338,7 +338,6 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
                 self, agent_steps, ground_truth_steps
             )
 
-            additional_properties_metrics["label"] = match_result
             return {
                 "task_navigation_efficiency_score": float(match_result),
                 "task_navigation_efficiency_passed": match_result,
