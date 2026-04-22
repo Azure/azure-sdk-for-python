@@ -51,7 +51,7 @@ def _describe_token(token: str) -> str:
             f"sub={claims.get('sub', '?')} "
             f"tid={claims.get('tid', '?')} "
             f"upn={claims.get('upn', claims.get('unique_name', '?'))} "
-            f"idtyp={claims.get('idtyp', '?')}"
+            f"identity_type={claims.get('idtyp', '?')}"
         )
     except Exception:
         return "<unable to decode token>"
