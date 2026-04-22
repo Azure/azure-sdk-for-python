@@ -2194,6 +2194,10 @@
     {
       "filename": ".github/**/ml/**",
       "words": ["envml", "paginators"]
+    },
+    {
+      "filename": "sdk/planetarycomputer/azure-planetarycomputer/**",
+      "words": ["topo", "haline", "Aproperty"]
     }
   ],
   "allowCompoundWords": true

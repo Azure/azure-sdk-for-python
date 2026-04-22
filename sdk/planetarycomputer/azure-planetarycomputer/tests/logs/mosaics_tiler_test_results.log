@@ -1,8 +1,0 @@
-2026-04-21 11:38:19,379 - test_mosaics_tiler - INFO - ================================================================================
-2026-04-21 11:38:19,380 - test_mosaics_tiler - INFO - TEST: test_04_get_mosaics_tile
-2026-04-21 11:38:19,380 - test_mosaics_tiler - INFO - ================================================================================
-2026-04-21 11:38:19,380 - test_mosaics_tiler - INFO - Input - endpoint: https://stablecat.gjehh4bsh5hdeegx.uksouth.geocatalog.ppe.spatio.azure-test.net
-2026-04-21 11:38:19,380 - test_mosaics_tiler - INFO - Input - collection_id: naip
-2026-04-21 11:38:19,380 - test_mosaics_tiler - INFO - Input - tile coordinates: z=13, x=2174, y=3282
-2026-04-21 11:38:21,730 - test_mosaics_tiler - INFO - Using search ID: 5bdb874db9ec386ccd82e56af5d216a3
-2026-04-21 11:38:21,730 - test_mosaics_tiler - INFO - Calling: get_mosaics_tile(...)

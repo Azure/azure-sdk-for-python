@@ -1,9 +1,0 @@
-2026-04-21 20:08:53,785 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-04-21 20:08:53,785 - test_planetary_computer_02_stac_specification_async - INFO - TEST: Replace STAC Item
-2026-04-21 20:08:53,786 - test_planetary_computer_02_stac_specification_async - INFO - ================================================================================
-2026-04-21 20:08:55,560 - test_planetary_computer_02_stac_specification_async - INFO - Using test item for replace test: ga_m_3308421_se_16_060_20211114_test
-2026-04-21 20:08:55,560 - test_planetary_computer_02_stac_specification_async - INFO - Replacing item ga_m_3308421_se_16_060_20211114_test using begin_replace_item...
-2026-04-21 20:09:26,039 - test_planetary_computer_02_stac_specification_async - INFO - Replaced item ga_m_3308421_se_16_060_20211114_test
-2026-04-21 20:09:26,108 - test_planetary_computer_02_stac_specification_async - INFO - Verified replaced item, platform: Imagery Updated via Replace Test
-2026-04-21 20:09:26,924 - test_planetary_computer_02_stac_specification_async - INFO - Restored original item ga_m_3308421_se_16_060_20211114_test
-2026-04-21 20:09:26,924 - test_planetary_computer_02_stac_specification_async - INFO - Successfully verified replace operation for item ga_m_3308421_se_16_060_20211114_test

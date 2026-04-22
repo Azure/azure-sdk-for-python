@@ -1,9 +1,0 @@
-2026-04-21 11:43:42,015 - test_collection_tiler - INFO - ================================================================================
-2026-04-21 11:43:42,016 - test_collection_tiler - INFO - TEST: test_02_get_collection_point
-2026-04-21 11:43:42,016 - test_collection_tiler - INFO - ================================================================================
-2026-04-21 11:43:45,754 - test_collection_tiler - INFO - Response type: <class 'azure.planetarycomputer.models._models.TilerCoreModelsResponsesPoint'>
-2026-04-21 11:43:45,755 - test_collection_tiler - INFO - Test PASSED
-
-2026-04-21 11:43:46,028 - test_collection_tiler - INFO - ================================================================================
-2026-04-21 11:43:46,028 - test_collection_tiler - INFO - TEST: test_02_get_collection_point
-2026-04-21 11:43:46,028 - test_collection_tiler - INFO - ================================================================================

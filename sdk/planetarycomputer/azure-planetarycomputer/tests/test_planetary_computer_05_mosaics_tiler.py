@@ -253,7 +253,6 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
         test_logger.info("Test PASSED\n")
 
-    @pytest.mark.skip(reason="PPE tile rendering returns 404; managed storage not accessible for tile operations")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
     def test_04_get_mosaics_tile(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
@@ -348,7 +347,7 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
         test_logger.info("Test PASSED\n")
 
-    @pytest.mark.skip(reason="PPE tile rendering returns 404; managed storage not accessible for tile operations")
+    @pytest.mark.skip(reason="TypeSpec missing AssetQueryParameters for Search WMTS; assets param not in SDK method")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
     def test_05_get_mosaics_wmts_capabilities(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
@@ -427,7 +426,6 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
         test_logger.info("Test PASSED\n")
 
-    @pytest.mark.skip(reason="PPE tile rendering returns 404; managed storage not accessible for tile operations")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
     def test_06_get_mosaics_assets_for_point(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
@@ -516,7 +514,6 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
         test_logger.info("Test PASSED\n")
 
-    @pytest.mark.skip(reason="PPE tile rendering returns 404; managed storage not accessible for tile operations")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
     def test_07_get_mosaics_assets_for_tile(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
@@ -587,7 +584,6 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
         test_logger.info("Test PASSED\n")
 
-    @pytest.mark.skip(reason="PPE returns 404; managed storage not accessible for data operations")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
     def test_08_get_searches_point(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
@@ -625,7 +621,7 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
         test_logger.info("Test PASSED\n")
 
-    @pytest.mark.skip(reason="PPE tile rendering returns 404; managed storage not accessible for tile operations")
+    @pytest.mark.skip(reason="PPE tiler returns 503 Service Unavailable for bbox crop rendering")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
     def test_09_get_searches_bbox_crop(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
@@ -667,7 +663,6 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
         test_logger.info("Test PASSED\n")
 
-    @pytest.mark.skip(reason="PPE tile rendering returns 404; managed storage not accessible for tile operations")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
     def test_10_crop_searches_feature_geo_json(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
