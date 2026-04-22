@@ -1698,8 +1698,8 @@ def build_metrics_list_at_subscription_scope_post_request(  # pylint: disable=na
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1711,7 +1711,6 @@ def build_metrics_list_at_subscription_scope_post_request(  # pylint: disable=na
     _url: str = _url.format(**path_format_arguments)  # type: ignore
 
     # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
     _params["region"] = _SERIALIZER.query("region", region, "str")
     if timespan is not None:
         _params["timespan"] = _SERIALIZER.query("timespan", timespan, "str")
@@ -1737,6 +1736,7 @@ def build_metrics_list_at_subscription_scope_post_request(  # pylint: disable=na
         _params["ValidateDimensions"] = _SERIALIZER.query("validate_dimensions", validate_dimensions, "bool")
     if rollupby is not None:
         _params["rollupby"] = _SERIALIZER.query("rollupby", rollupby, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
@@ -9920,9 +9920,9 @@ class MetricsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if body else None
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
         cls: ClsType[_models.Response] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json" if body else None
@@ -9950,8 +9950,8 @@ class MetricsOperations:
             auto_adjust_timegrain=auto_adjust_timegrain,
             validate_dimensions=validate_dimensions,
             rollupby=rollupby,
-            api_version=api_version,
             content_type=content_type,
+            api_version=api_version,
             content=_content,
             headers=_headers,
             params=_params,

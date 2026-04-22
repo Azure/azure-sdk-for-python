@@ -7053,9 +7053,9 @@ class MetricsOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         content_type = content_type if body else None
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-02-01"))
         cls: ClsType[_models.Response] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json" if body else None
@@ -7083,8 +7083,8 @@ class MetricsOperations:
             auto_adjust_timegrain=auto_adjust_timegrain,
             validate_dimensions=validate_dimensions,
             rollupby=rollupby,
-            api_version=api_version,
             content_type=content_type,
+            api_version=api_version,
             content=_content,
             headers=_headers,
             params=_params,
