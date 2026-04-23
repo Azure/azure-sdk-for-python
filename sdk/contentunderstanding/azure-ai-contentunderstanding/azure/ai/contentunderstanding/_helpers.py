@@ -192,8 +192,15 @@ def _get_renderable_contents(
     """Filter contents for rendering, handling classification hierarchies.
 
     A "parent" content has ``segments`` but no ``category``. When
-    detected, the parent is skipped to avoid text duplication — only
-    children (with ``category`` set) are rendered.
+    detected, the parent is expanded — each segment becomes a
+    synthetic ``DocumentContent`` with its category, page range,
+    and the corresponding markdown slice extracted via the segment's
+    ``span``.
+
+    When a segment has a corresponding routed top-level content
+    (linked by ``path`` = ``{parent_path}/{segment_id}``), the
+    top-level item is used instead of the synthetic expansion to
+    preserve extracted fields and avoid duplication.
 
     :param contents: The list of analysis contents to filter.
     :type contents: list[~azure.ai.contentunderstanding.models.AnalysisContent]
@@ -202,21 +209,51 @@ def _get_renderable_contents(
     """
     from .models import DocumentContent
 
-    has_parent = False
+    # Collect paths of routed top-level content items
+    # (e.g., "input1/segment1" for a segment routed to prebuilt-invoice).
+    routed_paths: set = set()
+    for c in contents:
+        if isinstance(c, DocumentContent) and c.category and c.path:
+            routed_paths.add(c.path)
+
+    result: List["AnalysisContent"] = []
     for c in contents:
         if isinstance(c, DocumentContent) and c.segments and not c.category:
-            has_parent = True
-            break
+            parent_path = c.path or ""
+            # Expand parent into per-segment synthetic DocumentContent items,
+            # but skip segments that have a routed top-level content.
+            for seg in c.segments:
+                seg_path = f"{parent_path}/{seg.segment_id}" if seg.segment_id else None
+                if seg_path and seg_path in routed_paths:
+                    continue  # top-level version with fields will be used
+                md = None
+                if c.markdown and seg.span:
+                    offset = seg.span.get("offset", 0) if isinstance(seg.span, dict) else getattr(seg.span, "offset", 0)
+                    length = seg.span.get("length", 0) if isinstance(seg.span, dict) else getattr(seg.span, "length", 0)
+                    md = c.markdown[offset : offset + length]
+                child = DocumentContent(
+                    kind="document",
+                    markdown=md,
+                    start_page_number=seg.start_page_number,
+                    end_page_number=seg.end_page_number,
+                    category=seg.category,
+                )
+                result.append(child)
+        else:
+            result.append(c)
 
-    if not has_parent:
-        return list(contents)
+    # Sort by page number so output follows document order.
+    # This matters when routed segments (with fields) appear as
+    # separate top-level contents after expanded parent segments.
+    from .models import DocumentContent as _DC
 
-    # Return only items that are NOT the parent
-    return [
-        c
-        for c in contents
-        if not (isinstance(c, DocumentContent) and c.segments and not c.category)
-    ]
+    def _sort_key(c: "AnalysisContent") -> int:
+        if isinstance(c, _DC) and c.start_page_number is not None:
+            return c.start_page_number
+        return 0
+
+    result.sort(key=_sort_key)
+    return result
 
 
 def _render_content_block(

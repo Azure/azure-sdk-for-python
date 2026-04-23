@@ -411,6 +411,7 @@ class TestMultiSegmentAV:
 class TestClassificationHierarchy:
 
     def _make_classification_result(self):
+        """All segments routed — both have top-level children with fields."""
         parent = DocumentContent(
             kind="document",
             path="input1",
@@ -419,12 +420,12 @@ class TestClassificationHierarchy:
             end_page_number=3,
             segments=[
                 DocumentContentSegment(
-                    segment_id="seg1", category="Invoice",
+                    segment_id="segment1", category="Invoice",
                     span=ContentSpan(offset=0, length=13),
                     start_page_number=1, end_page_number=1,
                 ),
                 DocumentContentSegment(
-                    segment_id="seg2", category="BankStatement",
+                    segment_id="segment2", category="BankStatement",
                     span=ContentSpan(offset=15, length=10),
                     start_page_number=2, end_page_number=3,
                 ),
@@ -470,6 +471,161 @@ class TestClassificationHierarchy:
         output = to_llm_input(self._make_classification_result())
         assert "pages: 1" in output
         assert "pages: 2-3" in output
+
+    def test_no_routing_expands_all_segments(self):
+        """No top-level children — all segments expanded from parent."""
+        parent = DocumentContent(
+            kind="document",
+            path="input1",
+            markdown="Invoice text.\n\nBank text.",
+            start_page_number=1,
+            end_page_number=3,
+            segments=[
+                DocumentContentSegment(
+                    segment_id="segment1", category="Invoice",
+                    span=ContentSpan(offset=0, length=13),
+                    start_page_number=1, end_page_number=1,
+                ),
+                DocumentContentSegment(
+                    segment_id="segment2", category="BankStatement",
+                    span=ContentSpan(offset=15, length=10),
+                    start_page_number=2, end_page_number=3,
+                ),
+            ],
+        )
+        result = _make_result([parent])
+        output = to_llm_input(result)
+        assert "category: Invoice" in output
+        assert "category: BankStatement" in output
+        assert "Invoice text." in output
+        assert "Bank text." in output
+        assert "*****" in output
+
+    def test_partial_routing_mixes_expanded_and_routed(self):
+        """Only Invoice is routed; BankStatement expanded from parent."""
+        parent = DocumentContent(
+            kind="document",
+            path="input1",
+            markdown="Invoice text.\n\nBank text.",
+            start_page_number=1,
+            end_page_number=3,
+            segments=[
+                DocumentContentSegment(
+                    segment_id="segment1", category="Invoice",
+                    span=ContentSpan(offset=0, length=13),
+                    start_page_number=1, end_page_number=1,
+                ),
+                DocumentContentSegment(
+                    segment_id="segment2", category="BankStatement",
+                    span=ContentSpan(offset=15, length=10),
+                    start_page_number=2, end_page_number=3,
+                ),
+            ],
+        )
+        routed_invoice = DocumentContent(
+            kind="document",
+            path="input1/segment1",
+            category="Invoice",
+            markdown="Invoice text.",
+            fields={"Vendor": StringField(type="string", value_string="CONTOSO")},
+            start_page_number=1,
+            end_page_number=1,
+        )
+        result = _make_result([parent, routed_invoice])
+        output = to_llm_input(result)
+        blocks = output.split("*****")
+        assert len(blocks) == 2
+        # Invoice block has fields (from routed content)
+        assert "Vendor: CONTOSO" in output
+        # BankStatement block expanded from parent (no fields)
+        assert "category: BankStatement" in output
+        assert "Bank text." in output
+
+    def test_output_sorted_by_page_number(self):
+        """Routed content at end of contents list still appears first if page 1."""
+        parent = DocumentContent(
+            kind="document",
+            path="input1",
+            markdown="Page1.\n\nPage2.\n\nPage3.",
+            start_page_number=1,
+            end_page_number=3,
+            segments=[
+                DocumentContentSegment(
+                    segment_id="segment1", category="TypeA",
+                    span=ContentSpan(offset=0, length=6),
+                    start_page_number=1, end_page_number=1,
+                ),
+                DocumentContentSegment(
+                    segment_id="segment2", category="TypeB",
+                    span=ContentSpan(offset=8, length=6),
+                    start_page_number=2, end_page_number=2,
+                ),
+                DocumentContentSegment(
+                    segment_id="segment3", category="TypeC",
+                    span=ContentSpan(offset=16, length=6),
+                    start_page_number=3, end_page_number=3,
+                ),
+            ],
+        )
+        # Routed TypeA comes last in contents list
+        routed = DocumentContent(
+            kind="document",
+            path="input1/segment1",
+            category="TypeA",
+            markdown="Page1.",
+            fields={"Key": StringField(type="string", value_string="val")},
+            start_page_number=1,
+            end_page_number=1,
+        )
+        result = _make_result([parent, routed])
+        output = to_llm_input(result)
+        blocks = output.split("*****")
+        assert len(blocks) == 3
+        # First block should be TypeA (page 1), not TypeB (page 2)
+        assert "category: TypeA" in blocks[0]
+        assert "category: TypeB" in blocks[1]
+        assert "category: TypeC" in blocks[2]
+
+    def test_path_based_dedup_not_category_based(self):
+        """Two segments with same category but different segment IDs — only the routed one is deduped."""
+        parent = DocumentContent(
+            kind="document",
+            path="input1",
+            markdown="Inv1.\n\nInv2.",
+            start_page_number=1,
+            end_page_number=2,
+            segments=[
+                DocumentContentSegment(
+                    segment_id="segment1", category="Invoice",
+                    span=ContentSpan(offset=0, length=5),
+                    start_page_number=1, end_page_number=1,
+                ),
+                DocumentContentSegment(
+                    segment_id="segment2", category="Invoice",
+                    span=ContentSpan(offset=7, length=5),
+                    start_page_number=2, end_page_number=2,
+                ),
+            ],
+        )
+        # Only segment1 is routed
+        routed = DocumentContent(
+            kind="document",
+            path="input1/segment1",
+            category="Invoice",
+            markdown="Inv1.",
+            fields={"Vendor": StringField(type="string", value_string="A")},
+            start_page_number=1,
+            end_page_number=1,
+        )
+        result = _make_result([parent, routed])
+        output = to_llm_input(result)
+        blocks = output.split("*****")
+        # Should have 2 blocks: routed segment1 (with fields) + expanded segment2 (no fields)
+        assert len(blocks) == 2
+        assert "Vendor: A" in blocks[0]
+        # Second block is expanded from parent — no fields
+        assert "Inv2." in blocks[1]
+        assert "fields:" not in blocks[1]
 
 
 # ===========================================================================
