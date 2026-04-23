@@ -107,11 +107,31 @@ class changelog(Check):
         create_p = changelog_sub.add_parser(
             "create", help="Generate CHANGELOG.md from pending chronus entries"
         )
+        create_p.add_argument(
+            "package",
+            nargs="?",
+            default=None,
+            help=(
+                "Package path (e.g. sdk/storage/azure-storage-blob) to generate changelog for. "
+                "If omitted and CWD is inside a package directory, the package is detected "
+                "automatically. Otherwise chronus generates changelogs for all packages."
+            ),
+        )
         create_p.set_defaults(func=self._run_create)
 
         # changelog status
         status_p = changelog_sub.add_parser(
             "status", help="Show a summary of pending changes and resulting version bumps"
+        )
+        status_p.add_argument(
+            "package",
+            nargs="?",
+            default=None,
+            help=(
+                "Package path (e.g. sdk/storage/azure-storage-blob) to show status for. "
+                "If omitted and CWD is inside a package directory, the package is detected "
+                "automatically. Otherwise chronus shows status for all packages."
+            ),
         )
         status_p.set_defaults(func=self._run_status)
 
@@ -202,8 +222,8 @@ class changelog(Check):
 
     def _detect_package_from_cwd(self) -> Optional[str]:
         """If CWD is inside a package directory (``sdk/<service>/<package>``),
-        return the relative path from the repository root.  Otherwise return
-        ``None``.
+        return the Chronus package **name** (the directory basename, e.g.
+        ``azure-core``).  Otherwise return ``None``.
 
         The chronus config uses the pattern ``sdk/*/*`` for packages, so we
         look for CWD being at or below ``<REPO_ROOT>/sdk/<service>/<pkg>``.
@@ -219,9 +239,37 @@ class changelog(Check):
         # rel should start with "sdk/<service>/<package>" (at least 3 components)
         parts = rel.replace("\\", "/").split("/")
         if len(parts) >= 3 and parts[0] == "sdk":
-            # Return the first 3 components: sdk/<service>/<package>
-            return "/".join(parts[:3])
+            # Return the package name (third component, e.g. "azure-core")
+            return parts[2]
         return None
+
+    def _resolve_package_name(self, package: str) -> str:
+        """Resolve a user-supplied package argument to a Chronus package name.
+
+        Accepts either:
+        - A package name directly (e.g. ``azure-core``) — returned as-is.
+        - A relative or absolute path (e.g. ``sdk/core/azure-core``,
+          ``.\\sdk\\core\\azure-core\\``) — resolved to the package name.
+
+        Chronus identifies packages by name (the directory basename under
+        ``sdk/<service>/``), not by path.
+        """
+        # If the path is absolute or starts with '.' resolve it relative to repo root
+        if os.path.isabs(package) or package.startswith("."):
+            try:
+                abs_path = os.path.abspath(os.path.join(os.getcwd(), package))
+                repo = os.path.abspath(REPO_ROOT)
+                package = os.path.relpath(abs_path, repo)
+            except ValueError:
+                pass
+        # Normalize separators and strip trailing slashes
+        package = package.replace("\\", "/").strip("/")
+        # If it looks like a path (sdk/<service>/<package>...), extract the name
+        parts = package.split("/")
+        if len(parts) >= 3 and parts[0] == "sdk":
+            return parts[2]
+        # Otherwise assume it's already a package name
+        return package
 
     def _run_chronus(self, chronus_args: List[str]) -> int:
         """Run a chronus command via ``npx`` from the repository root.
@@ -256,7 +304,9 @@ class changelog(Check):
         """
         chronus_args = ["add"]
         package = args.package
-        if not package:
+        if package:
+            package = self._resolve_package_name(package)
+        else:
             package = self._detect_package_from_cwd()
             if package:
                 logger.info(f"Detected package from current directory: {package}")
@@ -276,9 +326,53 @@ class changelog(Check):
         return self._run_chronus(["verify"])
 
     def _run_create(self, args: argparse.Namespace) -> int:
-        """Run ``chronus changelog`` to generate CHANGELOG.md files."""
-        return self._run_chronus(["changelog"])
+        """Run ``chronus changelog`` to generate CHANGELOG.md files.
+
+        When no *package* argument is given but CWD is inside a package
+        directory, the package path is detected automatically and passed
+        via ``--package`` so only that package's changelog is generated.
+        """
+        chronus_args = ["changelog"]
+        package = args.package
+        if package:
+            package = self._resolve_package_name(package)
+        else:
+            package = self._detect_package_from_cwd()
+            if package:
+                logger.info(f"Detected package from current directory: {package}")
+        if not package:
+            logger.error(
+                "No package specified and could not detect one from the current directory.\n"
+                "Either run from within a package directory (e.g. sdk/core/azure-core) or\n"
+                "pass the package path explicitly:\n\n"
+                "    azpysdk changelog create sdk/core/azure-core\n"
+            )
+            return 1
+        chronus_args.extend(["--package", package])
+        rc = self._run_chronus(chronus_args)
+        if rc != 0:
+            logger.info(
+                "Hint: if Chronus reported 'No release action found', it means there are no\n"
+                "pending change entries for this package. Run 'azpysdk changelog add' first to\n"
+                "create a change entry, then re-run 'azpysdk changelog create'."
+            )
+        return rc
 
     def _run_status(self, args: argparse.Namespace) -> int:
-        """Run ``chronus status`` to show pending changes."""
-        return self._run_chronus(["status"])
+        """Run ``chronus status`` to show pending changes.
+
+        When no *package* argument is given but CWD is inside a package
+        directory, the package path is detected automatically and passed
+        via ``--only`` so only that package's status is shown.
+        """
+        chronus_args = ["status"]
+        package = args.package
+        if package:
+            package = self._resolve_package_name(package)
+        else:
+            package = self._detect_package_from_cwd()
+            if package:
+                logger.info(f"Detected package from current directory: {package}")
+        if package:
+            chronus_args.extend(["--only", package])
+        return self._run_chronus(chronus_args)
