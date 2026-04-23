@@ -33,7 +33,9 @@ from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
 from .._configuration import PlanetaryComputerProClientConfiguration
-from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _deserialize_xml
+# TODO: Remove pylint disable once pygen emitter fixes unused _deserialize_xml import
+# https://github.com/Azure/autorest.python/issues/XXXX
+from .._utils.model_base import Model as _Model, SdkJSONEncoder, _deserialize, _deserialize_xml  # pylint: disable=unused-import
 from .._utils.serialization import Deserializer, Serializer
 from .._utils.utils import prepare_multipart_form_data
 
@@ -10143,7 +10145,8 @@ def build_data_get_searches_assets_for_tile_no_tms_request(  # pylint: disable=n
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_searches_point_request(  # pylint: disable=too-many-locals
+# TODO: Remove pylint disable once pygen emitter generates fewer statements in request builders
+def build_data_get_searches_point_request(  # pylint: disable=too-many-locals,too-many-statements
     search_id: str,
     longitude: float,
     latitude: float,
