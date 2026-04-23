@@ -17,9 +17,7 @@ from .streams import (
 from .validation import calculate_crc64
 
 
-class AsyncStructuredMessageDecoder(
-    IOBase
-):  # pylint: disable=too-many-instance-attributes
+class AsyncStructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instance-attributes
 
     message_version: int
     """The version of the structured message."""
@@ -50,9 +48,7 @@ class AsyncStructuredMessageDecoder(
         self.message_length = content_length
         # The stream should be at least long enough to hold minimum header length
         if self.message_length < StructuredMessageConstants.V1_HEADER_LENGTH:
-            raise ValueError(
-                "Content not long enough to contain a valid message header."
-            )
+            raise ValueError("Content not long enough to contain a valid message header.")
 
         self._inner_iterator = inner_iterator
         self._buffer = b""
@@ -76,19 +72,11 @@ class AsyncStructuredMessageDecoder(
 
     @property
     def _segment_footer_length(self) -> int:
-        return (
-            StructuredMessageConstants.CRC64_LENGTH
-            if StructuredMessageProperties.CRC64 in self.flags
-            else 0
-        )
+        return StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in self.flags else 0
 
     @property
     def _message_footer_length(self) -> int:
-        return (
-            StructuredMessageConstants.CRC64_LENGTH
-            if StructuredMessageProperties.CRC64 in self.flags
-            else 0
-        )
+        return StructuredMessageConstants.CRC64_LENGTH if StructuredMessageProperties.CRC64 in self.flags else 0
 
     @property
     def _end_of_segment_content(self) -> bool:
@@ -127,23 +115,17 @@ class AsyncStructuredMessageDecoder(
             if self._end_of_segment_content:
                 await self._read_segment_footer()
                 if self.num_segments > 1:
-                    raise ValueError(
-                        "First message segment was empty but more segments were detected."
-                    )
+                    raise ValueError("First message segment was empty but more segments were detected.")
                 await self._read_message_footer()
                 return b""
 
         count = 0
         content = BytesIO()
-        while count < size and not (
-            self._end_of_segment_content and self._message_offset == self.message_length
-        ):
+        while count < size and not (self._end_of_segment_content and self._message_offset == self.message_length):
             if self._end_of_segment_content:
                 await self._read_segment_header()
 
-            segment_remaining = (
-                self._segment_content_length - self._segment_content_offset
-            )
+            segment_remaining = self._segment_content_length - self._segment_content_offset
             read_size = min(segment_remaining, size - count)
 
             segment_content = await self._read_from_inner(read_size)
@@ -151,12 +133,8 @@ class AsyncStructuredMessageDecoder(
 
             # Update the running CRC64 for the segment and message
             if StructuredMessageProperties.CRC64 in self.flags:
-                self._segment_crc64 = calculate_crc64(
-                    segment_content, self._segment_crc64
-                )
-                self._message_crc64 = calculate_crc64(
-                    segment_content, self._message_crc64
-                )
+                self._segment_crc64 = calculate_crc64(segment_content, self._segment_crc64)
+                self._message_crc64 = calculate_crc64(segment_content, self._message_crc64)
 
             self._segment_content_offset += read_size
             self._message_offset += read_size
@@ -170,10 +148,7 @@ class AsyncStructuredMessageDecoder(
 
         # One final check to ensure if we think we've reached the end of the stream
         # that the current segment number matches the total.
-        if (
-            self._message_offset == self.message_length
-            and self._segment_number != self.num_segments
-        ):
+        if self._message_offset == self.message_length and self._segment_number != self.num_segments:
             raise ValueError("Invalid structured message data detected.")
 
         return content.getvalue()
@@ -187,21 +162,15 @@ class AsyncStructuredMessageDecoder(
             self._buffer += chunk
 
         if len(self._buffer) < size:
-            raise ValueError(
-                "Invalid structured message data detected. Stream content incomplete."
-            )
+            raise ValueError("Invalid structured message data detected. Stream content incomplete.")
 
         data = self._buffer[:size]
         self._buffer = self._buffer[size:]
         return data
 
     async def _read_message_header(self) -> None:
-        header_data = await self._read_from_inner(
-            StructuredMessageConstants.V1_HEADER_LENGTH
-        )
-        self.message_version, self.flags, self.num_segments = parse_message_header(
-            header_data, self.message_length
-        )
+        header_data = await self._read_from_inner(StructuredMessageConstants.V1_HEADER_LENGTH)
+        self.message_version, self.flags, self.num_segments = parse_message_header(header_data, self.message_length)
         self._message_offset += StructuredMessageConstants.V1_HEADER_LENGTH
 
     async def _read_message_footer(self) -> None:
@@ -211,23 +180,18 @@ class AsyncStructuredMessageDecoder(
             raise ValueError("Invalid structured message data detected.")
 
         if StructuredMessageProperties.CRC64 in self.flags:
-            message_crc = await self._read_from_inner(
-                StructuredMessageConstants.CRC64_LENGTH
-            )
+            message_crc = await self._read_from_inner(StructuredMessageConstants.CRC64_LENGTH)
 
             if self._message_crc64 != int.from_bytes(message_crc, "little"):
                 raise ValueError(
-                    "CRC64 mismatch detected in message trailer. "
-                    "All data read should be considered invalid."
+                    "CRC64 mismatch detected in message trailer. " "All data read should be considered invalid."
                 )
 
         self._message_offset += self._message_footer_length
 
     async def _read_segment_header(self) -> None:
         header_data = await self._read_from_inner(self._segment_header_length)
-        self._segment_number, self._segment_content_length = parse_segment_header(
-            header_data, self._segment_number + 1
-        )
+        self._segment_number, self._segment_content_length = parse_segment_header(header_data, self._segment_number + 1)
         self._message_offset += self._segment_header_length
 
         self._segment_content_offset = 0
@@ -235,9 +199,7 @@ class AsyncStructuredMessageDecoder(
 
     async def _read_segment_footer(self) -> None:
         if StructuredMessageProperties.CRC64 in self.flags:
-            segment_crc = await self._read_from_inner(
-                StructuredMessageConstants.CRC64_LENGTH
-            )
+            segment_crc = await self._read_from_inner(StructuredMessageConstants.CRC64_LENGTH)
 
             if self._segment_crc64 != int.from_bytes(segment_crc, "little"):
                 raise ValueError(
