@@ -63,6 +63,8 @@ class ChangelogTracker(BreakingChangesTracker):
             self.run_non_breaking_class_level_diff_checks(module)
 
     def run_non_breaking_class_level_diff_checks(self, module: Dict) -> None:
+        if not isinstance(module, dict):
+            return
         for class_name, class_components in module.get("class_nodes", {}).items():
             self.class_name = class_name
             stable_class_nodes = self.stable[self.module_name]["class_nodes"]

@@ -2,7 +2,9 @@
 
 ## 25.1.0 (2026-04-23)
 
-skip changelog generation
+### Other Changes
+
+  - Migrated from Swagger to TypeSpec
 
 ## 25.0.0 (2026-02-04)
 
