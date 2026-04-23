@@ -4,11 +4,21 @@
 
 ### Features Added
 
+- Added `_platform_headers` module centralizing all platform HTTP header name constants (`x-request-id`, `x-platform-server`, `x-agent-session-id`, isolation keys, `traceparent`, `x-ms-client-request-id`). All header references now use shared constants instead of scattered string literals.
+- Added `RequestIdMiddleware` (in `azure-ai-agentserver-core`) that sets the `x-request-id` response header on every HTTP response. Value is resolved in priority order: OTEL trace ID → incoming `x-request-id` header → new UUID.
+- Error responses (4xx/5xx) with a JSON `error` body are automatically enriched with `error.additionalInfo.request_id` matching the `x-request-id` response header, enabling client-side error correlation.
+- Foundry storage logging now includes the `traceparent` header (W3C distributed trace ID) in all log messages, enabling correlation between SDK log entries and backend distributed traces.
+
 ### Breaking Changes
 
 ### Bugs Fixed
 
+- Fixed crash in `FoundryStorageLoggingPolicy` when a transport-level failure (DNS resolution, connection refused, timeout) occurs before any HTTP response is received. The policy previously attempted to access `response.headers` unconditionally, raising an unrelated exception that masked the real transport error. Transport failures are now logged at ERROR level and the original exception propagates cleanly.
+
 ### Other Changes
+
+- Removed `x-ms-request-id` from Foundry storage response logging (unused service header).
+- Migrated all header string literals to use `_platform_headers` constants.
 
 ## 1.0.0b4 (2026-04-19)
 
