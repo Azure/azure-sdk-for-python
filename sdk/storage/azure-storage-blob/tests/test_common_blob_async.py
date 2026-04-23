@@ -1841,34 +1841,35 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
             await mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
 
-        blob_name = await self._create_block_blob()
-        # Act
-        sourceblob = '{0}/{1}/{2}'.format(
-            self.account_url(versioned_storage_account_name, "blob"), self.container_name, blob_name)
+        try:
+            blob_name = await self._create_block_blob()
+            # Act
+            sourceblob = '{0}/{1}/{2}'.format(
+                self.account_url(versioned_storage_account_name, "blob"), self.container_name, blob_name)
 
-        copyblob = self.bsc.get_blob_client(container_name, 'blob1copy')
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
-        immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
-                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+            copyblob = self.bsc.get_blob_client(container_name, 'blob1copy')
+            expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
+            immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
+                                                     policy_mode=BlobImmutabilityPolicyMode.Unlocked)
 
-        copy = await copyblob.start_copy_from_url(sourceblob, immutability_policy=immutability_policy,
-                                                  legal_hold=True)
+            copy = await copyblob.start_copy_from_url(sourceblob, immutability_policy=immutability_policy,
+                                                      legal_hold=True)
 
-        download_resp = await copyblob.download_blob()
-        assert await download_resp.readall() == self.byte_data
+            download_resp = await copyblob.download_blob()
+            assert await download_resp.readall() == self.byte_data
 
-        assert download_resp.properties['has_legal_hold']
-        assert download_resp.properties['immutability_policy']['expiry_time'] is not None
-        assert download_resp.properties['immutability_policy']['policy_mode'] is not None
-        assert copy is not None
-        assert copy['copy_status'] == 'success'
-        assert not isinstance(copy['copy_status'], Enum)
-
-        if self.is_live:
-            await copyblob.delete_immutability_policy()
-            await copyblob.set_legal_hold(False)
-            await copyblob.delete_blob()
-            await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+            assert download_resp.properties['has_legal_hold']
+            assert download_resp.properties['immutability_policy']['expiry_time'] is not None
+            assert download_resp.properties['immutability_policy']['policy_mode'] is not None
+            assert copy is not None
+            assert copy['copy_status'] == 'success'
+            assert not isinstance(copy['copy_status'], Enum)
+        finally:
+            if self.is_live:
+                await copyblob.delete_immutability_policy()
+                await copyblob.set_legal_hold(False)
+                await copyblob.delete_blob()
+                await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
         return variables
 
@@ -3054,37 +3055,38 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
             await mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
 
-        # Act
-        blob_name = self.get_resource_name('vlwblob')
-        blob = self.bsc.get_blob_client(container_name, blob_name)
-        await blob.upload_blob(b"abc", overwrite=True)
+        try:
+            # Act
+            blob_name = self.get_resource_name('vlwblob')
+            blob = self.bsc.get_blob_client(container_name, blob_name)
+            await blob.upload_blob(b"abc", overwrite=True)
 
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
-        immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
-                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
-        resp = await blob.set_immutability_policy(
-            immutability_policy=immutability_policy)
+            expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
+            immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
+                                                     policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+            resp = await blob.set_immutability_policy(
+                immutability_policy=immutability_policy)
 
-        # Assert
-        # check immutability policy after set_immutability_policy()
-        props = await blob.get_blob_properties()
-        assert resp['immutability_policy_until_date'] is not None
-        assert resp['immutability_policy_mode'] is not None
-        assert props['immutability_policy']['expiry_time'] is not None
-        assert props['immutability_policy']['policy_mode'] is not None
-        assert props['immutability_policy']['policy_mode'] == "unlocked"
+            # Assert
+            # check immutability policy after set_immutability_policy()
+            props = await blob.get_blob_properties()
+            assert resp['immutability_policy_until_date'] is not None
+            assert resp['immutability_policy_mode'] is not None
+            assert props['immutability_policy']['expiry_time'] is not None
+            assert props['immutability_policy']['policy_mode'] is not None
+            assert props['immutability_policy']['policy_mode'] == "unlocked"
 
-        # check immutability policy after delete_immutability_policy()
-        await blob.delete_immutability_policy()
-        props = await blob.get_blob_properties()
-        assert props['immutability_policy']['policy_mode'] is None
-        assert props['immutability_policy']['policy_mode'] is None
-
-        if self.is_live:
+            # check immutability policy after delete_immutability_policy()
             await blob.delete_immutability_policy()
-            await blob.set_legal_hold(False)
-            await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+            props = await blob.get_blob_properties()
+            assert props['immutability_policy']['policy_mode'] is None
+            assert props['immutability_policy']['policy_mode'] is None
+        finally:
+            if self.is_live:
+                await blob.delete_immutability_policy()
+                await blob.set_legal_hold(False)
+                await blob.delete_blob()
+                await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
         return variables
 
@@ -3107,30 +3109,31 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
             await mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
 
-        # Act
-        blob_name = self.get_resource_name('vlwblob')
-        blob = self.bsc.get_blob_client(container_name, blob_name)
-        await blob.upload_blob(b"abc", overwrite=True)
-        resp = await blob.set_legal_hold(True)
-        props = await blob.get_blob_properties()
+        try:
+            # Act
+            blob_name = self.get_resource_name('vlwblob')
+            blob = self.bsc.get_blob_client(container_name, blob_name)
+            await blob.upload_blob(b"abc", overwrite=True)
+            resp = await blob.set_legal_hold(True)
+            props = await blob.get_blob_properties()
 
-        with pytest.raises(HttpResponseError):
-            await blob.delete_blob()
+            with pytest.raises(HttpResponseError):
+                await blob.delete_blob()
 
-        assert resp['legal_hold']
-        assert props['has_legal_hold']
+            assert resp['legal_hold']
+            assert props['has_legal_hold']
 
-        resp2 = await blob.set_legal_hold(False)
-        props2 = await blob.get_blob_properties()
+            resp2 = await blob.set_legal_hold(False)
+            props2 = await blob.get_blob_properties()
 
-        assert not resp2['legal_hold']
-        assert not props2['has_legal_hold']
-
-        if self.is_live:
-            await blob.delete_immutability_policy()
-            await blob.set_legal_hold(False)
-            await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+            assert not resp2['legal_hold']
+            assert not props2['has_legal_hold']
+        finally:
+            if self.is_live:
+                await blob.delete_immutability_policy()
+                await blob.set_legal_hold(False)
+                await blob.delete_blob()
+                await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
     @pytest.mark.playback_test_only
     @BlobPreparer()
@@ -3151,37 +3154,38 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
             await mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
 
-        # Act
-        blob_name = self.get_resource_name('vlwblob')
-        blob = self.bsc.get_blob_client(container_name, blob_name)
-        content = b"abcedfg"
+        try:
+            # Act
+            blob_name = self.get_resource_name('vlwblob')
+            blob = self.bsc.get_blob_client(container_name, blob_name)
+            content = b"abcedfg"
 
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
-        immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
-                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
-        await blob.upload_blob(content,
-                               immutability_policy=immutability_policy,
-                               legal_hold=True,
-                               overwrite=True)
+            expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
+            immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
+                                                     policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+            await blob.upload_blob(content,
+                                   immutability_policy=immutability_policy,
+                                   legal_hold=True,
+                                   overwrite=True)
 
-        download_resp = await blob.download_blob()
+            download_resp = await blob.download_blob()
 
-        with pytest.raises(HttpResponseError):
-            await blob.delete_blob()
+            with pytest.raises(HttpResponseError):
+                await blob.delete_blob()
 
-        assert download_resp.properties['has_legal_hold']
-        assert download_resp.properties['immutability_policy']['expiry_time'] is not None
-        assert download_resp.properties['immutability_policy']['policy_mode'] is not None
+            assert download_resp.properties['has_legal_hold']
+            assert download_resp.properties['immutability_policy']['expiry_time'] is not None
+            assert download_resp.properties['immutability_policy']['policy_mode'] is not None
 
-        # Cleanup
-        await blob.set_legal_hold(False)
-        await blob.delete_immutability_policy()
-
-        if self.is_live:
-            await blob.delete_immutability_policy()
+            # Cleanup
             await blob.set_legal_hold(False)
-            await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+            await blob.delete_immutability_policy()
+        finally:
+            if self.is_live:
+                await blob.delete_immutability_policy()
+                await blob.set_legal_hold(False)
+                await blob.delete_blob()
+                await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
         return variables
 
@@ -3204,33 +3208,34 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
             await mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
 
-        # Act
-        blob_name = self.get_resource_name('vlwblob')
-        container_client = self.bsc.get_container_client(container_name)
-        blob = self.bsc.get_blob_client(container_name, blob_name)
-        content = b"abcedfg"
+        try:
+            # Act
+            blob_name = self.get_resource_name('vlwblob')
+            container_client = self.bsc.get_container_client(container_name)
+            blob = self.bsc.get_blob_client(container_name, blob_name)
+            content = b"abcedfg"
 
-        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
-        immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
-                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
-        await blob.upload_blob(content,
-                               immutability_policy=immutability_policy,
-                               legal_hold=True,
-                               overwrite=True)
+            expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
+            immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
+                                                     policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+            await blob.upload_blob(content,
+                                   immutability_policy=immutability_policy,
+                                   legal_hold=True,
+                                   overwrite=True)
 
-        blob_list = []
-        async for blob_prop in container_client.list_blobs(include=['immutabilitypolicy', 'legalhold']):
-            blob_list.append(blob_prop)
+            blob_list = []
+            async for blob_prop in container_client.list_blobs(include=['immutabilitypolicy', 'legalhold']):
+                blob_list.append(blob_prop)
 
-        assert blob_list[0]['has_legal_hold']
-        assert blob_list[0]['immutability_policy']['expiry_time'] is not None
-        assert blob_list[0]['immutability_policy']['policy_mode'] is not None
-
-        if self.is_live:
-            await blob.delete_immutability_policy()
-            await blob.set_legal_hold(False)
-            await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+            assert blob_list[0]['has_legal_hold']
+            assert blob_list[0]['immutability_policy']['expiry_time'] is not None
+            assert blob_list[0]['immutability_policy']['policy_mode'] is not None
+        finally:
+            if self.is_live:
+                await blob.delete_immutability_policy()
+                await blob.set_legal_hold(False)
+                await blob.delete_blob()
+                await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
         return variables
 
@@ -3283,6 +3288,8 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         finally:
             await snapshot_blob.set_legal_hold(False)
             await blob.delete_blob(delete_snapshots="include")
+            if self.is_live:
+                await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
         return variables
 
@@ -3338,6 +3345,8 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         finally:
             await old_version_blob.set_legal_hold(False)
             await root_blob.delete_blob(delete_snapshots="include")
+            if self.is_live:
+                await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
 
         return variables
 

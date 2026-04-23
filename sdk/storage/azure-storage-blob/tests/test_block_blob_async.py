@@ -828,38 +828,39 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
             await mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name,
                                                      container_name, blob_container=property)
 
-        blob_name = self._get_blob_reference()
-        blob = self.bsc.get_blob_client(container_name, blob_name)
-        await blob.stage_block('1', b'AAA')
-        await blob.stage_block('2', b'BBB')
-        await blob.stage_block('3', b'CCC')
+        try:
+            blob_name = self._get_blob_reference()
+            blob = self.bsc.get_blob_client(container_name, blob_name)
+            await blob.stage_block('1', b'AAA')
+            await blob.stage_block('2', b'BBB')
+            await blob.stage_block('3', b'CCC')
 
-        # Act
-        expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
-        block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
-        immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
-                                                 policy_mode=BlobImmutabilityPolicyMode.Unlocked)
-        put_block_list_resp = await blob.commit_block_list(block_list,
-                                                           immutability_policy=immutability_policy,
-                                                           legal_hold=True,
-                                                           )
+            # Act
+            expiry_time = self.get_datetime_variable(variables, "expiry_time", datetime.utcnow() + timedelta(seconds=5))
+            block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
+            immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
+                                                     policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+            put_block_list_resp = await blob.commit_block_list(block_list,
+                                                               immutability_policy=immutability_policy,
+                                                               legal_hold=True,
+                                                               )
 
-        # Assert
-        download_resp = await blob.download_blob()
-        content = await download_resp.readall()
-        assert content == b'AAABBBCCC'
-        assert download_resp.properties.etag == put_block_list_resp.get('etag')
-        assert download_resp.properties.last_modified == put_block_list_resp.get('last_modified')
-        assert download_resp.properties['has_legal_hold']
-        assert download_resp.properties['immutability_policy']['expiry_time'] is not None
-        assert download_resp.properties['immutability_policy']['policy_mode'] is not None
-
-        if self.is_live:
-            await blob.delete_immutability_policy()
-            await blob.set_legal_hold(False)
-            await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name,
-                                                     container_name)
+            # Assert
+            download_resp = await blob.download_blob()
+            content = await download_resp.readall()
+            assert content == b'AAABBBCCC'
+            assert download_resp.properties.etag == put_block_list_resp.get('etag')
+            assert download_resp.properties.last_modified == put_block_list_resp.get('last_modified')
+            assert download_resp.properties['has_legal_hold']
+            assert download_resp.properties['immutability_policy']['expiry_time'] is not None
+            assert download_resp.properties['immutability_policy']['policy_mode'] is not None
+        finally:
+            if self.is_live:
+                await blob.delete_immutability_policy()
+                await blob.set_legal_hold(False)
+                await blob.delete_blob()
+                await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name,
+                                                         container_name)
 
         return variables
 
