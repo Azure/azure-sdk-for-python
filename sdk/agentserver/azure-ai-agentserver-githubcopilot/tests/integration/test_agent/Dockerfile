@@ -7,8 +7,9 @@ RUN apt-get update && apt-get install -y git && rm -rf /var/lib/apt/lists/*
 
 # Install base packages from Azure DevOps feed FIRST (separate pip call
 # to avoid the feed interfering with github-copilot-sdk from PyPI).
+# Uses --index-url (not --extra-index-url) to satisfy CFS supply-chain policy.
 RUN pip install --no-cache-dir --no-input --pre \
-    --extra-index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/ \
+    --index-url https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/ \
     "azure-ai-agentserver-core>=2.0.0a1" \
     "azure-ai-agentserver-responses>=1.0.0a1"
 
