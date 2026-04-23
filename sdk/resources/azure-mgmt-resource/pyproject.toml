@@ -6,11 +6,11 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "azure-mgmt-resource"
+name = "azure-mgmt-resource-resources"
 authors = [
     { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
-description = "Microsoft Azure Resource Management Client Library for Python"
+description = "Microsoft Azure Resources Management Client Library for Python"
 license = "MIT"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -42,7 +42,7 @@ dynamic = [
 repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.dynamic.version]
-attr = "azure.mgmt.resource._version.VERSION"
+attr = "azure.mgmt.resource.resources._version.VERSION"
 
 [tool.setuptools.dynamic.readme]
 file = [
@@ -60,6 +60,7 @@ exclude = [
     "doc*",
     "azure",
     "azure.mgmt",
+    "azure.mgmt.resource",
 ]
 
 [tool.setuptools.package-data]
