@@ -2,9 +2,60 @@
 
 ## 25.1.0 (2026-04-23)
 
-### Other Changes
+### Features Added
 
-  - Migrated from Swagger to TypeSpec
+  - Client `ResourceManagementClient` added method `send_request`
+  - Model `GenericResource` added property `system_data`
+  - Model `GenericResourceExpanded` added property `system_data`
+  - Model `Operation` added property `is_data_action`
+  - Model `Operation` added property `origin`
+  - Model `Operation` added property `action_type`
+  - Model `Resource` added property `system_data`
+  - Model `ResourceGroup` added property `system_data`
+  - Model `TagDetails` added property `values_property`
+  - Model `TagsResource` added property `system_data`
+  - Added enum `ActionType`
+  - Added model `CloudError`
+  - Added enum `CreatedByType`
+  - Added model `ErrorDetail`
+  - Added model `ExtensionResource`
+  - Added enum `Origin`
+  - Added model `SystemData`
+  - Added model `TrackedResource`
+
+### Breaking Changes
+
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `extended_location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Model `TagDetails` deleted or renamed its instance variable `values`
+  - Deleted or renamed model `GenericResourceFilter`
+  - Deleted or renamed model `ResourceGroupFilter`
+  - Deleted or renamed model `ResourceProviderOperationDisplayProperties`
+  - Deleted or renamed model `SubResource`
+  - Method `ProviderResourceTypesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ProvidersOperations.get` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ProvidersOperations.get_at_tenant_scope` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ProvidersOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ProvidersOperations.list_at_tenant_scope` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourceGroupsOperations.begin_delete` changed its parameter `force_deletion_types` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.begin_create_or_update` changed its parameter `api_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.begin_create_or_update_by_id` changed its parameter `api_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.begin_delete` changed its parameter `api_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.begin_delete_by_id` changed its parameter `api_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.begin_update` changed its parameter `api_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.begin_update_by_id` changed its parameter `api_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.check_existence` changed its parameter `api_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.check_existence_by_id` changed its parameter `api_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.get` changed its parameter `api_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.get_by_id` changed its parameter `api_version` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.list` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Method `ResourcesOperations.list_by_resource_group` changed its parameter `expand` from `positional_or_keyword` to `keyword_only`
+  - Deleted or renamed module `['azure.mgmt.resource', 'azure.mgmt.resource.deploymentscripts', 'azure.mgmt.resource.deploymentscripts.aio', 'azure.mgmt.resource.deploymentscripts.aio.operations', 'azure.mgmt.resource.deploymentscripts.models', 'azure.mgmt.resource.deploymentscripts.operations', 'azure.mgmt.resource.deploymentstacks', 'azure.mgmt.resource.deploymentstacks.aio', 'azure.mgmt.resource.deploymentstacks.aio.operations', 'azure.mgmt.resource.deploymentstacks.models', 'azure.mgmt.resource.deploymentstacks.operations', 'azure.mgmt.resource.locks', 'azure.mgmt.resource.locks.aio', 'azure.mgmt.resource.locks.aio.operations', 'azure.mgmt.resource.locks.models', 'azure.mgmt.resource.locks.operations', 'azure.mgmt.resource.templatespecs', 'azure.mgmt.resource.templatespecs.aio', 'azure.mgmt.resource.templatespecs.aio.operations', 'azure.mgmt.resource.templatespecs.models', 'azure.mgmt.resource.templatespecs.operations']`
+  - Method `ResourcesOperations.begin_create_or_update_by_id` re-ordered its parameters from `['self', 'resource_id', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_id', 'parameters', 'api_version', 'kwargs']`
+  - Method `ResourcesOperations.begin_update` re-ordered its parameters from `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'parameters', 'api_version', 'kwargs']`
+  - Method `ResourcesOperations.begin_update_by_id` re-ordered its parameters from `['self', 'resource_id', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_id', 'parameters', 'api_version', 'kwargs']`
+  - Method `ResourcesOperations.begin_create_or_update` re-ordered its parameters from `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'api_version', 'parameters', 'kwargs']` to `['self', 'resource_group_name', 'resource_provider_namespace', 'parent_resource_path', 'resource_type', 'resource_name', 'parameters', 'api_version', 'kwargs']`
 
 ## 25.0.0 (2026-02-04)
 
