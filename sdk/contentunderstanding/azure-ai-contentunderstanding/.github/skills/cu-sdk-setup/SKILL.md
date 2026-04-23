@@ -361,6 +361,11 @@ fi
 | `Model deployment not found` | Deploy required models in Microsoft Foundry. Run `sample_update_defaults.py`. |
 | `Cognitive Services User role not assigned` | Add the role in Azure Portal → Your resource → Access Control (IAM). |
 
+## Related Skills
+
+- `cu-sdk-sample-run` - Run individual samples (including `sample_update_defaults` for model deployment setup)
+- `cu-sdk-common-knowledge` - Domain knowledge for Content Understanding concepts
+
 ## Additional Resources
 
 - [SDK README](../../../README.md) - Full documentation
