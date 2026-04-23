@@ -42,7 +42,15 @@ class TranslatorHeaderPolicy(SansIOHTTPPolicy):
 
 
 def get_translation_endpoint(endpoint: str, api_version: str) -> str:
-    """Transform cognitive services endpoint to translator-specific path if needed."""
+    """Transform cognitive services endpoint to translator-specific path if needed.
+
+    :param endpoint: The base endpoint URL.
+    :type endpoint: str
+    :param api_version: The API version string.
+    :type api_version: str
+    :return: The transformed endpoint URL.
+    :rtype: str
+    """
     if "cognitiveservices" in endpoint:
         return endpoint + "/translator/text/v" + api_version
     return endpoint
@@ -69,10 +77,13 @@ class TextTranslationClient(ServiceClientGenerated):
     :type endpoint: str
     :param credential: Credential used to authenticate with the Translator service. Optional for
      unauthenticated operations like get_languages.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential or None
-    :param region: Azure region of the Translator resource. Required for AzureKeyCredential, optional for Entra ID regional resources.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials.TokenCredential or None
+    :param region: Azure region of the Translator resource. Required for AzureKeyCredential,
+     optional for Entra ID regional resources.
     :type region: str or None
-    :param resource_id: Azure resource ID for Entra ID authentication. Required when using TokenCredential with global endpoint.
+    :param resource_id: Azure resource ID for Entra ID authentication. Required when using
+     TokenCredential with global endpoint.
     :type resource_id: str or None
     :param audience: Scopes of the credentials.
     :type audience: str or None

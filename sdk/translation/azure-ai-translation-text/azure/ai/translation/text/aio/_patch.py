@@ -46,10 +46,13 @@ class TextTranslationClient(ServiceClientGenerated):
     :type endpoint: str
     :param credential: Credential used to authenticate with the Translator service. Optional for
      unauthenticated operations like get_languages.
-    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential or None
-    :param region: Azure region of the Translator resource. Required for AzureKeyCredential, optional for Entra ID regional resources.
+    :type credential: ~azure.core.credentials.AzureKeyCredential or
+     ~azure.core.credentials_async.AsyncTokenCredential or None
+    :param region: Azure region of the Translator resource. Required for AzureKeyCredential,
+     optional for Entra ID regional resources.
     :type region: str or None
-    :param resource_id: Azure resource ID for Entra ID authentication. Required when using TokenCredential with global endpoint.
+    :param resource_id: Azure resource ID for Entra ID authentication. Required when using
+     TokenCredential with global endpoint.
     :type resource_id: str or None
     :param audience: Scopes of the credentials.
     :type audience: str or None

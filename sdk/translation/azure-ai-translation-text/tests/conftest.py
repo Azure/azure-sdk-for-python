@@ -1,5 +1,10 @@
 import pytest
-from devtools_testutils import test_proxy, add_remove_header_sanitizer, remove_batch_sanitizers, set_custom_default_matcher
+from devtools_testutils import (
+    test_proxy,
+    add_remove_header_sanitizer,
+    remove_batch_sanitizers,
+    set_custom_default_matcher,
+)
 
 # autouse=True will trigger this fixture on each pytest run, even if it's not explicitly used by a test method
 # def start_proxy(test_proxy):
