@@ -1947,7 +1947,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        data = u'hello world啊齄丂狛狜'
+        data = 'hello world啊齄丂狛狜'
         resp = blob.upload_blob(data)
 
         # Assert

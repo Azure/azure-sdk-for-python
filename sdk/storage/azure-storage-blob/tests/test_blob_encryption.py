@@ -270,8 +270,8 @@ class TestStorageBlobEncryption(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
-        small_stream = StringIO(u'small')
-        large_stream = StringIO(u'large' * self.config.max_single_put_size)
+        small_stream = StringIO('small')
+        large_stream = StringIO('large' * self.config.max_single_put_size)
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 

@@ -63,7 +63,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        blob_data = u'hello world啊齄丂狛狜'.encode('utf-8')
+        blob_data = 'hello world啊齄丂狛狜'.encode('utf-8')
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(blob_data)
@@ -706,7 +706,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(text, encoding='utf-16')
@@ -725,7 +725,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob.upload_blob(text, encoding='utf-16')

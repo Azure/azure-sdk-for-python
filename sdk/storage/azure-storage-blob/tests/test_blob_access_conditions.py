@@ -2888,7 +2888,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         for i in range(5):
-            resp = blob.append_block(u'block {0}'.format(i), if_modified_since=test_datetime)
+            resp = blob.append_block(f"block {i}", if_modified_since=test_datetime)
             assert resp is not None
 
         # Assert
@@ -2912,7 +2912,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
-                resp = blob.append_block(u'block {0}'.format(i), if_modified_since=test_datetime)
+                blob.append_block(f'block {i}', if_modified_since=test_datetime)
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -2933,7 +2933,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         for i in range(5):
-            resp = blob.append_block(u'block {0}'.format(i), if_unmodified_since=test_datetime)
+            resp = blob.append_block(f'block {i}', if_unmodified_since=test_datetime)
             assert resp is not None
 
         # Assert
@@ -2957,7 +2957,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
-                resp = blob.append_block(u'block {0}'.format(i), if_unmodified_since=test_datetime)
+                blob.append_block(f'block {i}', if_unmodified_since=test_datetime)
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -2978,7 +2978,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         # Act
         for i in range(5):
             etag = blob.get_blob_properties().etag
-            resp = blob.append_block(u'block {0}'.format(i), etag=etag, match_condition=MatchConditions.IfNotModified)
+            resp = blob.append_block(f'block {i}', etag=etag, match_condition=MatchConditions.IfNotModified)
             assert resp is not None
 
         # Assert
@@ -2999,7 +2999,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         # Act
         with pytest.raises(HttpResponseError) as e:
             for i in range(5):
-                resp = blob.append_block(u'block {0}'.format(i), etag='0x111111111111111',
+                resp = blob.append_block(f'block {i}', etag='0x111111111111111',
                                          match_condition=MatchConditions.IfNotModified)
 
     @BlobPreparer()
@@ -3015,7 +3015,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
         # Act
         for i in range(5):
-            resp = blob.append_block(u'block {0}'.format(i), etag='0x8D2C9167D53FC2C',
+            resp = blob.append_block(f'block {i}', etag='0x8D2C9167D53FC2C',
                                      match_condition=MatchConditions.IfModified)
             assert resp is not None
 
@@ -3038,7 +3038,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
                 etag = blob.get_blob_properties().etag
-                resp = blob.append_block(u'block {0}'.format(i), etag=etag, match_condition=MatchConditions.IfModified)
+                resp = blob.append_block(f'block {i}', etag=etag, match_condition=MatchConditions.IfModified)
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code

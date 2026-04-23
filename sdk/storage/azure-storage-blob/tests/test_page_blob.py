@@ -529,7 +529,7 @@ class TestStoragePageBlob(StorageRecordedTestCase):
         blob = self._create_blob(bsc)
 
         # Act
-        data = u'abcdefghijklmnop' * 32
+        data = 'abcdefghijklmnop' * 32
         resp = blob.upload_page(data, offset=0, length=512)
 
         # Assert

@@ -120,7 +120,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         created = container.create_container(public_access='blob')
 
         blob = container.get_blob_client("blob1")
-        blob.upload_blob(u'xyz')
+        blob.upload_blob('xyz')
 
         anonymous_service = BlobClient(
             self.account_url(storage_account_name, "blob"),
@@ -242,7 +242,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret)
-        container_name = u'啊齄丂狛狜'
+        container_name = '啊齄丂狛狜'
 
         container = bsc.get_container_client(container_name)
         # Act

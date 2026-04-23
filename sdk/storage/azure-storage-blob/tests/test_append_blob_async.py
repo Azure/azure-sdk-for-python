@@ -199,7 +199,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act
         for i in range(5):
-            resp = await blob.append_block(u'block {0}'.format(i).encode('utf-8'))
+            resp = await blob.append_block(f'block {i}'.encode('utf-8'))
             assert int(resp['blob_append_offset']) == 7 * i
             assert resp['blob_committed_block_count'] == i + 1
             assert resp['etag'] is not None
@@ -239,7 +239,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         blob = await self._create_blob(bsc)
 
         # Act
-        resp = await blob.append_block(u'啊齄丂狛狜', encoding='utf-16')
+        resp = await blob.append_block('啊齄丂狛狜', encoding='utf-16')
         assert int(resp['blob_append_offset']) == 0
         assert resp['blob_committed_block_count'] == 1
         assert resp['etag'] is not None
@@ -260,12 +260,12 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         blob = await self._create_blob(bsc, tags=tags)
         with pytest.raises(ResourceModifiedError):
             await blob.append_block(
-                u'啊齄丂狛狜',
+                '啊齄丂狛狜',
                 encoding='utf-16',
                 if_tags_match_condition="\"tag1\"='first tag'"
             )
         resp = await blob.append_block(
-            u'啊齄丂狛狜',
+            '啊齄丂狛狜',
             encoding='utf-16',
             if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'"
         )
@@ -1388,7 +1388,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         data = text.encode('utf-8')
 
         # Act
@@ -1410,7 +1410,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
 
         # Act
@@ -1429,7 +1429,7 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
                                 storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
 
         # Act

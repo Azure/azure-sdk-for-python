@@ -1200,7 +1200,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         blob = await self._create_blob(bsc)
 
         # Act
-        data = u'abcdefghijklmnop' * 32
+        data = 'abcdefghijklmnop' * 32
         resp = await blob.upload_page(data, offset=0, length=512)
 
         # Assert

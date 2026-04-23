@@ -761,7 +761,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob = await self._create_blob()
 
         # Act
-        headers = await blob.stage_block('1', u'啊齄丂狛狜')
+        headers = await blob.stage_block('1', '啊齄丂狛狜')
         assert 'content_crc64' in headers
 
         # Assert
@@ -1798,7 +1798,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         data = text.encode('utf-8')
 
         # Act
@@ -1820,7 +1820,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
 
         # Act
@@ -1839,7 +1839,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        text = u'hello 啊齄丂狛狜 world'
+        text = 'hello 啊齄丂狛狜 world'
         data = text.encode('utf-16')
 
         # Act

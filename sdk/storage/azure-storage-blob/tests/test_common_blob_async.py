@@ -2210,7 +2210,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
-        data = u'hello world啊齄丂狛狜'
+        data = 'hello world啊齄丂狛狜'
         resp = await blob.upload_blob(data)
 
         # Assert
