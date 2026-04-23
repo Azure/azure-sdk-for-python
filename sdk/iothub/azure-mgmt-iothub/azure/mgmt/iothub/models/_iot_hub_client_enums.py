@@ -167,7 +167,6 @@ class JobType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REBOOT_DEVICE = "rebootDevice"
     FACTORY_RESET_DEVICE = "factoryResetDevice"
     FIRMWARE_UPDATE = "firmwareUpdate"
-    IMPORT_ENUM = "import"
 
 
 class NetworkRuleIPAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -224,7 +223,9 @@ class RoutingSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MQTT_BROKER_MESSAGES = "MqttBrokerMessages"
 
 
-class RoutingStorageContainerPropertiesEncoding(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class RoutingStorageContainerPropertiesEncoding(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """Encoding that is used to serialize messages to blobs. Supported values are 'avro',
     'avrodeflate', and 'JSON'. Default value is 'avro'.
     """

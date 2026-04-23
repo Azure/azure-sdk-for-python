@@ -2088,7 +2088,7 @@ class JobResponse(_serialization.Model):
     :vartype end_time_utc: ~datetime.datetime
     :ivar type: The type of the job. Known values are: "unknown", "export", "import", "backup",
      "readDeviceProperties", "writeDeviceProperties", "updateDeviceConfiguration", "rebootDevice",
-     "factoryResetDevice", "firmwareUpdate", and "import".
+     "factoryResetDevice", and "firmwareUpdate".
     :vartype type: str or ~azure.mgmt.iothub.models.JobType
     :ivar status: The status of the job. Known values are: "unknown", "enqueued", "running",
      "completed", "failed", and "cancelled".
