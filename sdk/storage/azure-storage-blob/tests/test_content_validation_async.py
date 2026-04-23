@@ -14,6 +14,7 @@ from azure.storage.blob.aio import (
     BlobServiceClient,
     ContainerClient
 )
+from devtools_testutils import is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import (
     AsyncStorageRecordedTestCase,
@@ -47,6 +48,8 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
             pass
 
     def teardown_method(self, _):
+        if not is_live():
+            return
         # Use sync client as teardown_method must be sync
         if self.container:
             sync_credential = self.get_credential(SyncContainerClient, is_async=False)

@@ -15,7 +15,7 @@ from azure.storage.blob import (
     BlobType,
     ContainerClient
 )
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import is_live, recorded_by_proxy
 from devtools_testutils.storage import (
     GenericTestProxyParametrize1,
     GenericTestProxyParametrize2,
@@ -87,7 +87,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
             pass
 
     def teardown_method(self, _):
-        if self.container:
+        if self.container and is_live():
             try:
                 self.container.delete_container()
             except:
