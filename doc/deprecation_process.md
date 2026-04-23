@@ -19,7 +19,7 @@ If applicable, consider adding a post to the Azure Blog stating that:
  - the old package is scheduled to be deprecated on a specific date
  - guidance on adjusting code to use the new package.
 
-Reach out to the Python Azure SDK PM, Rohit Ganguly (rohitganguly), if you have any questions about creating a blog post.
+Reach out to the Azure SDK PMs, Scott Addie (Scott.Addie) or Sandeep Sen (sandeepsen) if you have any questions about creating a blog post.
 
 # Step 1: Updates to the package files
 
