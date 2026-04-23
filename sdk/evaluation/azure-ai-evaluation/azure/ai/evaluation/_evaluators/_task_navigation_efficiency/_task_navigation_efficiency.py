@@ -345,7 +345,7 @@ class _TaskNavigationEfficiencyEvaluator(EvaluatorBase):
                 "task_navigation_efficiency_passed": match_result,
                 "task_navigation_efficiency_reason": None,
                 "task_navigation_efficiency_status": "completed",
-                "task_navigation_efficiency_threshold": 0.5,
+                "task_navigation_efficiency_threshold": None,
                 "task_navigation_efficiency_properties": additional_properties_metrics,
             }
         else:
