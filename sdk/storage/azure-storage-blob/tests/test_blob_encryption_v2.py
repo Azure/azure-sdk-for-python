@@ -65,7 +65,8 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                     credential=storage_account_key.secret)
         kek = KeyWrapper('key1')
         self.enable_encryption_v2(kek)
 

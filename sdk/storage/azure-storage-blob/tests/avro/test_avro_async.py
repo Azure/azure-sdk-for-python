@@ -70,7 +70,8 @@ class AvroReaderTestsAsync(unittest.TestCase):
         nitems = 10
         for iexample, (writer_schema, datum) in enumerate(SCHEMAS_TO_VALIDATE):
             for codec in CODECS_TO_VALIDATE:
-                file_path = os.path.join(AvroReaderTestsAsync._samples_dir_root, 'test_' + codec + '_' + str(iexample) + '.avro')
+                file_path = os.path.join(AvroReaderTestsAsync._samples_dir_root,
+                                         'test_' + codec + '_' + str(iexample) + '.avro')
                 with open(file_path, 'rb') as reader:
                     datum_reader = AsyncDatumReader()
                     async_reader = AsyncBufferedReaderWrapper(reader)
@@ -127,6 +128,7 @@ class AvroReaderTestsAsync(unittest.TestCase):
             records.append(record)
         self.assertEqual(CHANGE_FEED_RECORD, records[0])
         self.assertIsNot(partial_data_stream.object_position, 0)
+
 
 class _HeaderStream(object):
     def __init__(self):

@@ -20,6 +20,7 @@ import sys
 import asyncio
 from azure.core.exceptions import ResourceNotFoundError, ResourceExistsError
 
+
 class BlobServiceSamplesAsync(object):
 
     connection_string = os.getenv("STORAGE_CONNECTION_STRING")
@@ -56,12 +57,14 @@ class BlobServiceSamplesAsync(object):
             from azure.storage.blob import BlobAnalyticsLogging, Metrics, CorsRule, RetentionPolicy
 
             # Create logging settings
-            logging = BlobAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+            logging = BlobAnalyticsLogging(read=True, write=True, delete=True,
+                                           retention_policy=RetentionPolicy(enabled=True, days=5))
 
             # Create metrics for requests statistics
-            hour_metrics = Metrics(enabled=True, include_apis=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+            hour_metrics = Metrics(enabled=True, include_apis=True,
+                                   retention_policy=RetentionPolicy(enabled=True, days=5))
             minute_metrics = Metrics(enabled=True, include_apis=True,
-                                    retention_policy=RetentionPolicy(enabled=True, days=5))
+                                     retention_policy=RetentionPolicy(enabled=True, days=5))
 
             # Create CORS rules
             cors_rule = CorsRule(['www.xyz.com'], ['GET'])

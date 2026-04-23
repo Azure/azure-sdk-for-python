@@ -25,6 +25,7 @@ USAGE:
 import os
 import sys
 
+
 class AuthSamples(object):
     url = "https://{}.blob.core.windows.net".format(
         os.getenv("STORAGE_ACCOUNT_NAME")
@@ -134,6 +135,7 @@ class AuthSamples(object):
 
         # Get account information for the Blob Service
         account_info = blob_service_client.get_service_properties()
+
 
 if __name__ == '__main__':
     sample = AuthSamples()

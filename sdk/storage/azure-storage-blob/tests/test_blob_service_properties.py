@@ -200,7 +200,8 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_delete_retention_policy_not_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_not_equal(
+            received_props['delete_retention_policy'], delete_retention_policy)
 
         # Should not work with 366 days
         delete_retention_policy = RetentionPolicy(enabled=True, days=366)
@@ -210,7 +211,8 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         # Assert
         received_props = bsc.get_service_properties()
-        self._assert_delete_retention_policy_not_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_not_equal(
+            received_props['delete_retention_policy'], delete_retention_policy)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -370,7 +372,8 @@ class TestServiceProperties(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
-        logging = BlobAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        logging = BlobAnalyticsLogging(read=True, write=True, delete=True,
+                                       retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
         bsc.set_service_properties(analytics_logging=logging)
@@ -473,8 +476,8 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         pytest.raises(ValueError,
-                          RetentionPolicy,
-                          True, None)
+                      RetentionPolicy,
+                      True, None)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -489,7 +492,7 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         # Assert
         pytest.raises(HttpResponseError,
-                          bsc.set_service_properties, None, None, None, cors)
+                      bsc.set_service_properties, None, None, None, cors)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -503,8 +506,8 @@ class TestServiceProperties(StorageRecordedTestCase):
 
         # Assert
         pytest.raises(HttpResponseError,
-                          bsc.set_service_properties,
-                          None, None, minute_metrics)
+                      bsc.set_service_properties,
+                      None, None, minute_metrics)
 
 
 # ------------------------------------------------------------------------------

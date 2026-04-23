@@ -14,30 +14,30 @@ from azure.storage.blob._shared.avro.datafile import DataFileReader
 from azure.storage.blob._shared.avro.avro_io import DatumReader
 
 SCHEMAS_TO_VALIDATE = (
-  ('"null"', None),
-  ('"boolean"', True),
-  ('"string"', 'adsfasdf09809dsf-=adsf'),
-  ('"bytes"', b'12345abcd'),
-  ('"int"', 1234),
-  ('"long"', 1234),
-  ('"float"', 1234.0),
-  ('"double"', 1234.0),
-  ('{"type": "fixed", "name": "Test", "size": 1}', b'B'),
-  ('{"type": "enum", "name": "Test", "symbols": ["A", "B"]}', 'B'),
-  ('{"type": "array", "items": "long"}', [1, 3, 2]),
-  ('{"type": "map", "values": "long"}', {'a': 1, 'b': 3, 'c': 2}),
-  ('["string", "null", "long"]', None),
+    ('"null"', None),
+    ('"boolean"', True),
+    ('"string"', 'adsfasdf09809dsf-=adsf'),
+    ('"bytes"', b'12345abcd'),
+    ('"int"', 1234),
+    ('"long"', 1234),
+    ('"float"', 1234.0),
+    ('"double"', 1234.0),
+    ('{"type": "fixed", "name": "Test", "size": 1}', b'B'),
+    ('{"type": "enum", "name": "Test", "symbols": ["A", "B"]}', 'B'),
+    ('{"type": "array", "items": "long"}', [1, 3, 2]),
+    ('{"type": "map", "values": "long"}', {'a': 1, 'b': 3, 'c': 2}),
+    ('["string", "null", "long"]', None),
 
-  ("""
+    ("""
    {
      "type": "record",
      "name": "Test",
      "fields": [{"name": "f", "type": "long"}]
    }
    """,
-   {'f': 5}),
+        {'f': 5}),
 
-  ("""
+    ("""
    {
      "type": "record",
      "name": "Lisp",
@@ -56,7 +56,7 @@ SCHEMAS_TO_VALIDATE = (
      }]
    }
    """,
-   {'value': {'car': {'value': 'head'}, 'cdr': {'value': None}}}),
+        {'value': {'car': {'value': 'head'}, 'cdr': {'value': None}}}),
 )
 
 CODECS_TO_VALIDATE = ('null', 'deflate')
@@ -97,7 +97,8 @@ class AvroReaderTests(unittest.TestCase):
         nitems = 10
         for iexample, (writer_schema, datum) in enumerate(SCHEMAS_TO_VALIDATE):
             for codec in CODECS_TO_VALIDATE:
-                file_path = os.path.join(AvroReaderTests._samples_dir_root, 'test_' + codec + '_' + str(iexample) + '.avro')
+                file_path = os.path.join(AvroReaderTests._samples_dir_root, 'test_' +
+                                         codec + '_' + str(iexample) + '.avro')
                 with open(file_path, 'rb') as reader:
                     datum_reader = DatumReader()
                     with DataFileReader(reader, datum_reader) as dfr:
@@ -113,7 +114,8 @@ class AvroReaderTests(unittest.TestCase):
         nitems = 10
         for iexample, (writer_schema, datum) in enumerate(SCHEMAS_TO_VALIDATE):
             for codec in CODECS_TO_VALIDATE:
-                file_path = os.path.join(AvroReaderTests._samples_dir_root, 'test_' + codec + '_' + str(iexample) + '.avro')
+                file_path = os.path.join(AvroReaderTests._samples_dir_root, 'test_' +
+                                         codec + '_' + str(iexample) + '.avro')
                 with open(file_path, 'rb') as reader:
                     data = BytesIO(reader.read())
                     datum_reader = DatumReader()

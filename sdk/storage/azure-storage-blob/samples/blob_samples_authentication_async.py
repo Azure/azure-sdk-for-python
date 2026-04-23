@@ -27,6 +27,7 @@ import os
 import sys
 import asyncio
 
+
 class AuthSamplesAsync(object):
     url = "https://{}.blob.core.windows.net".format(
         os.getenv("STORAGE_ACCOUNT_NAME")
@@ -130,6 +131,7 @@ class AuthSamplesAsync(object):
 
         # Get account information for the Blob Service
         account_info = await blob_service_client.get_service_properties()
+
 
 async def main():
     sample = AuthSamplesAsync()

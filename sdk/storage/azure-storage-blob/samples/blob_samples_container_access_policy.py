@@ -41,6 +41,7 @@ except KeyError:
     print("STORAGE_CONNECTION_STRING must be set.")
     sys.exit(1)
 
+
 def get_and_set_container_access_policy():
     service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
     container_client = service_client.get_container_client("mynewcontaineraccess")
@@ -50,8 +51,8 @@ def get_and_set_container_access_policy():
 
     # Create access policy
     access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True, write=True),
-                                    expiry=datetime.utcnow() + timedelta(hours=1),
-                                    start=datetime.utcnow() - timedelta(minutes=1))
+                                 expiry=datetime.utcnow() + timedelta(hours=1),
+                                 start=datetime.utcnow() - timedelta(minutes=1))
     identifiers = {'read': access_policy}
 
     # Specifies full public read access for container and blob data.

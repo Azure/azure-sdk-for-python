@@ -25,6 +25,7 @@ from datetime import datetime, timedelta
 current_dir = os.path.dirname(os.path.abspath(__file__))
 SOURCE_FILE = os.path.join(current_dir, 'SampleSource.txt')
 
+
 class ContainerSamplesAsync(object):
     connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
@@ -150,8 +151,8 @@ class ContainerSamplesAsync(object):
                 # Create access policy
                 from azure.storage.blob import AccessPolicy, ContainerSasPermissions
                 access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
-                                            expiry=datetime.utcnow() + timedelta(hours=1),
-                                            start=datetime.utcnow() - timedelta(minutes=1))
+                                             expiry=datetime.utcnow() + timedelta(hours=1),
+                                             start=datetime.utcnow() - timedelta(minutes=1))
 
                 identifiers = {'my-access-policy-id': access_policy}
 
