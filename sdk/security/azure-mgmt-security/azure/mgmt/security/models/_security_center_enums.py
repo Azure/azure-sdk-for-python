@@ -20,10 +20,8 @@ class AadConnectivityStateEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class ActionableRemediationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """ActionableRemediation Setting.
-    None - the setting was never set.
-    Enabled - ActionableRemediation is enabled.
-    Disabled - ActionableRemediation is disabled.
+    """ActionableRemediation Setting. None - the setting was never set. Enabled -
+    ActionableRemediation is enabled. Disabled - ActionableRemediation is disabled.
     """
 
     NONE = "None"
@@ -112,9 +110,6 @@ class ApplicationConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     IN = "In"
     """Checks that the string value of the data defined in Property equals any of the given values
     (exact fit)"""
-    IN_ENUM = "In"
-    """Checks that the string value of the data defined in Property equals any of the given values
-    (exact fit)"""
 
 
 class ApplicationSourceResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -148,8 +143,12 @@ class AssessmentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     based on custom Azure Policy definition.
     """
 
+    UNKNOWN = "Unknown"
+    """Unknown assessment type"""
     BUILT_IN = "BuiltIn"
     """Microsoft Defender for Cloud managed assessments"""
+    CUSTOM = "Custom"
+    """User defined custom assessments"""
     CUSTOM_POLICY = "CustomPolicy"
     """User defined policies that are automatically ingested from Azure Policy to Microsoft Defender
     for Cloud"""
@@ -178,30 +177,10 @@ class AttestationComplianceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     NON_COMPLIANT = "nonCompliant"
 
 
-class AuthenticationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of the multi-cloud connector."""
-
-    VALID = "Valid"
-    """Valid connector"""
-    INVALID = "Invalid"
-    """Invalid connector"""
-    EXPIRED = "Expired"
-    """the connection has expired"""
-    INCORRECT_POLICY = "IncorrectPolicy"
-    """Incorrect policy of the connector"""
-
-
 class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Connect to your cloud account, for AWS use either account credentials or role-based
-    authentication. For GCP use account organization credentials.
-    """
+    """The authentication type."""
 
-    AWS_CREDS = "awsCreds"
-    """AWS cloud account connector user credentials authentication"""
-    AWS_ASSUME_ROLE = "awsAssumeRole"
-    """AWS account connector assume role authentication"""
-    GCP_CREDENTIALS = "gcpCredentials"
-    """GCP account connector service to service authentication"""
+    ACCESS_TOKEN = "AccessToken"
 
 
 class AutoDiscovery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -210,6 +189,15 @@ class AutoDiscovery(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
     ENABLED = "Enabled"
     NOT_APPLICABLE = "NotApplicable"
+
+
+class AutomatedResponseType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Optional. Specifies the automated response action to take when malware is detected."""
+
+    NONE = "None"
+    """No automated response will be taken when malware is detected."""
+    BLOB_SOFT_DELETE = "BlobSoftDelete"
+    """The blob will be soft deleted when malware is detected."""
 
 
 class AutoProvision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -222,9 +210,9 @@ class AutoProvision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class BlobScanResultsOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Optional. Write scan result on blobIndexTags by default."""
+    """Optional. Write scan result on BlobIndexTags by default."""
 
-    BLOB_INDEX_TAGS = "blobIndexTags"
+    BLOB_INDEX_TAGS = "BlobIndexTags"
     """Write scan results on the blobs index tags."""
     NONE = "None"
     """Do not write scan results on the blobs index tags."""
@@ -346,16 +334,6 @@ class Effect(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ATTEST = "Attest"
 
 
-class EndOfSupportStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """End of support status."""
-
-    NONE = "None"
-    NO_LONGER_SUPPORTED = "noLongerSupported"
-    VERSION_NO_LONGER_SUPPORTED = "versionNoLongerSupported"
-    UPCOMING_NO_LONGER_SUPPORTED = "upcomingNoLongerSupported"
-    UPCOMING_VERSION_NO_LONGER_SUPPORTED = "upcomingVersionNoLongerSupported"
-
-
 class Enforce(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """If set to "False", it allows the descendants of this scope to override the pricing
     configuration set on this scope (allows setting inherited="False"). If set to "True", it
@@ -448,9 +426,6 @@ class GovernanceRuleConditionOperator(str, Enum, metaclass=CaseInsensitiveEnumMe
     IN = "In"
     """Checks that the string value of the data defined in Property equals any of the given values
     (exact fit)"""
-    IN_ENUM = "In"
-    """Checks that the string value of the data defined in Property equals any of the given values
-    (exact fit)"""
 
 
 class GovernanceRuleOwnerSourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -476,17 +451,6 @@ class GovernanceRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The source of the rule type definition is integrated"""
     SERVICE_NOW = "ServiceNow"
     """The source of the rule type definition is ServiceNow"""
-
-
-class HybridComputeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of the service principal and its secret."""
-
-    VALID = "Valid"
-    """Valid service principal details."""
-    INVALID = "Invalid"
-    """Invalid service principal details."""
-    EXPIRED = "Expired"
-    """the service principal details are expired"""
 
 
 class ImplementationEffort(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -622,30 +586,6 @@ class KindEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Simulate alerts according to bundles"""
 
 
-class MinimalRiskLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the minimal attack path risk level which will be sent as email notifications."""
-
-    CRITICAL = "Critical"
-    """Get notifications on new attack paths with Critical risk level"""
-    HIGH = "High"
-    """Get notifications on new attack paths with High or Critical risk level"""
-    MEDIUM = "Medium"
-    """Get notifications on new attach paths with Medium, High or Critical risk level"""
-    LOW = "Low"
-    """Get notifications on new attach paths with Low, Medium, High or Critical risk level"""
-
-
-class MinimalSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Defines the minimal alert severity which will be sent as email notifications."""
-
-    HIGH = "High"
-    """Get notifications on new alerts with High severity"""
-    MEDIUM = "Medium"
-    """Get notifications on new alerts with Medium or High severity"""
-    LOW = "Low"
-    """Get notifications on new alerts with Low, Medium or High severity"""
-
-
 class MipIntegrationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Microsoft information protection integration status."""
 
@@ -748,20 +688,6 @@ class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_SYSTEM = "user,system"
 
 
-class PermissionProperty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A permission detected in the cloud account."""
-
-    AWS_AWS_SECURITY_HUB_READ_ONLY_ACCESS = "AWS::AWSSecurityHubReadOnlyAccess"
-    """This permission provides read only access to AWS Security Hub resources."""
-    AWS_SECURITY_AUDIT = "AWS::SecurityAudit"
-    """This permission grants access to read security configuration metadata."""
-    AWS_AMAZON_SSM_AUTOMATION_ROLE = "AWS::AmazonSSMAutomationRole"
-    """The permission provides for EC2 Automation service to execute activities defined within
-    Automation documents."""
-    GCP_SECURITY_CENTER_ADMIN_VIEWER = "GCP::Security Center Admin Viewer"
-    """This permission provides read only access to GCP Security Command Center."""
-
-
 class PricingTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether the Defender plan is enabled on the selected scope. Microsoft Defender for
     Cloud is provided in two pricing tiers: free and standard. The standard tier offers advanced
@@ -774,7 +700,9 @@ class PricingTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Get the standard Microsoft Defender for Cloud experience with advanced security features"""
 
 
-class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class PrivateEndpointConnectionProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
@@ -816,6 +744,13 @@ class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
     UPDATING = "Updating"
+
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """This determines if traffic is allowed over public network. By default it is disabled."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
 
 
 class Rank(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -947,19 +882,16 @@ class ResourceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class RiskLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The risk level."""
 
+    NONE = "None"
     LOW = "Low"
     MEDIUM = "Medium"
     HIGH = "High"
+    CRITICAL = "Critical"
 
 
 class RuleCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Rule categories.
-    Code - code scanning results.
-    Artifact scanning results.
-    Dependencies scanning results.
-    IaC results.
-    Secrets scanning results.
-    Container scanning results.
+    """Rule categories. Code - code scanning results. Artifact scanning results. Dependencies scanning
+    results. IaC results. Secrets scanning results. Container scanning results.
     """
 
     CODE = "Code"
@@ -974,15 +906,15 @@ class RuleSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The rule severity."""
 
     HIGH = "High"
-    """High"""
+    """High severity vulnerability requiring immediate attention."""
     MEDIUM = "Medium"
-    """Medium"""
+    """Medium severity vulnerability that should be addressed."""
     LOW = "Low"
-    """Low"""
+    """Low severity vulnerability with minimal risk."""
     INFORMATIONAL = "Informational"
-    """Informational"""
+    """Informational finding that does not indicate a vulnerability."""
     OBSOLETE = "Obsolete"
-    """Obsolete"""
+    """The rule is obsolete and no longer applicable."""
 
 
 class RuleState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -997,11 +929,13 @@ class RuleStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The rule result status."""
 
     NON_FINDING = "NonFinding"
-    """NonFinding"""
+    """No vulnerability was found for this rule."""
     FINDING = "Finding"
-    """Finding"""
+    """A vulnerability was found for this rule."""
     INTERNAL_ERROR = "InternalError"
-    """InternalError"""
+    """An internal error occurred while evaluating this rule."""
+    NOT_APPLICABLE = "NotApplicable"
+    """The rule is not applicable to the assessed resource."""
 
 
 class RuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1021,6 +955,19 @@ class ScanningMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The scanning mode for the VM scan."""
 
     DEFAULT = "Default"
+
+
+class ScanOperationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The scan operation status."""
+
+    PASSED = "Passed"
+    """The scan completed successfully with no vulnerabilities found."""
+    FAILED = "Failed"
+    """The scan completed but found vulnerabilities."""
+    FAILED_TO_RUN = "FailedToRun"
+    """The scan failed to execute."""
+    IN_PROGRESS = "InProgress"
+    """The scan is currently running."""
 
 
 class ScanState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1043,26 +990,6 @@ class ScanTriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """OnDemand"""
     RECURRING = "Recurring"
     """Recurring"""
-
-
-class SecurityContactName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SecurityContactName."""
-
-    DEFAULT = "default"
-    """The single applicable name of the security contact object"""
-
-
-class SecurityContactRole(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A possible role to configure sending security notification alerts to."""
-
-    ACCOUNT_ADMIN = "AccountAdmin"
-    """If enabled, send notification on new alerts to the account admins"""
-    SERVICE_ADMIN = "ServiceAdmin"
-    """If enabled, send notification on new alerts to the service admins"""
-    OWNER = "Owner"
-    """If enabled, send notification on new alerts to the subscription owners"""
-    CONTRIBUTOR = "Contributor"
-    """If enabled, send notification on new alerts to the subscription contributors"""
 
 
 class SecurityFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1092,7 +1019,9 @@ class SecuritySolutionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
 
 
-class ServerVulnerabilityAssessmentPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ServerVulnerabilityAssessmentPropertiesProvisioningState(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The provisioningState of the vulnerability assessment capability on the VM."""
 
     SUCCEEDED = "Succeeded"
@@ -1102,20 +1031,26 @@ class ServerVulnerabilityAssessmentPropertiesProvisioningState(str, Enum, metacl
     DEPROVISIONING = "Deprovisioning"
 
 
-class ServerVulnerabilityAssessmentsAzureSettingSelectedProvider(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ServerVulnerabilityAssessmentsAzureSettingSelectedProvider(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The selected vulnerability assessments provider on Azure servers in the defined scope."""
 
     MDE_TVM = "MdeTvm"
     """Microsoft Defender for Endpoints threat and vulnerability management."""
 
 
-class ServerVulnerabilityAssessmentsSettingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ServerVulnerabilityAssessmentsSettingKind(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """The kind of the server vulnerability assessments setting."""
 
     AZURE_SERVERS_SETTING = "AzureServersSetting"
 
 
-class ServerVulnerabilityAssessmentsSettingKindName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+class ServerVulnerabilityAssessmentsSettingKindName(  # pylint: disable=name-too-long
+    str, Enum, metaclass=CaseInsensitiveEnumMeta
+):
     """ServerVulnerabilityAssessmentsSettingKindName."""
 
     AZURE_SERVERS_SETTING = "azureServersSetting"
@@ -1132,18 +1067,18 @@ class SettingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class SettingName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SettingName."""
 
-    CURRENT = "current"
-    """Name of the Defender for Storage Settings name."""
-
-
-class SettingNameAutoGenerated(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """SettingNameAutoGenerated."""
-
     MCAS = "MCAS"
     WDATP = "WDATP"
     WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW = "WDATP_EXCLUDE_LINUX_PUBLIC_PREVIEW"
     WDATP_UNIFIED_SOLUTION = "WDATP_UNIFIED_SOLUTION"
     SENTINEL = "Sentinel"
+
+
+class SettingNameAutoGenerated(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SettingNameAutoGenerated."""
+
+    CURRENT = "current"
+    """Name of the Defender for Storage Settings name."""
 
 
 class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1155,7 +1090,7 @@ class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class SeverityEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The severity to relate to the assessments generated by this assessment automation."""
+    """The severity to relate to the assessments generated by this Recommendation."""
 
     HIGH = "High"
     MEDIUM = "Medium"
@@ -1173,17 +1108,26 @@ class Source(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """SQL Resource in an on premise machine connected to Azure cloud"""
 
 
-class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The source type that will trigger the notification."""
+class SqlVulnerabilityAssessmentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the state of a SQL Vulnerability Assessment."""
 
-    ALERT = "Alert"
-    ATTACK_PATH = "AttackPath"
+    ENABLED = "Enabled"
+    """Enabled"""
+    DISABLED = "Disabled"
+    """Disabled"""
 
 
 class StandardSupportedCloud(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The cloud that the standard is supported on."""
 
     AZURE = "Azure"
+    AWS = "AWS"
+    GCP = "GCP"
+
+
+class StandardSupportedClouds(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The cloud that the standard is supported on."""
+
     AWS = "AWS"
     GCP = "GCP"
 
@@ -1249,13 +1193,6 @@ class SubPlan(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     P1 = "P1"
     P2 = "P2"
-
-
-class SupportedCloudEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Relevant cloud for the custom assessment automation."""
-
-    AWS = "AWS"
-    GCP = "GCP"
 
 
 class Tactics(str, Enum, metaclass=CaseInsensitiveEnumMeta):

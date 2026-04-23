@@ -24,7 +24,7 @@ class TestSecurityCenterGitLabGroupsOperations(AzureMgmtRecordedTestCase):
         response = self.client.git_lab_groups.list_available(
             resource_group_name=resource_group.name,
             security_connector_name="str",
-            api_version="2025-03-01",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestSecurityCenterGitLabGroupsOperations(AzureMgmtRecordedTestCase):
         response = self.client.git_lab_groups.list(
             resource_group_name=resource_group.name,
             security_connector_name="str",
-            api_version="2025-03-01",
+            api_version="2025-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -49,7 +49,7 @@ class TestSecurityCenterGitLabGroupsOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             security_connector_name="str",
             group_fq_name="str",
-            api_version="2025-03-01",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself

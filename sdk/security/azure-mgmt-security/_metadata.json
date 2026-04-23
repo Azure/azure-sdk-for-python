@@ -1,11 +1,11 @@
 {
-  "commit": "b64fe48e383ae6d6841fad0538f05dc82130ebb0",
+  "commit": "f25aaa2c654cc4c873be6004a83d09aecab082ad",
   "repository_url": "https://github.com/Azure/azure-rest-api-specs",
   "autorest": "3.10.2",
   "use": [
-    "@autorest/python@6.38.2",
+    "@autorest/python@6.50.0",
     "@autorest/modelerfour@4.27.0"
   ],
-  "autorest_command": "autorest specification/security/resource-manager/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --keep-setup-py=True --python --python-sdks-folder=/mnt/vss/_work/1/azure-sdk-for-python/sdk --tag=package-composite-v3 --use=@autorest/python@6.38.2 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
-  "readme": "specification/security/resource-manager/readme.md"
+  "autorest_command": "autorest specification/security/resource-manager/Microsoft.Security/Security/readme.md --generate-sample=True --generate-test=True --include-x-ms-examples-original-file=True --package-mode=azure-mgmt --python --python-sdks-folder=/home/v-chenjiang/spec/worktrees/sdk-azure-mgmt-security/sdk --use=@autorest/python@6.50.0 --use=@autorest/modelerfour@4.27.0 --version=3.10.2 --version-tolerant=False",
+  "readme": "specification/security/resource-manager/Microsoft.Security/Security/readme.md"
 }

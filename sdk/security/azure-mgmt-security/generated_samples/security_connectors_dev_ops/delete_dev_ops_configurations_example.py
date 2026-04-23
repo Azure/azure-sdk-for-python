@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/stable/2025-03-01/examples/SecurityConnectorsDevOps/DeleteDevOpsConfigurations_example.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/Security/preview/2025-11-01-preview/examples/SecurityConnectorsDevOps/DeleteDevOpsConfigurations_example.json
 if __name__ == "__main__":
     main()

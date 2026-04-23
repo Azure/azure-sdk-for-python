@@ -35,6 +35,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/preview/2021-10-01-preview/examples/MdeOnboardings/GetMdeOnboardings_example.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/Security/preview/2021-10-01-preview/examples/MdeOnboardings/GetMdeOnboardings_example.json
 if __name__ == "__main__":
     main()

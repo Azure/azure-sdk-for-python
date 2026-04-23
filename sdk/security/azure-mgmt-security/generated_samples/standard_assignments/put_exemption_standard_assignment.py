@@ -53,6 +53,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/stable/2024-08-01/examples/StandardAssignments/PutExemptionStandardAssignment.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/Security/stable/2024-08-01/examples/StandardAssignments/PutExemptionStandardAssignment.json
 if __name__ == "__main__":
     main()

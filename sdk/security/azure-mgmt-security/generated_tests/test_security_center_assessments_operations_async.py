@@ -24,7 +24,7 @@ class TestSecurityCenterAssessmentsOperationsAsync(AzureMgmtRecordedTestCase):
     async def test_assessments_list(self, resource_group):
         response = self.client.assessments.list(
             scope="str",
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -36,7 +36,7 @@ class TestSecurityCenterAssessmentsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.assessments.get(
             resource_id="str",
             assessment_name="str",
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestSecurityCenterAssessmentsOperationsAsync(AzureMgmtRecordedTestCase):
                 "status": {"code": "str", "cause": "str", "description": "str"},
                 "type": "str",
             },
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
 
         # please add some check logic here by yourself
@@ -98,7 +98,7 @@ class TestSecurityCenterAssessmentsOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.assessments.delete(
             resource_id="str",
             assessment_name="str",
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
 
         # please add some check logic here by yourself

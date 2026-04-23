@@ -9,7 +9,7 @@
 
 from collections.abc import MutableMapping
 import datetime
-from typing import Any, Dict, List, Literal, Optional, TYPE_CHECKING, Union
+from typing import Any, Literal, Optional, TYPE_CHECKING, Union
 
 from .._utils import serialization as _serialization
 
@@ -244,7 +244,7 @@ class ExternalSecuritySolutionProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
         device_vendor: Optional[str] = None,
         device_type: Optional[str] = None,
         workspace: Optional["_models.ConnectedWorkspace"] = None,
@@ -297,7 +297,7 @@ class AadSolutionProperties(ExternalSecuritySolutionProperties, AadConnectivityS
         self,
         *,
         connectivity_state: Optional[Union[str, "_models.AadConnectivityStateEnum"]] = None,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
         device_vendor: Optional[str] = None,
         device_type: Optional[str] = None,
         workspace: Optional["_models.ConnectedWorkspace"] = None,
@@ -340,8 +340,7 @@ class Authentication(_serialization.Model):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar authentication_type: The authentication type. Required. Known values are: "awsCreds",
-     "awsAssumeRole", and "gcpCredentials".
+    :ivar authentication_type: The authentication type. Required. "AccessToken"
     :vartype authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
     """
 
@@ -366,8 +365,7 @@ class AccessTokenAuthentication(Authentication):
 
     All required parameters must be populated in order to send to server.
 
-    :ivar authentication_type: The authentication type. Required. Known values are: "awsCreds",
-     "awsAssumeRole", and "gcpCredentials".
+    :ivar authentication_type: The authentication type. Required. "AccessToken"
     :vartype authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
     :ivar username: The user name that will be used while authenticating with the onboarded
      environment.
@@ -405,11 +403,9 @@ class AccessTokenAuthentication(Authentication):
 class ActionableRemediation(_serialization.Model):
     """Configuration payload for PR Annotations.
 
-    :ivar state: ActionableRemediation Setting.
-     None - the setting was never set.
-     Enabled - ActionableRemediation is enabled.
-     Disabled - ActionableRemediation is disabled. Known values are: "None", "Disabled", and
-     "Enabled".
+    :ivar state: ActionableRemediation Setting. None - the setting was never set. Enabled -
+     ActionableRemediation is enabled. Disabled - ActionableRemediation is disabled. Known values
+     are: "None", "Disabled", and "Enabled".
     :vartype state: str or ~azure.mgmt.security.models.ActionableRemediationState
     :ivar category_configurations: Gets or sets list of categories and severity levels.
     :vartype category_configurations: list[~azure.mgmt.security.models.CategoryConfiguration]
@@ -434,17 +430,15 @@ class ActionableRemediation(_serialization.Model):
         self,
         *,
         state: Optional[Union[str, "_models.ActionableRemediationState"]] = None,
-        category_configurations: Optional[List["_models.CategoryConfiguration"]] = None,
+        category_configurations: Optional[list["_models.CategoryConfiguration"]] = None,
         branch_configuration: Optional["_models.TargetBranchConfiguration"] = None,
         inherit_from_parent_state: Optional[Union[str, "_models.InheritFromParentState"]] = None,
         **kwargs: Any
     ) -> None:
         """
-        :keyword state: ActionableRemediation Setting.
-         None - the setting was never set.
-         Enabled - ActionableRemediation is enabled.
-         Disabled - ActionableRemediation is disabled. Known values are: "None", "Disabled", and
-         "Enabled".
+        :keyword state: ActionableRemediation Setting. None - the setting was never set. Enabled -
+         ActionableRemediation is enabled. Disabled - ActionableRemediation is disabled. Known values
+         are: "None", "Disabled", and "Enabled".
         :paramtype state: str or ~azure.mgmt.security.models.ActionableRemediationState
         :keyword category_configurations: Gets or sets list of categories and severity levels.
         :paramtype category_configurations: list[~azure.mgmt.security.models.CategoryConfiguration]
@@ -806,7 +800,7 @@ class AdditionalWorkspacesProperties(_serialization.Model):
         *,
         workspace: Optional[str] = None,
         type: Union[str, "_models.AdditionalWorkspaceType"] = "Sentinel",
-        data_types: Optional[List[Union[str, "_models.AdditionalWorkspaceDataType"]]] = None,
+        data_types: Optional[list[Union[str, "_models.AdditionalWorkspaceDataType"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -875,8 +869,7 @@ class AgentlessConfiguration(_serialization.Model):
      "Exclusion".
     :vartype inventory_list_type: str or ~azure.mgmt.security.models.InventoryListKind
     :ivar inventory_list: Gets or sets the inventory list for inclusion or exclusion from
-     Agentless.
-     Will be ignored if agentless auto-discovery is enabled.
+     Agentless. Will be ignored if agentless auto-discovery is enabled.
     :vartype inventory_list: list[~azure.mgmt.security.models.InventoryList]
     """
 
@@ -893,9 +886,9 @@ class AgentlessConfiguration(_serialization.Model):
         *,
         agentless_enabled: Optional[Union[str, "_models.AgentlessEnablement"]] = None,
         agentless_auto_discovery: Optional[Union[str, "_models.AutoDiscovery"]] = None,
-        scanners: Optional[List[str]] = None,
+        scanners: Optional[list[str]] = None,
         inventory_list_type: Optional[Union[str, "_models.InventoryListKind"]] = None,
-        inventory_list: Optional[List["_models.InventoryList"]] = None,
+        inventory_list: Optional[list["_models.InventoryList"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -911,8 +904,7 @@ class AgentlessConfiguration(_serialization.Model):
          "Exclusion".
         :paramtype inventory_list_type: str or ~azure.mgmt.security.models.InventoryListKind
         :keyword inventory_list: Gets or sets the inventory list for inclusion or exclusion from
-         Agentless.
-         Will be ignored if agentless auto-discovery is enabled.
+         Agentless. Will be ignored if agentless auto-discovery is enabled.
         :paramtype inventory_list: list[~azure.mgmt.security.models.InventoryList]
         """
         super().__init__(**kwargs)
@@ -1075,7 +1067,7 @@ class Alert(Resource):
     def __init__(  # pylint: disable=too-many-locals
         self,
         *,
-        extended_properties: Optional[Dict[str, str]] = None,
+        extended_properties: Optional[dict[str, str]] = None,
         supporting_evidence: Optional["_models.AlertPropertiesSupportingEvidence"] = None,
         **kwargs: Any
     ) -> None:
@@ -1097,22 +1089,22 @@ class Alert(Resource):
         self.intent: Optional[Union[str, "_models.Intent"]] = None
         self.start_time_utc: Optional[datetime.datetime] = None
         self.end_time_utc: Optional[datetime.datetime] = None
-        self.resource_identifiers: Optional[List["_models.ResourceIdentifier"]] = None
-        self.remediation_steps: Optional[List[str]] = None
+        self.resource_identifiers: Optional[list["_models.ResourceIdentifier"]] = None
+        self.remediation_steps: Optional[list[str]] = None
         self.vendor_name: Optional[str] = None
         self.status: Optional[Union[str, "_models.AlertStatus"]] = None
-        self.extended_links: Optional[List[Dict[str, str]]] = None
+        self.extended_links: Optional[list[dict[str, str]]] = None
         self.alert_uri: Optional[str] = None
         self.time_generated_utc: Optional[datetime.datetime] = None
         self.product_name: Optional[str] = None
         self.processing_end_time_utc: Optional[datetime.datetime] = None
-        self.entities: Optional[List["_models.AlertEntity"]] = None
+        self.entities: Optional[list["_models.AlertEntity"]] = None
         self.is_incident: Optional[bool] = None
         self.correlation_key: Optional[str] = None
         self.extended_properties = extended_properties
         self.compromised_entity: Optional[str] = None
-        self.techniques: Optional[List[str]] = None
-        self.sub_techniques: Optional[List[str]] = None
+        self.techniques: Optional[list[str]] = None
+        self.sub_techniques: Optional[list[str]] = None
         self.supporting_evidence = supporting_evidence
 
 
@@ -1137,7 +1129,7 @@ class AlertEntity(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1168,7 +1160,7 @@ class AlertList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Alert"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Alert"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: describes security alert properties.
         :paramtype value: list[~azure.mgmt.security.models.Alert]
@@ -1199,7 +1191,7 @@ class AlertPropertiesSupportingEvidence(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, JSON]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, JSON]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1236,7 +1228,7 @@ class AlertSimulatorRequestProperties(_serialization.Model):
 
     _subtype_map = {"kind": {"Bundles": "AlertSimulatorBundlesRequestProperties"}}
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -1274,8 +1266,8 @@ class AlertSimulatorBundlesRequestProperties(AlertSimulatorRequestProperties):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, Any]] = None,
-        bundles: Optional[List[Union[str, "_models.BundleType"]]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
+        bundles: Optional[list[Union[str, "_models.BundleType"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -1421,7 +1413,7 @@ class AlertsSuppressionRulesList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.AlertsSuppressionRule"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.AlertsSuppressionRule"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value: list[~azure.mgmt.security.models.AlertsSuppressionRule]
@@ -1543,7 +1535,7 @@ class AllowedConnectionsList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.AllowedConnectionsResource"]] = None
+        self.value: Optional[list["_models.AllowedConnectionsResource"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -1590,7 +1582,7 @@ class AllowedConnectionsResource(Resource, Location):
         super().__init__(**kwargs)
         self.location: Optional[str] = None
         self.calculated_date_time: Optional[datetime.datetime] = None
-        self.connectable_resources: Optional[List["_models.ConnectableResource"]] = None
+        self.connectable_resources: Optional[list["_models.ConnectableResource"]] = None
         self.id: Optional[str] = None
         self.name: Optional[str] = None
         self.type: Optional[str] = None
@@ -1705,7 +1697,7 @@ class AllowlistCustomAlertRule(ListCustomAlertRule):
         }
     }
 
-    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, is_enabled: bool, allowlist_values: list[str], **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -2052,7 +2044,7 @@ class ApiCollectionList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.ApiCollection"]] = None
+        self.value: Optional[list["_models.ApiCollection"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -2100,7 +2092,7 @@ class Application(Resource):
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         source_resource_type: Optional[Union[str, "_models.ApplicationSourceResourceType"]] = None,
-        condition_sets: Optional[List[JSON]] = None,
+        condition_sets: Optional[list[JSON]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -2130,7 +2122,7 @@ class ApplicationCondition(_serialization.Model):
     :ivar value: The application Condition's Value like IDs that contain some string, see examples.
     :vartype value: str
     :ivar operator: The application Condition's Operator, for example Contains for id or In for
-     list of possible IDs, see examples. Known values are: "Contains", "Equals", "In", and "In".
+     list of possible IDs, see examples. Known values are: "Contains", "Equals", and "In".
     :vartype operator: str or ~azure.mgmt.security.models.ApplicationConditionOperator
     """
 
@@ -2155,7 +2147,7 @@ class ApplicationCondition(_serialization.Model):
          examples.
         :paramtype value: str
         :keyword operator: The application Condition's Operator, for example Contains for id or In for
-         list of possible IDs, see examples. Known values are: "Contains", "Equals", "In", and "In".
+         list of possible IDs, see examples. Known values are: "Contains", "Equals", and "In".
         :paramtype operator: str or ~azure.mgmt.security.models.ApplicationConditionOperator
         """
         super().__init__(**kwargs)
@@ -2188,7 +2180,7 @@ class ApplicationsList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Application"]] = None
+        self.value: Optional[list["_models.Application"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -2360,7 +2352,7 @@ class AscLocationList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.AscLocation"]] = None
+        self.value: Optional[list["_models.AscLocation"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -2512,6 +2504,26 @@ class AssignedAssessmentItem(_serialization.Model):
         self.assessment_key = assessment_key
 
 
+class AssignedComponentItem(_serialization.Model):
+    """describe the properties of a security assessment object reference (by key).
+
+    :ivar key: unique key to a security assessment object.
+    :vartype key: str
+    """
+
+    _attribute_map = {
+        "key": {"key": "key", "type": "str"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: unique key to a security assessment object.
+        :paramtype key: str
+        """
+        super().__init__(**kwargs)
+        self.key = key
+
+
 class AssignedStandardItem(_serialization.Model):
     """Describe the properties of a of a standard assignments object reference.
 
@@ -2532,214 +2544,24 @@ class AssignedStandardItem(_serialization.Model):
         self.id = id
 
 
-class AtaExternalSecuritySolution(ExternalSecuritySolution):
-    """Represents an ATA security solution which sends logs to an OMS workspace.
+class AssignedStandardItemAutoGenerated(_serialization.Model):
+    """describe the properties of a of a security standard object reference.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar location: Location where the resource is stored.
-    :vartype location: str
-    :ivar kind: The kind of the external solution. Known values are: "CEF", "ATA", and "AAD".
-    :vartype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
-    :ivar id: Resource Id.
+    :ivar id: full resourceId of the Microsoft.Security/standard object.
     :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar properties: The external security solution properties for ATA solutions.
-    :vartype properties: ~azure.mgmt.security.models.AtaSolutionProperties
     """
 
-    _validation = {
-        "location": {"readonly": True},
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
     _attribute_map = {
-        "location": {"key": "location", "type": "str"},
-        "kind": {"key": "kind", "type": "str"},
         "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "properties": {"key": "properties", "type": "AtaSolutionProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        kind: Optional[Union[str, "_models.ExternalSecuritySolutionKindEnum"]] = None,
-        properties: Optional["_models.AtaSolutionProperties"] = None,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, *, id: Optional[str] = None, **kwargs: Any) -> None:  # pylint: disable=redefined-builtin
         """
-        :keyword kind: The kind of the external solution. Known values are: "CEF", "ATA", and "AAD".
-        :paramtype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
-        :keyword properties: The external security solution properties for ATA solutions.
-        :paramtype properties: ~azure.mgmt.security.models.AtaSolutionProperties
-        """
-        super().__init__(kind=kind, **kwargs)
-        self.properties = properties
-
-
-class AtaSolutionProperties(ExternalSecuritySolutionProperties):
-    """The external security solution properties for ATA solutions.
-
-    :ivar additional_properties: Unmatched properties from the message are deserialized to this
-     collection.
-    :vartype additional_properties: dict[str, any]
-    :ivar device_vendor:
-    :vartype device_vendor: str
-    :ivar device_type:
-    :vartype device_type: str
-    :ivar workspace: Represents an OMS workspace to which the solution is connected.
-    :vartype workspace: ~azure.mgmt.security.models.ConnectedWorkspace
-    :ivar last_event_received:
-    :vartype last_event_received: str
-    """
-
-    _attribute_map = {
-        "additional_properties": {"key": "", "type": "{object}"},
-        "device_vendor": {"key": "deviceVendor", "type": "str"},
-        "device_type": {"key": "deviceType", "type": "str"},
-        "workspace": {"key": "workspace", "type": "ConnectedWorkspace"},
-        "last_event_received": {"key": "lastEventReceived", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        additional_properties: Optional[Dict[str, Any]] = None,
-        device_vendor: Optional[str] = None,
-        device_type: Optional[str] = None,
-        workspace: Optional["_models.ConnectedWorkspace"] = None,
-        last_event_received: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword additional_properties: Unmatched properties from the message are deserialized to this
-         collection.
-        :paramtype additional_properties: dict[str, any]
-        :keyword device_vendor:
-        :paramtype device_vendor: str
-        :keyword device_type:
-        :paramtype device_type: str
-        :keyword workspace: Represents an OMS workspace to which the solution is connected.
-        :paramtype workspace: ~azure.mgmt.security.models.ConnectedWorkspace
-        :keyword last_event_received:
-        :paramtype last_event_received: str
-        """
-        super().__init__(
-            additional_properties=additional_properties,
-            device_vendor=device_vendor,
-            device_type=device_type,
-            workspace=workspace,
-            **kwargs
-        )
-        self.last_event_received = last_event_received
-
-
-class AttestationEvidence(_serialization.Model):
-    """Describe the properties of a assignment attestation.
-
-    :ivar description: The description of the evidence.
-    :vartype description: str
-    :ivar source_url: The source url of the evidence.
-    :vartype source_url: str
-    """
-
-    _attribute_map = {
-        "description": {"key": "description", "type": "str"},
-        "source_url": {"key": "sourceUrl", "type": "str"},
-    }
-
-    def __init__(self, *, description: Optional[str] = None, source_url: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword description: The description of the evidence.
-        :paramtype description: str
-        :keyword source_url: The source url of the evidence.
-        :paramtype source_url: str
+        :keyword id: full resourceId of the Microsoft.Security/standard object.
+        :paramtype id: str
         """
         super().__init__(**kwargs)
-        self.description = description
-        self.source_url = source_url
-
-
-class AuthenticationDetailsProperties(_serialization.Model):
-    """Settings for cloud authentication management.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    AwAssumeRoleAuthenticationDetailsProperties, AwsCredsAuthenticationDetailsProperties,
-    GcpCredentialsDetailsProperties
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar authentication_provisioning_state: State of the multi-cloud connector. Known values are:
-     "Valid", "Invalid", "Expired", and "IncorrectPolicy".
-    :vartype authentication_provisioning_state: str or
-     ~azure.mgmt.security.models.AuthenticationProvisioningState
-    :ivar granted_permissions: The permissions detected in the cloud account.
-    :vartype granted_permissions: list[str or ~azure.mgmt.security.models.PermissionProperty]
-    :ivar authentication_type: Connect to your cloud account, for AWS use either account
-     credentials or role-based authentication. For GCP use account organization credentials.
-     Required. Known values are: "awsCreds", "awsAssumeRole", and "gcpCredentials".
-    :vartype authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
-    """
-
-    _validation = {
-        "authentication_provisioning_state": {"readonly": True},
-        "granted_permissions": {"readonly": True},
-        "authentication_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "authentication_provisioning_state": {"key": "authenticationProvisioningState", "type": "str"},
-        "granted_permissions": {"key": "grantedPermissions", "type": "[str]"},
-        "authentication_type": {"key": "authenticationType", "type": "str"},
-    }
-
-    _subtype_map = {
-        "authentication_type": {
-            "awsAssumeRole": "AwAssumeRoleAuthenticationDetailsProperties",
-            "awsCreds": "AwsCredsAuthenticationDetailsProperties",
-            "gcpCredentials": "GcpCredentialsDetailsProperties",
-        }
-    }
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.authentication_provisioning_state: Optional[Union[str, "_models.AuthenticationProvisioningState"]] = None
-        self.granted_permissions: Optional[List[Union[str, "_models.PermissionProperty"]]] = None
-        self.authentication_type: Optional[str] = None
-
-
-class Authorization(_serialization.Model):
-    """Authorization payload.
-
-    :ivar code: Gets or sets one-time OAuth code to exchange for refresh and access tokens.
-
-     Only used during PUT/PATCH operations. The secret is cleared during GET.
-    :vartype code: str
-    """
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-    }
-
-    def __init__(self, *, code: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword code: Gets or sets one-time OAuth code to exchange for refresh and access tokens.
-
-         Only used during PUT/PATCH operations. The secret is cleared during GET.
-        :paramtype code: str
-        """
-        super().__init__(**kwargs)
-        self.code = code
+        self.id = id
 
 
 class Tags(_serialization.Model):
@@ -2753,7 +2575,7 @@ class Tags(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: A list of key value pairs that describe the resource.
         :paramtype tags: dict[str, str]
@@ -2865,7 +2687,7 @@ class TrackedResource(Resource, AzureTrackedResourceLocation, Kind, ETag, Tags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
         kind: Optional[str] = None,
         location: Optional[str] = None,
@@ -2890,6 +2712,351 @@ class TrackedResource(Resource, AzureTrackedResourceLocation, Kind, ETag, Tags):
         self.id: Optional[str] = None
         self.name: Optional[str] = None
         self.type: Optional[str] = None
+
+
+class Assignment(TrackedResource):
+    """Security Assignment on a resource group over a given scope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar tags: A list of key value pairs that describe the resource.
+    :vartype tags: dict[str, str]
+    :ivar etag: Entity tag is used for comparing two or more entities from the same requested
+     resource.
+    :vartype etag: str
+    :ivar kind: Kind of the resource.
+    :vartype kind: str
+    :ivar location: Location where the resource is stored.
+    :vartype location: str
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.security.models.SystemData
+    :ivar display_name: display name of the standardAssignment.
+    :vartype display_name: str
+    :ivar description: description of the standardAssignment.
+    :vartype description: str
+    :ivar assigned_standard: Standard item with key as applied to this standard assignment over the
+     given scope.
+    :vartype assigned_standard: ~azure.mgmt.security.models.AssignedStandardItemAutoGenerated
+    :ivar assigned_component: Component item with key as applied to this standard assignment over
+     the given scope.
+    :vartype assigned_component: ~azure.mgmt.security.models.AssignedComponentItem
+    :ivar scope: Scope to which the standardAssignment applies - can be a subscription path or a
+     resource group under that subscription.
+    :vartype scope: str
+    :ivar effect: expected effect of this assignment (Disable/Exempt/etc).
+    :vartype effect: str
+    :ivar expires_on: Expiration date of this assignment as a full ISO date.
+    :vartype expires_on: ~datetime.datetime
+    :ivar additional_data: Additional data about the assignment.
+    :vartype additional_data: ~azure.mgmt.security.models.AssignmentPropertiesAdditionalData
+    :ivar metadata: The assignment metadata. Metadata is an open ended object and is typically a
+     collection of key value pairs.
+    :vartype metadata: JSON
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "assigned_standard": {"key": "properties.assignedStandard", "type": "AssignedStandardItemAutoGenerated"},
+        "assigned_component": {"key": "properties.assignedComponent", "type": "AssignedComponentItem"},
+        "scope": {"key": "properties.scope", "type": "str"},
+        "effect": {"key": "properties.effect", "type": "str"},
+        "expires_on": {"key": "properties.expiresOn", "type": "iso-8601"},
+        "additional_data": {"key": "properties.additionalData", "type": "AssignmentPropertiesAdditionalData"},
+        "metadata": {"key": "properties.metadata", "type": "object"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        etag: Optional[str] = None,
+        kind: Optional[str] = None,
+        location: Optional[str] = None,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        assigned_standard: Optional["_models.AssignedStandardItemAutoGenerated"] = None,
+        assigned_component: Optional["_models.AssignedComponentItem"] = None,
+        scope: Optional[str] = None,
+        effect: Optional[str] = None,
+        expires_on: Optional[datetime.datetime] = None,
+        additional_data: Optional["_models.AssignmentPropertiesAdditionalData"] = None,
+        metadata: Optional[JSON] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: A list of key value pairs that describe the resource.
+        :paramtype tags: dict[str, str]
+        :keyword etag: Entity tag is used for comparing two or more entities from the same requested
+         resource.
+        :paramtype etag: str
+        :keyword kind: Kind of the resource.
+        :paramtype kind: str
+        :keyword location: Location where the resource is stored.
+        :paramtype location: str
+        :keyword display_name: display name of the standardAssignment.
+        :paramtype display_name: str
+        :keyword description: description of the standardAssignment.
+        :paramtype description: str
+        :keyword assigned_standard: Standard item with key as applied to this standard assignment over
+         the given scope.
+        :paramtype assigned_standard: ~azure.mgmt.security.models.AssignedStandardItemAutoGenerated
+        :keyword assigned_component: Component item with key as applied to this standard assignment
+         over the given scope.
+        :paramtype assigned_component: ~azure.mgmt.security.models.AssignedComponentItem
+        :keyword scope: Scope to which the standardAssignment applies - can be a subscription path or a
+         resource group under that subscription.
+        :paramtype scope: str
+        :keyword effect: expected effect of this assignment (Disable/Exempt/etc).
+        :paramtype effect: str
+        :keyword expires_on: Expiration date of this assignment as a full ISO date.
+        :paramtype expires_on: ~datetime.datetime
+        :keyword additional_data: Additional data about the assignment.
+        :paramtype additional_data: ~azure.mgmt.security.models.AssignmentPropertiesAdditionalData
+        :keyword metadata: The assignment metadata. Metadata is an open ended object and is typically a
+         collection of key value pairs.
+        :paramtype metadata: JSON
+        """
+        super().__init__(tags=tags, etag=etag, kind=kind, location=location, **kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
+        self.display_name = display_name
+        self.description = description
+        self.assigned_standard = assigned_standard
+        self.assigned_component = assigned_component
+        self.scope = scope
+        self.effect = effect
+        self.expires_on = expires_on
+        self.additional_data = additional_data
+        self.metadata = metadata
+
+
+class AssignmentList(_serialization.Model):
+    """Page of a standard assignment list.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Collection of standardAssignments in this page.
+    :vartype value: list[~azure.mgmt.security.models.Assignment]
+    :ivar next_link: The URI to fetch the next page.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Assignment]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value: Optional[list["_models.Assignment"]] = None
+        self.next_link: Optional[str] = None
+
+
+class AssignmentPropertiesAdditionalData(_serialization.Model):
+    """Additional data about the assignment.
+
+    :ivar exemption_category: Exemption category of this assignment.
+    :vartype exemption_category: str
+    """
+
+    _attribute_map = {
+        "exemption_category": {"key": "exemptionCategory", "type": "str"},
+    }
+
+    def __init__(self, *, exemption_category: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword exemption_category: Exemption category of this assignment.
+        :paramtype exemption_category: str
+        """
+        super().__init__(**kwargs)
+        self.exemption_category = exemption_category
+
+
+class AtaExternalSecuritySolution(ExternalSecuritySolution):
+    """Represents an ATA security solution which sends logs to an OMS workspace.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar location: Location where the resource is stored.
+    :vartype location: str
+    :ivar kind: The kind of the external solution. Known values are: "CEF", "ATA", and "AAD".
+    :vartype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar properties: The external security solution properties for ATA solutions.
+    :vartype properties: ~azure.mgmt.security.models.AtaSolutionProperties
+    """
+
+    _validation = {
+        "location": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "AtaSolutionProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        kind: Optional[Union[str, "_models.ExternalSecuritySolutionKindEnum"]] = None,
+        properties: Optional["_models.AtaSolutionProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword kind: The kind of the external solution. Known values are: "CEF", "ATA", and "AAD".
+        :paramtype kind: str or ~azure.mgmt.security.models.ExternalSecuritySolutionKindEnum
+        :keyword properties: The external security solution properties for ATA solutions.
+        :paramtype properties: ~azure.mgmt.security.models.AtaSolutionProperties
+        """
+        super().__init__(kind=kind, **kwargs)
+        self.properties = properties
+
+
+class AtaSolutionProperties(ExternalSecuritySolutionProperties):
+    """The external security solution properties for ATA solutions.
+
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
+     collection.
+    :vartype additional_properties: dict[str, any]
+    :ivar device_vendor:
+    :vartype device_vendor: str
+    :ivar device_type:
+    :vartype device_type: str
+    :ivar workspace: Represents an OMS workspace to which the solution is connected.
+    :vartype workspace: ~azure.mgmt.security.models.ConnectedWorkspace
+    :ivar last_event_received:
+    :vartype last_event_received: str
+    """
+
+    _attribute_map = {
+        "additional_properties": {"key": "", "type": "{object}"},
+        "device_vendor": {"key": "deviceVendor", "type": "str"},
+        "device_type": {"key": "deviceType", "type": "str"},
+        "workspace": {"key": "workspace", "type": "ConnectedWorkspace"},
+        "last_event_received": {"key": "lastEventReceived", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        additional_properties: Optional[dict[str, Any]] = None,
+        device_vendor: Optional[str] = None,
+        device_type: Optional[str] = None,
+        workspace: Optional["_models.ConnectedWorkspace"] = None,
+        last_event_received: Optional[str] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, any]
+        :keyword device_vendor:
+        :paramtype device_vendor: str
+        :keyword device_type:
+        :paramtype device_type: str
+        :keyword workspace: Represents an OMS workspace to which the solution is connected.
+        :paramtype workspace: ~azure.mgmt.security.models.ConnectedWorkspace
+        :keyword last_event_received:
+        :paramtype last_event_received: str
+        """
+        super().__init__(
+            additional_properties=additional_properties,
+            device_vendor=device_vendor,
+            device_type=device_type,
+            workspace=workspace,
+            **kwargs
+        )
+        self.last_event_received = last_event_received
+
+
+class AttestationEvidence(_serialization.Model):
+    """Describe the properties of a assignment attestation.
+
+    :ivar description: The description of the evidence.
+    :vartype description: str
+    :ivar source_url: The source url of the evidence.
+    :vartype source_url: str
+    """
+
+    _attribute_map = {
+        "description": {"key": "description", "type": "str"},
+        "source_url": {"key": "sourceUrl", "type": "str"},
+    }
+
+    def __init__(self, *, description: Optional[str] = None, source_url: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword description: The description of the evidence.
+        :paramtype description: str
+        :keyword source_url: The source url of the evidence.
+        :paramtype source_url: str
+        """
+        super().__init__(**kwargs)
+        self.description = description
+        self.source_url = source_url
+
+
+class Authorization(_serialization.Model):
+    """Authorization payload.
+
+    :ivar code: Gets or sets one-time OAuth code to exchange for refresh and access tokens.
+
+     Only used during PUT/PATCH operations. The secret is cleared during GET.
+    :vartype code: str
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+    }
+
+    def __init__(self, *, code: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword code: Gets or sets one-time OAuth code to exchange for refresh and access tokens.
+
+         Only used during PUT/PATCH operations. The secret is cleared during GET.
+        :paramtype code: str
+        """
+        super().__init__(**kwargs)
+        self.code = code
 
 
 class Automation(TrackedResource):
@@ -2952,15 +3119,15 @@ class Automation(TrackedResource):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
         kind: Optional[str] = None,
         location: Optional[str] = None,
         description: Optional[str] = None,
         is_enabled: Optional[bool] = None,
-        scopes: Optional[List["_models.AutomationScope"]] = None,
-        sources: Optional[List["_models.AutomationSource"]] = None,
-        actions: Optional[List["_models.AutomationAction"]] = None,
+        scopes: Optional[list["_models.AutomationScope"]] = None,
+        sources: Optional[list["_models.AutomationSource"]] = None,
+        actions: Optional[list["_models.AutomationAction"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3192,7 +3359,7 @@ class AutomationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.Automation"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Automation"], **kwargs: Any) -> None:
         """
         :keyword value: The list of security automations under the given scope. Required.
         :paramtype value: list[~azure.mgmt.security.models.Automation]
@@ -3214,7 +3381,7 @@ class AutomationRuleSet(_serialization.Model):
         "rules": {"key": "rules", "type": "[AutomationTriggeringRule]"},
     }
 
-    def __init__(self, *, rules: Optional[List["_models.AutomationTriggeringRule"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, rules: Optional[list["_models.AutomationTriggeringRule"]] = None, **kwargs: Any) -> None:
         """
         :keyword rules:
         :paramtype rules: list[~azure.mgmt.security.models.AutomationTriggeringRule]
@@ -3276,7 +3443,7 @@ class AutomationSource(_serialization.Model):
         self,
         *,
         event_source: Optional[Union[str, "_models.EventSource"]] = None,
-        rule_sets: Optional[List["_models.AutomationRuleSet"]] = None,
+        rule_sets: Optional[list["_models.AutomationRuleSet"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3385,12 +3552,12 @@ class AutomationUpdateModel(Tags):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         description: Optional[str] = None,
         is_enabled: Optional[bool] = None,
-        scopes: Optional[List["_models.AutomationScope"]] = None,
-        sources: Optional[List["_models.AutomationSource"]] = None,
-        actions: Optional[List["_models.AutomationAction"]] = None,
+        scopes: Optional[list["_models.AutomationScope"]] = None,
+        sources: Optional[list["_models.AutomationSource"]] = None,
+        actions: Optional[list["_models.AutomationAction"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -3504,7 +3671,7 @@ class AutoProvisioningSettingList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.AutoProvisioningSetting"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.AutoProvisioningSetting"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of all the auto provisioning settings.
         :paramtype value: list[~azure.mgmt.security.models.AutoProvisioningSetting]
@@ -3512,135 +3679,6 @@ class AutoProvisioningSettingList(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link: Optional[str] = None
-
-
-class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsProperties):  # pylint: disable=name-too-long
-    """AWS cloud account connector based assume role, the role enables delegating access to your AWS
-    resources. The role is composed of role Amazon Resource Name (ARN) and external ID. For more
-    details, refer to :code:`<a
-    href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_create_for-user.html">Creating
-    a Role to Delegate Permissions to an IAM User (write only)</a>`.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar authentication_provisioning_state: State of the multi-cloud connector. Known values are:
-     "Valid", "Invalid", "Expired", and "IncorrectPolicy".
-    :vartype authentication_provisioning_state: str or
-     ~azure.mgmt.security.models.AuthenticationProvisioningState
-    :ivar granted_permissions: The permissions detected in the cloud account.
-    :vartype granted_permissions: list[str or ~azure.mgmt.security.models.PermissionProperty]
-    :ivar authentication_type: Connect to your cloud account, for AWS use either account
-     credentials or role-based authentication. For GCP use account organization credentials.
-     Required. Known values are: "awsCreds", "awsAssumeRole", and "gcpCredentials".
-    :vartype authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
-    :ivar account_id: The ID of the cloud account.
-    :vartype account_id: str
-    :ivar aws_assume_role_arn: Assumed role ID is an identifier that you can use to create
-     temporary security credentials. Required.
-    :vartype aws_assume_role_arn: str
-    :ivar aws_external_id: A unique identifier that is required when you assume a role in another
-     account. Required.
-    :vartype aws_external_id: str
-    """
-
-    _validation = {
-        "authentication_provisioning_state": {"readonly": True},
-        "granted_permissions": {"readonly": True},
-        "authentication_type": {"required": True},
-        "account_id": {"readonly": True},
-        "aws_assume_role_arn": {"required": True},
-        "aws_external_id": {"required": True},
-    }
-
-    _attribute_map = {
-        "authentication_provisioning_state": {"key": "authenticationProvisioningState", "type": "str"},
-        "granted_permissions": {"key": "grantedPermissions", "type": "[str]"},
-        "authentication_type": {"key": "authenticationType", "type": "str"},
-        "account_id": {"key": "accountId", "type": "str"},
-        "aws_assume_role_arn": {"key": "awsAssumeRoleArn", "type": "str"},
-        "aws_external_id": {"key": "awsExternalId", "type": "str"},
-    }
-
-    def __init__(self, *, aws_assume_role_arn: str, aws_external_id: str, **kwargs: Any) -> None:
-        """
-        :keyword aws_assume_role_arn: Assumed role ID is an identifier that you can use to create
-         temporary security credentials. Required.
-        :paramtype aws_assume_role_arn: str
-        :keyword aws_external_id: A unique identifier that is required when you assume a role in
-         another account. Required.
-        :paramtype aws_external_id: str
-        """
-        super().__init__(**kwargs)
-        self.authentication_type: str = "awsAssumeRole"
-        self.account_id: Optional[str] = None
-        self.aws_assume_role_arn = aws_assume_role_arn
-        self.aws_external_id = aws_external_id
-
-
-class AwsCredsAuthenticationDetailsProperties(AuthenticationDetailsProperties):
-    """AWS cloud account connector based credentials, the credentials is composed of access key ID and
-    secret key, for more details, refer to :code:`<a
-    href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html">Creating an IAM
-    User in Your AWS Account (write only)</a>`.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar authentication_provisioning_state: State of the multi-cloud connector. Known values are:
-     "Valid", "Invalid", "Expired", and "IncorrectPolicy".
-    :vartype authentication_provisioning_state: str or
-     ~azure.mgmt.security.models.AuthenticationProvisioningState
-    :ivar granted_permissions: The permissions detected in the cloud account.
-    :vartype granted_permissions: list[str or ~azure.mgmt.security.models.PermissionProperty]
-    :ivar authentication_type: Connect to your cloud account, for AWS use either account
-     credentials or role-based authentication. For GCP use account organization credentials.
-     Required. Known values are: "awsCreds", "awsAssumeRole", and "gcpCredentials".
-    :vartype authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
-    :ivar account_id: The ID of the cloud account.
-    :vartype account_id: str
-    :ivar aws_access_key_id: Public key element of the AWS credential object (write only).
-     Required.
-    :vartype aws_access_key_id: str
-    :ivar aws_secret_access_key: Secret key element of the AWS credential object (write only).
-     Required.
-    :vartype aws_secret_access_key: str
-    """
-
-    _validation = {
-        "authentication_provisioning_state": {"readonly": True},
-        "granted_permissions": {"readonly": True},
-        "authentication_type": {"required": True},
-        "account_id": {"readonly": True},
-        "aws_access_key_id": {"required": True},
-        "aws_secret_access_key": {"required": True},
-    }
-
-    _attribute_map = {
-        "authentication_provisioning_state": {"key": "authenticationProvisioningState", "type": "str"},
-        "granted_permissions": {"key": "grantedPermissions", "type": "[str]"},
-        "authentication_type": {"key": "authenticationType", "type": "str"},
-        "account_id": {"key": "accountId", "type": "str"},
-        "aws_access_key_id": {"key": "awsAccessKeyId", "type": "str"},
-        "aws_secret_access_key": {"key": "awsSecretAccessKey", "type": "str"},
-    }
-
-    def __init__(self, *, aws_access_key_id: str, aws_secret_access_key: str, **kwargs: Any) -> None:
-        """
-        :keyword aws_access_key_id: Public key element of the AWS credential object (write only).
-         Required.
-        :paramtype aws_access_key_id: str
-        :keyword aws_secret_access_key: Secret key element of the AWS credential object (write only).
-         Required.
-        :paramtype aws_secret_access_key: str
-        """
-        super().__init__(**kwargs)
-        self.authentication_type: str = "awsCreds"
-        self.account_id: Optional[str] = None
-        self.aws_access_key_id = aws_access_key_id
-        self.aws_secret_access_key = aws_secret_access_key
 
 
 class EnvironmentData(_serialization.Model):
@@ -3723,7 +3761,7 @@ class AwsEnvironmentData(EnvironmentData):
         self,
         *,
         organizational_data: Optional["_models.AwsOrganizationalData"] = None,
-        regions: Optional[List[str]] = None,
+        regions: Optional[list[str]] = None,
         scan_interval: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -3806,7 +3844,7 @@ class AwsOrganizationalDataMaster(AwsOrganizationalData):
     }
 
     def __init__(
-        self, *, stackset_name: Optional[str] = None, excluded_account_ids: Optional[List[str]] = None, **kwargs: Any
+        self, *, stackset_name: Optional[str] = None, excluded_account_ids: Optional[list[str]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword stackset_name: If the multi cloud account is of membership type organization, this
@@ -3856,7 +3894,7 @@ class AwsOrganizationalDataMember(AwsOrganizationalData):
         self.parent_hierarchy_id = parent_hierarchy_id
 
 
-class ResourceAutoGenerated3(_serialization.Model):
+class ResourceAutoGenerated(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3891,7 +3929,7 @@ class ResourceAutoGenerated3(_serialization.Model):
         self.type: Optional[str] = None
 
 
-class ProxyResource(ResourceAutoGenerated3):
+class ProxyResource(ResourceAutoGenerated):
     """The resource model definition for a Azure Resource Manager proxy resource. It will not have
     tags and a location.
 
@@ -3958,9 +3996,9 @@ class AzureDevOpsOrganizationConfiguration(_serialization.Model):
     :ivar auto_discovery: AutoDiscovery states. Known values are: "Disabled", "Enabled", and
      "NotApplicable".
     :vartype auto_discovery: str or ~azure.mgmt.security.models.AutoDiscovery
-    :ivar project_configs: AzureDevOps Project Inventory Configuration.
-     Dictionary of AzureDevOps project name to desired project configuration.
-     If AutoDiscovery is Enabled, this field should be empty or null.
+    :ivar project_configs: AzureDevOps Project Inventory Configuration. Dictionary of AzureDevOps
+     project name to desired project configuration. If AutoDiscovery is Enabled, this field should
+     be empty or null.
     :vartype project_configs: dict[str,
      ~azure.mgmt.security.models.AzureDevOpsProjectConfiguration]
     """
@@ -3974,16 +4012,16 @@ class AzureDevOpsOrganizationConfiguration(_serialization.Model):
         self,
         *,
         auto_discovery: Optional[Union[str, "_models.AutoDiscovery"]] = None,
-        project_configs: Optional[Dict[str, "_models.AzureDevOpsProjectConfiguration"]] = None,
+        project_configs: Optional[dict[str, "_models.AzureDevOpsProjectConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword auto_discovery: AutoDiscovery states. Known values are: "Disabled", "Enabled", and
          "NotApplicable".
         :paramtype auto_discovery: str or ~azure.mgmt.security.models.AutoDiscovery
-        :keyword project_configs: AzureDevOps Project Inventory Configuration.
-         Dictionary of AzureDevOps project name to desired project configuration.
-         If AutoDiscovery is Enabled, this field should be empty or null.
+        :keyword project_configs: AzureDevOps Project Inventory Configuration. Dictionary of
+         AzureDevOps project name to desired project configuration. If AutoDiscovery is Enabled, this
+         field should be empty or null.
         :paramtype project_configs: dict[str,
          ~azure.mgmt.security.models.AzureDevOpsProjectConfiguration]
         """
@@ -4007,7 +4045,7 @@ class AzureDevOpsOrgListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.AzureDevOpsOrg"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.AzureDevOpsOrg"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Gets or sets list of resources.
@@ -4145,9 +4183,9 @@ class AzureDevOpsProjectConfiguration(_serialization.Model):
     :ivar auto_discovery: AutoDiscovery states. Known values are: "Disabled", "Enabled", and
      "NotApplicable".
     :vartype auto_discovery: str or ~azure.mgmt.security.models.AutoDiscovery
-    :ivar repository_configs: AzureDevOps Repository Inventory Configuration.
-     Dictionary of AzureDevOps repository name to desired repository configuration.
-     If AutoDiscovery is Enabled, this field should be null or empty.
+    :ivar repository_configs: AzureDevOps Repository Inventory Configuration. Dictionary of
+     AzureDevOps repository name to desired repository configuration. If AutoDiscovery is Enabled,
+     this field should be null or empty.
     :vartype repository_configs: dict[str, ~azure.mgmt.security.models.BaseResourceConfiguration]
     """
 
@@ -4160,16 +4198,16 @@ class AzureDevOpsProjectConfiguration(_serialization.Model):
         self,
         *,
         auto_discovery: Optional[Union[str, "_models.AutoDiscovery"]] = None,
-        repository_configs: Optional[Dict[str, "_models.BaseResourceConfiguration"]] = None,
+        repository_configs: Optional[dict[str, "_models.BaseResourceConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword auto_discovery: AutoDiscovery states. Known values are: "Disabled", "Enabled", and
          "NotApplicable".
         :paramtype auto_discovery: str or ~azure.mgmt.security.models.AutoDiscovery
-        :keyword repository_configs: AzureDevOps Repository Inventory Configuration.
-         Dictionary of AzureDevOps repository name to desired repository configuration.
-         If AutoDiscovery is Enabled, this field should be null or empty.
+        :keyword repository_configs: AzureDevOps Repository Inventory Configuration. Dictionary of
+         AzureDevOps repository name to desired repository configuration. If AutoDiscovery is Enabled,
+         this field should be null or empty.
         :paramtype repository_configs: dict[str, ~azure.mgmt.security.models.BaseResourceConfiguration]
         """
         super().__init__(**kwargs)
@@ -4194,7 +4232,7 @@ class AzureDevOpsProjectListResponse(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.AzureDevOpsProject"]] = None,
+        value: Optional[list["_models.AzureDevOpsProject"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -4359,7 +4397,7 @@ class AzureDevOpsRepositoryListResponse(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.AzureDevOpsRepository"]] = None,
+        value: Optional[list["_models.AzureDevOpsRepository"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -4648,7 +4686,7 @@ class AzureResourceLink(_serialization.Model):
         self.id: Optional[str] = None
 
 
-class ResourceAutoGenerated(_serialization.Model):
+class ResourceAutoGenerated2(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4689,7 +4727,7 @@ class ResourceAutoGenerated(_serialization.Model):
         self.system_data: Optional["_models.SystemData"] = None
 
 
-class ServerVulnerabilityAssessmentsSetting(ResourceAutoGenerated):
+class ServerVulnerabilityAssessmentsSetting(ResourceAutoGenerated2):
     """A base vulnerability assessments setting on servers in the defined scope.
 
     You probably want to use the sub-classes and not this class directly. Known sub-classes are:
@@ -4819,7 +4857,7 @@ class Baseline(_serialization.Model):
     def __init__(
         self,
         *,
-        expected_results: Optional[List[List[str]]] = None,
+        expected_results: Optional[list[list[str]]] = None,
         updated_time: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> None:
@@ -4839,12 +4877,12 @@ class BaselineAdjustedResult(_serialization.Model):
 
     :ivar baseline: Baseline details.
     :vartype baseline: ~azure.mgmt.security.models.Baseline
-    :ivar status: The rule result status. Known values are: "NonFinding", "Finding", and
-     "InternalError".
+    :ivar status: The rule result status. Known values are: "NonFinding", "Finding",
+     "InternalError", and "NotApplicable".
     :vartype status: str or ~azure.mgmt.security.models.RuleStatus
-    :ivar results_not_in_baseline: Results the are not in baseline.
+    :ivar results_not_in_baseline: Results that are not in the baseline.
     :vartype results_not_in_baseline: list[list[str]]
-    :ivar results_only_in_baseline: Results the are in baseline.
+    :ivar results_only_in_baseline: Results that are in the baseline.
     :vartype results_only_in_baseline: list[list[str]]
     """
 
@@ -4860,19 +4898,19 @@ class BaselineAdjustedResult(_serialization.Model):
         *,
         baseline: Optional["_models.Baseline"] = None,
         status: Optional[Union[str, "_models.RuleStatus"]] = None,
-        results_not_in_baseline: Optional[List[List[str]]] = None,
-        results_only_in_baseline: Optional[List[List[str]]] = None,
+        results_not_in_baseline: Optional[list[list[str]]] = None,
+        results_only_in_baseline: Optional[list[list[str]]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword baseline: Baseline details.
         :paramtype baseline: ~azure.mgmt.security.models.Baseline
-        :keyword status: The rule result status. Known values are: "NonFinding", "Finding", and
-         "InternalError".
+        :keyword status: The rule result status. Known values are: "NonFinding", "Finding",
+         "InternalError", and "NotApplicable".
         :paramtype status: str or ~azure.mgmt.security.models.RuleStatus
-        :keyword results_not_in_baseline: Results the are not in baseline.
+        :keyword results_not_in_baseline: Results that are not in the baseline.
         :paramtype results_not_in_baseline: list[list[str]]
-        :keyword results_only_in_baseline: Results the are in baseline.
+        :keyword results_only_in_baseline: Results that are in the baseline.
         :paramtype results_only_in_baseline: list[list[str]]
         """
         super().__init__(**kwargs)
@@ -5029,14 +5067,10 @@ class CategoryConfiguration(_serialization.Model):
 
     :ivar minimum_severity_level: Gets or sets minimum severity level for a given category.
     :vartype minimum_severity_level: str
-    :ivar category: Rule categories.
-     Code - code scanning results.
-     Artifact scanning results.
-     Dependencies scanning results.
-     IaC results.
-     Secrets scanning results.
-     Container scanning results. Known values are: "Code", "Artifacts", "Dependencies", "Secrets",
-     "IaC", and "Containers".
+    :ivar category: Rule categories. Code - code scanning results. Artifact scanning results.
+     Dependencies scanning results. IaC results. Secrets scanning results. Container scanning
+     results. Known values are: "Code", "Artifacts", "Dependencies", "Secrets", "IaC", and
+     "Containers".
     :vartype category: str or ~azure.mgmt.security.models.RuleCategory
     """
 
@@ -5055,14 +5089,10 @@ class CategoryConfiguration(_serialization.Model):
         """
         :keyword minimum_severity_level: Gets or sets minimum severity level for a given category.
         :paramtype minimum_severity_level: str
-        :keyword category: Rule categories.
-         Code - code scanning results.
-         Artifact scanning results.
-         Dependencies scanning results.
-         IaC results.
-         Secrets scanning results.
-         Container scanning results. Known values are: "Code", "Artifacts", "Dependencies", "Secrets",
-         "IaC", and "Containers".
+        :keyword category: Rule categories. Code - code scanning results. Artifact scanning results.
+         Dependencies scanning results. IaC results. Secrets scanning results. Container scanning
+         results. Known values are: "Code", "Artifacts", "Dependencies", "Secrets", "IaC", and
+         "Containers".
         :paramtype category: str or ~azure.mgmt.security.models.RuleCategory
         """
         super().__init__(**kwargs)
@@ -5155,7 +5185,7 @@ class CefSolutionProperties(ExternalSecuritySolutionProperties):
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, Any]] = None,
+        additional_properties: Optional[dict[str, Any]] = None,
         device_vendor: Optional[str] = None,
         device_type: Optional[str] = None,
         workspace: Optional["_models.ConnectedWorkspace"] = None,
@@ -5191,6 +5221,886 @@ class CefSolutionProperties(ExternalSecuritySolutionProperties):
         self.hostname = hostname
         self.agent = agent
         self.last_event_received = last_event_received
+
+
+class CloudErrorAutoGenerated(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated10(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated10]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated10]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated10"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated11(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated11]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated11]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated11"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated12(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated12]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated12]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated12"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated13(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated13]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated13]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated13"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated14(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated14]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated14]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated14"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated15(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated15]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated15]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated15"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated16(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated16]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated16]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated16"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated17(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated17]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated17]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated17"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated18(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated18]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated18]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated18"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated19(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated19]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated19]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated19"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated2(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated2]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated2]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated2"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated20(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated20]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated20]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated20"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated3(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated3]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated3]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated3"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated4(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated4]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated4]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated4"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated5(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated5]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated5]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated5"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated6(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated6]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated6]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated6"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated7(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated7]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated7]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated7"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated8(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated8]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated8]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated8"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorAutoGenerated9(_serialization.Model):
+    """Common error response for all Azure Resource Manager APIs to return error details for failed
+    operations. (This also follows the OData error response format.).
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated9]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[CloudErrorBodyAutoGenerated9]"},
+        "additional_info": {"key": "error.additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated9"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class CloudErrorBody(_serialization.Model):
@@ -5232,8 +6142,868 @@ class CloudErrorBody(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.CloudErrorBody"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.CloudErrorBody"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated10(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated10]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated10]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated10"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated11(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated11]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated11]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated11"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated12(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated12]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated12]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated12"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated13(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated13]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated13]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated13"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated14(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated14]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated14]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated14"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated15(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated15]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated15]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated15"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated16(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated16]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated16]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated16"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated17(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated17]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated17]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated17"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated18(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated18]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated18]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated18"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated19(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated19]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated19]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated19"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated2(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated2]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated2]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated2"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated20(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated20]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated20]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated20"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated3(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated3]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated3]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated3"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated4(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated4]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated4]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated4"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated5(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated5]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated5]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated5"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated6(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated6]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated6]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated6"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated7(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated7]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated7]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated7"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated8(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated8]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated8]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated8"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
+
+
+class CloudErrorBodyAutoGenerated9(_serialization.Model):
+    """The error detail.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
+    :ivar target: The error target.
+    :vartype target: str
+    :ivar details: The error details.
+    :vartype details: list[~azure.mgmt.security.models.CloudErrorBodyAutoGenerated9]
+    :ivar additional_info: The error additional info.
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
+    """
+
+    _validation = {
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBodyAutoGenerated9]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.code: Optional[str] = None
+        self.message: Optional[str] = None
+        self.target: Optional[str] = None
+        self.details: Optional[list["_models.CloudErrorBodyAutoGenerated9"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class CloudOffering(_serialization.Model):
@@ -5349,7 +7119,7 @@ class Compliance(Resource):
         super().__init__(**kwargs)
         self.assessment_timestamp_utc_date: Optional[datetime.datetime] = None
         self.resource_count: Optional[int] = None
-        self.assessment_result: Optional[List["_models.ComplianceSegment"]] = None
+        self.assessment_result: Optional[list["_models.ComplianceSegment"]] = None
 
 
 class ComplianceList(_serialization.Model):
@@ -5372,7 +7142,7 @@ class ComplianceList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Compliance"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Compliance"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of Compliance objects.
         :paramtype value: list[~azure.mgmt.security.models.Compliance]
@@ -5441,7 +7211,7 @@ class ComplianceResultList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.ComplianceResult"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.ComplianceResult"], **kwargs: Any) -> None:
         """
         :keyword value: List of compliance results. Required.
         :paramtype value: list[~azure.mgmt.security.models.ComplianceResult]
@@ -5534,7 +7304,7 @@ class Condition(_serialization.Model):
      see examples.
     :vartype value: str
     :ivar operator: The governance rule Condition's Operator, for example Equals for severity or In
-     for list of assessments, see examples. Known values are: "Equals", "In", and "In".
+     for list of assessments, see examples. Known values are: "Equals" and "In".
     :vartype operator: str or ~azure.mgmt.security.models.GovernanceRuleConditionOperator
     """
 
@@ -5560,7 +7330,7 @@ class Condition(_serialization.Model):
          keys, see examples.
         :paramtype value: str
         :keyword operator: The governance rule Condition's Operator, for example Equals for severity or
-         In for list of assessments, see examples. Known values are: "Equals", "In", and "In".
+         In for list of assessments, see examples. Known values are: "Equals" and "In".
         :paramtype operator: str or ~azure.mgmt.security.models.GovernanceRuleConditionOperator
         """
         super().__init__(**kwargs)
@@ -5600,8 +7370,8 @@ class ConnectableResource(_serialization.Model):
         """ """
         super().__init__(**kwargs)
         self.id: Optional[str] = None
-        self.inbound_connected_resources: Optional[List["_models.ConnectedResource"]] = None
-        self.outbound_connected_resources: Optional[List["_models.ConnectedResource"]] = None
+        self.inbound_connected_resources: Optional[list["_models.ConnectedResource"]] = None
+        self.outbound_connected_resources: Optional[list["_models.ConnectedResource"]] = None
 
 
 class ConnectedResource(_serialization.Model):
@@ -5699,7 +7469,7 @@ class ConnectionFromIpNotAllowed(AllowlistCustomAlertRule):
         "allowlist_values": {"key": "allowlistValues", "type": "[str]"},
     }
 
-    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, is_enabled: bool, allowlist_values: list[str], **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -5753,7 +7523,7 @@ class ConnectionToIpNotAllowed(AllowlistCustomAlertRule):
         "allowlist_values": {"key": "allowlistValues", "type": "[str]"},
     }
 
-    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, is_enabled: bool, allowlist_values: list[str], **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -5763,95 +7533,6 @@ class ConnectionToIpNotAllowed(AllowlistCustomAlertRule):
         """
         super().__init__(is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
         self.rule_type: str = "ConnectionToIpNotAllowed"
-
-
-class ConnectorSetting(Resource):
-    """The connector setting.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar hybrid_compute_settings: Settings for hybrid compute management. These settings are
-     relevant only for Arc autoProvision (Hybrid Compute).
-    :vartype hybrid_compute_settings: ~azure.mgmt.security.models.HybridComputeSettingsProperties
-    :ivar authentication_details: Settings for authentication management, these settings are
-     relevant only for the cloud connector.
-    :vartype authentication_details: ~azure.mgmt.security.models.AuthenticationDetailsProperties
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "hybrid_compute_settings": {
-            "key": "properties.hybridComputeSettings",
-            "type": "HybridComputeSettingsProperties",
-        },
-        "authentication_details": {
-            "key": "properties.authenticationDetails",
-            "type": "AuthenticationDetailsProperties",
-        },
-    }
-
-    def __init__(
-        self,
-        *,
-        hybrid_compute_settings: Optional["_models.HybridComputeSettingsProperties"] = None,
-        authentication_details: Optional["_models.AuthenticationDetailsProperties"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword hybrid_compute_settings: Settings for hybrid compute management. These settings are
-         relevant only for Arc autoProvision (Hybrid Compute).
-        :paramtype hybrid_compute_settings: ~azure.mgmt.security.models.HybridComputeSettingsProperties
-        :keyword authentication_details: Settings for authentication management, these settings are
-         relevant only for the cloud connector.
-        :paramtype authentication_details: ~azure.mgmt.security.models.AuthenticationDetailsProperties
-        """
-        super().__init__(**kwargs)
-        self.hybrid_compute_settings = hybrid_compute_settings
-        self.authentication_details = authentication_details
-
-
-class ConnectorSettingList(_serialization.Model):
-    """For a subscription, list of all cloud account connectors and their settings.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: List of all the cloud account connector settings.
-    :vartype value: list[~azure.mgmt.security.models.ConnectorSetting]
-    :ivar next_link: The URI to fetch the next page.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[ConnectorSetting]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: Optional[List["_models.ConnectorSetting"]] = None, **kwargs: Any) -> None:
-        """
-        :keyword value: List of all the cloud account connector settings.
-        :paramtype value: list[~azure.mgmt.security.models.ConnectorSetting]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link: Optional[str] = None
 
 
 class ContainerRegistryVulnerabilityProperties(AdditionalData):
@@ -5912,11 +7593,11 @@ class ContainerRegistryVulnerabilityProperties(AdditionalData):
         super().__init__(**kwargs)
         self.assessed_resource_type: str = "ContainerRegistryVulnerability"
         self.type: Optional[str] = None
-        self.cvss: Optional[Dict[str, "_models.CVSS"]] = None
+        self.cvss: Optional[dict[str, "_models.CVSS"]] = None
         self.patchable: Optional[bool] = None
-        self.cve: Optional[List["_models.CVE"]] = None
+        self.cve: Optional[list["_models.CVE"]] = None
         self.published_time: Optional[datetime.datetime] = None
-        self.vendor_references: Optional[List["_models.VendorReference"]] = None
+        self.vendor_references: Optional[list["_models.VendorReference"]] = None
         self.repository_name: Optional[str] = None
         self.image_digest: Optional[str] = None
 
@@ -6254,334 +7935,6 @@ class CspmMonitorJFrogOffering(CloudOffering):
         self.offering_type: str = "CspmMonitorJFrog"
 
 
-class CustomAssessmentAutomation(Resource):
-    """Custom Assessment Automation.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.security.models.SystemData
-    :ivar compressed_query: GZip encoded KQL query representing the assessment automation results
-     required.
-    :vartype compressed_query: str
-    :ivar supported_cloud: Relevant cloud for the custom assessment automation. Known values are:
-     "AWS" and "GCP".
-    :vartype supported_cloud: str or ~azure.mgmt.security.models.SupportedCloudEnum
-    :ivar severity: The severity to relate to the assessments generated by this assessment
-     automation. Known values are: "High", "Medium", and "Low".
-    :vartype severity: str or ~azure.mgmt.security.models.SeverityEnum
-    :ivar display_name: The display name of the assessments generated by this assessment
-     automation.
-    :vartype display_name: str
-    :ivar description: The description to relate to the assessments generated by this assessment
-     automation.
-    :vartype description: str
-    :ivar remediation_description: The remediation description to relate to the assessments
-     generated by this assessment automation.
-    :vartype remediation_description: str
-    :ivar assessment_key: The assessment metadata key used when an assessment is generated for this
-     assessment automation.
-    :vartype assessment_key: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "compressed_query": {"key": "properties.compressedQuery", "type": "str"},
-        "supported_cloud": {"key": "properties.supportedCloud", "type": "str"},
-        "severity": {"key": "properties.severity", "type": "str"},
-        "display_name": {"key": "properties.displayName", "type": "str"},
-        "description": {"key": "properties.description", "type": "str"},
-        "remediation_description": {"key": "properties.remediationDescription", "type": "str"},
-        "assessment_key": {"key": "properties.assessmentKey", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        compressed_query: Optional[str] = None,
-        supported_cloud: Union[str, "_models.SupportedCloudEnum"] = "AWS",
-        severity: Union[str, "_models.SeverityEnum"] = "Low",
-        display_name: Optional[str] = None,
-        description: Optional[str] = None,
-        remediation_description: Optional[str] = None,
-        assessment_key: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword compressed_query: GZip encoded KQL query representing the assessment automation
-         results required.
-        :paramtype compressed_query: str
-        :keyword supported_cloud: Relevant cloud for the custom assessment automation. Known values
-         are: "AWS" and "GCP".
-        :paramtype supported_cloud: str or ~azure.mgmt.security.models.SupportedCloudEnum
-        :keyword severity: The severity to relate to the assessments generated by this assessment
-         automation. Known values are: "High", "Medium", and "Low".
-        :paramtype severity: str or ~azure.mgmt.security.models.SeverityEnum
-        :keyword display_name: The display name of the assessments generated by this assessment
-         automation.
-        :paramtype display_name: str
-        :keyword description: The description to relate to the assessments generated by this assessment
-         automation.
-        :paramtype description: str
-        :keyword remediation_description: The remediation description to relate to the assessments
-         generated by this assessment automation.
-        :paramtype remediation_description: str
-        :keyword assessment_key: The assessment metadata key used when an assessment is generated for
-         this assessment automation.
-        :paramtype assessment_key: str
-        """
-        super().__init__(**kwargs)
-        self.system_data: Optional["_models.SystemData"] = None
-        self.compressed_query = compressed_query
-        self.supported_cloud = supported_cloud
-        self.severity = severity
-        self.display_name = display_name
-        self.description = description
-        self.remediation_description = remediation_description
-        self.assessment_key = assessment_key
-
-
-class CustomAssessmentAutomationRequest(Resource):
-    """Custom Assessment Automation request.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar compressed_query: Base 64 encoded KQL query representing the assessment automation
-     results required.
-    :vartype compressed_query: str
-    :ivar supported_cloud: Relevant cloud for the custom assessment automation. Known values are:
-     "AWS" and "GCP".
-    :vartype supported_cloud: str or ~azure.mgmt.security.models.SupportedCloudEnum
-    :ivar severity: The severity to relate to the assessments generated by this assessment
-     automation. Known values are: "High", "Medium", and "Low".
-    :vartype severity: str or ~azure.mgmt.security.models.SeverityEnum
-    :ivar display_name: The display name of the assessments generated by this assessment
-     automation.
-    :vartype display_name: str
-    :ivar description: The description to relate to the assessments generated by this assessment
-     automation.
-    :vartype description: str
-    :ivar remediation_description: The remediation description to relate to the assessments
-     generated by this assessment automation.
-    :vartype remediation_description: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "compressed_query": {"key": "properties.compressedQuery", "type": "str"},
-        "supported_cloud": {"key": "properties.supportedCloud", "type": "str"},
-        "severity": {"key": "properties.severity", "type": "str"},
-        "display_name": {"key": "properties.displayName", "type": "str"},
-        "description": {"key": "properties.description", "type": "str"},
-        "remediation_description": {"key": "properties.remediationDescription", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        compressed_query: Optional[str] = None,
-        supported_cloud: Union[str, "_models.SupportedCloudEnum"] = "AWS",
-        severity: Union[str, "_models.SeverityEnum"] = "Low",
-        display_name: Optional[str] = None,
-        description: Optional[str] = None,
-        remediation_description: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword compressed_query: Base 64 encoded KQL query representing the assessment automation
-         results required.
-        :paramtype compressed_query: str
-        :keyword supported_cloud: Relevant cloud for the custom assessment automation. Known values
-         are: "AWS" and "GCP".
-        :paramtype supported_cloud: str or ~azure.mgmt.security.models.SupportedCloudEnum
-        :keyword severity: The severity to relate to the assessments generated by this assessment
-         automation. Known values are: "High", "Medium", and "Low".
-        :paramtype severity: str or ~azure.mgmt.security.models.SeverityEnum
-        :keyword display_name: The display name of the assessments generated by this assessment
-         automation.
-        :paramtype display_name: str
-        :keyword description: The description to relate to the assessments generated by this assessment
-         automation.
-        :paramtype description: str
-        :keyword remediation_description: The remediation description to relate to the assessments
-         generated by this assessment automation.
-        :paramtype remediation_description: str
-        """
-        super().__init__(**kwargs)
-        self.compressed_query = compressed_query
-        self.supported_cloud = supported_cloud
-        self.severity = severity
-        self.display_name = display_name
-        self.description = description
-        self.remediation_description = remediation_description
-
-
-class CustomAssessmentAutomationsListResult(_serialization.Model):
-    """A list of Custom Assessment Automations.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: Collection of Custom Assessment Automations.
-    :vartype value: list[~azure.mgmt.security.models.CustomAssessmentAutomation]
-    :ivar next_link: The link used to get the next page of operations.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[CustomAssessmentAutomation]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword next_link: The link used to get the next page of operations.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value: Optional[List["_models.CustomAssessmentAutomation"]] = None
-        self.next_link = next_link
-
-
-class CustomEntityStoreAssignment(Resource):
-    """Custom entity store assignment.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~azure.mgmt.security.models.SystemData
-    :ivar principal: The principal assigned with entity store. Format of principal is: [AAD
-     type]=[PrincipalObjectId];[TenantId].
-    :vartype principal: str
-    :ivar entity_store_database_link: The link to entity store database.
-    :vartype entity_store_database_link: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-        "system_data": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "system_data": {"key": "systemData", "type": "SystemData"},
-        "principal": {"key": "properties.principal", "type": "str"},
-        "entity_store_database_link": {"key": "properties.entityStoreDatabaseLink", "type": "str"},
-    }
-
-    def __init__(
-        self, *, principal: Optional[str] = None, entity_store_database_link: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword principal: The principal assigned with entity store. Format of principal is: [AAD
-         type]=[PrincipalObjectId];[TenantId].
-        :paramtype principal: str
-        :keyword entity_store_database_link: The link to entity store database.
-        :paramtype entity_store_database_link: str
-        """
-        super().__init__(**kwargs)
-        self.system_data: Optional["_models.SystemData"] = None
-        self.principal = principal
-        self.entity_store_database_link = entity_store_database_link
-
-
-class CustomEntityStoreAssignmentRequest(_serialization.Model):
-    """describes the custom entity store assignment request.
-
-    :ivar principal: The principal assigned with entity store. If not provided, will use caller
-     principal. Format of principal is: [AAD type]=[PrincipalObjectId];[TenantId].
-    :vartype principal: str
-    """
-
-    _attribute_map = {
-        "principal": {"key": "properties.principal", "type": "str"},
-    }
-
-    def __init__(self, *, principal: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword principal: The principal assigned with entity store. If not provided, will use caller
-         principal. Format of principal is: [AAD type]=[PrincipalObjectId];[TenantId].
-        :paramtype principal: str
-        """
-        super().__init__(**kwargs)
-        self.principal = principal
-
-
-class CustomEntityStoreAssignmentsListResult(_serialization.Model):
-    """A list of custom entity store assignments.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value: Collection of custom entity store assignments.
-    :vartype value: list[~azure.mgmt.security.models.CustomEntityStoreAssignment]
-    :ivar next_link: The link used to get the next page of operations.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[CustomEntityStoreAssignment]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, next_link: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword next_link: The link used to get the next page of operations.
-        :paramtype next_link: str
-        """
-        super().__init__(**kwargs)
-        self.value: Optional[List["_models.CustomEntityStoreAssignment"]] = None
-        self.next_link = next_link
-
-
 class CustomRecommendation(Resource):
     """Custom Recommendation.
 
@@ -6648,7 +8001,7 @@ class CustomRecommendation(Resource):
         self,
         *,
         query: Optional[str] = None,
-        cloud_providers: Optional[List[Union[str, "_models.RecommendationSupportedClouds"]]] = None,
+        cloud_providers: Optional[list[Union[str, "_models.RecommendationSupportedClouds"]]] = None,
         severity: Union[str, "_models.SeverityEnum"] = "Low",
         security_issue: Union[str, "_models.SecurityIssue"] = "BestPractices",
         display_name: Optional[str] = None,
@@ -6718,7 +8071,7 @@ class CustomRecommendationsList(_serialization.Model):
         :paramtype next_link: str
         """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.CustomRecommendation"]] = None
+        self.value: Optional[list["_models.CustomRecommendation"]] = None
         self.next_link = next_link
 
 
@@ -9086,6 +10439,34 @@ class DefenderForStorageSetting(Resource):
         self.properties = properties
 
 
+class DefenderForStorageSettingList(_serialization.Model):
+    """List of Defender for Storage settings.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: List of Defender for Storage settings.
+    :vartype value: list[~azure.mgmt.security.models.DefenderForStorageSetting]
+    :ivar next_link: The URI to fetch the next page.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[DefenderForStorageSetting]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value: Optional[list["_models.DefenderForStorageSetting"]] = None
+        self.next_link: Optional[str] = None
+
+
 class DefenderForStorageSettingProperties(_serialization.Model):
     """Defender for Storage resource properties.
 
@@ -9176,7 +10557,7 @@ class DenylistCustomAlertRule(ListCustomAlertRule):
         "denylist_values": {"key": "denylistValues", "type": "[str]"},
     }
 
-    def __init__(self, *, is_enabled: bool, denylist_values: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, is_enabled: bool, denylist_values: list[str], **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -9229,10 +10610,10 @@ class DeviceSecurityGroup(Resource):
     def __init__(
         self,
         *,
-        threshold_rules: Optional[List["_models.ThresholdCustomAlertRule"]] = None,
-        time_window_rules: Optional[List["_models.TimeWindowCustomAlertRule"]] = None,
-        allowlist_rules: Optional[List["_models.AllowlistCustomAlertRule"]] = None,
-        denylist_rules: Optional[List["_models.DenylistCustomAlertRule"]] = None,
+        threshold_rules: Optional[list["_models.ThresholdCustomAlertRule"]] = None,
+        time_window_rules: Optional[list["_models.TimeWindowCustomAlertRule"]] = None,
+        allowlist_rules: Optional[list["_models.AllowlistCustomAlertRule"]] = None,
+        denylist_rules: Optional[list["_models.DenylistCustomAlertRule"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -9272,7 +10653,7 @@ class DeviceSecurityGroupList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DeviceSecurityGroup"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.DeviceSecurityGroup"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of device security group objects.
         :paramtype value: list[~azure.mgmt.security.models.DeviceSecurityGroup]
@@ -9371,7 +10752,7 @@ class DevOpsConfigurationListResponse(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.DevOpsConfiguration"]] = None,
+        value: Optional[list["_models.DevOpsConfiguration"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -9412,8 +10793,7 @@ class DevOpsConfigurationProperties(_serialization.Model):
      "NotApplicable".
     :vartype auto_discovery: str or ~azure.mgmt.security.models.AutoDiscovery
     :ivar top_level_inventory_list: List of top-level inventory to select when AutoDiscovery is
-     disabled.
-     This field is ignored when AutoDiscovery is enabled.
+     disabled. This field is ignored when AutoDiscovery is enabled.
     :vartype top_level_inventory_list: list[str]
     :ivar capabilities: List of capabilities assigned to the DevOps configuration during the
      discovery process.
@@ -9445,7 +10825,7 @@ class DevOpsConfigurationProperties(_serialization.Model):
         *,
         authorization: Optional["_models.Authorization"] = None,
         auto_discovery: Optional[Union[str, "_models.AutoDiscovery"]] = None,
-        top_level_inventory_list: Optional[List[str]] = None,
+        top_level_inventory_list: Optional[list[str]] = None,
         agentless_configuration: Optional["_models.AgentlessConfiguration"] = None,
         **kwargs: Any
     ) -> None:
@@ -9456,8 +10836,7 @@ class DevOpsConfigurationProperties(_serialization.Model):
          "NotApplicable".
         :paramtype auto_discovery: str or ~azure.mgmt.security.models.AutoDiscovery
         :keyword top_level_inventory_list: List of top-level inventory to select when AutoDiscovery is
-         disabled.
-         This field is ignored when AutoDiscovery is enabled.
+         disabled. This field is ignored when AutoDiscovery is enabled.
         :paramtype top_level_inventory_list: list[str]
         :keyword agentless_configuration: Details about Agentless configuration.
         :paramtype agentless_configuration: ~azure.mgmt.security.models.AgentlessConfiguration
@@ -9469,7 +10848,7 @@ class DevOpsConfigurationProperties(_serialization.Model):
         self.authorization = authorization
         self.auto_discovery = auto_discovery
         self.top_level_inventory_list = top_level_inventory_list
-        self.capabilities: Optional[List["_models.DevOpsCapability"]] = None
+        self.capabilities: Optional[list["_models.DevOpsCapability"]] = None
         self.agentless_configuration = agentless_configuration
 
 
@@ -9644,7 +11023,7 @@ class DiscoveredSecuritySolutionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.DiscoveredSecuritySolution"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.DiscoveredSecuritySolution"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.security.models.DiscoveredSecuritySolution]
@@ -9864,8 +11243,8 @@ class ErrorDetail(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetail"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorDetail"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorDetailAutoGenerated(_serialization.Model):
@@ -9907,8 +11286,8 @@ class ErrorDetailAutoGenerated(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetailAutoGenerated"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorDetailAutoGenerated"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorDetailAutoGenerated2(_serialization.Model):
@@ -9950,8 +11329,8 @@ class ErrorDetailAutoGenerated2(_serialization.Model):
         self.code: Optional[str] = None
         self.message: Optional[str] = None
         self.target: Optional[str] = None
-        self.details: Optional[List["_models.ErrorDetailAutoGenerated2"]] = None
-        self.additional_info: Optional[List["_models.ErrorAdditionalInfo"]] = None
+        self.details: Optional[list["_models.ErrorDetailAutoGenerated2"]] = None
+        self.additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = None
 
 
 class ErrorResponse(_serialization.Model):
@@ -10097,7 +11476,7 @@ class Extension(_serialization.Model):
     :vartype additional_extension_properties: dict[str, any]
     :ivar operation_status: Optional. A status describing the success/failure of the extension's
      enablement/disablement operation.
-    :vartype operation_status: ~azure.mgmt.security.models.OperationStatusAutoGenerated
+    :vartype operation_status: ~azure.mgmt.security.models.OperationStatus
     """
 
     _validation = {
@@ -10110,7 +11489,7 @@ class Extension(_serialization.Model):
         "name": {"key": "name", "type": "str"},
         "is_enabled": {"key": "isEnabled", "type": "str"},
         "additional_extension_properties": {"key": "additionalExtensionProperties", "type": "{object}"},
-        "operation_status": {"key": "operationStatus", "type": "OperationStatusAutoGenerated"},
+        "operation_status": {"key": "operationStatus", "type": "OperationStatus"},
     }
 
     def __init__(
@@ -10118,7 +11497,7 @@ class Extension(_serialization.Model):
         *,
         name: str,
         is_enabled: Union[str, "_models.IsEnabled"],
-        additional_extension_properties: Optional[Dict[str, Any]] = None,
+        additional_extension_properties: Optional[dict[str, Any]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10178,7 +11557,7 @@ class Extension(_serialization.Model):
         self.name = name
         self.is_enabled = is_enabled
         self.additional_extension_properties = additional_extension_properties
-        self.operation_status: Optional["_models.OperationStatusAutoGenerated"] = None
+        self.operation_status: Optional["_models.OperationStatus"] = None
 
 
 class ExternalSecuritySolutionList(_serialization.Model):
@@ -10201,7 +11580,7 @@ class ExternalSecuritySolutionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ExternalSecuritySolution"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.ExternalSecuritySolution"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.security.models.ExternalSecuritySolution]
@@ -10283,6 +11662,60 @@ class FailedLocalLoginsNotInAllowedRange(TimeWindowCustomAlertRule):
         self.rule_type: str = "FailedLocalLoginsNotInAllowedRange"
 
 
+class FilesScanSummary(_serialization.Model):
+    """A summary of the scan results of the files that were scanned.
+
+    :ivar total_files_scanned: The total number of files that were scanned.
+    :vartype total_files_scanned: int
+    :ivar malicious_files_count: The number of malicious files that were detected during the scan.
+    :vartype malicious_files_count: int
+    :ivar skipped_files_count: The number of files that were skipped.
+    :vartype skipped_files_count: int
+    :ivar failed_files_count: The number of failed file scans.
+    :vartype failed_files_count: int
+    :ivar scanned_files_in_gb: The number of gigabytes of data that were scanned.
+    :vartype scanned_files_in_gb: float
+    """
+
+    _attribute_map = {
+        "total_files_scanned": {"key": "totalFilesScanned", "type": "int"},
+        "malicious_files_count": {"key": "maliciousFilesCount", "type": "int"},
+        "skipped_files_count": {"key": "skippedFilesCount", "type": "int"},
+        "failed_files_count": {"key": "failedFilesCount", "type": "int"},
+        "scanned_files_in_gb": {"key": "scannedFilesInGB", "type": "float"},
+    }
+
+    def __init__(
+        self,
+        *,
+        total_files_scanned: Optional[int] = None,
+        malicious_files_count: Optional[int] = None,
+        skipped_files_count: Optional[int] = None,
+        failed_files_count: Optional[int] = None,
+        scanned_files_in_gb: Optional[float] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword total_files_scanned: The total number of files that were scanned.
+        :paramtype total_files_scanned: int
+        :keyword malicious_files_count: The number of malicious files that were detected during the
+         scan.
+        :paramtype malicious_files_count: int
+        :keyword skipped_files_count: The number of files that were skipped.
+        :paramtype skipped_files_count: int
+        :keyword failed_files_count: The number of failed file scans.
+        :paramtype failed_files_count: int
+        :keyword scanned_files_in_gb: The number of gigabytes of data that were scanned.
+        :paramtype scanned_files_in_gb: float
+        """
+        super().__init__(**kwargs)
+        self.total_files_scanned = total_files_scanned
+        self.malicious_files_count = malicious_files_count
+        self.skipped_files_count = skipped_files_count
+        self.failed_files_count = failed_files_count
+        self.scanned_files_in_gb = scanned_files_in_gb
+
+
 class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
     """Number of file uploads is not in allowed range.
 
@@ -10353,141 +11786,6 @@ class FileUploadsNotInAllowedRange(TimeWindowCustomAlertRule):
             **kwargs
         )
         self.rule_type: str = "FileUploadsNotInAllowedRange"
-
-
-class GcpCredentialsDetailsProperties(AuthenticationDetailsProperties):
-    """GCP cloud account connector based service to service credentials, the credentials are composed
-    of the organization ID and a JSON API key (write only).
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar authentication_provisioning_state: State of the multi-cloud connector. Known values are:
-     "Valid", "Invalid", "Expired", and "IncorrectPolicy".
-    :vartype authentication_provisioning_state: str or
-     ~azure.mgmt.security.models.AuthenticationProvisioningState
-    :ivar granted_permissions: The permissions detected in the cloud account.
-    :vartype granted_permissions: list[str or ~azure.mgmt.security.models.PermissionProperty]
-    :ivar authentication_type: Connect to your cloud account, for AWS use either account
-     credentials or role-based authentication. For GCP use account organization credentials.
-     Required. Known values are: "awsCreds", "awsAssumeRole", and "gcpCredentials".
-    :vartype authentication_type: str or ~azure.mgmt.security.models.AuthenticationType
-    :ivar organization_id: The organization ID of the GCP cloud account. Required.
-    :vartype organization_id: str
-    :ivar type: Type field of the API key (write only). Required.
-    :vartype type: str
-    :ivar project_id: Project ID field of the API key (write only). Required.
-    :vartype project_id: str
-    :ivar private_key_id: Private key ID field of the API key (write only). Required.
-    :vartype private_key_id: str
-    :ivar private_key: Private key field of the API key (write only). Required.
-    :vartype private_key: str
-    :ivar client_email: Client email field of the API key (write only). Required.
-    :vartype client_email: str
-    :ivar client_id: Client ID field of the API key (write only). Required.
-    :vartype client_id: str
-    :ivar auth_uri: Auth URI field of the API key (write only). Required.
-    :vartype auth_uri: str
-    :ivar token_uri: Token URI field of the API key (write only). Required.
-    :vartype token_uri: str
-    :ivar auth_provider_x509_cert_url: Auth provider x509 certificate URL field of the API key
-     (write only). Required.
-    :vartype auth_provider_x509_cert_url: str
-    :ivar client_x509_cert_url: Client x509 certificate URL field of the API key (write only).
-     Required.
-    :vartype client_x509_cert_url: str
-    """
-
-    _validation = {
-        "authentication_provisioning_state": {"readonly": True},
-        "granted_permissions": {"readonly": True},
-        "authentication_type": {"required": True},
-        "organization_id": {"required": True},
-        "type": {"required": True},
-        "project_id": {"required": True},
-        "private_key_id": {"required": True},
-        "private_key": {"required": True},
-        "client_email": {"required": True},
-        "client_id": {"required": True},
-        "auth_uri": {"required": True},
-        "token_uri": {"required": True},
-        "auth_provider_x509_cert_url": {"required": True},
-        "client_x509_cert_url": {"required": True},
-    }
-
-    _attribute_map = {
-        "authentication_provisioning_state": {"key": "authenticationProvisioningState", "type": "str"},
-        "granted_permissions": {"key": "grantedPermissions", "type": "[str]"},
-        "authentication_type": {"key": "authenticationType", "type": "str"},
-        "organization_id": {"key": "organizationId", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "project_id": {"key": "projectId", "type": "str"},
-        "private_key_id": {"key": "privateKeyId", "type": "str"},
-        "private_key": {"key": "privateKey", "type": "str"},
-        "client_email": {"key": "clientEmail", "type": "str"},
-        "client_id": {"key": "clientId", "type": "str"},
-        "auth_uri": {"key": "authUri", "type": "str"},
-        "token_uri": {"key": "tokenUri", "type": "str"},
-        "auth_provider_x509_cert_url": {"key": "authProviderX509CertUrl", "type": "str"},
-        "client_x509_cert_url": {"key": "clientX509CertUrl", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        organization_id: str,
-        type: str,
-        project_id: str,
-        private_key_id: str,
-        private_key: str,
-        client_email: str,
-        client_id: str,
-        auth_uri: str,
-        token_uri: str,
-        auth_provider_x509_cert_url: str,
-        client_x509_cert_url: str,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword organization_id: The organization ID of the GCP cloud account. Required.
-        :paramtype organization_id: str
-        :keyword type: Type field of the API key (write only). Required.
-        :paramtype type: str
-        :keyword project_id: Project ID field of the API key (write only). Required.
-        :paramtype project_id: str
-        :keyword private_key_id: Private key ID field of the API key (write only). Required.
-        :paramtype private_key_id: str
-        :keyword private_key: Private key field of the API key (write only). Required.
-        :paramtype private_key: str
-        :keyword client_email: Client email field of the API key (write only). Required.
-        :paramtype client_email: str
-        :keyword client_id: Client ID field of the API key (write only). Required.
-        :paramtype client_id: str
-        :keyword auth_uri: Auth URI field of the API key (write only). Required.
-        :paramtype auth_uri: str
-        :keyword token_uri: Token URI field of the API key (write only). Required.
-        :paramtype token_uri: str
-        :keyword auth_provider_x509_cert_url: Auth provider x509 certificate URL field of the API key
-         (write only). Required.
-        :paramtype auth_provider_x509_cert_url: str
-        :keyword client_x509_cert_url: Client x509 certificate URL field of the API key (write only).
-         Required.
-        :paramtype client_x509_cert_url: str
-        """
-        super().__init__(**kwargs)
-        self.authentication_type: str = "gcpCredentials"
-        self.organization_id = organization_id
-        self.type = type
-        self.project_id = project_id
-        self.private_key_id = private_key_id
-        self.private_key = private_key
-        self.client_email = client_email
-        self.client_id = client_id
-        self.auth_uri = auth_uri
-        self.token_uri = token_uri
-        self.auth_provider_x509_cert_url = auth_provider_x509_cert_url
-        self.client_x509_cert_url = client_x509_cert_url
 
 
 class GcpOrganizationalData(_serialization.Model):
@@ -10613,7 +11911,7 @@ class GcpOrganizationalDataOrganization(GcpOrganizationalData):
     def __init__(
         self,
         *,
-        excluded_project_numbers: Optional[List[str]] = None,
+        excluded_project_numbers: Optional[list[str]] = None,
         service_account_email_address: Optional[str] = None,
         workload_identity_provider_id: Optional[str] = None,
         **kwargs: Any
@@ -10743,7 +12041,7 @@ class GetSensitivitySettingsListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.GetSensitivitySettingsResponse"]] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.GetSensitivitySettingsResponse"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value:
@@ -10823,7 +12121,7 @@ class GetSensitivitySettingsResponseProperties(_serialization.Model):
     def __init__(
         self,
         *,
-        sensitive_info_types_ids: Optional[List[str]] = None,
+        sensitive_info_types_ids: Optional[list[str]] = None,
         sensitivity_threshold_label_order: Optional[float] = None,
         sensitivity_threshold_label_id: Optional[str] = None,
         mip_information: Optional["_models.GetSensitivitySettingsResponsePropertiesMipInformation"] = None,
@@ -10877,9 +12175,9 @@ class GetSensitivitySettingsResponsePropertiesMipInformation(_serialization.Mode
         self,
         *,
         mip_integration_status: Optional[Union[str, "_models.MipIntegrationStatus"]] = None,
-        labels: Optional[List["_models.Label"]] = None,
-        custom_info_types: Optional[List["_models.InfoType"]] = None,
-        built_in_info_types: Optional[List["_models.BuiltInInfoType"]] = None,
+        labels: Optional[list["_models.Label"]] = None,
+        custom_info_types: Optional[list["_models.InfoType"]] = None,
+        built_in_info_types: Optional[list["_models.BuiltInInfoType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -10950,9 +12248,9 @@ class GitHubOwnerConfiguration(_serialization.Model):
     :ivar auto_discovery: AutoDiscovery states. Known values are: "Disabled", "Enabled", and
      "NotApplicable".
     :vartype auto_discovery: str or ~azure.mgmt.security.models.AutoDiscovery
-    :ivar repository_configs: GitHub Repository Inventory Configuration.
-     Dictionary of GitHub repository name to desired repository configuration.
-     If AutoDiscovery is Enabled, this field should be null or empty.
+    :ivar repository_configs: GitHub Repository Inventory Configuration. Dictionary of GitHub
+     repository name to desired repository configuration. If AutoDiscovery is Enabled, this field
+     should be null or empty.
     :vartype repository_configs: dict[str, ~azure.mgmt.security.models.BaseResourceConfiguration]
     """
 
@@ -10965,16 +12263,16 @@ class GitHubOwnerConfiguration(_serialization.Model):
         self,
         *,
         auto_discovery: Optional[Union[str, "_models.AutoDiscovery"]] = None,
-        repository_configs: Optional[Dict[str, "_models.BaseResourceConfiguration"]] = None,
+        repository_configs: Optional[dict[str, "_models.BaseResourceConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword auto_discovery: AutoDiscovery states. Known values are: "Disabled", "Enabled", and
          "NotApplicable".
         :paramtype auto_discovery: str or ~azure.mgmt.security.models.AutoDiscovery
-        :keyword repository_configs: GitHub Repository Inventory Configuration.
-         Dictionary of GitHub repository name to desired repository configuration.
-         If AutoDiscovery is Enabled, this field should be null or empty.
+        :keyword repository_configs: GitHub Repository Inventory Configuration. Dictionary of GitHub
+         repository name to desired repository configuration. If AutoDiscovery is Enabled, this field
+         should be null or empty.
         :paramtype repository_configs: dict[str, ~azure.mgmt.security.models.BaseResourceConfiguration]
         """
         super().__init__(**kwargs)
@@ -10997,7 +12295,7 @@ class GitHubOwnerListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.GitHubOwner"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.GitHubOwner"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Gets or sets list of resources.
@@ -11146,7 +12444,7 @@ class GitHubRepositoryListResponse(_serialization.Model):
     def __init__(
         self,
         *,
-        value: Optional[List["_models.GitHubRepository"]] = None,
+        value: Optional[list["_models.GitHubRepository"]] = None,
         next_link: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -11186,11 +12484,9 @@ class GitHubRepositoryProperties(_serialization.Model):
      This is a numeric id defined by Github.
      Eg: "123456".
     :vartype repo_id: str
-    :ivar repo_name: Gets or sets GitHub Repository name.
-     Eg: "new-repo-1".
+    :ivar repo_name: Gets or sets GitHub Repository name. Eg: "new-repo-1".
     :vartype repo_name: str
-    :ivar repo_full_name: Gets or sets GitHub Full Name.
-     Repository name, prefixed with Owner name.
+    :ivar repo_full_name: Gets or sets GitHub Full Name. Repository name, prefixed with Owner name.
      Eg: "my-org/new-repo-1".
     :vartype repo_full_name: str
     :ivar onboarding_state: Details about resource onboarding status across all connectors.
@@ -11337,9 +12633,9 @@ class GitLabGroupConfiguration(_serialization.Model):
     :ivar auto_discovery: AutoDiscovery states. Known values are: "Disabled", "Enabled", and
      "NotApplicable".
     :vartype auto_discovery: str or ~azure.mgmt.security.models.AutoDiscovery
-    :ivar project_configs: GitLab Project Inventory Configuration.
-     Dictionary of GitLab fully-qualified project name to desired project configuration.
-     If AutoDiscovery is Enabled, this field should be null or empty.
+    :ivar project_configs: GitLab Project Inventory Configuration. Dictionary of GitLab
+     fully-qualified project name to desired project configuration. If AutoDiscovery is Enabled,
+     this field should be null or empty.
     :vartype project_configs: dict[str, ~azure.mgmt.security.models.BaseResourceConfiguration]
     """
 
@@ -11352,16 +12648,16 @@ class GitLabGroupConfiguration(_serialization.Model):
         self,
         *,
         auto_discovery: Optional[Union[str, "_models.AutoDiscovery"]] = None,
-        project_configs: Optional[Dict[str, "_models.BaseResourceConfiguration"]] = None,
+        project_configs: Optional[dict[str, "_models.BaseResourceConfiguration"]] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword auto_discovery: AutoDiscovery states. Known values are: "Disabled", "Enabled", and
          "NotApplicable".
         :paramtype auto_discovery: str or ~azure.mgmt.security.models.AutoDiscovery
-        :keyword project_configs: GitLab Project Inventory Configuration.
-         Dictionary of GitLab fully-qualified project name to desired project configuration.
-         If AutoDiscovery is Enabled, this field should be null or empty.
+        :keyword project_configs: GitLab Project Inventory Configuration. Dictionary of GitLab
+         fully-qualified project name to desired project configuration. If AutoDiscovery is Enabled,
+         this field should be null or empty.
         :paramtype project_configs: dict[str, ~azure.mgmt.security.models.BaseResourceConfiguration]
         """
         super().__init__(**kwargs)
@@ -11384,7 +12680,7 @@ class GitLabGroupListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.GitLabGroup"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.GitLabGroup"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Gets or sets list of resources.
@@ -11543,7 +12839,7 @@ class GitLabProjectListResponse(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.GitLabProject"]] = None, next_link: Optional[str] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.GitLabProject"]] = None, next_link: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Gets or sets list of resources.
@@ -11835,7 +13131,7 @@ class GovernanceAssignmentsList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.GovernanceAssignment"]] = None
+        self.value: Optional[list["_models.GovernanceAssignment"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -11968,8 +13264,8 @@ class GovernanceRule(Resource):
         is_disabled: Optional[bool] = None,
         rule_type: Optional[Union[str, "_models.GovernanceRuleType"]] = None,
         source_resource_type: Optional[Union[str, "_models.GovernanceRuleSourceResourceType"]] = None,
-        excluded_scopes: Optional[List[str]] = None,
-        condition_sets: Optional[List[JSON]] = None,
+        excluded_scopes: Optional[list[str]] = None,
+        condition_sets: Optional[list[JSON]] = None,
         include_member_scopes: Optional[bool] = None,
         owner_source: Optional["_models.GovernanceRuleOwnerSource"] = None,
         governance_email_notification: Optional["_models.GovernanceRuleEmailNotification"] = None,
@@ -12093,7 +13389,7 @@ class GovernanceRuleList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.GovernanceRule"]] = None
+        self.value: Optional[list["_models.GovernanceRule"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -12269,9 +13565,9 @@ class HealthReport(Resource):
         environment_details: Optional["_models.EnvironmentDetails"] = None,
         health_data_classification: Optional["_models.HealthDataClassification"] = None,
         status: Optional["_models.StatusAutoGenerated"] = None,
-        affected_defenders_plans: Optional[List[str]] = None,
-        affected_defenders_sub_plans: Optional[List[str]] = None,
-        issues: Optional[List["_models.Issue"]] = None,
+        affected_defenders_plans: Optional[list[str]] = None,
+        affected_defenders_sub_plans: Optional[list[str]] = None,
+        issues: Optional[list["_models.Issue"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12297,7 +13593,7 @@ class HealthReport(Resource):
         self.status = status
         self.affected_defenders_plans = affected_defenders_plans
         self.affected_defenders_sub_plans = affected_defenders_sub_plans
-        self.report_additional_data: Optional[Dict[str, str]] = None
+        self.report_additional_data: Optional[dict[str, str]] = None
         self.issues = issues
 
 
@@ -12325,7 +13621,7 @@ class HealthReportsList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.HealthReport"]] = None
+        self.value: Optional[list["_models.HealthReport"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -12545,81 +13841,6 @@ class HttpD2CMessagesNotInAllowedRange(TimeWindowCustomAlertRule):
         self.rule_type: str = "HttpD2CMessagesNotInAllowedRange"
 
 
-class HybridComputeSettingsProperties(_serialization.Model):
-    """Settings for hybrid compute management.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar hybrid_compute_provisioning_state: State of the service principal and its secret. Known
-     values are: "Valid", "Invalid", and "Expired".
-    :vartype hybrid_compute_provisioning_state: str or
-     ~azure.mgmt.security.models.HybridComputeProvisioningState
-    :ivar auto_provision: Whether or not to automatically install Azure Arc (hybrid compute) agents
-     on machines. Required. Known values are: "On" and "Off".
-    :vartype auto_provision: str or ~azure.mgmt.security.models.AutoProvision
-    :ivar resource_group_name: The name of the resource group where Arc (Hybrid Compute) connectors
-     are connected.
-    :vartype resource_group_name: str
-    :ivar region: The location where the metadata of machines will be stored.
-    :vartype region: str
-    :ivar proxy_server: For a non-Azure machine that is not connected directly to the internet,
-     specify a proxy server that the non-Azure machine can use.
-    :vartype proxy_server: ~azure.mgmt.security.models.ProxyServerProperties
-    :ivar service_principal: An object to access resources that are secured by an Azure AD tenant.
-    :vartype service_principal: ~azure.mgmt.security.models.ServicePrincipalProperties
-    """
-
-    _validation = {
-        "hybrid_compute_provisioning_state": {"readonly": True},
-        "auto_provision": {"required": True},
-    }
-
-    _attribute_map = {
-        "hybrid_compute_provisioning_state": {"key": "hybridComputeProvisioningState", "type": "str"},
-        "auto_provision": {"key": "autoProvision", "type": "str"},
-        "resource_group_name": {"key": "resourceGroupName", "type": "str"},
-        "region": {"key": "region", "type": "str"},
-        "proxy_server": {"key": "proxyServer", "type": "ProxyServerProperties"},
-        "service_principal": {"key": "servicePrincipal", "type": "ServicePrincipalProperties"},
-    }
-
-    def __init__(
-        self,
-        *,
-        auto_provision: Union[str, "_models.AutoProvision"],
-        resource_group_name: Optional[str] = None,
-        region: Optional[str] = None,
-        proxy_server: Optional["_models.ProxyServerProperties"] = None,
-        service_principal: Optional["_models.ServicePrincipalProperties"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword auto_provision: Whether or not to automatically install Azure Arc (hybrid compute)
-         agents on machines. Required. Known values are: "On" and "Off".
-        :paramtype auto_provision: str or ~azure.mgmt.security.models.AutoProvision
-        :keyword resource_group_name: The name of the resource group where Arc (Hybrid Compute)
-         connectors are connected.
-        :paramtype resource_group_name: str
-        :keyword region: The location where the metadata of machines will be stored.
-        :paramtype region: str
-        :keyword proxy_server: For a non-Azure machine that is not connected directly to the internet,
-         specify a proxy server that the non-Azure machine can use.
-        :paramtype proxy_server: ~azure.mgmt.security.models.ProxyServerProperties
-        :keyword service_principal: An object to access resources that are secured by an Azure AD
-         tenant.
-        :paramtype service_principal: ~azure.mgmt.security.models.ServicePrincipalProperties
-        """
-        super().__init__(**kwargs)
-        self.hybrid_compute_provisioning_state: Optional[Union[str, "_models.HybridComputeProvisioningState"]] = None
-        self.auto_provision = auto_provision
-        self.resource_group_name = resource_group_name
-        self.region = region
-        self.proxy_server = proxy_server
-        self.service_principal = service_principal
-
-
 class Identity(_serialization.Model):
     """Identity for the resource.
 
@@ -12743,8 +13964,8 @@ class InformationProtectionPolicy(Resource):
     def __init__(
         self,
         *,
-        labels: Optional[Dict[str, "_models.SensitivityLabel"]] = None,
-        information_types: Optional[Dict[str, "_models.InformationType"]] = None,
+        labels: Optional[dict[str, "_models.SensitivityLabel"]] = None,
+        information_types: Optional[dict[str, "_models.InformationType"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12780,7 +14001,7 @@ class InformationProtectionPolicyList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.InformationProtectionPolicy"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.InformationProtectionPolicy"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of information protection policies.
         :paramtype value: list[~azure.mgmt.security.models.InformationProtectionPolicy]
@@ -12829,7 +14050,7 @@ class InformationType(_serialization.Model):
         recommended_label_id: Optional[str] = None,
         enabled: Optional[bool] = None,
         custom: Optional[bool] = None,
-        keywords: Optional[List["_models.InformationProtectionKeyword"]] = None,
+        keywords: Optional[list["_models.InformationProtectionKeyword"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -12943,7 +14164,7 @@ class TagsResource(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -13038,7 +14259,7 @@ class IoTSecurityAggregatedAlert(Resource, TagsResource):
         },
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -13057,7 +14278,7 @@ class IoTSecurityAggregatedAlert(Resource, TagsResource):
         self.system_source: Optional[str] = None
         self.action_taken: Optional[str] = None
         self.log_analytics_query: Optional[str] = None
-        self.top_devices_list: Optional[List["_models.IoTSecurityAggregatedAlertPropertiesTopDevicesListItem"]] = None
+        self.top_devices_list: Optional[list["_models.IoTSecurityAggregatedAlertPropertiesTopDevicesListItem"]] = None
         self.id: Optional[str] = None
         self.name: Optional[str] = None
         self.type: Optional[str] = None
@@ -13087,7 +14308,7 @@ class IoTSecurityAggregatedAlertList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.IoTSecurityAggregatedAlert"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.IoTSecurityAggregatedAlert"], **kwargs: Any) -> None:
         """
         :keyword value: List of aggregated alerts data. Required.
         :paramtype value: list[~azure.mgmt.security.models.IoTSecurityAggregatedAlert]
@@ -13199,7 +14420,7 @@ class IoTSecurityAggregatedRecommendation(Resource, TagsResource):
     }
 
     def __init__(
-        self, *, tags: Optional[Dict[str, str]] = None, recommendation_name: Optional[str] = None, **kwargs: Any
+        self, *, tags: Optional[dict[str, str]] = None, recommendation_name: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword tags: Resource tags.
@@ -13248,7 +14469,7 @@ class IoTSecurityAggregatedRecommendationList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.IoTSecurityAggregatedRecommendation"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.IoTSecurityAggregatedRecommendation"], **kwargs: Any) -> None:
         """
         :keyword value: List of aggregated recommendations data. Required.
         :paramtype value: list[~azure.mgmt.security.models.IoTSecurityAggregatedRecommendation]
@@ -13417,9 +14638,9 @@ class IoTSecuritySolutionAnalyticsModel(Resource):
     def __init__(
         self,
         *,
-        top_alerted_devices: Optional[List["_models.IoTSecurityAlertedDevice"]] = None,
-        most_prevalent_device_alerts: Optional[List["_models.IoTSecurityDeviceAlert"]] = None,
-        most_prevalent_device_recommendations: Optional[List["_models.IoTSecurityDeviceRecommendation"]] = None,
+        top_alerted_devices: Optional[list["_models.IoTSecurityAlertedDevice"]] = None,
+        most_prevalent_device_alerts: Optional[list["_models.IoTSecurityDeviceAlert"]] = None,
+        most_prevalent_device_recommendations: Optional[list["_models.IoTSecurityDeviceRecommendation"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -13437,7 +14658,7 @@ class IoTSecuritySolutionAnalyticsModel(Resource):
         self.metrics: Optional["_models.IoTSeverityMetrics"] = None
         self.unhealthy_device_count: Optional[int] = None
         self.devices_metrics: Optional[
-            List["_models.IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem"]
+            list["_models.IoTSecuritySolutionAnalyticsModelPropertiesDevicesMetricsItem"]
         ] = None
         self.top_alerted_devices = top_alerted_devices
         self.most_prevalent_device_alerts = most_prevalent_device_alerts
@@ -13468,7 +14689,7 @@ class IoTSecuritySolutionAnalyticsModelList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.IoTSecuritySolutionAnalyticsModel"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.IoTSecuritySolutionAnalyticsModel"], **kwargs: Any) -> None:
         """
         :keyword value: List of Security analytics of your IoT Security solution. Required.
         :paramtype value: list[~azure.mgmt.security.models.IoTSecuritySolutionAnalyticsModel]
@@ -13594,18 +14815,18 @@ class IoTSecuritySolutionModel(Resource, TagsResource):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         location: Optional[str] = None,
         workspace: Optional[str] = None,
         display_name: Optional[str] = None,
         status: Union[str, "_models.SecuritySolutionStatus"] = "Enabled",
-        export: Optional[List[Union[str, "_models.ExportData"]]] = None,
-        disabled_data_sources: Optional[List[Union[str, "_models.DataSource"]]] = None,
-        iot_hubs: Optional[List[str]] = None,
+        export: Optional[list[Union[str, "_models.ExportData"]]] = None,
+        disabled_data_sources: Optional[list[Union[str, "_models.DataSource"]]] = None,
+        iot_hubs: Optional[list[str]] = None,
         user_defined_resources: Optional["_models.UserDefinedResourcesProperties"] = None,
-        recommendations_configuration: Optional[List["_models.RecommendationConfigurationProperties"]] = None,
+        recommendations_configuration: Optional[list["_models.RecommendationConfigurationProperties"]] = None,
         unmasked_ip_logging_status: Union[str, "_models.UnmaskedIpLoggingStatus"] = "Disabled",
-        additional_workspaces: Optional[List["_models.AdditionalWorkspacesProperties"]] = None,
+        additional_workspaces: Optional[list["_models.AdditionalWorkspacesProperties"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -13653,7 +14874,7 @@ class IoTSecuritySolutionModel(Resource, TagsResource):
         self.disabled_data_sources = disabled_data_sources
         self.iot_hubs = iot_hubs
         self.user_defined_resources = user_defined_resources
-        self.auto_discovered_resources: Optional[List[str]] = None
+        self.auto_discovered_resources: Optional[list[str]] = None
         self.recommendations_configuration = recommendations_configuration
         self.unmasked_ip_logging_status = unmasked_ip_logging_status
         self.additional_workspaces = additional_workspaces
@@ -13685,7 +14906,7 @@ class IoTSecuritySolutionsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.IoTSecuritySolutionModel"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.IoTSecuritySolutionModel"], **kwargs: Any) -> None:
         """
         :keyword value: List of IoT Security solutions. Required.
         :paramtype value: list[~azure.mgmt.security.models.IoTSecuritySolutionModel]
@@ -13772,11 +14993,11 @@ class Issue(_serialization.Model):
         *,
         issue_key: str,
         issue_name: Optional[str] = None,
-        security_values: Optional[List[str]] = None,
+        security_values: Optional[list[str]] = None,
         issue_description: Optional[str] = None,
         remediation_steps: Optional[str] = None,
         remediation_script: Optional[str] = None,
-        issue_additional_data: Optional[Dict[str, str]] = None,
+        issue_additional_data: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -13806,6 +15027,28 @@ class Issue(_serialization.Model):
         self.remediation_steps = remediation_steps
         self.remediation_script = remediation_script
         self.issue_additional_data = issue_additional_data
+
+
+class IssueCreationRequest(_serialization.Model):
+    """The issue creation request model.
+
+    :ivar security_assessment_resource_id: The security assessment resource id that the issue will
+     be opened based on.
+    :vartype security_assessment_resource_id: str
+    """
+
+    _attribute_map = {
+        "security_assessment_resource_id": {"key": "securityAssessmentResourceId", "type": "str"},
+    }
+
+    def __init__(self, *, security_assessment_resource_id: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword security_assessment_resource_id: The security assessment resource id that the issue
+         will be opened based on.
+        :paramtype security_assessment_resource_id: str
+        """
+        super().__init__(**kwargs)
+        self.security_assessment_resource_id = security_assessment_resource_id
 
 
 class JFrogEnvironmentData(EnvironmentData):
@@ -13861,7 +15104,7 @@ class JitNetworkAccessPoliciesList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.JitNetworkAccessPolicy"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.JitNetworkAccessPolicy"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.security.models.JitNetworkAccessPolicy]
@@ -13921,9 +15164,9 @@ class JitNetworkAccessPolicy(Resource, Kind, Location):
     def __init__(
         self,
         *,
-        virtual_machines: List["_models.JitNetworkAccessPolicyVirtualMachine"],
+        virtual_machines: list["_models.JitNetworkAccessPolicyVirtualMachine"],
         kind: Optional[str] = None,
-        requests: Optional[List["_models.JitNetworkAccessRequest"]] = None,
+        requests: Optional[list["_models.JitNetworkAccessRequest"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -14019,7 +15262,7 @@ class JitNetworkAccessPolicyInitiateRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        virtual_machines: List["_models.JitNetworkAccessPolicyInitiateVirtualMachine"],
+        virtual_machines: list["_models.JitNetworkAccessPolicyInitiateVirtualMachine"],
         justification: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -14060,7 +15303,7 @@ class JitNetworkAccessPolicyInitiateVirtualMachine(_serialization.Model):  # pyl
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        ports: List["_models.JitNetworkAccessPolicyInitiatePort"],
+        ports: list["_models.JitNetworkAccessPolicyInitiatePort"],
         **kwargs: Any
     ) -> None:
         """
@@ -14103,7 +15346,7 @@ class JitNetworkAccessPolicyVirtualMachine(_serialization.Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        ports: List["_models.JitNetworkAccessPortRule"],
+        ports: list["_models.JitNetworkAccessPortRule"],
         public_ip_address: Optional[str] = None,
         **kwargs: Any
     ) -> None:
@@ -14163,7 +15406,7 @@ class JitNetworkAccessPortRule(_serialization.Model):
         protocol: Union[str, "_models.ProtocolEnum"],
         max_request_access_duration: str,
         allowed_source_address_prefix: Optional[str] = None,
-        allowed_source_address_prefixes: Optional[List[str]] = None,
+        allowed_source_address_prefixes: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -14222,7 +15465,7 @@ class JitNetworkAccessRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        virtual_machines: List["_models.JitNetworkAccessRequestVirtualMachine"],
+        virtual_machines: list["_models.JitNetworkAccessRequestVirtualMachine"],
         start_time_utc: datetime.datetime,
         requestor: str,
         justification: Optional[str] = None,
@@ -14296,7 +15539,7 @@ class JitNetworkAccessRequestPort(_serialization.Model):
         status: Union[str, "_models.Status"],
         status_reason: Union[str, "_models.StatusReason"],
         allowed_source_address_prefix: Optional[str] = None,
-        allowed_source_address_prefixes: Optional[List[str]] = None,
+        allowed_source_address_prefixes: Optional[list[str]] = None,
         mapped_port: Optional[int] = None,
         **kwargs: Any
     ) -> None:
@@ -14356,7 +15599,7 @@ class JitNetworkAccessRequestVirtualMachine(_serialization.Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        ports: List["_models.JitNetworkAccessRequestPort"],
+        ports: list["_models.JitNetworkAccessRequestPort"],
         **kwargs: Any
     ) -> None:
         """
@@ -14452,7 +15695,7 @@ class LocalUserNotAllowed(AllowlistCustomAlertRule):
         "allowlist_values": {"key": "allowlistValues", "type": "[str]"},
     }
 
-    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, is_enabled: bool, allowlist_values: list[str], **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -14546,12 +15789,15 @@ class MalwareScanningProperties(_serialization.Model):
     :ivar scan_results_event_grid_topic_resource_id: Optional. Resource id of an Event Grid Topic
      to send scan results to.
     :vartype scan_results_event_grid_topic_resource_id: str
-    :ivar blob_scan_results_options: Optional. Write scan result on blobIndexTags by default. Known
-     values are: "blobIndexTags" and "None".
+    :ivar blob_scan_results_options: Optional. Write scan result on BlobIndexTags by default. Known
+     values are: "BlobIndexTags" and "None".
     :vartype blob_scan_results_options: str or ~azure.mgmt.security.models.BlobScanResultsOptions
+    :ivar automated_response: Optional. Specifies the automated response action to take when
+     malware is detected. Known values are: "None" and "BlobSoftDelete".
+    :vartype automated_response: str or ~azure.mgmt.security.models.AutomatedResponseType
     :ivar operation_status: Upon failure or partial success. Additional data describing Malware
      Scanning enable/disable operation.
-    :vartype operation_status: ~azure.mgmt.security.models.OperationStatus
+    :vartype operation_status: ~azure.mgmt.security.models.OperationStatusAutoGenerated
     """
 
     _validation = {
@@ -14562,7 +15808,8 @@ class MalwareScanningProperties(_serialization.Model):
         "on_upload": {"key": "onUpload", "type": "OnUploadProperties"},
         "scan_results_event_grid_topic_resource_id": {"key": "scanResultsEventGridTopicResourceId", "type": "str"},
         "blob_scan_results_options": {"key": "blobScanResultsOptions", "type": "str"},
-        "operation_status": {"key": "operationStatus", "type": "OperationStatus"},
+        "automated_response": {"key": "automatedResponse", "type": "str"},
+        "operation_status": {"key": "operationStatus", "type": "OperationStatusAutoGenerated"},
     }
 
     def __init__(
@@ -14570,7 +15817,8 @@ class MalwareScanningProperties(_serialization.Model):
         *,
         on_upload: Optional["_models.OnUploadProperties"] = None,
         scan_results_event_grid_topic_resource_id: Optional[str] = None,
-        blob_scan_results_options: Optional[Union[str, "_models.BlobScanResultsOptions"]] = None,
+        blob_scan_results_options: Union[str, "_models.BlobScanResultsOptions"] = "BlobIndexTags",
+        automated_response: Union[str, "_models.AutomatedResponseType"] = "None",
         **kwargs: Any
     ) -> None:
         """
@@ -14579,15 +15827,19 @@ class MalwareScanningProperties(_serialization.Model):
         :keyword scan_results_event_grid_topic_resource_id: Optional. Resource id of an Event Grid
          Topic to send scan results to.
         :paramtype scan_results_event_grid_topic_resource_id: str
-        :keyword blob_scan_results_options: Optional. Write scan result on blobIndexTags by default.
-         Known values are: "blobIndexTags" and "None".
+        :keyword blob_scan_results_options: Optional. Write scan result on BlobIndexTags by default.
+         Known values are: "BlobIndexTags" and "None".
         :paramtype blob_scan_results_options: str or ~azure.mgmt.security.models.BlobScanResultsOptions
+        :keyword automated_response: Optional. Specifies the automated response action to take when
+         malware is detected. Known values are: "None" and "BlobSoftDelete".
+        :paramtype automated_response: str or ~azure.mgmt.security.models.AutomatedResponseType
         """
         super().__init__(**kwargs)
         self.on_upload = on_upload
         self.scan_results_event_grid_topic_resource_id = scan_results_event_grid_topic_resource_id
         self.blob_scan_results_options = blob_scan_results_options
-        self.operation_status: Optional["_models.OperationStatus"] = None
+        self.automated_response = automated_response
+        self.operation_status: Optional["_models.OperationStatusAutoGenerated"] = None
 
 
 class MalwareScanProperties(_serialization.Model):
@@ -14717,7 +15969,7 @@ class MdeOnboardingDataList(_serialization.Model):
         "value": {"key": "value", "type": "[MdeOnboardingData]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.MdeOnboardingData"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.MdeOnboardingData"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of the resources of the configuration or data needed to onboard the
          machine to MDE.
@@ -14976,105 +16228,6 @@ class NodeIdentifier(_serialization.Model):
         self.type = type
 
 
-class NotificationsSource(_serialization.Model):
-    """A valid notification source type.
-
-    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
-    NotificationsSourceAlert, NotificationsSourceAttackPath
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar source_type: The source type that will trigger the notification. Required. Known values
-     are: "Alert" and "AttackPath".
-    :vartype source_type: str or ~azure.mgmt.security.models.SourceType
-    """
-
-    _validation = {
-        "source_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "source_type": {"key": "sourceType", "type": "str"},
-    }
-
-    _subtype_map = {"source_type": {"Alert": "NotificationsSourceAlert", "AttackPath": "NotificationsSourceAttackPath"}}
-
-    def __init__(self, **kwargs: Any) -> None:
-        """ """
-        super().__init__(**kwargs)
-        self.source_type: Optional[str] = None
-
-
-class NotificationsSourceAlert(NotificationsSource):
-    """Alert notification source.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar source_type: The source type that will trigger the notification. Required. Known values
-     are: "Alert" and "AttackPath".
-    :vartype source_type: str or ~azure.mgmt.security.models.SourceType
-    :ivar minimal_severity: Defines the minimal alert severity which will be sent as email
-     notifications. Known values are: "High", "Medium", and "Low".
-    :vartype minimal_severity: str or ~azure.mgmt.security.models.MinimalSeverity
-    """
-
-    _validation = {
-        "source_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "source_type": {"key": "sourceType", "type": "str"},
-        "minimal_severity": {"key": "minimalSeverity", "type": "str"},
-    }
-
-    def __init__(
-        self, *, minimal_severity: Optional[Union[str, "_models.MinimalSeverity"]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword minimal_severity: Defines the minimal alert severity which will be sent as email
-         notifications. Known values are: "High", "Medium", and "Low".
-        :paramtype minimal_severity: str or ~azure.mgmt.security.models.MinimalSeverity
-        """
-        super().__init__(**kwargs)
-        self.source_type: str = "Alert"
-        self.minimal_severity = minimal_severity
-
-
-class NotificationsSourceAttackPath(NotificationsSource):
-    """Attack path notification source.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar source_type: The source type that will trigger the notification. Required. Known values
-     are: "Alert" and "AttackPath".
-    :vartype source_type: str or ~azure.mgmt.security.models.SourceType
-    :ivar minimal_risk_level: Defines the minimal attach path risk level which will be sent as
-     email notifications. Known values are: "Critical", "High", "Medium", and "Low".
-    :vartype minimal_risk_level: str or ~azure.mgmt.security.models.MinimalRiskLevel
-    """
-
-    _validation = {
-        "source_type": {"required": True},
-    }
-
-    _attribute_map = {
-        "source_type": {"key": "sourceType", "type": "str"},
-        "minimal_risk_level": {"key": "minimalRiskLevel", "type": "str"},
-    }
-
-    def __init__(
-        self, *, minimal_risk_level: Optional[Union[str, "_models.MinimalRiskLevel"]] = None, **kwargs: Any
-    ) -> None:
-        """
-        :keyword minimal_risk_level: Defines the minimal attach path risk level which will be sent as
-         email notifications. Known values are: "Critical", "High", "Medium", and "Low".
-        :paramtype minimal_risk_level: str or ~azure.mgmt.security.models.MinimalRiskLevel
-        """
-        super().__init__(**kwargs)
-        self.source_type: str = "AttackPath"
-        self.minimal_risk_level = minimal_risk_level
-
-
 class OnPremiseResourceDetails(ResourceDetails):
     """Details of the On Premise resource that was assessed.
 
@@ -15219,13 +16372,10 @@ class OnUploadFilters(_serialization.Model):
     performed between each filter type.
 
     :ivar exclude_blobs_with_prefix: Optional. A list of prefixes to exclude from on-upload malware
-     scanning.
-     Format: ``container-name/blob-name`` (start with the container name; do not include the storage
-     account name).
-     Exclude entire containers: Use prefix of container names you want to exclude without a trailing
-     ``/``.
-     Exclude a single container: Add a trailing slash ``/`` after the container name to avoid
-     excluding other containers with similar prefixes.
+     scanning. Format: ``container-name/blob-name`` (start with the container name; do not include
+     the storage account name). Exclude entire containers: Use prefix of container names you want to
+     exclude without a trailing ``/``. Exclude a single container: Add a trailing slash ``/`` after
+     the container name to avoid excluding other containers with similar prefixes.
     :vartype exclude_blobs_with_prefix: list[str]
     :ivar exclude_blobs_with_suffix: Optional. A list of suffixes to exclude from on-upload malware
      scanning. Suffixes match only the end of blob names, and should be used for file extensions or
@@ -15246,20 +16396,17 @@ class OnUploadFilters(_serialization.Model):
     def __init__(
         self,
         *,
-        exclude_blobs_with_prefix: Optional[List[str]] = None,
-        exclude_blobs_with_suffix: Optional[List[str]] = None,
+        exclude_blobs_with_prefix: Optional[list[str]] = None,
+        exclude_blobs_with_suffix: Optional[list[str]] = None,
         exclude_blobs_larger_than: Optional[Any] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword exclude_blobs_with_prefix: Optional. A list of prefixes to exclude from on-upload
-         malware scanning.
-         Format: ``container-name/blob-name`` (start with the container name; do not include the storage
-         account name).
-         Exclude entire containers: Use prefix of container names you want to exclude without a trailing
-         ``/``.
-         Exclude a single container: Add a trailing slash ``/`` after the container name to avoid
-         excluding other containers with similar prefixes.
+         malware scanning. Format: ``container-name/blob-name`` (start with the container name; do not
+         include the storage account name). Exclude entire containers: Use prefix of container names you
+         want to exclude without a trailing ``/``. Exclude a single container: Add a trailing slash
+         ``/`` after the container name to avoid excluding other containers with similar prefixes.
         :paramtype exclude_blobs_with_prefix: list[str]
         :keyword exclude_blobs_with_suffix: Optional. A list of suffixes to exclude from on-upload
          malware scanning. Suffixes match only the end of blob names, and should be used for file
@@ -15436,7 +16583,7 @@ class OperationListResult(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.Operation"]] = None
+        self.value: Optional[list["_models.Operation"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -15465,32 +16612,6 @@ class OperationResultAutoGenerated(_serialization.Model):
 
 
 class OperationStatus(_serialization.Model):
-    """A status describing the success/failure of the enablement/disablement operation.
-
-    :ivar code: The operation status code.
-    :vartype code: str
-    :ivar message: Additional information regarding the success/failure of the operation.
-    :vartype message: str
-    """
-
-    _attribute_map = {
-        "code": {"key": "code", "type": "str"},
-        "message": {"key": "message", "type": "str"},
-    }
-
-    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword code: The operation status code.
-        :paramtype code: str
-        :keyword message: Additional information regarding the success/failure of the operation.
-        :paramtype message: str
-        """
-        super().__init__(**kwargs)
-        self.code = code
-        self.message = message
-
-
-class OperationStatusAutoGenerated(_serialization.Model):
     """A status describing the success/failure of the extension's enablement/disablement operation.
 
     :ivar code: The operation status code. Known values are: "Succeeded" and "Failed".
@@ -15510,6 +16631,32 @@ class OperationStatusAutoGenerated(_serialization.Model):
         """
         :keyword code: The operation status code. Known values are: "Succeeded" and "Failed".
         :paramtype code: str or ~azure.mgmt.security.models.Code
+        :keyword message: Additional information regarding the success/failure of the operation.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
+
+
+class OperationStatusAutoGenerated(_serialization.Model):
+    """A status describing the success/failure of the enablement/disablement operation.
+
+    :ivar code: The operation status code.
+    :vartype code: str
+    :ivar message: Additional information regarding the success/failure of the operation.
+    :vartype message: str
+    """
+
+    _attribute_map = {
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword code: The operation status code.
+        :paramtype code: str
         :keyword message: Additional information regarding the success/failure of the operation.
         :paramtype message: str
         """
@@ -15538,7 +16685,7 @@ class OperationStatusResult(_serialization.Model):
     :ivar operations: The operations list.
     :vartype operations: list[~azure.mgmt.security.models.OperationStatusResult]
     :ivar error: If present, details of the operation error.
-    :vartype error: ~azure.mgmt.security.models.ErrorDetailAutoGenerated2
+    :vartype error: ~azure.mgmt.security.models.ErrorDetailAutoGenerated
     """
 
     _validation = {
@@ -15554,7 +16701,7 @@ class OperationStatusResult(_serialization.Model):
         "start_time": {"key": "startTime", "type": "iso-8601"},
         "end_time": {"key": "endTime", "type": "iso-8601"},
         "operations": {"key": "operations", "type": "[OperationStatusResult]"},
-        "error": {"key": "error", "type": "ErrorDetailAutoGenerated2"},
+        "error": {"key": "error", "type": "ErrorDetailAutoGenerated"},
     }
 
     def __init__(
@@ -15566,8 +16713,8 @@ class OperationStatusResult(_serialization.Model):
         percent_complete: Optional[float] = None,
         start_time: Optional[datetime.datetime] = None,
         end_time: Optional[datetime.datetime] = None,
-        operations: Optional[List["_models.OperationStatusResult"]] = None,
-        error: Optional["_models.ErrorDetailAutoGenerated2"] = None,
+        operations: Optional[list["_models.OperationStatusResult"]] = None,
+        error: Optional["_models.ErrorDetailAutoGenerated"] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15586,10 +16733,99 @@ class OperationStatusResult(_serialization.Model):
         :keyword operations: The operations list.
         :paramtype operations: list[~azure.mgmt.security.models.OperationStatusResult]
         :keyword error: If present, details of the operation error.
+        :paramtype error: ~azure.mgmt.security.models.ErrorDetailAutoGenerated
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.status = status
+        self.percent_complete = percent_complete
+        self.start_time = start_time
+        self.end_time = end_time
+        self.operations = operations
+        self.error = error
+
+
+class OperationStatusResultAutoGenerated(_serialization.Model):
+    """The current status of an async operation.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to server.
+
+    :ivar id: Fully qualified ID for the async operation.
+    :vartype id: str
+    :ivar resource_id: Fully qualified ID of the resource against which the original async
+     operation was started.
+    :vartype resource_id: str
+    :ivar name: Name of the async operation.
+    :vartype name: str
+    :ivar status: Operation status. Required.
+    :vartype status: str
+    :ivar percent_complete: Percent of the operation that is complete.
+    :vartype percent_complete: float
+    :ivar start_time: The start time of the operation.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: The end time of the operation.
+    :vartype end_time: ~datetime.datetime
+    :ivar operations: The operations list.
+    :vartype operations: list[~azure.mgmt.security.models.OperationStatusResultAutoGenerated]
+    :ivar error: If present, details of the operation error.
+    :vartype error: ~azure.mgmt.security.models.ErrorDetailAutoGenerated2
+    """
+
+    _validation = {
+        "resource_id": {"readonly": True},
+        "status": {"required": True},
+        "percent_complete": {"maximum": 100, "minimum": 0},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "percent_complete": {"key": "percentComplete", "type": "float"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "operations": {"key": "operations", "type": "[OperationStatusResultAutoGenerated]"},
+        "error": {"key": "error", "type": "ErrorDetailAutoGenerated2"},
+    }
+
+    def __init__(
+        self,
+        *,
+        status: str,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        percent_complete: Optional[float] = None,
+        start_time: Optional[datetime.datetime] = None,
+        end_time: Optional[datetime.datetime] = None,
+        operations: Optional[list["_models.OperationStatusResultAutoGenerated"]] = None,
+        error: Optional["_models.ErrorDetailAutoGenerated2"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword id: Fully qualified ID for the async operation.
+        :paramtype id: str
+        :keyword name: Name of the async operation.
+        :paramtype name: str
+        :keyword status: Operation status. Required.
+        :paramtype status: str
+        :keyword percent_complete: Percent of the operation that is complete.
+        :paramtype percent_complete: float
+        :keyword start_time: The start time of the operation.
+        :paramtype start_time: ~datetime.datetime
+        :keyword end_time: The end time of the operation.
+        :paramtype end_time: ~datetime.datetime
+        :keyword operations: The operations list.
+        :paramtype operations: list[~azure.mgmt.security.models.OperationStatusResultAutoGenerated]
+        :keyword error: If present, details of the operation error.
         :paramtype error: ~azure.mgmt.security.models.ErrorDetailAutoGenerated2
         """
         super().__init__(**kwargs)
         self.id = id
+        self.resource_id: Optional[str] = None
         self.name = name
         self.status = status
         self.percent_complete = percent_complete
@@ -15648,8 +16884,8 @@ class Path(_serialization.Model):
         self,
         *,
         id: str,  # pylint: disable=redefined-builtin
-        nodes: List["_models.NodeIdentifier"],
-        edges: List["_models.EdgeIdentifiers"],
+        nodes: list["_models.NodeIdentifier"],
+        edges: list["_models.EdgeIdentifiers"],
         **kwargs: Any
     ) -> None:
         """
@@ -15765,7 +17001,7 @@ class Pricing(Resource):
         pricing_tier: Optional[Union[str, "_models.PricingTier"]] = None,
         sub_plan: Optional[str] = None,
         enforce: Optional[Union[str, "_models.Enforce"]] = None,
-        extensions: Optional[List["_models.Extension"]] = None,
+        extensions: Optional[list["_models.Extension"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -15799,7 +17035,7 @@ class Pricing(Resource):
         self.resources_coverage_status: Optional[Union[str, "_models.ResourcesCoverageStatus"]] = None
         self.extensions = extensions
         self.deprecated: Optional[bool] = None
-        self.replaced_by: Optional[List[str]] = None
+        self.replaced_by: Optional[list[str]] = None
 
 
 class PricingList(_serialization.Model):
@@ -15819,7 +17055,7 @@ class PricingList(_serialization.Model):
         "value": {"key": "value", "type": "[Pricing]"},
     }
 
-    def __init__(self, *, value: List["_models.Pricing"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.Pricing"], **kwargs: Any) -> None:
         """
         :keyword value: List of pricing configurations. Required.
         :paramtype value: list[~azure.mgmt.security.models.Pricing]
@@ -15851,7 +17087,7 @@ class PrivateEndpoint(_serialization.Model):
         self.id: Optional[str] = None
 
 
-class PrivateEndpointConnection(ResourceAutoGenerated):
+class PrivateEndpointConnection(ResourceAutoGenerated2):
     """The private endpoint connection resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -15920,7 +17156,7 @@ class PrivateEndpointConnection(ResourceAutoGenerated):
          ~azure.mgmt.security.models.PrivateLinkServiceConnectionState
         """
         super().__init__(**kwargs)
-        self.group_ids: Optional[List[str]] = None
+        self.group_ids: Optional[list[str]] = None
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state: Optional[Union[str, "_models.PrivateEndpointConnectionProvisioningState"]] = None
@@ -15946,7 +17182,7 @@ class PrivateEndpointConnectionListResult(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.PrivateEndpointConnection"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.security.models.PrivateEndpointConnection]
@@ -15989,7 +17225,7 @@ class PrivateLinkParameters(_serialization.Model):
         self.private_link_name = private_link_name
 
 
-class ResourceAutoGenerated2(_serialization.Model):
+class ResourceAutoGenerated3(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -16030,7 +17266,7 @@ class ResourceAutoGenerated2(_serialization.Model):
         self.system_data: Optional["_models.SystemData"] = None
 
 
-class TrackedResourceAutoGenerated(ResourceAutoGenerated2):
+class TrackedResourceAutoGenerated(ResourceAutoGenerated3):
     """The resource model definition for an Azure Resource Manager tracked top level resource which
     has 'tags' and a 'location'.
 
@@ -16072,7 +17308,7 @@ class TrackedResourceAutoGenerated(ResourceAutoGenerated2):
         "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, location: str, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -16121,6 +17357,9 @@ class PrivateLinkResource(TrackedResourceAutoGenerated):
      endpoints.
     :vartype private_link_resources:
      list[~azure.mgmt.security.models.PrivateLinkResourceAutoGenerated]
+    :ivar public_network_access: This determines if traffic is allowed over public network. By
+     default it is disabled. Known values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.security.models.PublicNetworkAccess
     """
 
     _validation = {
@@ -16150,22 +17389,34 @@ class PrivateLinkResource(TrackedResourceAutoGenerated):
             "key": "properties.privateLinkResources",
             "type": "[PrivateLinkResourceAutoGenerated]",
         },
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
     }
 
-    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        *,
+        location: str,
+        tags: Optional[dict[str, str]] = None,
+        public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Disabled",
+        **kwargs: Any
+    ) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives. Required.
         :paramtype location: str
+        :keyword public_network_access: This determines if traffic is allowed over public network. By
+         default it is disabled. Known values are: "Enabled" and "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.security.models.PublicNetworkAccess
         """
         super().__init__(tags=tags, location=location, **kwargs)
         self.provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None
-        self.private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None
-        self.private_link_resources: Optional[List["_models.PrivateLinkResourceAutoGenerated"]] = None
+        self.private_endpoint_connections: Optional[list["_models.PrivateEndpointConnection"]] = None
+        self.private_link_resources: Optional[list["_models.PrivateLinkResourceAutoGenerated"]] = None
+        self.public_network_access = public_network_access
 
 
-class PrivateLinkResourceAutoGenerated(ResourceAutoGenerated):
+class PrivateLinkResourceAutoGenerated(ResourceAutoGenerated2):
     """A private link resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -16208,14 +17459,14 @@ class PrivateLinkResourceAutoGenerated(ResourceAutoGenerated):
         "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, required_zone_names: Optional[list[str]] = None, **kwargs: Any) -> None:
         """
         :keyword required_zone_names: The private link resource private link DNS zone name.
         :paramtype required_zone_names: list[str]
         """
         super().__init__(**kwargs)
         self.group_id: Optional[str] = None
-        self.required_members: Optional[List[str]] = None
+        self.required_members: Optional[list[str]] = None
         self.required_zone_names = required_zone_names
 
 
@@ -16240,7 +17491,7 @@ class PrivateLinkResourceListResult(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.PrivateLinkResourceAutoGenerated"]] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.PrivateLinkResourceAutoGenerated"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value: Array of private link resources.
@@ -16323,7 +17574,7 @@ class PrivateLinksList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.PrivateLinkResource"]] = None
+        self.value: Optional[list["_models.PrivateLinkResource"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -16339,7 +17590,7 @@ class PrivateLinkUpdate(_serialization.Model):
         "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, tags: Optional[dict[str, str]] = None, **kwargs: Any) -> None:
         """
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
@@ -16389,7 +17640,7 @@ class ProcessNotAllowed(AllowlistCustomAlertRule):
         "allowlist_values": {"key": "allowlistValues", "type": "[str]"},
     }
 
-    def __init__(self, *, is_enabled: bool, allowlist_values: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, is_enabled: bool, allowlist_values: list[str], **kwargs: Any) -> None:
         """
         :keyword is_enabled: Status of the custom alert. Required.
         :paramtype is_enabled: bool
@@ -16399,33 +17650,6 @@ class ProcessNotAllowed(AllowlistCustomAlertRule):
         """
         super().__init__(is_enabled=is_enabled, allowlist_values=allowlist_values, **kwargs)
         self.rule_type: str = "ProcessNotAllowed"
-
-
-class ProxyServerProperties(_serialization.Model):
-    """For a non-Azure machine that is not connected directly to the internet, specify a proxy server
-    that the non-Azure machine can use.
-
-    :ivar ip: Proxy server IP.
-    :vartype ip: str
-    :ivar port: Proxy server port.
-    :vartype port: str
-    """
-
-    _attribute_map = {
-        "ip": {"key": "ip", "type": "str"},
-        "port": {"key": "port", "type": "str"},
-    }
-
-    def __init__(self, *, ip: Optional[str] = None, port: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword ip: Proxy server IP.
-        :paramtype ip: str
-        :keyword port: Proxy server port.
-        :paramtype port: str
-        """
-        super().__init__(**kwargs)
-        self.ip = ip
-        self.port = port
 
 
 class QueryCheck(_serialization.Model):
@@ -16449,8 +17673,8 @@ class QueryCheck(_serialization.Model):
         self,
         *,
         query: Optional[str] = None,
-        expected_result: Optional[List[List[str]]] = None,
-        column_names: Optional[List[str]] = None,
+        expected_result: Optional[list[list[str]]] = None,
+        column_names: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -16698,7 +17922,7 @@ class RegulatoryComplianceAssessmentList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RegulatoryComplianceAssessment"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.RegulatoryComplianceAssessment"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value: list[~azure.mgmt.security.models.RegulatoryComplianceAssessment]
@@ -16793,7 +18017,7 @@ class RegulatoryComplianceControlList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RegulatoryComplianceControl"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.RegulatoryComplianceControl"], **kwargs: Any) -> None:
         """
         :keyword value: List of regulatory compliance controls. Required.
         :paramtype value: list[~azure.mgmt.security.models.RegulatoryComplianceControl]
@@ -16889,7 +18113,7 @@ class RegulatoryComplianceStandardList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.RegulatoryComplianceStandard"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.RegulatoryComplianceStandard"], **kwargs: Any) -> None:
         """
         :keyword value: Required.
         :paramtype value: list[~azure.mgmt.security.models.RegulatoryComplianceStandard]
@@ -16923,7 +18147,7 @@ class Remediation(_serialization.Model):
         self,
         *,
         description: Optional[str] = None,
-        scripts: Optional[List[str]] = None,
+        scripts: Optional[list[str]] = None,
         automated: Optional[bool] = None,
         portal_link: Optional[str] = None,
         **kwargs: Any
@@ -17057,8 +18281,8 @@ class RuleResultsInput(_serialization.Model):
 
     :ivar latest_scan: Take results from latest scan.
     :vartype latest_scan: bool
-    :ivar results: Expected results to be inserted into the baseline.
-     Leave this field empty it LatestScan == true.
+    :ivar results: Expected results to be inserted into the baseline. Leave this field empty if
+     latestScan == true.
     :vartype results: list[list[str]]
     """
 
@@ -17068,13 +18292,13 @@ class RuleResultsInput(_serialization.Model):
     }
 
     def __init__(
-        self, *, latest_scan: Optional[bool] = None, results: Optional[List[List[str]]] = None, **kwargs: Any
+        self, *, latest_scan: Optional[bool] = None, results: Optional[list[list[str]]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword latest_scan: Take results from latest scan.
         :paramtype latest_scan: bool
-        :keyword results: Expected results to be inserted into the baseline.
-         Leave this field empty it LatestScan == true.
+        :keyword results: Expected results to be inserted into the baseline. Leave this field empty if
+         latestScan == true.
         :paramtype results: list[list[str]]
         """
         super().__init__(**kwargs)
@@ -17087,19 +18311,27 @@ class RuleResultsProperties(_serialization.Model):
 
     :ivar results: Expected results in the baseline.
     :vartype results: list[list[str]]
+    :ivar latest_scan: Take results from latest scan.
+    :vartype latest_scan: bool
     """
 
     _attribute_map = {
         "results": {"key": "results", "type": "[[str]]"},
+        "latest_scan": {"key": "latestScan", "type": "bool"},
     }
 
-    def __init__(self, *, results: Optional[List[List[str]]] = None, **kwargs: Any) -> None:
+    def __init__(
+        self, *, results: Optional[list[list[str]]] = None, latest_scan: Optional[bool] = None, **kwargs: Any
+    ) -> None:
         """
         :keyword results: Expected results in the baseline.
         :paramtype results: list[list[str]]
+        :keyword latest_scan: Take results from latest scan.
+        :paramtype latest_scan: bool
         """
         super().__init__(**kwargs)
         self.results = results
+        self.latest_scan = latest_scan
 
 
 class RulesResults(_serialization.Model):
@@ -17113,7 +18345,7 @@ class RulesResults(_serialization.Model):
         "value": {"key": "value", "type": "[RuleResults]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.RuleResults"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.RuleResults"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of rule results.
         :paramtype value: list[~azure.mgmt.security.models.RuleResults]
@@ -17127,8 +18359,8 @@ class RulesResultsInput(_serialization.Model):
 
     :ivar latest_scan: Take results from latest scan.
     :vartype latest_scan: bool
-    :ivar results: Expected results to be inserted into the baseline.
-     Leave this field empty it LatestScan == true.
+    :ivar results: Expected results to be inserted into the baseline. Leave this field empty if
+     latestScan == true.
     :vartype results: dict[str, list[list[str]]]
     """
 
@@ -17138,13 +18370,13 @@ class RulesResultsInput(_serialization.Model):
     }
 
     def __init__(
-        self, *, latest_scan: Optional[bool] = None, results: Optional[Dict[str, List[List[str]]]] = None, **kwargs: Any
+        self, *, latest_scan: Optional[bool] = None, results: Optional[dict[str, list[list[str]]]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword latest_scan: Take results from latest scan.
         :paramtype latest_scan: bool
-        :keyword results: Expected results to be inserted into the baseline.
-         Leave this field empty it LatestScan == true.
+        :keyword results: Expected results to be inserted into the baseline. Leave this field empty if
+         latestScan == true.
         :paramtype results: dict[str, list[list[str]]]
         """
         super().__init__(**kwargs)
@@ -17152,44 +18384,7 @@ class RulesResultsInput(_serialization.Model):
         self.results = results
 
 
-class Scan(Resource):
-    """A vulnerability assessment scan record.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar properties: A vulnerability assessment scan record properties.
-    :vartype properties: ~azure.mgmt.security.models.ScanProperties
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "properties": {"key": "properties", "type": "ScanProperties"},
-    }
-
-    def __init__(self, *, properties: Optional["_models.ScanProperties"] = None, **kwargs: Any) -> None:
-        """
-        :keyword properties: A vulnerability assessment scan record properties.
-        :paramtype properties: ~azure.mgmt.security.models.ScanProperties
-        """
-        super().__init__(**kwargs)
-        self.properties = properties
-
-
-class ScanProperties(_serialization.Model):
+class ScanPropertiesV2(_serialization.Model):
     """A vulnerability assessment scan record properties.
 
     :ivar trigger_type: The scan trigger type. Known values are: "OnDemand" and "Recurring".
@@ -17356,10 +18551,10 @@ class ScanResultProperties(_serialization.Model):
 
     :ivar rule_id: The rule Id.
     :vartype rule_id: str
-    :ivar status: The rule result status. Known values are: "NonFinding", "Finding", and
-     "InternalError".
+    :ivar status: The rule result status. Known values are: "NonFinding", "Finding",
+     "InternalError", and "NotApplicable".
     :vartype status: str or ~azure.mgmt.security.models.RuleStatus
-    :ivar is_trimmed: Indicated whether the results specified here are trimmed.
+    :ivar is_trimmed: Indicates whether the results specified here are trimmed.
     :vartype is_trimmed: bool
     :ivar query_results: The results of the query that was run.
     :vartype query_results: list[list[str]]
@@ -17387,7 +18582,7 @@ class ScanResultProperties(_serialization.Model):
         rule_id: Optional[str] = None,
         status: Optional[Union[str, "_models.RuleStatus"]] = None,
         is_trimmed: Optional[bool] = None,
-        query_results: Optional[List[List[str]]] = None,
+        query_results: Optional[list[list[str]]] = None,
         remediation: Optional["_models.Remediation"] = None,
         baseline_adjusted_result: Optional["_models.BaselineAdjustedResult"] = None,
         rule_metadata: Optional["_models.VaRule"] = None,
@@ -17396,10 +18591,10 @@ class ScanResultProperties(_serialization.Model):
         """
         :keyword rule_id: The rule Id.
         :paramtype rule_id: str
-        :keyword status: The rule result status. Known values are: "NonFinding", "Finding", and
-         "InternalError".
+        :keyword status: The rule result status. Known values are: "NonFinding", "Finding",
+         "InternalError", and "NotApplicable".
         :paramtype status: str or ~azure.mgmt.security.models.RuleStatus
-        :keyword is_trimmed: Indicated whether the results specified here are trimmed.
+        :keyword is_trimmed: Indicates whether the results specified here are trimmed.
         :paramtype is_trimmed: bool
         :keyword query_results: The results of the query that was run.
         :paramtype query_results: list[list[str]]
@@ -17431,30 +18626,10 @@ class ScanResults(_serialization.Model):
         "value": {"key": "value", "type": "[ScanResult]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ScanResult"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.ScanResult"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: List of vulnerability assessment scan results.
         :paramtype value: list[~azure.mgmt.security.models.ScanResult]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-
-
-class Scans(_serialization.Model):
-    """A list of vulnerability assessment scan records.
-
-    :ivar value: List of vulnerability assessment scan records.
-    :vartype value: list[~azure.mgmt.security.models.Scan]
-    """
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[Scan]"},
-    }
-
-    def __init__(self, *, value: Optional[List["_models.Scan"]] = None, **kwargs: Any) -> None:
-        """
-        :keyword value: List of vulnerability assessment scan records.
-        :paramtype value: list[~azure.mgmt.security.models.Scan]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -17465,6 +18640,8 @@ class ScanSummary(_serialization.Model):
 
     :ivar blobs: A summary of the scan results of the blobs that were scanned.
     :vartype blobs: ~azure.mgmt.security.models.BlobsScanSummary
+    :ivar files: A summary of the scan results of the files that were scanned.
+    :vartype files: ~azure.mgmt.security.models.FilesScanSummary
     :ivar estimated_scan_cost_usd: The estimated cost of the scan. Only available for a scan which
      has terminated.
     :vartype estimated_scan_cost_usd: float
@@ -17472,6 +18649,7 @@ class ScanSummary(_serialization.Model):
 
     _attribute_map = {
         "blobs": {"key": "blobs", "type": "BlobsScanSummary"},
+        "files": {"key": "files", "type": "FilesScanSummary"},
         "estimated_scan_cost_usd": {"key": "estimatedScanCostUSD", "type": "float"},
     }
 
@@ -17479,19 +18657,80 @@ class ScanSummary(_serialization.Model):
         self,
         *,
         blobs: Optional["_models.BlobsScanSummary"] = None,
+        files: Optional["_models.FilesScanSummary"] = None,
         estimated_scan_cost_usd: Optional[float] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword blobs: A summary of the scan results of the blobs that were scanned.
         :paramtype blobs: ~azure.mgmt.security.models.BlobsScanSummary
+        :keyword files: A summary of the scan results of the files that were scanned.
+        :paramtype files: ~azure.mgmt.security.models.FilesScanSummary
         :keyword estimated_scan_cost_usd: The estimated cost of the scan. Only available for a scan
          which has terminated.
         :paramtype estimated_scan_cost_usd: float
         """
         super().__init__(**kwargs)
         self.blobs = blobs
+        self.files = files
         self.estimated_scan_cost_usd = estimated_scan_cost_usd
+
+
+class ScansV2(_serialization.Model):
+    """A list of vulnerability assessment scan records.
+
+    :ivar value: List of vulnerability assessment scan records.
+    :vartype value: list[~azure.mgmt.security.models.ScanV2]
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[ScanV2]"},
+    }
+
+    def __init__(self, *, value: Optional[list["_models.ScanV2"]] = None, **kwargs: Any) -> None:
+        """
+        :keyword value: List of vulnerability assessment scan records.
+        :paramtype value: list[~azure.mgmt.security.models.ScanV2]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+
+
+class ScanV2(Resource):
+    """A vulnerability assessment scan record.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar properties: A vulnerability assessment scan record properties.
+    :vartype properties: ~azure.mgmt.security.models.ScanPropertiesV2
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "ScanPropertiesV2"},
+    }
+
+    def __init__(self, *, properties: Optional["_models.ScanPropertiesV2"] = None, **kwargs: Any) -> None:
+        """
+        :keyword properties: A vulnerability assessment scan record properties.
+        :paramtype properties: ~azure.mgmt.security.models.ScanPropertiesV2
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
 
 
 class ScopeElement(_serialization.Model):
@@ -17510,7 +18749,7 @@ class ScopeElement(_serialization.Model):
     }
 
     def __init__(
-        self, *, additional_properties: Optional[Dict[str, Any]] = None, field: Optional[str] = None, **kwargs: Any
+        self, *, additional_properties: Optional[dict[str, Any]] = None, field: Optional[str] = None, **kwargs: Any
     ) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
@@ -17577,7 +18816,7 @@ class SecureScoreControlDefinitionItem(Resource):
         self.description: Optional[str] = None
         self.max_score: Optional[int] = None
         self.source: Optional["_models.SecureScoreControlDefinitionSource"] = None
-        self.assessment_definitions: Optional[List["_models.AzureResourceLink"]] = None
+        self.assessment_definitions: Optional[list["_models.AzureResourceLink"]] = None
 
 
 class SecureScoreControlDefinitionList(_serialization.Model):
@@ -17604,7 +18843,7 @@ class SecureScoreControlDefinitionList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.SecureScoreControlDefinitionItem"]] = None
+        self.value: Optional[list["_models.SecureScoreControlDefinitionItem"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -17735,7 +18974,7 @@ class SecureScoreControlList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.SecureScoreControlDetails"]] = None
+        self.value: Optional[list["_models.SecureScoreControlDetails"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -17855,7 +19094,7 @@ class SecureScoresList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.SecureScoreItem"]] = None
+        self.value: Optional[list["_models.SecureScoreItem"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -17915,7 +19154,7 @@ class SecurityAssessment(Resource):
         *,
         risk: Optional["_models.SecurityAssessmentPropertiesBaseRisk"] = None,
         resource_details: Optional["_models.ResourceDetails"] = None,
-        additional_data: Optional[Dict[str, str]] = None,
+        additional_data: Optional[dict[str, str]] = None,
         metadata: Optional["_models.SecurityAssessmentMetadataProperties"] = None,
         partners_data: Optional["_models.SecurityAssessmentPartnerData"] = None,
         status: Optional["_models.AssessmentStatus"] = None,
@@ -17970,7 +19209,7 @@ class SecurityAssessmentList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.SecurityAssessmentResponse"]] = None
+        self.value: Optional[list["_models.SecurityAssessmentResponse"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -18011,9 +19250,9 @@ class SecurityAssessmentMetadata(Resource):
     :ivar preview: True if this assessment is in preview release status.
     :vartype preview: bool
     :ivar assessment_type: BuiltIn if the assessment based on built-in Azure Policy definition,
-     Custom if the assessment based on custom Azure Policy definition. Known values are: "BuiltIn",
-     "CustomPolicy", "CustomerManaged", "BuiltInPolicy", "VerifiedPartner", "ManualBuiltInPolicy",
-     "ManualBuiltIn", "ManualCustomPolicy", and "DynamicBuiltIn".
+     Custom if the assessment based on custom Azure Policy definition. Known values are: "Unknown",
+     "BuiltIn", "Custom", "CustomPolicy", "CustomerManaged", "BuiltInPolicy", "VerifiedPartner",
+     "ManualBuiltInPolicy", "ManualBuiltIn", "ManualCustomPolicy", and "DynamicBuiltIn".
     :vartype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
     :ivar partner_data: Describes the partner that created the assessment.
     :vartype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
@@ -18050,11 +19289,11 @@ class SecurityAssessmentMetadata(Resource):
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         remediation_description: Optional[str] = None,
-        categories: Optional[List[Union[str, "_models.Categories"]]] = None,
+        categories: Optional[list[Union[str, "_models.Categories"]]] = None,
         severity: Optional[Union[str, "_models.Severity"]] = None,
         user_impact: Optional[Union[str, "_models.UserImpact"]] = None,
         implementation_effort: Optional[Union[str, "_models.ImplementationEffort"]] = None,
-        threats: Optional[List[Union[str, "_models.Threats"]]] = None,
+        threats: Optional[list[Union[str, "_models.Threats"]]] = None,
         preview: Optional[bool] = None,
         assessment_type: Optional[Union[str, "_models.AssessmentType"]] = None,
         partner_data: Optional["_models.SecurityAssessmentMetadataPartnerData"] = None,
@@ -18084,9 +19323,9 @@ class SecurityAssessmentMetadata(Resource):
         :keyword preview: True if this assessment is in preview release status.
         :paramtype preview: bool
         :keyword assessment_type: BuiltIn if the assessment based on built-in Azure Policy definition,
-         Custom if the assessment based on custom Azure Policy definition. Known values are: "BuiltIn",
-         "CustomPolicy", "CustomerManaged", "BuiltInPolicy", "VerifiedPartner", "ManualBuiltInPolicy",
-         "ManualBuiltIn", "ManualCustomPolicy", and "DynamicBuiltIn".
+         Custom if the assessment based on custom Azure Policy definition. Known values are: "Unknown",
+         "BuiltIn", "Custom", "CustomPolicy", "CustomerManaged", "BuiltInPolicy", "VerifiedPartner",
+         "ManualBuiltInPolicy", "ManualBuiltIn", "ManualCustomPolicy", and "DynamicBuiltIn".
         :paramtype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
         :keyword partner_data: Describes the partner that created the assessment.
         :paramtype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
@@ -18181,8 +19420,9 @@ class SecurityAssessmentMetadataProperties(_serialization.Model):
     :vartype preview: bool
     :ivar assessment_type: BuiltIn if the assessment based on built-in Azure Policy definition,
      Custom if the assessment based on custom Azure Policy definition. Required. Known values are:
-     "BuiltIn", "CustomPolicy", "CustomerManaged", "BuiltInPolicy", "VerifiedPartner",
-     "ManualBuiltInPolicy", "ManualBuiltIn", "ManualCustomPolicy", and "DynamicBuiltIn".
+     "Unknown", "BuiltIn", "Custom", "CustomPolicy", "CustomerManaged", "BuiltInPolicy",
+     "VerifiedPartner", "ManualBuiltInPolicy", "ManualBuiltIn", "ManualCustomPolicy", and
+     "DynamicBuiltIn".
     :vartype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
     :ivar partner_data: Describes the partner that created the assessment.
     :vartype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
@@ -18218,10 +19458,10 @@ class SecurityAssessmentMetadataProperties(_serialization.Model):
         assessment_type: Union[str, "_models.AssessmentType"],
         description: Optional[str] = None,
         remediation_description: Optional[str] = None,
-        categories: Optional[List[Union[str, "_models.Categories"]]] = None,
+        categories: Optional[list[Union[str, "_models.Categories"]]] = None,
         user_impact: Optional[Union[str, "_models.UserImpact"]] = None,
         implementation_effort: Optional[Union[str, "_models.ImplementationEffort"]] = None,
-        threats: Optional[List[Union[str, "_models.Threats"]]] = None,
+        threats: Optional[list[Union[str, "_models.Threats"]]] = None,
         preview: Optional[bool] = None,
         partner_data: Optional["_models.SecurityAssessmentMetadataPartnerData"] = None,
         **kwargs: Any
@@ -18251,8 +19491,9 @@ class SecurityAssessmentMetadataProperties(_serialization.Model):
         :paramtype preview: bool
         :keyword assessment_type: BuiltIn if the assessment based on built-in Azure Policy definition,
          Custom if the assessment based on custom Azure Policy definition. Required. Known values are:
-         "BuiltIn", "CustomPolicy", "CustomerManaged", "BuiltInPolicy", "VerifiedPartner",
-         "ManualBuiltInPolicy", "ManualBuiltIn", "ManualCustomPolicy", and "DynamicBuiltIn".
+         "Unknown", "BuiltIn", "Custom", "CustomPolicy", "CustomerManaged", "BuiltInPolicy",
+         "VerifiedPartner", "ManualBuiltInPolicy", "ManualBuiltIn", "ManualCustomPolicy", and
+         "DynamicBuiltIn".
         :paramtype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
         :keyword partner_data: Describes the partner that created the assessment.
         :paramtype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
@@ -18308,8 +19549,9 @@ class SecurityAssessmentMetadataPropertiesResponse(
     :vartype preview: bool
     :ivar assessment_type: BuiltIn if the assessment based on built-in Azure Policy definition,
      Custom if the assessment based on custom Azure Policy definition. Required. Known values are:
-     "BuiltIn", "CustomPolicy", "CustomerManaged", "BuiltInPolicy", "VerifiedPartner",
-     "ManualBuiltInPolicy", "ManualBuiltIn", "ManualCustomPolicy", and "DynamicBuiltIn".
+     "Unknown", "BuiltIn", "Custom", "CustomPolicy", "CustomerManaged", "BuiltInPolicy",
+     "VerifiedPartner", "ManualBuiltInPolicy", "ManualBuiltIn", "ManualCustomPolicy", and
+     "DynamicBuiltIn".
     :vartype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
     :ivar partner_data: Describes the partner that created the assessment.
     :vartype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
@@ -18359,16 +19601,16 @@ class SecurityAssessmentMetadataPropertiesResponse(
         assessment_type: Union[str, "_models.AssessmentType"],
         description: Optional[str] = None,
         remediation_description: Optional[str] = None,
-        categories: Optional[List[Union[str, "_models.Categories"]]] = None,
+        categories: Optional[list[Union[str, "_models.Categories"]]] = None,
         user_impact: Optional[Union[str, "_models.UserImpact"]] = None,
         implementation_effort: Optional[Union[str, "_models.ImplementationEffort"]] = None,
-        threats: Optional[List[Union[str, "_models.Threats"]]] = None,
+        threats: Optional[list[Union[str, "_models.Threats"]]] = None,
         preview: Optional[bool] = None,
         partner_data: Optional["_models.SecurityAssessmentMetadataPartnerData"] = None,
         publish_dates: Optional["_models.SecurityAssessmentMetadataPropertiesResponsePublishDates"] = None,
         planned_deprecation_date: Optional[str] = None,
-        tactics: Optional[List[Union[str, "_models.Tactics"]]] = None,
-        techniques: Optional[List[Union[str, "_models.Techniques"]]] = None,
+        tactics: Optional[list[Union[str, "_models.Tactics"]]] = None,
+        techniques: Optional[list[Union[str, "_models.Techniques"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -18396,8 +19638,9 @@ class SecurityAssessmentMetadataPropertiesResponse(
         :paramtype preview: bool
         :keyword assessment_type: BuiltIn if the assessment based on built-in Azure Policy definition,
          Custom if the assessment based on custom Azure Policy definition. Required. Known values are:
-         "BuiltIn", "CustomPolicy", "CustomerManaged", "BuiltInPolicy", "VerifiedPartner",
-         "ManualBuiltInPolicy", "ManualBuiltIn", "ManualCustomPolicy", and "DynamicBuiltIn".
+         "Unknown", "BuiltIn", "Custom", "CustomPolicy", "CustomerManaged", "BuiltInPolicy",
+         "VerifiedPartner", "ManualBuiltInPolicy", "ManualBuiltIn", "ManualCustomPolicy", and
+         "DynamicBuiltIn".
         :paramtype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
         :keyword partner_data: Describes the partner that created the assessment.
         :paramtype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
@@ -18501,9 +19744,9 @@ class SecurityAssessmentMetadataResponse(Resource):
     :ivar preview: True if this assessment is in preview release status.
     :vartype preview: bool
     :ivar assessment_type: BuiltIn if the assessment based on built-in Azure Policy definition,
-     Custom if the assessment based on custom Azure Policy definition. Known values are: "BuiltIn",
-     "CustomPolicy", "CustomerManaged", "BuiltInPolicy", "VerifiedPartner", "ManualBuiltInPolicy",
-     "ManualBuiltIn", "ManualCustomPolicy", and "DynamicBuiltIn".
+     Custom if the assessment based on custom Azure Policy definition. Known values are: "Unknown",
+     "BuiltIn", "Custom", "CustomPolicy", "CustomerManaged", "BuiltInPolicy", "VerifiedPartner",
+     "ManualBuiltInPolicy", "ManualBuiltIn", "ManualCustomPolicy", and "DynamicBuiltIn".
     :vartype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
     :ivar partner_data: Describes the partner that created the assessment.
     :vartype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
@@ -18557,18 +19800,18 @@ class SecurityAssessmentMetadataResponse(Resource):
         display_name: Optional[str] = None,
         description: Optional[str] = None,
         remediation_description: Optional[str] = None,
-        categories: Optional[List[Union[str, "_models.Categories"]]] = None,
+        categories: Optional[list[Union[str, "_models.Categories"]]] = None,
         severity: Optional[Union[str, "_models.Severity"]] = None,
         user_impact: Optional[Union[str, "_models.UserImpact"]] = None,
         implementation_effort: Optional[Union[str, "_models.ImplementationEffort"]] = None,
-        threats: Optional[List[Union[str, "_models.Threats"]]] = None,
+        threats: Optional[list[Union[str, "_models.Threats"]]] = None,
         preview: Optional[bool] = None,
         assessment_type: Optional[Union[str, "_models.AssessmentType"]] = None,
         partner_data: Optional["_models.SecurityAssessmentMetadataPartnerData"] = None,
         publish_dates: Optional["_models.SecurityAssessmentMetadataPropertiesResponsePublishDates"] = None,
         planned_deprecation_date: Optional[str] = None,
-        tactics: Optional[List[Union[str, "_models.Tactics"]]] = None,
-        techniques: Optional[List[Union[str, "_models.Techniques"]]] = None,
+        tactics: Optional[list[Union[str, "_models.Tactics"]]] = None,
+        techniques: Optional[list[Union[str, "_models.Techniques"]]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -18595,9 +19838,9 @@ class SecurityAssessmentMetadataResponse(Resource):
         :keyword preview: True if this assessment is in preview release status.
         :paramtype preview: bool
         :keyword assessment_type: BuiltIn if the assessment based on built-in Azure Policy definition,
-         Custom if the assessment based on custom Azure Policy definition. Known values are: "BuiltIn",
-         "CustomPolicy", "CustomerManaged", "BuiltInPolicy", "VerifiedPartner", "ManualBuiltInPolicy",
-         "ManualBuiltIn", "ManualCustomPolicy", and "DynamicBuiltIn".
+         Custom if the assessment based on custom Azure Policy definition. Known values are: "Unknown",
+         "BuiltIn", "Custom", "CustomPolicy", "CustomerManaged", "BuiltInPolicy", "VerifiedPartner",
+         "ManualBuiltInPolicy", "ManualBuiltIn", "ManualCustomPolicy", and "DynamicBuiltIn".
         :paramtype assessment_type: str or ~azure.mgmt.security.models.AssessmentType
         :keyword partner_data: Describes the partner that created the assessment.
         :paramtype partner_data: ~azure.mgmt.security.models.SecurityAssessmentMetadataPartnerData
@@ -18654,7 +19897,7 @@ class SecurityAssessmentMetadataResponseList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.SecurityAssessmentMetadataResponse"]] = None
+        self.value: Optional[list["_models.SecurityAssessmentMetadataResponse"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -18735,7 +19978,7 @@ class SecurityAssessmentPropertiesBase(_serialization.Model):
         *,
         resource_details: "_models.ResourceDetails",
         risk: Optional["_models.SecurityAssessmentPropertiesBaseRisk"] = None,
-        additional_data: Optional[Dict[str, str]] = None,
+        additional_data: Optional[dict[str, str]] = None,
         metadata: Optional["_models.SecurityAssessmentMetadataProperties"] = None,
         partners_data: Optional["_models.SecurityAssessmentPartnerData"] = None,
         **kwargs: Any
@@ -18811,7 +20054,7 @@ class SecurityAssessmentProperties(SecurityAssessmentPropertiesBase):
         resource_details: "_models.ResourceDetails",
         status: "_models.AssessmentStatus",
         risk: Optional["_models.SecurityAssessmentPropertiesBaseRisk"] = None,
-        additional_data: Optional[Dict[str, str]] = None,
+        additional_data: Optional[dict[str, str]] = None,
         metadata: Optional["_models.SecurityAssessmentMetadataProperties"] = None,
         partners_data: Optional["_models.SecurityAssessmentPartnerData"] = None,
         **kwargs: Any
@@ -18846,7 +20089,7 @@ class SecurityAssessmentPropertiesBaseRisk(_serialization.Model):
 
     :ivar risk_factors: The factors of the risk adding base factor.
     :vartype risk_factors: list[str]
-    :ivar level: The risk level. Known values are: "Low", "Medium", and "High".
+    :ivar level: The risk level. Known values are: "None", "Low", "Medium", "High", and "Critical".
     :vartype level: str or ~azure.mgmt.security.models.RiskLevel
     :ivar attack_paths_references: The attack paths references of the risk.
     :vartype attack_paths_references: list[str]
@@ -18871,17 +20114,18 @@ class SecurityAssessmentPropertiesBaseRisk(_serialization.Model):
     def __init__(
         self,
         *,
-        risk_factors: Optional[List[str]] = None,
+        risk_factors: Optional[list[str]] = None,
         level: Optional[Union[str, "_models.RiskLevel"]] = None,
-        attack_paths_references: Optional[List[str]] = None,
-        paths: Optional[List["_models.SecurityAssessmentPropertiesBaseRiskPathsItem"]] = None,
+        attack_paths_references: Optional[list[str]] = None,
+        paths: Optional[list["_models.SecurityAssessmentPropertiesBaseRiskPathsItem"]] = None,
         is_contextual_risk: Optional[bool] = None,
         **kwargs: Any
     ) -> None:
         """
         :keyword risk_factors: The factors of the risk adding base factor.
         :paramtype risk_factors: list[str]
-        :keyword level: The risk level. Known values are: "Low", "Medium", and "High".
+        :keyword level: The risk level. Known values are: "None", "Low", "Medium", "High", and
+         "Critical".
         :paramtype level: str or ~azure.mgmt.security.models.RiskLevel
         :keyword attack_paths_references: The attack paths references of the risk.
         :paramtype attack_paths_references: list[str]
@@ -18925,9 +20169,9 @@ class SecurityAssessmentPropertiesBaseRiskPathsItem(_serialization.Model):  # py
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        nodes: Optional[List["_models.SecurityAssessmentPropertiesBaseRiskPathsPropertiesItemsItem"]] = None,
+        nodes: Optional[list["_models.SecurityAssessmentPropertiesBaseRiskPathsPropertiesItemsItem"]] = None,
         edges: Optional[
-            List[
+            list[
                 "_models.Components1Uu4J47SchemasSecurityassessmentpropertiesbasePropertiesRiskPropertiesPathsItemsPropertiesEdgesItems"
             ]
         ] = None,
@@ -18969,7 +20213,7 @@ class SecurityAssessmentPropertiesBaseRiskPathsPropertiesItemsItem(
         self,
         *,
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
-        node_properties_label: Optional[List[str]] = None,
+        node_properties_label: Optional[list[str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -19032,7 +20276,7 @@ class SecurityAssessmentPropertiesResponse(SecurityAssessmentPropertiesBase):
         resource_details: "_models.ResourceDetails",
         status: "_models.AssessmentStatusResponse",
         risk: Optional["_models.SecurityAssessmentPropertiesBaseRisk"] = None,
-        additional_data: Optional[Dict[str, str]] = None,
+        additional_data: Optional[dict[str, str]] = None,
         metadata: Optional["_models.SecurityAssessmentMetadataProperties"] = None,
         partners_data: Optional["_models.SecurityAssessmentPartnerData"] = None,
         **kwargs: Any
@@ -19118,7 +20362,7 @@ class SecurityAssessmentResponse(Resource):
         *,
         risk: Optional["_models.SecurityAssessmentPropertiesBaseRisk"] = None,
         resource_details: Optional["_models.ResourceDetails"] = None,
-        additional_data: Optional[Dict[str, str]] = None,
+        additional_data: Optional[dict[str, str]] = None,
         metadata: Optional["_models.SecurityAssessmentMetadataProperties"] = None,
         partners_data: Optional["_models.SecurityAssessmentPartnerData"] = None,
         status: Optional["_models.AssessmentStatusResponse"] = None,
@@ -19217,13 +20461,13 @@ class SecurityConnector(TrackedResource):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         etag: Optional[str] = None,
         kind: Optional[str] = None,
         location: Optional[str] = None,
         hierarchy_identifier: Optional[str] = None,
         environment_name: Optional[Union[str, "_models.CloudName"]] = None,
-        offerings: Optional[List["_models.CloudOffering"]] = None,
+        offerings: Optional[list["_models.CloudOffering"]] = None,
         environment_data: Optional["_models.EnvironmentData"] = None,
         **kwargs: Any
     ) -> None:
@@ -19280,7 +20524,7 @@ class SecurityConnectorsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.SecurityConnector"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.SecurityConnector"], **kwargs: Any) -> None:
         """
         :keyword value: The list of security connectors under the given scope. Required.
         :paramtype value: list[~azure.mgmt.security.models.SecurityConnector]
@@ -19288,159 +20532,6 @@ class SecurityConnectorsList(_serialization.Model):
         super().__init__(**kwargs)
         self.value = value
         self.next_link: Optional[str] = None
-
-
-class SecurityContact(Resource):
-    """Contact details and configurations for notifications coming from Microsoft Defender for Cloud.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar emails: List of email addresses which will get notifications from Microsoft Defender for
-     Cloud by the configurations defined in this security contact.
-    :vartype emails: str
-    :ivar phone: The security contact's phone number.
-    :vartype phone: str
-    :ivar is_enabled: Indicates whether the security contact is enabled.
-    :vartype is_enabled: bool
-    :ivar notifications_sources: A collection of sources types which evaluate the email
-     notification.
-    :vartype notifications_sources: list[~azure.mgmt.security.models.NotificationsSource]
-    :ivar notifications_by_role: Defines whether to send email notifications from Microsoft
-     Defender for Cloud to persons with specific RBAC roles on the subscription.
-    :vartype notifications_by_role:
-     ~azure.mgmt.security.models.SecurityContactPropertiesNotificationsByRole
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "emails": {"key": "properties.emails", "type": "str"},
-        "phone": {"key": "properties.phone", "type": "str"},
-        "is_enabled": {"key": "properties.isEnabled", "type": "bool"},
-        "notifications_sources": {"key": "properties.notificationsSources", "type": "[NotificationsSource]"},
-        "notifications_by_role": {
-            "key": "properties.notificationsByRole",
-            "type": "SecurityContactPropertiesNotificationsByRole",
-        },
-    }
-
-    def __init__(
-        self,
-        *,
-        emails: Optional[str] = None,
-        phone: Optional[str] = None,
-        is_enabled: Optional[bool] = None,
-        notifications_sources: Optional[List["_models.NotificationsSource"]] = None,
-        notifications_by_role: Optional["_models.SecurityContactPropertiesNotificationsByRole"] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword emails: List of email addresses which will get notifications from Microsoft Defender
-         for Cloud by the configurations defined in this security contact.
-        :paramtype emails: str
-        :keyword phone: The security contact's phone number.
-        :paramtype phone: str
-        :keyword is_enabled: Indicates whether the security contact is enabled.
-        :paramtype is_enabled: bool
-        :keyword notifications_sources: A collection of sources types which evaluate the email
-         notification.
-        :paramtype notifications_sources: list[~azure.mgmt.security.models.NotificationsSource]
-        :keyword notifications_by_role: Defines whether to send email notifications from Microsoft
-         Defender for Cloud to persons with specific RBAC roles on the subscription.
-        :paramtype notifications_by_role:
-         ~azure.mgmt.security.models.SecurityContactPropertiesNotificationsByRole
-        """
-        super().__init__(**kwargs)
-        self.emails = emails
-        self.phone = phone
-        self.is_enabled = is_enabled
-        self.notifications_sources = notifications_sources
-        self.notifications_by_role = notifications_by_role
-
-
-class SecurityContactList(_serialization.Model):
-    """List of security contacts response.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to server.
-
-    :ivar value: List of security contacts. Required.
-    :vartype value: list[~azure.mgmt.security.models.SecurityContact]
-    :ivar next_link: The URI to fetch the next page.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "value": {"required": True},
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[SecurityContact]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: List["_models.SecurityContact"], **kwargs: Any) -> None:
-        """
-        :keyword value: List of security contacts. Required.
-        :paramtype value: list[~azure.mgmt.security.models.SecurityContact]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link: Optional[str] = None
-
-
-class SecurityContactPropertiesNotificationsByRole(_serialization.Model):  # pylint: disable=name-too-long
-    """Defines whether to send email notifications from Microsoft Defender for Cloud to persons with
-    specific RBAC roles on the subscription.
-
-    :ivar state: Defines whether to send email notifications from AMicrosoft Defender for Cloud to
-     persons with specific RBAC roles on the subscription. Known values are: "Passed", "Failed",
-     "Skipped", and "Unsupported".
-    :vartype state: str or ~azure.mgmt.security.models.State
-    :ivar roles: Defines which RBAC roles will get email notifications from Microsoft Defender for
-     Cloud. List of allowed RBAC roles:.
-    :vartype roles: list[str or ~azure.mgmt.security.models.SecurityContactRole]
-    """
-
-    _attribute_map = {
-        "state": {"key": "state", "type": "str"},
-        "roles": {"key": "roles", "type": "[str]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        state: Optional[Union[str, "_models.State"]] = None,
-        roles: Optional[List[Union[str, "_models.SecurityContactRole"]]] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword state: Defines whether to send email notifications from AMicrosoft Defender for Cloud
-         to persons with specific RBAC roles on the subscription. Known values are: "Passed", "Failed",
-         "Skipped", and "Unsupported".
-        :paramtype state: str or ~azure.mgmt.security.models.State
-        :keyword roles: Defines which RBAC roles will get email notifications from Microsoft Defender
-         for Cloud. List of allowed RBAC roles:.
-        :paramtype roles: list[str or ~azure.mgmt.security.models.SecurityContactRole]
-        """
-        super().__init__(**kwargs)
-        self.state = state
-        self.roles = roles
 
 
 class SecurityOperator(Resource):
@@ -19497,7 +20588,7 @@ class SecurityOperatorList(_serialization.Model):
         "value": {"key": "value", "type": "[SecurityOperator]"},
     }
 
-    def __init__(self, *, value: List["_models.SecurityOperator"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.SecurityOperator"], **kwargs: Any) -> None:
         """
         :keyword value: List of SecurityOperator configurations. Required.
         :paramtype value: list[~azure.mgmt.security.models.SecurityOperator]
@@ -19601,7 +20692,7 @@ class SecuritySolutionList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.SecuritySolution"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.SecuritySolution"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.security.models.SecuritySolution]
@@ -19726,7 +20817,7 @@ class SecuritySolutionsReferenceDataList(_serialization.Model):
     }
 
     def __init__(
-        self, *, value: Optional[List["_models.SecuritySolutionsReferenceData"]] = None, **kwargs: Any
+        self, *, value: Optional[list["_models.SecuritySolutionsReferenceData"]] = None, **kwargs: Any
     ) -> None:
         """
         :keyword value:
@@ -19789,8 +20880,8 @@ class SecurityStandard(Resource):
         *,
         display_name: Optional[str] = None,
         description: Optional[str] = None,
-        assessments: Optional[List["_models.PartialAssessmentProperties"]] = None,
-        cloud_providers: Optional[List[Union[str, "_models.StandardSupportedCloud"]]] = None,
+        assessments: Optional[list["_models.PartialAssessmentProperties"]] = None,
+        cloud_providers: Optional[list[Union[str, "_models.StandardSupportedCloud"]]] = None,
         policy_set_definition_id: Optional[str] = None,
         metadata: Optional["_models.StandardMetadata"] = None,
         **kwargs: Any
@@ -19845,7 +20936,7 @@ class SecurityStandardList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.SecurityStandard"]] = None
+        self.value: Optional[list["_models.SecurityStandard"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -19964,7 +21055,7 @@ class SecuritySubAssessmentList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.SecuritySubAssessment"]] = None
+        self.value: Optional[list["_models.SecuritySubAssessment"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -20053,7 +21144,7 @@ class SecurityTaskList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.SecurityTask"]] = None
+        self.value: Optional[list["_models.SecurityTask"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -20078,7 +21169,7 @@ class SecurityTaskParameters(_serialization.Model):
         "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(self, *, additional_properties: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, additional_properties: Optional[dict[str, Any]] = None, **kwargs: Any) -> None:
         """
         :keyword additional_properties: Unmatched properties from the message are deserialized to this
          collection.
@@ -20098,7 +21189,7 @@ class SensitiveDataDiscoveryProperties(_serialization.Model):
     :vartype is_enabled: bool
     :ivar operation_status: Upon failure or partial success. Additional data describing Sensitive
      Data Discovery enable/disable operation.
-    :vartype operation_status: ~azure.mgmt.security.models.OperationStatus
+    :vartype operation_status: ~azure.mgmt.security.models.OperationStatusAutoGenerated
     """
 
     _validation = {
@@ -20107,7 +21198,7 @@ class SensitiveDataDiscoveryProperties(_serialization.Model):
 
     _attribute_map = {
         "is_enabled": {"key": "isEnabled", "type": "bool"},
-        "operation_status": {"key": "operationStatus", "type": "OperationStatus"},
+        "operation_status": {"key": "operationStatus", "type": "OperationStatusAutoGenerated"},
     }
 
     def __init__(self, *, is_enabled: Optional[bool] = None, **kwargs: Any) -> None:
@@ -20117,7 +21208,7 @@ class SensitiveDataDiscoveryProperties(_serialization.Model):
         """
         super().__init__(**kwargs)
         self.is_enabled = is_enabled
-        self.operation_status: Optional["_models.OperationStatus"] = None
+        self.operation_status: Optional["_models.OperationStatusAutoGenerated"] = None
 
 
 class SensitivityLabel(_serialization.Model):
@@ -20226,7 +21317,7 @@ class ServerVulnerabilityAssessmentsList(_serialization.Model):
         "value": {"key": "value", "type": "[ServerVulnerabilityAssessment]"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.ServerVulnerabilityAssessment"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.ServerVulnerabilityAssessment"]] = None, **kwargs: Any) -> None:
         """
         :keyword value:
         :paramtype value: list[~azure.mgmt.security.models.ServerVulnerabilityAssessment]
@@ -20259,7 +21350,7 @@ class ServerVulnerabilityAssessmentsSettingsList(_serialization.Model):  # pylin
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.ServerVulnerabilityAssessmentsSetting"]] = None
+        self.value: Optional[list["_models.ServerVulnerabilityAssessmentsSetting"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -20317,40 +21408,12 @@ class ServerVulnerabilityProperties(AdditionalData):
         super().__init__(**kwargs)
         self.assessed_resource_type: str = "ServerVulnerabilityAssessment"
         self.type: Optional[str] = None
-        self.cvss: Optional[Dict[str, "_models.CVSS"]] = None
+        self.cvss: Optional[dict[str, "_models.CVSS"]] = None
         self.patchable: Optional[bool] = None
-        self.cve: Optional[List["_models.CVE"]] = None
+        self.cve: Optional[list["_models.CVE"]] = None
         self.threat: Optional[str] = None
         self.published_time: Optional[datetime.datetime] = None
-        self.vendor_references: Optional[List["_models.VendorReference"]] = None
-
-
-class ServicePrincipalProperties(_serialization.Model):
-    """Details of the service principal.
-
-    :ivar application_id: Application ID of service principal.
-    :vartype application_id: str
-    :ivar secret: A secret string that the application uses to prove its identity, also can be
-     referred to as application password (write only).
-    :vartype secret: str
-    """
-
-    _attribute_map = {
-        "application_id": {"key": "applicationId", "type": "str"},
-        "secret": {"key": "secret", "type": "str"},
-    }
-
-    def __init__(self, *, application_id: Optional[str] = None, secret: Optional[str] = None, **kwargs: Any) -> None:
-        """
-        :keyword application_id: Application ID of service principal.
-        :paramtype application_id: str
-        :keyword secret: A secret string that the application uses to prove its identity, also can be
-         referred to as application password (write only).
-        :paramtype secret: str
-        """
-        super().__init__(**kwargs)
-        self.application_id = application_id
-        self.secret = secret
+        self.vendor_references: Optional[list["_models.VendorReference"]] = None
 
 
 class SettingsList(_serialization.Model):
@@ -20373,144 +21436,10 @@ class SettingsList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: Optional[List["_models.Setting"]] = None, **kwargs: Any) -> None:
+    def __init__(self, *, value: Optional[list["_models.Setting"]] = None, **kwargs: Any) -> None:
         """
         :keyword value: The settings list.
         :paramtype value: list[~azure.mgmt.security.models.Setting]
-        """
-        super().__init__(**kwargs)
-        self.value = value
-        self.next_link: Optional[str] = None
-
-
-class Software(Resource):
-    """Represents a software data.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: Resource Id.
-    :vartype id: str
-    :ivar name: Resource name.
-    :vartype name: str
-    :ivar type: Resource type.
-    :vartype type: str
-    :ivar device_id: Unique identifier for the virtual machine in the service.
-    :vartype device_id: str
-    :ivar os_platform: Platform of the operating system running on the device.
-    :vartype os_platform: str
-    :ivar vendor: Name of the software vendor.
-    :vartype vendor: str
-    :ivar software_name: Name of the software product.
-    :vartype software_name: str
-    :ivar version: Version number of the software product.
-    :vartype version: str
-    :ivar end_of_support_status: End of support status. Known values are: "None",
-     "noLongerSupported", "versionNoLongerSupported", "upcomingNoLongerSupported", and
-     "upcomingVersionNoLongerSupported".
-    :vartype end_of_support_status: str or ~azure.mgmt.security.models.EndOfSupportStatus
-    :ivar end_of_support_date: The end of support date in case the product is upcoming end of
-     support.
-    :vartype end_of_support_date: str
-    :ivar number_of_known_vulnerabilities: Number of weaknesses.
-    :vartype number_of_known_vulnerabilities: int
-    :ivar first_seen_at: First time that the software was seen in the device.
-    :vartype first_seen_at: str
-    """
-
-    _validation = {
-        "id": {"readonly": True},
-        "name": {"readonly": True},
-        "type": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "id": {"key": "id", "type": "str"},
-        "name": {"key": "name", "type": "str"},
-        "type": {"key": "type", "type": "str"},
-        "device_id": {"key": "properties.deviceId", "type": "str"},
-        "os_platform": {"key": "properties.osPlatform", "type": "str"},
-        "vendor": {"key": "properties.vendor", "type": "str"},
-        "software_name": {"key": "properties.softwareName", "type": "str"},
-        "version": {"key": "properties.version", "type": "str"},
-        "end_of_support_status": {"key": "properties.endOfSupportStatus", "type": "str"},
-        "end_of_support_date": {"key": "properties.endOfSupportDate", "type": "str"},
-        "number_of_known_vulnerabilities": {"key": "properties.numberOfKnownVulnerabilities", "type": "int"},
-        "first_seen_at": {"key": "properties.firstSeenAt", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        device_id: Optional[str] = None,
-        os_platform: Optional[str] = None,
-        vendor: Optional[str] = None,
-        software_name: Optional[str] = None,
-        version: Optional[str] = None,
-        end_of_support_status: Optional[Union[str, "_models.EndOfSupportStatus"]] = None,
-        end_of_support_date: Optional[str] = None,
-        number_of_known_vulnerabilities: Optional[int] = None,
-        first_seen_at: Optional[str] = None,
-        **kwargs: Any
-    ) -> None:
-        """
-        :keyword device_id: Unique identifier for the virtual machine in the service.
-        :paramtype device_id: str
-        :keyword os_platform: Platform of the operating system running on the device.
-        :paramtype os_platform: str
-        :keyword vendor: Name of the software vendor.
-        :paramtype vendor: str
-        :keyword software_name: Name of the software product.
-        :paramtype software_name: str
-        :keyword version: Version number of the software product.
-        :paramtype version: str
-        :keyword end_of_support_status: End of support status. Known values are: "None",
-         "noLongerSupported", "versionNoLongerSupported", "upcomingNoLongerSupported", and
-         "upcomingVersionNoLongerSupported".
-        :paramtype end_of_support_status: str or ~azure.mgmt.security.models.EndOfSupportStatus
-        :keyword end_of_support_date: The end of support date in case the product is upcoming end of
-         support.
-        :paramtype end_of_support_date: str
-        :keyword number_of_known_vulnerabilities: Number of weaknesses.
-        :paramtype number_of_known_vulnerabilities: int
-        :keyword first_seen_at: First time that the software was seen in the device.
-        :paramtype first_seen_at: str
-        """
-        super().__init__(**kwargs)
-        self.device_id = device_id
-        self.os_platform = os_platform
-        self.vendor = vendor
-        self.software_name = software_name
-        self.version = version
-        self.end_of_support_status = end_of_support_status
-        self.end_of_support_date = end_of_support_date
-        self.number_of_known_vulnerabilities = number_of_known_vulnerabilities
-        self.first_seen_at = first_seen_at
-
-
-class SoftwaresList(_serialization.Model):
-    """Represents the software inventory of the virtual machine.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar value:
-    :vartype value: list[~azure.mgmt.security.models.Software]
-    :ivar next_link: The URI to fetch the next page.
-    :vartype next_link: str
-    """
-
-    _validation = {
-        "next_link": {"readonly": True},
-    }
-
-    _attribute_map = {
-        "value": {"key": "value", "type": "[Software]"},
-        "next_link": {"key": "nextLink", "type": "str"},
-    }
-
-    def __init__(self, *, value: Optional[List["_models.Software"]] = None, **kwargs: Any) -> None:
-        """
-        :keyword value:
-        :paramtype value: list[~azure.mgmt.security.models.Software]
         """
         super().__init__(**kwargs)
         self.value = value
@@ -20551,6 +21480,269 @@ class SqlServerVulnerabilityProperties(AdditionalData):
         self.assessed_resource_type: str = "SqlServerVulnerability"
         self.type: Optional[str] = None
         self.query: Optional[str] = None
+
+
+class SqlVulnerabilityAssessmentScanOperationResult(Resource):  # pylint: disable=name-too-long
+    """Represents the result of a SQL Vulnerability Assessment scan operation, wrapped in the ARM
+    resource envelope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar properties: Represents the properties of a SQL Vulnerability Assessment scan operation
+     result.
+    :vartype properties:
+     ~azure.mgmt.security.models.SqlVulnerabilityAssessmentScanOperationResultProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "SqlVulnerabilityAssessmentScanOperationResultProperties"},
+    }
+
+    def __init__(
+        self,
+        *,
+        properties: Optional["_models.SqlVulnerabilityAssessmentScanOperationResultProperties"] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: Represents the properties of a SQL Vulnerability Assessment scan operation
+         result.
+        :paramtype properties:
+         ~azure.mgmt.security.models.SqlVulnerabilityAssessmentScanOperationResultProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class SqlVulnerabilityAssessmentScanOperationResultProperties(_serialization.Model):  # pylint: disable=name-too-long
+    """Represents the properties of a SQL Vulnerability Assessment scan operation result.
+
+    :ivar operation_id: Gets or sets the operation id.
+    :vartype operation_id: str
+    :ivar scan_status: The scan operation status. Known values are: "Passed", "Failed",
+     "FailedToRun", and "InProgress".
+    :vartype scan_status: str or ~azure.mgmt.security.models.ScanOperationStatus
+    """
+
+    _attribute_map = {
+        "operation_id": {"key": "operationId", "type": "str"},
+        "scan_status": {"key": "scanStatus", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        operation_id: Optional[str] = None,
+        scan_status: Optional[Union[str, "_models.ScanOperationStatus"]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword operation_id: Gets or sets the operation id.
+        :paramtype operation_id: str
+        :keyword scan_status: The scan operation status. Known values are: "Passed", "Failed",
+         "FailedToRun", and "InProgress".
+        :paramtype scan_status: str or ~azure.mgmt.security.models.ScanOperationStatus
+        """
+        super().__init__(**kwargs)
+        self.operation_id = operation_id
+        self.scan_status = scan_status
+
+
+class SqlVulnerabilityAssessmentSettings(Resource):
+    """SQL Vulnerability Assessment settings resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar properties: SQL Vulnerability Assessment settings properties.
+    :vartype properties: ~azure.mgmt.security.models.SqlVulnerabilityAssessmentSettingsProperties
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "SqlVulnerabilityAssessmentSettingsProperties"},
+    }
+
+    def __init__(
+        self, *, properties: Optional["_models.SqlVulnerabilityAssessmentSettingsProperties"] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword properties: SQL Vulnerability Assessment settings properties.
+        :paramtype properties: ~azure.mgmt.security.models.SqlVulnerabilityAssessmentSettingsProperties
+        """
+        super().__init__(**kwargs)
+        self.properties = properties
+
+
+class SqlVulnerabilityAssessmentSettingsProperties(_serialization.Model):  # pylint: disable=name-too-long
+    """SQL Vulnerability Assessment settings properties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar creation_time: The creation time of the SQL Vulnerability Assessment settings.
+    :vartype creation_time: ~datetime.datetime
+    :ivar state: Represents the state of a SQL Vulnerability Assessment. Known values are:
+     "Enabled" and "Disabled".
+    :vartype state: str or ~azure.mgmt.security.models.SqlVulnerabilityAssessmentState
+    """
+
+    _validation = {
+        "creation_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "state": {"key": "state", "type": "str"},
+    }
+
+    def __init__(
+        self, *, state: Optional[Union[str, "_models.SqlVulnerabilityAssessmentState"]] = None, **kwargs: Any
+    ) -> None:
+        """
+        :keyword state: Represents the state of a SQL Vulnerability Assessment. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype state: str or ~azure.mgmt.security.models.SqlVulnerabilityAssessmentState
+        """
+        super().__init__(**kwargs)
+        self.creation_time: Optional[datetime.datetime] = None
+        self.state = state
+
+
+class Standard(TrackedResource):
+    """Security Standard on a resource.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar tags: A list of key value pairs that describe the resource.
+    :vartype tags: dict[str, str]
+    :ivar etag: Entity tag is used for comparing two or more entities from the same requested
+     resource.
+    :vartype etag: str
+    :ivar kind: Kind of the resource.
+    :vartype kind: str
+    :ivar location: Location where the resource is stored.
+    :vartype location: str
+    :ivar id: Resource Id.
+    :vartype id: str
+    :ivar name: Resource name.
+    :vartype name: str
+    :ivar type: Resource type.
+    :vartype type: str
+    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+     information.
+    :vartype system_data: ~azure.mgmt.security.models.SystemData
+    :ivar display_name: display name of the standard, equivalent to the standardId.
+    :vartype display_name: str
+    :ivar standard_type: standard type (Custom or BuiltIn only currently).
+    :vartype standard_type: str
+    :ivar description: description of the standard.
+    :vartype description: str
+    :ivar category: category of the standard provided.
+    :vartype category: str
+    :ivar components: List of component objects containing component unique keys (such as
+     assessment keys) to apply to standard scope.  Currently only supports assessment keys.
+    :vartype components: list[~azure.mgmt.security.models.StandardComponentProperties]
+    :ivar supported_clouds: List of all standard supported clouds.
+    :vartype supported_clouds: list[str or ~azure.mgmt.security.models.StandardSupportedClouds]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "standard_type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "kind": {"key": "kind", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "display_name": {"key": "properties.displayName", "type": "str"},
+        "standard_type": {"key": "properties.standardType", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "category": {"key": "properties.category", "type": "str"},
+        "components": {"key": "properties.components", "type": "[StandardComponentProperties]"},
+        "supported_clouds": {"key": "properties.supportedClouds", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        tags: Optional[dict[str, str]] = None,
+        etag: Optional[str] = None,
+        kind: Optional[str] = None,
+        location: Optional[str] = None,
+        display_name: Optional[str] = None,
+        description: Optional[str] = None,
+        category: Optional[str] = None,
+        components: Optional[list["_models.StandardComponentProperties"]] = None,
+        supported_clouds: Optional[list[Union[str, "_models.StandardSupportedClouds"]]] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        :keyword tags: A list of key value pairs that describe the resource.
+        :paramtype tags: dict[str, str]
+        :keyword etag: Entity tag is used for comparing two or more entities from the same requested
+         resource.
+        :paramtype etag: str
+        :keyword kind: Kind of the resource.
+        :paramtype kind: str
+        :keyword location: Location where the resource is stored.
+        :paramtype location: str
+        :keyword display_name: display name of the standard, equivalent to the standardId.
+        :paramtype display_name: str
+        :keyword description: description of the standard.
+        :paramtype description: str
+        :keyword category: category of the standard provided.
+        :paramtype category: str
+        :keyword components: List of component objects containing component unique keys (such as
+         assessment keys) to apply to standard scope.  Currently only supports assessment keys.
+        :paramtype components: list[~azure.mgmt.security.models.StandardComponentProperties]
+        :keyword supported_clouds: List of all standard supported clouds.
+        :paramtype supported_clouds: list[str or ~azure.mgmt.security.models.StandardSupportedClouds]
+        """
+        super().__init__(tags=tags, etag=etag, kind=kind, location=location, **kwargs)
+        self.system_data: Optional["_models.SystemData"] = None
+        self.display_name = display_name
+        self.standard_type: Optional[str] = None
+        self.description = description
+        self.category = category
+        self.components = components
+        self.supported_clouds = supported_clouds
 
 
 class StandardAssignment(Resource):
@@ -20619,7 +21811,7 @@ class StandardAssignment(Resource):
         description: Optional[str] = None,
         assigned_standard: Optional["_models.AssignedStandardItem"] = None,
         effect: Optional[Union[str, "_models.Effect"]] = None,
-        excluded_scopes: Optional[List[str]] = None,
+        excluded_scopes: Optional[list[str]] = None,
         expires_on: Optional[datetime.datetime] = None,
         exemption_data: Optional["_models.StandardAssignmentPropertiesExemptionData"] = None,
         attestation_data: Optional["_models.StandardAssignmentPropertiesAttestationData"] = None,
@@ -20734,7 +21926,7 @@ class StandardAssignmentPropertiesAttestationData(_serialization.Model):  # pyli
         *,
         compliance_state: Optional[Union[str, "_models.AttestationComplianceState"]] = None,
         assigned_assessment: Optional["_models.AssignedAssessmentItem"] = None,
-        evidence: Optional[List["_models.AttestationEvidence"]] = None,
+        evidence: Optional[list["_models.AttestationEvidence"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -20816,7 +22008,55 @@ class StandardAssignmentsList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.StandardAssignment"]] = None
+        self.value: Optional[list["_models.StandardAssignment"]] = None
+        self.next_link: Optional[str] = None
+
+
+class StandardComponentProperties(_serialization.Model):
+    """Describes properties of an component as related to the standard.
+
+    :ivar key: Component Key matching componentMetadata.
+    :vartype key: str
+    """
+
+    _attribute_map = {
+        "key": {"key": "key", "type": "str"},
+    }
+
+    def __init__(self, *, key: Optional[str] = None, **kwargs: Any) -> None:
+        """
+        :keyword key: Component Key matching componentMetadata.
+        :paramtype key: str
+        """
+        super().__init__(**kwargs)
+        self.key = key
+
+
+class StandardList(_serialization.Model):
+    """Page of a Standard list.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: Collection of standards in this page.
+    :vartype value: list[~azure.mgmt.security.models.Standard]
+    :ivar next_link: The URI to fetch the next page.
+    :vartype next_link: str
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Standard]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+    }
+
+    def __init__(self, **kwargs: Any) -> None:
+        """ """
+        super().__init__(**kwargs)
+        self.value: Optional[list["_models.Standard"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -20965,7 +22205,7 @@ class SuppressionAlertsScope(_serialization.Model):
         "all_of": {"key": "allOf", "type": "[ScopeElement]"},
     }
 
-    def __init__(self, *, all_of: List["_models.ScopeElement"], **kwargs: Any) -> None:
+    def __init__(self, *, all_of: list["_models.ScopeElement"], **kwargs: Any) -> None:
         """
         :keyword all_of: All the conditions inside need to be true in order to suppress the alert.
          Required.
@@ -21060,7 +22300,7 @@ class TargetBranchConfiguration(_serialization.Model):
     def __init__(
         self,
         *,
-        branch_names: Optional[List[str]] = None,
+        branch_names: Optional[list[str]] = None,
         annotate_default_branch: Optional[Union[str, "_models.AnnotateDefaultBranchState"]] = None,
         **kwargs: Any
     ) -> None:
@@ -21104,7 +22344,7 @@ class TopologyList(_serialization.Model):
     def __init__(self, **kwargs: Any) -> None:
         """ """
         super().__init__(**kwargs)
-        self.value: Optional[List["_models.TopologyResource"]] = None
+        self.value: Optional[list["_models.TopologyResource"]] = None
         self.next_link: Optional[str] = None
 
 
@@ -21150,7 +22390,7 @@ class TopologyResource(Resource, Location):
         super().__init__(**kwargs)
         self.location: Optional[str] = None
         self.calculated_date_time: Optional[datetime.datetime] = None
-        self.topology_resources: Optional[List["_models.TopologySingleResource"]] = None
+        self.topology_resources: Optional[list["_models.TopologySingleResource"]] = None
         self.id: Optional[str] = None
         self.name: Optional[str] = None
         self.type: Optional[str] = None
@@ -21213,8 +22453,8 @@ class TopologySingleResource(_serialization.Model):
         self.network_zones: Optional[str] = None
         self.topology_score: Optional[int] = None
         self.location: Optional[str] = None
-        self.parents: Optional[List["_models.TopologySingleResourceParent"]] = None
-        self.children: Optional[List["_models.TopologySingleResourceChild"]] = None
+        self.parents: Optional[list["_models.TopologySingleResourceParent"]] = None
+        self.children: Optional[list["_models.TopologySingleResourceChild"]] = None
 
 
 class TopologySingleResourceChild(_serialization.Model):
@@ -21432,9 +22672,9 @@ class UpdateIotSecuritySolutionData(TagsResource):
     def __init__(
         self,
         *,
-        tags: Optional[Dict[str, str]] = None,
+        tags: Optional[dict[str, str]] = None,
         user_defined_resources: Optional["_models.UserDefinedResourcesProperties"] = None,
-        recommendations_configuration: Optional[List["_models.RecommendationConfigurationProperties"]] = None,
+        recommendations_configuration: Optional[list["_models.RecommendationConfigurationProperties"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -21482,7 +22722,7 @@ class UpdateSensitivitySettingsRequest(_serialization.Model):
     def __init__(
         self,
         *,
-        sensitive_info_types_ids: List[str],
+        sensitive_info_types_ids: list[str],
         sensitivity_threshold_label_order: Optional[float] = None,
         sensitivity_threshold_label_id: Optional[str] = None,
         **kwargs: Any
@@ -21527,7 +22767,7 @@ class UserDefinedResourcesProperties(_serialization.Model):
         "query_subscriptions": {"key": "querySubscriptions", "type": "[str]"},
     }
 
-    def __init__(self, *, query: str, query_subscriptions: List[str], **kwargs: Any) -> None:
+    def __init__(self, *, query: str, query_subscriptions: list[str], **kwargs: Any) -> None:
         """
         :keyword query: Azure Resource Graph query which represents the security solution's user
          defined resources. Required to start with "where type != "Microsoft.Devices/IotHubs"".
@@ -21590,7 +22830,7 @@ class VaRule(_serialization.Model):
         description: Optional[str] = None,
         rationale: Optional[str] = None,
         query_check: Optional["_models.QueryCheck"] = None,
-        benchmark_references: Optional[List["_models.BenchmarkReference"]] = None,
+        benchmark_references: Optional[list["_models.BenchmarkReference"]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -21673,7 +22913,7 @@ class VmScannersBaseConfiguration(_serialization.Model):
         self,
         *,
         scanning_mode: Optional[Union[str, "_models.ScanningMode"]] = None,
-        exclusion_tags: Optional[Dict[str, str]] = None,
+        exclusion_tags: Optional[dict[str, str]] = None,
         **kwargs: Any
     ) -> None:
         """
@@ -21755,7 +22995,7 @@ class WorkspaceSettingList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(self, *, value: List["_models.WorkspaceSetting"], **kwargs: Any) -> None:
+    def __init__(self, *, value: list["_models.WorkspaceSetting"], **kwargs: Any) -> None:
         """
         :keyword value: List of workspace settings. Required.
         :paramtype value: list[~azure.mgmt.security.models.WorkspaceSetting]

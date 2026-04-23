@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/preview/2025-02-01-preview/examples/DefenderForStorage/GetDefenderForStorageSettings_example.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/Security/preview/2025-09-01-preview/examples/DefenderForStorage/GetDefenderForStorageSettings_example.json
 if __name__ == "__main__":
     main()

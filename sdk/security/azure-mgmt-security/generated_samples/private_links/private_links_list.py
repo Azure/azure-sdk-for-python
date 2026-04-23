@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/preview/2025-09-01-preview/examples/PrivateLinks/PrivateLinks_List.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/Security/stable/2026-01-01/examples/PrivateLinks/PrivateLinks_List.json
 if __name__ == "__main__":
     main()

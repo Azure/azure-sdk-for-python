@@ -37,6 +37,6 @@ def main():
     )
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/preview/2025-05-04-preview/examples/Assessments/DeleteAssessment_example.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/Security/stable/2025-05-04/examples/Assessments/DeleteAssessment_example.json
 if __name__ == "__main__":
     main()

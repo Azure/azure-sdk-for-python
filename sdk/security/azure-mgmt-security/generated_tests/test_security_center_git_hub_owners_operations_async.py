@@ -25,7 +25,7 @@ class TestSecurityCenterGitHubOwnersOperationsAsync(AzureMgmtRecordedTestCase):
         response = await self.client.git_hub_owners.list_available(
             resource_group_name=resource_group.name,
             security_connector_name="str",
-            api_version="2025-03-01",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -37,7 +37,7 @@ class TestSecurityCenterGitHubOwnersOperationsAsync(AzureMgmtRecordedTestCase):
         response = self.client.git_hub_owners.list(
             resource_group_name=resource_group.name,
             security_connector_name="str",
-            api_version="2025-03-01",
+            api_version="2025-11-01-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -50,7 +50,7 @@ class TestSecurityCenterGitHubOwnersOperationsAsync(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             security_connector_name="str",
             owner_name="str",
-            api_version="2025-03-01",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself

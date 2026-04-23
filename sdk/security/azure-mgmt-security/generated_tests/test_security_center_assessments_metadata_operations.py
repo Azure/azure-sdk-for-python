@@ -22,7 +22,7 @@ class TestSecurityCenterAssessmentsMetadataOperations(AzureMgmtRecordedTestCase)
     @recorded_by_proxy
     def test_assessments_metadata_list(self, resource_group):
         response = self.client.assessments_metadata.list(
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestSecurityCenterAssessmentsMetadataOperations(AzureMgmtRecordedTestCase)
     def test_assessments_metadata_get(self, resource_group):
         response = self.client.assessments_metadata.get(
             assessment_metadata_name="str",
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
 
         # please add some check logic here by yourself
@@ -43,7 +43,7 @@ class TestSecurityCenterAssessmentsMetadataOperations(AzureMgmtRecordedTestCase)
     @recorded_by_proxy
     def test_assessments_metadata_list_by_subscription(self, resource_group):
         response = self.client.assessments_metadata.list_by_subscription(
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -54,7 +54,7 @@ class TestSecurityCenterAssessmentsMetadataOperations(AzureMgmtRecordedTestCase)
     def test_assessments_metadata_get_in_subscription(self, resource_group):
         response = self.client.assessments_metadata.get_in_subscription(
             assessment_metadata_name="str",
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestSecurityCenterAssessmentsMetadataOperations(AzureMgmtRecordedTestCase)
                 "type": "str",
                 "userImpact": "str",
             },
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
 
         # please add some check logic here by yourself
@@ -97,7 +97,7 @@ class TestSecurityCenterAssessmentsMetadataOperations(AzureMgmtRecordedTestCase)
     def test_assessments_metadata_delete_in_subscription(self, resource_group):
         response = self.client.assessments_metadata.delete_in_subscription(
             assessment_metadata_name="str",
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
 
         # please add some check logic here by yourself

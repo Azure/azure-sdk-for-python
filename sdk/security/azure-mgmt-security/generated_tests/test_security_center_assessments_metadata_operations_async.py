@@ -23,7 +23,7 @@ class TestSecurityCenterAssessmentsMetadataOperationsAsync(AzureMgmtRecordedTest
     @recorded_by_proxy_async
     async def test_assessments_metadata_list(self, resource_group):
         response = self.client.assessments_metadata.list(
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -34,7 +34,7 @@ class TestSecurityCenterAssessmentsMetadataOperationsAsync(AzureMgmtRecordedTest
     async def test_assessments_metadata_get(self, resource_group):
         response = await self.client.assessments_metadata.get(
             assessment_metadata_name="str",
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
 
         # please add some check logic here by yourself
@@ -44,7 +44,7 @@ class TestSecurityCenterAssessmentsMetadataOperationsAsync(AzureMgmtRecordedTest
     @recorded_by_proxy_async
     async def test_assessments_metadata_list_by_subscription(self, resource_group):
         response = self.client.assessments_metadata.list_by_subscription(
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -55,7 +55,7 @@ class TestSecurityCenterAssessmentsMetadataOperationsAsync(AzureMgmtRecordedTest
     async def test_assessments_metadata_get_in_subscription(self, resource_group):
         response = await self.client.assessments_metadata.get_in_subscription(
             assessment_metadata_name="str",
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
 
         # please add some check logic here by yourself
@@ -87,7 +87,7 @@ class TestSecurityCenterAssessmentsMetadataOperationsAsync(AzureMgmtRecordedTest
                 "type": "str",
                 "userImpact": "str",
             },
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
 
         # please add some check logic here by yourself
@@ -98,7 +98,7 @@ class TestSecurityCenterAssessmentsMetadataOperationsAsync(AzureMgmtRecordedTest
     async def test_assessments_metadata_delete_in_subscription(self, resource_group):
         response = await self.client.assessments_metadata.delete_in_subscription(
             assessment_metadata_name="str",
-            api_version="2025-05-04-preview",
+            api_version="2025-05-04",
         )
 
         # please add some check logic here by yourself

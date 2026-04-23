@@ -26,7 +26,7 @@ class TestSecurityCenterAzureDevOpsReposOperations(AzureMgmtRecordedTestCase):
             security_connector_name="str",
             org_name="str",
             project_name="str",
-            api_version="2025-03-01",
+            api_version="2025-11-01-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -41,7 +41,7 @@ class TestSecurityCenterAzureDevOpsReposOperations(AzureMgmtRecordedTestCase):
             org_name="str",
             project_name="str",
             repo_name="str",
-            api_version="2025-03-01",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +86,7 @@ class TestSecurityCenterAzureDevOpsReposOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2025-03-01",
+            api_version="2025-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -131,7 +131,7 @@ class TestSecurityCenterAzureDevOpsReposOperations(AzureMgmtRecordedTestCase):
                 },
                 "type": "str",
             },
-            api_version="2025-03-01",
+            api_version="2025-11-01-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

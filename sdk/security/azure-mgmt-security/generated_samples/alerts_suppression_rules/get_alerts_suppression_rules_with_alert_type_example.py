@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/preview/2019-01-01-preview/examples/AlertsSuppressionRules/GetAlertsSuppressionRulesWithAlertType_example.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/Security/preview/2019-01-01-preview/examples/AlertsSuppressionRules/GetAlertsSuppressionRulesWithAlertType_example.json
 if __name__ == "__main__":
     main()

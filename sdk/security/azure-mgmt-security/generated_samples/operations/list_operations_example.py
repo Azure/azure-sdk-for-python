@@ -36,6 +36,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/preview/2025-05-04-preview/examples/Operations/ListOperations_example.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/Security/preview/2025-10-01-preview/examples/Operations/ListOperations_example.json
 if __name__ == "__main__":
     main()

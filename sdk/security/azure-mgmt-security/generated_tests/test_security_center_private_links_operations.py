@@ -22,7 +22,7 @@ class TestSecurityCenterPrivateLinksOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_private_links_list_by_subscription(self, resource_group):
         response = self.client.private_links.list_by_subscription(
-            api_version="2025-09-01-preview",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -33,7 +33,7 @@ class TestSecurityCenterPrivateLinksOperations(AzureMgmtRecordedTestCase):
     def test_private_links_list(self, resource_group):
         response = self.client.private_links.list(
             resource_group_name=resource_group.name,
-            api_version="2025-09-01-preview",
+            api_version="2026-01-01",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -45,7 +45,7 @@ class TestSecurityCenterPrivateLinksOperations(AzureMgmtRecordedTestCase):
         response = self.client.private_links.get(
             resource_group_name=resource_group.name,
             private_link_parameters={"privateLinkName": "str"},
-            api_version="2025-09-01-preview",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestSecurityCenterPrivateLinksOperations(AzureMgmtRecordedTestCase):
         response = self.client.private_links.head(
             resource_group_name=resource_group.name,
             private_link_parameters={"privateLinkName": "str"},
-            api_version="2025-09-01-preview",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -115,6 +115,7 @@ class TestSecurityCenterPrivateLinksOperations(AzureMgmtRecordedTestCase):
                     }
                 ],
                 "provisioningState": "str",
+                "publicNetworkAccess": "Disabled",
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
                     "createdBy": "str",
@@ -126,7 +127,7 @@ class TestSecurityCenterPrivateLinksOperations(AzureMgmtRecordedTestCase):
                 "tags": {"str": "str"},
                 "type": "str",
             },
-            api_version="2025-09-01-preview",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -139,7 +140,7 @@ class TestSecurityCenterPrivateLinksOperations(AzureMgmtRecordedTestCase):
             resource_group_name=resource_group.name,
             private_link_parameters={"privateLinkName": "str"},
             private_link={"tags": {"str": "str"}},
-            api_version="2025-09-01-preview",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -151,7 +152,7 @@ class TestSecurityCenterPrivateLinksOperations(AzureMgmtRecordedTestCase):
         response = self.client.private_links.begin_delete(
             resource_group_name=resource_group.name,
             private_link_parameters={"privateLinkName": "str"},
-            api_version="2025-09-01-preview",
+            api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself

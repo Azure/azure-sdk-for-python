@@ -38,8 +38,10 @@ def main():
             "properties": {
                 "isEnabled": True,
                 "malwareScanning": {
+                    "automatedResponse": "BlobSoftDelete",
+                    "blobScanResultsOptions": "BlobIndexTags",
                     "onUpload": {
-                        "capGBPerMonth": -1,
+                        "capGBPerMonth": 10000,
                         "filters": {
                             "excludeBlobsLargerThan": 1024,
                             "excludeBlobsWithPrefix": ["unscanned-container", "sample-container/logs"],
@@ -57,6 +59,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/preview/2025-02-01-preview/examples/DefenderForStorage/PutDefenderForStorageSettings_example.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/Security/preview/2025-09-01-preview/examples/DefenderForStorage/PutDefenderForStorageSettings_example.json
 if __name__ == "__main__":
     main()

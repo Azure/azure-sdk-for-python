@@ -24,10 +24,6 @@ from ._regulatory_compliance_standards_operations import RegulatoryComplianceSta
 from ._regulatory_compliance_controls_operations import RegulatoryComplianceControlsOperations  # type: ignore
 from ._regulatory_compliance_assessments_operations import RegulatoryComplianceAssessmentsOperations  # type: ignore
 from ._sub_assessments_operations import SubAssessmentsOperations  # type: ignore
-from ._connectors_operations import ConnectorsOperations  # type: ignore
-from ._software_inventories_operations import SoftwareInventoriesOperations  # type: ignore
-from ._custom_assessment_automations_operations import CustomAssessmentAutomationsOperations  # type: ignore
-from ._custom_entity_store_assignments_operations import CustomEntityStoreAssignmentsOperations  # type: ignore
 from ._mde_onboardings_operations import MdeOnboardingsOperations  # type: ignore
 from ._governance_assignments_operations import GovernanceAssignmentsOperations  # type: ignore
 from ._governance_rules_operations import GovernanceRulesOperations  # type: ignore
@@ -39,18 +35,27 @@ from ._security_operators_operations import SecurityOperatorsOperations  # type:
 from ._sql_vulnerability_assessment_baseline_rules_operations import SqlVulnerabilityAssessmentBaselineRulesOperations  # type: ignore
 from ._sql_vulnerability_assessment_scans_operations import SqlVulnerabilityAssessmentScansOperations  # type: ignore
 from ._sql_vulnerability_assessment_scan_results_operations import SqlVulnerabilityAssessmentScanResultsOperations  # type: ignore
+from ._sql_vulnerability_assessment_settings_operations import SqlVulnerabilityAssessmentSettingsOperations  # type: ignore
 from ._sensitivity_settings_operations import SensitivitySettingsOperations  # type: ignore
 from ._health_reports_operations import HealthReportsOperations  # type: ignore
 from ._automations_operations import AutomationsOperations  # type: ignore
-from ._security_contacts_operations import SecurityContactsOperations  # type: ignore
 from ._security_connectors_operations import SecurityConnectorsOperations  # type: ignore
-from ._defender_for_storage_operations import DefenderForStorageOperations  # type: ignore
+from ._azure_dev_ops_orgs_operations import AzureDevOpsOrgsOperations  # type: ignore
+from ._azure_dev_ops_projects_operations import AzureDevOpsProjectsOperations  # type: ignore
+from ._azure_dev_ops_repos_operations import AzureDevOpsReposOperations  # type: ignore
+from ._dev_ops_configurations_operations import DevOpsConfigurationsOperations  # type: ignore
+from ._git_hub_owners_operations import GitHubOwnersOperations  # type: ignore
+from ._git_hub_repos_operations import GitHubReposOperations  # type: ignore
+from ._git_hub_issues_operations import GitHubIssuesOperations  # type: ignore
+from ._git_lab_groups_operations import GitLabGroupsOperations  # type: ignore
+from ._git_lab_subgroups_operations import GitLabSubgroupsOperations  # type: ignore
+from ._git_lab_projects_operations import GitLabProjectsOperations  # type: ignore
+from ._dev_ops_operation_results_operations import DevOpsOperationResultsOperations  # type: ignore
 from ._operations import Operations  # type: ignore
+from ._operation_results_operations import OperationResultsOperations  # type: ignore
+from ._operation_statuses_operations import OperationStatusesOperations  # type: ignore
 from ._assessments_metadata_operations import AssessmentsMetadataOperations  # type: ignore
 from ._assessments_operations import AssessmentsOperations  # type: ignore
-from ._private_links_operations import PrivateLinksOperations  # type: ignore
-from ._private_link_resources_operations import PrivateLinkResourcesOperations  # type: ignore
-from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations  # type: ignore
 from ._compliance_results_operations import ComplianceResultsOperations  # type: ignore
 from ._advanced_threat_protection_operations import AdvancedThreatProtectionOperations  # type: ignore
 from ._device_security_groups_operations import DeviceSecurityGroupsOperations  # type: ignore
@@ -62,9 +67,6 @@ from ._allowed_connections_operations import AllowedConnectionsOperations  # typ
 from ._discovered_security_solutions_operations import DiscoveredSecuritySolutionsOperations  # type: ignore
 from ._external_security_solutions_operations import ExternalSecuritySolutionsOperations  # type: ignore
 from ._jit_network_access_policies_operations import JitNetworkAccessPoliciesOperations  # type: ignore
-from ._secure_scores_operations import SecureScoresOperations  # type: ignore
-from ._secure_score_controls_operations import SecureScoreControlsOperations  # type: ignore
-from ._secure_score_control_definitions_operations import SecureScoreControlDefinitionsOperations  # type: ignore
 from ._security_solutions_operations import SecuritySolutionsOperations  # type: ignore
 from ._security_solutions_reference_data_operations import SecuritySolutionsReferenceDataOperations  # type: ignore
 from ._server_vulnerability_assessment_operations import ServerVulnerabilityAssessmentOperations  # type: ignore
@@ -77,16 +79,15 @@ from ._pricings_operations import PricingsOperations  # type: ignore
 from ._security_standards_operations import SecurityStandardsOperations  # type: ignore
 from ._standard_assignments_operations import StandardAssignmentsOperations  # type: ignore
 from ._custom_recommendations_operations import CustomRecommendationsOperations  # type: ignore
-from ._azure_dev_ops_orgs_operations import AzureDevOpsOrgsOperations  # type: ignore
-from ._azure_dev_ops_projects_operations import AzureDevOpsProjectsOperations  # type: ignore
-from ._azure_dev_ops_repos_operations import AzureDevOpsReposOperations  # type: ignore
-from ._dev_ops_configurations_operations import DevOpsConfigurationsOperations  # type: ignore
-from ._git_hub_owners_operations import GitHubOwnersOperations  # type: ignore
-from ._git_hub_repos_operations import GitHubReposOperations  # type: ignore
-from ._git_lab_groups_operations import GitLabGroupsOperations  # type: ignore
-from ._git_lab_subgroups_operations import GitLabSubgroupsOperations  # type: ignore
-from ._git_lab_projects_operations import GitLabProjectsOperations  # type: ignore
-from ._dev_ops_operation_results_operations import DevOpsOperationResultsOperations  # type: ignore
+from ._standards_operations import StandardsOperations  # type: ignore
+from ._assignments_operations import AssignmentsOperations  # type: ignore
+from ._defender_for_storage_operations import DefenderForStorageOperations  # type: ignore
+from ._private_links_operations import PrivateLinksOperations  # type: ignore
+from ._private_link_resources_operations import PrivateLinkResourcesOperations  # type: ignore
+from ._private_endpoint_connections_operations import PrivateEndpointConnectionsOperations  # type: ignore
+from ._secure_scores_operations import SecureScoresOperations  # type: ignore
+from ._secure_score_controls_operations import SecureScoreControlsOperations  # type: ignore
+from ._secure_score_control_definitions_operations import SecureScoreControlDefinitionsOperations  # type: ignore
 
 from ._patch import __all__ as _patch_all
 from ._patch import *
@@ -104,10 +105,6 @@ __all__ = [
     "RegulatoryComplianceControlsOperations",
     "RegulatoryComplianceAssessmentsOperations",
     "SubAssessmentsOperations",
-    "ConnectorsOperations",
-    "SoftwareInventoriesOperations",
-    "CustomAssessmentAutomationsOperations",
-    "CustomEntityStoreAssignmentsOperations",
     "MdeOnboardingsOperations",
     "GovernanceAssignmentsOperations",
     "GovernanceRulesOperations",
@@ -119,18 +116,27 @@ __all__ = [
     "SqlVulnerabilityAssessmentBaselineRulesOperations",
     "SqlVulnerabilityAssessmentScansOperations",
     "SqlVulnerabilityAssessmentScanResultsOperations",
+    "SqlVulnerabilityAssessmentSettingsOperations",
     "SensitivitySettingsOperations",
     "HealthReportsOperations",
     "AutomationsOperations",
-    "SecurityContactsOperations",
     "SecurityConnectorsOperations",
-    "DefenderForStorageOperations",
+    "AzureDevOpsOrgsOperations",
+    "AzureDevOpsProjectsOperations",
+    "AzureDevOpsReposOperations",
+    "DevOpsConfigurationsOperations",
+    "GitHubOwnersOperations",
+    "GitHubReposOperations",
+    "GitHubIssuesOperations",
+    "GitLabGroupsOperations",
+    "GitLabSubgroupsOperations",
+    "GitLabProjectsOperations",
+    "DevOpsOperationResultsOperations",
     "Operations",
+    "OperationResultsOperations",
+    "OperationStatusesOperations",
     "AssessmentsMetadataOperations",
     "AssessmentsOperations",
-    "PrivateLinksOperations",
-    "PrivateLinkResourcesOperations",
-    "PrivateEndpointConnectionsOperations",
     "ComplianceResultsOperations",
     "AdvancedThreatProtectionOperations",
     "DeviceSecurityGroupsOperations",
@@ -142,9 +148,6 @@ __all__ = [
     "DiscoveredSecuritySolutionsOperations",
     "ExternalSecuritySolutionsOperations",
     "JitNetworkAccessPoliciesOperations",
-    "SecureScoresOperations",
-    "SecureScoreControlsOperations",
-    "SecureScoreControlDefinitionsOperations",
     "SecuritySolutionsOperations",
     "SecuritySolutionsReferenceDataOperations",
     "ServerVulnerabilityAssessmentOperations",
@@ -157,16 +160,15 @@ __all__ = [
     "SecurityStandardsOperations",
     "StandardAssignmentsOperations",
     "CustomRecommendationsOperations",
-    "AzureDevOpsOrgsOperations",
-    "AzureDevOpsProjectsOperations",
-    "AzureDevOpsReposOperations",
-    "DevOpsConfigurationsOperations",
-    "GitHubOwnersOperations",
-    "GitHubReposOperations",
-    "GitLabGroupsOperations",
-    "GitLabSubgroupsOperations",
-    "GitLabProjectsOperations",
-    "DevOpsOperationResultsOperations",
+    "StandardsOperations",
+    "AssignmentsOperations",
+    "DefenderForStorageOperations",
+    "PrivateLinksOperations",
+    "PrivateLinkResourcesOperations",
+    "PrivateEndpointConnectionsOperations",
+    "SecureScoresOperations",
+    "SecureScoreControlsOperations",
+    "SecureScoreControlDefinitionsOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])  # pyright: ignore
 _patch_sdk()

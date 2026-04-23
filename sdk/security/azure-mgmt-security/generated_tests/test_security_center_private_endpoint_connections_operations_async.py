@@ -25,7 +25,7 @@ class TestSecurityCenterPrivateEndpointConnectionsOperationsAsync(AzureMgmtRecor
         response = self.client.private_endpoint_connections.list(
             resource_group_name=resource_group.name,
             private_link_parameters={"privateLinkName": "str"},
-            api_version="2025-09-01-preview",
+            api_version="2026-01-01",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestSecurityCenterPrivateEndpointConnectionsOperationsAsync(AzureMgmtRecor
             resource_group_name=resource_group.name,
             private_endpoint_connection_name="str",
             private_link_parameters={"privateLinkName": "str"},
-            api_version="2025-09-01-preview",
+            api_version="2026-01-01",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +73,7 @@ class TestSecurityCenterPrivateEndpointConnectionsOperationsAsync(AzureMgmtRecor
                     },
                     "type": "str",
                 },
-                api_version="2025-09-01-preview",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 
@@ -88,7 +88,7 @@ class TestSecurityCenterPrivateEndpointConnectionsOperationsAsync(AzureMgmtRecor
                 resource_group_name=resource_group.name,
                 private_endpoint_connection_name="str",
                 private_link_parameters={"privateLinkName": "str"},
-                api_version="2025-09-01-preview",
+                api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result
 

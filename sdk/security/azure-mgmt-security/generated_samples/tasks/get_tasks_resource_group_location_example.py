@@ -39,6 +39,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/preview/2015-06-01-preview/examples/Tasks/GetTasksResourceGroupLocation_example.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/Security/preview/2015-06-01-preview/examples/Tasks/GetTasksResourceGroupLocation_example.json
 if __name__ == "__main__":
     main()

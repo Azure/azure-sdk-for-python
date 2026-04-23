@@ -37,6 +37,6 @@ def main():
     ).result()
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/preview/2022-01-01-preview/examples/GovernanceRules/DeleteManagementGroupGovernanceRule_example.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/Security/preview/2022-01-01-preview/examples/GovernanceRules/DeleteManagementGroupGovernanceRule_example.json
 if __name__ == "__main__":
     main()

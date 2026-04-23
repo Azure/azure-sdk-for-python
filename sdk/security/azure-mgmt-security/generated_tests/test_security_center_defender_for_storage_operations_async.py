@@ -21,11 +21,22 @@ class TestSecurityCenterDefenderForStorageOperationsAsync(AzureMgmtRecordedTestC
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
+    async def test_defender_for_storage_list(self, resource_group):
+        response = self.client.defender_for_storage.list(
+            resource_id="str",
+            api_version="2025-09-01-preview",
+        )
+        result = [r async for r in response]
+        # please add some check logic here by yourself
+        # ...
+
+    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
+    @recorded_by_proxy_async
     async def test_defender_for_storage_get(self, resource_group):
         response = await self.client.defender_for_storage.get(
             resource_id="str",
             setting_name="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -43,7 +54,8 @@ class TestSecurityCenterDefenderForStorageOperationsAsync(AzureMgmtRecordedTestC
                 "properties": {
                     "isEnabled": bool,
                     "malwareScanning": {
-                        "blobScanResultsOptions": "str",
+                        "automatedResponse": "None",
+                        "blobScanResultsOptions": "BlobIndexTags",
                         "onUpload": {
                             "capGBPerMonth": 0,
                             "filters": {
@@ -61,7 +73,7 @@ class TestSecurityCenterDefenderForStorageOperationsAsync(AzureMgmtRecordedTestC
                 },
                 "type": "str",
             },
-            api_version="2025-02-01-preview",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -73,7 +85,7 @@ class TestSecurityCenterDefenderForStorageOperationsAsync(AzureMgmtRecordedTestC
         response = await self.client.defender_for_storage.start_malware_scan(
             resource_id="str",
             setting_name="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -86,7 +98,7 @@ class TestSecurityCenterDefenderForStorageOperationsAsync(AzureMgmtRecordedTestC
             resource_id="str",
             setting_name="str",
             scan_id="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself
@@ -99,7 +111,7 @@ class TestSecurityCenterDefenderForStorageOperationsAsync(AzureMgmtRecordedTestC
             resource_id="str",
             setting_name="str",
             scan_id="str",
-            api_version="2025-02-01-preview",
+            api_version="2025-09-01-preview",
         )
 
         # please add some check logic here by yourself

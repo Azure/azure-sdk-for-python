@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/stable/2022-05-01/examples/Settings/UpdateSetting_example.json
+# x-ms-original-file: specification/security/resource-manager/Microsoft.Security/Security/stable/2022-05-01/examples/Settings/UpdateSetting_example.json
 if __name__ == "__main__":
     main()

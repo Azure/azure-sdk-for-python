@@ -30,6 +30,7 @@ from .operations import (
     ApplicationsOperations,
     AssessmentsMetadataOperations,
     AssessmentsOperations,
+    AssignmentsOperations,
     AutoProvisioningSettingsOperations,
     AutomationsOperations,
     AzureDevOpsOrgsOperations,
@@ -37,9 +38,6 @@ from .operations import (
     AzureDevOpsReposOperations,
     ComplianceResultsOperations,
     CompliancesOperations,
-    ConnectorsOperations,
-    CustomAssessmentAutomationsOperations,
-    CustomEntityStoreAssignmentsOperations,
     CustomRecommendationsOperations,
     DefenderForStorageOperations,
     DevOpsConfigurationsOperations,
@@ -47,6 +45,7 @@ from .operations import (
     DeviceSecurityGroupsOperations,
     DiscoveredSecuritySolutionsOperations,
     ExternalSecuritySolutionsOperations,
+    GitHubIssuesOperations,
     GitHubOwnersOperations,
     GitHubReposOperations,
     GitLabGroupsOperations,
@@ -63,6 +62,8 @@ from .operations import (
     JitNetworkAccessPoliciesOperations,
     LocationsOperations,
     MdeOnboardingsOperations,
+    OperationResultsOperations,
+    OperationStatusesOperations,
     Operations,
     PricingsOperations,
     PrivateEndpointConnectionsOperations,
@@ -77,7 +78,6 @@ from .operations import (
     SecurityConnectorApplicationOperations,
     SecurityConnectorApplicationsOperations,
     SecurityConnectorsOperations,
-    SecurityContactsOperations,
     SecurityOperatorsOperations,
     SecuritySolutionsOperations,
     SecuritySolutionsReferenceDataOperations,
@@ -86,11 +86,12 @@ from .operations import (
     ServerVulnerabilityAssessmentOperations,
     ServerVulnerabilityAssessmentsSettingsOperations,
     SettingsOperations,
-    SoftwareInventoriesOperations,
     SqlVulnerabilityAssessmentBaselineRulesOperations,
     SqlVulnerabilityAssessmentScanResultsOperations,
     SqlVulnerabilityAssessmentScansOperations,
+    SqlVulnerabilityAssessmentSettingsOperations,
     StandardAssignmentsOperations,
+    StandardsOperations,
     SubAssessmentsOperations,
     TasksOperations,
     TopologyOperations,
@@ -98,6 +99,7 @@ from .operations import (
 )
 
 if TYPE_CHECKING:
+    from azure.core import AzureClouds
     from azure.core.credentials import TokenCredential
 
 
@@ -132,16 +134,6 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-
      azure.mgmt.security.operations.RegulatoryComplianceAssessmentsOperations
     :ivar sub_assessments: SubAssessmentsOperations operations
     :vartype sub_assessments: azure.mgmt.security.operations.SubAssessmentsOperations
-    :ivar connectors: ConnectorsOperations operations
-    :vartype connectors: azure.mgmt.security.operations.ConnectorsOperations
-    :ivar software_inventories: SoftwareInventoriesOperations operations
-    :vartype software_inventories: azure.mgmt.security.operations.SoftwareInventoriesOperations
-    :ivar custom_assessment_automations: CustomAssessmentAutomationsOperations operations
-    :vartype custom_assessment_automations:
-     azure.mgmt.security.operations.CustomAssessmentAutomationsOperations
-    :ivar custom_entity_store_assignments: CustomEntityStoreAssignmentsOperations operations
-    :vartype custom_entity_store_assignments:
-     azure.mgmt.security.operations.CustomEntityStoreAssignmentsOperations
     :ivar mde_onboardings: MdeOnboardingsOperations operations
     :vartype mde_onboardings: azure.mgmt.security.operations.MdeOnboardingsOperations
     :ivar governance_assignments: GovernanceAssignmentsOperations operations
@@ -171,31 +163,51 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-
      SqlVulnerabilityAssessmentScanResultsOperations operations
     :vartype sql_vulnerability_assessment_scan_results:
      azure.mgmt.security.operations.SqlVulnerabilityAssessmentScanResultsOperations
+    :ivar sql_vulnerability_assessment_settings: SqlVulnerabilityAssessmentSettingsOperations
+     operations
+    :vartype sql_vulnerability_assessment_settings:
+     azure.mgmt.security.operations.SqlVulnerabilityAssessmentSettingsOperations
     :ivar sensitivity_settings: SensitivitySettingsOperations operations
     :vartype sensitivity_settings: azure.mgmt.security.operations.SensitivitySettingsOperations
     :ivar health_reports: HealthReportsOperations operations
     :vartype health_reports: azure.mgmt.security.operations.HealthReportsOperations
     :ivar automations: AutomationsOperations operations
     :vartype automations: azure.mgmt.security.operations.AutomationsOperations
-    :ivar security_contacts: SecurityContactsOperations operations
-    :vartype security_contacts: azure.mgmt.security.operations.SecurityContactsOperations
     :ivar security_connectors: SecurityConnectorsOperations operations
     :vartype security_connectors: azure.mgmt.security.operations.SecurityConnectorsOperations
-    :ivar defender_for_storage: DefenderForStorageOperations operations
-    :vartype defender_for_storage: azure.mgmt.security.operations.DefenderForStorageOperations
+    :ivar azure_dev_ops_orgs: AzureDevOpsOrgsOperations operations
+    :vartype azure_dev_ops_orgs: azure.mgmt.security.operations.AzureDevOpsOrgsOperations
+    :ivar azure_dev_ops_projects: AzureDevOpsProjectsOperations operations
+    :vartype azure_dev_ops_projects: azure.mgmt.security.operations.AzureDevOpsProjectsOperations
+    :ivar azure_dev_ops_repos: AzureDevOpsReposOperations operations
+    :vartype azure_dev_ops_repos: azure.mgmt.security.operations.AzureDevOpsReposOperations
+    :ivar dev_ops_configurations: DevOpsConfigurationsOperations operations
+    :vartype dev_ops_configurations: azure.mgmt.security.operations.DevOpsConfigurationsOperations
+    :ivar git_hub_owners: GitHubOwnersOperations operations
+    :vartype git_hub_owners: azure.mgmt.security.operations.GitHubOwnersOperations
+    :ivar git_hub_repos: GitHubReposOperations operations
+    :vartype git_hub_repos: azure.mgmt.security.operations.GitHubReposOperations
+    :ivar git_hub_issues: GitHubIssuesOperations operations
+    :vartype git_hub_issues: azure.mgmt.security.operations.GitHubIssuesOperations
+    :ivar git_lab_groups: GitLabGroupsOperations operations
+    :vartype git_lab_groups: azure.mgmt.security.operations.GitLabGroupsOperations
+    :ivar git_lab_subgroups: GitLabSubgroupsOperations operations
+    :vartype git_lab_subgroups: azure.mgmt.security.operations.GitLabSubgroupsOperations
+    :ivar git_lab_projects: GitLabProjectsOperations operations
+    :vartype git_lab_projects: azure.mgmt.security.operations.GitLabProjectsOperations
+    :ivar dev_ops_operation_results: DevOpsOperationResultsOperations operations
+    :vartype dev_ops_operation_results:
+     azure.mgmt.security.operations.DevOpsOperationResultsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.security.operations.Operations
+    :ivar operation_results: OperationResultsOperations operations
+    :vartype operation_results: azure.mgmt.security.operations.OperationResultsOperations
+    :ivar operation_statuses: OperationStatusesOperations operations
+    :vartype operation_statuses: azure.mgmt.security.operations.OperationStatusesOperations
     :ivar assessments_metadata: AssessmentsMetadataOperations operations
     :vartype assessments_metadata: azure.mgmt.security.operations.AssessmentsMetadataOperations
     :ivar assessments: AssessmentsOperations operations
     :vartype assessments: azure.mgmt.security.operations.AssessmentsOperations
-    :ivar private_links: PrivateLinksOperations operations
-    :vartype private_links: azure.mgmt.security.operations.PrivateLinksOperations
-    :ivar private_link_resources: PrivateLinkResourcesOperations operations
-    :vartype private_link_resources: azure.mgmt.security.operations.PrivateLinkResourcesOperations
-    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
-    :vartype private_endpoint_connections:
-     azure.mgmt.security.operations.PrivateEndpointConnectionsOperations
     :ivar compliance_results: ComplianceResultsOperations operations
     :vartype compliance_results: azure.mgmt.security.operations.ComplianceResultsOperations
     :ivar advanced_threat_protection: AdvancedThreatProtectionOperations operations
@@ -227,13 +239,6 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-
     :ivar jit_network_access_policies: JitNetworkAccessPoliciesOperations operations
     :vartype jit_network_access_policies:
      azure.mgmt.security.operations.JitNetworkAccessPoliciesOperations
-    :ivar secure_scores: SecureScoresOperations operations
-    :vartype secure_scores: azure.mgmt.security.operations.SecureScoresOperations
-    :ivar secure_score_controls: SecureScoreControlsOperations operations
-    :vartype secure_score_controls: azure.mgmt.security.operations.SecureScoreControlsOperations
-    :ivar secure_score_control_definitions: SecureScoreControlDefinitionsOperations operations
-    :vartype secure_score_control_definitions:
-     azure.mgmt.security.operations.SecureScoreControlDefinitionsOperations
     :ivar security_solutions: SecuritySolutionsOperations operations
     :vartype security_solutions: azure.mgmt.security.operations.SecuritySolutionsOperations
     :ivar security_solutions_reference_data: SecuritySolutionsReferenceDataOperations operations
@@ -262,47 +267,59 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-
     :vartype standard_assignments: azure.mgmt.security.operations.StandardAssignmentsOperations
     :ivar custom_recommendations: CustomRecommendationsOperations operations
     :vartype custom_recommendations: azure.mgmt.security.operations.CustomRecommendationsOperations
-    :ivar azure_dev_ops_orgs: AzureDevOpsOrgsOperations operations
-    :vartype azure_dev_ops_orgs: azure.mgmt.security.operations.AzureDevOpsOrgsOperations
-    :ivar azure_dev_ops_projects: AzureDevOpsProjectsOperations operations
-    :vartype azure_dev_ops_projects: azure.mgmt.security.operations.AzureDevOpsProjectsOperations
-    :ivar azure_dev_ops_repos: AzureDevOpsReposOperations operations
-    :vartype azure_dev_ops_repos: azure.mgmt.security.operations.AzureDevOpsReposOperations
-    :ivar dev_ops_configurations: DevOpsConfigurationsOperations operations
-    :vartype dev_ops_configurations: azure.mgmt.security.operations.DevOpsConfigurationsOperations
-    :ivar git_hub_owners: GitHubOwnersOperations operations
-    :vartype git_hub_owners: azure.mgmt.security.operations.GitHubOwnersOperations
-    :ivar git_hub_repos: GitHubReposOperations operations
-    :vartype git_hub_repos: azure.mgmt.security.operations.GitHubReposOperations
-    :ivar git_lab_groups: GitLabGroupsOperations operations
-    :vartype git_lab_groups: azure.mgmt.security.operations.GitLabGroupsOperations
-    :ivar git_lab_subgroups: GitLabSubgroupsOperations operations
-    :vartype git_lab_subgroups: azure.mgmt.security.operations.GitLabSubgroupsOperations
-    :ivar git_lab_projects: GitLabProjectsOperations operations
-    :vartype git_lab_projects: azure.mgmt.security.operations.GitLabProjectsOperations
-    :ivar dev_ops_operation_results: DevOpsOperationResultsOperations operations
-    :vartype dev_ops_operation_results:
-     azure.mgmt.security.operations.DevOpsOperationResultsOperations
+    :ivar standards: StandardsOperations operations
+    :vartype standards: azure.mgmt.security.operations.StandardsOperations
+    :ivar assignments: AssignmentsOperations operations
+    :vartype assignments: azure.mgmt.security.operations.AssignmentsOperations
+    :ivar defender_for_storage: DefenderForStorageOperations operations
+    :vartype defender_for_storage: azure.mgmt.security.operations.DefenderForStorageOperations
+    :ivar private_links: PrivateLinksOperations operations
+    :vartype private_links: azure.mgmt.security.operations.PrivateLinksOperations
+    :ivar private_link_resources: PrivateLinkResourcesOperations operations
+    :vartype private_link_resources: azure.mgmt.security.operations.PrivateLinkResourcesOperations
+    :ivar private_endpoint_connections: PrivateEndpointConnectionsOperations operations
+    :vartype private_endpoint_connections:
+     azure.mgmt.security.operations.PrivateEndpointConnectionsOperations
+    :ivar secure_scores: SecureScoresOperations operations
+    :vartype secure_scores: azure.mgmt.security.operations.SecureScoresOperations
+    :ivar secure_score_controls: SecureScoreControlsOperations operations
+    :vartype secure_score_controls: azure.mgmt.security.operations.SecureScoreControlsOperations
+    :ivar secure_score_control_definitions: SecureScoreControlDefinitionsOperations operations
+    :vartype secure_score_control_definitions:
+     azure.mgmt.security.operations.SecureScoreControlDefinitionsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Azure subscription ID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is None.
     :type base_url: str
+    :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
+     None.
+    :paramtype cloud_setting: ~azure.core.AzureClouds
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(
-        self, credential: "TokenCredential", subscription_id: str, base_url: Optional[str] = None, **kwargs: Any
+        self,
+        credential: "TokenCredential",
+        subscription_id: str,
+        base_url: Optional[str] = None,
+        *,
+        cloud_setting: Optional["AzureClouds"] = None,
+        **kwargs: Any
     ) -> None:
-        _cloud = kwargs.pop("cloud_setting", None) or settings.current.azure_cloud  # type: ignore
+        _cloud = cloud_setting or settings.current.azure_cloud  # type: ignore
         _endpoints = get_arm_endpoints(_cloud)
         if not base_url:
             base_url = _endpoints["resource_manager"]
         credential_scopes = kwargs.pop("credential_scopes", _endpoints["credential_scopes"])
         self._config = SecurityCenterConfiguration(
-            credential=credential, subscription_id=subscription_id, credential_scopes=credential_scopes, **kwargs
+            credential=credential,
+            subscription_id=subscription_id,
+            cloud_setting=cloud_setting,
+            credential_scopes=credential_scopes,
+            **kwargs
         )
 
         _policies = kwargs.pop("policies", None)
@@ -354,16 +371,6 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-
             self._client, self._config, self._serialize, self._deserialize
         )
         self.sub_assessments = SubAssessmentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.connectors = ConnectorsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.software_inventories = SoftwareInventoriesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.custom_assessment_automations = CustomAssessmentAutomationsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.custom_entity_store_assignments = CustomEntityStoreAssignmentsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.mde_onboardings = MdeOnboardingsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.governance_assignments = GovernanceAssignmentsOperations(
             self._client, self._config, self._serialize, self._deserialize
@@ -391,32 +398,51 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-
         self.sql_vulnerability_assessment_scan_results = SqlVulnerabilityAssessmentScanResultsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.sql_vulnerability_assessment_settings = SqlVulnerabilityAssessmentSettingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.sensitivity_settings = SensitivitySettingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.health_reports = HealthReportsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.automations = AutomationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.security_contacts = SecurityContactsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.security_connectors = SecurityConnectorsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.defender_for_storage = DefenderForStorageOperations(
+        self.azure_dev_ops_orgs = AzureDevOpsOrgsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.azure_dev_ops_projects = AzureDevOpsProjectsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.azure_dev_ops_repos = AzureDevOpsReposOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.dev_ops_configurations = DevOpsConfigurationsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.git_hub_owners = GitHubOwnersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.git_hub_repos = GitHubReposOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.git_hub_issues = GitHubIssuesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.git_lab_groups = GitLabGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.git_lab_subgroups = GitLabSubgroupsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.git_lab_projects = GitLabProjectsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.dev_ops_operation_results = DevOpsOperationResultsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.operation_results = OperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.operation_statuses = OperationStatusesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.assessments_metadata = AssessmentsMetadataOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.assessments = AssessmentsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_links = PrivateLinksOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.private_link_resources = PrivateLinkResourcesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.compliance_results = ComplianceResultsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -450,13 +476,6 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-
         self.jit_network_access_policies = JitNetworkAccessPoliciesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.secure_scores = SecureScoresOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.secure_score_controls = SecureScoreControlsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.secure_score_control_definitions = SecureScoreControlDefinitionsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
         self.security_solutions = SecuritySolutionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -483,26 +502,23 @@ class SecurityCenter:  # pylint: disable=client-accepts-api-version-keyword,too-
         self.custom_recommendations = CustomRecommendationsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.azure_dev_ops_orgs = AzureDevOpsOrgsOperations(
+        self.standards = StandardsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.assignments = AssignmentsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.defender_for_storage = DefenderForStorageOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.azure_dev_ops_projects = AzureDevOpsProjectsOperations(
+        self.private_links = PrivateLinksOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.azure_dev_ops_repos = AzureDevOpsReposOperations(
+        self.private_endpoint_connections = PrivateEndpointConnectionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.dev_ops_configurations = DevOpsConfigurationsOperations(
+        self.secure_scores = SecureScoresOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.secure_score_controls = SecureScoreControlsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
-        self.git_hub_owners = GitHubOwnersOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.git_hub_repos = GitHubReposOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.git_lab_groups = GitLabGroupsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.git_lab_subgroups = GitLabSubgroupsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.git_lab_projects = GitLabProjectsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.dev_ops_operation_results = DevOpsOperationResultsOperations(
+        self.secure_score_control_definitions = SecureScoreControlDefinitionsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
 

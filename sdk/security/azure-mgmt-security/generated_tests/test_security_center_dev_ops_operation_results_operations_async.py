@@ -26,7 +26,7 @@ class TestSecurityCenterDevOpsOperationResultsOperationsAsync(AzureMgmtRecordedT
             resource_group_name=resource_group.name,
             security_connector_name="str",
             operation_result_id="str",
-            api_version="2025-03-01",
+            api_version="2025-11-01-preview",
         )
 
         # please add some check logic here by yourself
