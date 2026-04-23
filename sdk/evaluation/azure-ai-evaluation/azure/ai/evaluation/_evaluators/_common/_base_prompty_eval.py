@@ -439,6 +439,7 @@ class PromptyEvaluatorBase(EvaluatorBase[T]):
 
         return result
 
+    # TODO: After all evaluators output are updated, we can remove the _not_applicable_result method and replace calls to it with _return_not_applicable_result, which returns a "skipped" status instead of "pass" to avoid confusion.
     def _return_not_applicable_result(
         self, error_message: str, threshold: Union[int, float]
     ) -> Dict[str, Union[str, float, Dict, None]]:
