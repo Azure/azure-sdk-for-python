@@ -67,7 +67,7 @@ class TestEvaluate:
             ],
         )
         assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_score"] is None
-        assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_result"] == "not_applicable"
+        assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_result"] == "pass"
         assert result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_status"] == "skipped"
         assert (
             "not applicable" in result[f"{ToolCallAccuracyEvaluator._RESULT_KEY}_reason"].lower()
