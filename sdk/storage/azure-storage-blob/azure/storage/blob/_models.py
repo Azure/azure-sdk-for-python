@@ -591,8 +591,9 @@ class ImmutabilityPolicy(DictMixin):
     @classmethod
     def _from_generated(cls, generated):
         immutability_policy = cls()
-        immutability_policy.expiry_time = generated.properties.immutability_policy_expires_on
-        immutability_policy.policy_mode = generated.properties.immutability_policy_mode
+        props = generated.properties
+        immutability_policy.expiry_time = props.immutability_policy_expires_on
+        immutability_policy.policy_mode = props.immutability_policy_mode
         return immutability_policy
 
 
@@ -630,9 +631,10 @@ class LeaseProperties(DictMixin):
     @classmethod
     def _from_generated(cls, generated):
         lease = cls()
-        lease.status = get_enum_value(generated.properties.lease_status)
-        lease.state = get_enum_value(generated.properties.lease_state)
-        lease.duration = get_enum_value(generated.properties.lease_duration)
+        props = generated.properties
+        lease.status = get_enum_value(props.lease_status)
+        lease.state = get_enum_value(props.lease_state)
+        lease.duration = get_enum_value(props.lease_duration)
         return lease
 
 
@@ -696,12 +698,13 @@ class ContentSettings(DictMixin):
     @classmethod
     def _from_generated(cls, generated):
         settings = cls()
-        settings.content_type = generated.properties.content_type or None
-        settings.content_encoding = generated.properties.content_encoding or None
-        settings.content_language = generated.properties.content_language or None
-        settings.content_md5 = generated.properties.content_md5 or None
-        settings.content_disposition = generated.properties.content_disposition or None
-        settings.cache_control = generated.properties.cache_control or None
+        props = generated.properties
+        settings.content_type = props.content_type or None
+        settings.content_encoding = props.content_encoding or None
+        settings.content_language = props.content_language or None
+        settings.content_md5 = props.content_md5 or None
+        settings.content_disposition = props.content_disposition or None
+        settings.cache_control = props.cache_control or None
         return settings
 
 
@@ -759,14 +762,15 @@ class CopyProperties(DictMixin):
     @classmethod
     def _from_generated(cls, generated):
         copy = cls()
-        copy.id = generated.properties.copy_id or None
-        copy.status = get_enum_value(generated.properties.copy_status) or None
-        copy.source = generated.properties.copy_source or None
-        copy.progress = generated.properties.copy_progress or None
-        copy.completion_time = generated.properties.copy_completion_time or None
-        copy.status_description = generated.properties.copy_status_description or None
-        copy.incremental_copy = generated.properties.incremental_copy or None
-        copy.destination_snapshot = generated.properties.destination_snapshot or None
+        props = generated.properties
+        copy.id = props.copy_id or None
+        copy.status = get_enum_value(props.copy_status) or None
+        copy.source = props.copy_source or None
+        copy.progress = props.copy_progress or None
+        copy.completion_time = props.copy_completion_time or None
+        copy.status_description = props.copy_status_description or None
+        copy.incremental_copy = props.incremental_copy or None
+        copy.destination_snapshot = props.destination_snapshot or None
         return copy
 
 

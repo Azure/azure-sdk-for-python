@@ -23,30 +23,36 @@ def _patched_getattr(self, name):
 
 
 def _patched_setattr(self, name, value):
-    """Route attribute writes through _RestField descriptors even when shadowed."""
-    if not name.startswith("_"):
-        try:
-            rf = type(self)._attr_to_rest_field.get(name)
-        except AttributeError:
-            pass
-        else:
-            if rf is not None:
-                rf.__set__(self, value)
-                return
+    """Route attribute writes through _RestField descriptors even when shadowed.
+
+    Only installed on classes whose subclass-level annotations shadow a parent's
+    ``_RestField`` (see ``_patched_new``). For non-shadowing classes (the entire
+    generated TypeSpec model graph) this override is *not* installed, so writes
+    use native ``object.__setattr__``.
+    """
+    cls = type(self)
+    if not name.startswith("_") and name in cls._shadowed_rest_fields:
+        rf = cls._attr_to_rest_field.get(name)
+        if rf is not None:
+            rf.__set__(self, value)
+            return
     object.__setattr__(self, name, value)
 
 
 def _patched_getattribute(self, name):
-    """Route attribute reads through _RestField descriptors even when shadowed."""
+    """Route attribute reads through _RestField descriptors even when shadowed.
+
+    Only installed on classes whose subclass-level annotations shadow a parent's
+    ``_RestField``. The hot list-blobs path operates on generated classes that
+    do *not* have shadowing, so this override is not installed there and they
+    use native C ``object.__getattribute__``.
+    """
     if not name.startswith("_"):
-        try:
-            rest_fields = type(self)._attr_to_rest_field
-        except AttributeError:
-            pass
-        else:
-            rf = rest_fields.get(name)
+        cls = type(self)
+        if name in cls._shadowed_rest_fields:
+            rf = cls._attr_to_rest_field.get(name)
             if rf is not None:
-                return rf.__get__(self, type(self))
+                return rf.__get__(self, cls)
     return object.__getattribute__(self, name)
 
 
@@ -93,14 +99,48 @@ def _patched_new(cls, *args, **kwargs):
             rf._rest_name: attr for attr, rf in attr_to_rest_field.items()
         }
 
+        # Detect attrs whose value in the MRO is *not* a _RestField but which
+        # *do* have a _RestField further up the MRO. Those are the only attrs
+        # for which the patched dunders actually need to reroute: normal
+        # Python descriptor semantics already cover non-shadowed attrs.
+        # Generated TypeSpec models have no shadowing.
+        shadowed: set = set()
+        for attr in attr_to_rest_field:
+            for c in cls.__mro__:
+                if attr in c.__dict__:
+                    if not isinstance(c.__dict__[attr], _RestField):
+                        shadowed.add(attr)
+                    break
+        cls._shadowed_rest_fields = shadowed
+
+        # Always install ``__getattr__`` for lazy ``_data`` initialization.
+        # Some hand-written subclasses (e.g. CorsRule, BlobAnalyticsLogging,
+        # Metrics, StaticWebsite) override ``__init__`` without calling
+        # ``super().__init__()``, so ``_data`` is never created by the
+        # framework. ``__getattr__`` is only invoked when normal attribute
+        # lookup misses, so it does NOT disable CPython's C-level fast path
+        # for ordinary reads -- it costs effectively nothing on the hot path.
+        cls.__getattr__ = _patched_getattr
+
+        # Install ``__getattribute__``/``__setattr__`` ONLY on classes that
+        # actually shadow a parent ``_RestField`` with a non-descriptor class
+        # attribute. Installing ``__getattribute__`` (even a trivial one)
+        # disables CPython's C-level attribute access fast path for every
+        # instance of that class -- the difference is dramatic on the
+        # list-blobs hot path which makes tens of thousands of reads per
+        # call against generated models. Installing only on shadowing
+        # subclasses (e.g. RetentionPolicy, StaticWebsite, BlobAnalyticsLogging,
+        # Metrics) preserves backcompat semantics where they are needed
+        # without paying the cost everywhere.
+        if shadowed:
+            cls.__setattr__ = _patched_setattr
+            cls.__getattribute__ = _patched_getattribute
+
         cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
 
     return object.__new__(cls)
 
 
-_MyMutableMapping.__getattr__ = _patched_getattr
-_MyMutableMapping.__setattr__ = _patched_setattr
-_MyMutableMapping.__getattribute__ = _patched_getattribute
 _Model.__new__ = _patched_new
 
 

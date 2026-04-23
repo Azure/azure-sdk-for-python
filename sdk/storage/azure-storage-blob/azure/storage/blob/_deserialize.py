@@ -179,43 +179,49 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
         blob.name = unquote(generated.name.content)
     else:
         blob.name = generated.name.content  # type: ignore
-    blob_type = get_enum_value(generated.properties.blob_type)
+    # Cache cross-cutting attribute reads to a single patched __getattribute__
+    # call each. ``generated.properties`` is hit ~22 times below; reading it
+    # once turns ~44 patched lookups into ~23 plus the cached locals.
+    props = generated.properties
+    metadata = generated.metadata
+    orm = generated.object_replication_metadata
+    blob_type = get_enum_value(props.blob_type)
     blob.blob_type = BlobType(blob_type)
-    blob.etag = generated.properties.etag
+    blob.etag = props.etag
     blob.deleted = generated.deleted
     blob.snapshot = generated.snapshot
-    blob.is_append_blob_sealed = generated.properties.is_sealed
+    blob.is_append_blob_sealed = props.is_sealed
     blob.metadata = (  # type: ignore [assignment]
-        {k: v for k, v in generated.metadata.items() if k != "Encrypted"} if generated.metadata else {}
+        {k: v for k, v in metadata.items() if k != "Encrypted"} if metadata else {}
     )
-    blob.encrypted_metadata = generated.metadata.encrypted if generated.metadata else None
+    blob.encrypted_metadata = metadata.encrypted if metadata else None
     blob.lease = LeaseProperties._from_generated(generated)  # pylint: disable=protected-access
     blob.copy = CopyProperties._from_generated(generated)  # pylint: disable=protected-access
-    blob.last_modified = generated.properties.last_modified
-    blob.creation_time = generated.properties.creation_time  # type: ignore [assignment]
+    blob.last_modified = props.last_modified
+    blob.creation_time = props.creation_time  # type: ignore [assignment]
     blob.content_settings = ContentSettings._from_generated(generated)  # pylint: disable=protected-access
-    blob.size = generated.properties.content_length  # type: ignore [assignment]
-    blob.page_blob_sequence_number = generated.properties.blob_sequence_number
-    blob.server_encrypted = generated.properties.server_encrypted  # type: ignore [assignment]
-    blob.encryption_scope = generated.properties.encryption_scope
-    blob.deleted_time = generated.properties.deleted_time
-    blob.remaining_retention_days = generated.properties.remaining_retention_days
-    blob.blob_tier = generated.properties.access_tier  # type: ignore [assignment]
-    blob.smart_access_tier = generated.properties.smart_access_tier
-    blob.rehydrate_priority = generated.properties.rehydrate_priority
-    blob.blob_tier_inferred = generated.properties.access_tier_inferred
-    blob.archive_status = generated.properties.archive_status
-    blob.blob_tier_change_time = generated.properties.access_tier_change_time
+    blob.size = props.content_length  # type: ignore [assignment]
+    blob.page_blob_sequence_number = props.blob_sequence_number
+    blob.server_encrypted = props.server_encrypted  # type: ignore [assignment]
+    blob.encryption_scope = props.encryption_scope
+    blob.deleted_time = props.deleted_time
+    blob.remaining_retention_days = props.remaining_retention_days
+    blob.blob_tier = props.access_tier  # type: ignore [assignment]
+    blob.smart_access_tier = props.smart_access_tier
+    blob.rehydrate_priority = props.rehydrate_priority
+    blob.blob_tier_inferred = props.access_tier_inferred
+    blob.archive_status = props.archive_status
+    blob.blob_tier_change_time = props.access_tier_change_time
     blob.version_id = generated.version_id
     blob.is_current_version = generated.is_current_version
-    blob.tag_count = generated.properties.tag_count
+    blob.tag_count = props.tag_count
     blob.tags = parse_tags(generated.blob_tags)
     blob.object_replication_source_properties = deserialize_ors_policies(
-        generated.object_replication_metadata.as_dict() if generated.object_replication_metadata else None
+        orm.as_dict() if orm else None
     )
-    blob.last_accessed_on = generated.properties.last_accessed_on
+    blob.last_accessed_on = props.last_accessed_on
     blob.immutability_policy = ImmutabilityPolicy._from_generated(generated)  # pylint: disable=protected-access
-    blob.has_legal_hold = generated.properties.legal_hold
+    blob.has_legal_hold = props.legal_hold
     blob.has_versions_only = generated.has_versions_only
     return blob
 
