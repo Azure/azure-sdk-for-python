@@ -339,6 +339,13 @@ class FoundryResultProcessor:
         sorted_pieces = sorted(conversation_pieces, key=lambda p: getattr(p, "sequence", 0))
 
         for piece in sorted_pieces:
+            # Skip context pieces (from prepended_conversation).
+            # These are tool context SeedPrompts for categories like
+            # sensitive_data_leakage and should not appear in the conversation.
+            pm = getattr(piece, "prompt_metadata", None)
+            if isinstance(pm, dict) and pm.get("is_context") is True:
+                continue
+
             # Get role, handling api_role property
             role = getattr(piece, "api_role", None) or getattr(piece, "role", "user")
 

@@ -21,6 +21,7 @@ from test_helpers import (
     new_invoice_analyzer_object,
     new_marketing_video_analyzer_object,
     assert_poller_properties,
+    assert_analyze_poller_usage,
     assert_simple_content_analyzer_result,
     assert_invoice_fields,
     assert_document_properties,
@@ -978,6 +979,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         # Wait for completion
         result = await poller.result()
         assert_poller_properties(poller)
+        assert_analyze_poller_usage(poller)
 
         # Verify result
         assert result is not None, "Analysis result should not be null"
@@ -1113,6 +1115,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         # Wait for completion
         result = await poller.result()
         assert_poller_properties(poller)
+        assert_analyze_poller_usage(poller)
 
         # Verify result
         assert result is not None, "Analysis result should not be null"
@@ -1175,6 +1178,7 @@ class TestContentUnderstandingContentAnalyzersOperationsAsync(ContentUnderstandi
         # Wait for completion
         result = await poller.result()
         assert_poller_properties(poller)
+        assert_analyze_poller_usage(poller)
 
         # Verify operation completed successfully
         assert result is not None, "Analysis result should not be null"

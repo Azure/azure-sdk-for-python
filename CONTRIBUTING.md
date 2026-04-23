@@ -95,7 +95,15 @@ SDK performance testing is supported via the custom `perfstress` framework. For 
 
 ### More Reading
 
-We maintain an [additional document](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md) that has a ton of detail as to what is actually _happening_ in these executions.
+We maintain an [additional document](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md) that has a ton of detail as to what is actually _happening_ in these executions. That document covers:
+
+- [Static analysis checks](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#static-analysis-checks) (MyPy, Pyright, Pylint, Sphinx, Bandit, etc.)
+- [Install and test checks](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#install-and-test-checks) (whl, sdist, mindependency, latestdependency, devtest, regression)
+- [PR validation](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#pr-validation) (subset that runs on every pull request)
+- [Nightly and release checks](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#nightly-and-release) (full check set including latestdependency, whl_no_aio, import_all)
+- [Weekly analyze checks](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#weekly-analyze-checks) (ruff, next-generation tool versions)
+- [pyproject.toml configuration](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#the-pyprojecttoml) (enabling/disabling checks per package, analyze_python_version override)
+- [Skipping checks at queue time](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/eng_sys_checks.md#skipping-checks-at-queue-time)
 
 ### Dev Feed
 Daily dev build version of Azure sdk packages for python are available and are uploaded to Azure devops feed daily. Below is the link to Azure devops feed.
