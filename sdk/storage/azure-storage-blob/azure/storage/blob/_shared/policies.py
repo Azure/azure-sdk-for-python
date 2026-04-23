@@ -295,7 +295,9 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
             except Exception as err:  # pylint: disable=broad-except
                 _LOGGER.debug("Failed to log request: %r", err)
 
-    def on_response(self, request: "PipelineRequest", response: "PipelineResponse") -> None:
+    def on_response(
+        self, request: "PipelineRequest", response: "PipelineResponse"
+    ) -> None:
         # Logging settings should always be present in context if logging is enabled
         # Use .get() instead of .pop() to preserve context values for potential retries
         if response.context.get("logging_enable", False):
