@@ -63,6 +63,8 @@ class ChangelogTracker(BreakingChangesTracker):
             self.run_non_breaking_class_level_diff_checks(module)
 
     def run_non_breaking_class_level_diff_checks(self, module: Dict) -> None:
+        if not isinstance(module, dict):
+            return
         for class_name, class_components in module.get("class_nodes", {}).items():
             self.class_name = class_name
             stable_class_nodes = self.stable[self.module_name]["class_nodes"]
@@ -184,9 +186,13 @@ class ChangelogTracker(BreakingChangesTracker):
             buffer.append(title)
             buffer.append("")
             for _, bc in enumerate(content):
-                # Extract the message, skip the change type and the module name
-                msg, _, _,*args = bc
-                buffer.append("  - " + msg.format(*args))
+                # Extract the message, skip the change type; remaining include module_name
+                # (used for async filtering) plus the actual format args.
+                # Use only the last N args matching the number of {} placeholders.
+                msg, _, *args = bc
+                num_placeholders = msg.count('{}')
+                format_args = args[-num_placeholders:] if num_placeholders else []
+                buffer.append("  - " + msg.format(*format_args))
             buffer.append("")
             return buffer
 
