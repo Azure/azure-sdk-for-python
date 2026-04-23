@@ -10,7 +10,6 @@ import pytest
 from azpysdk.changelog import (
     changelog,
     REPO_ROOT,
-    _CHRONUS_MODULE_PATH,
     _CHRONUS_BIN_PATH,
     _CHANGE_KINDS,
     _FALLBACK_CHANGE_KINDS,
@@ -365,19 +364,6 @@ class TestDetectPackageFromCwd:
         c = changelog()
         with patch("os.getcwd", return_value="/tmp"):
             assert c._detect_package_from_cwd() is None
-
-
-# ---------------------------------------------------------------------------
-# Error handling tests
-# ---------------------------------------------------------------------------
-
-
-class TestChangelogErrors:
-    """Verify error handling when prerequisites are missing."""
-
-    # Note: there is no longer an "npx not found" error path — chronus is
-    # invoked via the pinned binary under .github/chronus/node_modules/.bin.
-    # Missing-binary scenarios are exercised by TestEnsureChronusInstalled.
 
 
 # ---------------------------------------------------------------------------

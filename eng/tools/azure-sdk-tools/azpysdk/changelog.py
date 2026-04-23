@@ -14,7 +14,6 @@ from ci_tools.logging import logger
 # dependencies are reproducible.
 _CHRONUS_PACKAGE = "@chronus/chronus"
 _CHRONUS_INSTALL_DIR = os.path.join(".github", "chronus")
-_CHRONUS_MODULE_PATH = os.path.join(_CHRONUS_INSTALL_DIR, "node_modules", "@chronus", "chronus")
 _CHRONUS_BIN_NAME = "chronus.cmd" if os.name == "nt" else "chronus"
 _CHRONUS_BIN_PATH = os.path.join(_CHRONUS_INSTALL_DIR, "node_modules", ".bin", _CHRONUS_BIN_NAME)
 
@@ -144,7 +143,8 @@ class changelog(Check):
 
     def _no_subcommand(self, args: argparse.Namespace) -> int:
         """Print help when no changelog subcommand is provided."""
-        self._parser.print_help()
+        if self._parser is not None:
+            self._parser.print_help()
         return 1
 
     def _is_chronus_installed(self) -> bool:
