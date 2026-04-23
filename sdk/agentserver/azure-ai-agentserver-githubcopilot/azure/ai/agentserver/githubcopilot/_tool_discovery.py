@@ -22,11 +22,7 @@ from typing import Any, List, Tuple
 
 import yaml
 
-try:
-    from copilot import Tool
-except ImportError:
-    # Copilot SDK renamed/moved Tool in some versions
-    Tool = None  # type: ignore
+from copilot.tools import Tool
 
 logger = logging.getLogger(__name__)
 

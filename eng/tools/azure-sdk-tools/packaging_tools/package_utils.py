@@ -32,9 +32,9 @@ def create_package(prefolder, name):
 @return_origin_path
 def change_log_new(package_folder: str, lastest_pypi_version: bool) -> str:
     os.chdir(package_folder)
-    cmd = f"{sys.executable} -m tox run -c ../../../eng/tox/tox.ini --root . -e breaking --  --changelog "
+    cmd = "azpysdk breaking . --changelog"
     if lastest_pypi_version:
-        cmd += "--latest-pypi-version"
+        cmd += " --latest-pypi-version"
     try:
         _LOGGER.info(f"Run breaking change detector with command: {cmd}")
         output = getoutput(cmd)
@@ -89,10 +89,6 @@ def change_log_generate(
     # try new changelog tool
     if prefolder:
         try:
-            tox_cache_path = Path(prefolder, package_name, ".tox")
-            if tox_cache_path.exists():
-                _LOGGER.info(f"Remove {tox_cache_path} to avoid potential tox cache conflict")
-                shutil.rmtree(tox_cache_path)
             return change_log_new(str(Path(prefolder) / package_name), not (last_stable_release and tag_is_stable))
         except Exception as e:
             _LOGGER.warning(f"Failed to generate changelog with breaking_change_detector: {e}")

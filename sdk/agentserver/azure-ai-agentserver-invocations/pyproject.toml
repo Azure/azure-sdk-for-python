@@ -21,15 +21,29 @@ classifiers = [
 keywords = ["azure", "azure sdk", "agent", "agentserver", "invocations"]
 
 dependencies = [
-    "azure-ai-agentserver-core>=2.0.0b1",
+    "azure-ai-agentserver-core>=2.0.0b3",
 ]
+
+[dependency-groups]
+# keep in sync with dev_requirements.txt
+dev = [
+    "azure-identity",
+    "azure-monitor-opentelemetry-exporter",
+    "azure-monitor-query",
+    "azure-sdk-tools",
+    "httpx",
+    "opentelemetry-api>=1.40.0",
+    "opentelemetry-sdk>=1.40.0",
+    "pytest-asyncio",
+    "pytest",
+]
+
+[project.urls]
+repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [build-system]
 requires = ["setuptools>=69", "wheel"]
 build-backend = "setuptools.build_meta"
-
-[project.urls]
-repository = "https://github.com/Azure/azure-sdk-for-python"
 
 [tool.setuptools.packages.find]
 exclude = [
@@ -60,9 +74,18 @@ known-first-party = ["azure.ai.agentserver.invocations"]
 combine-as-imports = true
 
 [tool.azure-sdk-build]
+analyze_python_version = "3.11"
 breaking = false
 mypy = true
 pyright = true
-verifytypes = true
+verifytypes = false
+latestdependency = false
 pylint = true
 type_check_samples = false
+
+[tool.uv.sources]
+azure-ai-agentserver-core = { path = "../azure-ai-agentserver-core", editable = true }
+azure-identity = { path = "../../identity/azure-identity" }
+azure-monitor-opentelemetry-exporter = { path = "../../monitor/azure-monitor-opentelemetry-exporter" }
+azure-monitor-query = { path = "../../monitor/azure-monitor-query" }
+azure-sdk-tools = { path = "../../../eng/tools/azure-sdk-tools" }

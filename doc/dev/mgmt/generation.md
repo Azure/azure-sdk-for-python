@@ -57,7 +57,6 @@ PS C:\dev\azure-sdk-for-python> .\.venv\Scripts\Activate.ps1  # Windows
 3. Install Python dependencies:
 ```
 (.venv) PS C:\dev\azure-sdk-for-python> python .\scripts\dev_setup.py -p azure-core
-(.venv) PS C:\dev\azure-sdk-for-python> pip install tox
 (.venv) PS C:\dev\azure-sdk-for-python> pip install setuptools
 ```
 

@@ -1,14 +1,217 @@
 # Release History
 
-## 11.7.0b3 (Unreleased)
+## 12.0.0 (2026-04-01)
 
 ### Features Added
 
+- Below clients and models are added for knowledge base support
+  - `azure.search.documents.knowledgebases.KnowledgeBaseRetrievalClient`
+  - `azure.search.documents.indexes.models.AzureBlobKnowledgeSource`
+  - `azure.search.documents.indexes.models.IndexedOneLakeKnowledgeSource`
+  - `azure.search.documents.indexes.models.KnowledgeBase`
+  - `azure.search.documents.indexes.models.SearchIndexKnowledgeSource`
+  - `azure.search.documents.indexes.models.WebKnowledgeSource`
+  - `azure.search.documents.knowledgebases.models.KnowledgeRetrievalMinimalReasoningEffort`
+  - `azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffort`
+  - `azure.search.documents.knowledgebases.models.KnowledgeSourceStatistics`
+  - `azure.search.documents.knowledgebases.models.KnowledgeSourceStatus`
+  - `azure.search.documents.knowledgebases.models.KnowledgeSourceSynchronizationError`
+
+- Below properties are added or changed for index and indexer enhancements
+  - `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.identity` for managed identity support on data source connections.
+  - `azure.search.documents.indexes.models.SearchIndexerKnowledgeStore.identity` for managed identity support on knowledge store projections.
+  - `azure.search.documents.indexes.models.SearchResourceEncryptionKey.key_version` changed from required to optional, aligning with service behavior.
+
+- Below enum members and properties are added for Markdown parsing
+  - `azure.search.documents.indexes.models.BlobIndexerParsingMode.MARKDOWN` enum value for native Markdown file parsing in blob indexers.
+  - `azure.search.documents.indexes.models.IndexingParametersConfiguration.markdown_header_depth` (`h1` through `h6`) to set header depth for sectioning.
+  - `azure.search.documents.indexes.models.IndexingParametersConfiguration.markdown_parsing_submode` (`oneToOne` or `oneToMany`) to control document splitting.
+
+- Below models are added
+  - `azure.search.documents.indexes.models.ChatCompletionCommonModelParameters`
+  - `azure.search.documents.indexes.models.ChatCompletionResponseFormat`
+  - `azure.search.documents.indexes.models.ChatCompletionSchema`
+  - `azure.search.documents.indexes.models.ChatCompletionSkill`
+  - `azure.search.documents.indexes.models.ContentUnderstandingSkill`
+  - `azure.search.documents.indexes.models.ContentUnderstandingSkillChunkingProperties`
+  - `azure.search.documents.indexes.models.ContentUnderstandingSkillChunkingUnit`
+  - `azure.search.documents.indexes.models.ContentUnderstandingSkillExtractionOptions`
+  - `azure.search.documents.knowledgebases.models.AIServices`
+  - `azure.search.documents.knowledgebases.models.CompletedSynchronizationState`
+  - `azure.search.documents.knowledgebases.models.SynchronizationState`
+
 ### Breaking Changes
 
-### Bugs Fixed
+- `serialize()` and `deserialize()` methods on models are removed. Use `as_dict()` to serialize and the model constructor to deserialize (e.g., `index.as_dict()` instead of `index.serialize()`, `SearchIndex(data)` instead of `SearchIndex.deserialize(data)`).
+- Below models do not exist in this release
+  - `azure.search.documents.indexes.models.EntityRecognitionSkill`
+  - `azure.search.documents.indexes.models.EntityRecognitionSkillVersion`
+  - `azure.search.documents.indexes.models.PathHierarchyTokenizer` (renamed to `PathHierarchyTokenizerV2`)
+  - `azure.search.documents.indexes.models.SentimentSkill`
+  - `azure.search.documents.indexes.models.SentimentSkillVersion`
+- Below enum members do not exist in this release
+  - `azure.search.documents.indexes.models.SearchIndexerDataSourceType.MY_SQL` (renamed to `MYSQL`)
+  - `azure.search.documents.indexes.models.SearchIndexerDataSourceType.ONE_LAKE` (renamed to `ONELAKE`)
+- Below properties do not exist in this release
+  - `azure.search.documents.indexes.models.BinaryQuantizationCompression.rerank_with_original_vectors`
+  - `azure.search.documents.indexes.models.ScalarQuantizationCompression.rerank_with_original_vectors`
+  - `azure.search.documents.indexes.models.VectorSearchCompression.rerank_with_original_vectors`
+
+> The following changes do not impact the API of stable versions such as 11.6.0.
+> Only code written against a beta version such as 11.7.0b2 may be affected.
+
+- Below models do not exist in this release
+  - `azure.search.documents.indexes.models.AIServicesVisionParameters`
+  - `azure.search.documents.indexes.models.AIServicesVisionVectorizer`
+  - `azure.search.documents.indexes.models.AzureMachineLearningSkill`
+  - `azure.search.documents.indexes.models.AzureOpenAITokenizerParameters`
+  - `azure.search.documents.indexes.models.IndexedSharePointContainerName`
+  - `azure.search.documents.indexes.models.IndexerCurrentState`
+  - `azure.search.documents.indexes.models.IndexerExecutionStatusDetail`
+  - `azure.search.documents.indexes.models.IndexerPermissionOption`
+  - `azure.search.documents.indexes.models.IndexerRuntime`
+  - `azure.search.documents.indexes.models.IndexingMode`
+  - `azure.search.documents.indexes.models.IndexStatisticsSummary`
+  - `azure.search.documents.indexes.models.KnowledgeRetrievalLowReasoningEffort`
+  - `azure.search.documents.indexes.models.KnowledgeRetrievalMediumReasoningEffort`
+  - `azure.search.documents.indexes.models.KnowledgeRetrievalOutputMode`
+  - `azure.search.documents.indexes.models.PermissionFilter`
+  - `azure.search.documents.indexes.models.SearchIndexerCache`
+  - `azure.search.documents.indexes.models.SearchIndexPermissionFilterOption`
+  - `azure.search.documents.indexes.models.ServiceIndexersRuntime`
+  - `azure.search.documents.indexes.models.SplitSkillEncoderModelName`
+  - `azure.search.documents.indexes.models.SplitSkillUnit`
+  - `azure.search.documents.indexes.models.VisionVectorizeSkill`
+  - `azure.search.documents.knowledgebases.models.IndexedSharePointKnowledgeSourceParams`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseIndexedSharePointReference`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseModelAnswerSynthesisActivityRecord`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseModelQueryPlanningActivityRecord`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRemoteSharePointReference`
+  - `azure.search.documents.knowledgebases.models.RemoteSharePointKnowledgeSourceParams`
+  - `azure.search.documents.models.DebugInfo`
+  - `azure.search.documents.models.HybridCountAndFacetMode`
+  - `azure.search.documents.models.HybridSearch`
+  - `azure.search.documents.models.QueryLanguage`
+  - `azure.search.documents.models.QueryResultDocumentInnerHit`
+  - `azure.search.documents.models.QueryResultDocumentRerankerInput`
+  - `azure.search.documents.models.QueryResultDocumentSemanticField`
+  - `azure.search.documents.models.QueryRewritesDebugInfo`
+  - `azure.search.documents.models.QueryRewritesType`
+  - `azure.search.documents.models.QueryRewritesValuesDebugInfo`
+  - `azure.search.documents.models.QuerySpellerType`
+  - `azure.search.documents.models.SearchDocumentsResult`
+  - `azure.search.documents.models.SearchScoreThreshold`
+  - `azure.search.documents.models.SemanticDebugInfo`
+  - `azure.search.documents.models.SemanticFieldState`
+  - `azure.search.documents.models.SemanticQueryRewritesResultType`
+  - `azure.search.documents.models.VectorSimilarityThreshold`
+  - `azure.search.documents.models.VectorThreshold`
+  - `azure.search.documents.models.VectorThresholdKind`
+  - SharePoint knowledge source types (`IndexedSharePointKnowledgeSource`, `RemoteSharePointKnowledgeSource` and related models including `IndexedSharePointKnowledgeSourceParameters`, `RemoteSharePointKnowledgeSourceParameters`, `SharePointSensitivityLabelInfo`)
+
+- Below properties do not exist in this release
+  - `azure.search.documents.indexes.models.ChatCompletionSkill.auth_resource_id`
+  - `azure.search.documents.indexes.models.ChatCompletionSkill.batch_size`
+  - `azure.search.documents.indexes.models.ChatCompletionSkill.degree_of_parallelism`
+  - `azure.search.documents.indexes.models.ChatCompletionSkill.http_headers`
+  - `azure.search.documents.indexes.models.ChatCompletionSkill.http_method`
+  - `azure.search.documents.indexes.models.ChatCompletionSkill.timeout`
+  - `azure.search.documents.indexes.models.IndexerExecutionResult.mode`
+  - `azure.search.documents.indexes.models.IndexerExecutionResult.status_detail`
+  - `azure.search.documents.indexes.models.KnowledgeBase.answer_instructions`
+  - `azure.search.documents.indexes.models.KnowledgeBase.output_mode`
+  - `azure.search.documents.indexes.models.KnowledgeBase.retrieval_instructions`
+  - `azure.search.documents.indexes.models.KnowledgeBase.retrieval_reasoning_effort`
+  - `azure.search.documents.indexes.models.SearchField.permission_filter`
+  - `azure.search.documents.indexes.models.SearchField.sensitivity_label`
+  - `azure.search.documents.indexes.models.SearchIndex.permission_filter_option`
+  - `azure.search.documents.indexes.models.SearchIndex.purview_enabled`
+  - `azure.search.documents.indexes.models.SearchIndexer.cache`
+  - `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.indexer_permission_options`
+  - `azure.search.documents.indexes.models.SearchIndexerDataSourceConnection.sub_type`
+  - `azure.search.documents.indexes.models.SearchIndexerDataUserAssignedIdentity.federated_identity_client_id`
+  - `azure.search.documents.indexes.models.SearchIndexerKnowledgeStore.parameters`
+  - `azure.search.documents.indexes.models.SearchIndexerStatus.current_state`
+  - `azure.search.documents.indexes.models.SearchIndexerStatus.runtime`
+  - `azure.search.documents.indexes.models.SearchServiceStatistics.indexers_runtime`
+  - `azure.search.documents.indexes.models.SemanticConfiguration.flighting_opt_in`
+  - `azure.search.documents.indexes.models.SplitSkill.azure_open_ai_tokenizer_parameters`
+  - `azure.search.documents.indexes.models.SplitSkill.unit`
+  - `azure.search.documents.knowledgebases.models.AzureBlobKnowledgeSourceParams.always_query_source`
+  - `azure.search.documents.knowledgebases.models.IndexedOneLakeKnowledgeSourceParams.always_query_source`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest.max_output_size`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest.messages`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest.output_mode`
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseRetrievalRequest.retrieval_reasoning_effort`
+  - `azure.search.documents.knowledgebases.models.KnowledgeSourceParams.always_query_source`
+  - `azure.search.documents.knowledgebases.models.WebKnowledgeSourceParams.always_query_source`
+  - `azure.search.documents.models.DebugInfo.query_rewrites`
+  - `azure.search.documents.models.DocumentDebugInfo.inner_hits`
+  - `azure.search.documents.models.DocumentDebugInfo.semantic`
+  - `azure.search.documents.models.FacetResult.avg`
+  - `azure.search.documents.models.FacetResult.cardinality`
+  - `azure.search.documents.models.FacetResult.facets`
+  - `azure.search.documents.models.FacetResult.max`
+  - `azure.search.documents.models.FacetResult.min`
+  - `azure.search.documents.models.FacetResult.sum`
+  - `azure.search.documents.models.SearchDocumentsResult.debug_info`
+  - `azure.search.documents.models.SearchDocumentsResult.semantic_query_rewrites_result_type`
+  - `azure.search.documents.models.VectorizableTextQuery.query_rewrites`
+  - `azure.search.documents.models.VectorQuery.filter_override`
+  - `azure.search.documents.models.VectorQuery.per_document_vector_limit`
+  - `azure.search.documents.models.VectorQuery.threshold`
+
+- Below parameters do not exist in this release
+  - `SearchClient.search.hybrid_search`
+  - `SearchClient.search.query_language`
+  - `SearchClient.search.query_rewrites`
+  - `SearchClient.search.semantic_fields`
+  - `SearchClient.search.speller`
+  - `SearchIndexerClient.create_or_update_data_source_connection.skip_indexer_reset_requirement_for_cache`
+  - `SearchIndexerClient.create_or_update_indexer.disable_cache_reprocessing_change_detection`
+  - `SearchIndexerClient.create_or_update_indexer.skip_indexer_reset_requirement_for_cache`
+  - `SearchIndexerClient.create_or_update_skillset.disable_cache_reprocessing_change_detection`
+  - `SearchIndexerClient.create_or_update_skillset.skip_indexer_reset_requirement_for_cache`
+
+- Below operations do not exist in this release
+  - `SearchIndexClient.list_index_stats_summary`
+  - `SearchIndexerClient.reset_documents`
+  - `SearchIndexerClient.reset_skills`
+  - `SearchIndexerClient.resync`
+
+- Below enum values do not exist in this release
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT4_O`
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT4_O_MINI`
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT41`
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT41_MINI`
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT41_NANO`
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT5`
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT5_MINI` (renamed to `GPT_5_MINI`)
+  - `azure.search.documents.indexes.models.AzureOpenAIModelName.GPT5_NANO` (renamed to `GPT_5_NANO`)
+  - `azure.search.documents.indexes.models.KnowledgeSourceKind.INDEXED_ONE_LAKE` (renamed to `INDEXED_ONELAKE`)
+  - `azure.search.documents.indexes.models.SearchIndexerDataSourceType.SHARE_POINT` (renamed to `SHAREPOINT`)
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseActivityRecordType.INDEXED_ONE_LAKE` (renamed to `INDEXED_ONELAKE`)
+  - `azure.search.documents.knowledgebases.models.KnowledgeBaseReferenceType.INDEXED_ONE_LAKE` (renamed to `INDEXED_ONELAKE`)
+  - `azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffortKind.LOW`
+  - `azure.search.documents.knowledgebases.models.KnowledgeRetrievalReasoningEffortKind.MEDIUM`
+
+### Deprecated
+
+The following changes are due to the migration from AutoRest to TypeSpec code generation. The old API continues to work at runtime via backward-compatible aliases:
+
+- `azure.search.documents.indexes.models.SearchFieldDataType` enum values are now UPPER_CASE (e.g., `STRING` instead of `String`). PascalCase aliases (e.g., `SearchFieldDataType.String`) are preserved and continue to work at runtime.
+- `azure.search.documents.indexes.models.SearchField` now uses `retrievable` (from the API) as its native property instead of `hidden`. A `hidden` property (the inverse of `retrievable`) is preserved for backward compatibility via getter/setter.
 
 ### Other Changes
+
+- Updated default API version to `2026-04-01`.
+- Some boolean properties now default to `None` instead of `True` or `False`. There is no behavioral change — the server applies the same default when the property is omitted. Examples include:
+  - `azure.search.documents.indexes.models.CommonGramTokenFilter.ignore_case`
+  - `azure.search.documents.indexes.models.CommonGramTokenFilter.use_query_mode`
+  - `azure.search.documents.indexes.models.DictionaryDecompounderTokenFilter.only_longest_match`
+  - `azure.search.documents.indexes.models.KeywordMarkerTokenFilter.ignore_case`
+  - `azure.search.documents.indexes.models.StopwordsTokenFilter.ignore_case`
+  - `azure.search.documents.indexes.models.SynonymTokenFilter.ignore_case`
 
 ## 11.7.0b2 (2025-11-13)
 
@@ -911,7 +1114,6 @@ This version will be the last version to officially support Python 3.5, future v
 - Create_or_updates methods does not support partial updates    #11800
 - Renamed AnalyzeRequest to AnalyzeTextOptions  #11800
 - Renamed Batch methods #11800
-  
 
 ## 1.0.0b3 (2020-05-04)
 
