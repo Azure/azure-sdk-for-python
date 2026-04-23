@@ -3,6 +3,7 @@
 import argparse
 import os
 import sys
+from types import SimpleNamespace
 from unittest.mock import patch, MagicMock, call
 
 import pytest
@@ -303,7 +304,8 @@ class TestChangelogExecution:
     def test_status_calls_chronus_status(self, mock_call, _mock_installed):
         parser = _build_parser()
         args = parser.parse_args(["changelog", "status"])
-        result = args.func(args)
+        with patch("os.getcwd", return_value=REPO_ROOT):
+            result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
         assert cmd == [_CHRONUS_BIN, "status"]
@@ -328,42 +330,89 @@ class TestChangelogExecution:
 
 
 # ---------------------------------------------------------------------------
-# CWD detection unit tests
+# Package resolution unit tests
 # ---------------------------------------------------------------------------
 
 
-class TestDetectPackageFromCwd:
-    """Test the _detect_package_from_cwd helper directly."""
+class TestFindPackageRootFromCwd:
+    """Test the _find_package_root_from_cwd helper directly."""
 
     def test_at_package_root(self):
         c = changelog()
-        with patch("os.getcwd", return_value=os.path.join(REPO_ROOT, "sdk", "core", "azure-core")):
-            assert c._detect_package_from_cwd() == "azure-core"
+        pkg_root = os.path.join(REPO_ROOT, "sdk", "core", "azure-core")
+        with patch("os.getcwd", return_value=pkg_root):
+            assert c._find_package_root_from_cwd() == pkg_root
 
     def test_inside_package_subdir(self):
         c = changelog()
-        with patch("os.getcwd", return_value=os.path.join(REPO_ROOT, "sdk", "core", "azure-core", "azure", "core")):
-            assert c._detect_package_from_cwd() == "azure-core"
+        pkg_root = os.path.join(REPO_ROOT, "sdk", "core", "azure-core")
+        with patch("os.getcwd", return_value=os.path.join(pkg_root, "azure", "core")):
+            assert c._find_package_root_from_cwd() == pkg_root
 
     def test_at_repo_root(self):
         c = changelog()
         with patch("os.getcwd", return_value=REPO_ROOT):
-            assert c._detect_package_from_cwd() is None
+            assert c._find_package_root_from_cwd() is None
 
     def test_at_sdk_dir(self):
         c = changelog()
         with patch("os.getcwd", return_value=os.path.join(REPO_ROOT, "sdk")):
-            assert c._detect_package_from_cwd() is None
+            assert c._find_package_root_from_cwd() is None
 
     def test_at_service_dir(self):
         c = changelog()
         with patch("os.getcwd", return_value=os.path.join(REPO_ROOT, "sdk", "storage")):
-            assert c._detect_package_from_cwd() is None
+            assert c._find_package_root_from_cwd() is None
 
     def test_outside_repo(self):
         c = changelog()
         with patch("os.getcwd", return_value="/tmp"):
-            assert c._detect_package_from_cwd() is None
+            assert c._find_package_root_from_cwd() is None
+
+
+class TestResolvePackage:
+    """Test the _resolve_package helper that uses discover_targeted_packages."""
+
+    @patch("azpysdk.changelog.ParsedSetup")
+    @patch("azpysdk.changelog.discover_targeted_packages")
+    def test_explicit_path_uses_discover(self, mock_discover, mock_parsed_setup):
+        mock_discover.return_value = [os.path.join(REPO_ROOT, "sdk", "core", "azure-core")]
+        mock_parsed_setup.from_path.return_value = SimpleNamespace(name="azure-core")
+        c = changelog()
+        result = c._resolve_package("sdk/core/azure-core")
+        assert result == "azure-core"
+        mock_discover.assert_called_once_with("sdk/core/azure-core", REPO_ROOT)
+
+    @patch("azpysdk.changelog.ParsedSetup")
+    @patch("azpysdk.changelog.discover_targeted_packages")
+    def test_bare_name_uses_discover(self, mock_discover, mock_parsed_setup):
+        mock_discover.return_value = [os.path.join(REPO_ROOT, "sdk", "core", "azure-core")]
+        mock_parsed_setup.from_path.return_value = SimpleNamespace(name="azure-core")
+        c = changelog()
+        result = c._resolve_package("azure-core")
+        assert result == "azure-core"
+        mock_discover.assert_called_once_with("azure-core", REPO_ROOT)
+
+    @patch("azpysdk.changelog.discover_targeted_packages")
+    def test_bare_name_passthrough_when_not_discovered(self, mock_discover):
+        mock_discover.return_value = []
+        c = changelog()
+        result = c._resolve_package("some-nonexistent-package-name")
+        assert result == "some-nonexistent-package-name"
+
+    @patch("azpysdk.changelog.ParsedSetup")
+    def test_cwd_detection_uses_parsed_setup(self, mock_parsed_setup):
+        mock_parsed_setup.from_path.return_value = SimpleNamespace(name="azure-storage-blob")
+        c = changelog()
+        pkg_dir = os.path.join(REPO_ROOT, "sdk", "storage", "azure-storage-blob")
+        with patch("os.getcwd", return_value=pkg_dir):
+            result = c._resolve_package(None)
+        assert result == "azure-storage-blob"
+
+    def test_cwd_at_repo_root_returns_none(self):
+        c = changelog()
+        with patch("os.getcwd", return_value=REPO_ROOT):
+            assert c._resolve_package(None) is None
 
 
 # ---------------------------------------------------------------------------

@@ -6,7 +6,9 @@ import sys
 from typing import Optional, List
 
 from .Check import Check, REPO_ROOT
+from ci_tools.functions import discover_targeted_packages
 from ci_tools.logging import logger
+from ci_tools.parsing import ParsedSetup
 
 # The expected Chronus package name and on-disk install location.
 # Chronus is pinned as a dev dependency in .github/chronus/package.json with
@@ -211,13 +213,17 @@ class changelog(Check):
             )
             raise SystemExit(1)
 
-    def _detect_package_from_cwd(self) -> Optional[str]:
-        """If CWD is inside a package directory (``sdk/<service>/<package>``),
-        return the Chronus package **name** (the directory basename, e.g.
-        ``azure-core``).  Otherwise return ``None``.
+    def _find_package_root_from_cwd(self) -> Optional[str]:
+        """Find the package root directory when CWD is at or below ``sdk/<service>/<package>``.
 
-        The chronus config uses the pattern ``sdk/*/*`` for packages, so we
-        look for CWD being at or below ``<REPO_ROOT>/sdk/<service>/<pkg>``.
+        Walks up from the current directory to locate the package root,
+        unlike ``get_targeted_directories(target=".")`` which only works
+        when CWD is exactly the package root.  This lets developers run
+        changelog commands from subdirectories such as
+        ``sdk/core/azure-core/tests/``.
+
+        Returns the absolute path to the package root, or ``None`` if CWD
+        is not inside an ``sdk/<service>/<package>`` tree.
         """
         try:
             cwd = os.path.abspath(os.getcwd())
@@ -227,40 +233,38 @@ class changelog(Check):
             # On Windows, relpath raises ValueError when paths are on different drives
             return None
 
-        # rel should start with "sdk/<service>/<package>" (at least 3 components)
         parts = rel.replace("\\", "/").split("/")
         if len(parts) >= 3 and parts[0] == "sdk":
-            # Return the package name (third component, e.g. "azure-core")
-            return parts[2]
+            return os.path.join(repo, parts[0], parts[1], parts[2])
         return None
 
-    def _resolve_package_name(self, package: str) -> str:
-        """Resolve a user-supplied package argument to a Chronus package name.
+    def _resolve_package(self, package_arg: Optional[str]) -> Optional[str]:
+        """Resolve a package argument or CWD to a Chronus package name.
 
-        Accepts either:
-        - A package name directly (e.g. ``azure-core``) — returned as-is.
-        - A relative or absolute path (e.g. ``sdk/core/azure-core``,
-          ``.\\sdk\\core\\azure-core\\``) — resolved to the package name.
-
-        Chronus identifies packages by name (the directory basename under
-        ``sdk/<service>/``), not by path.
+        Uses ``discover_targeted_packages`` — the same discovery function
+        that powers ``get_targeted_directories`` — to locate packages by
+        path or bare name.  When *package_arg* is ``None``, the method
+        detects the package from CWD by walking up to the nearest
+        ``sdk/<service>/<package>`` directory.
         """
-        # If the path is absolute or starts with '.' resolve it relative to repo root
-        if os.path.isabs(package) or package.startswith("."):
-            try:
-                abs_path = os.path.abspath(os.path.join(os.getcwd(), package))
-                repo = os.path.abspath(REPO_ROOT)
-                package = os.path.relpath(abs_path, repo)
-            except ValueError:
-                pass
-        # Normalize separators and strip trailing slashes
-        package = package.replace("\\", "/").strip("/")
-        # If it looks like a path (sdk/<service>/<package>...), extract the name
-        parts = package.split("/")
-        if len(parts) >= 3 and parts[0] == "sdk":
-            return parts[2]
-        # Otherwise assume it's already a package name
-        return package
+        if package_arg:
+            found = discover_targeted_packages(package_arg, REPO_ROOT)
+            if found:
+                try:
+                    return ParsedSetup.from_path(found[0]).name
+                except Exception:
+                    return os.path.basename(found[0])
+            # Not found by discovery — pass through as-is
+            return package_arg
+
+        # No explicit package — detect from CWD
+        pkg_root = self._find_package_root_from_cwd()
+        if pkg_root is None:
+            return None
+        try:
+            return ParsedSetup.from_path(pkg_root).name
+        except Exception:
+            return os.path.basename(os.path.normpath(pkg_root))
 
     def _run_chronus(self, chronus_args: List[str]) -> int:
         """Run a chronus command from the repository root.
@@ -293,13 +297,10 @@ class changelog(Check):
         ``azpysdk changelog add --kind breaking -m "Removed foo API"``).
         """
         chronus_args = ["add"]
-        package = args.package
-        if package:
-            package = self._resolve_package_name(package)
-        else:
-            package = self._detect_package_from_cwd()
-            if package:
-                logger.info(f"Detected package from current directory: {package}")
+        detected_from_cwd = not args.package
+        package = self._resolve_package(args.package)
+        if package and detected_from_cwd:
+            logger.info(f"Detected package from current directory: {package}")
         if package:
             chronus_args.append(package)
 
@@ -323,13 +324,10 @@ class changelog(Check):
         via ``--package`` so only that package's changelog is generated.
         """
         chronus_args = ["changelog"]
-        package = args.package
-        if package:
-            package = self._resolve_package_name(package)
-        else:
-            package = self._detect_package_from_cwd()
-            if package:
-                logger.info(f"Detected package from current directory: {package}")
+        detected_from_cwd = not args.package
+        package = self._resolve_package(args.package)
+        if package and detected_from_cwd:
+            logger.info(f"Detected package from current directory: {package}")
         if not package:
             logger.error(
                 "No package specified and could not detect one from the current directory.\n"
@@ -356,13 +354,10 @@ class changelog(Check):
         via ``--only`` so only that package's status is shown.
         """
         chronus_args = ["status"]
-        package = args.package
-        if package:
-            package = self._resolve_package_name(package)
-        else:
-            package = self._detect_package_from_cwd()
-            if package:
-                logger.info(f"Detected package from current directory: {package}")
+        detected_from_cwd = not args.package
+        package = self._resolve_package(args.package)
+        if package and detected_from_cwd:
+            logger.info(f"Detected package from current directory: {package}")
         if package:
             chronus_args.extend(["--only", package])
         return self._run_chronus(chronus_args)
