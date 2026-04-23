@@ -11,10 +11,15 @@ from azpysdk.changelog import (
     changelog,
     REPO_ROOT,
     _CHRONUS_MODULE_PATH,
+    _CHRONUS_BIN_PATH,
     _CHANGE_KINDS,
     _FALLBACK_CHANGE_KINDS,
     _load_change_kinds,
 )
+
+# Absolute path of the pinned chronus binary — used as the first element of
+# the invocation in all the execution tests below.
+_CHRONUS_BIN = os.path.join(REPO_ROOT, _CHRONUS_BIN_PATH)
 
 
 # ---------------------------------------------------------------------------
@@ -147,7 +152,7 @@ class TestLoadChangeKinds:
 
 
 # ---------------------------------------------------------------------------
-# Execution tests (npx / chronus invocation)
+# Execution tests (chronus invocation)
 # ---------------------------------------------------------------------------
 
 
@@ -155,13 +160,13 @@ class TestChangelogExecution:
     """Verify that each subcommand invokes chronus with the right arguments.
 
     All tests in this class patch ``_is_chronus_installed`` to return True
-    so the installation check is bypassed.
+    so the installation check is bypassed.  Chronus is invoked via the
+    pinned binary at ``.github/chronus/node_modules/.bin/chronus``.
     """
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
-    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
-    def test_add_calls_chronus_add(self, mock_which, mock_call, _mock_installed):
+    def test_add_calls_chronus_add(self, mock_call, _mock_installed):
         parser = _build_parser()
         args = parser.parse_args(["changelog", "add"])
         # Run from repo root so CWD detection does NOT inject a package
@@ -170,23 +175,21 @@ class TestChangelogExecution:
         assert result == 0
         mock_call.assert_called_once()
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add"]
+        assert cmd == [_CHRONUS_BIN, "add"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
-    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
-    def test_add_with_package_passes_package(self, mock_which, mock_call, _mock_installed):
+    def test_add_with_package_passes_package(self, mock_call, _mock_installed):
         parser = _build_parser()
         args = parser.parse_args(["changelog", "add", "sdk/core/azure-core"])
         result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "azure-core"]
+        assert cmd == [_CHRONUS_BIN, "add", "azure-core"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
-    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
-    def test_add_detects_package_from_cwd(self, mock_which, mock_call, _mock_installed):
+    def test_add_detects_package_from_cwd(self, mock_call, _mock_installed):
         """When CWD is inside a package dir and no package arg is given, detect it."""
         parser = _build_parser()
         args = parser.parse_args(["changelog", "add"])
@@ -195,12 +198,11 @@ class TestChangelogExecution:
             result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "azure-storage-blob"]
+        assert cmd == [_CHRONUS_BIN, "add", "azure-storage-blob"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
-    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
-    def test_add_detects_package_from_subdirectory(self, mock_which, mock_call, _mock_installed):
+    def test_add_detects_package_from_subdirectory(self, mock_call, _mock_installed):
         """When CWD is a subdirectory of a package, detect the package root."""
         parser = _build_parser()
         args = parser.parse_args(["changelog", "add"])
@@ -209,12 +211,11 @@ class TestChangelogExecution:
             result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "azure-storage-blob"]
+        assert cmd == [_CHRONUS_BIN, "add", "azure-storage-blob"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
-    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
-    def test_add_explicit_package_overrides_cwd(self, mock_which, mock_call, _mock_installed):
+    def test_add_explicit_package_overrides_cwd(self, mock_call, _mock_installed):
         """An explicit package argument takes precedence over CWD detection."""
         parser = _build_parser()
         args = parser.parse_args(["changelog", "add", "sdk/core/azure-core"])
@@ -223,12 +224,11 @@ class TestChangelogExecution:
             result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "azure-core"]
+        assert cmd == [_CHRONUS_BIN, "add", "azure-core"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
-    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
-    def test_add_with_kind_passes_flag(self, mock_which, mock_call, _mock_installed):
+    def test_add_with_kind_passes_flag(self, mock_call, _mock_installed):
         """The --kind flag should be forwarded to chronus."""
         parser = _build_parser()
         args = parser.parse_args(["changelog", "add", "--kind", "breaking"])
@@ -236,12 +236,11 @@ class TestChangelogExecution:
             result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "--kind", "breaking"]
+        assert cmd == [_CHRONUS_BIN, "add", "--kind", "breaking"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
-    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
-    def test_add_with_message_passes_flag(self, mock_which, mock_call, _mock_installed):
+    def test_add_with_message_passes_flag(self, mock_call, _mock_installed):
         """The --message flag should be forwarded to chronus."""
         parser = _build_parser()
         args = parser.parse_args(["changelog", "add", "-m", "Fixed upload bug"])
@@ -249,12 +248,11 @@ class TestChangelogExecution:
             result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "--message", "Fixed upload bug"]
+        assert cmd == [_CHRONUS_BIN, "add", "--message", "Fixed upload bug"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
-    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
-    def test_add_with_kind_message_and_package(self, mock_which, mock_call, _mock_installed):
+    def test_add_with_kind_message_and_package(self, mock_call, _mock_installed):
         """All flags (package, --kind, --message) should be forwarded together."""
         parser = _build_parser()
         args = parser.parse_args(
@@ -272,9 +270,7 @@ class TestChangelogExecution:
         assert result == 0
         cmd = mock_call.call_args[0][0]
         assert cmd == [
-            "/usr/bin/npx",
-            "--no",
-            "chronus",
+            _CHRONUS_BIN,
             "add",
             "azure-core",
             "--kind",
@@ -285,41 +281,37 @@ class TestChangelogExecution:
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
-    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
-    def test_verify_calls_chronus_verify(self, mock_which, mock_call, _mock_installed):
+    def test_verify_calls_chronus_verify(self, mock_call, _mock_installed):
         parser = _build_parser()
         args = parser.parse_args(["changelog", "verify"])
         result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "verify"]
+        assert cmd == [_CHRONUS_BIN, "verify"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
-    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
-    def test_create_calls_chronus_changelog(self, mock_which, mock_call, _mock_installed):
+    def test_create_calls_chronus_changelog(self, mock_call, _mock_installed):
         parser = _build_parser()
         args = parser.parse_args(["changelog", "create", "sdk/core/azure-core"])
         result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "changelog", "--package", "azure-core"]
+        assert cmd == [_CHRONUS_BIN, "changelog", "--package", "azure-core"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
-    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
-    def test_status_calls_chronus_status(self, mock_which, mock_call, _mock_installed):
+    def test_status_calls_chronus_status(self, mock_call, _mock_installed):
         parser = _build_parser()
         args = parser.parse_args(["changelog", "status"])
         result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "status"]
+        assert cmd == [_CHRONUS_BIN, "status"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
-    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
-    def test_chronus_runs_from_repo_root(self, mock_which, mock_call, _mock_installed):
+    def test_chronus_runs_from_repo_root(self, mock_call, _mock_installed):
         """Chronus must run from the repository root directory."""
         parser = _build_parser()
         args = parser.parse_args(["changelog", "verify"])
@@ -329,8 +321,7 @@ class TestChangelogExecution:
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=1)
-    @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
-    def test_nonzero_exit_code_propagated(self, mock_which, mock_call, _mock_installed):
+    def test_nonzero_exit_code_propagated(self, mock_call, _mock_installed):
         parser = _build_parser()
         args = parser.parse_args(["changelog", "verify"])
         result = args.func(args)
@@ -384,13 +375,9 @@ class TestDetectPackageFromCwd:
 class TestChangelogErrors:
     """Verify error handling when prerequisites are missing."""
 
-    @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
-    @patch("azpysdk.changelog.shutil.which", return_value=None)
-    def test_npx_not_found_raises(self, mock_which, _mock_installed):
-        parser = _build_parser()
-        args = parser.parse_args(["changelog", "verify"])
-        with pytest.raises(FileNotFoundError, match="npx not found"):
-            args.func(args)
+    # Note: there is no longer an "npx not found" error path — chronus is
+    # invoked via the pinned binary under .github/chronus/node_modules/.bin.
+    # Missing-binary scenarios are exercised by TestEnsureChronusInstalled.
 
 
 # ---------------------------------------------------------------------------
@@ -420,14 +407,17 @@ class TestEnsureChronusInstalled:
     @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npm")
     @patch("azpysdk.changelog.sys.stdin")
     def test_non_interactive_with_auto_install_env(self, mock_stdin, mock_which, mock_call, mock_installed):
-        """In non-interactive mode with AZPYSDK_AUTO_INSTALL=1, npm install runs."""
+        """In non-interactive mode with AZPYSDK_AUTO_INSTALL=1, npm ci runs."""
         mock_stdin.isatty.return_value = False
         c = changelog()
         with patch.dict(os.environ, {"AZPYSDK_AUTO_INSTALL": "1"}):
             c._ensure_chronus_installed()  # should not raise
         mock_call.assert_called_once()
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npm", "install"]
+        assert cmd == ["/usr/bin/npm", "ci"]
+        # And it must run from the .github/chronus directory, not repo root.
+        _, kwargs = mock_call.call_args
+        assert kwargs["cwd"].endswith(os.path.join(".github", "chronus"))
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=False)
     @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npm")
@@ -489,12 +479,12 @@ class TestEnsureChronusInstalled:
             with pytest.raises(SystemExit):
                 c._ensure_chronus_installed()
 
-    def test_is_chronus_installed_checks_node_modules(self):
-        """_is_chronus_installed should check for the chronus directory in node_modules."""
+    def test_is_chronus_installed_checks_bin(self):
+        """_is_chronus_installed should check for the chronus binary file."""
         c = changelog()
-        expected_path = os.path.join(REPO_ROOT, _CHRONUS_MODULE_PATH)
-        with patch("os.path.isdir", return_value=True) as mock_isdir:
+        expected_path = os.path.join(REPO_ROOT, _CHRONUS_BIN_PATH)
+        with patch("os.path.isfile", return_value=True) as mock_isfile:
             assert c._is_chronus_installed() is True
-            mock_isdir.assert_called_once_with(expected_path)
-        with patch("os.path.isdir", return_value=False) as mock_isdir:
+            mock_isfile.assert_called_once_with(expected_path)
+        with patch("os.path.isfile", return_value=False) as mock_isfile:
             assert c._is_chronus_installed() is False

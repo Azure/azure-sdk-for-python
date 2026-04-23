@@ -8,9 +8,15 @@ from typing import Optional, List
 from .Check import Check, REPO_ROOT
 from ci_tools.logging import logger
 
-# The expected Chronus package name in node_modules
+# The expected Chronus package name and on-disk install location.
+# Chronus is pinned as a dev dependency in .github/chronus/package.json with
+# a committed lockfile so both the top-level version and all transitive
+# dependencies are reproducible.
 _CHRONUS_PACKAGE = "@chronus/chronus"
-_CHRONUS_MODULE_PATH = os.path.join("node_modules", "@chronus", "chronus")
+_CHRONUS_INSTALL_DIR = os.path.join(".github", "chronus")
+_CHRONUS_MODULE_PATH = os.path.join(_CHRONUS_INSTALL_DIR, "node_modules", "@chronus", "chronus")
+_CHRONUS_BIN_NAME = "chronus.cmd" if os.name == "nt" else "chronus"
+_CHRONUS_BIN_PATH = os.path.join(_CHRONUS_INSTALL_DIR, "node_modules", ".bin", _CHRONUS_BIN_NAME)
 
 _FALLBACK_CHANGE_KINDS = ["breaking", "feature", "deprecation", "fix", "dependencies", "internal"]
 
@@ -141,50 +147,41 @@ class changelog(Check):
         self._parser.print_help()
         return 1
 
-    def _get_npx(self) -> str:
-        """Locate the ``npx`` executable on *PATH*."""
-        npx = shutil.which("npx")
-        if not npx:
-            logger.error(
-                "npx is not installed. Chronus requires Node.js. "
-                "Please install Node.js (LTS) from https://nodejs.org/ and try again."
-            )
-            raise FileNotFoundError("npx not found on PATH")
-        return npx
-
     def _is_chronus_installed(self) -> bool:
         """Return ``True`` if Chronus is installed locally in *node_modules*."""
-        return os.path.isdir(os.path.join(REPO_ROOT, _CHRONUS_MODULE_PATH))
+        return os.path.isfile(os.path.join(REPO_ROOT, _CHRONUS_BIN_PATH))
 
     def _ensure_chronus_installed(self) -> None:
         """Verify that Chronus is installed locally, offering to install if not.
 
         Security: we **never** allow ``npx`` to silently download packages
         from the npm registry.  Instead we check for a local installation
-        and, when missing, run ``npm install`` against the repo-root
-        ``package.json`` so only declared dependencies are resolved.
+        and, when missing, run ``npm ci`` against ``.github/chronus`` so
+        only the exact versions recorded in ``package-lock.json`` are
+        installed (with integrity-hash verification).
 
         Raises ``SystemExit`` if the user declines or installation fails.
         """
         if self._is_chronus_installed():
             return
 
+        install_dir = os.path.join(REPO_ROOT, _CHRONUS_INSTALL_DIR)
         npm = shutil.which("npm")
         if not npm:
             logger.error(
                 "Chronus is not installed and npm was not found on PATH.\n"
                 "Please install Node.js (LTS) from https://nodejs.org/ then run:\n\n"
-                f"    cd {REPO_ROOT}\n"
-                "    npm install\n"
+                f"    cd {install_dir}\n"
+                "    npm ci\n"
             )
             raise SystemExit(1)
 
         if sys.stdin.isatty():
             print(
-                "\nChronus is not installed locally. It is listed as a dev dependency\n"
-                f"in {os.path.join(REPO_ROOT, 'package.json')}.\n"
+                "\nChronus is not installed locally. It is pinned as a dev dependency\n"
+                f"in {os.path.join(install_dir, 'package.json')}.\n"
             )
-            answer = input("Run 'npm install' in the repo root to install it? [Y/n] ").strip().lower()
+            answer = input(f"Run 'npm ci' in {_CHRONUS_INSTALL_DIR} to install it? [Y/n] ").strip().lower()
             if answer not in ("", "y", "yes"):
                 logger.info("Skipped Chronus installation.")
                 raise SystemExit(1)
@@ -193,23 +190,24 @@ class changelog(Check):
                 logger.error(
                     "Chronus is not installed and running in non-interactive mode.\n"
                     "Set AZPYSDK_AUTO_INSTALL=1 to allow automatic installation, or run:\n\n"
-                    f"    cd {REPO_ROOT}\n"
-                    "    npm install\n"
+                    f"    cd {install_dir}\n"
+                    "    npm ci\n"
                 )
                 raise SystemExit(1)
-            logger.info("AZPYSDK_AUTO_INSTALL set — running 'npm install' automatically.")
+            logger.info("AZPYSDK_AUTO_INSTALL set — running 'npm ci' automatically.")
 
-        logger.info(f"Running: npm install  (cwd: {REPO_ROOT})")
-        rc = subprocess.call([npm, "install"], cwd=REPO_ROOT)
+        logger.info(f"Running: npm ci  (cwd: {install_dir})")
+        rc = subprocess.call([npm, "ci"], cwd=install_dir)
         if rc != 0:
-            logger.error("'npm install' failed. Please resolve npm errors and try again.")
+            logger.error("'npm ci' failed. Please resolve npm errors and try again.")
             raise SystemExit(rc)
 
         if not self._is_chronus_installed():
             logger.error(
-                "'npm install' succeeded but Chronus was not found in node_modules.\n"
-                f"Expected: {os.path.join(REPO_ROOT, _CHRONUS_MODULE_PATH)}\n"
-                "Please verify that package.json lists @chronus/chronus as a dependency."
+                "'npm ci' succeeded but Chronus was not found in node_modules.\n"
+                f"Expected: {os.path.join(REPO_ROOT, _CHRONUS_BIN_PATH)}\n"
+                f"Please verify that {os.path.join(_CHRONUS_INSTALL_DIR, 'package.json')} "
+                "lists @chronus/chronus as a dependency."
             )
             raise SystemExit(1)
 
@@ -265,18 +263,17 @@ class changelog(Check):
         return package
 
     def _run_chronus(self, chronus_args: List[str]) -> int:
-        """Run a chronus command via ``npx`` from the repository root.
+        """Run a chronus command from the repository root.
 
-        Before execution the method verifies that Chronus is installed
-        locally and uses ``npx --no`` to prevent automatic downloads
-        from the npm registry (supply-chain safety).
-
-        stdin/stdout/stderr are inherited so that interactive prompts
-        (e.g. ``chronus add``) work transparently.
+        Before execution the method verifies that Chronus is installed in
+        ``.github/chronus/node_modules`` and invokes the pinned binary
+        directly (rather than via ``npx``) to avoid any registry lookup or
+        ambient resolution.  stdin/stdout/stderr are inherited so that
+        interactive prompts (e.g. ``chronus add``) work transparently.
         """
         self._ensure_chronus_installed()
-        npx = self._get_npx()
-        cmd = [npx, "--no", "chronus"] + chronus_args
+        chronus_bin = os.path.join(REPO_ROOT, _CHRONUS_BIN_PATH)
+        cmd = [chronus_bin] + chronus_args
         logger.info(f"Running: {' '.join(cmd)}")
         return subprocess.call(cmd, cwd=REPO_ROOT)
 
