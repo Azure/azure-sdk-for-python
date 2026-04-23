@@ -4,9 +4,6 @@
 # Licensed under the MIT License.
 # ------------------------------------
 # cSpell:disable
-
-import pytest
-
 """
 Multi-Tool Tests: File Search + Code Interpreter + Function Tool
 
@@ -14,7 +11,6 @@ Tests various scenarios using an agent with all three tools together.
 All tests use the same 3-tool combination but different inputs and workflows.
 """
 
-import json
 from io import BytesIO
 from test_base import TestBase, servicePreparer
 from devtools_testutils import recorded_by_proxy, RecordedTransport
@@ -25,7 +21,6 @@ from azure.ai.projects.models import (
     AutoCodeInterpreterToolParam,
     FunctionTool,
 )
-from openai.types.responses.response_input_param import FunctionCallOutput, ResponseInputParam
 
 
 class TestAgentFileSearchCodeInterpreterFunction(TestBase):
@@ -43,7 +38,7 @@ class TestAgentFileSearchCodeInterpreterFunction(TestBase):
         3. Function Tool: Agent saves the computed results
         """
 
-        model = kwargs.get("azure_ai_model_deployment_name")
+        model = kwargs.get("foundry_model_name")
 
         # Setup
         project_client = self.create_client(operation_group="agents", **kwargs)

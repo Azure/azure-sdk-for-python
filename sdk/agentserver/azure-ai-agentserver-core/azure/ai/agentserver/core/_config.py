@@ -15,6 +15,7 @@ misconfiguration is surfaced at startup rather than silently masked.
 """
 import os
 from typing import Optional
+
 from typing_extensions import Self
 
 # ======================================================================
@@ -23,6 +24,7 @@ from typing_extensions import Self
 
 _ENV_FOUNDRY_AGENT_NAME = "FOUNDRY_AGENT_NAME"
 _ENV_FOUNDRY_AGENT_VERSION = "FOUNDRY_AGENT_VERSION"
+_ENV_FOUNDRY_HOSTING_ENVIRONMENT = "FOUNDRY_HOSTING_ENVIRONMENT"
 _ENV_FOUNDRY_PROJECT_ENDPOINT = "FOUNDRY_PROJECT_ENDPOINT"
 _ENV_FOUNDRY_PROJECT_ARM_ID = "FOUNDRY_PROJECT_ARM_ID"
 _ENV_FOUNDRY_AGENT_SESSION_ID = "FOUNDRY_AGENT_SESSION_ID"
@@ -40,7 +42,7 @@ _DEFAULT_SSE_KEEPALIVE_INTERVAL = 0
 # ======================================================================
 
 
-class AgentConfig:
+class AgentConfig:  # pylint: disable=too-many-instance-attributes
     """Resolved configuration for an agent server host.
 
     All values are populated from environment variables at creation time.
@@ -53,6 +55,8 @@ class AgentConfig:
     :param agent_name: Agent name from ``FOUNDRY_AGENT_NAME``.
     :param agent_version: Agent version from ``FOUNDRY_AGENT_VERSION``.
     :param agent_id: Combined identifier (``"name:version"`` or ``"name"`` or ``""``).
+    :param is_hosted: Whether the agent is running in a Foundry-hosted container environment,
+        derived from ``FOUNDRY_HOSTING_ENVIRONMENT``.
     :param project_endpoint: Foundry project endpoint from ``FOUNDRY_PROJECT_ENDPOINT``.
     :param project_id: Foundry project ARM resource ID from ``FOUNDRY_PROJECT_ARM_ID``.
     :param session_id: Default session ID from ``FOUNDRY_AGENT_SESSION_ID``.
@@ -68,6 +72,7 @@ class AgentConfig:
         agent_name: str,
         agent_version: str,
         agent_id: str,
+        is_hosted: bool,
         project_endpoint: str,
         project_id: str,
         session_id: str,
@@ -79,6 +84,7 @@ class AgentConfig:
         self.agent_name = agent_name
         self.agent_version = agent_version
         self.agent_id = agent_id
+        self.is_hosted = is_hosted
         self.project_endpoint = project_endpoint
         self.project_id = project_id
         self.session_id = session_id
@@ -108,6 +114,7 @@ class AgentConfig:
             agent_name=agent_name,
             agent_version=agent_version,
             agent_id=agent_id,
+            is_hosted=bool(os.environ.get(_ENV_FOUNDRY_HOSTING_ENVIRONMENT, "")),
             project_endpoint=os.environ.get(_ENV_FOUNDRY_PROJECT_ENDPOINT, ""),
             project_id=os.environ.get(_ENV_FOUNDRY_PROJECT_ARM_ID, ""),
             session_id=os.environ.get(_ENV_FOUNDRY_AGENT_SESSION_ID, ""),

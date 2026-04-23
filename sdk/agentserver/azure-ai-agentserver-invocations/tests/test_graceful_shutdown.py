@@ -140,7 +140,7 @@ async def test_shutdown_handler_exception(caplog):
     async def on_shutdown():
         raise RuntimeError("shutdown exploded")
 
-    with caplog.at_level(logging.ERROR, logger="azure.ai.agentserver"):
+    with caplog.at_level(logging.WARNING, logger="azure.ai.agentserver"):
         await _drive_lifespan(app)
 
     # Should have logged the exception

@@ -68,7 +68,8 @@ def _make_tracing_server(**kwargs):
     """Create an InvocationAgentServerHost with tracing enabled."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
         with patch("azure.ai.agentserver.core._tracing._setup_trace_export"):
-            server = InvocationAgentServerHost(**kwargs)
+            with patch("azure.ai.agentserver.core._tracing._setup_log_export"):
+                server = InvocationAgentServerHost(**kwargs)
 
     @server.invoke_handler
     async def handle(request: Request) -> Response:
@@ -82,7 +83,8 @@ def _make_tracing_server_with_get_cancel(**kwargs):
     """Create a tracing-enabled server with get/cancel handlers."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
         with patch("azure.ai.agentserver.core._tracing._setup_trace_export"):
-            server = InvocationAgentServerHost(**kwargs)
+            with patch("azure.ai.agentserver.core._tracing._setup_log_export"):
+                server = InvocationAgentServerHost(**kwargs)
 
     store: dict[str, bytes] = {}
 
@@ -114,7 +116,8 @@ def _make_failing_tracing_server(**kwargs):
     """Create a tracing-enabled server whose handler raises."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
         with patch("azure.ai.agentserver.core._tracing._setup_trace_export"):
-            server = InvocationAgentServerHost(**kwargs)
+            with patch("azure.ai.agentserver.core._tracing._setup_log_export"):
+                server = InvocationAgentServerHost(**kwargs)
 
     @server.invoke_handler
     async def handle(request: Request) -> Response:
@@ -127,7 +130,8 @@ def _make_streaming_tracing_server(**kwargs):
     """Create a tracing-enabled server with streaming response."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
         with patch("azure.ai.agentserver.core._tracing._setup_trace_export"):
-            server = InvocationAgentServerHost(**kwargs)
+            with patch("azure.ai.agentserver.core._tracing._setup_log_export"):
+                server = InvocationAgentServerHost(**kwargs)
 
     @server.invoke_handler
     async def handle(request: Request) -> StreamingResponse:
@@ -239,7 +243,8 @@ def test_tracing_via_appinsights_env_var():
     """Tracing is enabled when APPLICATIONINSIGHTS_CONNECTION_STRING is set."""
     with patch.dict(os.environ, {"APPLICATIONINSIGHTS_CONNECTION_STRING": "InstrumentationKey=test"}):
         with patch("azure.ai.agentserver.core._tracing._setup_trace_export"):
-            app = InvocationAgentServerHost()
+            with patch("azure.ai.agentserver.core._tracing._setup_log_export"):
+                app = InvocationAgentServerHost()
 
     @app.invoke_handler
     async def handle(request: Request) -> Response:
@@ -258,8 +263,8 @@ def test_tracing_via_appinsights_env_var():
 # ---------------------------------------------------------------------------
 
 def test_no_tracing_when_no_endpoints():
-    """When no connection string or OTLP endpoint is set, configure_tracing is not called,
-    but spans are still created (they're just not exported)."""
+    """When no connection string or OTLP endpoint is set, configure_observability
+    still runs (for console logging) but tracing spans are not exported."""
     env = os.environ.copy()
     env.pop("APPLICATIONINSIGHTS_CONNECTION_STRING", None)
     env.pop("OTEL_EXPORTER_OTLP_ENDPOINT", None)
