@@ -141,7 +141,13 @@ def _get_input_text(request: CreateResponse) -> str:
     texts: list[str] = []
     for item in items:
         if _is_type(item, ItemMessage, "message"):
-            for part in _get_field(item, "content") or []:
+            content = _get_field(item, "content")
+            if isinstance(content, str):
+                # String shorthand — treat as a single input_text part
+                if content:
+                    texts.append(content)
+                continue
+            for part in content or []:
                 if _is_type(part, MessageContentInputTextContent, "input_text"):
                     text = _get_field(part, "text")
                     if text is not None:
@@ -285,9 +291,10 @@ def get_output_item_id(item: OutputItem) -> str:
 def get_content_expanded(message: ItemMessage) -> list[MessageContent]:
     """Return the typed content list from an :class:`ItemMessage`.
 
-    In Python the generated ``ItemMessage.content`` is already
-    ``list[MessageContent]``, so this is a convenience passthrough that
-    returns an empty list when content is ``None``.
+    If ``content`` is a plain string (the API allows a string shorthand),
+    it is wrapped as a single :class:`MessageContentInputTextContent`.
+    If it is already a list, returns a shallow copy.
+    Returns an empty list when content is ``None``.
 
     :param message: The item message.
     :type message: ItemMessage
@@ -295,7 +302,11 @@ def get_content_expanded(message: ItemMessage) -> list[MessageContent]:
     :rtype: list[MessageContent]
     """
     content = _get_field(message, "content")
-    return list(content) if content else []
+    if content is None:
+        return []
+    if isinstance(content, str):
+        return [MessageContentInputTextContent(text=content)] if content else []
+    return list(content)
 
 
 # ---------------------------------------------------------------------------

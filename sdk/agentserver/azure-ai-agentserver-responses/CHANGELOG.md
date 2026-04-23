@@ -12,6 +12,7 @@
 ### Bugs Fixed
 
 - Fixed crash in `FoundryStorageLoggingPolicy` when a transport-level failure (DNS resolution, connection refused, timeout) occurs before any HTTP response is received. The policy previously attempted to access `response.headers` unconditionally, raising an unrelated exception that masked the real transport error. Transport failures are now logged at ERROR level and the original exception propagates cleanly.
+- Fixed `_get_input_text` and `get_content_expanded` silently dropping text when `ItemMessage.content` is a plain string (the API allows `Union[str, list[MessageContent]]`). String content is now correctly wrapped as `MessageContentInputTextContent`, matching the .NET `ExpandContent` behavior.
 
 ### Other Changes
 
