@@ -124,6 +124,13 @@ def get_input_expanded(request: CreateResponse) -> list[Item]:
             items.append(d)
         else:
             items.append(_deserialize(Item, d))
+
+    # Auto-expand string content on message items so downstream consumers
+    # always see list[MessageContent] (matches .NET ExpandContent behaviour).
+    for item in items:
+        if isinstance(item, ItemMessage) and isinstance(item.content, str):
+            item.content = get_content_expanded(item)
+
     return items
 
 
@@ -141,13 +148,7 @@ def _get_input_text(request: CreateResponse) -> str:
     texts: list[str] = []
     for item in items:
         if _is_type(item, ItemMessage, "message"):
-            content = _get_field(item, "content")
-            if isinstance(content, str):
-                # String shorthand — treat as a single input_text part
-                if content:
-                    texts.append(content)
-                continue
-            for part in content or []:
+            for part in _get_field(item, "content") or []:
                 if _is_type(part, MessageContentInputTextContent, "input_text"):
                     text = _get_field(part, "text")
                     if text is not None:

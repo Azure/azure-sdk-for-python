@@ -145,3 +145,57 @@ def test_get_input_text__dict_message_with_string_content() -> None:
     )
     result = _get_input_text(request)
     assert result == "dict string"
+
+
+# ---------------------------------------------------------------------------
+# get_input_expanded — auto-expands string content on ItemMessage items
+# ---------------------------------------------------------------------------
+
+
+def test_get_input_expanded__normalizes_string_content_to_list() -> None:
+    """get_input_expanded auto-expands string content to list[MessageContent]."""
+    request = CreateResponse(
+        model="test",
+        input=[
+            ItemMessage(role=MessageRole.USER, content="expanded text"),
+        ],
+    )
+    items = get_input_expanded(request)
+
+    assert len(items) == 1
+    msg = items[0]
+    assert isinstance(msg, ItemMessage)
+    # content should now be a list, not a string
+    assert isinstance(msg.content, list)
+    assert len(msg.content) == 1
+    assert isinstance(msg.content[0], MessageContentInputTextContent)
+    assert msg.content[0].text == "expanded text"
+
+
+def test_get_input_expanded__list_content_unchanged() -> None:
+    """get_input_expanded leaves list content untouched."""
+    request = CreateResponse(
+        model="test",
+        input=[
+            ItemMessage(
+                role=MessageRole.USER,
+                content=[MessageContentInputTextContent(text="already a list")],
+            ),
+        ],
+    )
+    items = get_input_expanded(request)
+
+    msg = items[0]
+    assert isinstance(msg.content, list)
+    assert msg.content[0].text == "already a list"
+
+
+def test_get_input_expanded__string_input_shorthand_already_list() -> None:
+    """When input is a plain string, the generated ItemMessage already has list content."""
+    request = CreateResponse(model="test", input="plain string input")
+    items = get_input_expanded(request)
+
+    msg = items[0]
+    assert isinstance(msg, ItemMessage)
+    assert isinstance(msg.content, list)
+    assert msg.content[0].text == "plain string input"
