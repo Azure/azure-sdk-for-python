@@ -26,6 +26,7 @@ class BreakingChangeType(str, Enum):
     CHANGED_PARAMETER_DEFAULT_VALUE = "ChangedParameterDefaultValue"
     CHANGED_PARAMETER_ORDERING = "ChangedParameterOrdering"
     CHANGED_PARAMETER_KIND = "ChangedParameterKind"
+    CHANGED_PARAMETER_TYPE = "ChangedParameterType"
     CHANGED_FUNCTION_KIND = "ChangedFunctionKind"
     REMOVED_OR_RENAMED_MODULE = "RemovedOrRenamedModule"
     REMOVED_FUNCTION_KWARGS = "RemovedFunctionKwargs"
@@ -73,6 +74,10 @@ class BreakingChangesTracker:
         "Method `{}.{}` changed its parameter `{}` from `{}` to `{}`"
     CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG = \
         "Function `{}` changed its parameter `{}` from `{}` to `{}`"
+    CHANGED_PARAMETER_TYPE_MSG = \
+        "Method `{}.{}` changed type of its parameter `{}` from `{}` to `{}`"
+    CHANGED_PARAMETER_TYPE_OF_FUNCTION_MSG = \
+        "Function `{}` changed type of its parameter `{}` from `{}` to `{}`"
     CHANGED_CLASS_FUNCTION_KIND_MSG = \
         "Method `{}.{}` changed from `{}` to `{}`"
     CHANGED_FUNCTION_KIND_MSG = \
@@ -292,6 +297,10 @@ class BreakingChangesTracker:
                     self.check_parameter_type_changed(
                         diff["param_type"], stable_parameters_node
                     )
+                elif diff_type == "type":
+                    self.check_parameter_annotation_type_changed(
+                        diff["type"], stable_parameters_node
+                    )
 
     def check_kwargs_removed(self, param_type: str, param_name: str) -> None:
         if param_type == "var_keyword" and param_name == "kwargs":
@@ -374,6 +383,25 @@ class BreakingChangesTracker:
                     self.CHANGED_PARAMETER_KIND_OF_FUNCTION_MSG, BreakingChangeType.CHANGED_PARAMETER_KIND,
                     self._module_name, self._function_name, self._parameter_name,
                     stable_parameters_node[self._parameter_name]["param_type"], diff
+                )
+            )
+
+    def check_parameter_annotation_type_changed(self, diff: Any, stable_parameters_node: Dict) -> None:
+        stable_type = stable_parameters_node[self._parameter_name].get("type")
+        if self._class_name:
+            self.breaking_changes.append(
+                (
+                    self.CHANGED_PARAMETER_TYPE_MSG, BreakingChangeType.CHANGED_PARAMETER_TYPE,
+                    self._module_name, self._class_name, self._function_name, self._parameter_name,
+                    stable_type, diff
+                )
+            )
+        else:
+            self.breaking_changes.append(
+                (
+                    self.CHANGED_PARAMETER_TYPE_OF_FUNCTION_MSG, BreakingChangeType.CHANGED_PARAMETER_TYPE,
+                    self._module_name, self._function_name, self._parameter_name,
+                    stable_type, diff
                 )
             )
 
