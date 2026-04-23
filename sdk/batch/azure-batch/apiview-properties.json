@@ -128,7 +128,7 @@
         "azure.batch.models.OutputFile": "Azure.Batch.OutputFile",
         "azure.batch.models.OutputFileBlobContainerDestination": "Azure.Batch.OutputFileBlobContainerDestination",
         "azure.batch.models.OutputFileDestination": "Azure.Batch.OutputFileDestination",
-        "azure.batch.models.OutputFileUploadConfig": "Azure.Batch.OutputFileUploadConfig",
+        "azure.batch.models.OutputFileUploadConfiguration": "Azure.Batch.OutputFileUploadConfig",
         "azure.batch.models.OutputFileUploadHeader": "Azure.Batch.OutputFileUploadHeader",
         "azure.batch.models.ProxyAgentSettings": "Azure.Batch.ProxyAgentSettings",
         "azure.batch.models.RecentBatchJob": "Azure.Batch.RecentBatchJob",

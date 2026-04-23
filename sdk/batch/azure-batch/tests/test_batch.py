@@ -1126,7 +1126,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                         container_url=container_url, path="taskLogs/output.txt"
                     )
                 ),
-                upload_options=models.OutputFileUploadConfig(
+                upload_options=models.OutputFileUploadConfiguration(
                     upload_condition=models.OutputFileUploadCondition.TASK_COMPLETION
                 ),
             ),
@@ -1137,7 +1137,7 @@ class TestBatch(AzureMgmtRecordedTestCase):
                         container_url=container_url, path="taskLogs/error.txt"
                     )
                 ),
-                upload_options=models.OutputFileUploadConfig(
+                upload_options=models.OutputFileUploadConfiguration(
                     upload_condition=models.OutputFileUploadCondition.TASK_FAILURE
                 ),
             ),
