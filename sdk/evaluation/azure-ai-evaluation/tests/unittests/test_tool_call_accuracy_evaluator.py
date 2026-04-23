@@ -338,7 +338,7 @@ class TestToolCallAccuracyEvaluator:
         key = ToolCallAccuracyEvaluator._RESULT_KEY
         assert result is not None
         assert result[f"{key}_score"] is None
-        assert result[f"{key}_result"] == "not_applicable"
+        assert result[f"{key}_result"] == "pass"
         assert result[f"{key}_status"] == "skipped"
         assert result[f"{key}_threshold"] == ToolCallAccuracyEvaluator._DEFAULT_TOOL_CALL_ACCURACY_SCORE
         assert (
