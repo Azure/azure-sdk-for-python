@@ -1,5 +1,5 @@
 ---
-name: cu-sdk-py-sample-run
+name: cu-sdk-sample-run
 description: Run a specific sample for the Azure AI Content Understanding SDK. Use when users want to run a particular sample like sample_analyze_url.py or sample_analyze_invoice.py.
 ---
 
@@ -130,7 +130,7 @@ source .venv/bin/activate  # Linux/macOS
 > - `sample_update_defaults` -- Configure model defaults (one-time setup)
 > - Other -- Let me see the full list
 >
-> If the user picks "Other", show the full Available Samples list above or run `.github/skills/cu-sdk-py-sample-run/scripts/run_sample.sh --list`.
+> If the user picks "Other", show the full Available Samples list above or run `.github/skills/cu-sdk-sample-run/scripts/run_sample.sh --list`.
 
 > **[ASK USER] Sync or async?:**
 > Ask: "Would you like to run the **sync** or **async** version of this sample?"
@@ -152,20 +152,20 @@ python sample_analyze_url_async.py
 **Or use the script:**
 
 ```bash
-.github/skills/cu-sdk-py-sample-run/scripts/run_sample.sh <sample_name>
+.github/skills/cu-sdk-sample-run/scripts/run_sample.sh <sample_name>
 ```
 
 **Examples:**
 
 ```bash
 # Run sync sample
-.github/skills/cu-sdk-py-sample-run/scripts/run_sample.sh sample_analyze_url
+.github/skills/cu-sdk-sample-run/scripts/run_sample.sh sample_analyze_url
 
 # Run async sample
-.github/skills/cu-sdk-py-sample-run/scripts/run_sample.sh sample_analyze_url_async
+.github/skills/cu-sdk-sample-run/scripts/run_sample.sh sample_analyze_url_async
 
 # With .py extension (also works)
-.github/skills/cu-sdk-py-sample-run/scripts/run_sample.sh sample_analyze_invoice.py
+.github/skills/cu-sdk-sample-run/scripts/run_sample.sh sample_analyze_invoice.py
 ```
 
 > **[ASK USER] Sample result:**
@@ -185,28 +185,28 @@ python sample_analyze_url_async.py
 
 1. **First-time setup** (run once per Foundry resource):
    ```bash
-   .github/skills/cu-sdk-py-sample-run/scripts/run_sample.sh sample_update_defaults
+   .github/skills/cu-sdk-sample-run/scripts/run_sample.sh sample_update_defaults
    ```
 
 2. **Analyze a document from URL:**
    ```bash
-   .github/skills/cu-sdk-py-sample-run/scripts/run_sample.sh sample_analyze_url
+   .github/skills/cu-sdk-sample-run/scripts/run_sample.sh sample_analyze_url
    ```
 
 3. **Analyze a local PDF file:**
    ```bash
-   .github/skills/cu-sdk-py-sample-run/scripts/run_sample.sh sample_analyze_binary
+   .github/skills/cu-sdk-sample-run/scripts/run_sample.sh sample_analyze_binary
    ```
 
 4. **Extract invoice fields:**
    ```bash
-   .github/skills/cu-sdk-py-sample-run/scripts/run_sample.sh sample_analyze_invoice
+   .github/skills/cu-sdk-sample-run/scripts/run_sample.sh sample_analyze_invoice
    ```
 
 ### List Available Samples
 
 ```bash
-.github/skills/cu-sdk-py-sample-run/scripts/run_sample.sh --list
+.github/skills/cu-sdk-sample-run/scripts/run_sample.sh --list
 ```
 
 ## Troubleshooting
@@ -223,6 +223,7 @@ python sample_analyze_url_async.py
 ## Related Skills
 
 - `cu-sdk-setup` - Set up environment for running samples
+- `cu-sdk-common-knowledge` - Domain knowledge for Content Understanding concepts
 
 ## Additional Resources
 
