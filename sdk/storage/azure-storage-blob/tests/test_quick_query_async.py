@@ -930,6 +930,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(data, overwrite=True)
 
         errors = []
+
         def on_error(error):
             errors.append(error)
 
@@ -972,6 +973,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(data, overwrite=True)
 
         errors = []
+
         def on_error(error):
             errors.append(error)
 
@@ -991,7 +993,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
 
         assert len(errors) == 0
         assert resp._size == len(data)
-        assert listdata, [b'{"name":"owner"}',b'{}',b'{"name":"owner"}' == b'']
+        assert listdata, [b'{"name":"owner"}', b'{}', b'{"name":"owner"}' == b'']
         await self._teardown(bsc)
 
     @BlobPreparer()

@@ -41,12 +41,12 @@ from test_helpers import (
     _create_file_share_oauth
 )
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
 SMALL_BLOB_SIZE = 1024
 LARGE_BLOB_SIZE = 5 * 1024 + 5
 TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 
 
 class TestStorageBlockBlob(StorageRecordedTestCase):
@@ -101,7 +101,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         actual_data = blob.download_blob()
         assert actual_data.readall() == expected_data
 
-    #--Test cases for block blobs --------------------------------------------
+    # --Test cases for block blobs --------------------------------------------
     @BlobPreparer()
     @recorded_by_proxy
     def test_upload_blob_from_url_with_oauth(self, **kwargs):
@@ -596,10 +596,10 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             content_disposition='inline'
         )
         source_blob = self._create_blob(
-             data=b"This is test data to be copied over.",
-             tags={"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"},
-             content_settings=content_settings,
-             standard_blob_tier=StandardBlobTier.Cool)
+            data=b"This is test data to be copied over.",
+            tags={"tag1": "firsttag", "tag2": "secondtag", "tag3": "thirdtag"},
+            content_settings=content_settings,
+            standard_blob_tier=StandardBlobTier.Cool)
         source_blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
         source_blob_props = source_blob.get_blob_properties()
         sas = self.generate_sas(
@@ -626,9 +626,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Assert
         assert new_blob_copy1_props.content_settings.content_language == \
-               source_blob_props.content_settings.content_language
+            source_blob_props.content_settings.content_language
         assert new_blob_copy2_props.content_settings.content_language != \
-               source_blob_props.content_settings.content_language
+            source_blob_props.content_settings.content_language
 
         assert source_blob_props.lease.status == 'locked'
         assert new_blob_copy1_props.lease.status == 'unlocked'
@@ -749,7 +749,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
+            mgmt_client.blob_containers.create(storage_resource_group_name,
+                                               versioned_storage_account_name, container_name, blob_container=property)
 
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(container_name, blob_name)
@@ -780,7 +781,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             blob.delete_immutability_policy()
             blob.set_legal_hold(False)
             blob.delete_blob()
-            mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+            mgmt_client.blob_containers.delete(storage_resource_group_name,
+                                               versioned_storage_account_name, container_name)
 
         return variables
 
@@ -831,7 +833,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
     def test_put_block_list_with_blob_tier_specified(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-
 
         # Arrange
         self._setup(storage_account_name, storage_account_key)
@@ -1216,9 +1217,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        content_settings=ContentSettings(
-                content_type='image/png',
-                content_language='spanish')
+        content_settings = ContentSettings(
+            content_type='image/png',
+            content_language='spanish')
         blob.upload_blob(data, content_settings=content_settings)
 
         # Assert
@@ -1240,6 +1241,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -1301,9 +1303,9 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        content_settings=ContentSettings(
-                content_type='image/png',
-                content_language='spanish')
+        content_settings = ContentSettings(
+            content_type='image/png',
+            content_language='spanish')
         blob.upload_blob(data[3:], length=5, content_settings=content_settings)
 
         # Assert
@@ -1430,6 +1432,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -1457,7 +1460,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        content_settings=ContentSettings(
+        content_settings = ContentSettings(
             content_type='image/png',
             content_language='spanish')
         with tempfile.TemporaryFile() as temp_file:
@@ -1550,6 +1553,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -1598,7 +1602,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        content_settings=ContentSettings(
+        content_settings = ContentSettings(
             content_type='image/png',
             content_language='spanish')
         blob_size = len(data) - 301
@@ -1625,7 +1629,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
 
         # Act
-        content_settings=ContentSettings(
+        content_settings = ContentSettings(
             content_type='image/png',
             content_language='spanish')
         with tempfile.TemporaryFile() as temp_file:
@@ -1660,7 +1664,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            blob.upload_blob(temp_file, content_settings=content_settings, max_concurrency=2, standard_blob_tier=blob_tier)
+            blob.upload_blob(temp_file, content_settings=content_settings,
+                             max_concurrency=2, standard_blob_tier=blob_tier)
 
         properties = blob.get_blob_properties()
 
@@ -1720,6 +1725,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -2110,4 +2116,4 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
             assert blob.blob_tier == StandardBlobTier.SMART
             assert blob.smart_access_tier is not None
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------

@@ -81,7 +81,7 @@ class RSAKeyWrapper:
         if algorithm == 'RSA':
             return self.private_key.decrypt(key,
                                             OAEP(
-                                                mgf=MGF1(algorithm=SHA1()), # nosec
+                                                mgf=MGF1(algorithm=SHA1()),  # nosec
                                                 algorithm=SHA1(),   # nosec
                                                 label=None)
                                             )

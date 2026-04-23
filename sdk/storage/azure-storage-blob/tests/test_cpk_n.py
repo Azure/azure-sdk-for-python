@@ -68,7 +68,8 @@ class TestStorageCPKN(StorageRecordedTestCase):
         blob_name = blob_name if blob_name else self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         data = data if data else b''
-        resp = blob_client.upload_blob(data, encryption_scope=encryption_scope, max_concurrency=max_concurrency, overwrite=overwrite)
+        resp = blob_client.upload_blob(data, encryption_scope=encryption_scope,
+                                       max_concurrency=max_concurrency, overwrite=overwrite)
         return blob_client, resp
 
     def _create_append_blob(self, bsc, encryption_scope=None):
@@ -892,7 +893,8 @@ class TestStorageCPKN(StorageRecordedTestCase):
 
         self._setup(bsc_with_sas_credential)
         # blob is encrypted using TEST_ENCRYPTION_SCOPE_2
-        blob_client, _ = self._create_block_blob(bsc_with_sas_credential, blob_name="blockblob", data=b'AAABBBCCC', overwrite=True)
+        blob_client, _ = self._create_block_blob(
+            bsc_with_sas_credential, blob_name="blockblob", data=b'AAABBBCCC', overwrite=True)
 
         sas_token2 = self.generate_sas(
             generate_account_sas,
@@ -947,7 +949,8 @@ class TestStorageCPKN(StorageRecordedTestCase):
             max_page_size=1024)
 
         self._setup(bsc_with_sas_credential)
-        blob_client, _ = self._create_block_blob(bsc_with_sas_credential, blob_name="blockblob", data=b'AAABBBCCC', overwrite=True)
+        blob_client, _ = self._create_block_blob(
+            bsc_with_sas_credential, blob_name="blockblob", data=b'AAABBBCCC', overwrite=True)
 
         bsc = BlobServiceClient(
             self.account_url(storage_account_name, "blob"),
@@ -1009,7 +1012,8 @@ class TestStorageCPKN(StorageRecordedTestCase):
             max_page_size=1024)
 
         # blob is encrypted using TEST_ENCRYPTION_SCOPE
-        blob_client, _ = self._create_block_blob(bsc_with_delegation_sas, blob_name=blob_name, data=b'AAABBBCCC', overwrite=True)
+        blob_client, _ = self._create_block_blob(
+            bsc_with_delegation_sas, blob_name=blob_name, data=b'AAABBBCCC', overwrite=True)
         props = blob_client.get_blob_properties()
 
         assert props.encryption_scope == TEST_ENCRYPTION_SCOPE
@@ -1034,12 +1038,12 @@ class TestStorageCPKN(StorageRecordedTestCase):
                                                 container_encryption_scope=TEST_CONTAINER_ENCRYPTION_SCOPE)
         container_props = container_client.get_container_properties()
         assert container_props.encryption_scope.default_encryption_scope == \
-               TEST_CONTAINER_ENCRYPTION_SCOPE.default_encryption_scope
+            TEST_CONTAINER_ENCRYPTION_SCOPE.default_encryption_scope
         assert container_props.encryption_scope.prevent_encryption_scope_override == False
 
         for _ in bsc.list_containers(name_starts_with='cpkcontainer'):
             assert container_props.encryption_scope.default_encryption_scope == \
-               TEST_CONTAINER_ENCRYPTION_SCOPE.default_encryption_scope
+                TEST_CONTAINER_ENCRYPTION_SCOPE.default_encryption_scope
             assert container_props.encryption_scope.prevent_encryption_scope_override == False
 
         blob_client = container_client.get_blob_client("appendblob")

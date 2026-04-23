@@ -145,6 +145,7 @@ class MockLegacyTransport(AsyncHttpTransport):
     This transport returns legacy http response objects from azure core and is
     intended only to test our backwards compatibility support.
     """
+
     async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
         if request.method == 'GET':
             # download_blob

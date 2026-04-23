@@ -35,6 +35,7 @@ from settings.testcase import BlobPreparer
 
 class TimeoutAioHttpTransport(AioHttpTransport):
     """Transport to test read timeout"""
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.count = 0
@@ -182,7 +183,6 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         container_name = self.get_resource_name('utcontainer')
         service = self._create_storage_service(
             BlobServiceClient, storage_account_name, storage_account_key, retry_total=0)
-
 
         # Force the create call to 'timeout' with a 408
         callback = ResponseCallback(status=201, new_status=408).override_status
@@ -396,6 +396,7 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         class MockTransport(AioHttpTransport):
             CALL_NUMBER = 1
             ENABLE = False
+
             async def send(self, request, **kwargs):
                 if MockTransport.ENABLE:
                     if MockTransport.CALL_NUMBER == 2:
@@ -512,8 +513,8 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         """Test that retry mechanisms are working when streaming data."""
-        container_name = self.get_resource_name('utcontainer') 
-        retry = LinearRetry(backoff = 0.1, random_jitter_range=0)
+        container_name = self.get_resource_name('utcontainer')
+        retry = LinearRetry(backoff=0.1, random_jitter_range=0)
 
         service = self._create_storage_service(
             BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry)

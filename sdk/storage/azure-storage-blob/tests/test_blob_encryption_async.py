@@ -84,12 +84,13 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                     credential=storage_account_key.secret)
         self.bsc.require_encryption = True
         valid_key = KeyWrapper('key1')
 
         # Act
-        invalid_key_1 = lambda: None  # functions are objects, so this effectively creates an empty object
+        def invalid_key_1(): return None  # functions are objects, so this effectively creates an empty object
         invalid_key_1.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_1.get_kid = valid_key.get_kid
         # No attribute wrap_key
@@ -97,7 +98,7 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(AttributeError):
             await self._create_small_blob(BlobType.BlockBlob)
 
-        invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
+        def invalid_key_2(): return None  # functions are objects, so this effectively creates an empty object
         invalid_key_2.wrap_key = valid_key.wrap_key
         invalid_key_2.get_kid = valid_key.get_kid
         # No attribute get_key_wrap_algorithm
@@ -105,7 +106,7 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(AttributeError):
             await self._create_small_blob(BlobType.BlockBlob)
 
-        invalid_key_3 = lambda: None  # functions are objects, so this effectively creates an empty object
+        def invalid_key_3(): return None  # functions are objects, so this effectively creates an empty object
         invalid_key_3.get_key_wrap_algorithm = valid_key.get_key_wrap_algorithm
         invalid_key_3.wrap_key = valid_key.wrap_key
         # No attribute get_kid
@@ -118,7 +119,8 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                     credential=storage_account_key.secret)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
 
@@ -154,17 +156,17 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         # Act
         # Note that KeyWrapper has a default value for key_id, so these Exceptions
         # are not due to non_matching kids.
-        invalid_key_1 = lambda: None #functions are objects, so this effectively creates an empty object
+        def invalid_key_1(): return None  # functions are objects, so this effectively creates an empty object
         invalid_key_1.get_kid = valid_key.get_kid
-        #No attribute unwrap_key
+        # No attribute unwrap_key
         blob.key_encryption_key = invalid_key_1
         with pytest.raises(HttpResponseError):
             await (await blob.download_blob()).readall()
 
-        invalid_key_2 = lambda: None #functions are objects, so this effectively creates an empty object
+        def invalid_key_2(): return None  # functions are objects, so this effectively creates an empty object
         invalid_key_2.unwrap_key = valid_key.unwrap_key
         blob.key_encryption_key = invalid_key_2
-        #No attribute get_kid
+        # No attribute get_kid
         with pytest.raises(HttpResponseError):
             await (await blob.download_blob()).readall()
 

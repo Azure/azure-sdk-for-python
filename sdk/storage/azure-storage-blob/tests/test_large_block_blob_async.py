@@ -194,7 +194,6 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
 
-
     @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_create_large_blob_from_path_non_parallel(self, **kwargs):
@@ -216,7 +215,6 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
 
-
     @pytest.mark.live_test_only
     @BlobPreparer()
     async def test_create_large_blob_from_path_with_progress(self, **kwargs):
@@ -231,6 +229,7 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -245,7 +244,6 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         await self.assertBlobEqual(self.container_name, blob_name, data)
         self.assert_upload_progress(len(data), self.config.max_block_size, progress)
-
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -309,6 +307,7 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']

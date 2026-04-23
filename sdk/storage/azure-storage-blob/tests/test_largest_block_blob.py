@@ -215,7 +215,6 @@ class TestStorageLargestBlockBlob(StorageRecordedTestCase):
             temp_file.seek(0)
             blob.upload_blob(temp_file, max_concurrency=2)
 
-
     def test_substream_for_single_thread_upload_large_block(self):
         with tempfile.TemporaryFile() as temp_file:
             largeStream = LargeStream(LARGE_BLOCK_SIZE, 4 * 1024 * 1024)
@@ -367,9 +366,11 @@ def _is_put_block_request(request):
     query = request.http_request.query
     return query and "comp" in query and query["comp"] == "block"
 
+
 def _is_put_blob_request(request):
     query = request.http_request.query
     return request.http_request.method == "PUT" and not query
+
 
 def _get_body_length(request):
     body = request.http_request.body

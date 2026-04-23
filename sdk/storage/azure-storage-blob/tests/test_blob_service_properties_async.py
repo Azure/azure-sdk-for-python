@@ -201,7 +201,8 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
 
         # Assert
         received_props = await bsc.get_service_properties()
-        self._assert_delete_retention_policy_not_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_not_equal(
+            received_props['delete_retention_policy'], delete_retention_policy)
 
         # Should not work with 366 days
         delete_retention_policy = RetentionPolicy(enabled=True, days=366)
@@ -211,7 +212,8 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
 
         # Assert
         received_props = await bsc.get_service_properties()
-        self._assert_delete_retention_policy_not_equal(received_props['delete_retention_policy'], delete_retention_policy)
+        self._assert_delete_retention_policy_not_equal(
+            received_props['delete_retention_policy'], delete_retention_policy)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -371,7 +373,8 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
-        logging = BlobAnalyticsLogging(read=True, write=True, delete=True, retention_policy=RetentionPolicy(enabled=True, days=5))
+        logging = BlobAnalyticsLogging(read=True, write=True, delete=True,
+                                       retention_policy=RetentionPolicy(enabled=True, days=5))
 
         # Act
         await bsc.set_service_properties(analytics_logging=logging)
@@ -473,8 +476,8 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
 
         # Assert
         pytest.raises(ValueError,
-                          RetentionPolicy,
-                          True, None)
+                      RetentionPolicy,
+                      True, None)
 
     @BlobPreparer()
     @recorded_by_proxy_async

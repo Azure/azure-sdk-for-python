@@ -17,10 +17,11 @@ from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
 TEST_BLOB_PREFIX = 'blob'
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+
 
 class TestStorageBlobTags(AsyncStorageRecordedTestCase):
 
@@ -35,7 +36,7 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
                 pass
         self.byte_data = self.get_random_bytes(1024)
 
-    #--Helpers-----------------------------------------------------------------
+    # --Helpers-----------------------------------------------------------------
     def _get_blob_reference(self):
         return self.get_resource_name(TEST_BLOB_PREFIX)
 
@@ -71,7 +72,7 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
             pass
         return container_name
 
-    #-- test cases for blob tags ----------------------------------------------
+    # -- test cases for blob tags ----------------------------------------------
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -392,7 +393,7 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         container = self.bsc.get_container_client(self.container_name)
         blob_list = container.list_blobs(include="tags")
 
-        #Assert
+        # Assert
         async for blob in blob_list:
             assert blob.tag_count == len(tags)
             for key, value in blob.tags.items():
@@ -485,4 +486,4 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         tags = await blob.get_blob_tags(etag=first_resp['etag'], match_condition=MatchConditions.IfModified)
         assert tags == second_tags
 
-#------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------

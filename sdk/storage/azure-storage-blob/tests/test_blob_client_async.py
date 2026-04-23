@@ -90,14 +90,14 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-
         for service_type in SERVICES.items():
             # Act
             service = service_type[0].from_connection_string(
                 self.connection_string(storage_account_name, storage_account_key.secret), container_name="test", blob_name="test")
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1], storage_account_name, storage_account_key.secret)
+            self.validate_standard_account_endpoints(
+                service, service_type[1], storage_account_name, storage_account_key.secret)
             assert service.scheme == 'https'
 
     @BlobPreparer()
@@ -232,7 +232,8 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
                 url, credential=storage_account_key.secret, container_name='foo', blob_name='bar')
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1], storage_account_name, storage_account_key.secret)
+            self.validate_standard_account_endpoints(
+                service, service_type[1], storage_account_name, storage_account_key.secret)
             assert service.scheme == 'http'
 
     @BlobPreparer()
@@ -244,7 +245,8 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
 
         for service_type in BLOB_SERVICES:
             # Act
-            service = service_type(self.account_url(storage_account_name, "blob"), container_name='foo', blob_name='bar')
+            service = service_type(self.account_url(storage_account_name, "blob"),
+                                   container_name='foo', blob_name='bar')
 
             # Assert
             assert service is not None
@@ -274,7 +276,8 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
             assert service.credential.account_name == storage_account_name
             assert service.credential.account_key == storage_account_key.secret
             assert service.primary_endpoint.startswith('https://www.mydomain.com/')
-            assert service.secondary_endpoint.startswith('https://' + storage_account_name + '-secondary.blob.core.windows.net')
+            assert service.secondary_endpoint.startswith(
+                'https://' + storage_account_name + '-secondary.blob.core.windows.net')
 
     @BlobPreparer()
     def test_create_service_with_socket_timeout(self, **kwargs):
@@ -293,7 +296,8 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
                 container_name='foo', blob_name='bar', connection_timeout=22)
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1], storage_account_name, storage_account_key.secret)
+            self.validate_standard_account_endpoints(
+                service, service_type[1], storage_account_name, storage_account_key.secret)
             assert service._client._client._pipeline._transport.connection_config.timeout == 22
             assert default_service._client._client._pipeline._transport.connection_config.timeout in [20, (20, 2000)]
 
@@ -408,7 +412,8 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
                 conn_string, container_name='foo', blob_name='bar')
 
             # Assert
-            self.validate_standard_account_endpoints(service, service_type[1], storage_account_name, storage_account_key.secret)
+            self.validate_standard_account_endpoints(
+                service, service_type[1], storage_account_name, storage_account_key.secret)
             assert service.scheme == 'https'
 
     @BlobPreparer()
@@ -465,9 +470,9 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
             assert service.credential.account_name == storage_account_name
             assert service.credential.account_key == storage_account_key.secret
             assert service.primary_endpoint.startswith(
-                    'http://{}.{}.core.chinacloudapi.cn/'.format(storage_account_name, service_type[1]))
+                'http://{}.{}.core.chinacloudapi.cn/'.format(storage_account_name, service_type[1]))
             assert service.secondary_endpoint.startswith(
-                    'http://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account_name, service_type[1]))
+                'http://{}-secondary.{}.core.chinacloudapi.cn'.format(storage_account_name, service_type[1]))
             assert service.scheme == 'http'
 
     @BlobPreparer()
@@ -506,7 +511,8 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
             assert service.credential.account_name == storage_account_name
             assert service.credential.account_key == storage_account_key.secret
             assert service.primary_endpoint.startswith('https://www.mydomain.com/')
-            assert service.secondary_endpoint.startswith('https://' + storage_account_name + '-secondary.blob.core.windows.net')
+            assert service.secondary_endpoint.startswith(
+                'https://' + storage_account_name + '-secondary.blob.core.windows.net')
 
     @BlobPreparer()
     def test_creat_serv_w_connstr_custm_dom_trailing_slash(self, **kwargs):
@@ -527,7 +533,8 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
             assert service.credential.account_name == storage_account_name
             assert service.credential.account_key == storage_account_key.secret
             assert service.primary_endpoint.startswith('https://www.mydomain.com/')
-            assert service.secondary_endpoint.startswith('https://' + storage_account_name + '-secondary.blob.core.windows.net')
+            assert service.secondary_endpoint.startswith(
+                'https://' + storage_account_name + '-secondary.blob.core.windows.net')
 
     @BlobPreparer()
     def test_creat_serv_w_connstr_custm_dom_2ndry_override(self, **kwargs):
@@ -640,7 +647,8 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
         assert service.primary_hostname == 'local-machine:11002/custom/account/path'
         assert service.url.startswith('http://local-machine:11002/custom/account/path/foo/bar?snapshot=baz&')
 
-        service = BlobClient.from_blob_url("http://local-machine:11002/custom/account/path/foo/bar?snapshot=baz&query=value")
+        service = BlobClient.from_blob_url(
+            "http://local-machine:11002/custom/account/path/foo/bar?snapshot=baz&query=value")
         assert service.account_name == None
         assert service.container_name == "foo"
         assert service.blob_name == "bar"
@@ -668,7 +676,8 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        service = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                    credential=storage_account_key.secret)
         name = self.get_resource_name('cont')
 
         # Act
@@ -691,7 +700,8 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        service = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                    credential=storage_account_key.secret)
         name = self.get_resource_name('cont')
         container = service.get_container_client(name)
 
@@ -710,7 +720,8 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        service = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                    credential=storage_account_key.secret)
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers
@@ -752,7 +763,8 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        service = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        service = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                    credential=storage_account_key.secret)
 
         def callback(response):
             assert 'User-Agent' in response.http_request.headers

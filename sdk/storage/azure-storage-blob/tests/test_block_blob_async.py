@@ -646,9 +646,9 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
 
         # Assert
         assert new_blob_copy1_props.content_settings.content_language == \
-               source_blob_props.content_settings.content_language
+            source_blob_props.content_settings.content_language
         assert new_blob_copy2_props.content_settings.content_language != \
-               source_blob_props.content_settings.content_language
+            source_blob_props.content_settings.content_language
 
         assert source_blob_props.lease.status == 'locked'
         assert new_blob_copy1_props.lease.status == 'unlocked'

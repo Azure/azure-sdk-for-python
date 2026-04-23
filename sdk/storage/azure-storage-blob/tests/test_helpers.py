@@ -122,6 +122,7 @@ class MockLegacyTransport(RequestsTransport):
     This transport returns http response objects from azure core pipelines and is
     intended only to test our backwards compatibility support.
     """
+
     def send(self, request: HttpRequest, **kwargs: Any) -> RequestsTransportResponse:
         if request.method == 'GET':
             # download_blob

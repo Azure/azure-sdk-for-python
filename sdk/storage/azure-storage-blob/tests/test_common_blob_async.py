@@ -124,7 +124,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         await blob.upload_blob(self.byte_data, length=len(self.byte_data), overwrite=overwrite, tags=tags,
-                              standard_blob_tier=standard_blob_tier)
+                               standard_blob_tier=standard_blob_tier)
         return blob_name
 
     async def _create_empty_block_blob(self, overwrite=False, tags=None):
@@ -1100,7 +1100,8 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                     credential=storage_account_key.secret)
         self.container_name = self.get_resource_name('utcontainer')
         self.source_container_name = self.get_resource_name('utcontainersource')
         self.byte_data = self.get_random_bytes(1024)
@@ -1505,7 +1506,6 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Assert
         assert len(blob_list) == 1
         self._assert_blob_is_soft_deleted(blob_list[0])
-
 
         # list_blobs should not list soft deleted blobs if Include(deleted=True) is not specified
         blob_list = []
@@ -3024,7 +3024,8 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         container_name = self.get_resource_name('utcontainerasync')
         transport = AioHttpTransport()
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, transport=transport)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                credential=storage_account_key.secret, transport=transport)
         blob_name = self._get_blob_reference()
         async with bsc:
             await bsc.get_service_properties()
@@ -3252,7 +3253,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
             await mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name,
-                                               container_name, blob_container=property)
+                                                     container_name, blob_container=property)
 
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(container_name, blob_name)

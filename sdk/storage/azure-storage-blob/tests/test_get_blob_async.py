@@ -209,7 +209,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         snapshot_ref = await blob.create_snapshot()
         snapshot = self.bsc.get_blob_client(self.container_name, self.byte_blob, snapshot=snapshot_ref)
 
-        await blob.upload_blob(self.byte_data, overwrite=True) # Modify the blob so the Etag no longer matches
+        await blob.upload_blob(self.byte_data, overwrite=True)  # Modify the blob so the Etag no longer matches
 
         # Act
         content = await (await snapshot.download_blob(max_concurrency=2)).readall()
@@ -378,7 +378,8 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             temp_file.seek(0)
             actual = temp_file.read()
             assert self.byte_data == actual
-        self.assert_download_progress(len(self.byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
+        self.assert_download_progress(len(self.byte_data), self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -406,7 +407,8 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             temp_file.seek(0)
             actual = temp_file.read()
             assert self.byte_data == actual
-        self.assert_download_progress(len(self.byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
+        self.assert_download_progress(len(self.byte_data), self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -428,7 +430,6 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             total = response.context['data_stream_total']
             progress.append((current, total))
 
-
         # Act
         with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(raw_response_hook=callback, max_concurrency=2)
@@ -439,7 +440,8 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             temp_file.seek(0)
             actual = temp_file.read()
             assert blob_data == actual
-        self.assert_download_progress(len(blob_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
+        self.assert_download_progress(len(blob_data), self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -500,7 +502,8 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             temp_file.seek(0)
             actual = temp_file.read()
             assert self.byte_data[start_range:end_range + start_range] == actual
-        self.assert_download_progress(end_range, self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
+        self.assert_download_progress(end_range, self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -850,7 +853,8 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             temp_file.seek(0)
             actual = temp_file.read()
             assert byte_data == actual
-        self.assert_download_progress(len(byte_data), self.config.max_chunk_get_size, self.config.max_single_get_size, progress)
+        self.assert_download_progress(len(byte_data), self.config.max_chunk_get_size,
+                                      self.config.max_single_get_size, progress)
 
     @BlobPreparer()
     @recorded_by_proxy_async

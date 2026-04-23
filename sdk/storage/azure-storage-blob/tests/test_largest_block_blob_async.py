@@ -1,4 +1,4 @@
-## -------------------------------------------------------------------------
+# -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
@@ -348,9 +348,11 @@ def _is_put_block_request(request):
     query = request.http_request.query
     return query and "comp" in query and query["comp"] == "block"
 
+
 def _is_put_blob_request(request):
     query = request.http_request.query
     return request.http_request.method == "PUT" and not query
+
 
 def _get_body_length(request):
     body = request.http_request.body

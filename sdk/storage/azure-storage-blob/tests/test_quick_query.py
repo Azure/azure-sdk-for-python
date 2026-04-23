@@ -245,7 +245,8 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
 
         input_format = DelimitedTextDialect(has_header=True)
         output_format = DelimitedTextDialect(has_header=False)
-        reader = blob_client.query_blob("SELECT * from BlobStorage", blob_format=input_format, output_format=output_format)
+        reader = blob_client.query_blob("SELECT * from BlobStorage",
+                                        blob_format=input_format, output_format=output_format)
         read_records = reader.records()
 
         # Assert first line does not include header
@@ -708,6 +709,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         blob_client.upload_blob(CSV_DATA, overwrite=True)
 
         errors = []
+
         def on_error(error):
             errors.append(error)
 
@@ -755,6 +757,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         blob_client.upload_blob(CSV_DATA, overwrite=True)
 
         errors = []
+
         def on_error(error):
             errors.append(error)
 
@@ -884,6 +887,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         blob_client.upload_blob(data, overwrite=True)
 
         errors = []
+
         def on_error(error):
             errors.append(error)
 
@@ -924,6 +928,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         blob_client.upload_blob(data, overwrite=True)
 
         errors = []
+
         def on_error(error):
             errors.append(error)
 
@@ -939,7 +944,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
 
         assert len(errors) == 0
         assert resp._size == len(data)
-        assert listdata, [b'{"name":"owner"}',b'{}',b'{"name":"owner"}' == b'']
+        assert listdata, [b'{"name":"owner"}', b'{}', b'{"name":"owner"}' == b'']
         self._teardown(bsc)
 
     @BlobPreparer()
@@ -964,6 +969,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         blob_client.upload_blob(data, overwrite=True)
 
         errors = []
+
         def on_error(error):
             errors.append(error)
 
@@ -1002,6 +1008,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         blob_client.upload_blob(data, overwrite=True)
 
         errors = []
+
         def on_error(error):
             errors.append(error)
 
@@ -1044,6 +1051,7 @@ class TestStorageQuickQuery(StorageRecordedTestCase):
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
 
         errors = []
+
         def on_error(error):
             errors.append(error)
 

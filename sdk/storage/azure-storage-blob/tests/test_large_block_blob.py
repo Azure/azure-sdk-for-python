@@ -219,6 +219,7 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']
@@ -293,6 +294,7 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
             current = response.context['upload_stream_current']
             total = response.context['data_stream_total']

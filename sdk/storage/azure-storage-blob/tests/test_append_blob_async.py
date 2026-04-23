@@ -106,7 +106,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob_name = self._get_blob_reference()
 
@@ -126,7 +127,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"),
+                                versioned_storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob_name = self._get_blob_reference()
 
@@ -148,7 +150,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -168,7 +171,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         metadata = {'hello': 'world', 'number': '42'}
         blob_name = self._get_blob_reference()
@@ -187,7 +191,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -208,7 +213,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=100 * 1024 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=100 * 1024 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(5 * 1024)
@@ -226,7 +232,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -245,7 +252,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob = await self._create_blob(bsc, tags=tags)
@@ -264,7 +272,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -284,7 +293,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -346,7 +356,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -391,7 +402,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -441,7 +453,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -492,7 +505,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -542,7 +556,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -592,7 +607,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -645,7 +661,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -694,7 +711,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -742,7 +760,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -790,7 +809,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -840,7 +860,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
@@ -889,7 +910,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob_name = self._get_blob_reference()
         blob = bsc.get_blob_client(
@@ -928,7 +950,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob_name = self._get_blob_reference()
         blob = bsc.get_blob_client(
@@ -965,7 +988,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -985,7 +1009,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -1005,7 +1030,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = b'abcdefghijklmnopqrstuvwxyz'
@@ -1030,7 +1056,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -1047,7 +1074,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -1064,7 +1092,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1084,7 +1113,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1115,7 +1145,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1134,7 +1165,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1157,7 +1189,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1193,7 +1226,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1216,7 +1250,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1238,7 +1273,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1259,7 +1295,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1284,7 +1321,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1306,7 +1344,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # parallel tests introduce random order of requests, can only run live
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_bytes(LARGE_BLOB_SIZE)
@@ -1330,7 +1369,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         text = u'hello 啊齄丂狛狜 world'
@@ -1351,7 +1391,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         text = u'hello 啊齄丂狛狜 world'
@@ -1369,7 +1410,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         text = u'hello 啊齄丂狛狜 world'
@@ -1394,7 +1436,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = self.get_random_text_data(LARGE_BLOB_SIZE)
@@ -1412,7 +1455,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         data = b'hello world'
@@ -1426,7 +1470,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         resp = await blob.seal_append_blob()
@@ -1446,7 +1491,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
         with pytest.raises(HttpResponseError):
@@ -1461,7 +1507,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -1481,7 +1528,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -1505,7 +1553,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
+                                storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
         blob = await self._create_blob(bsc)
 
@@ -1528,7 +1577,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         storage_resource_group_name = kwargs.pop("storage_resource_group_name")
         variables = kwargs.pop("variables", {})
 
-        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"), versioned_storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(self.account_url(versioned_storage_account_name, "blob"),
+                                versioned_storage_account_key.secret, max_block_size=4 * 1024)
         await self._setup(bsc)
 
         container_name = self.get_resource_name('vlwcontainerasync')
@@ -1545,7 +1595,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         blob = bsc.get_blob_client(container_name, blob_name)
 
         expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=10))
-        immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time, policy_mode=BlobImmutabilityPolicyMode.Unlocked)
+        immutability_policy = ImmutabilityPolicy(
+            expiry_time=expiry_time, policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         await blob.create_append_blob(immutability_policy=immutability_policy,
                                       legal_hold=True)
 

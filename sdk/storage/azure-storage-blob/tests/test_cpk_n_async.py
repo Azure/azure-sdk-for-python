@@ -956,7 +956,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         copied_blob_client = bsc.get_blob_client(self.container_name, copied_blob)
 
         await copied_blob_client.start_copy_from_url(blob_client.url, requires_sync=True,
-                                               encryption_scope=TEST_ENCRYPTION_SCOPE)
+                                                     encryption_scope=TEST_ENCRYPTION_SCOPE)
 
         props = await copied_blob_client.get_blob_properties()
 

@@ -33,7 +33,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
             connection_data_block_size=4 * 1024,
             max_single_put_size=32 * 1024,
             max_block_size=4 * 1024,
-            )
+        )
         self.config = self.bsc._config
         self.container_name = self.get_resource_name('utcontainer')
 
@@ -87,11 +87,11 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
                 source_length=split)
         # Assert it passes after passing an oauth credential
         await destination_blob_client.stage_block_from_url(
-                block_id=1,
-                source_url=self.source_blob_url_without_sas,
-                source_offset=0,
-                source_length=split,
-                source_authorization=token)
+            block_id=1,
+            source_url=self.source_blob_url_without_sas,
+            source_offset=0,
+            source_length=split,
+            source_authorization=token)
         await destination_blob_client.stage_block_from_url(
             block_id=2,
             source_url=self.source_blob_url_without_sas,
