@@ -9,7 +9,7 @@ from io import BytesIO
 import pytest
 from azure.storage.fileshare import ShareClient, ShareServiceClient
 
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import is_live, recorded_by_proxy
 from devtools_testutils.storage import GenericTestProxyParametrize1, StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
 
@@ -44,7 +44,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         self.share_client.create_share()
 
     def teardown_method(self, _):
-        if self.share_client:
+        if self.share_client and is_live():
             try:
                 self.share_client.delete_share()
             except:

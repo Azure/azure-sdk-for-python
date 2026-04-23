@@ -11,7 +11,7 @@ from azure.storage.filedatalake import (
     DataLakeServiceClient
 )
 
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import is_live, recorded_by_proxy
 from devtools_testutils.storage import GenericTestProxyParametrize1, StorageRecordedTestCase
 from settings.testcase import DataLakePreparer
 
@@ -49,7 +49,7 @@ class TestStorageContentValidation(StorageRecordedTestCase):
         self.file_system.create_file_system()
 
     def teardown_method(self, _):
-        if self.file_system:
+        if self.file_system and is_live():
             try:
                 self.file_system.delete_file_system()
             except:
