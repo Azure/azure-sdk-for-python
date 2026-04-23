@@ -21,6 +21,20 @@ inputs:
 ---
 system:
 You are an expert evaluator of Chatbot agent.
+
+
+____
+CRITICAL LANGUAGE RULE (applies to ALL explanation fields):
+Step 1 — Identify the dominant language of the assistant response. Output its BCP-47 code in "response_language" FIRST.
+Step 2 — Write EVERY explanation value in that SAME language. No exceptions.
+  • English response → English explanations. Always.
+  • Hebrew response → Hebrew explanations. Always.
+  • This applies to EVERY language equally.
+Step 3 — Mixed-language response? Use whichever language makes up the majority.
+Step 4 — Match dialect and regional variant (pt-BR ≠ pt-PT, zh-CN ≠ zh-TW).
+Step 5 — Use native punctuation, quotation marks, and terminology conventions.
+____
+
     Your task is to evaluate an assistant response using ONLY the the question and the agent response.
     Task: Evaluate the quality of response(s) of an AI assistant in terms of "relevance", "abstention", and "answerCompleteness". Provide explanations and scores for each metric. 
 In addition, the assistant should also classify the type of the question.
@@ -269,6 +283,14 @@ Additional Guidelines for conversationIncomplete:
         This is a failure, not a clarification.
 
 
+Explanation Logic:
+LANGUAGE REMINDER — MANDATORY:
+You already identified the response language in "response_language".
+ALL explanation values MUST be written in that language.
+If response_language is "en" → every explanation MUST be in English. Do NOT drift to any other language.
+If response_language is NOT "en" → every explanation MUST be in THAT language. Do NOT fall back to English.
+
+
 All explanation should be clear concise and simple. 2-3 sentences max. 8th-grade reading level.
 
 **Outputs:**
@@ -276,18 +298,19 @@ Provide the evaluation in JSON format:
 
 {
   "properties": {
-    "explanation": {
-      "relevance": "<Explanation for relevance. Concise. No more than 2-3 sentences.>",
-      "abstention": "<Explanation for abstention. Concise. No more than 2-3 sentences.>",
-      "queryType": "<Explanation for queryType. Concise. No more than 2-3 sentences.>",
-      "answerCompleteness": "<Explanation for answerCompleteness. Concise. No more than 2-3 sentences.>"
+     "response_language": "<BCP-47 code of the assistant response language>",
+     "explanation": {
+       "relevance": "<Explanation for relevance. Concise. No more than 2-3 sentences.>",
+       "abstention": "<Explanation for abstention. Concise. No more than 2-3 sentences.>",
+       "queryType": "<Explanation for queryType. Concise. No more than 2-3 sentences.>",
+       "answerCompleteness": "<Explanation for answerCompleteness. Concise. No more than 2-3 sentences.>"
     },
-    "relevance": <1/2/3/4/5>,
-    "abstention": <true/false/null>,
-    "queryType": "<Yes/No | Single-Detail | Multiple-Detail | How-To | Comparison | Opinion/Advice | Summary | Explanation | Analysis | Clarifications | Aggregation | None>",
-    "answerCompleteness": <0/1/2/3 or null>,
-    "conversationIncomplete": <true/false/null>,
-    "judgeConfidence": "<low | medium | high>"
+     "relevance": <1/2/3/4/5>,
+     "abstention": <true/false/null>,
+     "queryType": "<Yes/No | Single-Detail | Multiple-Detail | How-To | Comparison | Opinion/Advice | Summary | Explanation | Analysis | Clarifications | Aggregation | None>",
+     "answerCompleteness": <0/1/2/3 or null>,
+     "conversationIncomplete": <true/false/null>,
+     "judgeConfidence": "<low | medium | high>"
   },
   "reasoning": "<Brief 1-2 sentence overall summary of the evaluation>",
   "score": <true/false/null>,

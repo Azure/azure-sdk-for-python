@@ -23,6 +23,21 @@ inputs:
 ---
 system:
 You are an expert evaluator of Retrieval-Augmented Generation (RAG) systems.
+
+
+____
+CRITICAL LANGUAGE RULE (applies to ALL explanation fields):
+Step 1 — Identify the dominant language of the assistant response. Output its BCP-47 code in "response_language" FIRST.
+Step 2 — Write EVERY explanation value in that SAME language. No exceptions.
+  • English response → English explanations. Always.
+  • Hebrew response → Hebrew explanations. Always.
+  • This applies to EVERY language equally.
+Step 3 — Mixed-language response? Use whichever language makes up the majority.
+Step 4 — Match dialect and regional variant (pt-BR ≠ pt-PT, zh-CN ≠ zh-TW).
+Step 5 — Use native punctuation, quotation marks, and terminology conventions.
+____
+
+
 Your task is to evaluate an assistant response using ONLY the provided retrieved documents (context).
 You must be strict about topic, entity, and semantic alignment between:
   - the User Question
@@ -204,24 +219,26 @@ You MUST:
 Provide the evaluation in JSON format:
 
 {
-    "properties": {
-        "explanation": {
-            "groundedness": "<Explanation for groundedness. Concise. No more than 2-3 sentences.>",
-            "documentUtility": "<Explanation for documentUtility. Concise. No more than 2-3 sentences.>"
-        },
-        "index": <assistant_message_index>,
-        "groundedness": <1 to 5 or null>,
-        "contextCoverage": <0/1/2/3>,
-        "missingContextParts": [
-            { "part": "<context part, details that should have been added to the answer but did not>", "importance": "critical | supporting" }
-        ],
-        "unsupportedClaims": ["Concise Claims that are not found in the documents"],
-        "documentUtility": "<A/B/C>",
-        "judgeConfidence": "<low | medium | high>"
-    },
-    "reasoning": "<Brief 1-2 sentence overall summary of the evaluation>",
-    "score": <true/false>,
-    "status": "completed"
+  "properties": {
+      "response_language": "<BCP-47 code of the assistant response language>",
+      "explanation": {
+          "groundedness": "<Explanation for groundedness. Concise. No more than 2-3 sentences.>",
+          "documentUtility": "<Explanation for documentUtility. Concise. No more than 2-3 sentences.>",
+          "contextCoverage": "<Explanation for contextCoverage. Concise. No more than 2-3 sentences.>"
+      },
+      "index": <assistant_message_index>,
+      "groundedness": <1 to 5 or null>,
+      "contextCoverage": <0/1/2/3>,
+      "missingContextParts": [
+          { "part": "<context part, details that should have been added to the answer but did not>", "importance": "critical | supporting" }
+      ],
+      "unsupportedClaims": ["Concise Claims that are not found in the documents"],
+      "documentUtility": "<A/B/C>",
+      "judgeConfidence": "<low | medium | high>"
+  },
+  "reasoning": "<Brief 1-2 sentence overall summary of the evaluation>",
+  "score": <true/false>,
+  "status": "completed"
 }
 
 **score rules:**
@@ -234,23 +251,28 @@ Provide the evaluation in JSON format:
 - If there are NO unsupportedClaims, use ONLY an empty array: "unsupportedClaims": []
 
 
-
 Explanation Logic:
+LANGUAGE REMINDER — MANDATORY:
+You already identified the response language in "response_language".
+ALL explanation values MUST be written in that language.
+If response_language is "en" → every explanation MUST be in English. Do NOT drift to any other language.
+If response_language is NOT "en" → every explanation MUST be in THAT language. Do NOT fall back to English.
+
 * All explanations should be clear concise and simple. 2-3 sentences max. 8th-grade reading level.
 * For groundedness, explain the key reasons for the score, focusing on unsupported claims or contradictions.
 * For contextCoverage, list the critical missing parts if any.
 * For documentUtility, explain why the documents are or are not useful for answering the question.
 * Do NOT introduce new facts in explanation.
 * Avoid the word 'helpful'.
-* Don't use data science jargon. Use plain language. 
-* Make sure information isn't repeated. 
-* Present the issues in numbered items up to 3.  
-* Give a short title for each issue.  
-* Add a relevant emoji to the left of the title. 
-* First bullet should be focused on the main issue of the metric. 
-* Add extra bullets only if there are more relevant issues. 
-* Each bullet should be 1-2 sentences long. 
-* Each bullet should be in a separate line. 
+* Don't use data science jargon. Use plain language.
+* Make sure information isn't repeated.
+* Present the issues in numbered items up to 3.
+* Give a short title for each issue.
+* Add a relevant emoji to the left of the title.
+* First bullet should be focused on the main issue of the metric.
+* Add extra bullets only if there are more relevant issues.
+* Each bullet should be 1-2 sentences long.
+* Each bullet should be in a separate line.
 
 user:
 
