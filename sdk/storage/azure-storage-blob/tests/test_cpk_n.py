@@ -64,7 +64,9 @@ class TestStorageCPKN(StorageRecordedTestCase):
     def _get_blob_reference(self):
         return self.get_resource_name("cpk")
 
-    def _create_block_blob(self, bsc, blob_name=None, data=None, encryption_scope=None, max_concurrency=1, overwrite=False):
+    def _create_block_blob(
+        self, bsc, blob_name=None, data=None, encryption_scope=None, max_concurrency=1, overwrite=False
+    ):
         blob_name = blob_name if blob_name else self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         data = data if data else b''
@@ -247,8 +249,10 @@ class TestStorageCPKN(StorageRecordedTestCase):
             expiry=datetime.utcnow() + timedelta(hours=1),
             encryption_scope=TEST_ENCRYPTION_SCOPE_2,
         )
-        blob_client_diff_encryption_scope_sas = BlobServiceClient(self.account_url(storage_account_name, "blob"), token2)\
-            .get_blob_client(self.container_name, blob_name)
+        blob_client_diff_encryption_scope_sas = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            token2
+        ).get_blob_client(self.container_name, blob_name)
 
         # blob can be downloaded successfully no matter which encryption scope is used on the blob actually
         # the encryption scope on blob is TEST_ENCRYPTION_SCOPE and ses is TEST_ENCRYPTION_SCOPE_2 in SAS token,
@@ -555,8 +559,8 @@ class TestStorageCPKN(StorageRecordedTestCase):
         blob_client = self._create_append_blob(bsc, encryption_scope=TEST_ENCRYPTION_SCOPE)
 
         # Act
-        append_blob_prop = blob_client.upload_blob(self.byte_data,
-                                                   blob_type=BlobType.AppendBlob, encryption_scope=TEST_ENCRYPTION_SCOPE)
+        append_blob_prop = blob_client.upload_blob(
+            self.byte_data, blob_type=BlobType.AppendBlob, encryption_scope=TEST_ENCRYPTION_SCOPE)
 
         # Assert
         assert append_blob_prop['etag'] is not None

@@ -391,9 +391,10 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act part 2: put block from url with wrong md5
         with pytest.raises(HttpResponseError):
-            await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                source_content_md5=StorageContentValidation.get_content_md5(
-                                                                    b"POTATO"))
+            await destination_blob_client.append_block_from_url(
+                source_blob_client.url + '?' + sas,
+                source_content_md5=StorageContentValidation.get_content_md5(b"POTATO")
+            )
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -473,11 +474,12 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         destination_blob_client = await self._create_blob(bsc)
 
         # Act part 1: make append block from url calls
-        resp = await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                   source_offset=0,
-                                                                   source_length=LARGE_BLOB_SIZE,
-                                                                   source_if_unmodified_since=source_blob_properties.get(
-                                                                       'last_modified'))
+        resp = await destination_blob_client.append_block_from_url(
+            source_blob_client.url + '?' + sas,
+            source_offset=0,
+            source_length=LARGE_BLOB_SIZE,
+            source_if_unmodified_since=source_blob_properties.get('last_modified')
+        )
         assert resp.get('blob_append_offset') == '0'
         assert resp.get('blob_committed_block_count') == 1
         assert resp.get('etag') is not None
@@ -1588,7 +1590,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            await mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
+            await mgmt_client.blob_containers.create(
+                storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
 
         # Act
         blob_name = self.get_resource_name('vlwblob')
@@ -1613,7 +1616,9 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
             await blob.delete_immutability_policy()
             await blob.set_legal_hold(False)
             await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+            await mgmt_client.blob_containers.delete(
+                storage_resource_group_name, versioned_storage_account_name, container_name
+            )
 
         return variables
 

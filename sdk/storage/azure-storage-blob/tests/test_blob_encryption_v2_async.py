@@ -211,7 +211,10 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
         self.enable_encryption_v2(kek)
 
         blob = self.bsc.get_blob_client(self.container_name, self._get_blob_reference())
-        compressed_data = b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        compressed_data = (
+            b'\x1f\x8b\x08\x00\x00\x00\x00\x00\x00\xff\xcaH\xcd\xc9\xc9WH+\xca\xcfUH'
+            b'\xaf\xca,\x00\x00\x00\x00\xff\xff\x03\x00d\xaa\x8e\xb5\x0f\x00\x00\x00'
+        )
         content_settings = ContentSettings(content_encoding='gzip')
 
         # Act / Assert
@@ -316,7 +319,8 @@ class TestStorageBlobEncryptionV2Async(AsyncStorageRecordedTestCase):
             etag = resp['etag']
 
             # Act
-            resp = await blob.upload_blob(content, overwrite=True, etag=etag, match_condition=MatchConditions.IfNotModified)
+            resp = await blob.upload_blob(
+                content, overwrite=True, etag=etag, match_condition=MatchConditions.IfNotModified)
             etag = resp['etag']
 
         with pytest.raises(HttpResponseError):

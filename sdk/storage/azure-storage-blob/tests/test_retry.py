@@ -681,7 +681,10 @@ class TestStorageRetry(StorageRecordedTestCase):
 
         # Act
         try:
-            with mock.patch('azure.storage.blob._download.process_content', side_effect=mock_process_content_with_error):
+            with mock.patch(
+                'azure.storage.blob._download.process_content',
+                side_effect=mock_process_content_with_error
+            ):
                 downloaded_data = blob.download_blob().readall()
             assert downloaded_data == data
             assert retry_counter.count >= 3
