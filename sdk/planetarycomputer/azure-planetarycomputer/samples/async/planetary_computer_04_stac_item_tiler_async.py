@@ -80,9 +80,7 @@ async def get_item_asset_details(client: PlanetaryComputerProClient, collection_
     """
 
     # Get info for specific assets
-    result_specific = await client.data.get_item_info(
-        collection_id=collection_id, item_id=item_id, assets=["image"]
-    )
+    result_specific = await client.data.get_item_info(collection_id=collection_id, item_id=item_id, assets=["image"])
     logging.info("Assets info (image asset only):")
     logging.info(f"  Dataset: {result_specific}")
 

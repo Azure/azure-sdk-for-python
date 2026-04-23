@@ -199,10 +199,12 @@ class TestPlanetaryComputerIngestionManagement(PlanetaryComputerProClientTestBas
         for ingestion in existing_ingestions:
             # Cancel any active runs before deleting
             try:
-                runs = list(client.ingestion.list_runs(
-                    collection_id=planetarycomputer_collection_id,
-                    ingestion_id=ingestion.id,
-                ))
+                runs = list(
+                    client.ingestion.list_runs(
+                        collection_id=planetarycomputer_collection_id,
+                        ingestion_id=ingestion.id,
+                    )
+                )
                 for run in runs:
                     run_status = run.status if hasattr(run, "status") else run.get("status", "")
                     if run_status in ("Running", "Pending", "Queued"):

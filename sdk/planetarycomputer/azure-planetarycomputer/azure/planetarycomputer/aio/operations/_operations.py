@@ -6199,32 +6199,18 @@ class DataOperations:  # pylint: disable=too-many-public-methods
 
         Generate values and color swatches mapping for a given interval classmap.
 
-        Returns a color map for intervals, where each interval is defined by:
-
-        * A numeric range `[min, max]` representing the interval boundaries.
-        * An RGBA color `[red, green, blue, alpha]` associated with the interval.
+        Returns a color map for intervals, where each interval is defined by
+        a numeric range [min, max] representing the interval boundaries and
+        an RGBA color [red, green, blue, alpha] associated with the interval.
 
         The response is a 2D array of interval definitions, where each element is a pair:
-
-        * The first element is an array of two numbers `[min, max]` defining the interval.
-        * The second element is an array of four numbers `[red, green, blue, alpha]` defining the RGBA
+        the first element is an array of two numbers [min, max] defining the interval,
+        and the second element is an array of four numbers [red, green, blue, alpha] defining the RGBA
         color.
 
-        Example:
-
-        .. code-block:: json
-
-           [
-             [
-               [-2, 0], [0, 0, 0, 0]
-             ],
-             [
-               [1, 32], [255, 255, 178, 255]
-             ]
-           ]This example defines two intervals:
-
-        * The interval `[-2, 0]` is mapped to the color `[0, 0, 0, 0]` (transparent black).
-        * The interval `[1, 32]` is mapped to the color `[255, 255, 178, 255]` (opaque yellow).
+        Example: [[ [-2, 0], [0, 0, 0, 0] ], [ [1, 32], [255, 255, 178, 255] ]].
+        This defines two intervals: [-2, 0] mapped to transparent black and [1, 32] mapped to opaque
+        yellow.
 
         :param classmap_name: classmap name. Required.
         :type classmap_name: str
@@ -18043,7 +18029,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_collection_wmts_capabilities(
+    async def get_collection_wmts_capabilities(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         *,
@@ -18057,6 +18043,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         tile_scale: Optional[int] = None,
         min_zoom: Optional[int] = None,
         max_zoom: Optional[int] = None,
+        bidx: Optional[List[int]] = None,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        no_data: Optional[str] = None,
+        unscale: Optional[bool] = None,
+        reproject: Optional[Union[str, _models.WarpKernelResampling]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Collection Wmts.
@@ -18093,6 +18087,26 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype min_zoom: int
         :keyword max_zoom: Overwrite default maxzoom. Default value is None.
         :paramtype max_zoom: int
+        :keyword bidx: Dataset band indexes. Default value is None.
+        :paramtype bidx: list[int]
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: str
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword reproject: WarpKernel resampling algorithm (only used when doing re-projection).
+         Defaults to ``nearest``. Known values are: "nearest", "bilinear", "cubic", "cubic_spline",
+         "lanczos", "average", "mode", "max", "min", "med", "q1", "q3", "sum", and "rms". Default value
+         is None.
+        :paramtype reproject: str or ~azure.planetarycomputer.models.WarpKernelResampling
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -18122,6 +18136,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             tile_scale=tile_scale,
             min_zoom=min_zoom,
             max_zoom=max_zoom,
+            bidx=bidx,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            no_data=no_data,
+            unscale=unscale,
+            reproject=reproject,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -18159,7 +18181,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_collection_wmts_capabilities_tms(
+    async def get_collection_wmts_capabilities_tms(  # pylint: disable=too-many-locals
         self,
         collection_id: str,
         tile_matrix_set_id: str,
@@ -18173,6 +18195,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         tile_scale: Optional[int] = None,
         min_zoom: Optional[int] = None,
         max_zoom: Optional[int] = None,
+        bidx: Optional[List[int]] = None,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        no_data: Optional[str] = None,
+        unscale: Optional[bool] = None,
+        reproject: Optional[Union[str, _models.WarpKernelResampling]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Collection Wmts Tilematrixsetid As Path.
@@ -18204,6 +18234,26 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype min_zoom: int
         :keyword max_zoom: Overwrite default maxzoom. Default value is None.
         :paramtype max_zoom: int
+        :keyword bidx: Dataset band indexes. Default value is None.
+        :paramtype bidx: list[int]
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: str
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword reproject: WarpKernel resampling algorithm (only used when doing re-projection).
+         Defaults to ``nearest``. Known values are: "nearest", "bilinear", "cubic", "cubic_spline",
+         "lanczos", "average", "mode", "max", "min", "med", "q1", "q3", "sum", and "rms". Default value
+         is None.
+        :paramtype reproject: str or ~azure.planetarycomputer.models.WarpKernelResampling
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -18233,6 +18283,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             tile_scale=tile_scale,
             min_zoom=min_zoom,
             max_zoom=max_zoom,
+            bidx=bidx,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            no_data=no_data,
+            unscale=unscale,
+            reproject=reproject,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -24265,7 +24323,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_searches_wmts_capabilities_tms(
+    async def get_searches_wmts_capabilities_tms(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         tile_matrix_set_id: str,
@@ -24274,6 +24332,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         tile_scale: Optional[int] = None,
         min_zoom: Optional[int] = None,
         max_zoom: Optional[int] = None,
+        bidx: Optional[List[int]] = None,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        no_data: Optional[str] = None,
+        unscale: Optional[bool] = None,
+        reproject: Optional[Union[str, _models.WarpKernelResampling]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Searches Wmts Tilematrixsetid As Path.
@@ -24294,6 +24360,26 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype min_zoom: int
         :keyword max_zoom: Overwrite default maxzoom. Default value is None.
         :paramtype max_zoom: int
+        :keyword bidx: Dataset band indexes. Default value is None.
+        :paramtype bidx: list[int]
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: str
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword reproject: WarpKernel resampling algorithm (only used when doing re-projection).
+         Defaults to ``nearest``. Known values are: "nearest", "bilinear", "cubic", "cubic_spline",
+         "lanczos", "average", "mode", "max", "min", "med", "q1", "q3", "sum", and "rms". Default value
+         is None.
+        :paramtype reproject: str or ~azure.planetarycomputer.models.WarpKernelResampling
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -24318,6 +24404,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             tile_scale=tile_scale,
             min_zoom=min_zoom,
             max_zoom=max_zoom,
+            bidx=bidx,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            no_data=no_data,
+            unscale=unscale,
+            reproject=reproject,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -27682,7 +27776,7 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_searches_wmts_capabilities(
+    async def get_searches_wmts_capabilities(  # pylint: disable=too-many-locals
         self,
         search_id: str,
         *,
@@ -27691,6 +27785,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         tile_scale: Optional[int] = None,
         min_zoom: Optional[int] = None,
         max_zoom: Optional[int] = None,
+        bidx: Optional[List[int]] = None,
+        assets: Optional[List[str]] = None,
+        expression: Optional[str] = None,
+        asset_band_indices: Optional[List[str]] = None,
+        asset_as_band: Optional[bool] = None,
+        no_data: Optional[str] = None,
+        unscale: Optional[bool] = None,
+        reproject: Optional[Union[str, _models.WarpKernelResampling]] = None,
         **kwargs: Any
     ) -> AsyncIterator[bytes]:
         """Searches Wmts.
@@ -27716,6 +27818,26 @@ class DataOperations:  # pylint: disable=too-many-public-methods
         :paramtype min_zoom: int
         :keyword max_zoom: Overwrite default maxzoom. Default value is None.
         :paramtype max_zoom: int
+        :keyword bidx: Dataset band indexes. Default value is None.
+        :paramtype bidx: list[int]
+        :keyword assets: Asset's names. Default value is None.
+        :paramtype assets: list[str]
+        :keyword expression: Band math expression between assets. Default value is None.
+        :paramtype expression: str
+        :keyword asset_band_indices: Per asset band indexes (coma separated indexes, e.g. "image|1,2,3"
+         means use the bands 1, 2, and 3 from the asset named "image"). Default value is None.
+        :paramtype asset_band_indices: list[str]
+        :keyword asset_as_band: Asset as Band. Default value is None.
+        :paramtype asset_as_band: bool
+        :keyword no_data: Overwrite internal Nodata value. Default value is None.
+        :paramtype no_data: str
+        :keyword unscale: Apply internal Scale or Offset. Default value is None.
+        :paramtype unscale: bool
+        :keyword reproject: WarpKernel resampling algorithm (only used when doing re-projection).
+         Defaults to ``nearest``. Known values are: "nearest", "bilinear", "cubic", "cubic_spline",
+         "lanczos", "average", "mode", "max", "min", "med", "q1", "q3", "sum", and "rms". Default value
+         is None.
+        :paramtype reproject: str or ~azure.planetarycomputer.models.WarpKernelResampling
         :return: AsyncIterator[bytes]
         :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -27740,6 +27862,14 @@ class DataOperations:  # pylint: disable=too-many-public-methods
             tile_scale=tile_scale,
             min_zoom=min_zoom,
             max_zoom=max_zoom,
+            bidx=bidx,
+            assets=assets,
+            expression=expression,
+            asset_band_indices=asset_band_indices,
+            asset_as_band=asset_as_band,
+            no_data=no_data,
+            unscale=unscale,
+            reproject=reproject,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,

@@ -919,6 +919,7 @@ class TestPlanetaryComputerStacCollection(PlanetaryComputerProClientTestBase):
 
         # Create the collection, retrying if previous deletion hasn't fully propagated
         from azure.core.exceptions import ResourceExistsError
+
         test_logger.info("Creating collection using begin_create_collection")
         for attempt in range(12):
             try:

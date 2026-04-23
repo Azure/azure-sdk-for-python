@@ -934,6 +934,7 @@ class TestPlanetaryComputerStacCollectionAsync(PlanetaryComputerProClientTestBas
                 test_logger.info(f"Deleted existing collection '{test_collection_id}'")
                 # Wait for deletion to fully propagate
                 import asyncio
+
                 for _ in range(12):
                     try:
                         await client.stac.get_collection(collection_id=test_collection_id)
@@ -971,6 +972,7 @@ class TestPlanetaryComputerStacCollectionAsync(PlanetaryComputerProClientTestBas
         # Create the collection, retrying if previous deletion hasn't fully propagated
         import asyncio
         from azure.core.exceptions import ResourceExistsError
+
         test_logger.info("Creating collection using begin_create_collection")
         for attempt in range(12):
             try:

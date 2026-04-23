@@ -89,6 +89,7 @@ class TestPlanetaryComputerCollectionLifecycleAsync(PlanetaryComputerProClientTe
         test_logger.info("Calling: begin_create_collection(body=collection_data)")
         import asyncio
         from azure.core.exceptions import ResourceExistsError
+
         for attempt in range(12):
             try:
                 create_poller = await client.stac.begin_create_collection(body=collection_data, polling=True)

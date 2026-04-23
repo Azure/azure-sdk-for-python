@@ -27,8 +27,6 @@ from azure.planetarycomputer.models import (
     StacSortExtension,
     StacSearchSortingDirection,
     TilerImageFormat,
-
-
 )
 import logging
 

@@ -347,7 +347,6 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
         test_logger.info("Test PASSED\n")
 
-    @pytest.mark.skip(reason="TypeSpec missing AssetQueryParameters for Search WMTS; assets param not in SDK method")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
     def test_05_get_mosaics_wmts_capabilities(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
@@ -621,7 +620,6 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
         test_logger.info("Test PASSED\n")
 
-    @pytest.mark.skip(reason="PPE tiler returns 503 Service Unavailable for bbox crop rendering")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
     def test_09_get_searches_bbox_crop(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
@@ -648,10 +646,10 @@ class TestPlanetaryComputerMosaicsTiler(PlanetaryComputerProClientTestBase):
 
         response = client.data.get_searches_bbox_crop(
             search_id=search_id,
-            minx=-84.3930,
-            miny=33.6798,
-            maxx=-84.3670,
-            maxy=33.7058,
+            minx=-84.3900,
+            miny=33.6800,
+            maxx=-84.3850,
+            maxy=33.6850,
             format="png",
             assets=["image"],
             asset_band_indices=["image|1,2,3"],

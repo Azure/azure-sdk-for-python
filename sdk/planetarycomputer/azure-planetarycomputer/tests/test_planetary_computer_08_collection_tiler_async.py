@@ -165,7 +165,6 @@ class TestPlanetaryComputerCollectionTilerAsync(PlanetaryComputerProClientTestBa
         test_logger.info("Test PASSED\n")
         await self.close_client()
 
-    @pytest.mark.skip(reason="PPE tiler returns 503 Service Unavailable for bbox crop rendering")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
     async def test_06_get_collection_bbox_crop(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
@@ -178,10 +177,10 @@ class TestPlanetaryComputerCollectionTilerAsync(PlanetaryComputerProClientTestBa
 
         response = await client.data.get_collection_bbox_crop(
             collection_id=planetarycomputer_collection_id,
-            minx=-84.3930,
-            miny=33.6798,
-            maxx=-84.3670,
-            maxy=33.7058,
+            minx=-84.3900,
+            miny=33.6800,
+            maxx=-84.3850,
+            maxy=33.6850,
             format="png",
             assets=["image"],
             asset_band_indices=["image|1,2,3"],
@@ -195,10 +194,11 @@ class TestPlanetaryComputerCollectionTilerAsync(PlanetaryComputerProClientTestBa
         test_logger.info("Test PASSED\n")
         await self.close_client()
 
-    @pytest.mark.skip(reason="TypeSpec missing AssetQueryParameters for Collection WMTS; assets param not in SDK method")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_07_get_collection_wmts_capabilities(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    async def test_07_get_collection_wmts_capabilities(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """Test getting WMTS capabilities for a collection."""
         test_logger.info("=" * 80)
         test_logger.info("TEST: test_07_get_collection_wmts_capabilities")
@@ -208,6 +208,7 @@ class TestPlanetaryComputerCollectionTilerAsync(PlanetaryComputerProClientTestBa
 
         response = await client.data.get_collection_wmts_capabilities(
             collection_id=planetarycomputer_collection_id,
+            assets=["image"],
         )
 
         test_logger.info(f"Response type: {type(response)}")
@@ -216,7 +217,7 @@ class TestPlanetaryComputerCollectionTilerAsync(PlanetaryComputerProClientTestBa
         if isinstance(response, bytes):
             assert b"WMTSCapabilities" in response or b"xml" in response
             test_logger.info(f"Response size: {len(response)} bytes")
-        elif hasattr(response, '__aiter__'):
+        elif hasattr(response, "__aiter__"):
             xml_bytes = b"".join([chunk async for chunk in response])
             test_logger.info(f"Response size: {len(xml_bytes)} bytes")
             assert len(xml_bytes) > 0
@@ -226,7 +227,9 @@ class TestPlanetaryComputerCollectionTilerAsync(PlanetaryComputerProClientTestBa
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_08_crop_collection_feature_geo_json(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    async def test_08_crop_collection_feature_geo_json(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """Test cropping a collection by GeoJSON feature."""
         test_logger.info("=" * 80)
         test_logger.info("TEST: test_08_crop_collection_feature_geo_json")
@@ -311,7 +314,9 @@ class TestPlanetaryComputerCollectionTilerAsync(PlanetaryComputerProClientTestBa
 
     @PlanetaryComputerPreparer()
     @recorded_by_proxy_async
-    async def test_11_get_collection_tileset_metadata(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
+    async def test_11_get_collection_tileset_metadata(
+        self, planetarycomputer_endpoint, planetarycomputer_collection_id
+    ):
         """Test getting collection tileset metadata."""
         test_logger.info("=" * 80)
         test_logger.info("TEST: test_11_get_collection_tileset_metadata")

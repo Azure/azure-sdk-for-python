@@ -158,7 +158,6 @@ class TestPlanetaryComputerCollectionTiler(PlanetaryComputerProClientTestBase):
 
         test_logger.info("Test PASSED\n")
 
-    @pytest.mark.skip(reason="PPE tiler returns 503 Service Unavailable for bbox crop rendering")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
     def test_06_get_collection_bbox_crop(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
@@ -171,10 +170,10 @@ class TestPlanetaryComputerCollectionTiler(PlanetaryComputerProClientTestBase):
 
         response = client.data.get_collection_bbox_crop(
             collection_id=planetarycomputer_collection_id,
-            minx=-84.3930,
-            miny=33.6798,
-            maxx=-84.3670,
-            maxy=33.7058,
+            minx=-84.3900,
+            miny=33.6800,
+            maxx=-84.3850,
+            maxy=33.6850,
             format="png",
             assets=["image"],
             asset_band_indices=["image|1,2,3"],
@@ -187,7 +186,6 @@ class TestPlanetaryComputerCollectionTiler(PlanetaryComputerProClientTestBase):
 
         test_logger.info("Test PASSED\n")
 
-    @pytest.mark.skip(reason="TypeSpec missing AssetQueryParameters for Collection WMTS; assets param not in SDK method")
     @PlanetaryComputerPreparer()
     @recorded_by_proxy
     def test_07_get_collection_wmts_capabilities(self, planetarycomputer_endpoint, planetarycomputer_collection_id):
@@ -200,6 +198,7 @@ class TestPlanetaryComputerCollectionTiler(PlanetaryComputerProClientTestBase):
 
         response = client.data.get_collection_wmts_capabilities(
             collection_id=planetarycomputer_collection_id,
+            assets=["image"],
         )
 
         test_logger.info(f"Response type: {type(response)}")
@@ -209,7 +208,7 @@ class TestPlanetaryComputerCollectionTiler(PlanetaryComputerProClientTestBase):
         if isinstance(response, bytes):
             assert b"WMTSCapabilities" in response or b"xml" in response
             test_logger.info(f"Response size: {len(response)} bytes")
-        elif hasattr(response, '__iter__'):
+        elif hasattr(response, "__iter__"):
             xml_bytes = b"".join(response)
             test_logger.info(f"Response size: {len(xml_bytes)} bytes")
             assert len(xml_bytes) > 0
