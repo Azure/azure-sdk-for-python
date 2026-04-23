@@ -2,7 +2,36 @@
 
 ## 5.0.0b3 (2026-04-23)
 
-skip changelog generation
+### Features Added
+
+  - Model `CertificateDescription` added property `system_data`
+  - Model `EventHubConsumerGroupInfo` added property `system_data`
+  - Model `PrivateEndpointConnection` added property `system_data`
+  - Model `Resource` added property `system_data`
+  - Added model `ProxyResource`
+  - Added model `TrackedResource`
+  - Model `CertificatesOperations` added parameter `etag` in method `create_or_update`
+  - Model `CertificatesOperations` added parameter `match_condition` in method `create_or_update`
+  - Model `CertificatesOperations` added parameter `etag` in method `delete`
+  - Model `CertificatesOperations` added parameter `match_condition` in method `delete`
+  - Model `CertificatesOperations` added parameter `etag` in method `generate_verification_code`
+  - Model `CertificatesOperations` added parameter `match_condition` in method `generate_verification_code`
+  - Model `CertificatesOperations` added parameter `etag` in method `verify`
+  - Model `CertificatesOperations` added parameter `match_condition` in method `verify`
+  - Model `IotHubResourceOperations` added parameter `etag` in method `begin_create_or_update`
+  - Model `IotHubResourceOperations` added parameter `match_condition` in method `begin_create_or_update`
+
+### Breaking Changes
+
+  - Deleted or renamed client `IotHubClient`
+  - Model `Resource` deleted or renamed its instance variable `location`
+  - Model `Resource` deleted or renamed its instance variable `tags`
+  - Deleted or renamed model `CertificateBodyDescription`
+  - Method `CertificatesOperations.create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `CertificatesOperations.delete` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `CertificatesOperations.generate_verification_code` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `CertificatesOperations.verify` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
+  - Method `IotHubResourceOperations.begin_create_or_update` deleted or renamed its parameter `if_match` of kind `positional_or_keyword`
 
 ## 5.0.0b2 (2025-10-20)
 
