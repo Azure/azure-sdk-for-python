@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import asyncio
 
 from typing import Callable, List, Optional
 from urllib.parse import unquote
@@ -17,6 +18,7 @@ from .._deserialize import (
     load_xml_string
 )
 from .._generated.models import BlobItemInternal, BlobPrefix as GenBlobPrefix
+from .._list_blobs_helper import _ARROW_CONTENT_TYPE, _parse_arrow_response
 from .._models import BlobProperties
 from .._shared.models import DictMixin
 from .._shared.response_handlers import (
@@ -247,3 +249,61 @@ class BlobPrefixPaged(BlobPropertiesPaged):
                 results_per_page=self.results_per_page,
                 location_mode=self.location_mode)
         return item
+
+
+class ArrowBlobPropertiesPaged(BlobPropertiesPaged):
+    """An async PageIterator that deserializes Apache Arrow IPC responses from list-blobs operations."""
+
+    def __init__(self, *args, deserializer=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._deserializer = deserializer
+        self._arrow_response = None
+
+    async def _arrow_cls(self, pipeline_response, deserialized, response_headers):
+        content_type = response_headers.get("Content-Type", "")
+        location_mode = getattr(pipeline_response.http_response, "location_mode", None)
+        if _ARROW_CONTENT_TYPE in content_type:
+            chunks = []
+            async for chunk in deserialized:
+                chunks.append(chunk)
+            raw_bytes = b"".join(chunks)
+            next_marker, blob_items = _parse_arrow_response(raw_bytes, self.container)
+            self._arrow_response = (next_marker, blob_items)
+            return location_mode, raw_bytes
+        if hasattr(pipeline_response.http_response, "read"):
+            await pipeline_response.http_response.read()
+        xml_response = self._deserializer("ListBlobsFlatSegmentResponse", pipeline_response.http_response)
+        self._arrow_response = None
+        return location_mode, xml_response
+
+    async def _get_next_cb(self, continuation_token):
+        try:
+            result = await self._command(
+                prefix=self.prefix,
+                marker=continuation_token or None,
+                maxresults=self.results_per_page,
+                cls=self._arrow_cls,
+                use_location=self.location_mode,
+            )
+            if asyncio.iscoroutine(result):
+                return await result
+            return result
+        except HttpResponseError as error:
+            process_storage_error(error)
+
+    async def _extract_data_cb(self, get_next_return):
+        if self._arrow_response is not None:
+            self.location_mode, _ = get_next_return
+            next_marker, self.current_page = self._arrow_response
+            self._arrow_response = None
+            return next_marker or None, self.current_page or []
+        return await super()._extract_data_cb(get_next_return)
+
+
+class ArrowBlobPrefixPaged(ArrowBlobPropertiesPaged):
+    """Arrow-backed AsyncPageIterator for walk_blobs."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.name = self.prefix
+        self.delimiter = kwargs.get("delimiter")

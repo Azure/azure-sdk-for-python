@@ -201,7 +201,9 @@ class ContainerClient(StorageAccountHostsMixin, StorageEncryptionMixin):
         include: Optional[Union[str, List[str]]] = None,
         *,
         results_per_page: Optional[int] = None,
+        use_arrow: Optional[bool] = None,
         start_from: Optional[str] = None,
+        end_before: Optional[str] = None,
         timeout: Optional[int] = None,
         **kwargs: Any,
     ) -> ItemPaged[BlobProperties]: ...

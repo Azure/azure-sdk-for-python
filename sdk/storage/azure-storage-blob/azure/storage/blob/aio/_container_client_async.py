@@ -25,7 +25,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from ._blob_client_async import BlobClient
 from ._download_async import StorageStreamDownloader
 from ._lease_async import BlobLeaseClient
-from ._list_blobs_helper import BlobNamesPaged, BlobPropertiesPaged, BlobPrefix
+from ._list_blobs_helper import ArrowBlobPropertiesPaged, ArrowBlobPrefixPaged, BlobNamesPaged, BlobPropertiesPaged, BlobPrefix
 from ._models import FilteredBlobPaged
 from .._container_client_helpers import (
     _format_url,
@@ -793,9 +793,14 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
         :keyword int results_per_page:
             Controls the maximum number of Blobs that will be included in each page of results if using
             `AsyncItemPaged.by_page()`.
+        :keyword bool use_arrow:
+            Specifies the ability to return and parse the response in Apache Arrow format.
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
             Only one entity level is supported.
+        :keyword str end_before:
+            Specifies the relative path (exclusive) to end before list paths.
+            This may be used if use_arrow is set to True.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -823,8 +828,18 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
 
         results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
+        use_arrow = kwargs.pop('use_arrow', False)
+        if use_arrow:
+            try:
+                import pyarrow  # pylint: disable=import-outside-toplevel,unused-import
+            except ImportError as e:
+                raise ImportError(
+                    "The 'pyarrow' package is required to use Apache Arrow deserialization. "
+                    "Install it with: pip install pyarrow"
+                ) from e
         command = functools.partial(
-            self._client.container.list_blob_flat_segment,
+            self._client.container.list_blob_flat_segment_apache_arrow
+            if use_arrow else self._client.container.list_blob_flat_segment,
             include=include,
             timeout=timeout,
             **kwargs
@@ -834,7 +849,8 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             prefix=name_starts_with,
             results_per_page=results_per_page,
             container=self.container_name,
-            page_iterator_class=BlobPropertiesPaged
+            page_iterator_class=ArrowBlobPropertiesPaged if use_arrow else BlobPropertiesPaged,
+            **({"deserializer": self._client.container._deserialize} if use_arrow else {})  # pylint: disable=protected-access
         )
 
     @distributed_trace
@@ -914,8 +930,13 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
             element in the response body that acts as a placeholder for all blobs whose
             names begin with the same substring up to the appearance of the delimiter
             character. The delimiter may be a single character or a string.
+        :keyword bool use_arrow:
+            Specifies the ability to return and parse the response in Apache Arrow format.
         :keyword str start_from:
             Specifies the full path (inclusive) to list paths from.
+        :keyword str end_before:
+            Specifies the relative path (exclusive) to end before list paths.
+            This may be used if use_arrow is set to True.
         :keyword int timeout:
             Sets the server-side timeout for the operation in seconds. For more details see
             https://learn.microsoft.com/rest/api/storageservices/setting-timeouts-for-blob-service-operations.
@@ -935,18 +956,46 @@ class ContainerClient(  # type: ignore [misc]  # pylint: disable=too-many-public
 
         results_per_page = kwargs.pop('results_per_page', None)
         timeout = kwargs.pop('timeout', None)
+        use_arrow = kwargs.pop('use_arrow', False)
+        if use_arrow:
+            try:
+                import pyarrow  # pylint: disable=import-outside-toplevel,unused-import
+            except ImportError as e:
+                raise ImportError(
+                    "The 'pyarrow' package is required to use Apache Arrow deserialization. "
+                    "Install it with: pip install pyarrow"
+                ) from e
+
+            command = functools.partial(
+                self._client.container.list_blob_hierarchy_segment_apache_arrow,
+                delimiter=delimiter,
+                include=include,
+                timeout=timeout,
+                **kwargs
+            )
+            return AsyncItemPaged(
+                command,
+                prefix=name_starts_with,
+                results_per_page=results_per_page,
+                container=self.container_name,
+                delimiter=delimiter,
+                deserializer=self._client.container._deserialize,  # pylint: disable=protected-access
+                page_iterator_class=ArrowBlobPrefixPaged
+            )
         command = functools.partial(
             self._client.container.list_blob_hierarchy_segment,
             delimiter=delimiter,
             include=include,
             timeout=timeout,
-            **kwargs)
+            **kwargs
+        )
         return BlobPrefix(
             command,
             prefix=name_starts_with,
             results_per_page=results_per_page,
             container=self.container_name,
-            delimiter=delimiter)
+            delimiter=delimiter
+        )
 
     @distributed_trace
     def find_blobs_by_tags(
