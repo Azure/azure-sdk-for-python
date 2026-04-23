@@ -79,6 +79,7 @@ jobs:
             tr -d '{}' | \
             tr ',' '\n' | \
             grep -v '^next-' | \
+            grep -v '^changelog$' | \
             sort | \
             paste -sd,)
 

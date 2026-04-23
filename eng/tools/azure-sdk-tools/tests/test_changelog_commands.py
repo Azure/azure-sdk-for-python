@@ -21,6 +21,7 @@ from azpysdk.changelog import (
 # Helper – build a minimal parser that includes the changelog subcommands
 # ---------------------------------------------------------------------------
 
+
 def _build_parser():
     parser = argparse.ArgumentParser(prog="azpysdk")
     subparsers = parser.add_subparsers(title="commands", dest="command")
@@ -180,7 +181,7 @@ class TestChangelogExecution:
         result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "sdk/core/azure-core"]
+        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "azure-core"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
@@ -194,7 +195,7 @@ class TestChangelogExecution:
             result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "sdk/storage/azure-storage-blob"]
+        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "azure-storage-blob"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
@@ -208,7 +209,7 @@ class TestChangelogExecution:
             result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "sdk/storage/azure-storage-blob"]
+        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "azure-storage-blob"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
@@ -222,7 +223,7 @@ class TestChangelogExecution:
             result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "sdk/core/azure-core"]
+        assert cmd == ["/usr/bin/npx", "--no", "chronus", "add", "azure-core"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
@@ -256,16 +257,30 @@ class TestChangelogExecution:
     def test_add_with_kind_message_and_package(self, mock_which, mock_call, _mock_installed):
         """All flags (package, --kind, --message) should be forwarded together."""
         parser = _build_parser()
-        args = parser.parse_args([
-            "changelog", "add", "sdk/core/azure-core",
-            "--kind", "breaking", "-m", "Removed deprecated API",
-        ])
+        args = parser.parse_args(
+            [
+                "changelog",
+                "add",
+                "sdk/core/azure-core",
+                "--kind",
+                "breaking",
+                "-m",
+                "Removed deprecated API",
+            ]
+        )
         result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
         assert cmd == [
-            "/usr/bin/npx", "--no", "chronus", "add", "sdk/core/azure-core",
-            "--kind", "breaking", "--message", "Removed deprecated API",
+            "/usr/bin/npx",
+            "--no",
+            "chronus",
+            "add",
+            "azure-core",
+            "--kind",
+            "breaking",
+            "--message",
+            "Removed deprecated API",
         ]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
@@ -284,11 +299,11 @@ class TestChangelogExecution:
     @patch("azpysdk.changelog.shutil.which", return_value="/usr/bin/npx")
     def test_create_calls_chronus_changelog(self, mock_which, mock_call, _mock_installed):
         parser = _build_parser()
-        args = parser.parse_args(["changelog", "create"])
+        args = parser.parse_args(["changelog", "create", "sdk/core/azure-core"])
         result = args.func(args)
         assert result == 0
         cmd = mock_call.call_args[0][0]
-        assert cmd == ["/usr/bin/npx", "--no", "chronus", "changelog"]
+        assert cmd == ["/usr/bin/npx", "--no", "chronus", "changelog", "--package", "azure-core"]
 
     @patch("azpysdk.changelog.changelog._is_chronus_installed", return_value=True)
     @patch("azpysdk.changelog.subprocess.call", return_value=0)
@@ -333,12 +348,12 @@ class TestDetectPackageFromCwd:
     def test_at_package_root(self):
         c = changelog()
         with patch("os.getcwd", return_value=os.path.join(REPO_ROOT, "sdk", "core", "azure-core")):
-            assert c._detect_package_from_cwd() == "sdk/core/azure-core"
+            assert c._detect_package_from_cwd() == "azure-core"
 
     def test_inside_package_subdir(self):
         c = changelog()
         with patch("os.getcwd", return_value=os.path.join(REPO_ROOT, "sdk", "core", "azure-core", "azure", "core")):
-            assert c._detect_package_from_cwd() == "sdk/core/azure-core"
+            assert c._detect_package_from_cwd() == "azure-core"
 
     def test_at_repo_root(self):
         c = changelog()

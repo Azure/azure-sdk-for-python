@@ -81,21 +81,17 @@ class changelog(Check):
             ),
         )
         add_p.add_argument(
-            "--kind", "-k",
+            "--kind",
+            "-k",
             choices=_CHANGE_KINDS,
             default=None,
-            help=(
-                "Kind of change (e.g. breaking, feature, fix). "
-                "If omitted, chronus will prompt interactively."
-            ),
+            help=("Kind of change (e.g. breaking, feature, fix). " "If omitted, chronus will prompt interactively."),
         )
         add_p.add_argument(
-            "--message", "-m",
+            "--message",
+            "-m",
             default=None,
-            help=(
-                "Short description of the change. "
-                "If omitted, chronus will prompt interactively."
-            ),
+            help=("Short description of the change. " "If omitted, chronus will prompt interactively."),
         )
         add_p.set_defaults(func=self._run_add)
 
@@ -104,9 +100,7 @@ class changelog(Check):
         verify_p.set_defaults(func=self._run_verify)
 
         # changelog create
-        create_p = changelog_sub.add_parser(
-            "create", help="Generate CHANGELOG.md from pending chronus entries"
-        )
+        create_p = changelog_sub.add_parser("create", help="Generate CHANGELOG.md from pending chronus entries")
         create_p.add_argument(
             "package",
             nargs="?",
@@ -185,7 +179,6 @@ class changelog(Check):
             )
             raise SystemExit(1)
 
-       
         if sys.stdin.isatty():
             print(
                 "\nChronus is not installed locally. It is listed as a dev dependency\n"
@@ -205,7 +198,7 @@ class changelog(Check):
                 )
                 raise SystemExit(1)
             logger.info("AZPYSDK_AUTO_INSTALL set — running 'npm install' automatically.")
-       
+
         logger.info(f"Running: npm install  (cwd: {REPO_ROOT})")
         rc = subprocess.call([npm, "install"], cwd=REPO_ROOT)
         if rc != 0:
