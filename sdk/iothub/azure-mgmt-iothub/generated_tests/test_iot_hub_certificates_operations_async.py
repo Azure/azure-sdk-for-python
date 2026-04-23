@@ -6,22 +6,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.iothub import DevicesClient
+from azure.mgmt.iothub.aio import IotHubClient
 
-from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
+from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 
 AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDevicesCertificatesOperations(AzureMgmtRecordedTestCase):
+class TestIotHubCertificatesOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DevicesClient)
+        self.client = self.create_mgmt_client(IotHubClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_certificates_get(self, resource_group):
-        response = self.client.certificates.get(
+    @recorded_by_proxy_async
+    async def test_certificates_get(self, resource_group):
+        response = await self.client.certificates.get(
             resource_group_name=resource_group.name,
             resource_name="str",
             certificate_name="str",
@@ -31,9 +32,9 @@ class TestDevicesCertificatesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_certificates_create_or_update(self, resource_group):
-        response = self.client.certificates.create_or_update(
+    @recorded_by_proxy_async
+    async def test_certificates_create_or_update(self, resource_group):
+        response = await self.client.certificates.create_or_update(
             resource_group_name=resource_group.name,
             resource_name="str",
             certificate_name="str",
@@ -67,9 +68,9 @@ class TestDevicesCertificatesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_certificates_delete(self, resource_group):
-        response = self.client.certificates.delete(
+    @recorded_by_proxy_async
+    async def test_certificates_delete(self, resource_group):
+        response = await self.client.certificates.delete(
             resource_group_name=resource_group.name,
             resource_name="str",
             certificate_name="str",
@@ -81,9 +82,9 @@ class TestDevicesCertificatesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_certificates_list_by_iot_hub(self, resource_group):
-        response = self.client.certificates.list_by_iot_hub(
+    @recorded_by_proxy_async
+    async def test_certificates_list_by_iot_hub(self, resource_group):
+        response = await self.client.certificates.list_by_iot_hub(
             resource_group_name=resource_group.name,
             resource_name="str",
         )
@@ -92,9 +93,9 @@ class TestDevicesCertificatesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_certificates_generate_verification_code(self, resource_group):
-        response = self.client.certificates.generate_verification_code(
+    @recorded_by_proxy_async
+    async def test_certificates_generate_verification_code(self, resource_group):
+        response = await self.client.certificates.generate_verification_code(
             resource_group_name=resource_group.name,
             resource_name="str",
             certificate_name="str",
@@ -106,9 +107,9 @@ class TestDevicesCertificatesOperations(AzureMgmtRecordedTestCase):
         # ...
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_certificates_verify(self, resource_group):
-        response = self.client.certificates.verify(
+    @recorded_by_proxy_async
+    async def test_certificates_verify(self, resource_group):
+        response = await self.client.certificates.verify(
             resource_group_name=resource_group.name,
             resource_name="str",
             certificate_name="str",

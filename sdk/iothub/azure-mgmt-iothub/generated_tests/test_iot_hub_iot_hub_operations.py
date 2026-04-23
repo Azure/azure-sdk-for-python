@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.iothub import DevicesClient
+from azure.mgmt.iothub import IotHubClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer, recorded_by_proxy
 
@@ -14,29 +14,18 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDevicesPrivateLinkResourcesOperations(AzureMgmtRecordedTestCase):
+class TestIotHubIotHubOperations(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DevicesClient)
+        self.client = self.create_mgmt_client(IotHubClient)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy
-    def test_private_link_resources_get(self, resource_group):
-        response = self.client.private_link_resources.get(
+    def test_iot_hub_begin_manual_failover(self, resource_group):
+        response = self.client.iot_hub.begin_manual_failover(
+            iot_hub_name="str",
             resource_group_name=resource_group.name,
-            resource_name="str",
-            group_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy
-    def test_private_link_resources_list(self, resource_group):
-        response = self.client.private_link_resources.list(
-            resource_group_name=resource_group.name,
-            resource_name="str",
-        )
+            failover_input={"failoverRegion": "str"},
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

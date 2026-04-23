@@ -8,7 +8,7 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.iothub import DevicesClient
+from azure.mgmt.iothub import IotHubClient
 
 """
 # PREREQUISITES
@@ -25,7 +25,7 @@ from azure.mgmt.iothub import DevicesClient
 
 
 def main():
-    client = DevicesClient(
+    client = IotHubClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )

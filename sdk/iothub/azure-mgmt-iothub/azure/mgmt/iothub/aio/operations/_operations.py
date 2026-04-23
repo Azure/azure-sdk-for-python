@@ -77,7 +77,7 @@ from ...operations._operations import (
     build_private_link_resources_list_request,
     build_resource_provider_common_get_subscription_quota_request,
 )
-from .._configuration import DevicesClientConfiguration
+from .._configuration import IotHubClientConfiguration
 
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, dict[str, Any]], Any]]
@@ -91,14 +91,14 @@ class Operations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.iothub.aio.DevicesClient`'s
+        :class:`~azure.mgmt.iothub.aio.IotHubClient`'s
         :attr:`operations` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevicesClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: IotHubClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -198,14 +198,14 @@ class PrivateEndpointConnectionsOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.iothub.aio.DevicesClient`'s
+        :class:`~azure.mgmt.iothub.aio.IotHubClient`'s
         :attr:`private_endpoint_connections` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevicesClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: IotHubClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -766,14 +766,14 @@ class IotHubResourceOperations:  # pylint: disable=too-many-public-methods
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.iothub.aio.DevicesClient`'s
+        :class:`~azure.mgmt.iothub.aio.IotHubClient`'s
         :attr:`iot_hub_resource` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevicesClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: IotHubClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -3844,14 +3844,14 @@ class IotHubOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.iothub.aio.DevicesClient`'s
+        :class:`~azure.mgmt.iothub.aio.IotHubClient`'s
         :attr:`iot_hub` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevicesClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: IotHubClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4110,14 +4110,14 @@ class CertificatesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.iothub.aio.DevicesClient`'s
+        :class:`~azure.mgmt.iothub.aio.IotHubClient`'s
         :attr:`certificates` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevicesClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: IotHubClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -4920,14 +4920,14 @@ class PrivateLinkResourcesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.iothub.aio.DevicesClient`'s
+        :class:`~azure.mgmt.iothub.aio.IotHubClient`'s
         :attr:`private_link_resources` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevicesClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: IotHubClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
@@ -5087,14 +5087,14 @@ class ResourceProviderCommonOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.iothub.aio.DevicesClient`'s
+        :class:`~azure.mgmt.iothub.aio.IotHubClient`'s
         :attr:`resource_provider_common` attribute.
     """
 
     def __init__(self, *args, **kwargs) -> None:
         input_args = list(args)
         self._client: AsyncPipelineClient = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config: DevicesClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
+        self._config: IotHubClientConfiguration = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize: Serializer = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 

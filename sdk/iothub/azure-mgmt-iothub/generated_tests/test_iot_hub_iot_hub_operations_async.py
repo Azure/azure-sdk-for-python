@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import pytest
-from azure.mgmt.iothub.aio import DevicesClient
+from azure.mgmt.iothub.aio import IotHubClient
 
 from devtools_testutils import AzureMgmtRecordedTestCase, RandomNameResourceGroupPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -15,29 +15,20 @@ AZURE_LOCATION = "eastus"
 
 
 @pytest.mark.skip("you may need to update the auto-generated test case before run it")
-class TestDevicesPrivateLinkResourcesOperationsAsync(AzureMgmtRecordedTestCase):
+class TestIotHubIotHubOperationsAsync(AzureMgmtRecordedTestCase):
     def setup_method(self, method):
-        self.client = self.create_mgmt_client(DevicesClient, is_async=True)
+        self.client = self.create_mgmt_client(IotHubClient, is_async=True)
 
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
-    async def test_private_link_resources_get(self, resource_group):
-        response = await self.client.private_link_resources.get(
-            resource_group_name=resource_group.name,
-            resource_name="str",
-            group_id="str",
-        )
-
-        # please add some check logic here by yourself
-        # ...
-
-    @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
-    @recorded_by_proxy_async
-    async def test_private_link_resources_list(self, resource_group):
-        response = await self.client.private_link_resources.list(
-            resource_group_name=resource_group.name,
-            resource_name="str",
-        )
+    async def test_iot_hub_begin_manual_failover(self, resource_group):
+        response = await (
+            await self.client.iot_hub.begin_manual_failover(
+                iot_hub_name="str",
+                resource_group_name=resource_group.name,
+                failover_input={"failoverRegion": "str"},
+            )
+        ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
         # ...

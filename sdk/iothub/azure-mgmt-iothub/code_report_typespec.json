@@ -1,7 +1,7 @@
 {
   "azure.mgmt.iothub": {
     "class_nodes": {
-      "DevicesClient": {
+      "IotHubClient": {
         "type": null,
         "methods": {
           "__init__": {
@@ -21234,7 +21234,7 @@
   },
   "azure.mgmt.iothub.aio": {
     "class_nodes": {
-      "DevicesClient": {
+      "IotHubClient": {
         "type": null,
         "methods": {
           "__init__": {
