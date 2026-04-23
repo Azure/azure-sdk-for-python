@@ -39,6 +39,7 @@ from azure.storage.blob import BlobServiceClient
 STORAGE_URL = 'STORAGE_ACCOUNT_BLOB_URL'
 KEYVAULT_URL = 'KEYVAULT_URL'
 
+
 def get_env_var(key):
     try:
         return os.environ[key]
@@ -46,8 +47,10 @@ def get_env_var(key):
         print('{} must be set.'.format(key))
         sys.exit(1)
 
+
 def make_resource_name(prefix):
     return '{}{}'.format(prefix, str(uuid.uuid4()).replace('-', ''))
+
 
 class KeyWrapper:
     """ Class that fulfills the interface used by the storage SDK's
@@ -76,6 +79,7 @@ class KeyWrapper:
 
     def get_kid(self):
         return self.kid
+
 
 # Retrieve sensitive data from environment variables
 storage_url = get_env_var(STORAGE_URL)

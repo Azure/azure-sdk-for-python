@@ -30,7 +30,7 @@ class BlobSamplesAsync(object):
 
     connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
-    #--Begin Blob Samples-----------------------------------------------------------------
+    # --Begin Blob Samples-----------------------------------------------------------------
 
     async def create_container_sample_async(self):
         if self.connection_string is None:

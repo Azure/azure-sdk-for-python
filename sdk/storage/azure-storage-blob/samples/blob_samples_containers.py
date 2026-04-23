@@ -30,7 +30,7 @@ class ContainerSamples(object):
 
     connection_string = os.getenv("STORAGE_CONNECTION_STRING")
 
-    #--Begin Blob Samples-----------------------------------------------------------------
+    # --Begin Blob Samples-----------------------------------------------------------------
 
     def container_sample(self):
         if self.connection_string is None:

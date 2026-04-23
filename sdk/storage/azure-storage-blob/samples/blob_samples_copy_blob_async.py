@@ -21,6 +21,7 @@ import asyncio
 import time
 from azure.storage.blob.aio import BlobServiceClient
 
+
 async def main():
     try:
         CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']

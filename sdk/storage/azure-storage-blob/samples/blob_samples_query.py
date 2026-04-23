@@ -21,6 +21,7 @@ from azure.storage.blob import BlobServiceClient, DelimitedJsonDialect, Delimite
 current_dir = os.path.dirname(os.path.abspath(__file__))
 BASE_FILE = os.path.join(current_dir, './sample-blobs/quick_query.csv')
 
+
 def main():
     try:
         CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
@@ -38,6 +39,7 @@ def main():
         pass
     # [START query]
     errors = []
+
     def on_error(error):
         errors.append(error)
 

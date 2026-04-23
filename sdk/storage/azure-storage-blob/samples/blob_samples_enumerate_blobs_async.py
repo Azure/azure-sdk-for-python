@@ -20,6 +20,7 @@ import sys
 import asyncio
 from azure.storage.blob.aio import ContainerClient
 
+
 async def main():
     try:
         CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']

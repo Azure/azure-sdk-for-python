@@ -20,6 +20,7 @@ import sys
 import time
 from azure.storage.blob import BlobServiceClient
 
+
 def main():
     try:
         CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
@@ -59,6 +60,7 @@ def main():
             sys.exit(1)
         props = copied_blob.get_blob_properties()
         print(props.copy.status)
+
 
 if __name__ == "__main__":
     main()

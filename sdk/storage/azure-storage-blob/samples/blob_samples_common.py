@@ -31,7 +31,7 @@ class CommonBlobSamples(object):
 
     connection_string = os.getenv("STORAGE_CONNECTION_STRING_SOFT")
 
-    #--Begin Blob Samples-----------------------------------------------------------------
+    # --Begin Blob Samples-----------------------------------------------------------------
 
     def blob_snapshots(self):
         if self.connection_string is None:
@@ -239,6 +239,7 @@ class CommonBlobSamples(object):
 
         finally:
             blob_service_client.delete_container("copyblobcontainer")
+
 
 if __name__ == '__main__':
     sample = CommonBlobSamples()

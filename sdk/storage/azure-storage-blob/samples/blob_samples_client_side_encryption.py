@@ -98,7 +98,7 @@ class RSAKeyWrapper:
         if algorithm == 'RSA':
             return self.private_key.decrypt(key,
                                             OAEP(
-                                                mgf=MGF1(algorithm=SHA1()), # nosec
+                                                mgf=MGF1(algorithm=SHA1()),  # nosec
                                                 algorithm=SHA1(),   # nosec
                                                 label=None)
                                             )
@@ -148,7 +148,7 @@ class BlobEncryptionSamples():
 
             self.container_client.upload_blob(block_blob_name, b'ABC')
 
-            # Even when encrypting, uploading large blobs will still automatically 
+            # Even when encrypting, uploading large blobs will still automatically
             # chunk the data.
             max_single_put_size = self.bsc._config.max_single_put_size
             self.container_client.upload_blob(block_blob_name, b'ABC' * max_single_put_size, overwrite=True)
@@ -196,7 +196,7 @@ class BlobEncryptionSamples():
             self.container_client.upload_blob(block_blob_name, data)
 
             # If the key_encryption_key property is set on download, the blobservice
-            # will try to decrypt blobs using that key. If both the key_resolver and 
+            # will try to decrypt blobs using that key. If both the key_resolver and
             # key_encryption_key are set, the result of the key_resolver will take precedence
             # and the decryption will fail if that key is not successful.
             self.container_client.key_resolver_function = None
@@ -218,7 +218,7 @@ class BlobEncryptionSamples():
             data = b'ABC'
             self.container_client.upload_blob(unencrypted_blob_name, data)
 
-            # If the require_encryption flag is set, the service object will throw if 
+            # If the require_encryption flag is set, the service object will throw if
             # there is no encryption policy set on upload.
             self.container_client.require_encryption = True
             try:
@@ -273,6 +273,7 @@ class BlobEncryptionSamples():
             blob = self.container_client.get_blob_client(block_blob_name).download_blob().readall()
         finally:
             self.container_client.delete_container()
+
 
 try:
     CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']

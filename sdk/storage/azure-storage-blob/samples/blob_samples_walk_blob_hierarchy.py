@@ -49,6 +49,7 @@ except KeyError:
     print("STORAGE_CONNECTION_STRING must be set.")
     sys.exit(1)
 
+
 def walk_container(client, container_prop):
     container_client = client.get_container_client(container_prop.name)
     print('C: {}'.format(container_prop.name))
@@ -72,6 +73,7 @@ def walk_container(client, container_prop):
                     message += " ({} snapshots)".format(num_snapshots)
                 print(message)
     walk_blob_hierarchy()
+
 
 try:
     service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)

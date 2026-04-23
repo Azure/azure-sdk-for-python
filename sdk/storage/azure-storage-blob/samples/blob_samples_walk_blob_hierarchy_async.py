@@ -49,6 +49,7 @@ except KeyError:
     print("STORAGE_CONNECTION_STRING must be set.")
     sys.exit(1)
 
+
 async def walk_container(client, container):
     container_client = client.get_container_client(container.name)
     print('C: {}'.format(container.name))
@@ -74,6 +75,7 @@ async def walk_container(client, container):
                     message += " ({} snapshots)".format(num_snapshots)
                 print(message)
     await walk_blob_hierarchy()
+
 
 async def main():
     try:
