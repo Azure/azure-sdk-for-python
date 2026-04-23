@@ -833,8 +833,10 @@ class TestStorageContainer(StorageRecordedTestCase):
         # Assert
         with pytest.raises(ValueError) as e:
             container_name.set_container_access_policy(identifiers)
-        assert str(
-            e.value.args[0]) == 'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
+        assert str(e.value.args[0]) == (
+            'Too many access policies provided. The server does not support '
+            'setting more than 5 access policies on a single resource.'
+        )
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -1357,8 +1359,9 @@ class TestStorageContainer(StorageRecordedTestCase):
                           metadata={'number': '1', 'name': 'bob'})
         blob1.create_snapshot()
 
-        container.get_blob_client('blob2').upload_blob(data, overwrite=True,
-                                                       content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+        container.get_blob_client('blob2').upload_blob(
+            data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'}
+        )
 
         # Act
         blobs = list(container.list_blobs(include="metadata"))
@@ -1396,10 +1399,12 @@ class TestStorageContainer(StorageRecordedTestCase):
         root_version_id = blob1.upload_blob(root_content, overwrite=True)['version_id']
         blob1.delete_blob()
 
-        container.get_blob_client('blob2').upload_blob(data, overwrite=True,
-                                                       content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
-        container.get_blob_client('blob3').upload_blob(data, overwrite=True,
-                                                       content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+        container.get_blob_client('blob2').upload_blob(
+            data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'}
+        )
+        container.get_blob_client('blob3').upload_blob(
+            data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'}
+        )
 
         # Act
         blobs = list(container.list_blobs(include=["deletedwithversions"]))

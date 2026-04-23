@@ -124,7 +124,8 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             storage_account_key = storage_account_key.encode('utf-8')
         bsc = BlobServiceClient(account_url, credential=storage_account_key.secret, max_page_size=4 * 1024)
         await self._setup(bsc)
-        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token("https://storage.azure.com/.default")
+        access_token = await self.get_credential(
+            BlobServiceClient, is_async=True).get_token("https://storage.azure.com/.default")
         token = "Bearer {}".format(access_token.token)
         source_blob_data = self.get_random_bytes(SOURCE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(bsc, source_blob_data, 0, SOURCE_BLOB_SIZE)
@@ -181,7 +182,12 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             mgmt_client = StorageManagementClient(token_credential, subscription_id, '2021-04-01')
             property = mgmt_client.models().BlobContainer(
                 immutable_storage_with_versioning=mgmt_client.models().ImmutableStorageWithVersioning(enabled=True))
-            await mgmt_client.blob_containers.create(storage_resource_group_name, versioned_storage_account_name, container_name, blob_container=property)
+            await mgmt_client.blob_containers.create(
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name,
+                blob_container=property
+            )
 
         blob_name = self.get_resource_name("vlwblob")
         blob = bsc.get_blob_client(container_name, blob_name)
@@ -206,7 +212,11 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             await blob.delete_immutability_policy()
             await blob.set_legal_hold(False)
             await blob.delete_blob()
-            await mgmt_client.blob_containers.delete(storage_resource_group_name, versioned_storage_account_name, container_name)
+            await mgmt_client.blob_containers.delete(
+                storage_resource_group_name,
+                versioned_storage_account_name,
+                container_name
+            )
 
         return variables
 
@@ -283,14 +293,32 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob = await self._create_blob(bsc, tags=tags)
         with pytest.raises(ResourceModifiedError):
-            await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', if_tags_match_condition="\"tag1\"='first tag'")
-        lease = await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            await blob.acquire_lease(
+                lease_id='00000000-1111-2222-3333-444444444444',
+                if_tags_match_condition="\"tag1\"='first tag'"
+            )
+        lease = await blob.acquire_lease(
+            lease_id='00000000-1111-2222-3333-444444444444',
+            if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'"
+        )
 
         # Act
         data = self.get_random_bytes(512)
         with pytest.raises(ResourceModifiedError):
-            await blob.upload_page(data, offset=0, length=512, lease=lease, if_tags_match_condition="\"tag1\"='first tag'")
-        await blob.upload_page(data, offset=0, length=512, lease=lease, if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            await blob.upload_page(
+                data,
+                offset=0,
+                length=512,
+                lease=lease,
+                if_tags_match_condition="\"tag1\"='first tag'"
+            )
+        await blob.upload_page(
+            data,
+            offset=0,
+            length=512,
+            lease=lease,
+            if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'"
+        )
 
         page_ranges, cleared = await blob.get_page_ranges()
 
@@ -627,11 +655,13 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act part 2: put block from url with wrong md5
         with pytest.raises(HttpResponseError):
-            await destination_blob_client.upload_pages_from_url(source_blob_client.url + "?" + sas, 0,
-                                                                SOURCE_BLOB_SIZE,
-                                                                0,
-                                                                source_content_md5=StorageContentValidation.get_content_md5(
-                                                                    b"POTATO"))
+            await destination_blob_client.upload_pages_from_url(
+                source_blob_client.url + "?" + sas,
+                0,
+                SOURCE_BLOB_SIZE,
+                0,
+                source_content_md5=StorageContentValidation.get_content_md5(b"POTATO")
+            )
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -2121,7 +2151,12 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
             with tempfile.TemporaryFile() as temp_file:
                 temp_file.write(byte_data)
                 temp_file.seek(0)
-                await pblob3.upload_blob(temp_file, blob_type=BlobType.PageBlob, premium_page_blob_tier=PremiumPageBlobTier.P10, overwrite=True)
+                await pblob3.upload_blob(
+                    temp_file,
+                    blob_type=BlobType.PageBlob,
+                    premium_page_blob_tier=PremiumPageBlobTier.P10,
+                    overwrite=True
+                )
 
             props3 = await pblob3.get_blob_properties()
             assert props3.blob_tier == PremiumPageBlobTier.P10
@@ -2241,10 +2276,16 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
 
             await source_blob2.create_page_blob(1024)
             source_blob2_url = '{0}/{1}/{2}'.format(
-                self.account_url(premium_storage_account_name, "blob"), source_blob2.container_name, source_blob2.blob_name)
+                self.account_url(premium_storage_account_name, "blob"),
+                source_blob2.container_name,
+                source_blob2.blob_name
+            )
 
             copy_blob2 = pbs.get_blob_client(container_name, 'blob2copy')
-            copy2 = await copy_blob2.start_copy_from_url(source_blob2_url, premium_page_blob_tier=PremiumPageBlobTier.P60)
+            copy2 = await copy_blob2.start_copy_from_url(
+                source_blob2_url,
+                premium_page_blob_tier=PremiumPageBlobTier.P60
+            )
             assert copy2 is not None
             assert copy2['copy_status'] == 'success'
             assert copy2['copy_id'] is not None

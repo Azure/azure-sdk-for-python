@@ -335,14 +335,18 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
         destination_blob_client.set_blob_tags(tags=tags)
         with pytest.raises(ResourceModifiedError):
-            destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                          source_offset=split,
-                                                          source_length=LARGE_BLOB_SIZE - split,
-                                                          if_tags_match_condition="\"tag1\"='first tag'")
-        resp = destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                             source_offset=split,
-                                                             source_length=LARGE_BLOB_SIZE - split,
-                                                             if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            destination_blob_client.append_block_from_url(
+                source_blob_client.url + '?' + sas,
+                source_offset=split,
+                source_length=LARGE_BLOB_SIZE - split,
+                if_tags_match_condition="\"tag1\"='first tag'"
+            )
+        resp = destination_blob_client.append_block_from_url(
+            source_blob_client.url + '?' + sas,
+            source_offset=split,
+            source_length=LARGE_BLOB_SIZE - split,
+            if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'"
+        )
         assert resp.get('blob_append_offset') == str(4 * 1024)
         assert resp.get('blob_committed_block_count') == 2
         assert resp.get('etag') is not None

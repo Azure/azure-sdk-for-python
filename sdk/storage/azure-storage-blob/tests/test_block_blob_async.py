@@ -1776,7 +1776,12 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            await blob.upload_blob(temp_file, content_settings=content_settings, max_concurrency=2, standard_blob_tier=blob_tier)
+            await blob.upload_blob(
+                temp_file,
+                content_settings=content_settings,
+                max_concurrency=2,
+                standard_blob_tier=blob_tier
+            )
 
         properties = await blob.get_blob_properties()
 

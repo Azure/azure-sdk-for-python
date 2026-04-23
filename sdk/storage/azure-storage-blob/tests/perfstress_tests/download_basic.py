@@ -66,7 +66,9 @@ class DownloadBasicTest(_BlobTest):
         else:
             raise Exception(f"Download failed with status code {response.status_code}")
 
-    async def download_chunk_aiohttp(self, session: aiohttp.ClientSession, offset: int, end: int, semaphore: asyncio.Semaphore):
+    async def download_chunk_aiohttp(
+        self, session: aiohttp.ClientSession, offset: int, end: int, semaphore: asyncio.Semaphore
+    ):
         async with semaphore:
             headers = {'x-ms-version': self.blob_client.api_version,
                        'Range': f'bytes={offset}-{end}', 'Authorization': self.auth_header}

@@ -72,7 +72,10 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc1 = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, connection_data_block_size=4 * 1024)
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            connection_data_block_size=4 * 1024
+        )
         self._setup()
         container_client1 = self._create_container(self.container_name, bsc1)
 
@@ -103,7 +106,10 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, connection_data_block_size=4 * 1024)
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            connection_data_block_size=4 * 1024
+        )
         self._setup()
         container_client1 = self._create_container(self.container_name, bsc)
 
@@ -480,7 +486,11 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             assert header == 'test_value'
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_single_put_size=100, max_block_size=50)
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_single_put_size=100,
+            max_block_size=50
+        )
         self._setup()
         data = self.get_random_bytes(2 * 100)
         self._create_container(self.container_name, bsc)
@@ -1145,8 +1155,11 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
         container_name = self.get_resource_name("testcontainer1")
         cc = ContainerClient(
-            self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, container_name=container_name,
-            connection_data_block_size=4 * 1024)
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+            container_name=container_name,
+            connection_data_block_size=4 * 1024
+        )
         cc.create_container()
         self._setup()
         test_cpk = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)

@@ -73,7 +73,10 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc1 = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, connection_data_block_size=4 * 1024)
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            connection_data_block_size=4 * 1024
+        )
         self._setup()
         container_client1 = await self._create_container(self.container_name, bsc1)
 
@@ -106,7 +109,10 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, connection_data_block_size=4 * 1024)
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            connection_data_block_size=4 * 1024
+        )
         self._setup()
         container_client1 = await self._create_container(self.container_name, bsc)
 
@@ -483,7 +489,11 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
             assert header == 'test_value'
 
         bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"), storage_account_key.secret, max_single_put_size=100, max_block_size=50)
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_single_put_size=100,
+            max_block_size=50
+        )
         self._setup()
         data = self.get_random_bytes(2 * 100)
         await self._create_container(self.container_name, bsc)
@@ -645,7 +655,12 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
             self.container_name, 'blob1', data, bsc)
 
         # Act
-        resp = await blob.upload_blob(data, length=len(data), etag='0x111111111111111', match_condition=MatchConditions.IfModified)
+        resp = await blob.upload_blob(
+            data,
+            length=len(data),
+            etag='0x111111111111111',
+            match_condition=MatchConditions.IfModified
+        )
 
         # Assert
         assert resp.get('etag') is not None
@@ -666,7 +681,13 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
-            await blob.upload_blob(data, length=len(data), etag=etag, match_condition=MatchConditions.IfModified, overwrite=True)
+            await blob.upload_blob(
+                data,
+                length=len(data),
+                etag=etag,
+                match_condition=MatchConditions.IfModified,
+                overwrite=True
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -990,7 +1011,11 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
                 content_language='spanish',
                 content_disposition='inline')
             blob = bsc.get_blob_client(self.container_name, 'blob1')
-            await blob.set_http_headers(content_settings, etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
+            await blob.set_http_headers(
+                content_settings,
+                etag='0x111111111111111',
+                match_condition=MatchConditions.IfNotModified
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -1012,7 +1037,11 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
             content_language='spanish',
             content_disposition='inline')
         blob = bsc.get_blob_client(self.container_name, 'blob1')
-        await blob.set_http_headers(content_settings, etag='0x111111111111111', match_condition=MatchConditions.IfModified)
+        await blob.set_http_headers(
+            content_settings,
+            etag='0x111111111111111',
+            match_condition=MatchConditions.IfModified
+        )
 
         # Assert
         properties = await blob.get_blob_properties()
@@ -1089,8 +1118,11 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
 
         container_name = self.get_resource_name("testcontainer1")
         cc = ContainerClient(
-            self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret, container_name=container_name,
-            connection_data_block_size=4 * 1024)
+            self.account_url(storage_account_name, "blob"),
+            credential=storage_account_key.secret,
+            container_name=container_name,
+            connection_data_block_size=4 * 1024
+        )
         await cc.create_container()
         self._setup()
         test_cpk = CustomerProvidedEncryptionKey(key_value=CPK_KEY_VALUE, key_hash=CPK_KEY_HASH)
@@ -1252,7 +1284,10 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
-        properties = await blob.get_blob_properties(etag='0x111111111111111', match_condition=MatchConditions.IfModified)
+        properties = await blob.get_blob_properties(
+            etag='0x111111111111111',
+            match_condition=MatchConditions.IfModified
+        )
 
         # Assert
         assert properties is not None
@@ -1429,7 +1464,10 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
-        md = (await blob.get_blob_properties(etag='0x111111111111111', match_condition=MatchConditions.IfModified)).metadata
+        md = (await blob.get_blob_properties(
+            etag='0x111111111111111',
+            match_condition=MatchConditions.IfModified)
+        ).metadata
 
         # Assert
         assert md is not None
@@ -1593,7 +1631,11 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(ResourceModifiedError) as e:
             metadata = {'hello': 'world', 'number': '42'}
             blob = bsc.get_blob_client(self.container_name, 'blob1')
-            await blob.set_blob_metadata(metadata, etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
+            await blob.set_blob_metadata(
+                metadata,
+                etag='0x111111111111111',
+                match_condition=MatchConditions.IfNotModified
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -2576,7 +2618,13 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         with pytest.raises(ResourceModifiedError) as e:
-            await blob.upload_page(data, offset=0, length=512, etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
+            await blob.upload_page(
+                data,
+                offset=0,
+                length=512,
+                etag='0x111111111111111',
+                match_condition=MatchConditions.IfNotModified
+            )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -2596,7 +2644,13 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
-        await blob.upload_page(data, offset=0, length=512, etag='0x111111111111111', match_condition=MatchConditions.IfModified)
+        await blob.upload_page(
+            data,
+            offset=0,
+            length=512,
+            etag='0x111111111111111',
+            match_condition=MatchConditions.IfModified
+        )
 
         # Assert
 
@@ -2636,7 +2690,10 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
-        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
+        await asyncio.gather(
+            blob.upload_page(data, offset=0, length=512),
+            blob.upload_page(data, offset=1024, length=512)
+        )
 
         # Act
         ranges = await blob.get_page_ranges(if_modified_since=test_datetime)
@@ -2662,7 +2719,10 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
-        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
+        await asyncio.gather(
+            blob.upload_page(data, offset=0, length=512),
+            blob.upload_page(data, offset=1024, length=512)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -2687,7 +2747,10 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
-        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
+        await asyncio.gather(
+            blob.upload_page(data, offset=0, length=512),
+            blob.upload_page(data, offset=1024, length=512)
+        )
 
         # Act
         ranges = await blob.get_page_ranges(if_unmodified_since=test_datetime)
@@ -2713,7 +2776,10 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
-        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
+        await asyncio.gather(
+            blob.upload_page(data, offset=0, length=512),
+            blob.upload_page(data, offset=1024, length=512)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -2736,7 +2802,10 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
+        await asyncio.gather(
+            blob.upload_page(data, offset=0, length=512),
+            blob.upload_page(data, offset=1024, length=512)
+        )
         etag = (await blob.get_blob_properties()).etag
 
         # Act
@@ -2759,7 +2828,10 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
+        await asyncio.gather(
+            blob.upload_page(data, offset=0, length=512),
+            blob.upload_page(data, offset=1024, length=512)
+        )
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -2780,7 +2852,10 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         container, blob = await self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
+        await asyncio.gather(
+            blob.upload_page(data, offset=0, length=512),
+            blob.upload_page(data, offset=1024, length=512)
+        )
 
         # Act
         ranges = await blob.get_page_ranges(etag='0x111111111111111', match_condition=MatchConditions.IfModified)
@@ -2803,7 +2878,10 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
 
-        await asyncio.gather(blob.upload_page(data, offset=0, length=512), blob.upload_page(data, offset=1024, length=512))
+        await asyncio.gather(
+            blob.upload_page(data, offset=0, length=512),
+            blob.upload_page(data, offset=1024, length=512)
+        )
         etag = (await blob.get_blob_properties()).etag
 
         # Act
@@ -2827,7 +2905,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         for i in range(5):
-            resp = await blob.append_block(u'block {0}'.format(i), if_modified_since=test_datetime)
+            resp = await blob.append_block(f"block {i}", if_modified_since=test_datetime)
             assert resp is not None
 
         # Assert
@@ -2852,7 +2930,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
-                resp = await blob.append_block(u'block {0}'.format(i), if_modified_since=test_datetime)
+                resp = await blob.append_block(f"block {i}", if_modified_since=test_datetime)
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -2873,7 +2951,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         for i in range(5):
-            resp = await blob.append_block(u'block {0}'.format(i), if_unmodified_since=test_datetime)
+            resp = await blob.append_block(f"block {i}", if_unmodified_since=test_datetime)
             assert resp is not None
 
         # Assert
@@ -2898,7 +2976,7 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
-                resp = await blob.append_block(u'block {0}'.format(i), if_unmodified_since=test_datetime)
+                await blob.append_block(f"block {i}", if_unmodified_since=test_datetime)
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -2919,7 +2997,11 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         # Act
         for i in range(5):
             etag = (await blob.get_blob_properties()).etag
-            resp = await blob.append_block(u'block {0}'.format(i), etag=etag, match_condition=MatchConditions.IfNotModified)
+            resp = await blob.append_block(
+                f"block {i}",
+                etag=etag,
+                match_condition=MatchConditions.IfNotModified
+            )
             assert resp is not None
 
         # Assert
@@ -2941,7 +3023,11 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         # Act
         with pytest.raises(HttpResponseError) as e:
             for i in range(5):
-                resp = await blob.append_block(u'block {0}'.format(i), etag='0x111111111111111', match_condition=MatchConditions.IfNotModified)
+                await blob.append_block(
+                    f"block {i}",
+                    etag='0x111111111111111',
+                    match_condition=MatchConditions.IfNotModified
+                )
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -2956,7 +3042,11 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
 
         # Act
         for i in range(5):
-            resp = await blob.append_block(u'block {0}'.format(i), etag='0x8D2C9167D53FC2C', match_condition=MatchConditions.IfModified)
+            resp = await blob.append_block(
+                f"block {i}",
+                etag='0x8D2C9167D53FC2C',
+                match_condition=MatchConditions.IfModified
+            )
             assert resp is not None
 
         # Assert
@@ -2979,7 +3069,11 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
                 etag = (await blob.get_blob_properties()).etag
-                resp = await blob.append_block(u'block {0}'.format(i), etag=etag, match_condition=MatchConditions.IfModified)
+                await blob.append_block(
+                    f"block {i}",
+                    etag=etag,
+                    match_condition=MatchConditions.IfModified
+                )
 
         # Assert
         assert StorageErrorCode.condition_not_met == e.value.error_code
@@ -3095,7 +3189,12 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-        await blob.upload_blob(data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfNotModified)
+        await blob.upload_blob(
+            data,
+            blob_type=BlobType.AppendBlob,
+            etag=test_etag,
+            match_condition=MatchConditions.IfNotModified
+        )
 
         # Assert
         content = await blob.download_blob()
@@ -3118,7 +3217,12 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-            await blob.upload_blob(data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfNotModified)
+            await blob.upload_blob(
+                data,
+                blob_type=BlobType.AppendBlob,
+                etag=test_etag,
+                match_condition=MatchConditions.IfNotModified
+            )
 
         assert StorageErrorCode.condition_not_met == e.value.error_code
 
@@ -3137,7 +3241,12 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-        await blob.upload_blob(data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfModified)
+        await blob.upload_blob(
+            data,
+            blob_type=BlobType.AppendBlob,
+            etag=test_etag,
+            match_condition=MatchConditions.IfModified
+        )
 
         # Assert
         content = await blob.download_blob()
@@ -3160,7 +3269,12 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
-            await blob.upload_blob(data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfModified)
+            await blob.upload_blob(
+                data,
+                blob_type=BlobType.AppendBlob,
+                etag=test_etag,
+                match_condition=MatchConditions.IfModified
+            )
 
         assert StorageErrorCode.condition_not_met == e.value.error_code
 

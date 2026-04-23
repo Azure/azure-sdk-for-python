@@ -891,8 +891,10 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # Assert
         with pytest.raises(ValueError) as e:
             await container_name.set_container_access_policy(identifiers)
-        assert str(
-            e.value.args[0]) == 'Too many access policies provided. The server does not support setting more than 5 access policies on a single resource.'
+        assert str(e.value.args[0]) == (
+            'Too many access policies provided. The server does not support '
+            'setting more than 5 access policies on a single resource.'
+        )
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -1390,7 +1392,12 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
             content_language='spanish',
             content_disposition='inline')
         blob1 = container.get_blob_client('blob1')
-        resp = await blob1.upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '1', 'name': 'bob'})
+        resp = await blob1.upload_blob(
+            data,
+            overwrite=True,
+            content_settings=content_settings,
+            metadata={'number': '1', 'name': 'bob'}
+        )
         version_id_1 = resp['version_id']
         await blob1.upload_blob(b"abc", overwrite=True)
         root_content = b"cde"
@@ -1398,13 +1405,24 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         # this will delete the root blob, while you can still access it through versioning
         await blob1.delete_blob()
 
-        await container.get_blob_client('blob2').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
-        await container.get_blob_client('blob3').upload_blob(data, overwrite=True, content_settings=content_settings, metadata={'number': '2', 'name': 'car'})
+        await container.get_blob_client('blob2').upload_blob(
+            data,
+            overwrite=True,
+            content_settings=content_settings,
+            metadata={'number': '2', 'name': 'car'}
+        )
+        await container.get_blob_client('blob3').upload_blob(
+            data,
+            overwrite=True,
+            content_settings=content_settings,
+            metadata={'number': '2', 'name': 'car'}
+        )
 
         # Act
         blobs = []
 
-        # include deletedwithversions will give you all alive root blobs and the the deleted root blobs when versioning is on.
+        # include deletedwithversions will give you all alive root blobs
+        # and the deleted root blobs when versioning is on.
         async for blob in container.list_blobs(include=["deletedwithversions"]):
             blobs.append(blob)
         downloaded_root_content = await (await blob1.download_blob(version_id=root_version_id)).readall()
@@ -2208,7 +2226,9 @@ class TestStorageContainerAsync(AsyncStorageRecordedTestCase):
         await c2.upload_blob(data)
 
         # Act
-        prefix_list = await self._to_list(container.walk_blobs(name_starts_with='a', delimiter='/', include=['versions']))
+        prefix_list = await self._to_list(
+            container.walk_blobs(name_starts_with='a', delimiter='/', include=['versions'])
+        )
 
         # Assert
         assert len(prefix_list) == 1

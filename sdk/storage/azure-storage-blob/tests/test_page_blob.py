@@ -593,7 +593,11 @@ class TestStoragePageBlob(StorageRecordedTestCase):
 
         # Act: make update page from url calls
         source_with_special_chars_resp = destination_blob_client.upload_pages_from_url(
-            source_blob_client_with_special_chars.url + "?" + sas_token_for_blob_with_special_chars, offset=0, length=4 * 1024, source_offset=0)
+            source_blob_client_with_special_chars.url + "?" + sas_token_for_blob_with_special_chars,
+            offset=0,
+            length=4 * 1024,
+            source_offset=0
+        )
         assert source_with_special_chars_resp.get('etag') is not None
         assert source_with_special_chars_resp.get('last_modified') is not None
 
@@ -2254,7 +2258,10 @@ class TestStoragePageBlob(StorageRecordedTestCase):
 
             source_blob2.create_page_blob(1024)
             source_blob2_url = '{0}/{1}/{2}'.format(
-                self.account_url(premium_storage_account_name, "blob"), source_blob2.container_name, source_blob2.blob_name)
+                self.account_url(premium_storage_account_name, "blob"),
+                source_blob2.container_name,
+                source_blob2.blob_name
+            )
 
             copy_blob2 = pbs.get_blob_client(container_name, 'blob2copy')
             copy2 = copy_blob2.start_copy_from_url(source_blob2_url, premium_page_blob_tier=PremiumPageBlobTier.P60)

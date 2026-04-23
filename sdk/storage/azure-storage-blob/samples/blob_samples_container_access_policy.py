@@ -22,7 +22,8 @@ USAGE: python blob_samples_container_access_policy.py
 EXAMPLE OUTPUT:
 
 ..Creating container
-Created container has identifier 'read' with permissions 'rw', start date '2019-10-18T22:14:36Z', and expiry date '2019-10-18T23:15:36Z'.
+Created container has identifier 'read' with permissions 'rw',
+start date '2019-10-18T22:14:36Z', and expiry date '2019-10-18T23:15:36Z'.
 
 ..Getting container access policy
 Blob Access Type: container
@@ -63,9 +64,9 @@ def get_and_set_container_access_policy():
 
     for identifier_name, access_policy in identifiers.items():
         print(
-            "Created container has identifier '{}' with permissions '{}', start date '{}', and expiry date '{}'.".format(
-                identifier_name, access_policy.permission, access_policy.start, access_policy.expiry
-            )
+            f"Created container has identifier {identifier_name} "
+            f"with permissions {access_policy.permission}, "
+            f"start date {access_policy.start}, and expiry date {access_policy.expiry}"
         )
 
     # Get the access policy on the container

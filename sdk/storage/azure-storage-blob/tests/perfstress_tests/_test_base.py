@@ -75,26 +75,73 @@ class _ServiceTest(PerfStressTest):
     @staticmethod
     def add_arguments(parser):
         super(_ServiceTest, _ServiceTest).add_arguments(parser)
-        parser.add_argument('--max-put-size', nargs='?', type=int,
-                            help='Maximum size of data uploading in single HTTP PUT. Defaults to SDK default.', default=None)
-        parser.add_argument('--max-block-size', nargs='?', type=int,
-                            help='Maximum size of data in a block within a blob. Defaults to SDK default.', default=None)
-        parser.add_argument('--max-get-size', nargs='?', type=int,
-                            help='Initial chunk size of a Blob download. Defaults to SDK default.', default=None)
-        parser.add_argument('--buffer-threshold', nargs='?', type=int,
-                            help='Minimum block size to prevent full block buffering. Defaults to SDK default.', default=None)
-        parser.add_argument('--data-block-size', nargs='?', type=int,
-                            help='The chunk size used when reading from the network stream. Defaults to SDK default.', default=None)
-        parser.add_argument('--client-encryption', nargs='?', type=str,
-                            help='The version of client-side encryption to use. Leave out for no encryption.', default=None)
-        parser.add_argument('--max-concurrency', nargs='?', type=int,
-                            help='Maximum number of concurrent threads used for data transfer. Defaults to 1', default=1)
-        parser.add_argument('-s', '--size', nargs='?', type=int,
-                            help='Size of data to transfer.  Default is 10240.', default=10240)
-        parser.add_argument('--no-client-share', action='store_true',
-                            help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.', default=False)
         parser.add_argument(
-            "--use-entra-id", action="store_true", help="Use Microsoft Entra ID authentication instead of connection string."
+            '--max-put-size',
+            nargs='?',
+            type=int,
+            help='Maximum size of data uploading in single HTTP PUT. Defaults to SDK default.',
+            default=None
+        )
+        parser.add_argument(
+            '--max-block-size',
+            nargs='?',
+            type=int,
+            help='Maximum size of data in a block within a blob. Defaults to SDK default.',
+            default=None
+        )
+        parser.add_argument(
+            '--max-get-size',
+            nargs='?',
+            type=int,
+            help='Initial chunk size of a Blob download. Defaults to SDK default.',
+            default=None
+        )
+        parser.add_argument(
+            '--buffer-threshold',
+            nargs='?',
+            type=int,
+            help='Minimum block size to prevent full block buffering. Defaults to SDK default.',
+            default=None
+        )
+        parser.add_argument(
+            '--data-block-size',
+            nargs='?',
+            type=int,
+            help='The chunk size used when reading from the network stream. Defaults to SDK default.',
+            default=None
+        )
+        parser.add_argument(
+            '--client-encryption',
+            nargs='?',
+            type=str,
+            help='The version of client-side encryption to use. Leave out for no encryption.',
+            default=None
+        )
+        parser.add_argument(
+            '--max-concurrency',
+            nargs='?',
+            type=int,
+            help='Maximum number of concurrent threads used for data transfer. Defaults to 1',
+            default=1
+        )
+        parser.add_argument(
+            '-s',
+            '--size',
+            nargs='?',
+            type=int,
+            help='Size of data to transfer.  Default is 10240.',
+            default=10240
+        )
+        parser.add_argument(
+            '--no-client-share',
+            action='store_true',
+            help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.',
+            default=False
+        )
+        parser.add_argument(
+            "--use-entra-id",
+            action="store_true",
+            help="Use Microsoft Entra ID authentication instead of connection string."
         )
 
 

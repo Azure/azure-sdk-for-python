@@ -88,7 +88,8 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         source_blob_data = self.get_random_bytes(LARGE_BLOB_SIZE)
         source_blob_client = await self._create_source_blob(source_blob_data, bsc)
         destination_blob_client = await self._create_blob(bsc)
-        access_token = await self.get_credential(BlobServiceClient, is_async=True).get_token("https://storage.azure.com/.default")
+        access_token = await self.get_credential(
+            BlobServiceClient, is_async=True).get_token("https://storage.azure.com/.default")
         token = "Bearer {}".format(access_token.token)
 
         # Assert this operation fails without a credential
@@ -258,8 +259,16 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
         blob = await self._create_blob(bsc, tags=tags)
         with pytest.raises(ResourceModifiedError):
-            await blob.append_block(u'啊齄丂狛狜', encoding='utf-16', if_tags_match_condition="\"tag1\"='first tag'")
-        resp = await blob.append_block(u'啊齄丂狛狜', encoding='utf-16', if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            await blob.append_block(
+                u'啊齄丂狛狜',
+                encoding='utf-16',
+                if_tags_match_condition="\"tag1\"='first tag'"
+            )
+        resp = await blob.append_block(
+            u'啊齄丂狛狜',
+            encoding='utf-16',
+            if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'"
+        )
 
         assert int(resp['blob_append_offset']) == 0
         assert resp['blob_committed_block_count'] == 1
@@ -323,14 +332,18 @@ class TestStorageAppendBlobAsync(AsyncStorageRecordedTestCase):
         tags = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
         await destination_blob_client.set_blob_tags(tags=tags)
         with pytest.raises(ResourceModifiedError):
-            await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                source_offset=split,
-                                                                source_length=LARGE_BLOB_SIZE - split,
-                                                                if_tags_match_condition="\"tag1\"='first tag'")
-        resp = await destination_blob_client.append_block_from_url(source_blob_client.url + '?' + sas,
-                                                                   source_offset=split,
-                                                                   source_length=LARGE_BLOB_SIZE - split,
-                                                                   if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'")
+            await destination_blob_client.append_block_from_url(
+                source_blob_client.url + '?' + sas,
+                source_offset=split,
+                source_length=LARGE_BLOB_SIZE - split,
+                if_tags_match_condition="\"tag1\"='first tag'"
+            )
+        resp = await destination_blob_client.append_block_from_url(
+            source_blob_client.url + '?' + sas,
+            source_offset=split,
+            source_length=LARGE_BLOB_SIZE - split,
+            if_tags_match_condition="\"tag1 name\"='my tag' AND \"tag2\"='secondtag'"
+        )
 
         assert resp.get('blob_append_offset') == str(4 * 1024)
         assert resp.get('blob_committed_block_count') == 2
