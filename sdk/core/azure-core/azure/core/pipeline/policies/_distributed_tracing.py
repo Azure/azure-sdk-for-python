@@ -78,7 +78,7 @@ class DistributedTracingPolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseTyp
     :type instrumentation_config: dict[str, Any]
     :keyword allowed_query_params: Query parameter names whose values are allowed in recorded URLs.
         These are added to the default set which includes "api-version".
-    :type allowed_query_params: set[str] or list[str]
+    :type allowed_query_params: Iterable[str]
     """
 
     TRACING_CONTEXT = "TRACING_CONTEXT"

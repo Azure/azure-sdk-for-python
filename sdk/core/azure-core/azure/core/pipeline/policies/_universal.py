@@ -398,6 +398,9 @@ class HttpLoggingPolicy(
     :keyword int http_logging_level: The logging level to use for HTTP request and response logs.
      Defaults to logging.INFO.
     :type http_logging_level: int
+    :keyword allowed_query_params: Query parameter names whose values are allowed in recorded URLs.
+        These are added to the default set which includes "api-version".
+    :type allowed_query_params: Iterable[str]
 
     Environment variables:
 

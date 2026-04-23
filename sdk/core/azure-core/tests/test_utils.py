@@ -233,7 +233,7 @@ def test_sanitize_url():
     assert sanitize_url(url, {"q1"}) == "https://example.com?q1=value1&q1=value2&q1=value3"
     assert sanitize_url(url, {"q2"}) == "https://example.com?q1=REDACTED&q1=REDACTED&q1=REDACTED"
 
-    # Test query paramaters in the path.
+    # Test query parameters in the path.
     url = "https://www.example.com/q1=value1/foo"
     assert sanitize_url(url, {"q1", "q3"}) == url
     url = "https://www.example.com/q1=value1&q2=value2/foo"

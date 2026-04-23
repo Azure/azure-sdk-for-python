@@ -171,8 +171,8 @@ class CaseInsensitiveSet(set):
 
     The cache is rebuilt only when the set is mutated, not on every lookup.
 
-    :param iterable: Initial values for the set.
-    :type iterable: iterable[str]
+    :param data: Initial values for the set.
+    :type data: Iterable[str]
     """
 
     def __init__(self, data: Optional[Iterable[str]] = None) -> None:
