@@ -1,24 +1,32 @@
 # Release History
 
-## 1.0.0b5 (Unreleased)
+## 1.0.0b6 (Unreleased)
 
 ### Features Added
-
-- Added `_platform_headers` module centralizing all platform HTTP header name constants (`x-request-id`, `x-platform-server`, `x-agent-session-id`, isolation keys, `traceparent`, `x-ms-client-request-id`). All header references now use shared constants instead of scattered string literals.
-- Added `RequestIdMiddleware` (in `azure-ai-agentserver-core`) that sets the `x-request-id` response header on every HTTP response. Value is resolved in priority order: OTEL trace ID → incoming `x-request-id` header → new UUID.
-- Error responses (4xx/5xx) with a JSON `error` body are automatically enriched with `error.additionalInfo.request_id` matching the `x-request-id` response header, enabling client-side error correlation.
-- Foundry storage logging now includes the `traceparent` header (W3C distributed trace ID) in all log messages, enabling correlation between SDK log entries and backend distributed traces.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 
+### Other Changes
+
+## 1.0.0b5 (2026-04-22)
+
+### Features Added
+
+- All HTTP responses now include an `x-request-id` header for request correlation. Value is resolved in priority order: OTEL trace ID → incoming `x-request-id` header → new UUID.
+- Error responses (4xx/5xx) with a JSON `error` body are automatically enriched with `error.additionalInfo.request_id` matching the `x-request-id` response header, enabling client-side error correlation.
+- Persistence failure resilience — when storage operations fail, responses now complete gracefully with `status: "failed"` and `error.code: "storage_error"` instead of crashing or leaving responses permanently stuck at `in_progress`. Covers all execution modes (streaming, background+streaming, background+non-streaming, synchronous). For streaming responses, terminal SSE events are buffered, persistence is attempted, and on failure the terminal event is replaced with `response.failed` carrying `error_code="storage_error"`. Synchronous persistence failures return HTTP 500 with the storage error details.
+- Foundry storage logging now includes the `traceparent` header (W3C distributed trace ID) in all log messages, enabling correlation between SDK log entries and backend distributed traces.
+
+### Bugs Fixed
+
 - Fixed crash in `FoundryStorageLoggingPolicy` when a transport-level failure (DNS resolution, connection refused, timeout) occurs before any HTTP response is received. The policy previously attempted to access `response.headers` unconditionally, raising an unrelated exception that masked the real transport error. Transport failures are now logged at ERROR level and the original exception propagates cleanly.
+- Fixed `ResponseContext.get_input_text()` and `ResponseContext.get_input_items()` silently dropping text when `ItemMessage.content` is a plain string. String content is now correctly expanded into `MessageContentInputTextContent`.
 
 ### Other Changes
 
 - Removed `x-ms-request-id` from Foundry storage response logging (unused service header).
-- Migrated all header string literals to use `_platform_headers` constants.
 
 ## 1.0.0b4 (2026-04-19)
 
