@@ -12,7 +12,3 @@
   aggregation, and SLO baselines.
 - Integration with Azure Monitor Workspace (AMW) accounts for metric emission,
   with managed identity and alert support.
-
-### Other Changes
-
-  - Initial version
