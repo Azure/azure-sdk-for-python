@@ -75,6 +75,13 @@ class TestQuerySanitizationAsync(unittest.TestCase):
         result = sanitize_query(query, None)
         self.assertEqual(result, "SELECT * FROM c WHERE c.value = ?")
 
+    def test_boolean_field_names_preserved(self):
+        """Field names containing 'true' or 'false' should NOT be sanitized (M7 fix)."""
+        query = "SELECT * FROM c WHERE c.true = 'yes' AND c.false = 'no' AND c.isTrue = 1"
+        result = sanitize_query(query, None)
+        expected = "SELECT * FROM c WHERE c.true = '?' AND c.false = '?' AND c.isTrue = ?"
+        self.assertEqual(result, expected)
+
     def test_mixed_literals(self):
         """Mix of different literal types should all be sanitized."""
         query = "SELECT * FROM c WHERE c.name = 'Alice' AND c.age = 30 AND c.active = true"
@@ -88,11 +95,12 @@ class TestQuerySanitizationAsync(unittest.TestCase):
         self.assertEqual(result, "SELECT * FROM c WHERE c.id = @id AND c.status = '?'")
 
     def test_parameterized_with_literals_and_parameters(self):
-        """Parameterized query text should remain unchanged when parameters are provided."""
+        """Inline literals are sanitized even when parameters are provided (M2 fix)."""
         query = "SELECT * FROM c WHERE c.id = @id AND c.status = 'active' AND c.priority >= 5"
         parameters = [{"name": "@id", "value": "thread-1"}]
         result = sanitize_query(query, parameters)
-        self.assertEqual(result, query)
+        expected = "SELECT * FROM c WHERE c.id = @id AND c.status = '?' AND c.priority >= ?"
+        self.assertEqual(result, expected)
 
     def test_complex_query_with_functions(self):
         """Complex queries with functions and literals."""
@@ -131,10 +139,11 @@ class TestQuerySanitizationAsync(unittest.TestCase):
         self.assertEqual(result, "SELECT * FROM c WHERE c.large = ? AND c.small = ?")
 
     def test_parameterized_query_with_scientific_notation_literal(self):
-        """Parameterized query text should remain unchanged when parameters exist."""
+        """Inline scientific notation is sanitized even when parameters exist (M2 fix)."""
         query = "SELECT * FROM c WHERE c.id = @id AND c.large = 1.5e10"
         result = sanitize_query(query, [{"name": "@id", "value": "item-1"}])
-        self.assertEqual(result, query)
+        expected = "SELECT * FROM c WHERE c.id = @id AND c.large = ?"
+        self.assertEqual(result, expected)
 
     def test_real_world_auth_query(self):
         """Real-world authentication query with sensitive data."""

@@ -24,15 +24,30 @@ _TRUE_VALUES = {"1", "true", "yes", "on"}
 _FALSE_VALUES = {"0", "false", "no", "off"}
 
 
-def _build_telemetry_kwargs(func_kwargs: Mapping[str, Any]) -> dict[str, Any]:
+def _build_telemetry_kwargs(
+    func_kwargs: Mapping[str, Any],
+    func_args: Optional[tuple[Any, ...]] = None,
+) -> dict[str, Any]:
     """Copy kwargs and normalize query metadata for telemetry.
 
+    When the query is passed as a positional argument (e.g. ``query_items("SELECT ...")``),
+    it appears in *func_args* rather than *func_kwargs*.  This helper checks both sources
+    so that telemetry is recorded regardless of calling convention.
+
     :param Mapping[str, Any] func_kwargs: The keyword arguments passed to the decorated method.
+    :param func_args: The positional arguments passed to the decorated method.
+    :type func_args: Optional[tuple[Any, ...]]
     :returns: A copied kwargs mapping with normalized query and parameters values for telemetry.
     :rtype: dict[str, Any]
     """
     query_for_telemetry = func_kwargs.get("query")
     parameters_for_telemetry = func_kwargs.get("parameters")
+
+    # If no query in kwargs, check positional args (args[0]=self, args[1]=query).
+    if query_for_telemetry is None and func_args is not None and len(func_args) > 1:
+        candidate = func_args[1]
+        if isinstance(candidate, (str, dict)):
+            query_for_telemetry = candidate
 
     if isinstance(query_for_telemetry, dict) and "query" in query_for_telemetry:
         if parameters_for_telemetry is None:
@@ -68,10 +83,9 @@ def sanitize_query(query: str, parameters: Optional[list]) -> str:
     if not query:
         return query
 
-    if parameters:
-        return query
-
-    # Sanitize literal values in non-parameterized queries
+    # Always sanitize literal values regardless of whether parameters are provided.
+    # Parameterized queries can still contain inline literals (mixed queries),
+    # and those inline literals must be sanitized to avoid PII leaks.
     # Replace string literals, including escaped quotes and doubled single quotes.
     sanitized = re.sub(r"'(?:\\.|''|[^'])*'", "'?'", query)
 
@@ -79,8 +93,8 @@ def sanitize_query(query: str, parameters: Optional[list]) -> str:
     # including negative values. Match numbers not preceded by @ or identifier characters.
     sanitized = _NUMERIC_LITERAL_PATTERN.sub("?", sanitized)
 
-    # Replace boolean literals
-    sanitized = re.sub(r'\b(true|false)\b', '?', sanitized, flags=re.IGNORECASE)
+    # Replace boolean literals, but not when preceded by a dot (field access like c.true)
+    sanitized = re.sub(r'(?<![.\w])\b(true|false)\b', '?', sanitized, flags=re.IGNORECASE)
 
     # Replace null literals
     sanitized = re.sub(r'\b(null)\b', '?', sanitized, flags=re.IGNORECASE)
@@ -104,6 +118,61 @@ def _get_env_bool(name: str) -> Optional[bool]:
 def _should_emit_query_text() -> bool:
     explicit_opt_in = _get_env_bool(_Constants.OTEL_ENABLE_QUERY_TEXT)
     return explicit_opt_in is True
+
+
+# TODO (C1 – paged response telemetry): Paged operations (query_items,
+# read_all_items, list_*, query_items_change_feed) return an ItemPaged/
+# CosmosItemPaged before any HTTP request fires.  The @distributed_trace
+# span has already ended by the time pages are iterated, so RU charge,
+# sub-status code, item count, and continuation-token info are never
+# recorded on the span for paged results.
+#
+# Possible approaches investigated (none are safe for GA without further
+# SDK-level changes):
+#
+# 1. Response-hook injection (post-call _kwargs mutation):
+#    Capture the raw OTel span while still recording, then after the
+#    decorated method returns the paged result (but before iteration),
+#    monkey-patch result._kwargs["response_hook"] and
+#    result._kwargs["fetch_function"] with a deferred hook that
+#    enriches the span via direct _attributes dict mutation (since
+#    set_attribute() is a no-op on ended spans).
+#
+#    Issues:
+#    - Overwrites/wraps the user's response_hook, breaking customers
+#      who rely on their own hook receiving unmodified headers.
+#    - Several SDK methods (e.g. read_all_items) have a latent bug
+#      where response_hook is passed both as a named parameter AND
+#      via **kwargs, causing "got multiple values" TypeError when the
+#      hook is non-None.
+#    - Relies on mutating OTel span internals (_attributes) after the
+#      span has ended, which is not part of the public API.
+#
+# 2. Pipeline-policy layer instrumentation:
+#    Add a custom pipeline policy in _cosmos_client_connection.py that
+#    intercepts every HTTP response and enriches the active span.
+#    This is how .NET/Java/Go SDKs handle it.
+#
+#    Issues:
+#    - The @distributed_trace span is still ended before iteration,
+#      so per-page attributes would need a new child span per page
+#      or a custom span lifecycle.
+#    - Requires changes to the pipeline and careful span management.
+#
+# 3. Custom span lifecycle (don't use @distributed_trace for paged ops):
+#    Manually start a span in the decorator, return the paged result
+#    WITHOUT ending the span, and end it when iteration completes
+#    (via a wrapper around ItemPaged that hooks __del__ or exhaustion).
+#
+#    Issues:
+#    - Long-lived spans (user may iterate slowly or not at all).
+#    - Complex lifecycle management and error handling.
+#    - Diverges from azure-core's @distributed_trace contract.
+#
+# For now, paged operations get pre-request attributes (db.operation.name,
+# db.namespace, db.collection.name, db.query.text, etc.) but no per-page
+# response attributes (RU charge, sub-status, item count, status code).
+# This should be tracked as a follow-up issue.
 
 
 def _wrap_span(span_impl_type: Any, raw_span: Any) -> AbstractSpan:
@@ -166,11 +235,17 @@ def cosmos_span_attributes(
             try:
                 result = func(*args, **func_kwargs)
 
+                # NOTE: Paged results (ItemPaged/CosmosItemPaged) are returned
+                # before any HTTP request fires. Response-level telemetry
+                # (RU charge, sub-status, item count) is NOT captured for paged
+                # operations. See the TODO comment above for details and
+                # potential future approaches (C1 issue).
+
                 # Add Cosmos-specific attributes (only if span exists)
                 _add_cosmos_telemetry(
                     resolved_operation_name,
                     args,
-                    _build_telemetry_kwargs(func_kwargs),
+                    _build_telemetry_kwargs(func_kwargs, args),
                     result,
                 )
 
@@ -181,7 +256,7 @@ def cosmos_span_attributes(
                     error,
                     resolved_operation_name,
                     args,
-                    _build_telemetry_kwargs(func_kwargs),
+                    _build_telemetry_kwargs(func_kwargs, args),
                 )
                 raise
 
@@ -468,11 +543,13 @@ def _add_instance_attributes(span: AbstractSpan, instance: Any) -> None:
     """
     _add_client_connection_attributes(span, instance)
 
+    # ContainerProxy / ScriptsProxy — has container_link like "dbs/{db}/colls/{coll}"
     if hasattr(instance, "container_link") and hasattr(instance, "id"):
         span.add_attribute(_Constants.OpenTelemetryAttributes.DB_COLLECTION_NAME, instance.id)
         _add_namespace_from_link(span, instance.container_link)
         return
 
+    # DatabaseProxy — has database_link and id IS the database name
     if (
         hasattr(instance, "database_link")
         and not hasattr(instance, "user_link")
@@ -484,6 +561,12 @@ def _add_instance_attributes(span: AbstractSpan, instance: Any) -> None:
             _add_namespace_from_link(span, instance.database_link)
         return
 
+    # UserProxy — has user_link like "dbs/{db}/users/{user}"
+    if hasattr(instance, "user_link"):
+        _add_namespace_from_link(span, instance.user_link)
+        return
+
+    # Fallback — try database_link for any other proxy
     if hasattr(instance, "database_link"):
         _add_namespace_from_link(span, instance.database_link)
 

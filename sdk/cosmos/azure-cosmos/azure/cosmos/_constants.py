@@ -174,7 +174,8 @@ class _Constants:
     class OpenTelemetryValues:
         """Shared OpenTelemetry values used by Cosmos telemetry helpers."""
 
-        DB_SYSTEM_NAME_VALUE: Literal["azure.cosmosdb"] = "azure.cosmosdb"
+        # Aligned with .NET, Java, and Go SDKs (value: "cosmosdb").
+        DB_SYSTEM_NAME_VALUE: Literal["cosmosdb"] = "cosmosdb"
         AZURE_RESOURCE_PROVIDER_NAMESPACE_VALUE: Literal["Microsoft.DocumentDB"] = "Microsoft.DocumentDB"
         CONNECTION_MODE_DIRECT: Literal["direct"] = "direct"
         CONNECTION_MODE_GATEWAY: Literal["gateway"] = "gateway"

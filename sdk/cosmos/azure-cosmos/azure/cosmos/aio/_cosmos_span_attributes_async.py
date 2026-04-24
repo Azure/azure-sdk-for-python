@@ -10,33 +10,11 @@ from typing import Any, Awaitable, Callable, Mapping, Optional, cast
 from .._cosmos_span_attributes import (
     _add_cosmos_error_telemetry,
     _add_cosmos_telemetry,
+    _build_telemetry_kwargs,
     sanitize_query,
 )
 
 __all__ = ["cosmos_span_attributes_async", "sanitize_query"]
-
-
-def _build_telemetry_kwargs(func_kwargs: Mapping[str, Any]) -> dict[str, Any]:
-    """Copy kwargs and normalize query metadata for telemetry.
-
-    :param Mapping[str, Any] func_kwargs: The keyword arguments passed to the decorated method.
-    :returns: A copied kwargs mapping with normalized query and parameters values for telemetry.
-    :rtype: dict[str, Any]
-    """
-    query_for_telemetry = func_kwargs.get("query")
-    parameters_for_telemetry = func_kwargs.get("parameters")
-
-    if isinstance(query_for_telemetry, dict) and "query" in query_for_telemetry:
-        if parameters_for_telemetry is None:
-            parameters_for_telemetry = query_for_telemetry.get("parameters")
-        query_for_telemetry = query_for_telemetry["query"]
-
-    telemetry_kwargs = dict(func_kwargs)
-    if query_for_telemetry is not None:
-        telemetry_kwargs["query"] = query_for_telemetry
-    if parameters_for_telemetry is not None:
-        telemetry_kwargs["parameters"] = parameters_for_telemetry
-    return telemetry_kwargs
 
 
 def _add_success_telemetry(
@@ -59,7 +37,7 @@ def _add_success_telemetry(
     _add_cosmos_telemetry(
         operation_name,
         args,
-        _build_telemetry_kwargs(func_kwargs),
+        _build_telemetry_kwargs(func_kwargs, args),
         result,
     )
 
@@ -140,6 +118,8 @@ def cosmos_span_attributes_async(
             async def async_wrapper(*args: Any, **kwargs: Any) -> Any:
                 try:
                     result = await coroutine_func(*args, **kwargs)
+                    # NOTE: Paged results are not enriched with response-level
+                    # telemetry (C1 gap). See sync module TODO for details.
                     _add_success_telemetry(resolved_operation_name, args, kwargs, result)
                     return result
                 except Exception as error:
@@ -147,7 +127,7 @@ def cosmos_span_attributes_async(
                         error,
                         resolved_operation_name,
                         args,
-                        _build_telemetry_kwargs(kwargs),
+                        _build_telemetry_kwargs(kwargs, args),
                     )
                     raise
 
@@ -157,6 +137,8 @@ def cosmos_span_attributes_async(
         def sync_wrapper(*args: Any, **kwargs: Any) -> Any:
             try:
                 result = func(*args, **kwargs)
+                # NOTE: Paged results are not enriched with response-level
+                # telemetry (C1 gap). See sync module TODO for details.
                 _add_success_telemetry(resolved_operation_name, args, kwargs, result)
                 return result
             except Exception as error:
@@ -164,7 +146,7 @@ def cosmos_span_attributes_async(
                     error,
                     resolved_operation_name,
                     args,
-                    _build_telemetry_kwargs(kwargs),
+                    _build_telemetry_kwargs(kwargs, args),
                 )
                 raise
 

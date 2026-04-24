@@ -9,6 +9,7 @@ from unittest.mock import Mock, patch
 from azure.cosmos._cosmos_responses import CosmosDict, CosmosList
 from azure.cosmos._cosmos_span_attributes import (
     _add_cosmos_attributes,
+    _add_instance_attributes,
     _add_response_attributes,
     _extract_headers,
     cosmos_span_attributes,
@@ -32,13 +33,14 @@ class TestQuerySanitization(unittest.TestCase):
         self.assertEqual(result, query)
 
     def test_sanitize_parameterized_query_with_inline_literals(self):
-        """Parameterized query text should remain unchanged when parameters are supplied."""
+        """Inline literals are sanitized even when parameters are supplied (M2 fix)."""
         query = "SELECT * FROM c WHERE c.userId = @userId AND c.status = 'active' AND c.age > 21"
         parameters = [{"name": "@userId", "value": "12345"}]
 
         result = sanitize_query(query, parameters)
 
-        self.assertEqual(result, query)
+        expected = "SELECT * FROM c WHERE c.userId = @userId AND c.status = '?' AND c.age > ?"
+        self.assertEqual(result, expected)
 
     def test_sanitize_string_literals(self):
         """String literals should be replaced with '?'."""
@@ -94,6 +96,16 @@ class TestQuerySanitization(unittest.TestCase):
         expected = "SELECT * FROM c WHERE c.optional = ?"
         self.assertEqual(result, expected)
 
+    def test_sanitize_boolean_field_names_preserved(self):
+        """Field names containing 'true' or 'false' should NOT be sanitized (M7 fix)."""
+        query = "SELECT * FROM c WHERE c.true = 'yes' AND c.false = 'no' AND c.isTrue = 1"
+
+        result = sanitize_query(query, None)
+
+        # Field names c.true, c.false, c.isTrue must remain; only values are sanitized
+        expected = "SELECT * FROM c WHERE c.true = '?' AND c.false = '?' AND c.isTrue = ?"
+        self.assertEqual(result, expected)
+
     def test_sanitize_mixed_literals(self):
         """Query with multiple types of literals should all be sanitized."""
         query = "SELECT * FROM c WHERE c.name = 'Alice' AND c.age = 30 AND c.active = true AND c.score = 95.5"
@@ -146,12 +158,13 @@ class TestQuerySanitization(unittest.TestCase):
         self.assertEqual(result, "SELECT * FROM c WHERE c.large = ? AND c.small = ?")
 
     def test_sanitize_parameterized_query_with_scientific_notation_literal(self):
-        """Parameterized query text should remain unchanged when parameters are present."""
+        """Inline scientific notation is sanitized even when parameters are present (M2 fix)."""
         query = "SELECT * FROM c WHERE c.id = @id AND c.large = 1.5e10"
 
         result = sanitize_query(query, [{"name": "@id", "value": "item-1"}])
 
-        self.assertEqual(result, query)
+        expected = "SELECT * FROM c WHERE c.id = @id AND c.large = ?"
+        self.assertEqual(result, expected)
 
 
 class TestCosmosSpanAttributes(unittest.TestCase):
@@ -249,7 +262,7 @@ class TestCosmosSpanAttributes(unittest.TestCase):
         # Verify core attributes were added
         calls = {call[0][0]: call[0][1] for call in self.mock_span_wrapper.add_attribute.call_args_list}
 
-        self.assertEqual(calls.get(_Constants.OpenTelemetryAttributes.DB_SYSTEM_NAME), "azure.cosmosdb")
+        self.assertEqual(calls.get(_Constants.OpenTelemetryAttributes.DB_SYSTEM_NAME), "cosmosdb")
         self.assertEqual(
             calls.get(_Constants.OpenTelemetryAttributes.DB_OPERATION_NAME),
             _Constants.OpenTelemetryOperationNames.CREATE_ITEM,
@@ -438,6 +451,28 @@ class TestDecoratorIntegration(unittest.TestCase):
         telemetry_kwargs = mock_add_cosmos_telemetry.call_args.args[2]
         self.assertEqual(telemetry_kwargs["query"], "SELECT * FROM c WHERE c.id = @id")
         self.assertEqual(telemetry_kwargs["parameters"], [{"name": "@id", "value": "1"}])
+
+
+
+
+class TestUserProxyNamespace(unittest.TestCase):
+    """Test C2: db.namespace resolution for UserProxy."""
+
+    def test_user_link_resolves_namespace(self):
+        """UserProxy with user_link should resolve db.namespace from link."""
+        mock_span = Mock()
+        mock_instance = Mock(spec=[])  # empty spec to avoid hasattr surprises
+        mock_instance.user_link = "dbs/my-database/users/user1"
+        mock_instance.id = "user1"
+        mock_instance.client_connection = Mock()
+        # Remove attributes that shouldn't exist on UserProxy
+        del mock_instance.container_link
+        del mock_instance.database_link
+
+        _add_instance_attributes(mock_span, mock_instance)
+
+        calls = {call[0][0]: call[0][1] for call in mock_span.add_attribute.call_args_list}
+        self.assertEqual(calls.get(_Constants.OpenTelemetryAttributes.DB_NAMESPACE), "my-database")
 
 
 if __name__ == '__main__':
