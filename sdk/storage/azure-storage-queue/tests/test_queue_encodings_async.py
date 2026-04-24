@@ -4,8 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 import unittest
-
 import pytest
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import QueuePreparer
+
 from azure.core.exceptions import DecodeError, HttpResponseError, ResourceExistsError
 from azure.storage.queue import (
     BinaryBase64DecodePolicy,
@@ -14,10 +18,6 @@ from azure.storage.queue import (
     TextBase64EncodePolicy,
 )
 from azure.storage.queue.aio import QueueClient, QueueServiceClient
-
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import QueuePreparer
 
 # ------------------------------------------------------------------------------
 TEST_QUEUE_PREFIX = "mytestqueue"
@@ -35,7 +35,7 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
     async def _create_queue(self, qsc, prefix=TEST_QUEUE_PREFIX):
         queue = self._get_queue_reference(qsc, prefix)
         try:
-            created = await queue.create_queue()
+            await queue.create_queue()
         except ResourceExistsError:
             pass
         return queue
@@ -43,7 +43,7 @@ class TestAsyncStorageQueueEncoding(AsyncStorageRecordedTestCase):
     async def _validate_encoding(self, queue, message):
         # Arrange
         try:
-            created = await queue.create_queue()
+            await queue.create_queue()
         except ResourceExistsError:
             pass
 
