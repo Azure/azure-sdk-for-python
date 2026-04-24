@@ -134,18 +134,34 @@ def main() -> None:
         print(f"Combined content range analysis returned pages {page_nums}")
     # [END analyze_binary_with_combined_content_range]
 
+    # [START convert_to_llm_input]
+    # The markdown above can be consumed directly by LLMs. For convenience, the SDK
+    # provides to_llm_input() which packages the result into a single text block with
+    # YAML front matter (content type, pages, fields, optional metadata) followed by
+    # the markdown body — ready for LLM prompts, vector stores, or agentic tools.
+    print("\n" + "=" * 60)
+    print("LLM-READY OUTPUT")
+    print("=" * 60)
+
+    text = to_llm_input(result)
+    print(text)
+    # [END convert_to_llm_input]
+
     # [START extract_markdown]
-    print("\nMarkdown Content:")
-    print("=" * 50)
+    print("\n" + "=" * 60)
+    print("MARKDOWN CONTENT")
+    print("=" * 60)
 
     # A PDF file has only one content element even if it contains multiple pages
     content = result.contents[0]
     print(content.markdown)
-
-    print("=" * 50)
     # [END extract_markdown]
 
     # [START access_document_properties]
+    print("\n" + "=" * 60)
+    print("DOCUMENT PROPERTIES")
+    print("=" * 60)
+
     # Check if this is document content to access document-specific properties
     if isinstance(content, DocumentContent):
         print(f"\nDocument type: {content.mime_type or '(unknown)'}")
@@ -169,19 +185,6 @@ def main() -> None:
                 )
                 table_counter += 1
     # [END access_document_properties]
-
-    # [START convert_to_llm_input]
-    # The markdown above can be consumed directly by LLMs. For convenience, the SDK
-    # provides to_llm_input() which packages the result into a single text block with
-    # YAML front matter (content type, pages, fields, optional metadata) followed by
-    # the markdown body — ready for LLM prompts, vector stores, or agentic tools.
-    print("\n" + "=" * 60)
-    print("LLM-READY OUTPUT")
-    print("=" * 60)
-
-    text = to_llm_input(result)
-    print(text)
-    # [END convert_to_llm_input]
 
 
 if __name__ == "__main__":

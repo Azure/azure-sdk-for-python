@@ -523,19 +523,20 @@ asyncio.run(analyze_invoice())
 Use the `to_llm_input()` helper to convert any analysis result into a text format that LLMs
 can consume directly — YAML front matter with extracted fields followed by the markdown body.
 This works with all content types (documents, images, audio, video) and handles multi-segment
-results and classification hierarchies automatically.
+results and classification hierarchies automatically. Run from the `samples/` directory:
 
 ```python
 from azure.ai.contentunderstanding import ContentUnderstandingClient, to_llm_input
-from azure.ai.contentunderstanding.models import AnalysisInput
 from azure.identity import DefaultAzureCredential
 
 client = ContentUnderstandingClient(endpoint, DefaultAzureCredential())
 
-poller = client.begin_analyze(
-    analyzer_id="prebuilt-invoice",
-    inputs=[AnalysisInput(url="https://example.com/invoice.pdf")],
-)
+# Analyze a document with text, tables, and charts using prebuilt-documentSearch (CU's primary RAG analyzer)
+with open("sample_files/sample_document_features.pdf", "rb") as f:
+    poller = client.begin_analyze_binary(
+        analyzer_id="prebuilt-documentSearch",
+        binary_input=f.read(),
+    )
 result = poller.result()
 
 # One line to get LLM-ready text
@@ -546,16 +547,24 @@ print(text)
 #   contentType: document
 #   pages: 1
 #   fields:
-#     VendorName: CONTOSO LTD.
-#     InvoiceDate: '2019-11-15'
-#     TotalAmount: {Amount: 110, CurrencyCode: USD}
-#     LineItems:
-#     - Description: Consulting Services
-#       Quantity: 2
+#     Summary: The document provides an overview of Latin, includes a sample
+#       table with names and corporate affiliations, presents a bar chart
+#       figure illustrating monthly values, and describes the AI Document
+#       Intelligence service...
 #   ---
 #   <!-- page 1 -->
-#   CONTOSO LTD.
-#   # INVOICE ...
+#   # ==This is title==
+#   ## 1. Text
+#   [Latin](https://en.wikipedia.org/wiki/Latin) refers to an ancient Italic language...
+#   ## 2. Page Objects
+#   ### 2.1 Table
+#   <table><caption>Table 1: This is a dummy table</caption>...</table>
+#   ### 2.2. Figure
+#   ![Values...](figures/1.1 "Bar chart with six bars: Jan=200, Feb=300...")
+#   ```chart
+#   {"type":"bar","data":{"labels":["Jan","Feb",...],...}}
+#   ```
+#   ...
 ```
 
 See the [advanced sample][python_cu_sample_to_llm_input] for output options (fields-only,
