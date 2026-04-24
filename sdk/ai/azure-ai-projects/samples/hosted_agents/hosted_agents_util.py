@@ -57,3 +57,17 @@ def get_latest_active_agent_version(
         f"No active version found for hosted agent '{agent_name}'. "
         "Create or activate a version before running this sample."
     )
+
+
+async def get_latest_active_agent_version_async(
+    project_client: AsyncAIProjectClient,
+    agent_name: str,
+) -> AgentVersionDetails:
+    async for version in project_client.agents.list_versions(agent_name=agent_name, order="desc"):
+        if version.status == "active":
+            return version
+
+    raise RuntimeError(
+        f"No active version found for hosted agent '{agent_name}'. "
+        "Create or activate a version before running this sample."
+    )
