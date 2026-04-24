@@ -388,12 +388,17 @@ class BreakingChangesTracker:
 
     def check_parameter_annotation_type_changed(self, diff: Any, stable_parameters_node: Dict) -> None:
         stable_type = stable_parameters_node[self._parameter_name].get("type")
+        # `create_parameters` stores a missing annotation as Python None, while an
+        # explicit `None` annotation is stored as the string "None". Normalize the
+        # missing-annotation case to a distinct display so the message is unambiguous.
+        display_stable = "<no annotation>" if stable_type is None else stable_type
+        display_current = "<no annotation>" if diff is None else diff
         if self._class_name:
             self.breaking_changes.append(
                 (
                     self.CHANGED_PARAMETER_TYPE_MSG, BreakingChangeType.CHANGED_PARAMETER_TYPE,
                     self._module_name, self._class_name, self._function_name, self._parameter_name,
-                    stable_type, diff
+                    display_stable, display_current
                 )
             )
         else:
@@ -401,7 +406,7 @@ class BreakingChangesTracker:
                 (
                     self.CHANGED_PARAMETER_TYPE_OF_FUNCTION_MSG, BreakingChangeType.CHANGED_PARAMETER_TYPE,
                     self._module_name, self._function_name, self._parameter_name,
-                    stable_type, diff
+                    display_stable, display_current
                 )
             )
 
