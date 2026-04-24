@@ -14,7 +14,7 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
 
 from .._version import VERSION
-from .._platform_headers import CHAT_ISOLATION_KEY, USER_ISOLATION_KEY
+from .._platform_headers import CHAT_ISOLATION_KEY, PLATFORM_ERROR_TAG, USER_ISOLATION_KEY
 from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-defined]
 from ._foundry_errors import raise_for_storage_error
 from ._foundry_logging_policy import FoundryStorageLoggingPolicy
@@ -159,6 +159,31 @@ class FoundryStorageProvider:
         await self.aclose()
 
     # ------------------------------------------------------------------
+    # Internal transport helper
+    # ------------------------------------------------------------------
+
+    async def _send_storage_request(self, request: HttpRequest) -> Any:
+        """Send an HTTP request to the Foundry storage API.
+
+        Any transport-level exception (connection failure, timeout, etc.)
+        is tagged as a platform error before re-raising, matching the .NET
+        ``FoundryStorageProvider.SendStorageRequestAsync`` pattern.
+
+        :param request: The HTTP request to send.
+        :type request: ~azure.core.rest.HttpRequest
+        :returns: The HTTP response object.
+        :rtype: ~azure.core.rest.HttpResponse
+        :raises FoundryStorageError: When the response status code is non-2xx.
+        """
+        try:
+            http_resp = await self._client.send_request(request)
+        except Exception as exc:
+            setattr(exc, PLATFORM_ERROR_TAG, True)
+            raise
+        raise_for_storage_error(http_resp)
+        return http_resp
+
+    # ------------------------------------------------------------------
     # ResponseProviderProtocol implementation
     # ------------------------------------------------------------------
 
@@ -186,8 +211,7 @@ class FoundryStorageProvider:
         url = self._settings.build_url("responses")
         request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
         _apply_isolation_headers(request, isolation)
-        http_resp = await self._client.send_request(request)
-        raise_for_storage_error(http_resp)
+        await self._send_storage_request(request)
 
     async def get_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> ResponseObject:
         """Retrieve a stored response by its ID.
@@ -204,8 +228,7 @@ class FoundryStorageProvider:
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
         request = HttpRequest("GET", url)
         _apply_isolation_headers(request, isolation)
-        http_resp = await self._client.send_request(request)
-        raise_for_storage_error(http_resp)
+        http_resp = await self._send_storage_request(request)
         return deserialize_response(http_resp.text())
 
     async def update_response(self, response: ResponseObject, *, isolation: IsolationContext | None = None) -> None:
@@ -223,8 +246,7 @@ class FoundryStorageProvider:
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
         request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
         _apply_isolation_headers(request, isolation)
-        http_resp = await self._client.send_request(request)
-        raise_for_storage_error(http_resp)
+        await self._send_storage_request(request)
 
     async def delete_response(self, response_id: str, *, isolation: IsolationContext | None = None) -> None:
         """Delete a stored response and its associated data.
@@ -239,8 +261,7 @@ class FoundryStorageProvider:
         url = self._settings.build_url(f"responses/{_encode(response_id)}")
         request = HttpRequest("DELETE", url)
         _apply_isolation_headers(request, isolation)
-        http_resp = await self._client.send_request(request)
-        raise_for_storage_error(http_resp)
+        await self._send_storage_request(request)
 
     async def get_input_items(
         self,
@@ -283,8 +304,7 @@ class FoundryStorageProvider:
         url = self._settings.build_url(f"responses/{_encode(response_id)}/input_items", **extra)
         request = HttpRequest("GET", url)
         _apply_isolation_headers(request, isolation)
-        http_resp = await self._client.send_request(request)
-        raise_for_storage_error(http_resp)
+        http_resp = await self._send_storage_request(request)
         return deserialize_paged_items(http_resp.text())
 
     async def get_items(
@@ -308,8 +328,7 @@ class FoundryStorageProvider:
         url = self._settings.build_url("items/batch/retrieve")
         request = HttpRequest("POST", url, content=body, headers={"Content-Type": _JSON_CONTENT_TYPE})
         _apply_isolation_headers(request, isolation)
-        http_resp = await self._client.send_request(request)
-        raise_for_storage_error(http_resp)
+        http_resp = await self._send_storage_request(request)
         return deserialize_items_array(http_resp.text())
 
     async def get_history_item_ids(
@@ -343,6 +362,5 @@ class FoundryStorageProvider:
         url = self._settings.build_url("history/item_ids", **extra)
         request = HttpRequest("GET", url)
         _apply_isolation_headers(request, isolation)
-        http_resp = await self._client.send_request(request)
-        raise_for_storage_error(http_resp)
+        http_resp = await self._send_storage_request(request)
         return deserialize_history_ids(http_resp.text())

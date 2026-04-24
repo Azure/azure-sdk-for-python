@@ -13,6 +13,11 @@ consistency across logging policies, middleware, and endpoint handlers.
 - :data:`SERVER_VERSION` — server SDK identity.
 - :data:`SESSION_ID` — resolved session ID (when applicable).
 
+**Error response headers** (set on 4xx/5xx responses):
+
+- :data:`ERROR_SOURCE` — classifies error origin (``user``, ``platform``, or ``upstream``).
+- :data:`ERROR_DETAIL` — internal diagnostic detail for platform telemetry.
+
 **Request headers** (set by the platform or client):
 
 - :data:`REQUEST_ID` — client-provided correlation ID (echoed back on the response).
@@ -83,6 +88,57 @@ Logged for diagnostic correlation with upstream Azure SDK callers.
 APIM_REQUEST_ID: str = "apim-request-id"
 """The ``apim-request-id`` header — APIM gateway correlation header.
 Extracted from Foundry storage responses for diagnostic logging.
+"""
+
+# -- Error source classification --------------------------------------------
+
+ERROR_SOURCE: str = "x-platform-error-source"
+"""The ``x-platform-error-source`` header — classifies every error response
+so the platform can route actionable errors to the right team.
+Present on all 4xx/5xx responses from protocol endpoints.
+Values: ``user``, ``platform``, ``upstream``.
+"""
+
+ERROR_DETAIL: str = "x-platform-error-detail"
+"""The ``x-platform-error-detail`` header — internal diagnostic detail
+for platform telemetry.  Not intended for end-user display.
+Present on error responses when additional diagnostic context is available.
+"""
+
+ERROR_SOURCE_USER: str = "user"
+"""Error source value indicating the caller's input is invalid.
+The caller can fix the request and retry.
+"""
+
+ERROR_SOURCE_PLATFORM: str = "platform"
+"""Error source value indicating the error was caused by the SDK, library,
+or a platform dependency — not by the caller or the developer's handler.
+"""
+
+ERROR_SOURCE_UPSTREAM: str = "upstream"
+"""Error source value indicating the developer's handler code or an external
+service it called failed or returned incorrect behaviour.
+"""
+
+# -- Platform error tagging -------------------------------------------------
+
+PLATFORM_ERROR_TAG: str = "Azure.AI.AgentServer.PlatformError"
+"""Key for tagging exceptions as platform errors.
+
+Infrastructure code sets this key on exceptions to signal that the error
+originated from the SDK's own infrastructure (storage transport, auth,
+persistence pipeline).  Exceptions with this tag are classified as
+``platform``; all others default to ``upstream`` (developer handler code)
+in the exception filter.
+"""
+
+# -- Error detail formatting ------------------------------------------------
+
+MAX_ERROR_DETAIL_LENGTH: int = 2048
+"""Maximum length for the ``x-platform-error-detail`` header value.
+
+Keeps the header within safe limits for reverse proxies and load balancers
+while preserving enough of the exception string to be diagnostically useful.
 """
 
 # -- HttpContext item key ---------------------------------------------------

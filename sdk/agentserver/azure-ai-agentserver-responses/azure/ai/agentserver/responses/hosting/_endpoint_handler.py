@@ -39,6 +39,10 @@ from .._options import ResponsesServerOptions
 from .._platform_headers import (
     CHAT_ISOLATION_KEY,
     CLIENT_HEADER_PREFIX,
+    ERROR_SOURCE,
+    ERROR_SOURCE_PLATFORM,
+    ERROR_SOURCE_UPSTREAM,
+    ERROR_SOURCE_USER,
     REQUEST_ID_ITEM_KEY,
     SESSION_ID,
     USER_ISOLATION_KEY,
@@ -72,6 +76,7 @@ from ._request_parsing import (
 )
 from ._runtime_state import _RuntimeState
 from ._validation import (
+    _apply_error_source_headers,
     deleted_response as _deleted_response,
 )
 from ._validation import (
@@ -85,6 +90,9 @@ from ._validation import (
 )
 from ._validation import (
     invalid_request_response as _invalid_request,
+)
+from ._validation import (
+    is_platform_error,
 )
 from ._validation import (
     not_found_response as _not_found,
@@ -593,17 +601,29 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         except FoundryResourceNotFoundError as exc:
             span.end(exc)
             if exc.response_body is not None:
-                return JSONResponse(exc.response_body, status_code=404, headers=_hdrs)
+                return JSONResponse(
+                    exc.response_body,
+                    status_code=404,
+                    headers=_apply_error_source_headers(_hdrs, ERROR_SOURCE_USER),
+                )
             return _not_found(str(ctx.previous_response_id or ctx.conversation_id), _hdrs)
         except FoundryBadRequestError as exc:
             span.end(exc)
             if exc.response_body is not None:
-                return JSONResponse(exc.response_body, status_code=400, headers=_hdrs)
+                return JSONResponse(
+                    exc.response_body,
+                    status_code=400,
+                    headers=_apply_error_source_headers(_hdrs, ERROR_SOURCE_USER),
+                )
             return _invalid_request(str(exc), _hdrs)
         except FoundryApiError as exc:
             span.end(exc)
             if exc.response_body is not None:
-                return JSONResponse(exc.response_body, status_code=500, headers=_hdrs)
+                return JSONResponse(
+                    exc.response_body,
+                    status_code=500,
+                    headers=_apply_error_source_headers(_hdrs, ERROR_SOURCE_PLATFORM),
+                )
             return _error_response(exc, _hdrs)
         except Exception as exc:  # pylint: disable=broad-exception-caught
             logger.error(
@@ -797,7 +817,13 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                                 "param": None,
                             }
                         }
-                        return JSONResponse(err_body, status_code=500, headers=self._session_headers(agent_session_id))
+                        return JSONResponse(
+                            err_body,
+                            status_code=500,
+                            headers=_apply_error_source_headers(
+                                self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM
+                            ),
+                        )
                     finally:
                         disconnect_task.cancel()
 
@@ -831,7 +857,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
                 return JSONResponse(
                     err_body,
                     status_code=500,
-                    headers=self._session_headers(agent_session_id),
+                    headers=_apply_error_source_headers(
+                        self._session_headers(agent_session_id), ERROR_SOURCE_UPSTREAM
+                    ),
                 )
             except Exception as exc:  # pylint: disable=broad-exception-caught
                 logger.error("Unexpected error in create (response_id=%s)", ctx.response_id, exc_info=exc)
