@@ -111,5 +111,4 @@ def mock_urandom(size: int) -> bytes:
         return b'\xbb\xd6\x87\xb6j\xe5\xdc\x93\xb0\x13\x1e\xcc\x9f\xf4\xca\xab'
     if size == 32:
         return b'\x08\xe0A\xb6\xf2\xb7x\x8f\xe5\xdap\x87^6x~\xa4F\xc4\xe9\xb1\x8a:\xfbC%S\x0cZ\xbb\xbe\x88'
-    else:
-        return os.urandom(size)
+    return os.urandom(size)

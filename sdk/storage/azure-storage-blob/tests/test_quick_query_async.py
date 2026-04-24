@@ -3,19 +3,20 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
+
 import base64
 import os
 
 import pytest
 
-from azure.storage.blob.aio import BlobServiceClient
-from azure.storage.blob import (
-    DelimitedJsonDialect,
-    DelimitedTextDialect
-)
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
+
+from azure.core.exceptions import ResourceExistsError
+from azure.storage.blob import DelimitedJsonDialect, DelimitedTextDialect
+from azure.storage.blob.aio import BlobServiceClient
 
 
 # ------------------------------------------------------------------------------
@@ -96,14 +97,14 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     async def _teardown(self, bsc):
         if self.is_live:
             try:
                 await bsc.delete_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     # --Helpers-----------------------------------------------------------------
@@ -141,7 +142,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         assert len(errors) == 0
         assert len(reader) == len(CSV_DATA)
         assert reader._size == reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'\n')
+        assert data == CSV_DATA.replace(b'\r\n', b'\n')
         await self._teardown(bsc)
 
     @BlobPreparer()
@@ -174,7 +175,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
 
         assert len(reader) == len(CSV_DATA)
         assert reader._size == reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'')
+        assert data == CSV_DATA.replace(b'\r\n', b'')
         await self._teardown(bsc)
 
     @BlobPreparer()
@@ -206,7 +207,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         assert len(errors) == 0
         assert len(reader) == len(CSV_DATA)
         assert reader._size == reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'\n').decode('utf-8')
+        assert data == CSV_DATA.replace(b'\r\n', b'\n').decode('utf-8')
         await self._teardown(bsc)
 
     @BlobPreparer()
@@ -228,13 +229,11 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         await blob_client.upload_blob(CSV_DATA, overwrite=True)
 
         reader = await blob_client.query_blob("SELECT * from BlobStorage", encoding='utf-8')
-        data = ''
-        async for record in reader.records():
-            data += record
+        data = "".join([record async for record in reader.records()])
 
         assert len(reader) == len(CSV_DATA)
         assert reader._size == reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'').decode('utf-8')
+        assert data == CSV_DATA.replace(b'\r\n', b'').decode('utf-8')
         await self._teardown(bsc)
 
     @BlobPreparer()
@@ -273,7 +272,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
 
         assert len(reader) == len(CSV_DATA)
         assert reader._size == reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'')[44:]
+        assert data == CSV_DATA.replace(b'\r\n', b'')[44:]
         await self._teardown(bsc)
 
     @BlobPreparer()
@@ -307,7 +306,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
 
         assert len(reader) == len(CSV_DATA)
         assert reader._size == reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'')
+        assert data == CSV_DATA.replace(b'\r\n', b'')
         await self._teardown(bsc)
 
     @BlobPreparer()
@@ -338,7 +337,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
 
         assert len(reader) == len(CSV_DATA)
         assert reader._size == reader._bytes_processed
-        assert data, CSV_DATA.replace(b'\r\n' == b'')
+        assert data == CSV_DATA.replace(b'\r\n', b'')
         assert progress == reader._size
         await self._teardown(bsc)
 
@@ -460,7 +459,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
             b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
         )
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         blob_name = self._get_blob_reference()
@@ -488,7 +487,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
         query_result = await resp.readall()
 
         assert len(errors) == 1
-        assert resp._size == 43
+        assert resp._size == 414
         assert query_result == b''
         await self._teardown(bsc)
 
@@ -514,7 +513,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
             b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
         )
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         blob_name = self._get_blob_reference()
@@ -544,7 +543,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             data.append(record)
 
         assert len(errors) == 1
-        assert resp._size == 43
+        assert resp._size == 414
         assert data == [b'']
         await self._teardown(bsc)
 
@@ -570,17 +569,15 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
             b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
         )
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         blob_name = self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         await blob_client.upload_blob(data, overwrite=True)
 
-        errors = []
-
         def on_error(error):
-            raise Exception(error.description)
+            raise ValueError(error.description)
 
         input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
@@ -595,8 +592,8 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             blob_format=input_format,
             output_format=output_format
         )
-        with pytest.raises(Exception):
-            query_result = await resp.readall()
+        with pytest.raises(ValueError):
+            await resp.readall()
         await self._teardown(bsc)
 
     @BlobPreparer()
@@ -621,17 +618,15 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
             b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
         )
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         blob_name = self._get_blob_reference()
         blob_client = bsc.get_blob_client(self.container_name, blob_name)
         await blob_client.upload_blob(data, overwrite=True)
 
-        errors = []
-
         def on_error(error):
-            raise Exception(error.description)
+            raise ValueError(error.description)
 
         input_format = DelimitedJsonDialect()
         output_format = DelimitedTextDialect(
@@ -647,7 +642,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             output_format=output_format
         )
 
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             async for record in resp.records():
                 print(record)
         await self._teardown(bsc)
@@ -686,7 +681,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             blob_format=input_format,
             output_format=output_format
         )
-        query_result = await resp.readall()
+        await resp.readall()
         await self._teardown(bsc)
 
     @BlobPreparer()
@@ -711,7 +706,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
             b'{version:0,lastModifiedTime:2019-11-01T17:53:18.861Z,'
             b'data:{aid:d305317d-a006-0042-00dd-902bbb06fc56}}}'
         )
-        data = data1 + b'\n' + data2 + b'\n' + data1
+        data = data1 + b'\n' + data2 + b'\n' + data3
 
         # upload the json file
         blob_name = self._get_blob_reference()
@@ -1010,7 +1005,7 @@ class TestStorageQuickQuery(AsyncStorageRecordedTestCase):
 
         assert len(errors) == 0
         assert resp._size == len(data)
-        assert listdata, [b'{"name":"owner"}', b'{}', b'{"name":"owner"}' == b'']
+        assert listdata == [b'{"name":"owner"}', b'{}', b'{"name":"owner"}', b'']
         await self._teardown(bsc)
 
     @BlobPreparer()
