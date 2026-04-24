@@ -57,7 +57,7 @@ This table shows the relationship between SDK versions and supported API service
 
 | SDK version | Supported API service version |
 | ----------- | ----------------------------- |
-| 1.2.0       | 2025-11-01                    |
+| 1.2.0b1     | 2025-11-01                    |
 | 1.1.0       | 2025-11-01                    |
 | 1.0.1       | 2025-11-01                    |
 | 1.0.0       | 2025-11-01                    |
