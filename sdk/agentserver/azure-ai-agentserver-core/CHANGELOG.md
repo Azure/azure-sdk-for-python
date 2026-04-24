@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Added `_platform_headers` module with cross-cutting protocol header name constants (`x-request-id`, `x-platform-server`, `x-agent-session-id`, `x-platform-error-source`, `x-platform-error-detail`, and others). Protocol packages now import shared header name strings from core instead of maintaining their own copies.
+
 ### Breaking Changes
 
 ### Bugs Fixed

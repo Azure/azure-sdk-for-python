@@ -1,11 +1,11 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT license.
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 """Platform HTTP header name constants used across the AgentServer packages.
 
+Defines the HTTP header names used across the AgentServer platform.
 These headers form the wire contract between the Foundry platform, agent
-containers, and downstream storage services.  All header name constants
-are defined here to eliminate scattered string literals and ensure
-consistency across logging policies, middleware, and endpoint handlers.
+containers, and downstream storage services.
 
 **Response headers** (set by the server on every response):
 
@@ -83,8 +83,6 @@ CLIENT_REQUEST_ID: str = "x-ms-client-request-id"
 Logged for diagnostic correlation with upstream Azure SDK callers.
 """
 
-# -- Storage diagnostics (response headers from Foundry) --------------------
-
 APIM_REQUEST_ID: str = "apim-request-id"
 """The ``apim-request-id`` header — APIM gateway correlation header.
 Extracted from Foundry storage responses for diagnostic logging.
@@ -103,49 +101,4 @@ ERROR_DETAIL: str = "x-platform-error-detail"
 """The ``x-platform-error-detail`` header — internal diagnostic detail
 for platform telemetry.  Not intended for end-user display.
 Present on error responses when additional diagnostic context is available.
-"""
-
-ERROR_SOURCE_USER: str = "user"
-"""Error source value indicating the caller's input is invalid.
-The caller can fix the request and retry.
-"""
-
-ERROR_SOURCE_PLATFORM: str = "platform"
-"""Error source value indicating the error was caused by the SDK, library,
-or a platform dependency — not by the caller or the developer's handler.
-"""
-
-ERROR_SOURCE_UPSTREAM: str = "upstream"
-"""Error source value indicating the developer's handler code or an external
-service it called failed or returned incorrect behaviour.
-"""
-
-# -- Platform error tagging -------------------------------------------------
-
-PLATFORM_ERROR_TAG: str = "Azure.AI.AgentServer.PlatformError"
-"""Key for tagging exceptions as platform errors.
-
-Infrastructure code sets this key on exceptions to signal that the error
-originated from the SDK's own infrastructure (storage transport, auth,
-persistence pipeline).  Exceptions with this tag are classified as
-``platform``; all others default to ``upstream`` (developer handler code)
-in the exception filter.
-"""
-
-# -- Error detail formatting ------------------------------------------------
-
-MAX_ERROR_DETAIL_LENGTH: int = 2048
-"""Maximum length for the ``x-platform-error-detail`` header value.
-
-Keeps the header within safe limits for reverse proxies and load balancers
-while preserving enough of the exception string to be diagnostically useful.
-"""
-
-# -- HttpContext item key ---------------------------------------------------
-
-REQUEST_ID_ITEM_KEY: str = "agentserver.request_id"
-"""Key used to store the resolved request ID in ASGI scope state.
-
-Downstream handlers and middleware can read this value to correlate the
-request ID without re-resolving it.
 """

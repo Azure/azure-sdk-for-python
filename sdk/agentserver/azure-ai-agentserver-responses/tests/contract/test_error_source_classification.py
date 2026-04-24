@@ -11,13 +11,13 @@ from __future__ import annotations
 
 from typing import Any, AsyncIterator
 
-from starlette.testclient import TestClient
-
-from azure.ai.agentserver.responses import ResponsesAgentServerHost
-from azure.ai.agentserver.responses._platform_headers import (
+from azure.ai.agentserver.core._platform_headers import (
     ERROR_DETAIL,
     ERROR_SOURCE,
 )
+from starlette.testclient import TestClient
+
+from azure.ai.agentserver.responses import ResponsesAgentServerHost
 from azure.ai.agentserver.responses.streaming._event_stream import ResponseEventStream
 
 

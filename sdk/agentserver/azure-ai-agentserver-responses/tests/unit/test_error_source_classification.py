@@ -5,17 +5,17 @@
 from __future__ import annotations
 
 import pytest
-
-from azure.ai.agentserver.responses._platform_headers import (
+from azure.ai.agentserver.core._platform_headers import (
     ERROR_DETAIL,
     ERROR_SOURCE,
+)
+
+from azure.ai.agentserver.responses.hosting._validation import (
     ERROR_SOURCE_PLATFORM,
     ERROR_SOURCE_UPSTREAM,
     ERROR_SOURCE_USER,
     MAX_ERROR_DETAIL_LENGTH,
     PLATFORM_ERROR_TAG,
-)
-from azure.ai.agentserver.responses.hosting._validation import (
     _apply_error_source_headers,
     error_response,
     format_error_detail,
@@ -28,7 +28,6 @@ from azure.ai.agentserver.responses.hosting._validation import (
     tag_platform_error,
 )
 from azure.ai.agentserver.responses.models.errors import RequestValidationError
-
 
 # ---------------------------------------------------------------------------
 # is_platform_error / tag_platform_error
@@ -229,12 +228,8 @@ class TestFoundryErrorTagging:
     """Tests that FoundryApiError from raise_for_storage_error is tagged as platform."""
 
     def test_foundry_api_error_tagged_as_platform(self) -> None:
-        from azure.core.rest import HttpResponse
-
         from azure.ai.agentserver.responses.store._foundry_errors import (
             FoundryApiError,
-            FoundryBadRequestError,
-            FoundryResourceNotFoundError,
             raise_for_storage_error,
         )
 

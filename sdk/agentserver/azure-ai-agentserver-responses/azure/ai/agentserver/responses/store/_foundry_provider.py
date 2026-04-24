@@ -7,6 +7,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Callable, Iterable
 from urllib.parse import quote as _url_quote
 
+from azure.ai.agentserver.core._platform_headers import CHAT_ISOLATION_KEY, USER_ISOLATION_KEY
+from azure.ai.agentserver.responses.hosting._validation import PLATFORM_ERROR_TAG
 from azure.core import AsyncPipelineClient
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline import PipelineRequest, policies
@@ -14,7 +16,6 @@ from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.rest import HttpRequest
 
 from .._version import VERSION
-from .._platform_headers import CHAT_ISOLATION_KEY, PLATFORM_ERROR_TAG, USER_ISOLATION_KEY
 from ..models._generated import OutputItem, ResponseObject  # type: ignore[attr-defined]
 from ._foundry_errors import raise_for_storage_error
 from ._foundry_logging_policy import FoundryStorageLoggingPolicy

@@ -28,6 +28,13 @@ from azure.ai.agentserver.core import (  # pylint: disable=import-error,no-name-
     set_current_span,
     trace_stream,
 )
+from azure.ai.agentserver.core._platform_headers import (
+    CHAT_ISOLATION_KEY,
+    CLIENT_HEADER_PREFIX,
+    SESSION_ID,
+    USER_ISOLATION_KEY,
+)
+from azure.ai.agentserver.core._request_id import REQUEST_ID_STATE_KEY
 from azure.ai.agentserver.responses.models._generated import (
     AgentReference,
     CreateResponse,
@@ -36,17 +43,6 @@ from azure.ai.agentserver.responses.models._generated import (
 
 from .._id_generator import IdGenerator
 from .._options import ResponsesServerOptions
-from .._platform_headers import (
-    CHAT_ISOLATION_KEY,
-    CLIENT_HEADER_PREFIX,
-    ERROR_SOURCE,
-    ERROR_SOURCE_PLATFORM,
-    ERROR_SOURCE_UPSTREAM,
-    ERROR_SOURCE_USER,
-    REQUEST_ID_ITEM_KEY,
-    SESSION_ID,
-    USER_ISOLATION_KEY,
-)
 from .._response_context import IsolationContext, ResponseContext
 from ..models._helpers import get_input_expanded, to_output_item
 from ..models.errors import RequestValidationError
@@ -76,7 +72,13 @@ from ._request_parsing import (
 )
 from ._runtime_state import _RuntimeState
 from ._validation import (
+    ERROR_SOURCE_PLATFORM,
+    ERROR_SOURCE_UPSTREAM,
+    ERROR_SOURCE_USER,
     _apply_error_source_headers,
+    parse_and_validate_create_response,
+)
+from ._validation import (
     deleted_response as _deleted_response,
 )
 from ._validation import (
@@ -92,12 +94,8 @@ from ._validation import (
     invalid_request_response as _invalid_request,
 )
 from ._validation import (
-    is_platform_error,
-)
-from ._validation import (
     not_found_response as _not_found,
 )
-from ._validation import parse_and_validate_create_response
 from ._validation import (
     service_unavailable_response as _service_unavailable,
 )
@@ -188,7 +186,7 @@ def _get_scope_request_id(request: Request) -> str | None:
     """
     state = request.scope.get("state")
     if isinstance(state, dict):
-        return state.get(REQUEST_ID_ITEM_KEY)
+        return state.get(REQUEST_ID_STATE_KEY)
     return None
 
 

@@ -12,6 +12,8 @@
 
 ### Other Changes
 
+- Platform header name constants (e.g. `x-platform-error-source`, `x-platform-error-detail`) are now imported from `azure-ai-agentserver-core` (`_platform_headers` module). Error source classification helpers remain internal to this package.
+
 ## 1.0.0b5 (2026-04-22)
 
 ### Features Added

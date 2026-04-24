@@ -10,16 +10,18 @@ from typing import Any
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
+from azure.ai.agentserver.core._platform_headers import (
+    CHAT_ISOLATION_KEY as _CHAT_ISOLATION_HEADER,
+)
+from azure.ai.agentserver.core._platform_headers import (
+    USER_ISOLATION_KEY as _USER_ISOLATION_HEADER,
+)
 
 from azure.ai.agentserver.responses._response_context import IsolationContext
 from azure.ai.agentserver.responses.store._foundry_errors import (
     FoundryApiError,
     FoundryBadRequestError,
     FoundryResourceNotFoundError,
-)
-from azure.ai.agentserver.responses._platform_headers import (
-    CHAT_ISOLATION_KEY as _CHAT_ISOLATION_HEADER,
-    USER_ISOLATION_KEY as _USER_ISOLATION_HEADER,
 )
 from azure.ai.agentserver.responses.store._foundry_provider import (
     FoundryStorageProvider,

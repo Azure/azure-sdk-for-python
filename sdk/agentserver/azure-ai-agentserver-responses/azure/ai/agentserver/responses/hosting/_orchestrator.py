@@ -43,8 +43,8 @@ from ..streaming._sse import encode_keep_alive_comment, encode_sse_any_event, ne
 from ..streaming._state_machine import EventStreamValidator
 from ._event_subject import _ResponseEventSubject
 from ._execution_context import _ExecutionContext
-from .._platform_headers import PLATFORM_ERROR_TAG
 from ._runtime_state import _RuntimeState
+from ._validation import PLATFORM_ERROR_TAG
 
 if TYPE_CHECKING:
     from .._response_context import ResponseContext

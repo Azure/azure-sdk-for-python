@@ -8,17 +8,12 @@ from typing import Any, Mapping
 
 from starlette.responses import JSONResponse
 
-from azure.ai.agentserver.responses._id_generator import IdGenerator
-from azure.ai.agentserver.responses._options import ResponsesServerOptions
-from azure.ai.agentserver.responses._platform_headers import (
+from azure.ai.agentserver.core._platform_headers import (
     ERROR_DETAIL,
     ERROR_SOURCE,
-    ERROR_SOURCE_PLATFORM,
-    ERROR_SOURCE_UPSTREAM,
-    ERROR_SOURCE_USER,
-    MAX_ERROR_DETAIL_LENGTH,
-    PLATFORM_ERROR_TAG,
 )
+from azure.ai.agentserver.responses._id_generator import IdGenerator
+from azure.ai.agentserver.responses._options import ResponsesServerOptions
 from azure.ai.agentserver.responses.models._generated import ApiErrorResponse, CreateResponse, Error
 from azure.ai.agentserver.responses.models._generated._validators import validate_CreateResponse
 from azure.ai.agentserver.responses.models.errors import RequestValidationError
@@ -274,44 +269,30 @@ def to_api_error_response(error: Exception) -> ApiErrorResponse:
 
 
 # ---------------------------------------------------------------------------
-# Error source classification (container-image-spec §8)
+# Internal error-source classification constants & helpers
 # ---------------------------------------------------------------------------
+
+ERROR_SOURCE_USER: str = "user"
+ERROR_SOURCE_PLATFORM: str = "platform"
+ERROR_SOURCE_UPSTREAM: str = "upstream"
+PLATFORM_ERROR_TAG: str = "Azure.AI.AgentServer.PlatformError"
+MAX_ERROR_DETAIL_LENGTH: int = 2048
 
 
 def is_platform_error(exc: BaseException) -> bool:
-    """Check whether *exc* has been tagged as a platform infrastructure error.
-
-    :param exc: The exception to inspect.
-    :type exc: BaseException
-    :returns: ``True`` if the exception carries the platform error tag.
-    :rtype: bool
-    """
+    """Check whether *exc* has been tagged as a platform infrastructure error."""
     return getattr(exc, PLATFORM_ERROR_TAG, False) is True
 
 
 def tag_platform_error(exc: BaseException) -> None:
-    """Tag *exc* as a platform infrastructure error.
-
-    The tag is set as an attribute on the exception object so that the
-    error-source classification logic can later distinguish platform errors
-    from upstream (developer handler) errors.
-
-    :param exc: The exception to tag.
-    :type exc: BaseException
-    """
+    """Tag *exc* as a platform infrastructure error."""
     setattr(exc, PLATFORM_ERROR_TAG, True)
 
 
 def format_error_detail(exc: BaseException) -> str:
     """Format an exception for the ``x-platform-error-detail`` header.
 
-    Uses ``repr(exc)`` for diagnostic context and truncates to
-    :data:`MAX_ERROR_DETAIL_LENGTH`.
-
-    :param exc: The exception to format.
-    :type exc: BaseException
-    :returns: A truncated string suitable for the header value.
-    :rtype: str
+    Uses ``repr(exc)`` and truncates to :data:`MAX_ERROR_DETAIL_LENGTH`.
     """
     detail = repr(exc)
     if len(detail) > MAX_ERROR_DETAIL_LENGTH:
@@ -325,19 +306,7 @@ def _apply_error_source_headers(
     error_source: str,
     error_detail: str | None = None,
 ) -> dict[str, str]:
-    """Add error source classification headers to a headers dict.
-
-    Returns a **new** dict with the error source headers merged in.
-
-    :param headers: Existing response headers.
-    :type headers: dict[str, str]
-    :param error_source: One of ``user``, ``platform``, ``upstream``.
-    :type error_source: str
-    :param error_detail: Optional diagnostic detail for platform errors.
-    :type error_detail: str | None
-    :returns: A new dict with error source headers added.
-    :rtype: dict[str, str]
-    """
+    """Return a new dict with error source classification headers merged in."""
     merged = {**headers, ERROR_SOURCE: error_source}
     if error_detail:
         merged[ERROR_DETAIL] = error_detail
