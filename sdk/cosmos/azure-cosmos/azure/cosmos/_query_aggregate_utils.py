@@ -38,6 +38,10 @@ def _extract_query_text(query: Optional[Union[str, dict[str, Any]]]) -> Optional
 def _get_select_value_aggregate_function(query: Optional[Union[str, dict[str, Any]]]) -> Optional[str]:
     """Identify the aggregate function for ``SELECT VALUE`` aggregate queries.
 
+    This is a lightweight text heuristic over the full query string (not a SQL
+    parser). Aggregate function tokens inside subqueries can therefore produce
+    false positives for the outer query.
+
     :param query: Query text or query spec dictionary.
     :type query: Optional[Union[str, dict[str, Any]]]
     :returns: One of ``COUNT``, ``SUM``, ``MIN``, ``MAX``, ``AVG`` when matched; otherwise ``None``.
@@ -51,6 +55,8 @@ def _get_select_value_aggregate_function(query: Optional[Union[str, dict[str, An
     if "SELECT VALUE" not in normalized:
         return None
 
+    # NOTE: This checks the full normalized query text, so aggregate function
+    # names inside subqueries can be matched as false positives.
     for aggregate_fn in ("COUNT", "SUM", "MIN", "MAX", "AVG"):
         if f"{aggregate_fn}(" in normalized:
             return aggregate_fn

@@ -21,7 +21,8 @@ import base64
 import binascii
 import hashlib
 import json
-from typing import Any, List, MutableMapping, Optional, Tuple
+from collections import deque
+from typing import Any, Deque, List, MutableMapping, Optional, Tuple
 
 from .. import http_constants
 from .._query_aggregate_utils import _AggregatePartialClassification, _classify_aggregate_partial
@@ -314,8 +315,8 @@ def _extract_resume_state(
 def _explode_feedrange_on_multi_overlap(
     current_feedrange: routing_range.Range,
     overlapping: List[dict],
-    remaining_feedranges: List[routing_range.Range],
-) -> Tuple[routing_range.Range, List[routing_range.Range], bool]:
+    remaining_feedranges: Deque[routing_range.Range],
+) -> Tuple[routing_range.Range, Deque[routing_range.Range], bool]:
     """If a saved feedrange now spans more than one physical partition
     (Cosmos split it), slice it into one sub-feedrange per child.
 
@@ -334,7 +335,9 @@ def _explode_feedrange_on_multi_overlap(
     sub_feedranges = _derive_initial_feedranges(current_feedrange, overlapping)
     if not sub_feedranges:
         return current_feedrange, remaining_feedranges, False
-    return sub_feedranges[0], sub_feedranges[1:] + remaining_feedranges, True
+    queued_remaining = deque(sub_feedranges[1:])
+    queued_remaining.extend(remaining_feedranges)
+    return sub_feedranges[0], queued_remaining, True
 
 
 def _build_scope_from_overlaps(
@@ -418,7 +421,7 @@ class _FeedRangePaginationState:
         remaining_page_item_count: Optional[int],
     ) -> None:
         self.current_feedrange = current_feedrange
-        self.remaining_feedranges = remaining_feedranges
+        self.remaining_feedranges: Deque[routing_range.Range] = deque(remaining_feedranges)
         self.backend_continuation = backend_continuation
         self.remaining_page_item_count = remaining_page_item_count
 
@@ -512,7 +515,7 @@ class _FeedRangePaginationState:
         if not self.remaining_feedranges:
             self.current_feedrange = None
             return
-        self.current_feedrange = self.remaining_feedranges.pop(0)
+        self.current_feedrange = self.remaining_feedranges.popleft()
 
     def write_outbound_continuation(
         self,
@@ -634,6 +637,8 @@ def _count_page_items_from_partial_result(
     if not isinstance(docs, list):
         return 0
     if len(docs) != 1:
+        # Cosmos backend invariant: aggregate partial fragments are emitted as
+        # single-element arrays. Non-singleton arrays are treated as regular rows.
         return len(docs)
 
     # Aggregate partials must be merged across overlaps before they count as rows.

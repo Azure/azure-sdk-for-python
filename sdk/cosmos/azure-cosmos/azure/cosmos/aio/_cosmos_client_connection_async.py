@@ -2127,9 +2127,9 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
-        await base.set_session_token_header_async(self, headers, path, request_params, options)
         request_params.set_availability_strategy(options, self.availability_strategy)
         request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
+        await base.set_session_token_header_async(self, headers, path, request_params, options)
         result = await self.__Post(path, request_params, batch_operations, headers, **kwargs)
         return cast(Tuple[list[dict[str, Any]], CaseInsensitiveDict], result)
 
@@ -3237,7 +3237,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # read from parent X before it split, those rows can show up
                 # once more after resume when children X1/X2 restart from the
                 # start of their slices.
-                if pagination_state.explode_on_multi_overlap(overlapping):
+                while pagination_state.explode_on_multi_overlap(overlapping):
                     current_feedrange = pagination_state.current_feedrange
                     if current_feedrange is None:
                         break

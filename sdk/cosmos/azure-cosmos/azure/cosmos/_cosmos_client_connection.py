@@ -3457,7 +3457,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # read from parent X before it split, those rows can show up
                 # once more after resume when children X1/X2 restart from the
                 # start of their slices.
-                if pagination_state.explode_on_multi_overlap(overlapping):
+                while pagination_state.explode_on_multi_overlap(overlapping):
                     current_feedrange = pagination_state.current_feedrange
                     if current_feedrange is None:
                         break

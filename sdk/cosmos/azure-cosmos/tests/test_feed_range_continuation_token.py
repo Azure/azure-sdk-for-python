@@ -716,6 +716,10 @@ class TestBudgetCounting:
         partial_result = {"Documents": [{"id": "1"}, {"id": "2"}]}
         assert _count_page_items_from_partial_result(partial_result, "SELECT * FROM c") == 2
 
+    def test_multi_element_documents_in_aggregate_context_consume_page_item_limit(self):
+        partial_result = {"Documents": [{"_aggregate": {"count": 7}}, {"_aggregate": {"count": 3}}]}
+        assert _count_page_items_from_partial_result(partial_result, "SELECT COUNT(1) FROM c") == 2
+
     def test_object_aggregate_partial_does_not_consume_page_item_limit(self):
         partial_result = {"Documents": [{"_aggregate": {"count": 7}}]}
         assert _count_page_items_from_partial_result(partial_result, "SELECT COUNT(1) FROM c") == 0
@@ -759,6 +763,15 @@ class TestAggregateMergeConsistency:
 
         merged = _base._merge_query_results({"Documents": [True]}, {"Documents": [True]}, query)
         assert merged["Documents"] == [True, True]
+
+    def test_value_merge_raises_if_aggregate_function_detection_is_missing(self, monkeypatch):
+        query = "SELECT VALUE COUNT(1) FROM c"
+        monkeypatch.setattr(_base, "_get_select_value_aggregate_function", lambda _: None)
+
+        with pytest.raises(ValueError) as excinfo:
+            _base._merge_query_results({"Documents": [7]}, {"Documents": [3]}, query)
+
+        assert "VALUE aggregate classification" in str(excinfo.value)
 
 
 class TestEmptyPageStallCounter:
@@ -822,7 +835,7 @@ class TestFeedRangePaginationState:
     def test_from_derived_feedranges_empty_initializes_done_state(self):
         state = _FeedRangePaginationState.from_derived_feedranges([], remaining_page_item_count=5)
         assert state.current_feedrange is None
-        assert state.remaining_feedranges == []
+        assert list(state.remaining_feedranges) == []
         assert state.backend_continuation is None
         assert state.remaining_page_item_count == 5
 
@@ -896,7 +909,7 @@ class TestFeedRangePaginationState:
         state.apply_post_result(items_returned=1, backend_continuation=None)
 
         assert self._bounds(state.current_feedrange) == ("40", "80")
-        assert state.remaining_feedranges == []
+        assert list(state.remaining_feedranges) == []
         assert state.backend_continuation is None
         assert state.remaining_page_item_count == 5
 
@@ -912,7 +925,7 @@ class TestFeedRangePaginationState:
         state.apply_post_result(items_returned=1, backend_continuation=None)
 
         assert state.current_feedrange is None
-        assert state.remaining_feedranges == []
+        assert list(state.remaining_feedranges) == []
         assert state.backend_continuation is None
 
     def test_explode_on_multi_overlap_single_overlap_keeps_state(self):

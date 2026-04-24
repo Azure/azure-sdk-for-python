@@ -203,6 +203,10 @@ def _merge_query_results(
         and results_aggregate_class == _AggregatePartialClassification.VALUE
     ):
         aggregate_fn = _get_select_value_aggregate_function(query)
+        if aggregate_fn is None:
+            raise ValueError(
+                "Invariant violation: VALUE aggregate classification requires a recognized aggregate function."
+            )
         if aggregate_fn == "MIN":
             results_docs[0] = min(results_docs[0], partial_docs[0]) # type: ignore[index]
         elif aggregate_fn == "MAX":
