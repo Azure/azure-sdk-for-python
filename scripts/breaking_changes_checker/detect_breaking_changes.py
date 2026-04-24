@@ -8,9 +8,12 @@
 import re
 import ast
 import os
+import sys
 import jsondiff
 import argparse
 import importlib
+import importlib.machinery
+import importlib.util
 import inspect
 import json
 import json
@@ -18,6 +21,7 @@ import ast
 import logging
 import inspect
 import subprocess
+import __future__
 from enum import Enum
 from typing import Dict, Union, Type, Callable, Optional
 from packaging_tools.venvtools import create_venv_with_package
@@ -442,8 +446,107 @@ def resolve_module_name(module_name: str, target_module: str) -> str:
     return module_name
 
 
+# Compiler flag that enables PEP 563 (``from __future__ import annotations``)
+# semantics. When used, annotations are preserved as strings instead of being
+# evaluated at function-definition time.
+_PEP563_COMPILER_FLAG = __future__.annotations.compiler_flag
+
+
+class _PEP563SourceLoader(importlib.machinery.SourceFileLoader):
+    """SourceFileLoader that compiles modules as if ``from __future__ import
+    annotations`` was declared.
+
+    Some generated Azure SDK modules contain type annotations such as
+    ``list[str]`` inside class bodies that also define a method named ``list``.
+    Because Python evaluates function annotations eagerly in the class-body
+    namespace, such annotations resolve the shadowed method rather than the
+    ``list`` builtin and raise ``TypeError: 'function' object is not
+    subscriptable`` at import time (see Azure SDK tool issue for details).
+    Compiling with the annotations future flag defers annotation evaluation,
+    keeping them as strings and side-stepping the name shadowing problem.
+    """
+
+    def source_to_code(self, data, path, *, _optimize=-1):  # type: ignore[override]
+        return compile(
+            data,
+            path,
+            "exec",
+            dont_inherit=True,
+            optimize=_optimize,
+            flags=_PEP563_COMPILER_FLAG,
+        )
+
+    def get_code(self, fullname):  # type: ignore[override]
+        # Bypass any cached ``.pyc`` bytecode so that our PEP 563-aware
+        # ``source_to_code`` is always used. A stale ``.pyc`` compiled
+        # without the annotations flag would otherwise re-introduce the
+        # eager-evaluation bug we are working around.
+        source_path = self.get_filename(fullname)
+        source_bytes = self.get_data(source_path)
+        return self.source_to_code(source_bytes, source_path)
+
+
+class _PEP563MetaPathFinder:
+    """Meta path finder that applies :class:`_PEP563SourceLoader` to modules
+    that live under ``target_prefix``.
+
+    The finder is intentionally scoped to a single target package so that
+    unrelated third-party imports (e.g. dependencies of the breaking changes
+    tool itself) keep their normal annotation-evaluation semantics.
+    """
+
+    def __init__(self, target_prefix: str) -> None:
+        self.target_prefix = target_prefix
+
+    def _matches(self, fullname: str) -> bool:
+        return fullname == self.target_prefix or fullname.startswith(self.target_prefix + ".")
+
+    def find_spec(self, fullname, path=None, target=None):
+        if not self._matches(fullname):
+            return None
+        spec = importlib.machinery.PathFinder.find_spec(fullname, path, target)
+        if spec is None or spec.loader is None:
+            return spec
+        # Only wrap plain source-file loaders; leave extension modules,
+        # namespace packages, and other loader types alone.
+        if not isinstance(spec.loader, importlib.machinery.SourceFileLoader):
+            return spec
+        if isinstance(spec.loader, _PEP563SourceLoader):
+            return spec
+        spec.loader = _PEP563SourceLoader(spec.loader.name, spec.loader.path)
+        return spec
+
+
+def _install_pep563_import_hook(target_module: str) -> None:
+    """Install a :class:`_PEP563MetaPathFinder` for ``target_module`` and
+    purge any already-imported submodules so they are re-imported through the
+    hook.
+
+    Idempotent: repeated calls for the same prefix will not stack multiple
+    finders.
+    """
+    if not target_module:
+        return
+
+    for finder in sys.meta_path:
+        if isinstance(finder, _PEP563MetaPathFinder) and finder.target_prefix == target_module:
+            break
+    else:
+        sys.meta_path.insert(0, _PEP563MetaPathFinder(target_module))
+
+    # Evict any modules that were already imported with the standard loader so
+    # that subsequent ``importlib.import_module`` calls go through the hook.
+    to_evict = [
+        name for name in list(sys.modules)
+        if name == target_module or name.startswith(target_module + ".")
+    ]
+    for name in to_evict:
+        del sys.modules[name]
+
+
 def build_library_report(target_module: str) -> Dict:
     _ast_cache.clear()  # Clear AST cache to avoid stale data between runs
+    _install_pep563_import_hook(target_module)
     module = importlib.import_module(target_module)
     modules = test_find_modules(module.__path__[0])
 
