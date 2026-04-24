@@ -509,7 +509,7 @@ class DataLakeFileClient(PathClient):
         :type length: int or None
         :keyword bool flush:
             If true, will commit the data after it is appended.
-        ::keyword validate_content:
+        :keyword validate_content:
             Enables checksum validation for the transfer. Any checksum calculated is NOT stored with the blob.
             Choose "auto" (let the SDK choose the best algorithm), "crc64", or "md5". The use of bool is deprecated.
             NOTE: The use of "auto" or "crc64" requires the `azure-storage-extensions` package to be installed.

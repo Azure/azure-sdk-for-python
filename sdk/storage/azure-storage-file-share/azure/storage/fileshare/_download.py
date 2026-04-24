@@ -18,7 +18,7 @@ from azure.core.tracing.common import with_current_context
 from ._shared.request_handlers import validate_and_format_range_headers
 from ._shared.response_handlers import parse_length_from_content_range, process_storage_error
 from ._shared.constants import DEFAULT_MAX_CONCURRENCY
-from ._shared.validation import is_md5_validation, CV_TYPE, CV_TYPE_PARSED
+from ._shared.validation import is_md5_validation, CV_TYPE_PARSED
 
 if TYPE_CHECKING:
     from ._generated.operations import FileOperations
@@ -253,7 +253,9 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
         # If validate_content is using MD5, get only self.MAX_CHUNK_GET_SIZE for the first
         # chunk so a transactional MD5 can be retrieved.
         self._first_get_size = (
-            self._config.max_single_get_size if not is_md5_validation(self._validate_content) else self._config.max_chunk_get_size
+            self._config.max_single_get_size
+            if not is_md5_validation(self._validate_content)
+            else self._config.max_chunk_get_size
         )
 
         initial_request_start = self._start_range or 0
