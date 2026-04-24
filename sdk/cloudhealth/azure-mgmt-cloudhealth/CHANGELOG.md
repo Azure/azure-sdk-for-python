@@ -4,7 +4,7 @@
 
 ### Features Added
 
-  - Model `CloudHealthMgmtClient` added parameter `cloud_setting` in method `__init__`
+  - Client `CloudHealthMgmtClient` added parameter `cloud_setting` in method `__init__`
   - Enum `DependenciesAggregationType` added member `MAX_NOT_HEALTHY`
   - Enum `DependenciesAggregationType` added member `MIN_HEALTHY`
   - Model `DiscoveryRuleProperties` added property `specification`
@@ -50,22 +50,23 @@
   - Added model `SignalInstanceProperties`
   - Added model `SignalStatus`
   - Added model `ThresholdRuleV2`
-  - Model `AuthenticationSettingsOperations` added method `begin_create_or_update`
-  - Model `AuthenticationSettingsOperations` added method `begin_delete`
-  - Model `DiscoveryRulesOperations` added method `begin_create_or_update`
-  - Model `DiscoveryRulesOperations` added method `begin_delete`
-  - Model `EntitiesOperations` added method `begin_create_or_update`
-  - Model `EntitiesOperations` added method `begin_delete`
-  - Model `EntitiesOperations` added method `get_history`
-  - Model `EntitiesOperations` added method `get_signal_history`
-  - Model `EntitiesOperations` added method `ingest_health_report`
-  - Model `RelationshipsOperations` added method `begin_create_or_update`
-  - Model `RelationshipsOperations` added method `begin_delete`
-  - Model `SignalDefinitionsOperations` added method `begin_create_or_update`
-  - Model `SignalDefinitionsOperations` added method `begin_delete`
+  - Operation group `AuthenticationSettingsOperations` added method `begin_create_or_update`
+  - Operation group `AuthenticationSettingsOperations` added method `begin_delete`
+  - Operation group `DiscoveryRulesOperations` added method `begin_create_or_update`
+  - Operation group `DiscoveryRulesOperations` added method `begin_delete`
+  - Operation group `EntitiesOperations` added method `begin_create_or_update`
+  - Operation group `EntitiesOperations` added method `begin_delete`
+  - Operation group `EntitiesOperations` added method `get_history`
+  - Operation group `EntitiesOperations` added method `get_signal_history`
+  - Operation group `EntitiesOperations` added method `ingest_health_report`
+  - Operation group `RelationshipsOperations` added method `begin_create_or_update`
+  - Operation group `RelationshipsOperations` added method `begin_delete`
+  - Operation group `SignalDefinitionsOperations` added method `begin_create_or_update`
+  - Operation group `SignalDefinitionsOperations` added method `begin_delete`
 
 ### Breaking Changes
 
+  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed enum value `DependenciesAggregationType.THRESHOLDS`
   - Model `DiscoveryRuleProperties` deleted or renamed its instance variable `resource_graph_query`
   - Model `DiscoveryRuleProperties` deleted or renamed its instance variable `deletion_date`
