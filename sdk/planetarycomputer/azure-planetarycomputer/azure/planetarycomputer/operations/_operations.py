@@ -2112,7 +2112,7 @@ def build_data_get_tile_by_scale_request(  # pylint: disable=too-many-locals,too
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_tile_by_scale_and_format_request(  # pylint: disable=name-too-long,too-many-locals
+def build_data_get_tile_by_scale_and_format_request(  # pylint: disable=name-too-long,too-many-locals,too-many-branches,too-many-statements
     collection_id: str,
     item_id: str,
     tile_matrix_set_id: str,
@@ -3281,7 +3281,7 @@ def build_data_list_item_available_assets_request(  # pylint: disable=name-too-l
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_data_get_item_asset_statistics_request(  # pylint: disable=name-too-long,too-many-locals
+def build_data_get_item_asset_statistics_request(  # pylint: disable=name-too-long,too-many-locals,too-many-branches,too-many-statements
     collection_id: str,
     item_id: str,
     *,
@@ -10146,7 +10146,7 @@ def build_data_get_searches_assets_for_tile_no_tms_request(  # pylint: disable=n
 
 
 # TODO: Remove pylint disable once pygen emitter generates fewer statements in request builders
-def build_data_get_searches_point_request(  # pylint: disable=too-many-locals,too-many-statements
+def build_data_get_searches_point_request(  # pylint: disable=too-many-locals,too-many-statements,too-many-branches
     search_id: str,
     longitude: float,
     latitude: float,
