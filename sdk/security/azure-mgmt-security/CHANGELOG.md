@@ -1,6 +1,6 @@
 # Release History
 
-## 8.0.0b2 (2026-04-23)
+## 8.0.0b2 (2026-04-24)
 
 skip changelog generation
 
