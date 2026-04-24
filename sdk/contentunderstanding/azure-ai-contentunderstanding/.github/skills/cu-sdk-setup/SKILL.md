@@ -43,6 +43,10 @@ Before starting, ensure you have:
 > | `venv: MISSING` (common on Debian/Ubuntu base images) | Tell user to install `python3.x-venv` (e.g. `sudo apt install python3.12-venv`). |
 > | Windows resolves to a `WindowsApps\python*.exe` stub | Tell user to install real Python (`winget install Python.Python.3.12`) and use `py -3` going forward. The stub exits silently and breaks `venv`. |
 >
+> **Windows gotcha — App Execution Aliases:** Even after uninstalling the Store Python stub, the `python.exe` / `python3.exe` entries under `C:\Users\<you>\AppData\Local\Microsoft\WindowsApps\` may persist as **App Execution Aliases** and shadow a real install. If the probe still reports a stub after the user confirms they installed real Python:
+>   1. Point them to **Settings → Apps → Advanced app settings → App execution aliases**, and toggle **off** `python.exe` and `python3.exe`.
+>   2. As a fallback, suggest invoking Python via the `py` launcher (`py -3 -m venv .venv`) or the explicit install path (e.g. `%LOCALAPPDATA%\Programs\Python\Python312\python.exe`). The companion `setup_user_env.ps1` script already probes well-known install paths automatically.
+>
 > Report the detected version + venv status back to the user in one sentence before the `[ASK USER]` block below.
 
 > **[ASK USER] Prerequisites Check:**

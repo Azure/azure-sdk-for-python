@@ -18,16 +18,38 @@ Set-Location $PackageRoot
 
 # Resolve a usable Python interpreter.
 # IMPORTANT: On Windows, plain `python`/`python3` may be a Microsoft Store stub
-# that exits silently (failing `python -m venv`). Prefer the `py` launcher, and
-# reject stubs located under WindowsApps.
+# (App Execution Alias under WindowsApps) that exits silently and breaks
+# `python -m venv`. Prefer the `py` launcher, reject stubs under WindowsApps,
+# and also probe common install locations that may not be on PATH (e.g. when
+# the user disabled PATH entries for the real Python install but aliases
+# remain enabled).
 function Resolve-Python {
     $candidates = @()
+
+    # 1. `py` launcher (preferred on Windows)
     $py = Get-Command py -ErrorAction SilentlyContinue
     if ($py) { $candidates += @(@{ Exe = $py.Source; Args = @('-3') }) }
+
+    # 2. PATH-resolved python3 / python (may be WindowsApps stub; filtered below)
     foreach ($name in 'python3', 'python') {
         $cmd = Get-Command $name -ErrorAction SilentlyContinue
         if ($cmd) { $candidates += @(@{ Exe = $cmd.Source; Args = @() }) }
     }
+
+    # 3. Well-known install locations (per-user and machine-wide), when PATH
+    #    lacks real Python because WindowsApps alias shadows it.
+    $wellKnown = @(
+        "$env:LOCALAPPDATA\Programs\Python\Python3*\python.exe",
+        "$env:ProgramFiles\Python3*\python.exe",
+        "${env:ProgramFiles(x86)}\Python3*\python.exe",
+        "C:\Python3*\python.exe"
+    )
+    foreach ($pattern in $wellKnown) {
+        Get-ChildItem $pattern -ErrorAction SilentlyContinue |
+            Sort-Object FullName -Descending |
+            ForEach-Object { $candidates += @(@{ Exe = $_.FullName; Args = @() }) }
+    }
+
     foreach ($c in $candidates) {
         if ($c.Exe -match 'WindowsApps') { continue }
         try {
@@ -76,8 +98,21 @@ Write-Host ""
 # Step 1: Check and create virtual environment
 Write-Host "Step 1: Checking virtual environment..."
 if (Test-Path '.venv') {
-    Write-Host "  [OK] Virtual environment already exists at .venv"
-} else {
+    # Detect a venv created on a different platform (e.g. WSL-created .venv
+    # has bin/activate but no Scripts\Activate.ps1). Recreate in that case.
+    $expectedActivate = if ($IsWindows -or $PSVersionTable.PSEdition -eq 'Desktop') {
+        '.venv\Scripts\Activate.ps1'
+    } else {
+        '.venv/bin/Activate.ps1'
+    }
+    if (-not (Test-Path $expectedActivate)) {
+        Write-Host "  [WARN] Existing .venv was created on a different platform; recreating..."
+        Remove-Item -Recurse -Force .venv
+    } else {
+        Write-Host "  [OK] Virtual environment already exists at .venv"
+    }
+}
+if (-not (Test-Path '.venv')) {
     Write-Host "  Creating virtual environment..."
     $py = Resolve-Python
     if (-not $py) {
