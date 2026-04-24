@@ -222,5 +222,19 @@ class verifytypes(Check):
             return report["typeCompleteness"]["completenessScore"]
 
         # library scores 100%
-        report = json.loads(response.stdout)
+        try:
+            report = json.loads(response.stdout)
+        except (json.JSONDecodeError, TypeError):
+            logger.error(
+                f"pyright --verifytypes exited successfully but did not produce valid JSON output.\n"
+                f"stdout: {response.stdout}\n"
+                f"stderr: {response.stderr}\n"
+                f"Re-running without --outputjson for diagnostic output..."
+            )
+            non_json_commands = [c for c in commands[1:] if c != "--outputjson"] + ["--verbose"]
+            diag = self.run_venv_command(executable, non_json_commands, cwd, check=False)
+            logger.error(f"Diagnostic pyright stdout:\n{diag.stdout}")
+            if diag.stderr:
+                logger.error(f"Diagnostic pyright stderr:\n{diag.stderr}")
+            return -1.0
         return report["typeCompleteness"]["completenessScore"]
