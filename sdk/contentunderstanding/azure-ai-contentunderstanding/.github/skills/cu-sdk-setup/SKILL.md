@@ -17,11 +17,38 @@ Before starting, ensure you have:
 - An **Azure subscription** ([create one for free](https://azure.microsoft.com/free/))
 - A **Microsoft Foundry resource** in a [supported region](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support)
 
+> **[COPILOT] Probe Python runtime first (before asking):**
+> Do not take the user's word for it — run these checks, then report. This prevents silent failures later in `python -m venv`.
+>
+> ```bash
+> # POSIX / WSL / macOS
+> python3 --version 2>/dev/null || python --version 2>/dev/null
+> python3 -m pip --version 2>/dev/null || python -m pip --version 2>/dev/null
+> python3 -c "import venv" 2>/dev/null && echo "venv: ok" || echo "venv: MISSING"
+> ```
+>
+> ```powershell
+> # Windows PowerShell
+> py -3 --version 2>$null; if ($LASTEXITCODE -ne 0) { python --version }
+> py -3 -m pip --version 2>$null
+> py -3 -c "import venv" 2>$null; if ($LASTEXITCODE -eq 0) { 'venv: ok' } else { 'venv: MISSING' }
+> ```
+>
+> **Decision table:**
+>
+> | Finding | Action |
+> |---|---|
+> | `Python 3.9+` and `venv: ok` and `pip` present | ✓ Good to go. Proceed to Step 1. |
+> | Python missing or `< 3.9` | Print platform-specific install hint: **Windows** → `winget install Python.Python.3.12`; **Debian/Ubuntu** → `sudo apt install python3.12 python3.12-venv`; **macOS** → `brew install python@3.12`. Stop and wait for user to install and re-open terminal. |
+> | `venv: MISSING` (common on Debian/Ubuntu base images) | Tell user to install `python3.x-venv` (e.g. `sudo apt install python3.12-venv`). |
+> | Windows resolves to a `WindowsApps\python*.exe` stub | Tell user to install real Python (`winget install Python.Python.3.12`) and use `py -3` going forward. The stub exits silently and breaks `venv`. |
+>
+> Report the detected version + venv status back to the user in one sentence before the `[ASK USER]` block below.
+
 > **[ASK USER] Prerequisites Check:**
-> Before proceeding, ask the user to confirm their prerequisites:
-> 1. "Do you have **Python 3.9+** installed?" — If no, guide them to install Python first.
-> 2. "Do you already have a **Microsoft Foundry resource** set up in Azure?" — If no, jump to **Step 5** (Azure Resource Setup) first, then return here.
-> 3. "Have you already deployed the required **AI models** (GPT-4.1, GPT-4.1-mini, text-embedding-3-large) in Microsoft Foundry?" — If no, include Step 5.3 and Step 6 in the workflow.
+> After the probe above, confirm the remaining items:
+> 1. "Do you already have a **Microsoft Foundry resource** set up in Azure?" — If no, jump to **Step 5** (Azure Resource Setup) first, then return here.
+> 2. "Have you already deployed the required **AI models** (GPT-4.1, GPT-4.1-mini, text-embedding-3-large) in Microsoft Foundry?" — If no, include Step 5.3 and Step 6 in the workflow.
 
 ## Package Directory
 
@@ -167,13 +194,55 @@ Open `.env` in your editor and set the following **required** variables:
 
 **For running `sample_update_defaults.py` (one-time model configuration):**
 
-> **[ASK USER] Model deployment names:**
-> Ask the user: "Do you want to configure **model deployment names** now? These are needed for `sample_update_defaults.py` (one-time setup)."
-> - If yes, ask for each deployment name one by one with sensible defaults:
+> **[COPILOT] Probe existing model defaults on the Foundry resource:**
+> Before asking the user for deployment names, probe what the resource already has configured. The venv is active and the SDK is installed, so call `get_defaults()` via a short inline Python snippet. Export `CONTENTUNDERSTANDING_ENDPOINT` (and `CONTENTUNDERSTANDING_KEY` if Option A) in the shell first so the snippet can read them.
+>
+> ```bash
+> python - <<'PY'
+> import os, sys
+> from azure.ai.contentunderstanding import ContentUnderstandingClient
+> from azure.core.credentials import AzureKeyCredential
+> from azure.identity import DefaultAzureCredential
+> from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+>
+> ep = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
+> key = os.environ.get("CONTENTUNDERSTANDING_KEY") or None
+> cred = AzureKeyCredential(key) if key else DefaultAzureCredential()
+> try:
+>     d = ContentUnderstandingClient(ep, cred).get_defaults().model_deployments or {}
+> except ClientAuthenticationError:
+>     sys.exit(3)
+> except HttpResponseError as e:
+>     sys.exit(3 if e.status_code in (401, 403) else 1)
+> except Exception:
+>     sys.exit(1)
+>
+> keys = ["gpt-4.1", "gpt-4.1-mini", "text-embedding-3-large"]
+> vals = [d.get(k, "") for k in keys]
+> print(";".join(f"{k}={v}" for k, v in zip(keys, vals)))
+> sys.exit(0 if all(vals) else (2 if not any(vals) else 10))
+> PY
+> ```
+>
+> Branch on the exit code:
+>
+> | Exit | Meaning | Action |
+> |------|---------|--------|
+> | `0` | **ALL_SET** — all 3 deployments already mapped on the resource | Show the detected values and ask *"Detected existing defaults: gpt-4.1=`<A>`, gpt-4.1-mini=`<B>`, text-embedding-3-large=`<C>`. Use these? (Y/n)"*. On Y, prefill the 3 env vars and **skip Step 6** (defaults already configured). On n, fall through to the per-model prompts below. |
+> | `10` | **PARTIAL** — some mapped, some missing | Prefill the ones that are set. For missing models, ask per-item with the default shown below. After Step 4 completes, run Step 6 to fill the gaps. |
+> | `2` | **NONE** — resource has no defaults yet | Fall through to the per-model prompts below. Step 6 will configure them. |
+> | `3` | **AUTH_ERROR** (401/403) | Print a one-line warning: *"Probe unavailable (auth failed). If you're using DefaultAzureCredential, run `az login` and ensure the Cognitive Services User role is assigned. Continuing with manual entry."* Fall through to per-model prompts. |
+> | other | Unexpected error | Print *"Probe failed: `<error>`. Continuing with manual entry."* Fall through. |
+>
+> Only proceed to the per-model prompts below when the probe outcome requires it.
+
+> **[ASK USER] Model deployment names (only when probe did not yield all values):**
+> For each model not already prefilled from the probe, ask with a sensible default:
 >   - "What is your **GPT-4.1** deployment name?" (default: `gpt-4.1`)
 >   - "What is your **GPT-4.1-mini** deployment name?" (default: `gpt-4.1-mini`)
 >   - "What is your **text-embedding-3-large** deployment name?" (default: `text-embedding-3-large`)
-> - If no, let them know they can configure these later before running `sample_update_defaults.py`.
+>
+> If the user prefers to configure these later, let them know they can run `sample_update_defaults.py` (Step 6) anytime before using prebuilt analyzers.
 
 | Variable | Description | How to Get It |
 |----------|-------------|---------------|
@@ -203,7 +272,7 @@ Open `.env` in your editor and set the following **required** variables:
 CONTENTUNDERSTANDING_ENDPOINT=https://my-foundry-resource.services.ai.azure.com/
 
 # Optional: API key (if not set, DefaultAzureCredential is used)
-CONTENTUNDERSTANDING_KEY=abc123...
+CONTENTUNDERSTANDING_KEY=
 
 # Required for sample_update_defaults.py (model configuration)
 GPT_4_1_DEPLOYMENT=gpt-4.1
@@ -260,6 +329,9 @@ This role is required even if you own the resource:
 > Use these names to populate the `.env` file.
 
 ### Step 6: Configure Model Defaults (One-Time Setup)
+
+> **[COPILOT] Skip condition:**
+> If the Step 4.2 probe returned **ALL_SET** and the user accepted the detected values, defaults are already configured on the Foundry resource — skip this step and tell the user *"Your Foundry resource already has model defaults configured; skipping Step 6."* Otherwise continue below.
 
 > **[ASK USER] Run model defaults?:**
 > Ask: "Would you like to run `sample_update_defaults.py` now to configure model defaults? This is a **one-time setup** per Microsoft Foundry resource. (Yes / Skip for now)"
