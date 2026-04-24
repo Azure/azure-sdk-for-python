@@ -117,7 +117,6 @@
   - Deleted or renamed method `RelationshipsOperations.delete`
   - Deleted or renamed method `SignalDefinitionsOperations.create_or_update`
   - Deleted or renamed method `SignalDefinitionsOperations.delete`
-  - `HealthModelProperties.__init__` had all overloads removed
 
 ## 1.0.0b1 (2025-06-04)
 
