@@ -41,9 +41,10 @@ class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     V2024_07_01 = "2024-07-01"
     V2025_09_01 = "2025-09-01"
     V2026_04_01 = "2026-04-01"
+    V2026_05_01_PREVIEW = "2026-05-01-preview"
 
 
-DEFAULT_VERSION = ApiVersion.V2026_04_01
+DEFAULT_VERSION = ApiVersion.V2026_05_01_PREVIEW
 
 
 class SearchClient(_SearchClient):
@@ -57,9 +58,9 @@ class SearchClient(_SearchClient):
      ~azure.core.credentials.TokenCredential
     :param index_name: The name of the index. Required.
     :type index_name: str
-    :keyword api_version: The API version to use for this operation. Known values are "2026-04-01"
-     and None. Default value is "2026-04-01". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-04-01", "2026-05-01-preview" and None. Default value is "2026-05-01-preview". Note that
+     overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword str audience: Sets the Audience to use for authentication with Microsoft Entra ID. The
      audience is not considered when using a shared key. If audience is not provided, the public cloud

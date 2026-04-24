@@ -1,5 +1,30 @@
 # Release History
 
+## 12.0.0b1 (Unreleased)
+
+### Features Added
+
+- Added support for API version `2026-05-01-preview`
+- Added new knowledge source types:
+  - `FabricDataAgentKnowledgeSourceParams` for Fabric Data Agent
+  - `FabricOntologyKnowledgeSourceParams` for Fabric Ontology
+  - `WorkIQKnowledgeSourceParams` for WorkIQ
+  - Re-introduced `IndexedSharePointKnowledgeSourceParams` and `RemoteSharePointKnowledgeSourceParams`
+- Added new retrieval models:
+  - `KnowledgeRetrievalLowReasoningEffort` and `KnowledgeRetrievalMediumReasoningEffort`
+  - `KnowledgeRetrievalOutputMode` enum
+  - `ImageServingStatistics` for image serving tracking
+  - `PurviewSensitivityLabelInfo` for sensitivity label information
+- Added new activity record types: `KnowledgeBaseWorkIQActivityRecord`, `KnowledgeBaseFabricDataAgentActivityRecord`, `KnowledgeBaseFabricOntologyActivityRecord`, `KnowledgeBaseModelAnswerSynthesisActivityRecord`, `KnowledgeBaseModelQueryPlanningActivityRecord`, `KnowledgeBaseModelWebSummarizationActivityRecord`
+- Added new reference types: `KnowledgeBaseWorkIQReference`, `KnowledgeBaseFabricDataAgentReference`, `KnowledgeBaseFabricOntologyReference`, `KnowledgeBaseIndexedSharePointReference`, `KnowledgeBaseRemoteSharePointReference`
+- Added new `KnowledgeSourceKind` enum values: `INDEXED_SQL`, `WORK_IQ`, `FILE`, `MCP_SERVER`, `FABRIC_DATA_AGENT`, `FABRIC_ONTOLOGY`, `INDEXED_SHARE_POINT`, `REMOTE_SHARE_POINT`
+- Added new `AzureOpenAIModelName` enum values: `GPT5_1`, `GPT5_2`, `GPT5_4`, `GPT4_1`, `GPT4_1_MINI`, `GPT4_1_NANO`, `GPT5`, `GPT4O`, `GPT4O_MINI`
+- Added new fields to `KnowledgeSourceParams`: `always_query_source`, `fail_on_error`, `max_output_documents`, `enable_image_serving`
+- Added new fields to `KnowledgeBaseRetrievalRequest`: `messages`, `max_output_size`, `max_output_documents`, `retrieval_reasoning_effort`, `output_mode`
+- Added `response_sensitivity_label_info` to `KnowledgeBaseRetrievalResponse`
+- Added `warning` field to `KnowledgeBaseActivityRecord`
+- Added `WorkIQAttribution` model
+
 ## 12.0.0 (2026-04-01)
 
 ### Features Added
