@@ -103769,6 +103769,38 @@
                     "default": null,
                     "param_type": "positional_or_keyword"
                   },
+                  "time_window_size": {
+                    "type": "timedelta",
+                    "default": null,
+                    "param_type": "keyword_only"
+                  }
+                },
+                "is_async": false,
+                "return_type": null
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
+                  "mapping": {
+                    "type": "Mapping[str, Any]",
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  }
+                },
+                "is_async": false,
+                "return_type": null
+              },
+              {
+                "parameters": {
+                  "self": {
+                    "type": null,
+                    "default": null,
+                    "param_type": "positional_or_keyword"
+                  },
                   "is_enabled": {
                     "type": "bool",
                     "default": null,
@@ -103781,11 +103813,6 @@
                   },
                   "max_threshold": {
                     "type": "int",
-                    "default": null,
-                    "param_type": "keyword_only"
-                  },
-                  "time_window_size": {
-                    "type": "timedelta",
                     "default": null,
                     "param_type": "keyword_only"
                   }
@@ -103996,10 +104023,10 @@
           }
         },
         "properties": {
-          "min_threshold": null,
-          "max_threshold": null,
           "time_window_size": "datetime",
           "rule_type": null,
+          "min_threshold": null,
+          "max_threshold": null,
           "display_name": "Optional",
           "description": "Optional",
           "is_enabled": null

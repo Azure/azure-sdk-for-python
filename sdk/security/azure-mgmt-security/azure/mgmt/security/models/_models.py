@@ -18405,6 +18405,9 @@ class ThresholdCustomAlertRule(CustomAlertRule, discriminator="ThresholdCustomAl
     """A custom alert rule that checks if a value (depends on the custom alert type) is within the
     given range.
 
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    TimeWindowCustomAlertRule
+
     :ivar display_name: The display name of the custom alert.
     :vartype display_name: str
     :ivar description: The description of the custom alert.
@@ -18419,6 +18422,7 @@ class ThresholdCustomAlertRule(CustomAlertRule, discriminator="ThresholdCustomAl
     :vartype rule_type: str
     """
 
+    __mapping__: dict[str, _Model] = {}
     min_threshold: int = rest_field(name="minThreshold", visibility=["read", "create", "update", "delete", "query"])
     """The minimum threshold. Required."""
     max_threshold: int = rest_field(name="maxThreshold", visibility=["read", "create", "update", "delete", "query"])
@@ -18447,30 +18451,16 @@ class ThresholdCustomAlertRule(CustomAlertRule, discriminator="ThresholdCustomAl
         self.rule_type = "ThresholdCustomAlertRule"  # type: ignore
 
 
-class TimeWindowCustomAlertRule(CustomAlertRule, discriminator="TimeWindowCustomAlertRule"):
+class TimeWindowCustomAlertRule(ThresholdCustomAlertRule, discriminator="TimeWindowCustomAlertRule"):
     """A custom alert rule that checks if the number of activities (depends on the custom alert type)
     in a time window is within the given range.
 
-    :ivar display_name: The display name of the custom alert.
-    :vartype display_name: str
-    :ivar description: The description of the custom alert.
-    :vartype description: str
-    :ivar is_enabled: Status of the custom alert. Required.
-    :vartype is_enabled: bool
-    :ivar min_threshold: The minimum threshold. Required.
-    :vartype min_threshold: int
-    :ivar max_threshold: The maximum threshold. Required.
-    :vartype max_threshold: int
     :ivar time_window_size: The time window size in iso8601 format. Required.
     :vartype time_window_size: ~datetime.timedelta
     :ivar rule_type: Required. Default value is "TimeWindowCustomAlertRule".
     :vartype rule_type: str
     """
 
-    min_threshold: int = rest_field(name="minThreshold", visibility=["read", "create", "update", "delete", "query"])
-    """The minimum threshold. Required."""
-    max_threshold: int = rest_field(name="maxThreshold", visibility=["read", "create", "update", "delete", "query"])
-    """The maximum threshold. Required."""
     time_window_size: datetime.timedelta = rest_field(
         name="timeWindowSize", visibility=["read", "create", "update", "delete", "query"]
     )
@@ -18482,9 +18472,6 @@ class TimeWindowCustomAlertRule(CustomAlertRule, discriminator="TimeWindowCustom
     def __init__(
         self,
         *,
-        is_enabled: bool,
-        min_threshold: int,
-        max_threshold: int,
         time_window_size: datetime.timedelta,
     ) -> None: ...
 

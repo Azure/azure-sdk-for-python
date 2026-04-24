@@ -61,27 +61,8 @@ class TestSecurityManagementDeviceSecurityGroupsOperationsAsync(AzureMgmtRecorde
                             "valueType": "str",
                         }
                     ],
-                    "thresholdRules": [
-                        {
-                            "isEnabled": bool,
-                            "maxThreshold": 0,
-                            "minThreshold": 0,
-                            "ruleType": "ThresholdCustomAlertRule",
-                            "description": "str",
-                            "displayName": "str",
-                        }
-                    ],
-                    "timeWindowRules": [
-                        {
-                            "isEnabled": bool,
-                            "maxThreshold": 0,
-                            "minThreshold": 0,
-                            "ruleType": "TimeWindowCustomAlertRule",
-                            "timeWindowSize": "1 day, 0:00:00",
-                            "description": "str",
-                            "displayName": "str",
-                        }
-                    ],
+                    "thresholdRules": ["threshold_custom_alert_rule"],
+                    "timeWindowRules": [{"ruleType": "TimeWindowCustomAlertRule", "timeWindowSize": "1 day, 0:00:00"}],
                 },
                 "systemData": {
                     "createdAt": "2020-02-20 00:00:00",
