@@ -32,9 +32,9 @@ class TestSecurityManagementMdeOnboardingsOperationsAsync(AzureMgmtRecordedTestC
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_mde_onboardings_list(self, resource_group):
-        response = self.client.mde_onboardings.list(
+        response = await self.client.mde_onboardings.list(
             api_version="2021-10-01-preview",
         )
-        result = [r async for r in response]
+
         # please add some check logic here by yourself
         # ...

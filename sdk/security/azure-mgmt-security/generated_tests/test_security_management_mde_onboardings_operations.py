@@ -34,6 +34,6 @@ class TestSecurityManagementMdeOnboardingsOperations(AzureMgmtRecordedTestCase):
         response = self.client.mde_onboardings.list(
             api_version="2021-10-01-preview",
         )
-        result = [r for r in response]
+
         # please add some check logic here by yourself
         # ...

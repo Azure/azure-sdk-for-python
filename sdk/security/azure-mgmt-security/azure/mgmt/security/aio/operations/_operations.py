@@ -7482,20 +7482,14 @@ class MdeOnboardingsOperations:
 
         return deserialized  # type: ignore
 
-    @distributed_trace
-    def list(self, **kwargs: Any) -> AsyncItemPaged["_models.MdeOnboardingData"]:
+    @distributed_trace_async
+    async def list(self, **kwargs: Any) -> _models.MdeOnboardingDataList:
         """The configuration or data needed to onboard the machine to MDE.
 
-        :return: An iterator like instance of MdeOnboardingData
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.MdeOnboardingData]
+        :return: MdeOnboardingDataList. The MdeOnboardingDataList is compatible with MutableMapping
+        :rtype: ~azure.mgmt.security.models.MdeOnboardingDataList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01-preview"))
-        cls: ClsType[List[_models.MdeOnboardingData]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -7504,63 +7498,53 @@ class MdeOnboardingsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-                _request = build_mde_onboardings_list_request(
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01-preview"))
+        cls: ClsType[_models.MdeOnboardingDataList] = kwargs.pop("cls", None)
 
-            else:
-                _request = HttpRequest("GET", next_link)
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request = build_mde_onboardings_list_request(
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return _request
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
 
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.MdeOnboardingData],
-                deserialized.get("value", []),
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
             )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, AsyncList(list_of_elem)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.MdeOnboardingDataList, response.json())
 
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.CloudError,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
+        return deserialized  # type: ignore
 
 
 class Operations:
@@ -7976,8 +7960,8 @@ class PricingsOperations:
         if cls:
             return cls(pipeline_response, None, {})  # type: ignore
 
-    @distributed_trace
-    def list(self, scope_id: str, *, filter: Optional[str] = None, **kwargs: Any) -> AsyncItemPaged["_models.Pricing"]:
+    @distributed_trace_async
+    async def list(self, scope_id: str, *, filter: Optional[str] = None, **kwargs: Any) -> _models.PricingList:
         """Lists Microsoft Defender for Cloud pricing configurations of the scopeId, that match the
         optional given $filter. Valid scopes are: subscription id or a specific resource id (Supported
         resources are: 'VirtualMachines, VMSS and ARC Machines'). Valid $filter is: 'name in
@@ -7990,16 +7974,10 @@ class PricingsOperations:
         :type scope_id: str
         :keyword filter: OData filter. Optional. Default value is None.
         :paramtype filter: str
-        :return: An iterator like instance of Pricing
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.Pricing]
+        :return: PricingList. The PricingList is compatible with MutableMapping
+        :rtype: ~azure.mgmt.security.models.PricingList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
-        cls: ClsType[List[_models.Pricing]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -8008,64 +7986,54 @@ class PricingsOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-                _request = build_pricings_list_request(
-                    scope_id=scope_id,
-                    filter=filter,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2024-01-01"))
+        cls: ClsType[_models.PricingList] = kwargs.pop("cls", None)
 
-            else:
-                _request = HttpRequest("GET", next_link)
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request = build_pricings_list_request(
+            scope_id=scope_id,
+            filter=filter,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return _request
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
 
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.Pricing],
-                deserialized.get("value", []),
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
             )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, AsyncList(list_of_elem)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.PricingList, response.json())
 
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.CloudError,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
+        return deserialized  # type: ignore
 
 
 class PrivateLinkResourcesOperations:
@@ -8086,17 +8054,12 @@ class PrivateLinkResourcesOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(
-        self, resource_group_name: str, private_link_name: str, group_id: str, **kwargs: Any
-    ) -> _models.PrivateLinkGroupResource:
+    async def get(self, resource_group_name: str, group_id: str, **kwargs: Any) -> _models.PrivateLinkGroupResource:
         """Get the specified private link resource associated with the private link.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :param group_id: The group ID of the private link resource. Required.
         :type group_id: str
         :return: PrivateLinkGroupResource. The PrivateLinkGroupResource is compatible with
@@ -8120,7 +8083,6 @@ class PrivateLinkResourcesOperations:
 
         _request = build_private_link_resources_get_request(
             resource_group_name=resource_group_name,
-            private_link_name=private_link_name,
             group_id=group_id,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -8164,17 +8126,12 @@ class PrivateLinkResourcesOperations:
         return deserialized  # type: ignore
 
     @distributed_trace
-    def list(
-        self, resource_group_name: str, private_link_name: str, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PrivateLinkGroupResource"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.PrivateLinkGroupResource"]:
         """List all private link resources in a private link.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :return: An iterator like instance of PrivateLinkGroupResource
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.PrivateLinkGroupResource]
@@ -8199,7 +8156,6 @@ class PrivateLinkResourcesOperations:
 
                 _request = build_private_link_resources_list_request(
                     resource_group_name=resource_group_name,
-                    private_link_name=private_link_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -8274,7 +8230,7 @@ class PrivateEndpointConnectionsOperations:
 
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, private_link_name: str, private_endpoint_connection_name: str, **kwargs: Any
+        self, resource_group_name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> _models.PrivateEndpointConnection:
         """Gets the specified private endpoint connection associated with the private link. Returns the
         connection details, status, and configuration for a specific private endpoint.
@@ -8282,9 +8238,6 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
@@ -8309,7 +8262,6 @@ class PrivateEndpointConnectionsOperations:
 
         _request = build_private_endpoint_connections_get_request(
             resource_group_name=resource_group_name,
-            private_link_name=private_link_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -8624,7 +8576,7 @@ class PrivateEndpointConnectionsOperations:
         )
 
     async def _delete_initial(
-        self, resource_group_name: str, private_link_name: str, private_endpoint_connection_name: str, **kwargs: Any
+        self, resource_group_name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -8642,7 +8594,6 @@ class PrivateEndpointConnectionsOperations:
 
         _request = build_private_endpoint_connections_delete_request(
             resource_group_name=resource_group_name,
-            private_link_name=private_link_name,
             private_endpoint_connection_name=private_endpoint_connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
@@ -8691,7 +8642,7 @@ class PrivateEndpointConnectionsOperations:
 
     @distributed_trace_async
     async def begin_delete(
-        self, resource_group_name: str, private_link_name: str, private_endpoint_connection_name: str, **kwargs: Any
+        self, resource_group_name: str, private_endpoint_connection_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes the specified private endpoint connection associated with the private link. This
         operation will disconnect the private endpoint and remove the connection configuration.
@@ -8699,9 +8650,6 @@ class PrivateEndpointConnectionsOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :param private_endpoint_connection_name: The name of the private endpoint connection associated
          with the Azure resource. Required.
         :type private_endpoint_connection_name: str
@@ -8720,7 +8668,6 @@ class PrivateEndpointConnectionsOperations:
         if cont_token is None:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
-                private_link_name=private_link_name,
                 private_endpoint_connection_name=private_endpoint_connection_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
@@ -8757,18 +8704,13 @@ class PrivateEndpointConnectionsOperations:
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
-    def list(
-        self, resource_group_name: str, private_link_name: str, **kwargs: Any
-    ) -> AsyncItemPaged["_models.PrivateEndpointConnection"]:
+    def list(self, resource_group_name: str, **kwargs: Any) -> AsyncItemPaged["_models.PrivateEndpointConnection"]:
         """Gets all private endpoint connections for a private link. Returns the list of private endpoints
         that are connected or in the process of connecting to this private link.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :return: An iterator like instance of PrivateEndpointConnection
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.PrivateEndpointConnection]
@@ -8793,7 +8735,6 @@ class PrivateEndpointConnectionsOperations:
 
                 _request = build_private_endpoint_connections_list_request(
                     resource_group_name=resource_group_name,
-                    private_link_name=private_link_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     headers=_headers,
@@ -23331,15 +23272,12 @@ class PrivateLinksOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def head(self, resource_group_name: str, private_link_name: str, **kwargs: Any) -> bool:
+    async def head(self, resource_group_name: str, **kwargs: Any) -> bool:
         """Checks whether private link exists.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :return: bool
         :rtype: bool
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23360,7 +23298,6 @@ class PrivateLinksOperations:
 
         _request = build_private_links_head_request(
             resource_group_name=resource_group_name,
-            private_link_name=private_link_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -23391,11 +23328,7 @@ class PrivateLinksOperations:
         return 200 <= response.status_code <= 299
 
     async def _create_initial(
-        self,
-        resource_group_name: str,
-        private_link_name: str,
-        private_link: Union[_models.PrivateLinkResource, JSON, IO[bytes]],
-        **kwargs: Any
+        self, resource_group_name: str, private_link: Union[_models.PrivateLinkResource, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
@@ -23408,8 +23341,8 @@ class PrivateLinksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
         cls: ClsType[AsyncIterator[bytes]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -23421,10 +23354,9 @@ class PrivateLinksOperations:
 
         _request = build_private_links_create_request(
             resource_group_name=resource_group_name,
-            private_link_name=private_link_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             content_type=content_type,
+            api_version=api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -23472,7 +23404,6 @@ class PrivateLinksOperations:
     async def begin_create(
         self,
         resource_group_name: str,
-        private_link_name: str,
         private_link: _models.PrivateLinkResource,
         *,
         content_type: str = "application/json",
@@ -23486,9 +23417,6 @@ class PrivateLinksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :param private_link: Private link request payload containing the resource information for
          create operations. Required.
         :type private_link: ~azure.mgmt.security.models.PrivateLinkResource
@@ -23503,13 +23431,7 @@ class PrivateLinksOperations:
 
     @overload
     async def begin_create(
-        self,
-        resource_group_name: str,
-        private_link_name: str,
-        private_link: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, resource_group_name: str, private_link: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateLinkResource]:
         """Create a private link resource. This operation creates the necessary infrastructure to enable
         private endpoint connections to Microsoft Defender for Cloud services. For updates to existing
@@ -23519,9 +23441,6 @@ class PrivateLinksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :param private_link: Private link request payload containing the resource information for
          create operations. Required.
         :type private_link: JSON
@@ -23538,7 +23457,6 @@ class PrivateLinksOperations:
     async def begin_create(
         self,
         resource_group_name: str,
-        private_link_name: str,
         private_link: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -23552,9 +23470,6 @@ class PrivateLinksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :param private_link: Private link request payload containing the resource information for
          create operations. Required.
         :type private_link: IO[bytes]
@@ -23569,11 +23484,7 @@ class PrivateLinksOperations:
 
     @distributed_trace_async
     async def begin_create(
-        self,
-        resource_group_name: str,
-        private_link_name: str,
-        private_link: Union[_models.PrivateLinkResource, JSON, IO[bytes]],
-        **kwargs: Any
+        self, resource_group_name: str, private_link: Union[_models.PrivateLinkResource, JSON, IO[bytes]], **kwargs: Any
     ) -> AsyncLROPoller[_models.PrivateLinkResource]:
         """Create a private link resource. This operation creates the necessary infrastructure to enable
         private endpoint connections to Microsoft Defender for Cloud services. For updates to existing
@@ -23583,9 +23494,6 @@ class PrivateLinksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :param private_link: Private link request payload containing the resource information for
          create operations. Is one of the following types: PrivateLinkResource, JSON, IO[bytes]
          Required.
@@ -23598,8 +23506,8 @@ class PrivateLinksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
         cls: ClsType[_models.PrivateLinkResource] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -23607,10 +23515,9 @@ class PrivateLinksOperations:
         if cont_token is None:
             raw_result = await self._create_initial(
                 resource_group_name=resource_group_name,
-                private_link_name=private_link_name,
                 private_link=private_link,
-                api_version=api_version,
                 content_type=content_type,
+                api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -23653,7 +23560,6 @@ class PrivateLinksOperations:
     async def update(
         self,
         resource_group_name: str,
-        private_link_name: str,
         private_link: _models.PrivateLinkUpdate,
         *,
         content_type: str = "application/json",
@@ -23665,9 +23571,6 @@ class PrivateLinksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :param private_link: private link update payload containing only the properties to be updated.
          Required.
         :type private_link: ~azure.mgmt.security.models.PrivateLinkUpdate
@@ -23681,13 +23584,7 @@ class PrivateLinksOperations:
 
     @overload
     async def update(
-        self,
-        resource_group_name: str,
-        private_link_name: str,
-        private_link: JSON,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
+        self, resource_group_name: str, private_link: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> _models.PrivateLinkResource:
         """Update specific properties of a private link resource. Use this operation to update mutable
         properties like tags without affecting the entire resource configuration.
@@ -23695,9 +23592,6 @@ class PrivateLinksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :param private_link: private link update payload containing only the properties to be updated.
          Required.
         :type private_link: JSON
@@ -23713,7 +23607,6 @@ class PrivateLinksOperations:
     async def update(
         self,
         resource_group_name: str,
-        private_link_name: str,
         private_link: IO[bytes],
         *,
         content_type: str = "application/json",
@@ -23725,9 +23618,6 @@ class PrivateLinksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :param private_link: private link update payload containing only the properties to be updated.
          Required.
         :type private_link: IO[bytes]
@@ -23741,11 +23631,7 @@ class PrivateLinksOperations:
 
     @distributed_trace_async
     async def update(
-        self,
-        resource_group_name: str,
-        private_link_name: str,
-        private_link: Union[_models.PrivateLinkUpdate, JSON, IO[bytes]],
-        **kwargs: Any
+        self, resource_group_name: str, private_link: Union[_models.PrivateLinkUpdate, JSON, IO[bytes]], **kwargs: Any
     ) -> _models.PrivateLinkResource:
         """Update specific properties of a private link resource. Use this operation to update mutable
         properties like tags without affecting the entire resource configuration.
@@ -23753,9 +23639,6 @@ class PrivateLinksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :param private_link: private link update payload containing only the properties to be updated.
          Is one of the following types: PrivateLinkUpdate, JSON, IO[bytes] Required.
         :type private_link: ~azure.mgmt.security.models.PrivateLinkUpdate or JSON or IO[bytes]
@@ -23774,8 +23657,8 @@ class PrivateLinksOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2026-01-01"))
         cls: ClsType[_models.PrivateLinkResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
@@ -23787,10 +23670,9 @@ class PrivateLinksOperations:
 
         _request = build_private_links_update_request(
             resource_group_name=resource_group_name,
-            private_link_name=private_link_name,
             subscription_id=self._config.subscription_id,
-            api_version=api_version,
             content_type=content_type,
+            api_version=api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -23831,9 +23713,7 @@ class PrivateLinksOperations:
 
         return deserialized  # type: ignore
 
-    async def _delete_initial(
-        self, resource_group_name: str, private_link_name: str, **kwargs: Any
-    ) -> AsyncIterator[bytes]:
+    async def _delete_initial(self, resource_group_name: str, **kwargs: Any) -> AsyncIterator[bytes]:
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -23850,7 +23730,6 @@ class PrivateLinksOperations:
 
         _request = build_private_links_delete_request(
             resource_group_name=resource_group_name,
-            private_link_name=private_link_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,
@@ -23897,9 +23776,7 @@ class PrivateLinksOperations:
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def begin_delete(
-        self, resource_group_name: str, private_link_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[None]:
+    async def begin_delete(self, resource_group_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
         """Delete a private link resource. This operation will remove the private link infrastructure and
         disconnect all associated private endpoints. This operation is asynchronous and may take
         several minutes to complete.
@@ -23907,9 +23784,6 @@ class PrivateLinksOperations:
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :return: An instance of AsyncLROPoller that returns None
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23925,7 +23799,6 @@ class PrivateLinksOperations:
         if cont_token is None:
             raw_result = await self._delete_initial(
                 resource_group_name=resource_group_name,
-                private_link_name=private_link_name,
                 api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -26738,10 +26611,10 @@ class ServerVulnerabilityAssessmentOperations:
             )
         return AsyncLROPoller[None](self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    @distributed_trace
-    def list_by_extended_resource(
+    @distributed_trace_async
+    async def list_by_extended_resource(
         self, resource_group_name: str, resource_namespace: str, resource_type: str, resource_name: str, **kwargs: Any
-    ) -> AsyncItemPaged["_models.ServerVulnerabilityAssessment"]:
+    ) -> _models.ServerVulnerabilityAssessmentsList:
         """Gets a list of server vulnerability assessment onboarding statuses on a given resource.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
@@ -26753,17 +26626,11 @@ class ServerVulnerabilityAssessmentOperations:
         :type resource_type: str
         :param resource_name: The name of the resource. Required.
         :type resource_name: str
-        :return: An iterator like instance of ServerVulnerabilityAssessment
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.security.models.ServerVulnerabilityAssessment]
+        :return: ServerVulnerabilityAssessmentsList. The ServerVulnerabilityAssessmentsList is
+         compatible with MutableMapping
+        :rtype: ~azure.mgmt.security.models.ServerVulnerabilityAssessmentsList
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
-        cls: ClsType[List[_models.ServerVulnerabilityAssessment]] = kwargs.pop("cls", None)
-
         error_map: MutableMapping = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -26772,67 +26639,57 @@ class ServerVulnerabilityAssessmentOperations:
         }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        def prepare_request(next_link=None):
-            if not next_link:
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-                _request = build_server_vulnerability_assessment_list_by_extended_resource_request(
-                    resource_group_name=resource_group_name,
-                    resource_namespace=resource_namespace,
-                    resource_type=resource_type,
-                    resource_name=resource_name,
-                    subscription_id=self._config.subscription_id,
-                    api_version=api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2020-01-01"))
+        cls: ClsType[_models.ServerVulnerabilityAssessmentsList] = kwargs.pop("cls", None)
 
-            else:
-                _request = HttpRequest("GET", next_link)
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.base_url", self._config.base_url, "str", skip_quote=True
-                    ),
-                }
-                _request.url = self._client.format_url(_request.url, **path_format_arguments)
+        _request = build_server_vulnerability_assessment_list_by_extended_resource_request(
+            resource_group_name=resource_group_name,
+            resource_namespace=resource_namespace,
+            resource_type=resource_type,
+            resource_name=resource_name,
+            subscription_id=self._config.subscription_id,
+            api_version=api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "endpoint": self._serialize.url("self._config.base_url", self._config.base_url, "str", skip_quote=True),
+        }
+        _request.url = self._client.format_url(_request.url, **path_format_arguments)
 
-            return _request
+        _decompress = kwargs.pop("decompress", True)
+        _stream = kwargs.pop("stream", False)
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            _request, stream=_stream, **kwargs
+        )
 
-        async def extract_data(pipeline_response):
-            deserialized = pipeline_response.http_response.json()
-            list_of_elem = _deserialize(
-                List[_models.ServerVulnerabilityAssessment],
-                deserialized.get("value", []),
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            if _stream:
+                try:
+                    await response.read()  # Load the body in memory and close the socket
+                except (StreamConsumedError, StreamClosedError):
+                    pass
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = _failsafe_deserialize(
+                _models.CloudError,
+                response,
             )
-            if cls:
-                list_of_elem = cls(list_of_elem)  # type: ignore
-            return None, AsyncList(list_of_elem)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        async def get_next(next_link=None):
-            _request = prepare_request(next_link)
+        if _stream:
+            deserialized = response.iter_bytes() if _decompress else response.iter_raw()
+        else:
+            deserialized = _deserialize(_models.ServerVulnerabilityAssessmentsList, response.json())
 
-            _stream = False
-            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-                _request, stream=_stream, **kwargs
-            )
-            response = pipeline_response.http_response
+        if cls:
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = _failsafe_deserialize(
-                    _models.CloudError,
-                    response,
-                )
-                raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
+        return deserialized  # type: ignore
 
 
 class TopologyOperations:

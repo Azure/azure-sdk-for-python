@@ -35,7 +35,6 @@ class TestSecurityManagementPrivateLinksOperationsAsync(AzureMgmtRecordedTestCas
     async def test_private_links_head(self, resource_group):
         response = await self.client.private_links.head(
             resource_group_name=resource_group.name,
-            private_link_name="str",
             api_version="2026-01-01",
         )
 
@@ -48,7 +47,6 @@ class TestSecurityManagementPrivateLinksOperationsAsync(AzureMgmtRecordedTestCas
         response = await (
             await self.client.private_links.begin_create(
                 resource_group_name=resource_group.name,
-                private_link_name="str",
                 private_link={
                     "location": "str",
                     "properties": {
@@ -124,7 +122,6 @@ class TestSecurityManagementPrivateLinksOperationsAsync(AzureMgmtRecordedTestCas
     async def test_private_links_update(self, resource_group):
         response = await self.client.private_links.update(
             resource_group_name=resource_group.name,
-            private_link_name="str",
             private_link={"tags": {"str": "str"}},
             api_version="2026-01-01",
         )
@@ -138,7 +135,6 @@ class TestSecurityManagementPrivateLinksOperationsAsync(AzureMgmtRecordedTestCas
         response = await (
             await self.client.private_links.begin_delete(
                 resource_group_name=resource_group.name,
-                private_link_name="str",
                 api_version="2026-01-01",
             )
         ).result()  # call '.result()' to poll until service return final result

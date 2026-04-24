@@ -91,10 +91,10 @@ class TestSecurityManagementPricingsOperationsAsync(AzureMgmtRecordedTestCase):
     @RandomNameResourceGroupPreparer(location=AZURE_LOCATION)
     @recorded_by_proxy_async
     async def test_pricings_list(self, resource_group):
-        response = self.client.pricings.list(
+        response = await self.client.pricings.list(
             scope_id="str",
             api_version="2024-01-01",
         )
-        result = [r async for r in response]
+
         # please add some check logic here by yourself
         # ...

@@ -23,7 +23,6 @@ class TestSecurityManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
     def test_private_endpoint_connections_get(self, resource_group):
         response = self.client.private_endpoint_connections.get(
             resource_group_name=resource_group.name,
-            private_link_name="str",
             private_endpoint_connection_name="str",
             api_version="2026-01-01",
         )
@@ -71,7 +70,6 @@ class TestSecurityManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
     def test_private_endpoint_connections_begin_delete(self, resource_group):
         response = self.client.private_endpoint_connections.begin_delete(
             resource_group_name=resource_group.name,
-            private_link_name="str",
             private_endpoint_connection_name="str",
             api_version="2026-01-01",
         ).result()  # call '.result()' to poll until service return final result
@@ -84,7 +82,6 @@ class TestSecurityManagementPrivateEndpointConnectionsOperations(AzureMgmtRecord
     def test_private_endpoint_connections_list(self, resource_group):
         response = self.client.private_endpoint_connections.list(
             resource_group_name=resource_group.name,
-            private_link_name="str",
             api_version="2026-01-01",
         )
         result = [r for r in response]

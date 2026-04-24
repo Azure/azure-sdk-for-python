@@ -12698,6 +12698,37 @@ class MdeOnboardingData(ProxyResource):
             super().__setattr__(key, value)
 
 
+class MdeOnboardingDataList(_Model):
+    """List of all MDE onboarding data resources.
+
+    :ivar value: List of the resources of the configuration or data needed to onboard the machine
+     to MDE.
+    :vartype value: list[~azure.mgmt.security.models.MdeOnboardingData]
+    """
+
+    value: Optional[list["_models.MdeOnboardingData"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+    """List of the resources of the configuration or data needed to onboard the machine to MDE."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.MdeOnboardingData"]] = None,
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
 class MdeOnboardingDataProperties(_Model):
     """Properties of the MDE configuration or data parameter needed to onboard the machine to MDE.
 
@@ -13261,6 +13292,34 @@ class Pricing(ExtensionResource):
             setattr(self.properties, key, value)
         else:
             super().__setattr__(key, value)
+
+
+class PricingList(_Model):
+    """List of pricing configurations response.
+
+    :ivar value: List of pricing configurations. Required.
+    :vartype value: list[~azure.mgmt.security.models.Pricing]
+    """
+
+    value: list["_models.Pricing"] = rest_field(visibility=["read", "create", "update", "delete", "query"])
+    """List of pricing configurations. Required."""
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: list["_models.Pricing"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
 
 
 class PricingProperties(_Model):
@@ -17407,6 +17466,35 @@ class ServerVulnerabilityAssessmentsAzureSettingProperties(_Model):  # pylint: d
         self,
         *,
         selected_provider: Union[str, "_models.ServerVulnerabilityAssessmentsAzureSettingSelectedProvider"],
+    ) -> None: ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]) -> None:
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)
+
+
+class ServerVulnerabilityAssessmentsList(_Model):
+    """List of server vulnerability assessments.
+
+    :ivar value:
+    :vartype value: list[~azure.mgmt.security.models.ServerVulnerabilityAssessment]
+    """
+
+    value: Optional[list["_models.ServerVulnerabilityAssessment"]] = rest_field(
+        visibility=["read", "create", "update", "delete", "query"]
+    )
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: Optional[list["_models.ServerVulnerabilityAssessment"]] = None,
     ) -> None: ...
 
     @overload
