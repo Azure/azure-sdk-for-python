@@ -15,7 +15,7 @@ from azure.mgmt.containerservice import ContainerServiceClient
     pip install azure-identity
     pip install azure-mgmt-containerservice
 # USAGE
-    python managed_clusters_list_cluster_monitoring_user_credentials.py
+    python mesh_memberships_delete.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -30,13 +30,13 @@ def main():
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.managed_clusters.list_cluster_monitoring_user_credentials(
+    client.mesh_memberships.begin_delete(
         resource_group_name="rg1",
         resource_name="clustername1",
-    )
-    print(response)
+        mesh_membership_name="meshmembership1",
+    ).result()
 
 
-# x-ms-original-file: 2026-02-01/ManagedClustersListClusterMonitoringUserCredentials.json
+# x-ms-original-file: 2026-02-02-preview/MeshMemberships_Delete.json
 if __name__ == "__main__":
     main()
