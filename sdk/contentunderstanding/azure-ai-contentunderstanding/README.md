@@ -492,6 +492,49 @@ async def analyze_invoice():
 asyncio.run(analyze_invoice())
 ```
 
+#### Convert results to LLM-ready text
+
+Use the `to_llm_input()` helper to convert any analysis result into a text format that LLMs
+can consume directly — YAML front matter with extracted fields followed by the markdown body.
+This works with all content types (documents, images, audio, video) and handles multi-segment
+results and classification hierarchies automatically.
+
+```python
+from azure.ai.contentunderstanding import ContentUnderstandingClient, to_llm_input
+from azure.ai.contentunderstanding.models import AnalysisInput
+from azure.identity import DefaultAzureCredential
+
+client = ContentUnderstandingClient(endpoint, DefaultAzureCredential())
+
+poller = client.begin_analyze(
+    analyzer_id="prebuilt-invoice",
+    inputs=[AnalysisInput(url="https://example.com/invoice.pdf")],
+)
+result = poller.result()
+
+# One line to get LLM-ready text
+text = to_llm_input(result)
+print(text)
+# Output:
+#   ---
+#   contentType: document
+#   pages: 1
+#   fields:
+#     VendorName: CONTOSO LTD.
+#     InvoiceDate: '2019-11-15'
+#     TotalAmount: {Amount: 110, CurrencyCode: USD}
+#     LineItems:
+#     - Description: Consulting Services
+#       Quantity: 2
+#   ---
+#   <!-- page 1 -->
+#   CONTOSO LTD.
+#   # INVOICE ...
+```
+
+See the [advanced sample][python_cu_sample_to_llm_input] for output options (fields-only,
+markdown-only, custom metadata), multi-page content ranges, and multi-segment video.
+
 ## Troubleshooting
 
 ### Common issues
@@ -558,6 +601,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [python_cu_pypi]: https://pypi.org/project/azure-ai-contentunderstanding/
 [python_cu_product_docs]: https://learn.microsoft.com/azure/ai-services/content-understanding/
 [python_cu_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples
+[python_cu_sample_to_llm_input]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/contentunderstanding/azure-ai-contentunderstanding/samples/sample_to_llm_input.py
 [azure_sub]: https://azure.microsoft.com/free/
 [cu_quickstart]: https://learn.microsoft.com/azure/ai-services/content-understanding/quickstart/use-rest-api?tabs=portal%2Cdocument
 [cu_region_support]: https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support
