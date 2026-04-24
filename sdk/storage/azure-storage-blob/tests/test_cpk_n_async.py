@@ -3,12 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
 import asyncio
 from datetime import datetime, timedelta
 
 import pytest
-from azure.core.exceptions import HttpResponseError
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import BlobPreparer
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.blob import (
     AccountSasPermissions,
     BlobBlock,
@@ -23,9 +29,6 @@ from azure.storage.blob import (
 )
 from azure.storage.blob.aio import BlobServiceClient
 
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 # For local testing, ensure these encryption scopes are created for your account.
@@ -35,7 +38,8 @@ TEST_ENCRYPTION_SCOPE_2 = "testscope2"
 TEST_CONTAINER_ENCRYPTION_SCOPE = ContainerEncryptionScope(default_encryption_scope="testscope1")
 TEST_CONTAINER_ENCRYPTION_SCOPE_DENY_OVERRIDE = ContainerEncryptionScope(
     default_encryption_scope="testscope1",
-    prevent_encryption_scope_override=True)
+    prevent_encryption_scope_override=True
+)
 # ------------------------------------------------------------------------------
 
 
@@ -47,7 +51,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     def _teardown(self, bsc):
@@ -55,7 +59,7 @@ class TestStorageCPKAsync(AsyncStorageRecordedTestCase):
             loop = asyncio.get_event_loop()
             try:
                 loop.run_until_complete(bsc.delete_container(self.container_name))
-            except:
+            except ResourceExistsError:
                 pass
 
     # --Helpers-----------------------------------------------------------------

@@ -405,8 +405,8 @@ class TestStorageBlobEncryptionV2(StorageRecordedTestCase):
         metadata = blob.get_blob_properties().metadata
         encryption_data = loads(metadata['encryptiondata'])
         encrypted_key = base64.b64decode(encryption_data['WrappedContentKey']['EncryptedKey'])
-        cek = kek.unwrap_key(encrypted_key, 'A256KW')
-        encrypted_key = kek.wrap_key(cek[8:])
+        cek = kek.unwrap_key(encrypted_key, 'A256KW')  # pylint: disable=not-callable
+        encrypted_key = kek.wrap_key(cek[8:])  # pylint: disable=not-callable
         encrypted_key = base64.b64encode(encrypted_key).decode()
         encryption_data['WrappedContentKey']['EncryptedKey'] = encrypted_key
         metadata = {'encryptiondata': dumps(encryption_data)}
