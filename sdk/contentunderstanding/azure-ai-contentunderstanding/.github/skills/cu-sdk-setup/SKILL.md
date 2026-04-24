@@ -39,9 +39,22 @@ Before starting, ensure you have:
 > | Finding | Action |
 > |---|---|
 > | `Python 3.9+` and `venv: ok` and `pip` present | ✓ Good to go. Proceed to Step 1. |
-> | Python missing or `< 3.9` | Print platform-specific install hint: **Windows** → `winget install Python.Python.3.12`; **Debian/Ubuntu** → `sudo apt install python3.12 python3.12-venv`; **macOS** → `brew install python@3.12`. Stop and wait for user to install and re-open terminal. |
-> | `venv: MISSING` (common on Debian/Ubuntu base images) | Tell user to install `python3.x-venv` (e.g. `sudo apt install python3.12-venv`). |
-> | Windows resolves to a `WindowsApps\python*.exe` stub | Tell user to install real Python (`winget install Python.Python.3.12`) and use `py -3` going forward. The stub exits silently and breaks `venv`. |
+> | Python missing or `< 3.9` | Report the finding, then go to the **[ASK USER] Python install choice** block below. |
+> | `venv: MISSING` (common on Debian/Ubuntu base images) | Report the finding, then go to the **[ASK USER] Python install choice** block below. |
+> | Windows resolves to a `WindowsApps\python*.exe` stub | Report the finding, then go to the **[ASK USER] Python install choice** block below (auto-install cannot fix this — user must disable App Execution Aliases). |
+>
+> **[ASK USER] Python install choice (only when probe fails):**
+> Ask the user: "Python is missing / too old / the `venv` module is unavailable. How would you like to proceed?"
+> - **Option A: Install it for me** — Agent runs the platform-appropriate install command (see below), verifies, and continues. Requires elevated privileges on Linux (`sudo`). Not available for the Windows App Execution Alias case — that requires manual UI action.
+> - **Option B: I'll install it myself** — Agent prints the install command for the user's platform and stops. User runs it, re-opens the terminal, and tells the agent to resume.
+>
+> **Default install commands (Option A):**
+> - **macOS** → `brew install python@3.12` (requires Homebrew; if not installed, fall back to Option B)
+> - **Debian / Ubuntu / WSL** → `sudo apt update && sudo apt install -y python3.12 python3.12-venv` (will prompt for sudo password)
+> - **Debian / Ubuntu — `venv: MISSING` only** → `sudo apt install -y python3-venv` (matches the existing Python version)
+> - **Windows** → `winget install Python.Python.3.12` (run in an elevated PowerShell if needed)
+>
+> **Before running Option A, confirm with the user one more time** by restating the exact command that will execute, then proceed. After install, re-run the probe to verify `Python 3.9+` and `venv: ok` before continuing.
 >
 > **Windows gotcha — App Execution Aliases:** Even after uninstalling the Store Python stub, the `python.exe` / `python3.exe` entries under `C:\Users\<you>\AppData\Local\Microsoft\WindowsApps\` may persist as **App Execution Aliases** and shadow a real install. If the probe still reports a stub after the user confirms they installed real Python:
 >   1. Point them to **Settings → Apps → Advanced app settings → App execution aliases**, and toggle **off** `python.exe` and `python3.exe`.
@@ -90,6 +103,9 @@ else
 fi
 ```
 
+> **[COPILOT] Existing `.venv` behavior:**
+> If `.venv` already exists, prefer reusing it. If the existing virtual environment was created with a different Python minor version than the interpreter selected in the prerequisite probe, or if the environment is incomplete/corrupted, recreate `.venv` before continuing. This avoids subtle failures when the machine later upgrades from one supported Python version to another (for example, 3.9 → 3.12).
+
 **Activate virtual environment:**
 
 | Platform | Command |
@@ -127,6 +143,9 @@ pip install -r dev_requirements.txt
 pip install -e .
 pip install -r dev_requirements.txt
 ```
+
+> **[COPILOT] Repeated-run behavior:**
+> On repeated runs, if the required SDK/sample dependencies are already importable from the active virtual environment, the setup scripts may skip the `pip install` step instead of reinstalling everything. Only rerun the install commands when dependencies are missing or the virtual environment was recreated.
 
 This also installs all dependencies needed to run samples:
 - `aiohttp` - Required for async operations
@@ -355,13 +374,15 @@ This is a **one-time setup per Microsoft Foundry resource**.
 
 > **[ASK USER] Which samples?:**
 > Ask: "Which sample would you like to run first?" with options:
-> - `sample_analyze_url.py` — Analyze content from a URL (recommended start)
-> - `sample_analyze_binary.py` — Analyze a local file
+> - `sample_analyze_binary.py` — Analyze a local PDF (**recommended for first run; ~30-60s**)
+> - `sample_analyze_url.py` — Analyze document/video/audio/image from URLs (full demo; **~15-20 min** — do not kill early)
 > - `sample_analyze_invoice.py` — Extract invoice fields
 > - Other — Let me see the full list
 > - Skip — I'll run samples on my own later
 >
 > If the user picks "Other", list available samples from the `samples/` directory.
+>
+> **[COPILOT] Timing note:** `sample_analyze_url.py` runs 14 sequential LROs (document + video + audio + image, with multiple content-range variants). Video/audio chapter generation with GPT-4.1 is slow on the service side — total runtime is typically **15-20 minutes**. Do not interpret quiet periods (no stdout for several minutes during a video LRO) as a hang. Only consider killing if there is **no new stdout for 5+ minutes** AND no active HTTP traffic. For a quick end-to-end smoke test, use `sample_analyze_binary.py` instead.
 
 #### Sync Samples
 

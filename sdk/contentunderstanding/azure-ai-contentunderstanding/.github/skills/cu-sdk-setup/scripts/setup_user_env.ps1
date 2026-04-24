@@ -62,37 +62,121 @@ function Resolve-Python {
     return $null
 }
 
+# Offer to install Python via the platform's native installer. Returns $true
+# if an install was attempted so the caller can re-probe; $false if declined
+# or the platform has no supported installer.
+function Invoke-OfferInstallPython {
+    param(
+        [string]$Reason  # 'missing' | 'too_old' | 'no_venv'
+    )
+    $isWin = $IsWindows -or $PSVersionTable.PSEdition -eq 'Desktop'
+    $cmd = $null
+    if ($isWin) {
+        $winget = Get-Command winget -ErrorAction SilentlyContinue
+        if (-not $winget) {
+            Write-Host "    (winget not found — install Python 3.12 from https://www.python.org/downloads/)"
+            return $false
+        }
+        $cmd = 'winget install -e --id Python.Python.3.12 --accept-source-agreements --accept-package-agreements'
+    } elseif ($IsMacOS) {
+        $brew = Get-Command brew -ErrorAction SilentlyContinue
+        if (-not $brew) {
+            Write-Host "    (Homebrew not found — install it first: https://brew.sh/)"
+            return $false
+        }
+        $cmd = 'brew install python@3.12'
+    } elseif ($IsLinux) {
+        $apt = Get-Command apt-get -ErrorAction SilentlyContinue
+        if (-not $apt) {
+            Write-Host "    (No apt-get detected — install Python 3.9+ with your distro's package manager.)"
+            return $false
+        }
+        if ($Reason -eq 'no_venv') {
+            $cmd = 'sudo apt-get update && sudo apt-get install -y python3-venv'
+        } else {
+            $cmd = 'sudo apt-get update && sudo apt-get install -y python3.12 python3.12-venv'
+        }
+    } else {
+        Write-Host "    (Unsupported platform for auto-install.)"
+        return $false
+    }
+
+    Write-Host ""
+    Write-Host "  This script can run the following command for you:"
+    Write-Host "    $cmd"
+    $reply = Read-Host "  Run it now? (y/N)"
+    if ($reply -notmatch '^[Yy]$') {
+        Write-Host "  Please run it yourself, then re-run this script."
+        return $false
+    }
+
+    try {
+        if ($isWin) {
+            & winget install -e --id Python.Python.3.12 --accept-source-agreements --accept-package-agreements
+        } else {
+            bash -lc "$cmd"
+        }
+        if ($LASTEXITCODE -ne 0) { throw "installer exit code $LASTEXITCODE" }
+    } catch {
+        Write-Host "  [FAIL] Installation command failed: $_"
+        return $false
+    }
+    Write-Host "  [OK] Installation complete. Re-probing..."
+    return $true
+}
+
 # Step 0: Prerequisites check (Python 3.9+ with venv + pip)
 Write-Host "Step 0: Checking Python prerequisites..."
-$py = Resolve-Python
-if (-not $py) {
-    Write-Host "  [FAIL] Python 3 not found (or only Windows Store stub available)."
-    Write-Host "         Install real Python and retry:"
-    Write-Host "         winget install Python.Python.3.12"
-    exit 1
+$attempt = 1
+while ($true) {
+    $py = Resolve-Python
+    $failReason = $null
+    $verOut = $null
+
+    if (-not $py) {
+        Write-Host "  [FAIL] Python 3 not found (or only Windows Store stub available)."
+        $failReason = 'missing'
+    } else {
+        $verOut = & $py.Exe @($py.Args + '-c' + 'import sys; print("%d.%d" % sys.version_info[:2])') 2>$null
+        if ($LASTEXITCODE -ne 0 -or -not $verOut) {
+            Write-Host "  [FAIL] Could not determine Python version via '$($py.Exe) $($py.Args -join ' ')'."
+            $failReason = 'missing'
+        } else {
+            $parts = $verOut.Trim().Split('.')
+            $major = [int]$parts[0]; $minor = [int]$parts[1]
+            if ($major -lt 3 -or ($major -eq 3 -and $minor -lt 9)) {
+                Write-Host "  [FAIL] Found Python $verOut, need 3.9+."
+                $failReason = 'too_old'
+            } else {
+                & $py.Exe @($py.Args + '-c' + 'import venv') 2>$null | Out-Null
+                if ($LASTEXITCODE -ne 0) {
+                    Write-Host "  [FAIL] 'import venv' failed. Reinstall Python with the standard installer."
+                    $failReason = 'no_venv'
+                } else {
+                    & $py.Exe @($py.Args + '-m' + 'pip' + '--version') 2>$null | Out-Null
+                    if ($LASTEXITCODE -ne 0) {
+                        Write-Host "  [FAIL] pip not available. Run: $($py.Exe) $($py.Args -join ' ') -m ensurepip --upgrade"
+                        exit 1
+                    }
+                }
+            }
+        }
+    }
+
+    if (-not $failReason) {
+        Write-Host "  [OK] Python $verOut via '$($py.Exe) $($py.Args -join ' ')' (venv + pip OK)"
+        break
+    }
+
+    if ($attempt -ge 2) {
+        Write-Host "  [FAIL] Python prerequisites still not satisfied after install attempt. Aborting."
+        exit 1
+    }
+    if (-not (Invoke-OfferInstallPython -Reason $failReason)) {
+        exit 1
+    }
+    $attempt++
 }
-$verOut = & $py.Exe @($py.Args + '-c' + 'import sys; print("%d.%d" % sys.version_info[:2])') 2>$null
-if ($LASTEXITCODE -ne 0 -or -not $verOut) {
-    Write-Host "  [FAIL] Could not determine Python version via '$($py.Exe) $($py.Args -join ' ')'."
-    exit 1
-}
-$parts = $verOut.Trim().Split('.')
-$major = [int]$parts[0]; $minor = [int]$parts[1]
-if ($major -lt 3 -or ($major -eq 3 -and $minor -lt 9)) {
-    Write-Host "  [FAIL] Found Python $verOut, need 3.9+. Install: winget install Python.Python.3.12"
-    exit 1
-}
-& $py.Exe @($py.Args + '-c' + 'import venv') 2>$null | Out-Null
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "  [FAIL] 'import venv' failed. Reinstall Python with the standard installer."
-    exit 1
-}
-& $py.Exe @($py.Args + '-m' + 'pip' + '--version') 2>$null | Out-Null
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "  [FAIL] pip not available. Run: $($py.Exe) $($py.Args -join ' ') -m ensurepip --upgrade"
-    exit 1
-}
-Write-Host "  [OK] Python $verOut via '$($py.Exe) $($py.Args -join ' ')' (venv + pip OK)"
 Write-Host ""
 
 # Step 1: Check and create virtual environment
@@ -109,7 +193,25 @@ if (Test-Path '.venv') {
         Write-Host "  [WARN] Existing .venv was created on a different platform; recreating..."
         Remove-Item -Recurse -Force .venv
     } else {
-        Write-Host "  [OK] Virtual environment already exists at .venv"
+        # Check Python version mismatch: recreate .venv if the interpreter
+        # minor version differs from the one selected in Step 0.
+        $venvPyPath = if ($IsWindows -or $PSVersionTable.PSEdition -eq 'Desktop') {
+            '.venv\Scripts\python.exe'
+        } else {
+            '.venv/bin/python'
+        }
+        if (Test-Path $venvPyPath) {
+            $venvVer = & $venvPyPath -c 'import sys; print("%d.%d" % sys.version_info[:2])' 2>$null
+            if ($venvVer -and $verOut -and $venvVer.Trim() -ne $verOut.Trim()) {
+                Write-Host "  [WARN] Existing .venv uses Python $($venvVer.Trim()) but current interpreter is $($verOut.Trim()); recreating..."
+                Remove-Item -Recurse -Force .venv
+            } else {
+                Write-Host "  [OK] Virtual environment already exists at .venv"
+            }
+        } else {
+            Write-Host "  [WARN] Existing .venv is missing its Python interpreter; recreating..."
+            Remove-Item -Recurse -Force .venv
+        }
     }
 }
 if (-not (Test-Path '.venv')) {
@@ -148,15 +250,43 @@ Write-Host "  [OK] Virtual environment activated"
 Write-Host "  Python: $venvPython"
 Write-Host ""
 
+function Test-DependenciesInstalled {
+    $checkScript = @'
+required = [
+    "azure.ai.contentunderstanding",
+    "azure.identity",
+    "azure.storage.blob",
+    "aiohttp",
+    "dotenv",
+    "devtools_testutils",
+]
+for module_name in required:
+    __import__(module_name)
+'@
+    & $venvPython -c $checkScript *> $null
+    return ($LASTEXITCODE -eq 0)
+}
+
 # Step 3: Install SDK and dependencies
 Write-Host "Step 3: Installing SDK and dependencies..."
-Write-Host "  Installing azure-ai-contentunderstanding..."
-& $venvPython -m pip install azure-ai-contentunderstanding --quiet
-if ($LASTEXITCODE -ne 0) { Write-Host "  [ERROR] pip install failed." -ForegroundColor Red; exit 1 }
-Write-Host "  Installing sample dependencies..."
-& $venvPython -m pip install -r dev_requirements.txt --quiet
-if ($LASTEXITCODE -ne 0) { Write-Host "  [ERROR] pip install -r dev_requirements.txt failed." -ForegroundColor Red; exit 1 }
-Write-Host "  [OK] Dependencies installed"
+if (Test-DependenciesInstalled) {
+    Write-Host "  [OK] Required SDK dependencies already installed; skipping pip install"
+} else {
+    $modeChoice = Read-Host "  Install from PyPI [P] or local editable install [E]? (P/e)"
+    if ($modeChoice -match '^[Ee]$') {
+        Write-Host "  Installing azure-ai-contentunderstanding (editable)..."
+        & $venvPython -m pip install -e . --quiet
+        if ($LASTEXITCODE -ne 0) { Write-Host "  [ERROR] pip install -e . failed." -ForegroundColor Red; exit 1 }
+    } else {
+        Write-Host "  Installing azure-ai-contentunderstanding (PyPI)..."
+        & $venvPython -m pip install azure-ai-contentunderstanding --quiet
+        if ($LASTEXITCODE -ne 0) { Write-Host "  [ERROR] pip install failed." -ForegroundColor Red; exit 1 }
+    }
+    Write-Host "  Installing sample dependencies..."
+    & $venvPython -m pip install -r dev_requirements.txt --quiet
+    if ($LASTEXITCODE -ne 0) { Write-Host "  [ERROR] pip install -r dev_requirements.txt failed." -ForegroundColor Red; exit 1 }
+    Write-Host "  [OK] Dependencies installed"
+}
 Write-Host ""
 
 # Step 4: Configure environment file
