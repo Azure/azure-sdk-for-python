@@ -11,7 +11,7 @@ authors = [
     { name = "Microsoft Corporation", email = "azpysdkhelp@microsoft.com" },
 ]
 description = "Microsoft Azure Appnetwork Management Client Library for Python"
-license = "MIT"
+license = {text = "MIT License"}
 classifiers = [
     "Development Status :: 4 - Beta",
     "Programming Language :: Python",
