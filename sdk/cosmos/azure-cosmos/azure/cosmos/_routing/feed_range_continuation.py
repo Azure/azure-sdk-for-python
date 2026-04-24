@@ -672,11 +672,16 @@ def _update_no_progress_page_count(
     :returns: Updated consecutive no-progress page count.
     :rtype: int
     """
+    def _range_bounds(rng: Optional[routing_range.Range]) -> Optional[Tuple[str, str]]:
+        if rng is None:
+            return None
+        return rng.min, rng.max
+
     if page_items_returned > 0:
         return 0
     if current_backend_continuation is None:
         return 0
-    if current_feedrange != previous_feedrange:
+    if _range_bounds(current_feedrange) != _range_bounds(previous_feedrange):
         return 0
     if current_backend_continuation != previous_backend_continuation:
         return 0

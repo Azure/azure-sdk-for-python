@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 
+import re
 from enum import Enum
 from typing import Any, Optional, Union
 
@@ -56,9 +57,10 @@ def _get_select_value_aggregate_function(query: Optional[Union[str, dict[str, An
         return None
 
     # NOTE: This checks the full normalized query text, so aggregate function
-    # names inside subqueries can be matched as false positives.
+    # names inside subqueries can still be matched as false positives.
+    # Match whole function names only (avoid MYCOUNT) and allow COUNT (1).
     for aggregate_fn in ("COUNT", "SUM", "MIN", "MAX", "AVG"):
-        if f"{aggregate_fn}(" in normalized:
+        if re.search(rf"(?<![A-Z0-9_]){aggregate_fn}\s*\(", normalized):
             return aggregate_fn
     return None
 

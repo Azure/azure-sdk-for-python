@@ -28,6 +28,7 @@ import pytest
 
 from azure.cosmos import _base
 from azure.cosmos import http_constants
+from azure.cosmos._query_aggregate_utils import _get_select_value_aggregate_function
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.feed_range_continuation import (
     _MAX_CONSECUTIVE_NO_PROGRESS_PAGES,
@@ -773,6 +774,16 @@ class TestAggregateMergeConsistency:
 
         assert "VALUE aggregate classification" in str(excinfo.value)
 
+    def test_value_aggregate_detection_allows_space_before_open_paren(self):
+        query = "SELECT VALUE COUNT (1) FROM c"
+        assert _get_select_value_aggregate_function(query) == "COUNT"
+        assert _count_page_items_from_partial_result({"Documents": [7]}, query) == 0
+
+    def test_value_aggregate_detection_does_not_match_function_substrings(self):
+        query = "SELECT VALUE MYCOUNT(1) FROM c"
+        assert _get_select_value_aggregate_function(query) is None
+        assert _count_page_items_from_partial_result({"Documents": [7]}, query) == 1
+
 
 class TestEmptyPageStallCounter:
     """No-progress guard only counts empty pages that still carry continuation."""
@@ -785,6 +796,18 @@ class TestEmptyPageStallCounter:
             previous_feedrange=current_feedrange,
             previous_backend_continuation="token",
             current_feedrange=current_feedrange,
+            current_backend_continuation="token",
+        ) == 4
+
+    def test_increments_when_equal_bounds_are_different_objects(self):
+        # Guard against regressions where two equivalent ranges are reconstructed
+        # as distinct objects between loop iterations.
+        assert _update_no_progress_page_count(
+            3,
+            page_items_returned=0,
+            previous_feedrange=_mk_range("10", "20"),
+            previous_backend_continuation="token",
+            current_feedrange=_mk_range("10", "20"),
             current_backend_continuation="token",
         ) == 4
 

@@ -3500,13 +3500,19 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     )
                 except Exception:  # pylint: disable=broad-exception-caught
                     # Preserve resume progress if a later POST fails mid-page.
-                    pagination_state.write_outbound_continuation(
-                        feedrange_response_headers,
-                        resource_id_str,
-                        query,
-                        feed_range_epk,
-                    )
-                    self.last_response_headers = feedrange_response_headers
+                    try:
+                        pagination_state.write_outbound_continuation(
+                            feedrange_response_headers,
+                            resource_id_str,
+                            query,
+                            feed_range_epk,
+                        )
+                        self.last_response_headers = feedrange_response_headers
+                    except Exception as continuation_write_error:  # pylint: disable=broad-exception-caught
+                        _LOGGER.warning(
+                            "Failed to write continuation while handling query POST failure: %s",
+                            continuation_write_error,
+                        )
                     raise
                 feedrange_response_headers = backend_response_headers
                 self.last_response_headers = feedrange_response_headers

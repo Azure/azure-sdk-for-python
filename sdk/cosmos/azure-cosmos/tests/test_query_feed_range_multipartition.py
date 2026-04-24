@@ -294,6 +294,64 @@ class TestFeedRangeMultiPartition:
             f"missing={len(ground_truth - unique)}, "
             f"unexpected={len(unique - ground_truth)}.")
 
+    def test_two_partition_feed_range_count_aggregate_pagination(self):
+        """Run a VALUE aggregate through a two-partition crossing feed_range.
+
+        Guards aggregate-specific invariants on the multi-overlap path:
+          (a) each logical page still respects ``max_item_count``,
+          (b) partial aggregate fragments are merged client-side (one scalar
+              result after draining),
+          (c) merged count matches an independent per-partition scan baseline.
+        """
+        container = _get_container()
+        partitions = _sorted_partition_ranges(container)
+        if len(partitions) < 2:
+            pytest.skip("Need a container with ≥ 2 physical partitions")
+
+        chosen = None
+        for i in range(len(partitions) - 1):
+            p0, p1 = partitions[i], partitions[i + 1]
+            if (_count_in_range(container, p0[0], p0[1]) >= MIN_DOCS_PER_PARTITION
+                    and _count_in_range(container, p1[0], p1[1]) >= MIN_DOCS_PER_PARTITION):
+                chosen = (p0, p1)
+                break
+        if chosen is None:
+            pytest.skip("No adjacent partition pair both populated with ≥ "
+                        f"{MIN_DOCS_PER_PARTITION} docs")
+        (p0_min, _), (_, p1_max) = chosen
+        crossing = _crossing_feed_range(p0_min, p1_max)
+
+        # Ground truth from independent per-partition scans, not aggregate path.
+        expected_count = len(_ids_via_per_partition_scan(container, [chosen[0], chosen[1]]))
+
+        pager = container.query_items(
+            query="SELECT VALUE COUNT(1) FROM c",
+            feed_range=crossing,
+            max_item_count=1,
+        ).by_page()
+
+        pages: List[List[int]] = []
+        merged_rows: List[int] = []
+        for page in pager:
+            items = list(page)
+            pages.append(items)
+            merged_rows.extend(items)
+
+        oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > 1]
+        assert not oversized, (
+            "aggregate page-size limit violated (max_item_count=1); "
+            f"page sizes={[len(p) for p in pages]}, oversized={oversized}.")
+
+        assert len(merged_rows) == 1, (
+            "aggregate merge leaked partial fragments or dropped final value; "
+            f"expected one merged row, got {len(merged_rows)} rows: {merged_rows}")
+        assert merged_rows[0] == expected_count, (
+            "merged COUNT result mismatch for two-partition crossing feed_range; "
+            f"returned={merged_rows[0]}, expected={expected_count}")
+        assert pager.continuation_token in (None, "", b""), (
+            f"expected empty continuation after draining aggregate query; got "
+            f"{pager.continuation_token!r}")
+
     # ------------------------------------------------------------------ #
     # Three-way overlap (synthetic, wider fan-out)
     # ------------------------------------------------------------------ #
