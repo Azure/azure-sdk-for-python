@@ -9,6 +9,7 @@
 ### Breaking Changes
 
 - Renamed `BatchNodeUserUpdateOptions` to `BatchNodeUserReplaceOptions`.
+- Renamed `OutputFileUploadConfig` to `OutputFileUploadConfiguration`.
 
 - Removed Models:
   - Removed `AuthenticationTokenSettings`
@@ -29,6 +30,8 @@
 
 - Renamed public methods:
   - `list_sub_tasks` -> `list_subtasks`
+  - `get_task_file` -> `download_task_file`
+  - `get_node_file` -> `download_node_file`
   
 - Renamed parameters across all operation methods:
   - `timeout` -> `service_timeout`
