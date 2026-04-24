@@ -50,19 +50,9 @@
   - Added model `SignalInstanceProperties`
   - Added model `SignalStatus`
   - Added model `ThresholdRuleV2`
-  - Operation group `AuthenticationSettingsOperations` added method `begin_create_or_update`
-  - Operation group `AuthenticationSettingsOperations` added method `begin_delete`
-  - Operation group `DiscoveryRulesOperations` added method `begin_create_or_update`
-  - Operation group `DiscoveryRulesOperations` added method `begin_delete`
-  - Operation group `EntitiesOperations` added method `begin_create_or_update`
-  - Operation group `EntitiesOperations` added method `begin_delete`
   - Operation group `EntitiesOperations` added method `get_history`
   - Operation group `EntitiesOperations` added method `get_signal_history`
   - Operation group `EntitiesOperations` added method `ingest_health_report`
-  - Operation group `RelationshipsOperations` added method `begin_create_or_update`
-  - Operation group `RelationshipsOperations` added method `begin_delete`
-  - Operation group `SignalDefinitionsOperations` added method `begin_create_or_update`
-  - Operation group `SignalDefinitionsOperations` added method `begin_delete`
 
 ### Breaking Changes
 
@@ -107,16 +97,16 @@
   - Deleted or renamed model `SignalAssignment`
   - Deleted or renamed model `SignalGroup`
   - Deleted or renamed model `ThresholdRule`
-  - Deleted or renamed method `AuthenticationSettingsOperations.create_or_update`
-  - Deleted or renamed method `AuthenticationSettingsOperations.delete`
-  - Deleted or renamed method `DiscoveryRulesOperations.create_or_update`
-  - Deleted or renamed method `DiscoveryRulesOperations.delete`
-  - Deleted or renamed method `EntitiesOperations.create_or_update`
-  - Deleted or renamed method `EntitiesOperations.delete`
-  - Deleted or renamed method `RelationshipsOperations.create_or_update`
-  - Deleted or renamed method `RelationshipsOperations.delete`
-  - Deleted or renamed method `SignalDefinitionsOperations.create_or_update`
-  - Deleted or renamed method `SignalDefinitionsOperations.delete`
+  - Method `AuthenticationSettingsOperations.create_or_update` was converted to a long-running operation and renamed to `begin_create_or_update`
+  - Method `AuthenticationSettingsOperations.delete` was converted to a long-running operation and renamed to `begin_delete`
+  - Method `DiscoveryRulesOperations.create_or_update` was converted to a long-running operation and renamed to `begin_create_or_update`
+  - Method `DiscoveryRulesOperations.delete` was converted to a long-running operation and renamed to `begin_delete`
+  - Method `EntitiesOperations.create_or_update` was converted to a long-running operation and renamed to `begin_create_or_update`
+  - Method `EntitiesOperations.delete` was converted to a long-running operation and renamed to `begin_delete`
+  - Method `RelationshipsOperations.create_or_update` was converted to a long-running operation and renamed to `begin_create_or_update`
+  - Method `RelationshipsOperations.delete` was converted to a long-running operation and renamed to `begin_delete`
+  - Method `SignalDefinitionsOperations.create_or_update` was converted to a long-running operation and renamed to `begin_create_or_update`
+  - Method `SignalDefinitionsOperations.delete` was converted to a long-running operation and renamed to `begin_delete`
 
 ## 1.0.0b1 (2025-06-04)
 
