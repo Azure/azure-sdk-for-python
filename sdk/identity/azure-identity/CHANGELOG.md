@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Added `RequestIdPolicy` to the default pipeline policies to ensure a unique `x-ms-client-request-id` header is sent with each request. ([#46070](https://github.com/Azure/azure-sdk-for-python/pull/46070))
+
 ## 1.25.3 (2026-03-12)
 
 ### Bugs Fixed
