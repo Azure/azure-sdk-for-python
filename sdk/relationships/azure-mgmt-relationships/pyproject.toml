@@ -71,6 +71,7 @@ pytyped = [
 breaking = false
 pyright = false
 mypy = false
+verifytypes = false
 
 [packaging]
 package_name = "azure-mgmt-relationships"
