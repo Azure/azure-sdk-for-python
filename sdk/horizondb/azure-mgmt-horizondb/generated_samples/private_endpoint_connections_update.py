@@ -1,4 +1,3 @@
-# pylint: disable=line-too-long,useless-suppression
 # coding=utf-8
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
@@ -9,14 +8,14 @@
 
 from azure.identity import DefaultAzureCredential
 
-from azure.mgmt.containerservice import ContainerServiceClient
+from azure.mgmt.horizondb import HorizonDBMgmtClient
 
 """
 # PREREQUISITES
     pip install azure-identity
-    pip install azure-mgmt-containerservice
+    pip install azure-mgmt-horizondb
 # USAGE
-    python agent_pools_create_crg.py
+    python private_endpoint_connections_update.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,28 +25,26 @@ from azure.mgmt.containerservice import ContainerServiceClient
 
 
 def main():
-    client = ContainerServiceClient(
+    client = HorizonDBMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="SUBSCRIPTION_ID",
     )
 
-    response = client.agent_pools.begin_create_or_update(
-        resource_group_name="rg1",
-        resource_name="clustername1",
-        agent_pool_name="agentpool1",
-        parameters={
+    response = client.horizon_db_private_endpoint_connections.begin_update(
+        resource_group_name="exampleresourcegroup",
+        private_endpoint_connection_name="exampleprivateendpointconnection.1fa229cd-bf3f-47f0-8c49-afb36723997e",
+        properties={
             "properties": {
-                "capacityReservationGroupID": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rg1/providers/Microsoft.Compute/CapacityReservationGroups/crg1",
-                "count": 3,
-                "orchestratorVersion": "",
-                "osType": "Linux",
-                "vmSize": "Standard_DS2_v2",
+                "privateLinkServiceConnectionState": {
+                    "description": "Approved by `johndoe@contoso.com <mailto:johndoe@contoso.com>`_",
+                    "status": "Approved",
+                }
             }
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: 2026-02-01/AgentPoolsCreate_CRG.json
+# x-ms-original-file: 2026-01-20-preview/PrivateEndpointConnections_Update.json
 if __name__ == "__main__":
     main()
