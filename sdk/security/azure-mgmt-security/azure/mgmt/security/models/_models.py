@@ -13398,6 +13398,10 @@ class PricingProperties(_Model):
         super().__init__(*args, **kwargs)
 
 
+class Private_link_parameters(_Model):
+    """Private_link_parameters."""
+
+
 class PrivateEndpoint(_Model):
     """The private endpoint resource.
 

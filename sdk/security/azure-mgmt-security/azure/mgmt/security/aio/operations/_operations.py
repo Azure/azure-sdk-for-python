@@ -23262,16 +23262,13 @@ class PrivateLinksOperations:
         self._deserialize: Deserializer = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def get(self, resource_group_name: str, private_link_name: str, **kwargs: Any) -> _models.PrivateLinkResource:
+    async def get(self, resource_group_name: str, **kwargs: Any) -> _models.PrivateLinkResource:
         """Get a private link resource. Returns the configuration and status of private endpoint
         connectivity for Microsoft Defender for Cloud services in the specified region.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
          Required.
         :type resource_group_name: str
-        :param private_link_name: The name of the private link resource. Must be unique within the
-         resource group and follow Azure naming conventions. Required.
-        :type private_link_name: str
         :return: PrivateLinkResource. The PrivateLinkResource is compatible with MutableMapping
         :rtype: ~azure.mgmt.security.models.PrivateLinkResource
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -23292,7 +23289,6 @@ class PrivateLinksOperations:
 
         _request = build_private_links_get_request(
             resource_group_name=resource_group_name,
-            private_link_name=private_link_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             headers=_headers,

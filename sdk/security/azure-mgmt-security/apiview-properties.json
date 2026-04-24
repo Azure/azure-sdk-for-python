@@ -290,6 +290,7 @@
         "azure.mgmt.security.models.PartialAssessmentProperties": "SecurityStandardsAPI.PartialAssessmentProperties",
         "azure.mgmt.security.models.Pricing": "PricingsAPI.Pricing",
         "azure.mgmt.security.models.PricingProperties": "PricingsAPI.PricingProperties",
+        "azure.mgmt.security.models.Private_link_parameters": "SecurityManagementClient.private-link-parameters",
         "azure.mgmt.security.models.PrivateEndpoint": "Azure.ResourceManager.CommonTypes.PrivateEndpoint",
         "azure.mgmt.security.models.PrivateEndpointConnection": "PrivateLinksAPI.PrivateEndpointConnection",
         "azure.mgmt.security.models.PrivateEndpointConnectionProperties": "Azure.ResourceManager.CommonTypes.PrivateEndpointConnectionProperties",

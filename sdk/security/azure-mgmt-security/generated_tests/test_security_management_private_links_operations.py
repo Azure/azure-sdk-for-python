@@ -23,7 +23,6 @@ class TestSecurityManagementPrivateLinksOperations(AzureMgmtRecordedTestCase):
     def test_private_links_get(self, resource_group):
         response = self.client.private_links.get(
             resource_group_name=resource_group.name,
-            private_link_name="str",
             api_version="2026-01-01",
         )
 
