@@ -2007,10 +2007,6 @@ class TestLogEventsTokenUsage:
         """Create a mock event logger that captures emitted events."""
         emitted = []
 
-        class FakeEvent:
-            def __init__(self, **kwargs):
-                self.kwargs = kwargs
-
         class FakeEventLogger:
             def emit(self, event):
                 emitted.append(event)
