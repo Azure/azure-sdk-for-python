@@ -12,7 +12,7 @@ import pytest
 import requests
 
 from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
-from devtools_testutils.storage import LogCaptured, StorageRecordedTestCase
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
 from azure.core import MatchConditions
@@ -1954,7 +1954,7 @@ class TestStorageContainer(StorageRecordedTestCase):
         tiers = [StandardBlobTier.Archive, StandardBlobTier.Cool, StandardBlobTier.Hot]
 
         for tier in tiers:
-            response = container.delete_blobs(
+            container.delete_blobs(
                 'blob1',
                 'blob2',
                 'blob3',
@@ -2054,7 +2054,7 @@ class TestStorageContainer(StorageRecordedTestCase):
             assert not blob_ref2.blob_tier_inferred
             assert blob_ref2.blob_tier_change_time is not None
 
-        response = container.delete_blobs(
+        container.delete_blobs(
             'blob1',
             'blob2',
             'blob3',

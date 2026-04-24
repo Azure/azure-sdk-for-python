@@ -3,10 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, expression-not-assigned, too-many-public-methods
 
 from datetime import datetime, timedelta
 
 import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
+from settings.testcase import BlobPreparer
+
 from azure.core import MatchConditions
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError, ResourceModifiedError
 from azure.storage.blob import (
@@ -23,10 +30,6 @@ from azure.storage.blob import (
     StorageErrorCode,
 )
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
-from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 LARGE_APPEND_BLOB_SIZE = 64 * 1024

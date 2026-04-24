@@ -8,7 +8,6 @@
 import base64
 import random
 import tempfile
-import uuid
 from io import BytesIO
 from math import ceil
 

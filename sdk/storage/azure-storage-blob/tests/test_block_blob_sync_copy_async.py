@@ -3,18 +3,22 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
+
 import asyncio
 from datetime import datetime, timedelta
 
 import pytest
-from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import BlobSasPermissions, StandardBlobTier, StorageErrorCode, generate_blob_sas
-from azure.storage.blob.aio import BlobClient, BlobServiceClient
-from azure.storage.blob._shared.policies import StorageContentValidation
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.storage.blob import BlobSasPermissions, StandardBlobTier, StorageErrorCode, generate_blob_sas
+from azure.storage.blob.aio import BlobClient, BlobServiceClient
+from azure.storage.blob._shared.policies import StorageContentValidation
+
 
 # ------------------------------------------------------------------------------
 SOURCE_BLOB_SIZE = 8 * 1024
@@ -46,7 +50,7 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
             await blob.upload_blob(self.source_blob_data, overwrite=True)
 
