@@ -185,30 +185,15 @@ class TestSamples(AzureRecordedTestCase):
         "sample_path",
         get_sample_paths(
             "hosted_agents",
-            samples_to_skip=["sample_hosted_agent_create.py"],
+            samples_to_skip=[],
         ),
     )
     @servicePreparer()
     @SamplePathPasser()
     @recorded_by_proxy(RecordedTransport.AZURE_CORE, RecordedTransport.HTTPX)
     def test_hosted_agents_samples(self, sample_path: str, **kwargs) -> None:
-        env_vars = get_sample_env_vars(kwargs)
-        executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
-        executor.execute()
-        executor.validate_print_calls_by_llm()
-
-    @pytest.mark.parametrize(
-        "sample_path",
-        get_sample_paths(
-            "hosted_agents",
-            samples_to_test=["sample_hosted_agent_create.py"],
-        ),
-    )
-    @servicePreparer()
-    @SamplePathPasser()
-    def test_hosted_agents_samples_no_recording(self, sample_path: str, **kwargs) -> None:
-        # sample_hosted_agent_create.py is tested separately without recording/playback
-        # due to variable RBAC permissions that cannot be reliably recorded/replayed
+        if os.path.basename(sample_path) == "sample_hosted_agent_create.py" and not self.is_live:
+            pytest.skip("sample_hosted_agent_create.py is skipped in replay mode due to RBAC complications.")
         env_vars = get_sample_env_vars(kwargs)
         executor = SyncSampleExecutor(self, sample_path, env_vars=env_vars, **kwargs)
         executor.execute()
