@@ -1,0 +1,10 @@
+{
+  "apiVersion": "2025-05-01",
+  "apiVersions": {
+    "Microsoft.ResourceHealth": "2025-05-01"
+  },
+  "commit": "cf78c8a0e5a4b71b589ba613230622b11a9f3a05",
+  "repository_url": "https://github.com/Azure/azure-rest-api-specs",
+  "typespec_src": "specification/resourcehealth/resource-manager/Microsoft.ResourceHealth/ResourceHealth",
+  "emitterVersion": "0.61.3"
+}
