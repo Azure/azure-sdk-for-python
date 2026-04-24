@@ -85,7 +85,7 @@ async def main() -> None:
             print("Listing session files for the session at path '.'...")
             files = await project_client.beta.agents.get_session_files(
                 agent_name=agent_name,
-                session_id=session_id,
+                agent_session_id=session_id,
                 path="/remote",
             )
             for entry in files.entries:
@@ -94,7 +94,7 @@ async def main() -> None:
             print(f"Downloading and printing content from '{remote_file_path1}'")
             download_stream = await project_client.beta.agents.download_session_file(
                 agent_name=agent_name,
-                session_id=session_id,
+                agent_session_id=session_id,
                 path=remote_file_path1,
             )
             content_bytes = b"".join([chunk async for chunk in download_stream])
@@ -104,14 +104,14 @@ async def main() -> None:
             print(f"Deleting session file at path: {remote_file_path1}...")
             await project_client.beta.agents.delete_session_file(
                 agent_name=agent_name,
-                session_id=session_id,
+                agent_session_id=session_id,
                 path=remote_file_path1,
             )
 
             print(f"Deleting session file at path: {remote_file_path2}...")
             await project_client.beta.agents.delete_session_file(
                 agent_name=agent_name,
-                session_id=session_id,
+                agent_session_id=session_id,
                 path=remote_file_path2,
             )
 

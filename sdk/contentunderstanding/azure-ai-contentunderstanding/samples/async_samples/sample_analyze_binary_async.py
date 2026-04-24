@@ -107,7 +107,7 @@ async def main() -> None:
         if isinstance(range_result.contents[0], DocumentContent):
             range_doc = range_result.contents[0]
             print(
-                f"Content range analysis returned pages"
+                "Content range analysis returned pages"
                 f" {range_doc.start_page_number} - {range_doc.end_page_number}"
             )
         # [END analyze_binary_with_content_range]
@@ -125,7 +125,7 @@ async def main() -> None:
         if isinstance(combine_range_result.contents[0], DocumentContent):
             combine_doc = combine_range_result.contents[0]
             print(
-                f"Combined content range analysis returned pages"
+                "Combined content range analysis returned pages"
                 f" {combine_doc.start_page_number} - {combine_doc.end_page_number}"
             )
         # [END analyze_binary_with_combined_content_range]

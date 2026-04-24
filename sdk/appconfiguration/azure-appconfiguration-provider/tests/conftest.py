@@ -83,6 +83,6 @@ def no_startup_backoff(request, monkeypatch):
     if request.fspath.basename == "test_startup_retry.py":  # cspell:ignore fspath
         return
     monkeypatch.setattr(
-        "azure.appconfiguration.provider._azureappconfigurationprovider._get_startup_backoff",
+        "azure.appconfiguration.provider._azureappconfigurationprovider.get_startup_backoff",
         lambda *args, **kwargs: (0, False),
     )

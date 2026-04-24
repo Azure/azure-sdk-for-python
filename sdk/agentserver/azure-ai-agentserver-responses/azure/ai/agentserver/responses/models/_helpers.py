@@ -124,14 +124,20 @@ def get_input_expanded(request: CreateResponse) -> list[Item]:
             items.append(d)
         else:
             items.append(_deserialize(Item, d))
+
+    # Auto-expand string content on message items so downstream consumers
+    # always see list[MessageContent] (matches .NET ExpandContent behaviour).
+    for item in items:
+        if isinstance(item, ItemMessage) and isinstance(item.content, str):
+            item.content = get_content_expanded(item)
+
     return items
 
 
 def _get_input_text(request: CreateResponse) -> str:
     """Extract all text content from ``CreateResponse.input`` as a single string.
 
-    Internal helper — callers should use :meth:`ResponseContext.get_input_text`
-    instead, which handles item-reference resolution.
+    Internal helper — callers should use :meth:`ResponseContext.get_input_text`.
 
     :param request: The create-response request.
     :type request: CreateResponse
@@ -286,9 +292,10 @@ def get_output_item_id(item: OutputItem) -> str:
 def get_content_expanded(message: ItemMessage) -> list[MessageContent]:
     """Return the typed content list from an :class:`ItemMessage`.
 
-    In Python the generated ``ItemMessage.content`` is already
-    ``list[MessageContent]``, so this is a convenience passthrough that
-    returns an empty list when content is ``None``.
+    If ``content`` is a plain string (the API allows a string shorthand),
+    it is wrapped as a single :class:`MessageContentInputTextContent`.
+    If it is already a list, returns a shallow copy.
+    Returns an empty list when content is ``None``.
 
     :param message: The item message.
     :type message: ItemMessage
@@ -296,7 +303,11 @@ def get_content_expanded(message: ItemMessage) -> list[MessageContent]:
     :rtype: list[MessageContent]
     """
     content = _get_field(message, "content")
-    return list(content) if content else []
+    if content is None:
+        return []
+    if isinstance(content, str):
+        return [MessageContentInputTextContent(text=content)] if content else []
+    return list(content)
 
 
 # ---------------------------------------------------------------------------
