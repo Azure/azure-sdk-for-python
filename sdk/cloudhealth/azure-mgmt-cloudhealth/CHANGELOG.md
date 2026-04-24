@@ -56,7 +56,6 @@
 
 ### Breaking Changes
 
-  - This version introduces new hybrid models which have dual dictionary and model nature. Please follow https://aka.ms/azsdk/python/migrate/hybrid-models for migration.
   - Deleted or renamed enum value `DependenciesAggregationType.THRESHOLDS`
   - Model `DiscoveryRuleProperties` deleted or renamed its instance variable `resource_graph_query`
   - Model `DiscoveryRuleProperties` deleted or renamed its instance variable `deletion_date`
