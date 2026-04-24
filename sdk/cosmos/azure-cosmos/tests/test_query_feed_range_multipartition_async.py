@@ -387,6 +387,7 @@ class TestFeedRangeMultiPartitionAsync:
             ground_truth = await _ids_via_per_partition_scan(
                 container, [chosen[0], chosen[1]])
 
+            # cspell:ignore AOXB BAAAAAAAAAA EAAAAFAAAA
             legacy_token = "+RID:~Yxs1AOXBSp4BAAAAAAAAAA==#RT:1#TRC:5#ISV:2#IEO:65567#FPC:AgEAAAAFAAAA"
 
             pager = container.query_items(

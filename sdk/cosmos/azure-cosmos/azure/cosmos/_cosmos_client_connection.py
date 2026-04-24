@@ -75,14 +75,15 @@ from ._request_object import RequestObject
 from ._retry_utility import ConnectionRetryPolicy
 from ._routing import routing_map_provider
 from ._routing.feed_range_continuation import (
+    _FeedRangePaginationState,
+    _MAX_CONSECUTIVE_NO_PROGRESS_PAGES,
     _apply_feedrange_request_headers,
     _build_scope_from_overlaps,
+    _count_page_items_from_partial_result,
     _decode_token,
     _derive_initial_feedranges,
-    _explode_feedrange_on_multi_overlap,
-    _extract_resume_state,
     _normalize_max_item_count,
-    _set_outbound_continuation,
+    _update_no_progress_page_count,
     _validate_token_identity,
 )
 from ._query_advisor import get_query_advice_info
@@ -3311,15 +3312,15 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 change_feed_state.populate_request_headers(self._routing_map_provider, headers, feed_options)
                 request_params.headers = headers
 
-            result, last_response_headers = self.__Get(path, request_params, headers, **kwargs)
-            self.last_response_headers = last_response_headers
+            result, get_response_headers = self.__Get(path, request_params, headers, **kwargs)
+            self.last_response_headers = get_response_headers
             if internal_headers_capture is not None:
-                _capture_internal_headers(last_response_headers)
+                _capture_internal_headers(get_response_headers)
             if response_headers_list is not None:
-                response_headers_list.append(last_response_headers.copy())
+                response_headers_list.append(get_response_headers.copy())
             if response_hook:
-                response_hook(last_response_headers, result)
-            return __GetBodiesFromQueryResult(result), last_response_headers
+                response_hook(get_response_headers, result)
+            return __GetBodiesFromQueryResult(result), get_response_headers
 
         query = self.__CheckAndUnifyQueryFormat(query)
 
@@ -3355,7 +3356,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
             req_headers[http_constants.HttpHeaders.IsQuery] = "true"
             base.set_session_token_header(self, req_headers, path, request_params, options, partition_key_range_id)
 
-        # Check if the over lapping ranges can be populated
+        # Check if the overlapping ranges can be populated
         feed_range_epk = None
         if "feed_range" in kwargs:
             feed_range = kwargs.pop("feed_range")
@@ -3368,21 +3369,32 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
 
         # If feed_range_epk exist, query with the range
         if feed_range_epk is not None:
+            if resource_id is None:
+                raise ValueError("resource_id is required for feed_range continuation.")
+            # Narrow ``resource_id`` (Optional[str]) to ``str`` for the helpers below.
+            # ``cast`` carries the narrowing reliably across the alias even when
+            # mypy widens it again later in this long pagination block.
+            resource_id_str: str = cast(str, resource_id)
             # (a) Look at the continuation the caller passed in.
             #     - Empty or from a pre-fix SDK: start fresh.
             #     - One of our v=1 envelopes: check the collection, query, and
             #       feed_range still match before resuming from it.
+            #
+            # Shared state transitions (resume, split handling, page-item update,
+            # outbound token) live in _FeedRangePaginationState so sync/async
+            # stay behaviorally aligned.
+            items_left_in_page = _normalize_max_item_count(options.get("maxItemCount"))
             inbound = _decode_token(options.get("continuation"))
             if inbound is not None:
-                _validate_token_identity(inbound, resource_id, query, feed_range_epk)
-                current_feedrange, remaining_feedranges, next_backend_cont = _extract_resume_state(inbound)
+                _validate_token_identity(inbound, resource_id_str, query, feed_range_epk)
+                pagination_state = _FeedRangePaginationState.from_inbound(inbound, items_left_in_page)
             else:
                 # First call (or legacy passthrough). Ask the routing map which
                 # partitions the input feed_range overlaps right now and turn
                 # each overlap into a feedrange (intersection of that partition
                 # and the input feed_range).
                 first_overlaps = self._routing_map_provider.get_overlapping_ranges(
-                    resource_id, [feed_range_epk], options
+                    resource_id, [feed_range_epk], dict(options)
                 )
                 all_feedranges = _derive_initial_feedranges(feed_range_epk, first_overlaps)
                 if not all_feedranges:
@@ -3395,35 +3407,25 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     empty_headers: CaseInsensitiveDict = CaseInsensitiveDict()
                     self.last_response_headers = empty_headers
                     return [], empty_headers
-                current_feedrange, remaining_feedranges = all_feedranges[0], all_feedranges[1:]
-                next_backend_cont = None
-
-            # (b) max_item_count is the cap for the page we hand back to the
-            # caller. We may need several backend POSTs to fill it (one per
-            # feedrange we have to query). Once the cap is reached we stop;
-            # any feedranges we have not started yet go into the outbound
-            # token so the next call picks up from there.
-            #
-            # Non-positive or non-numeric caps are normalized to "unbounded"
-            # (None) by _normalize_max_item_count: a cap of 0 / -1 would
-            # otherwise make the loop short-circuit before issuing any POST
-            # and emit a continuation token whose current_feedrange is
-            # unchanged - the caller would then pull empty pages forever
-            # without making progress.
-            remaining_budget = _normalize_max_item_count(options.get("maxItemCount"))
+                pagination_state = _FeedRangePaginationState.from_derived_feedranges(
+                    all_feedranges,
+                    items_left_in_page,
+                )
 
             results: dict[str, Any] = {}
-            last_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
+            feedrange_response_headers: CaseInsensitiveDict = CaseInsensitiveDict()
+            consecutive_no_progress_pages = 0
 
-            while True:
-                if remaining_budget is not None and remaining_budget <= 0:
-                    break  # cap reached; carry the unfinished feedranges forward
+            while pagination_state.can_issue_request():
+                current_feedrange = pagination_state.current_feedrange
+                if current_feedrange is None:
+                    break
 
                 # Look up the live routing map for the current feedrange.
                 # Doing this every iteration is what makes the token
                 # split-safe.
                 overlapping = self._routing_map_provider.get_overlapping_ranges(
-                    resource_id, [current_feedrange], options
+                    resource_id, [current_feedrange], dict(options)
                 )
                 overlapping, partition_scope = _build_scope_from_overlaps(
                     overlapping, current_feedrange
@@ -3453,27 +3455,24 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # Note: if the caller had already pulled some rows from X
                 # before the split, those rows show up again on this resume.
                 # The customer dedupes by document id.
-                current_feedrange, remaining_feedranges, did_explode = _explode_feedrange_on_multi_overlap(
-                    current_feedrange,
-                    overlapping,
-                    remaining_feedranges,
-                )
-                if did_explode:
-                    next_backend_cont = None
+                if pagination_state.explode_on_multi_overlap(overlapping):
+                    current_feedrange = pagination_state.current_feedrange
+                    if current_feedrange is None:
+                        break
                     overlapping = self._routing_map_provider.get_overlapping_ranges(
-                        resource_id, [current_feedrange], options
+                        resource_id, [current_feedrange], dict(options)
                     )
                     overlapping, partition_scope = _build_scope_from_overlaps(
                         overlapping, current_feedrange
                     )
 
-                sub_options = dict(options)
-                if remaining_budget is not None:
-                    sub_options["maxItemCount"] = remaining_budget
-                if next_backend_cont is not None:
-                    sub_options["continuation"] = next_backend_cont
+                backend_request_options = dict(options)
+                if pagination_state.remaining_page_item_count is not None:
+                    backend_request_options["maxItemCount"] = pagination_state.remaining_page_item_count
+                if pagination_state.backend_continuation is not None:
+                    backend_request_options["continuation"] = pagination_state.backend_continuation
                 else:
-                    sub_options.pop("continuation", None)
+                    backend_request_options.pop("continuation", None)
 
                 # Populate request headers for this single backend POST.
                 # The shared helper handles partition routing (PKR id +
@@ -3484,102 +3483,123 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                     overlapping,
                     partition_scope,
                     current_feedrange,
-                    remaining_budget,
-                    sub_options.get("continuation"),
+                    pagination_state.remaining_page_item_count,
+                    backend_request_options.get("continuation"),
                 )
                 # Use the session token for this specific partition so we don't
                 # send a compound token covering all partitions.
                 base.set_session_token_header(
-                    self, req_headers, path, request_params, sub_options, overlapping[0]["id"]
+                    self, req_headers, path, request_params, backend_request_options, overlapping[0]["id"]
                 )
 
-                partial_result, sub_response_headers = self.__Post(
-                    path, request_params, query, req_headers, **kwargs
-                )
-                last_response_headers = sub_response_headers
-                self.last_response_headers = last_response_headers
+                try:
+                    backend_query_result, backend_response_headers = self.__Post(
+                        path, request_params, query, req_headers, **kwargs
+                    )
+                except Exception:  # pylint: disable=broad-exception-caught
+                    # Preserve resume progress if a later POST fails mid-page.
+                    pagination_state.write_outbound_continuation(
+                        feedrange_response_headers,
+                        resource_id_str,
+                        query,
+                        feed_range_epk,
+                    )
+                    self.last_response_headers = feedrange_response_headers
+                    raise
+                feedrange_response_headers = backend_response_headers
+                self.last_response_headers = feedrange_response_headers
                 if internal_headers_capture is not None:
-                    _capture_internal_headers(sub_response_headers)
-                self._UpdateSessionIfRequired(req_headers, partial_result, sub_response_headers)
+                    _capture_internal_headers(backend_response_headers)
+                self._UpdateSessionIfRequired(req_headers, backend_query_result, backend_response_headers)
 
                 # Merge results, falling back to a plain extend if the
                 # aggregating merge raises (it can on aggregated queries
                 # during splits).
                 try:
-                    results = base._merge_query_results(results, partial_result, query)
+                    results = base._merge_query_results(results, backend_query_result, query)
                 except Exception:  # pylint: disable=broad-exception-caught
-                    if results:
-                        results["Documents"].extend(partial_result["Documents"])
-                    else:
-                        results = partial_result
+                    results_docs = results.get("Documents") if results else None
+                    partial_docs = backend_query_result.get("Documents") if backend_query_result else None
+                    if isinstance(results_docs, list) and isinstance(partial_docs, list):
+                        results_docs.extend(partial_docs)
+                    elif backend_query_result:
+                        results = backend_query_result
 
-                items_returned = len(partial_result.get("Documents", []))
-                if remaining_budget is not None:
-                    remaining_budget -= items_returned
+                previous_feedrange = pagination_state.current_feedrange
+                previous_backend_continuation = pagination_state.backend_continuation
+                page_items_returned = _count_page_items_from_partial_result(backend_query_result, query)
                 if response_headers_list is not None:
-                    response_headers_list.append(sub_response_headers.copy())
+                    response_headers_list.append(backend_response_headers.copy())
                 if response_hook:
-                    response_hook(sub_response_headers, partial_result)
-
-                next_backend_cont = sub_response_headers.get(http_constants.HttpHeaders.Continuation)
-                if next_backend_cont:
-                    # Current feedrange has more to give. Stay on it; the
-                    # budget check at the top of the next iteration decides
-                    # whether to issue another POST.
-                    continue
-
-                # Current feedrange is drained. Move to the next one if there
-                # is one; otherwise we are done.
-                if not remaining_feedranges:
-                    current_feedrange = None
-                    break
-                current_feedrange = remaining_feedranges.pop(0)
-                next_backend_cont = None
+                    response_hook(backend_response_headers, backend_query_result)
+                pagination_state.apply_post_result(
+                    page_items_returned,
+                    backend_response_headers.get(http_constants.HttpHeaders.Continuation),
+                )
+                consecutive_no_progress_pages = _update_no_progress_page_count(
+                    consecutive_no_progress_pages,
+                    page_items_returned,
+                    previous_feedrange,
+                    previous_backend_continuation,
+                    pagination_state.current_feedrange,
+                    pagination_state.backend_continuation,
+                )
+                if consecutive_no_progress_pages >= _MAX_CONSECUTIVE_NO_PROGRESS_PAGES:
+                    pagination_state.write_outbound_continuation(
+                        feedrange_response_headers,
+                        resource_id_str,
+                        query,
+                        feed_range_epk,
+                    )
+                    self.last_response_headers = feedrange_response_headers
+                    raise RuntimeError(
+                        "Feed-range query made no progress across {} consecutive "
+                        "continuation pages (0 items returned).".format(
+                            _MAX_CONSECUTIVE_NO_PROGRESS_PAGES
+                        )
+                    )
 
             # (c) Build the outbound token. Clear the continuation header if
             # there is no work left at all.
-            _set_outbound_continuation(
-                last_response_headers,
-                resource_id,
+            pagination_state.write_outbound_continuation(
+                feedrange_response_headers,
+                resource_id_str,
                 query,
                 feed_range_epk,
-                current_feedrange,
-                remaining_feedranges,
-                next_backend_cont,
             )
-            self.last_response_headers = last_response_headers
+            self.last_response_headers = feedrange_response_headers
 
             # if the prefix partition query has results lets return it
             if results:
-                if last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
-                    index_metrics_raw = last_response_headers[http_constants.HttpHeaders.IndexUtilization]
-                    last_response_headers[http_constants.HttpHeaders.IndexUtilization] = (
+                if feedrange_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
+                    index_metrics_raw = feedrange_response_headers[http_constants.HttpHeaders.IndexUtilization]
+                    feedrange_response_headers[http_constants.HttpHeaders.IndexUtilization] = (
                          _utils.get_index_metrics_info(index_metrics_raw))
-                if last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
-                    query_advice_raw = last_response_headers[http_constants.HttpHeaders.QueryAdvice]
-                    last_response_headers[http_constants.HttpHeaders.QueryAdvice] = (
+                if feedrange_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
+                    query_advice_raw = feedrange_response_headers[http_constants.HttpHeaders.QueryAdvice]
+                    feedrange_response_headers[http_constants.HttpHeaders.QueryAdvice] = (
                         get_query_advice_info(query_advice_raw))
-                return __GetBodiesFromQueryResult(results), last_response_headers
-            return [], last_response_headers
+                return __GetBodiesFromQueryResult(results), feedrange_response_headers
+            return [], feedrange_response_headers
 
-        result, last_response_headers = self.__Post(path, request_params, query, req_headers, **kwargs)
-        self.last_response_headers = last_response_headers
+        result, post_response_headers = self.__Post(path, request_params, query, req_headers, **kwargs)
+        self.last_response_headers = post_response_headers
         if internal_headers_capture is not None:
-            _capture_internal_headers(last_response_headers)
-        self._UpdateSessionIfRequired(req_headers, result, last_response_headers)
-        if last_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
+            _capture_internal_headers(post_response_headers)
+        self._UpdateSessionIfRequired(req_headers, result, post_response_headers)
+        if post_response_headers.get(http_constants.HttpHeaders.IndexUtilization) is not None:
             INDEX_METRICS_HEADER = http_constants.HttpHeaders.IndexUtilization
-            index_metrics_raw = last_response_headers[INDEX_METRICS_HEADER]
-            last_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
-        if last_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
-            query_advice_raw = last_response_headers[http_constants.HttpHeaders.QueryAdvice]
-            last_response_headers[http_constants.HttpHeaders.QueryAdvice] = get_query_advice_info(query_advice_raw)
+            index_metrics_raw = post_response_headers[INDEX_METRICS_HEADER]
+            post_response_headers[INDEX_METRICS_HEADER] = _utils.get_index_metrics_info(index_metrics_raw)
+        if post_response_headers.get(http_constants.HttpHeaders.QueryAdvice) is not None:
+            query_advice_raw = post_response_headers[http_constants.HttpHeaders.QueryAdvice]
+            post_response_headers[http_constants.HttpHeaders.QueryAdvice] = get_query_advice_info(query_advice_raw)
         if response_headers_list is not None:
-            response_headers_list.append(last_response_headers.copy())
+            response_headers_list.append(post_response_headers.copy())
         if response_hook:
-            response_hook(last_response_headers, result)
+            response_hook(post_response_headers, result)
 
-        return __GetBodiesFromQueryResult(result), last_response_headers
+        return __GetBodiesFromQueryResult(result), post_response_headers
 
     def _GetQueryPlanThroughGateway(self, query: str, resource_link: str,
                                     excluded_locations: Optional[Sequence[str]] = None,

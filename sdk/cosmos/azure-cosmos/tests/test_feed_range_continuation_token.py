@@ -28,16 +28,21 @@ import json
 
 import pytest
 
+from azure.cosmos import http_constants
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.feed_range_continuation import (
+    _MAX_CONSECUTIVE_NO_PROGRESS_PAGES,
+    _apply_feedrange_request_headers,
     _build_outbound_token,
     _build_scope_from_overlaps,
+    _count_page_items_from_partial_result,
     _decode_token,
     _derive_initial_feedranges,
     _encode_token,
     _hash_feed_range,
     _hash_query_spec,
     _normalize_max_item_count,
+    _update_no_progress_page_count,
     _validate_token_identity,
     _FIELD_BACKEND_CONTINUATION,
     _FIELD_COLLECTION_RID,
@@ -52,6 +57,7 @@ from azure.cosmos._routing.feed_range_continuation import (
 
 # Fixed inputs reused across the round-trip / mismatch tests so each
 # assertion compares against a known-good baseline.
+# cspell:ignore AOXB BFFFFFFFFFFFFFFF BAAAAAAAAAA
 _RID = "Yxs1AOXBSp4="
 _QUERY = {"query": "SELECT * FROM c WHERE c.x = @x",
           "parameters": [{"name": "@x", "value": 7}]}
@@ -74,6 +80,10 @@ _REMAINING_FEEDRANGE = routing_range.Range(
     isMaxInclusive=False,
 )
 _BACKEND_CONT = "+RID:~Yxs1AOXBSp4BAAAAAAAAAA==#RT:1#TRC:5#ISV:2#IEO:65567"
+
+
+def _mk_range(mn: str, mx: str) -> routing_range.Range:
+    return routing_range.Range(range_min=mn, range_max=mx, isMinInclusive=True, isMaxInclusive=False)
 
 
 def _make_valid_token_payload() -> dict:
@@ -639,4 +649,164 @@ class TestNormalizeMaxItemCount:
 
     def test_object_is_treated_as_unbounded(self):
         assert _normalize_max_item_count(object()) is None
+
+
+# ---------------------------------------------------------------------- #
+# Request-header shaping
+# ---------------------------------------------------------------------- #
+class TestApplyFeedrangeRequestHeaders:
+    """``_apply_feedrange_request_headers`` sets and clears routing/page/token
+    headers correctly for both full-partition and sub-range requests."""
+
+    @pytest.mark.parametrize(
+        "current_feedrange,expect_epk_headers",
+        [
+            # full-partition request -> EPK headers must be cleared
+            (_mk_range("10", "20"), False),
+            # strict sub-range request -> EPK headers must be stamped
+            (_mk_range("12", "18"), True),
+        ],
+    )
+    def test_epk_headers_match_full_vs_subrange(self, current_feedrange, expect_epk_headers):
+        req_headers = {
+            # pre-populate with stale values to prove clear behavior
+            http_constants.HttpHeaders.StartEpkString: "stale-start",
+            http_constants.HttpHeaders.EndEpkString: "stale-end",
+        }
+        overlapping = [{"id": "7", "minInclusive": "10", "maxExclusive": "20"}]
+        partition_scope = _mk_range("10", "20")
+
+        _apply_feedrange_request_headers(
+            req_headers=req_headers,
+            overlapping=overlapping,
+            partition_scope=partition_scope,
+            current_feedrange=current_feedrange,
+            remaining_page_item_count=None,
+            inbound_continuation=None,
+        )
+
+        assert req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] == "7"
+        assert req_headers[http_constants.HttpHeaders.ReadFeedKeyType] == "EffectivePartitionKeyRange"
+        if expect_epk_headers:
+            assert req_headers[http_constants.HttpHeaders.StartEpkString] == current_feedrange.min
+            assert req_headers[http_constants.HttpHeaders.EndEpkString] == current_feedrange.max
+        else:
+            assert http_constants.HttpHeaders.StartEpkString not in req_headers
+            assert http_constants.HttpHeaders.EndEpkString not in req_headers
+
+    @pytest.mark.parametrize(
+        "remaining_page_item_count,inbound_continuation,expect_page_size,expect_continuation",
+        [
+            (5, "abc", True, True),
+            (None, "abc", False, True),
+            (5, None, True, False),
+            (None, None, False, False),
+        ],
+    )
+    def test_page_size_and_continuation_are_set_or_cleared(
+        self,
+        remaining_page_item_count,
+        inbound_continuation,
+        expect_page_size,
+        expect_continuation,
+    ):
+        req_headers = {
+            # pre-populate stale values; helper should clear when args are None
+            http_constants.HttpHeaders.PageSize: "999",
+            http_constants.HttpHeaders.Continuation: "stale-cont",
+        }
+        overlapping = [{"id": "9", "minInclusive": "30", "maxExclusive": "40"}]
+        partition_scope = _mk_range("30", "40")
+        current_feedrange = _mk_range("30", "40")
+
+        _apply_feedrange_request_headers(
+            req_headers=req_headers,
+            overlapping=overlapping,
+            partition_scope=partition_scope,
+            current_feedrange=current_feedrange,
+            remaining_page_item_count=remaining_page_item_count,
+            inbound_continuation=inbound_continuation,
+        )
+
+        if expect_page_size:
+            assert req_headers[http_constants.HttpHeaders.PageSize] == str(remaining_page_item_count)
+        else:
+            assert http_constants.HttpHeaders.PageSize not in req_headers
+
+        if expect_continuation:
+            assert req_headers[http_constants.HttpHeaders.Continuation] == inbound_continuation
+        else:
+            assert http_constants.HttpHeaders.Continuation not in req_headers
+
+
+class TestBudgetCounting:
+    """Budget accounting treats aggregate partial rows as merge fragments."""
+
+    def test_standard_documents_consume_budget(self):
+        partial_result = {"Documents": [{"id": "1"}, {"id": "2"}]}
+        assert _count_page_items_from_partial_result(partial_result, "SELECT * FROM c") == 2
+
+    def test_object_aggregate_partial_does_not_consume_budget(self):
+        partial_result = {"Documents": [{"_aggregate": {"count": 7}}]}
+        assert _count_page_items_from_partial_result(partial_result, "SELECT COUNT(1) FROM c") == 0
+
+    def test_value_aggregate_partial_does_not_consume_budget(self):
+        partial_result = {"Documents": [7]}
+        assert _count_page_items_from_partial_result(partial_result, "SELECT VALUE COUNT(1) FROM c") == 0
+
+    def test_value_non_aggregate_numeric_row_consumes_budget(self):
+        partial_result = {"Documents": [7]}
+        assert _count_page_items_from_partial_result(partial_result, "SELECT VALUE c.value FROM c") == 1
+
+    def test_value_non_aggregate_boolean_row_consumes_budget(self):
+        partial_result = {"Documents": [True]}
+        assert _count_page_items_from_partial_result(partial_result, "SELECT VALUE c.flag FROM c") == 1
+
+
+class TestEmptyPageStallCounter:
+    """No-progress guard only counts empty pages that still carry continuation."""
+
+    def test_increments_on_empty_page_with_continuation(self):
+        current_feedrange = _mk_range("10", "20")
+        assert _update_no_progress_page_count(
+            3,
+            page_items_returned=0,
+            previous_feedrange=current_feedrange,
+            previous_backend_continuation="token",
+            current_feedrange=current_feedrange,
+            current_backend_continuation="token",
+        ) == 4
+
+    def test_resets_when_items_are_returned(self):
+        current_feedrange = _mk_range("10", "20")
+        assert _update_no_progress_page_count(
+            5,
+            page_items_returned=1,
+            previous_feedrange=current_feedrange,
+            previous_backend_continuation="token",
+            current_feedrange=current_feedrange,
+            current_backend_continuation="token",
+        ) == 0
+
+    def test_resets_when_continuation_is_none(self):
+        assert _update_no_progress_page_count(
+            _MAX_CONSECUTIVE_NO_PROGRESS_PAGES - 1,
+            page_items_returned=0,
+            previous_feedrange=_mk_range("10", "20"),
+            previous_backend_continuation="token",
+            current_feedrange=_mk_range("20", "30"),
+            current_backend_continuation=None,
+        ) == 0
+
+    def test_resets_when_continuation_advances(self):
+        current_feedrange = _mk_range("10", "20")
+        assert _update_no_progress_page_count(
+            8,
+            page_items_returned=0,
+            previous_feedrange=current_feedrange,
+            previous_backend_continuation="token-1",
+            current_feedrange=current_feedrange,
+            current_backend_continuation="token-2",
+        ) == 0
+
 

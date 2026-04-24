@@ -155,7 +155,7 @@ class _QueryBuilder:
             parameters.append({"name": id_param_name, "value": item_id})
             condition_parts = [f"c.id = {id_param_name}"]
 
-            pk_values = []
+            pk_values: list = []
             if partition_key_value is not None and not isinstance(partition_key_value, type(NonePartitionKeyValue)):
                 pk_values = partition_key_value if isinstance(partition_key_value, list) else [partition_key_value]
                 if len(pk_values) != len(partition_key_paths):

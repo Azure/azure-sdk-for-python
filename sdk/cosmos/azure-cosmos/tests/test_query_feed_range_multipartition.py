@@ -511,6 +511,7 @@ class TestFeedRangeMultiPartition:
         # continuation string that is NOT base64-of-our-JSON. The new
         # _decode_token must return None for this and the call site must
         # restart from offset 0.
+        # cspell:ignore AOXB BAAAAAAAAAA EAAAAFAAAA
         legacy_token = "+RID:~Yxs1AOXBSp4BAAAAAAAAAA==#RT:1#TRC:5#ISV:2#IEO:65567#FPC:AgEAAAAFAAAA"
 
         pager = container.query_items(
