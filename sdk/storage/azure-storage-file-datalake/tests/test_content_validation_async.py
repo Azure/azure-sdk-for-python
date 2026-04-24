@@ -10,6 +10,7 @@ import pytest
 from azure.storage.filedatalake import FileSystemClient as SyncFileSystemClient
 from azure.storage.filedatalake.aio import DataLakeServiceClient
 
+from devtools_testutils import is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase, GenericTestProxyParametrize1
 from settings.testcase import DataLakePreparer
@@ -30,6 +31,8 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         await self.file_system.create_file_system()
 
     def teardown_method(self, _):
+        if not is_live():
+            return
         # Use sync client as teardown_method must be sync
         if self.file_system:
             sync_credential = self.get_credential(SyncFileSystemClient, is_async=False)

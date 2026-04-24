@@ -10,6 +10,7 @@ import pytest
 from azure.storage.fileshare import ShareClient as SyncShareClient
 from azure.storage.fileshare.aio import ShareServiceClient
 
+from devtools_testutils import is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase, GenericTestProxyParametrize1
 from settings.testcase import FileSharePreparer
@@ -29,6 +30,8 @@ class TestStorageContentValidationAsync(AsyncStorageRecordedTestCase):
         await self.share_client.create_share()
 
     def teardown_method(self, _):
+        if not is_live():
+            return
         if self.share_client:
             sync_credential = self.get_credential(SyncShareClient, is_async=False)
             sync_share_client = SyncShareClient(
