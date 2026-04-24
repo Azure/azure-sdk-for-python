@@ -24,6 +24,7 @@ class TestSecurityManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtR
     async def test_private_endpoint_connections_get(self, resource_group):
         response = await self.client.private_endpoint_connections.get(
             resource_group_name=resource_group.name,
+            private_link_name="str",
             private_endpoint_connection_name="str",
             api_version="2026-01-01",
         )
@@ -74,6 +75,7 @@ class TestSecurityManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtR
         response = await (
             await self.client.private_endpoint_connections.begin_delete(
                 resource_group_name=resource_group.name,
+                private_link_name="str",
                 private_endpoint_connection_name="str",
                 api_version="2026-01-01",
             )
@@ -87,6 +89,7 @@ class TestSecurityManagementPrivateEndpointConnectionsOperationsAsync(AzureMgmtR
     async def test_private_endpoint_connections_list(self, resource_group):
         response = self.client.private_endpoint_connections.list(
             resource_group_name=resource_group.name,
+            private_link_name="str",
             api_version="2026-01-01",
         )
         result = [r async for r in response]

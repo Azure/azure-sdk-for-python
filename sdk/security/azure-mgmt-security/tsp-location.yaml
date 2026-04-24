@@ -1,4 +1,4 @@
 directory: specification/security/resource-manager/Microsoft.Security/Security
-commit: fa51a1903041b3885d3ca316ccb7a63a227a581f
+commit: 7e2493bebca0a2f36291ab0ee9302d6254346fc0
 repo: Azure/azure-rest-api-specs
 additionalDirectories: 

@@ -1856,21 +1856,6 @@ class ArcAutoProvisioningGcp(ArcAutoProvisioning):
         super().__init__(*args, **kwargs)
 
 
-class ArmErrorAdditionalInfo(_Model):
-    """The resource management error additional info.
-
-    :ivar type: The additional info type.
-    :vartype type: str
-    :ivar info: The additional info.
-    :vartype info: any
-    """
-
-    type: Optional[str] = rest_field(visibility=["read"])
-    """The additional info type."""
-    info: Optional[Any] = rest_field(visibility=["read"])
-    """The additional info."""
-
-
 class AscLocation(ProxyResource):
     """The ASC location of the subscription is in the "name" field.
 
@@ -4591,7 +4576,7 @@ class CloudErrorBody(_Model):
     :ivar details: The error details.
     :vartype details: list[~azure.mgmt.security.models.CloudErrorBody]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~azure.mgmt.security.models.ArmErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
     """
 
     code: Optional[str] = rest_field(visibility=["read"])
@@ -4602,7 +4587,7 @@ class CloudErrorBody(_Model):
     """The error target."""
     details: Optional[list["_models.CloudErrorBody"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[list["_models.ArmErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -5629,17 +5614,17 @@ class DefenderCspmAwsOfferingCiem(_Model):
     """Defenders CSPM Permissions Management offering configurations.
 
     :ivar ciem_discovery: Defender CSPM Permissions Management discovery configuration.
-    :vartype ciem_discovery: ~azure.mgmt.security.models.DefenderCspmAwsOfferingCiemCiemDiscovery
+    :vartype ciem_discovery: ~azure.mgmt.security.models.DefenderCspmAwsOfferingCiemDiscovery
     :ivar ciem_oidc: AWS Defender CSPM Permissions Management OIDC (open id connect) connection
      configurations.
-    :vartype ciem_oidc: ~azure.mgmt.security.models.DefenderCspmAwsOfferingCiemCiemOidc
+    :vartype ciem_oidc: ~azure.mgmt.security.models.DefenderCspmAwsOfferingCiemOidc
     """
 
-    ciem_discovery: Optional["_models.DefenderCspmAwsOfferingCiemCiemDiscovery"] = rest_field(
+    ciem_discovery: Optional["_models.DefenderCspmAwsOfferingCiemDiscovery"] = rest_field(
         name="ciemDiscovery", visibility=["read", "create", "update", "delete", "query"]
     )
     """Defender CSPM Permissions Management discovery configuration."""
-    ciem_oidc: Optional["_models.DefenderCspmAwsOfferingCiemCiemOidc"] = rest_field(
+    ciem_oidc: Optional["_models.DefenderCspmAwsOfferingCiemOidc"] = rest_field(
         name="ciemOidc", visibility=["read", "create", "update", "delete", "query"]
     )
     """AWS Defender CSPM Permissions Management OIDC (open id connect) connection configurations."""
@@ -5648,8 +5633,8 @@ class DefenderCspmAwsOfferingCiem(_Model):
     def __init__(
         self,
         *,
-        ciem_discovery: Optional["_models.DefenderCspmAwsOfferingCiemCiemDiscovery"] = None,
-        ciem_oidc: Optional["_models.DefenderCspmAwsOfferingCiemCiemOidc"] = None,
+        ciem_discovery: Optional["_models.DefenderCspmAwsOfferingCiemDiscovery"] = None,
+        ciem_oidc: Optional["_models.DefenderCspmAwsOfferingCiemOidc"] = None,
     ) -> None: ...
 
     @overload
@@ -5663,7 +5648,7 @@ class DefenderCspmAwsOfferingCiem(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmAwsOfferingCiemCiemDiscovery(_Model):
+class DefenderCspmAwsOfferingCiemDiscovery(_Model):
     """Defender CSPM Permissions Management discovery configuration.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for Permissions Management discovery.
@@ -5693,7 +5678,7 @@ class DefenderCspmAwsOfferingCiemCiemDiscovery(_Model):
         super().__init__(*args, **kwargs)
 
 
-class DefenderCspmAwsOfferingCiemCiemOidc(_Model):
+class DefenderCspmAwsOfferingCiemOidc(_Model):
     """AWS Defender CSPM Permissions Management OIDC (open id connect) connection configurations.
 
     :ivar cloud_role_arn: The cloud role ARN in AWS for Permissions Management used for oidc
@@ -8567,6 +8552,21 @@ class EnvironmentDetails(_Model):
         super().__init__(*args, **kwargs)
 
 
+class ErrorAdditionalInfo(_Model):
+    """The resource management error additional info.
+
+    :ivar type: The additional info type.
+    :vartype type: str
+    :ivar info: The additional info.
+    :vartype info: any
+    """
+
+    type: Optional[str] = rest_field(visibility=["read"])
+    """The additional info type."""
+    info: Optional[Any] = rest_field(visibility=["read"])
+    """The additional info."""
+
+
 class ErrorDetail(_Model):
     """The error detail.
 
@@ -8579,7 +8579,7 @@ class ErrorDetail(_Model):
     :ivar details: The error details.
     :vartype details: list[~azure.mgmt.security.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~azure.mgmt.security.models.ArmErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.security.models.ErrorAdditionalInfo]
     """
 
     code: Optional[str] = rest_field(visibility=["read"])
@@ -8590,7 +8590,7 @@ class ErrorDetail(_Model):
     """The error target."""
     details: Optional[list["_models.ErrorDetail"]] = rest_field(visibility=["read"])
     """The error details."""
-    additional_info: Optional[list["_models.ArmErrorAdditionalInfo"]] = rest_field(
+    additional_info: Optional[list["_models.ErrorAdditionalInfo"]] = rest_field(
         name="additionalInfo", visibility=["read"]
     )
     """The error additional info."""
@@ -13455,10 +13455,6 @@ class PricingProperties(_Model):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-
-
-class Private_link_parameters(_Model):
-    """Private_link_parameters."""
 
 
 class PrivateEndpoint(_Model):

@@ -23,6 +23,7 @@ class TestSecurityManagementPrivateLinkResourcesOperations(AzureMgmtRecordedTest
     def test_private_link_resources_get(self, resource_group):
         response = self.client.private_link_resources.get(
             resource_group_name=resource_group.name,
+            private_link_name="str",
             group_id="str",
             api_version="2026-01-01",
         )
@@ -35,6 +36,7 @@ class TestSecurityManagementPrivateLinkResourcesOperations(AzureMgmtRecordedTest
     def test_private_link_resources_list(self, resource_group):
         response = self.client.private_link_resources.list(
             resource_group_name=resource_group.name,
+            private_link_name="str",
             api_version="2026-01-01",
         )
         result = [r for r in response]
