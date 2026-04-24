@@ -1270,7 +1270,12 @@ def _log_events_to_app_insights(
                     internal_log_attributes["gen_ai.agent.version"] = agent_version
 
                 # Add token usage information if present in sample.usage
-                usage = event_data.get("sample", {}).get("usage", {}) if isinstance(event_data.get("sample"), dict) else {}
+                # Normalize sample once so non-dict values do not break sample-derived logging
+                sample = event_data.get("sample")
+                sample = sample if isinstance(sample, dict) else {}
+                # Add token usage information if present in sample.usage
+                usage = sample.get("usage", {})
+                usage = usage if isinstance(usage, dict) else {}
                 if usage.get("prompt_tokens") is not None:
                     standard_log_attributes["gen_ai.evaluation.usage.input_tokens"] = str(usage["prompt_tokens"])
                 if usage.get("completion_tokens") is not None:
