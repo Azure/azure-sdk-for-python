@@ -3371,10 +3371,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if feed_range_epk is not None:
             if resource_id is None:
                 raise ValueError("resource_id is required for feed_range continuation.")
-            # Narrow ``resource_id`` (Optional[str]) to ``str`` for the helpers below.
-            # ``cast`` carries the narrowing reliably across the alias even when
-            # mypy widens it again later in this long pagination block.
-            resource_id_str: str = cast(str, resource_id)
+            # The None-check above already narrows ``resource_id`` to ``str``
+            # for the rest of this block. Bind it to a clearly-named local so
+            # the feed_range helpers below read as ``resource_id_str`` instead
+            # of the generic ``resource_id``.
+            resource_id_str: str = resource_id
             # (a) Look at the continuation the caller passed in.
             #     - Empty or from a pre-fix SDK: start fresh.
             #     - One of our v=1 envelopes: check the collection, query, and
@@ -3452,9 +3453,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # loop iteration sees a single overlap and falls through to
                 # the normal single-partition POST below.
                 #
-                # Note: if the caller had already pulled some rows from X
-                # before the split, those rows show up again on this resume.
-                # The customer dedupes by document id.
+                # One edge case remains by design: if some rows were already
+                # read from parent X before it split, those rows can show up
+                # once more after resume when children X1/X2 restart from the
+                # start of their slices.
                 if pagination_state.explode_on_multi_overlap(overlapping):
                     current_feedrange = pagination_state.current_feedrange
                     if current_feedrange is None:

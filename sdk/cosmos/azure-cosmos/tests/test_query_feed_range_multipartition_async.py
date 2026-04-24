@@ -2,11 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 """Async parity for the multi-partition feed_range tests.
 
-Mirrors ``test_query_feed_range_multipartition.py`` against the async
-client (``azure.cosmos.aio.CosmosClient``). See that file for the full
-explanation of what each test asserts and why; the assertions here are
-identical, only the I/O pattern (``async``/``await`` + async iteration) is
-async.
+Async mirror of ``test_query_feed_range_multipartition.py``; assertions
+are identical, only the I/O is ``async``/``await``.
 """
 
 import asyncio
@@ -170,7 +167,7 @@ class TestFeedRangeMultiPartitionAsync:
             await client.close()
 
     # ------------------------------------------------------------------ #
-    # Two-partition feed_range (the customer's exact case)
+    # Two-partition feed_range
     # ------------------------------------------------------------------ #
     async def test_two_partition_feed_range_async(self):
         client = _client()
@@ -206,14 +203,13 @@ class TestFeedRangeMultiPartitionAsync:
             assert not oversized, (
                 f"page-size budget violated (max_item_count={PAGE_SIZE}); "
                 f"got pages with sizes {[len(p) for p in pages]}; "
-                f"oversized pages: {oversized}. Customer's '10 items per page' symptom.")
+                f"oversized pages: {oversized}.")
 
             unique = set(all_ids)
             assert len(all_ids) == len(unique), (
                 f"duplicates across pages: {len(all_ids)} returned, "
                 f"{len(unique)} distinct, "
-                f"{len(all_ids) - len(unique)} duplicate(s). "
-                "Customer's 'page 3 replays page 2' symptom.")
+                f"{len(all_ids) - len(unique)} duplicate(s).")
 
             assert unique == ground_truth, (
                 f"item-set mismatch: returned={len(unique)}, "
@@ -359,7 +355,7 @@ class TestFeedRangeMultiPartitionAsync:
             await client.close()
 
     # ------------------------------------------------------------------ #
-    # Legacy opaque token compatibility (#7 in §7.2.2)
+    # Legacy opaque token compatibility
     # ------------------------------------------------------------------ #
     async def test_legacy_opaque_token_compat_async(self):
         """Async parity for the legacy-opaque-token compatibility test.
@@ -419,10 +415,10 @@ class TestFeedRangeMultiPartitionAsync:
             await client.close()
 
     # ------------------------------------------------------------------ #
-    # Identity-fingerprint mismatch rejection (#6 in §7.2.2, live half)
+    # Identity-fingerprint mismatch rejection (live half)
     # ------------------------------------------------------------------ #
     async def test_token_identity_mismatch_rejected_async(self):
-        """Async parity for the live #6 identity-mismatch test. See the
+        """Async parity for the live identity-mismatch test. See the
         sync ``test_token_identity_mismatch_rejected`` for the assertion
         contract."""
         client = _client()

@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 """Unit tests for ``azure.cosmos._routing.feed_range_continuation``.
 
-These tests do NOT touch the network. They cover the wire-format
-contracts for the structured ``feed_range`` continuation token:
 
 * ``TestTokenRoundTrip`` - ``_decode_token(_encode_token(p))`` returns
   a structurally-equivalent dict; the wire form is valid base64 of
@@ -32,6 +30,7 @@ from azure.cosmos import http_constants
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.feed_range_continuation import (
     _MAX_CONSECUTIVE_NO_PROGRESS_PAGES,
+    _FeedRangePaginationState,
     _apply_feedrange_request_headers,
     _build_outbound_token,
     _build_scope_from_overlaps,
@@ -269,10 +268,7 @@ class TestIdentityFingerprintMismatch:
 
     The hash helpers are deterministic and the call-site validators in
     ``__QueryFeed`` compare ``inbound[_FIELD_*]`` to ``_hash_*(current)``
-    and raise ``ValueError`` on mismatch. These tests exercise the
-    equality contract those validators rely on; the live equivalents
-    of the call-site raise live in
-    ``test_query_feed_range_multipartition*.py``."""
+    and raise ``ValueError`` on mismatch."""
 
     def test_collection_rid_mismatch_detected(self):
         payload = _make_valid_token_payload()
@@ -397,59 +393,38 @@ class TestIdentityFingerprintMismatch:
 # Explode-on-multi-overlap - post-split fan-out unit contract
 # ---------------------------------------------------------------------- #
 class TestExplodeOnMultiOverlap:
-    """Reproduces the customer scenario at the unit-test layer, no network
-    needed.
+    """Post-split fan-out contract for the resume path.
 
-    Concrete setup: the customer's feed range ``[05C1D9D5..., 05C1D9F5...)``
-    lived inside one physical partition ``X`` on Day 1. On Day N Cosmos
-    split ``X`` at the midpoint ``M = 05C1D9E4...`` into
-    ``X1 = [05C1D9D5..., 05C1D9E4...)`` and
-    ``X2 = [05C1D9E4..., 05C1D9F5...)``. The same ``{min, max}`` string
-    the customer's worker has on disk now resolves to two physical
-    partitions, not one.
+    Setup: a saved feedrange ``[A, C)`` lived inside one physical
+    partition on the day the token was emitted. By the time the token
+    is resumed, that partition has split at ``B`` into two children
+    ``X1 = [A, B)`` and ``X2 = [B, C)``. Re-resolving the saved
+    feedrange against the live routing map now returns two overlaps,
+    not one.
 
-    A continuation token saved on Day 1 carries
-    ``current_feedrange = [05C1D9D5..., 05C1D9F5...)`` (the whole of old
-    ``X``). On Day N the SDK re-resolves that feedrange against the live
-    routing map and gets back two overlaps: ``X1`` and ``X2``. If the
-    call site just POSTs once with ``PartitionKeyRangeID = X1`` and
-    ``EndEpkString = 05C1D9F5...``, every row that physically lives on
-    ``X2`` is silently dropped - the backend's EPK filter only returns
-    rows on the partition the request was routed to. That's how the
-    slow ``test_post_split_resume_async`` came back with 69 of the
-    expected 88 ids on the run that flagged this.
+    If the call site just POSTed once against ``X1`` with
+    ``EndEpkString = C``, every row that physically lives on ``X2``
+    would be silently dropped - the backend's EPK filter only returns
+    rows on the partition the request was routed to.
 
-    The fix the call site applies (``__QueryFeed``, sync and async) is:
-    when ``len(overlapping) > 1``, hand ``current_feedrange`` and the
-    new children to ``_derive_initial_feedranges``. That returns one
-    sub-feedrange per child, each one the intersection of the child's
-    range with the saved feedrange - for the customer's case,
-    ``[05C1D9D5..., 05C1D9E4...)`` for ``X1`` and
-    ``[05C1D9E4..., 05C1D9F5...)`` for ``X2``. The first sub-feedrange
-    becomes the new ``current_feedrange``, the rest are prepended to
-    ``remaining_feedranges``, and the parent's saved
-    ``next_backend_cont`` is dropped (it referenced ``X``'s id and
-    won't decode against either child). The next loop iteration then
-    sees a single overlap and falls through to the normal
-    single-partition route.
+    The contract in ``__QueryFeed`` (sync and async): when
+    ``len(overlapping) > 1``, hand the saved feedrange and the new
+    children to ``_derive_initial_feedranges`` to get one sub-feedrange
+    per child (each the intersection of the child's range with the
+    saved feedrange). The first becomes the new ``current_feedrange``,
+    the rest are prepended to ``remaining_feedranges``, and the
+    parent's backend continuation is dropped (it referenced the old
+    partition's id). The next loop iteration sees a single overlap and
+    falls through to the normal single-partition POST.
 
-    The tests below pin the four properties the call site relies on:
+    The tests below pin four properties of that slice:
 
-      * the slice produces one sub-feedrange per child,
-      * the sub-feedranges cover the saved feedrange end-to-end with no
+      * one sub-feedrange per child,
+      * sub-feedranges cover the saved feedrange end-to-end with no
         gap and no overlap,
-      * the order is by EPK ``min`` regardless of what order the
-        routing map returned the children,
-      * each sub-feedrange, fed back through ``_build_scope_from_overlaps``
-        against its own child, resolves to a single overlap (so the
-        next loop iteration takes the single-partition route, not the
-        slice branch again).
-
-    The slow live coverage is ``test_post_split_resume[_async]`` in
-    ``test_query_feed_range_multipartition*.py`` (the 10-minute
-    ``cosmosSplit`` test). These six tests run in a fraction of a
-    second and pin the same contract without waiting on Cosmos to
-    actually split a partition."""
+      * order is by EPK ``min`` regardless of input order,
+      * each sub-feedrange resolves to exactly one child on the next
+        loop iteration (so the slice branch does not re-fire)."""
 
     @staticmethod
     def _pkr(pkr_id: str, mn: str, mx: str) -> dict:
@@ -459,12 +434,8 @@ class TestExplodeOnMultiOverlap:
         return {"id": pkr_id, "minInclusive": mn, "maxExclusive": mx}
 
     def test_two_child_split_slices_into_two_sub_feedranges(self):
-        # The customer's exact case, with the hex range simplified for
-        # readability:
-        #   parent       saved_feedrange = [05C1D9D5..., 05C1D9F5...)   (old X)
-        #   children     X1              = [05C1D9D5..., 05C1D9E4...)
-        #                X2              = [05C1D9E4..., 05C1D9F5...)
-        # Re-resolving saved_feedrange on Day N returns [X1, X2]; the
+        # Saved feedrange covers the whole of the pre-split parent.
+        # After the split it resolves to two children X1 and X2; the
         # slice must hand back one sub-feedrange per child.
         saved_feedrange = routing_range.Range(
             range_min="05C1D9D533F364", range_max="05C1D9F59FF5A0",
@@ -485,12 +456,12 @@ class TestExplodeOnMultiOverlap:
             "second sub-feedrange should be the X2 slice of the saved feedrange")
 
     def test_sub_feedranges_partition_parent_exactly(self):
-        # A wider variant of the customer's case: imagine the saved
-        # feedrange sits inside an even bigger old partition that has
-        # since split into THREE children. The slice must still cover
-        # the saved feedrange end-to-end - every row that was returnable
-        # under the old layout must still be reachable under the new
-        # one, no gap (= missing rows) and no overlap (= duplicates).
+        # A wider variant: the saved feedrange sits inside an even
+        # bigger old partition that has since split into THREE children.
+        # The slice must still cover the saved feedrange end-to-end -
+        # every row that was returnable under the old layout must still
+        # be reachable under the new one, no gap (= missing rows) and
+        # no overlap (= duplicates).
         saved_feedrange = routing_range.Range(
             range_min="20", range_max="E0",
             isMinInclusive=True, isMaxInclusive=False)
@@ -574,14 +545,12 @@ class TestExplodeOnMultiOverlap:
                 "under-fetch".format(sb.min, sb.max, scope.min, scope.max))
 
     def test_no_split_single_overlap_is_not_sliced(self):
-        # The "feed range fits inside one child" path: most of the
-        # customer's thousands of feed ranges sat entirely inside one
-        # of the two children after the split, so they still resolve
-        # to a single overlap on Day N. The slice branch is gated by
-        # `if len(overlapping) > 1`, so for these the call site goes
-        # straight to the single-partition POST. This is the negative
-        # control - verifying nothing in our slice helpers fires
-        # spuriously for the common safe case.
+        # The "feed range fits inside one child" path: a feedrange that
+        # sits entirely inside a single child still resolves to one
+        # overlap. The slice branch is gated by `if len(overlapping) > 1`,
+        # so the call site goes straight to the single-partition POST.
+        # This is the negative control - verifying nothing in our slice
+        # helpers fires spuriously for the common safe case.
         feed_range = routing_range.Range(
             range_min="40", range_max="60",
             isMinInclusive=True, isMaxInclusive=False)
@@ -593,13 +562,13 @@ class TestExplodeOnMultiOverlap:
             "partition scope")
 
     def test_three_child_split_slices_into_three(self):
-        # The customer's case is 1->2 because Cosmos split X once. But
-        # nothing in the design caps it there - over enough wall-clock
-        # time, X1 and X2 can themselves split, and a saved feedrange
-        # from before all of those splits will resolve to 3+ overlaps.
-        # Pin that the slice handles N children the same way it
-        # handles 2: one sub-feedrange per child, in EPK order,
-        # covering the saved feedrange.
+        # The 1->2 split is the common case, but nothing in the design
+        # caps it there - over enough wall-clock time, X1 and X2 can
+        # themselves split, and a saved feedrange from before all of
+        # those splits will resolve to 3+ overlaps. Pin that the slice
+        # handles N children the same way it handles 2: one
+        # sub-feedrange per child, in EPK order, covering the saved
+        # feedrange.
         saved_feedrange = routing_range.Range(
             range_min="00", range_max="FF",
             isMinInclusive=True, isMaxInclusive=False)
@@ -810,3 +779,148 @@ class TestEmptyPageStallCounter:
         ) == 0
 
 
+class TestFeedRangePaginationState:
+    """Unit tests for the shared pagination state machine."""
+
+    @staticmethod
+    def _pkr(pkr_id: str, mn: str, mx: str) -> dict:
+        return {"id": pkr_id, "minInclusive": mn, "maxExclusive": mx}
+
+    @staticmethod
+    def _bounds(rng: routing_range.Range) -> tuple[str, str]:
+        return rng.min, rng.max
+
+    def test_from_derived_feedranges_empty_initializes_done_state(self):
+        state = _FeedRangePaginationState.from_derived_feedranges([], remaining_page_item_count=5)
+        assert state.current_feedrange is None
+        assert state.remaining_feedranges == []
+        assert state.backend_continuation is None
+        assert state.remaining_page_item_count == 5
+
+    def test_from_derived_feedranges_sets_current_and_remaining(self):
+        a = _mk_range("00", "40")
+        b = _mk_range("40", "80")
+        state = _FeedRangePaginationState.from_derived_feedranges([a, b], remaining_page_item_count=7)
+        assert self._bounds(state.current_feedrange) == ("00", "40")
+        assert [self._bounds(r) for r in state.remaining_feedranges] == [("40", "80")]
+        assert state.backend_continuation is None
+        assert state.remaining_page_item_count == 7
+
+    @pytest.mark.parametrize(
+        "current_feedrange,remaining_page_item_count,expected",
+        [
+            (None, None, False),
+            (_mk_range("00", "40"), 0, False),
+            (_mk_range("00", "40"), -1, False),
+            (_mk_range("00", "40"), None, True),
+            (_mk_range("00", "40"), 1, True),
+        ],
+    )
+    def test_can_issue_request_boundaries(self, current_feedrange, remaining_page_item_count, expected):
+        state = _FeedRangePaginationState(
+            current_feedrange=current_feedrange,
+            remaining_feedranges=[],
+            backend_continuation=None,
+            remaining_page_item_count=remaining_page_item_count,
+        )
+        assert state.can_issue_request() is expected
+
+    def test_from_inbound_parses_current_remaining_and_continuation(self):
+        inbound = {
+            _FIELD_CURRENT_FEEDRANGE: {"min": "00", "max": "40"},
+            _FIELD_REMAINING_FEEDRANGES: [{"min": "40", "max": "80"}],
+            _FIELD_BACKEND_CONTINUATION: "token-1",
+        }
+        state = _FeedRangePaginationState.from_inbound(inbound, remaining_page_item_count=9)
+        assert self._bounds(state.current_feedrange) == ("00", "40")
+        assert [self._bounds(r) for r in state.remaining_feedranges] == [("40", "80")]
+        assert state.backend_continuation == "token-1"
+        assert state.remaining_page_item_count == 9
+
+    def test_apply_post_result_with_continuation_does_not_advance_feedrange(self):
+        current = _mk_range("00", "40")
+        next_range = _mk_range("40", "80")
+        state = _FeedRangePaginationState(
+            current_feedrange=current,
+            remaining_feedranges=[next_range],
+            backend_continuation=None,
+            remaining_page_item_count=5,
+        )
+
+        state.apply_post_result(items_returned=2, backend_continuation="token-2")
+
+        assert self._bounds(state.current_feedrange) == ("00", "40")
+        assert [self._bounds(r) for r in state.remaining_feedranges] == [("40", "80")]
+        assert state.backend_continuation == "token-2"
+        assert state.remaining_page_item_count == 3
+
+    def test_apply_post_result_with_none_advances_to_next_feedrange(self):
+        current = _mk_range("00", "40")
+        next_range = _mk_range("40", "80")
+        state = _FeedRangePaginationState(
+            current_feedrange=current,
+            remaining_feedranges=[next_range],
+            backend_continuation="token-1",
+            remaining_page_item_count=6,
+        )
+
+        state.apply_post_result(items_returned=1, backend_continuation=None)
+
+        assert self._bounds(state.current_feedrange) == ("40", "80")
+        assert state.remaining_feedranges == []
+        assert state.backend_continuation is None
+        assert state.remaining_page_item_count == 5
+
+    def test_apply_post_result_with_none_and_no_remaining_marks_done(self):
+        current = _mk_range("00", "40")
+        state = _FeedRangePaginationState(
+            current_feedrange=current,
+            remaining_feedranges=[],
+            backend_continuation="token-1",
+            remaining_page_item_count=None,
+        )
+
+        state.apply_post_result(items_returned=1, backend_continuation=None)
+
+        assert state.current_feedrange is None
+        assert state.remaining_feedranges == []
+        assert state.backend_continuation is None
+
+    def test_explode_on_multi_overlap_single_overlap_keeps_state(self):
+        current = _mk_range("00", "80")
+        tail = _mk_range("80", "C0")
+        state = _FeedRangePaginationState(
+            current_feedrange=current,
+            remaining_feedranges=[tail],
+            backend_continuation="token-1",
+            remaining_page_item_count=4,
+        )
+
+        did_explode = state.explode_on_multi_overlap([self._pkr("X", "00", "80")])
+
+        assert did_explode is False
+        assert self._bounds(state.current_feedrange) == ("00", "80")
+        assert [self._bounds(r) for r in state.remaining_feedranges] == [("80", "C0")]
+        assert state.backend_continuation == "token-1"
+
+    def test_explode_on_multi_overlap_multi_overlap_splits_and_clears_continuation(self):
+        current = _mk_range("00", "80")
+        tail = _mk_range("80", "C0")
+        state = _FeedRangePaginationState(
+            current_feedrange=current,
+            remaining_feedranges=[tail],
+            backend_continuation="token-1",
+            remaining_page_item_count=4,
+        )
+
+        did_explode = state.explode_on_multi_overlap(
+            [
+                self._pkr("X1", "00", "40"),
+                self._pkr("X2", "40", "80"),
+            ]
+        )
+
+        assert did_explode is True
+        assert self._bounds(state.current_feedrange) == ("00", "40")
+        assert [self._bounds(r) for r in state.remaining_feedranges] == [("40", "80"), ("80", "C0")]
+        assert state.backend_continuation is None

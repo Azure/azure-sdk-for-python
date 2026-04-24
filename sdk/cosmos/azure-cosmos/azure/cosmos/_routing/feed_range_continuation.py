@@ -9,18 +9,12 @@ source of truth for token wire-format, hash fingerprinting, and
 routing-scope resolution. Only the pagination loop differs between the
 two paths (sync vs. ``await``); the token logic does not.
 
-Terminology: the saved continuation tracks progress through the
+The saved continuation tracks progress through the
 caller's input ``feed_range``. We need to remember (a) the piece of
 that range we are currently reading and (b) any pieces we have not
 started yet. We call each piece a ``feedrange`` because it is exactly
 that - a sub-range of the caller's ``feed_range``, represented as the
 same ``routing_range.Range`` type the rest of the routing code uses.
-The two-letter wire codes ``cf`` (current feedrange) and ``rf``
-(remaining feedranges) deliberately diverge from the codes Java uses
-in ``ReadManyByPartitionKeyContinuationToken`` (``cb``/``rb``); the
-divergence is intentional, like ``ph`` -> ``frh`` already in this
-file, and makes accidental cross-SDK token reuse fail at the shape
-check rather than producing wrong rows.
 """
 
 import base64
@@ -58,11 +52,30 @@ _MAX_CONSECUTIVE_NO_PROGRESS_PAGES = 1000
 def _stable_hash_128(payload: bytes) -> str:
     """Stable 128-bit hex digest.
 
-    SHA-256 truncated to 32 hex characters. Switch to a vendored
-    MurmurHash3-128 if cross-SDK token portability is ever required
-    (it currently is not).
+    SHA-256 truncated to 32 hex characters. We deliberately use the
+    stdlib ``hashlib`` here instead of the vendored MurmurHash3-128 in
+    ``_cosmos_murmurhash3.py`` (which ``partition_key.py`` uses for
+    EPK routing). Reasons:
+
+      * The fingerprint is only ever compared by ``_decode_token`` on
+        the same machine in the same SDK version that produced it;
+        cross-SDK byte-equality with Java/.NET buys nothing observable
+        because the envelope shape (``frh`` / ``cf`` / ``rf``) already
+        differs from Java's by design.
+      * ``hashlib.sha256`` is one stdlib import with no review surface;
+        reusing the Murmur module would couple this fingerprint to a
+        helper whose hard correctness contract today is "byte-match
+        Java for partition routing", forcing every future change there
+        to be reviewed against two unrelated contracts.
+      * Both algorithms produce 128 bits, so collision risk is the
+        same (~2^64 birthday bound).
+
+    If cross-SDK token portability ever becomes a real requirement,
+    swap this for ``murmurhash3_128`` and bump ``_TOKEN_VERSION`` so
+    old tokens are rejected instead of silently misinterpreted.
 
     :param payload: Bytes to hash.
+    :type payload: bytes
     :returns: A 32-character hexadecimal digest.
     :rtype: str
     """
@@ -77,6 +90,7 @@ def _hash_query_spec(query: Any) -> str:
     produced by ``__CheckAndUnifyQueryFormat``.
 
     :param query: Query text or query spec dictionary.
+    :type query: str or dict
     :returns: Stable hash for query text and parameters.
     :rtype: str
     """
@@ -105,6 +119,7 @@ def _hash_feed_range(feed_range: routing_range.Range) -> str:
     the same container being replayed against the wrong scope.
 
     :param feed_range: Input feed range.
+    :type feed_range: ~azure.cosmos._routing.routing_range.Range
     :returns: Stable feed range fingerprint.
     :rtype: str
     """
@@ -126,6 +141,7 @@ def _encode_token(payload: dict) -> str:
     """JSON-serialize ``payload`` then base64-encode to a single ASCII blob.
 
     :param payload: Token envelope to serialize.
+    :type payload: dict
     :returns: Base64-encoded token string.
     :rtype: str
     """
@@ -147,6 +163,7 @@ def _decode_token(serialized: Optional[str]) -> Optional[dict]:
     or a corrupted blob is not silently coerced into "start fresh".
 
     :param serialized: Encoded continuation token from the caller.
+    :type serialized: Optional[str]
     :returns: Decoded token payload when valid; otherwise ``None``.
     :rtype: Optional[dict]
     """
@@ -174,6 +191,7 @@ def _validate_v1_token_structure(decoded: dict) -> None:
     them without checking for ``KeyError``.
 
     :param decoded: Decoded token payload to validate.
+    :type decoded: dict
     """
     if not isinstance(decoded.get(_FIELD_COLLECTION_RID), str):
         raise ValueError("Malformed feed_range continuation token: 'cr' is required.")
@@ -206,7 +224,9 @@ def _validate_range_dict(range_dict: dict, field_name: str) -> None:
     """Each persisted feedrange is a {'min': str, 'max': str} dict.
 
     :param range_dict: Serialized feed range dictionary.
+    :type range_dict: dict
     :param field_name: Field label used in validation messages.
+    :type field_name: str
     """
     if not isinstance(range_dict.get("min"), str) or not isinstance(range_dict.get("max"), str):
         raise ValueError(
@@ -221,6 +241,7 @@ def _dict_to_range(range_dict: dict) -> routing_range.Range:
     """Convert a persisted ``{'min': ..., 'max': ...}`` dict back into a ``Range``.
 
     :param range_dict: Persisted feed range dictionary.
+    :type range_dict: dict
     :returns: Routing range instance.
     :rtype: ~azure.cosmos._routing.routing_range.Range
     """
@@ -245,9 +266,13 @@ def _validate_token_identity(
     request.
 
     :param inbound: Decoded inbound token payload.
+    :type inbound: dict
     :param resource_id: Current collection resource ID.
+    :type resource_id: str
     :param query: Current query spec.
+    :type query: str or dict
     :param feed_range_epk: Current feed range scope.
+    :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
     """
     expected_qh = _hash_query_spec(query)
     expected_frh = _hash_feed_range(feed_range_epk)
@@ -275,8 +300,10 @@ def _extract_resume_state(
     backend continuation out of a v1 token.
 
     :param inbound: Decoded inbound token payload.
+    :type inbound: dict
     :returns: Current feedrange, remaining feedranges, and backend continuation.
-    :rtype: tuple[~azure.cosmos._routing.routing_range.Range, list[~azure.cosmos._routing.routing_range.Range], Optional[str]]
+    :rtype: tuple[~azure.cosmos._routing.routing_range.Range,
+        list[~azure.cosmos._routing.routing_range.Range], Optional[str]]
     """
     current_feedrange = _dict_to_range(inbound[_FIELD_CURRENT_FEEDRANGE])
     remaining_feedranges = [_dict_to_range(r) for r in inbound[_FIELD_REMAINING_FEEDRANGES]]
@@ -292,10 +319,14 @@ def _explode_feedrange_on_multi_overlap(
     (Cosmos split it), slice it into one sub-feedrange per child.
 
     :param current_feedrange: Feed range currently being resumed.
+    :type current_feedrange: ~azure.cosmos._routing.routing_range.Range
     :param overlapping: Partition ranges overlapping ``current_feedrange``.
+    :type overlapping: list[dict]
     :param remaining_feedranges: Not-yet-visited feed ranges.
+    :type remaining_feedranges: list[~azure.cosmos._routing.routing_range.Range]
     :returns: New current feedrange, updated remaining feedranges, and split indicator.
-    :rtype: tuple[~azure.cosmos._routing.routing_range.Range, list[~azure.cosmos._routing.routing_range.Range], bool]
+    :rtype: tuple[~azure.cosmos._routing.routing_range.Range,
+        list[~azure.cosmos._routing.routing_range.Range], bool]
     """
     if len(overlapping) <= 1:
         return current_feedrange, remaining_feedranges, False
@@ -308,17 +339,20 @@ def _explode_feedrange_on_multi_overlap(
 def _build_scope_from_overlaps(
     overlapping: List[dict], feedrange: routing_range.Range
 ) -> Tuple[List[dict], routing_range.Range]:
-    """Compute the union EPK scope over a set of overlapping physical
-    partitions, returning the overlaps and the union as a ``Range``.
+    """Compute the smallest EPK ``Range`` that covers every one of the
+    overlapping physical partitions, and return both the original
+    overlaps and that combined range.
 
     Both the sync and async pagination paths call this directly after
     awaiting / invoking ``routing_map_provider.get_overlapping_ranges``
     themselves, so the live lookup stays at the call site (sync vs.
-    async) and the pure union logic is shared here.
+    async) and the pure combine logic is shared here.
 
     :param overlapping: Overlapping partition-range dictionaries.
+    :type overlapping: list[dict]
     :param feedrange: Feed range used for error context.
-    :returns: Original overlaps and their union scope.
+    :type feedrange: ~azure.cosmos._routing.routing_range.Range
+    :returns: Original overlaps and the combined range covering them.
     :rtype: tuple[list[dict], ~azure.cosmos._routing.routing_range.Range]
     """
     if not overlapping:
@@ -351,7 +385,9 @@ def _derive_initial_feedranges(
     ordered by EPK ``min``.
 
     :param feed_range_epk: Requested feed range.
+    :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
     :param overlapping: Overlapping partition-range dictionaries.
+    :type overlapping: list[dict]
     :returns: Derived feed ranges ordered by ``min``.
     :rtype: list[~azure.cosmos._routing.routing_range.Range]
     """
@@ -394,7 +430,9 @@ class _FeedRangePaginationState:
         """Build state from a decoded inbound token.
 
         :param inbound: Decoded inbound token payload.
+        :type inbound: dict
         :param remaining_page_item_count: Remaining items allowed in this logical page.
+        :type remaining_page_item_count: Optional[int]
         :returns: Pagination state initialized for resume.
         :rtype: _FeedRangePaginationState
         """
@@ -415,7 +453,9 @@ class _FeedRangePaginationState:
         """Build state from the first/remaining feedranges computed at startup.
 
         :param feedranges: Derived feedranges ordered by ``min``.
+        :type feedranges: list[~azure.cosmos._routing.routing_range.Range]
         :param remaining_page_item_count: Remaining items allowed in this logical page.
+        :type remaining_page_item_count: Optional[int]
         :returns: Pagination state initialized for first request.
         :rtype: _FeedRangePaginationState
         """
@@ -439,6 +479,7 @@ class _FeedRangePaginationState:
         """Split current feedrange when routing now overlaps multiple partitions.
 
         :param overlapping: Routing overlaps for ``current_feedrange``.
+        :type overlapping: list[dict]
         :returns: ``True`` when current feedrange was exploded.
         :rtype: bool
         """
@@ -457,13 +498,15 @@ class _FeedRangePaginationState:
         """Apply one backend response to pagination state.
 
         :param items_returned: Number of documents returned by this POST.
+        :type items_returned: int
         :param backend_continuation: Continuation for current feedrange.
+        :type backend_continuation: Optional[str]
         """
         if self.remaining_page_item_count is not None:
             self.remaining_page_item_count -= items_returned
 
         self.backend_continuation = backend_continuation
-        if backend_continuation:
+        if backend_continuation is not None:
             return
         if not self.remaining_feedranges:
             self.current_feedrange = None
@@ -480,9 +523,13 @@ class _FeedRangePaginationState:
         """Set/clear outbound continuation header from current state.
 
         :param last_response_headers: Response headers to mutate.
+        :type last_response_headers: MutableMapping[str, Any]
         :param resource_id: Collection resource ID.
+        :type resource_id: str
         :param query: Query spec used for hashing.
+        :type query: str or dict
         :param feed_range_epk: Original request feed range.
+        :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
         """
         _set_outbound_continuation(
             last_response_headers,
@@ -506,11 +553,17 @@ def _build_outbound_token(
     """Build and base64-encode the outbound continuation token.
 
     :param resource_id: Collection resource ID.
+    :type resource_id: str
     :param query: Query spec used for hashing.
+    :type query: str or dict
     :param feed_range_epk: Original feed range for the request.
+    :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
     :param current_feedrange: Feed range currently in progress.
+    :type current_feedrange: ~azure.cosmos._routing.routing_range.Range
     :param remaining_feedranges: Feed ranges still pending.
+    :type remaining_feedranges: list[~azure.cosmos._routing.routing_range.Range]
     :param backend_continuation: Service continuation for current range.
+    :type backend_continuation: Optional[str]
     :returns: Encoded continuation token.
     :rtype: str
     """
@@ -545,6 +598,7 @@ def _normalize_max_item_count(raw_max_item_count: Any) -> Optional[int]:
         cycle on the caller side.
 
     :param raw_max_item_count: Raw ``maxItemCount`` value from options.
+    :type raw_max_item_count: Any
     """
     if raw_max_item_count is None:
         return None
@@ -561,6 +615,7 @@ def _extract_query_text(query: Any) -> Optional[str]:
     """Return SQL text from either a string query or query-spec dict.
 
     :param query: Query text or query spec dictionary.
+    :type query: Any
     :returns: Query text when present.
     :rtype: Optional[str]
     """
@@ -577,6 +632,7 @@ def _is_select_value_aggregate_query(query: Any) -> bool:
     """Detect SELECT VALUE aggregate shapes that return scalar merge fragments.
 
     :param query: Query text or query spec dictionary.
+    :type query: Any
     :returns: ``True`` when query is SELECT VALUE with COUNT/SUM/MIN/MAX/AVG.
     :rtype: bool
     """
@@ -599,7 +655,9 @@ def _count_page_items_from_partial_result(
     rows, so they should not consume page items and force an early break.
 
     :param partial_result: One backend POST result.
+    :type partial_result: Optional[dict[str, Any]]
     :param query: Query text or query spec dictionary.
+    :type query: Any
     :returns: Number of items to subtract from the remaining page-item count.
     :rtype: int
     """
@@ -615,8 +673,13 @@ def _count_page_items_from_partial_result(
     # Object/scalar aggregate partials must be merged across overlaps first.
     if isinstance(row, dict) and row.get("_aggregate") is not None:
         return 0
-    # SELECT VALUE aggregates (COUNT/SUM/MIN/MAX/AVG) can surface a scalar
-    # merge fragment per partition. Do not charge page items for those.
+    # A SELECT VALUE COUNT/SUM/MIN/MAX/AVG query asks each partition for
+    # its piece of the answer (e.g. "how many rows do you have?"). Each
+    # partition returns one bare number, and the merge step adds those
+    # numbers together to produce the single final answer the caller will
+    # see. Treating one of those per-partition numbers as a real page row
+    # would stop the loop after the first partition and ship a half-done
+    # answer, so we count it as zero page items.
     if isinstance(row, (int, float, bool)) and _is_select_value_aggregate_query(query):
         return 0
     return 1
@@ -633,11 +696,17 @@ def _update_no_progress_page_count(
     """Track consecutive empty pages that still carry continuation.
 
     :param current_no_progress_count: Current consecutive no-progress page count.
+    :type current_no_progress_count: int
     :param page_items_returned: Number of logical page items returned this iteration.
+    :type page_items_returned: int
     :param previous_feedrange: Feedrange before processing this response.
+    :type previous_feedrange: Optional[~azure.cosmos._routing.routing_range.Range]
     :param previous_backend_continuation: Backend continuation before response.
+    :type previous_backend_continuation: Optional[str]
     :param current_feedrange: Feedrange after processing this response.
+    :type current_feedrange: Optional[~azure.cosmos._routing.routing_range.Range]
     :param current_backend_continuation: Backend continuation after response.
+    :type current_backend_continuation: Optional[str]
     :returns: Updated consecutive no-progress page count.
     :rtype: int
     """
@@ -651,9 +720,7 @@ def _update_no_progress_page_count(
         return 0
 
     # No logical rows and no cursor/feedrange movement: caller made no progress.
-    if current_backend_continuation is not None:
-        return current_no_progress_count + 1
-    return 0
+    return current_no_progress_count + 1
 
 
 def _apply_feedrange_request_headers(
@@ -673,11 +740,17 @@ def _apply_feedrange_request_headers(
     cleared so leftover state from the previous iteration cannot leak.
 
     :param req_headers: Mutable request headers to populate.
+    :type req_headers: MutableMapping[str, Any]
     :param overlapping: Overlapping partition-range dictionaries.
+    :type overlapping: list[dict]
     :param partition_scope: Union scope for overlapping partitions.
+    :type partition_scope: ~azure.cosmos._routing.routing_range.Range
     :param current_feedrange: Feed range for the current backend request.
+    :type current_feedrange: ~azure.cosmos._routing.routing_range.Range
     :param remaining_page_item_count: Remaining items allowed in this logical page.
+    :type remaining_page_item_count: Optional[int]
     :param inbound_continuation: Continuation token for backend request.
+    :type inbound_continuation: Optional[str]
     """
     pkr_id = overlapping[0]["id"]
     req_headers[http_constants.HttpHeaders.PartitionKeyRangeID] = pkr_id
@@ -723,12 +796,19 @@ def _set_outbound_continuation(
     ``by_page`` loop will see no continuation and terminate.
 
     :param last_response_headers: Mutable response headers to update.
+    :type last_response_headers: MutableMapping[str, Any]
     :param resource_id: Collection resource ID.
+    :type resource_id: str
     :param query: Query spec used for hashing.
+    :type query: str or dict
     :param feed_range_epk: Original feed range for this query.
+    :type feed_range_epk: ~azure.cosmos._routing.routing_range.Range
     :param current_feedrange: Current feed range or ``None`` when complete.
+    :type current_feedrange: Optional[~azure.cosmos._routing.routing_range.Range]
     :param remaining_feedranges: Feed ranges that remain after current.
+    :type remaining_feedranges: list[~azure.cosmos._routing.routing_range.Range]
     :param backend_continuation: Service continuation for current feed range.
+    :type backend_continuation: Optional[str]
     """
     if current_feedrange is None:
         last_response_headers.pop(http_constants.HttpHeaders.Continuation, None)

@@ -2127,7 +2127,6 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
-        await base.set_session_token_header_async(self, headers, path, request_params, options)
         request_params.set_availability_strategy(options, self.availability_strategy)
         request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
         result = await self.__Post(path, request_params, batch_operations, headers, **kwargs)
@@ -3052,8 +3051,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         )
 
         def _capture_internal_headers(headers: Mapping[str, Any]) -> None:
-            # Local helper so flow analysis can narrow Optional[Dict] once
-            # and every call site stays a single line.
+            # `internal_headers_capture` is Optional[Dict]; checking it
+            # for None once inside this helper lets the type checker
+            # treat it as a plain Dict for the .clear()/.update() calls
+            # below, and keeps every call site to a single line.
             if internal_headers_capture is None:
                 return
             internal_headers_capture.clear()
@@ -3159,10 +3160,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
         if feed_range_epk is not None:
             if id_ is None:
                 raise ValueError("resource_id is required for feed_range continuation.")
-            # Narrow ``id_`` (Optional[str]) to ``str`` for the helpers below.
-            # ``cast`` carries the narrowing reliably across the alias even when
-            # mypy widens it again later in this long pagination block.
-            resource_id_str: str = cast(str, id_)
+            # The None-check above already narrows ``id_`` to ``str`` for the
+            # rest of this block. Bind it to a clearly-named local so the
+            # feed_range helpers below read as ``resource_id_str`` instead
+            # of the generic ``id_``.
+            resource_id_str: str = id_
             # (a) Look at the continuation the caller passed in.
             #     - Empty or from a pre-fix SDK: start fresh.
             #     - One of our v=1 envelopes: check the collection, query, and
@@ -3230,9 +3232,10 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # loop iteration sees a single overlap and falls through to
                 # the normal single-partition POST below.
                 #
-                # Note: if the caller had already pulled some rows from X
-                # before the split, those rows show up again on this resume.
-                # The customer dedupes by document id.
+                # One edge case remains by design: if some rows were already
+                # read from parent X before it split, those rows can show up
+                # once more after resume when children X1/X2 restart from the
+                # start of their slices.
                 if pagination_state.explode_on_multi_overlap(overlapping):
                     current_feedrange = pagination_state.current_feedrange
                     if current_feedrange is None:

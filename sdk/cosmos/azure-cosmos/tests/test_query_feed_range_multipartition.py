@@ -3,30 +3,22 @@
 """End-to-end tests for ``query_items(feed_range=...)`` against a feed_range
 that overlaps more than one physical partition.
 
-These tests reproduce a customer-reported bug whose two visible symptoms are:
+These tests pin two invariants of the multi-overlap pagination contract:
 
-* pages return more than ``max_item_count`` items (the per-partition fan-out
-  loop POSTs once per overlapping physical partition and concatenates the
-  results into a single logical page), and
-* duplicate items appear across pages (only the last overlap's outbound
-  continuation is preserved on the wire, so the next page restarts the
-  other overlap(s) from offset 0).
+* every page returns at most ``max_item_count`` items, and
+* no item id is returned on more than one page (no duplicates across the
+  fan-out / resume boundary).
 
 Three scenarios are covered:
 
 * ``test_two_partition_feed_range`` — feed_range overlaps two adjacent
-  physical partitions (the customer's exact case).
+  physical partitions.
 * ``test_three_way_overlap`` — feed_range overlaps three adjacent physical
-  partitions; same family of bug, wider fan-out.
+  partitions; wider fan-out.
 * ``test_post_split_resume`` — emit a continuation under one physical
   layout, force a real partition split, then resume with the same
   continuation against the new layout. Slow (``cosmosSplit``).
 
-The tests run against a live Cosmos account (``ACCOUNT_HOST`` and
-``ACCOUNT_KEY`` env vars). They are marked ``cosmosQuery`` (and
-``cosmosSplit`` for the post-split test). Each one is expected to fail on
-the buggy code path and to pass once the fan-out / continuation handling is
-fixed.
 
 Async parity lives in ``test_query_feed_range_multipartition_async.py``.
 """
@@ -56,14 +48,15 @@ REPRO_PARTITION_KEY = "pk"
 REPRO_THROUGHPUT = CONFIG.THROUGHPUT_FOR_5_PARTITIONS  # 30000 → ~5 partitions
 REPRO_DOC_COUNT = 200  # spread across partitions; ensures every partition has data
 
-# Customer-reported symptom thresholds:
-#   max_item_count=5 → page returns 10 items (under 2-overlap fan-out)
-#   page 3 replays page 2's items (duplicate ids)
+# Per-page cap applied to every multi-overlap query in this module.
+# Small enough to drive several pages per partition under the seeded data
+# count, so any per-page over-fetch or duplicate-on-resume shows up across
+# the page sequence rather than only on the last page.
 PAGE_SIZE = 5
 
 # Per-overlap data threshold below which we skip a configuration as not a
 # meaningful repro. Need enough docs in each partition to drive ≥ 3 pages
-# under PAGE_SIZE = 5, matching the customer's observed setup.
+# under PAGE_SIZE = 5.
 MIN_DOCS_PER_PARTITION = 15
 
 
@@ -101,9 +94,8 @@ def _count_in_range(container, range_min: str, range_max: str) -> int:
 
 def _crossing_feed_range(range_min: str, range_max: str):
     """Synthesize a feed_range whose ``[min, max)`` interval spans the union
-    of one or more current physical partitions — exactly the shape a
-    customer-supplied feed_range takes after the underlying partition has
-    been split."""
+    of one or more current physical partitions — the shape a feed_range
+    takes after the underlying partition has been split."""
     return test_config.create_feed_range_in_dict(
         test_config.create_range(range_min=range_min, range_max=range_max,
                                  is_min_inclusive=True, is_max_inclusive=False))
@@ -112,9 +104,9 @@ def _crossing_feed_range(range_min: str, range_max: str):
 def _ids_via_per_partition_scan(container, partition_ranges: Iterable[Tuple[str, str]]):
     """Ground-truth set of document ids inside the union of the given physical
     partition ranges. Each partition is queried independently (each call is a
-    single-overlap query that does NOT go through the buggy fan-out branch),
-    so this is the correct baseline to compare a crossing-feed_range query
-    against."""
+    single-overlap query that does NOT exercise the multi-overlap fan-out
+    branch), so this is the correct baseline to compare a crossing-feed_range
+    query against."""
     ground_truth = set()
     for (mn, mx) in partition_ranges:
         fr = _crossing_feed_range(mn, mx)
@@ -179,10 +171,9 @@ class TestFeedRangeMultiPartition:
         duplicates across pages, and the last page's continuation must be
         ``None``.
 
-        This is the path thousands of the customer's other feedRanges
-        follow. It does NOT exercise the multi-overlap fan-out branch and
-        must remain green both before and after the fix - any regression
-        here means the fix broke the single-overlap path.
+        This is the path the vast majority of feedRanges follow. It does
+        NOT exercise the multi-overlap fan-out branch; a regression here
+        means the single-overlap path itself is broken.
         """
         container = _get_container()
         partitions = _sorted_partition_ranges(container)
@@ -238,24 +229,20 @@ class TestFeedRangeMultiPartition:
             f"{pager.continuation_token!r}")
 
     # ------------------------------------------------------------------ #
-    # Two-partition feed_range (the customer's exact case)
+    # Two-partition feed_range
     # ------------------------------------------------------------------ #
     def test_two_partition_feed_range(self):
         """Construct a feed_range that overlaps two adjacent physical
-        partitions and pin down the customer's three symptoms:
+        partitions and pin three invariants:
 
-          (a) per-page item count ≤ ``max_item_count`` (customer saw 10 on
-              ``max_item_count=5`` because the buggy fan-out loop concatenates
-              one POST per overlap),
-          (b) no duplicate ids across pages (customer saw page 3 replay 5 of
-              page 2's items because only the last overlap's outbound
-              continuation is preserved),
+          (a) per-page item count ≤ ``max_item_count`` (the fan-out must
+              not concatenate per-overlap responses into one oversized
+              logical page),
+          (b) no duplicate ids across pages (each overlap's outbound
+              continuation must be preserved so the next page resumes
+              instead of restarting from offset 0),
           (c) the union of ids returned matches the union of ids from
               independent per-partition scans (no missing items).
-
-        On the buggy code path this test is expected to fail on (a) and (b).
-        Once the fan-out / continuation handling is fixed it must pass on
-        all three.
         """
         container = _get_container()
         partitions = _sorted_partition_ranges(container)
@@ -263,8 +250,7 @@ class TestFeedRangeMultiPartition:
             pytest.skip("Need a container with ≥ 2 physical partitions")
 
         # Find the first adjacent pair where both partitions hold enough docs
-        # to drive ≥ 3 pages under PAGE_SIZE = 5 (matching the customer's
-        # observed setup).
+        # to drive ≥ 3 pages under PAGE_SIZE = 5.
         chosen = None
         for i in range(len(partitions) - 1):
             p0, p1 = partitions[i], partitions[i + 1]
@@ -292,18 +278,14 @@ class TestFeedRangeMultiPartition:
         assert not oversized, (
             f"page-size budget violated (max_item_count={PAGE_SIZE}); "
             f"got pages with sizes {[len(p) for p in pages]}; "
-            f"oversized pages (index, size): {oversized}. "
-            "This is the customer's '10 items per page on max_item_count=5' "
-            "symptom.")
+            f"oversized pages (index, size): {oversized}.")
 
         # (b) no duplicates across pages
         unique = set(all_ids)
         assert len(all_ids) == len(unique), (
             f"duplicates across pages: {len(all_ids)} items returned, "
             f"{len(unique)} distinct, "
-            f"{len(all_ids) - len(unique)} duplicate(s). "
-            "This is the customer's 'page 3 replays 5 items from page 2' "
-            "symptom.")
+            f"{len(all_ids) - len(unique)} duplicate(s).")
 
         # (c) no missing items vs ground truth
         assert unique == ground_truth, (
@@ -318,10 +300,8 @@ class TestFeedRangeMultiPartition:
     def test_three_way_overlap(self):
         """Same shape as ``test_two_partition_feed_range`` but with a
         ``feed_range`` that overlaps **three** adjacent physical partitions.
-        The buggy fan-out fires three POSTs per page, so per-page sizes can
-        reach ``3 × PAGE_SIZE`` and the duplicate-on-resume pattern becomes
-        more pronounced. Once the bug is fixed, behaviour must collapse back
-        to the same three guarantees as the two-partition test.
+        Wider fan-out exercises the same three guarantees as the
+        two-partition test on a larger overlap set.
         """
         container = _get_container()
         partitions = _sorted_partition_ranges(container)
@@ -352,8 +332,7 @@ class TestFeedRangeMultiPartition:
         oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > PAGE_SIZE]
         assert not oversized, (
             f"page-size budget violated; sizes={[len(p) for p in pages]}; "
-            f"oversized={oversized}. With 3-way overlap on the buggy code "
-            "path, expect pages of up to 3×max_item_count.")
+            f"oversized={oversized}.")
 
         unique = set(all_ids)
         assert len(all_ids) == len(unique), (
@@ -387,10 +366,10 @@ class TestFeedRangeMultiPartition:
              unique and equal the union of a fresh per-partition scan over
              the same EPK interval.
 
-        On the buggy code path the saved continuation is a plain backend
-        string from whichever overlap was last in the loop; sending that
-        token to a different partition layout is undefined. Expect this
-        test to fail with either duplicates or wrong rows.
+        On the post-split resume path, the saved continuation must remain
+        valid (or be safely restarted) under the new physical layout - the
+        combined ids across the split boundary must still be unique and
+        cover the same EPK interval.
         """
         container = _get_container()
         partitions_before = _sorted_partition_ranges(container)
@@ -451,10 +430,8 @@ class TestFeedRangeMultiPartition:
             f"returned across page 1 + {len(post_pages)} post-split page(s), "
             f"{len(unique)} distinct, "
             f"{len(combined_ids) - len(unique)} duplicate(s). "
-            "Under the buggy code path, the saved continuation is a plain "
-            "backend string from the pre-split layout; sending it through "
-            "the post-split routing map is the failure mode this test is "
-            "designed to catch.")
+            "The saved continuation must remain valid (or be safely "
+            "restarted) under the post-split routing map.")
 
         oversized = [(i, len(p)) for i, p in enumerate(post_pages) if len(p) > PAGE_SIZE]
         assert not oversized, (
@@ -473,13 +450,12 @@ class TestFeedRangeMultiPartition:
             f"unexpected={len(unique - ground_truth)}.")
 
     # ------------------------------------------------------------------ #
-    # Legacy opaque token compatibility (#7 in §7.2.2)
+    # Legacy opaque token compatibility
     # ------------------------------------------------------------------ #
     def test_legacy_opaque_token_compat(self):
         """Hand the new code a continuation produced by the OLD code
-        (opaque, neither base64-of-JSON nor v=1). Per §6.5 of
-        ``docs/FEED_RANGE_ISSUE.md`` the new code treats it as
-        ``continuation_token=None``.
+        (opaque, neither base64-of-JSON nor v=1). The new code treats it
+        as ``continuation_token=None``.
 
         Asserts:
           (a) no exception is raised on the resume call,
@@ -507,7 +483,7 @@ class TestFeedRangeMultiPartition:
         crossing = _crossing_feed_range(p0_min, p1_max)
         ground_truth = _ids_via_per_partition_scan(container, [chosen[0], chosen[1]])
 
-        # An opaque pre-fix token from the buggy SDK: a backend RID:~
+        # An opaque legacy token from an older SDK: a backend RID:~
         # continuation string that is NOT base64-of-our-JSON. The new
         # _decode_token must return None for this and the call site must
         # restart from offset 0.
@@ -547,7 +523,7 @@ class TestFeedRangeMultiPartition:
             f"legacy-token restart; got {pager.continuation_token!r}")
 
     # ------------------------------------------------------------------ #
-    # Identity-fingerprint mismatch rejection (#6 in §7.2.2, live half)
+    # Identity-fingerprint mismatch rejection (live half)
     # ------------------------------------------------------------------ #
     def test_token_identity_mismatch_rejected(self):
         """Round-trip a token through ``query_items`` then replay it
