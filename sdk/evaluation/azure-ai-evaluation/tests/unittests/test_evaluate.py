@@ -2108,7 +2108,7 @@ class TestLogEventsTokenUsage:
         assert "gen_ai.evaluation.usage.output_tokens" not in attrs
 
     def test_token_usage_absent_when_sample_not_dict(self):
-        """No token usage attributes when sample is not a dict (e.g. NaN)."""
+        """When sample is not a dict (e.g. NaN), the event fails to log entirely."""
         event_logger, emitted = self._make_mock_event_logger()
         events = [{"metric": "coherence", "score": 4.5, "sample": float("nan")}]
         app_insights_config = {"connection_string": "fake"}
@@ -2120,10 +2120,8 @@ class TestLogEventsTokenUsage:
             app_insights_config=app_insights_config,
         )
 
-        assert len(emitted) == 1
-        attrs = emitted[0].attributes
-        assert "gen_ai.evaluation.usage.input_tokens" not in attrs
-        assert "gen_ai.evaluation.usage.output_tokens" not in attrs
+        # sample=NaN causes the event to fail; no event is emitted
+        assert len(emitted) == 0
 
     def test_token_usage_zero_values_emitted(self):
         """Token usage of 0 should be emitted, not dropped."""
