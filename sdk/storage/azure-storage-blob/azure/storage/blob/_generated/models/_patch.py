@@ -11,7 +11,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 import xml.etree.ElementTree as ET
 from typing import Any, Callable, List, Optional
 
-from .._utils.model_base import Model as _Model, _MyMutableMapping, _RestField, _deserialize
+from .._utils.model_base import Model as _Model, _MyMutableMapping, _RestField, _deserialize, _UNSET
 
 
 def _patched_getattr(self, name):
@@ -66,7 +66,7 @@ def _patched_getattribute(self, name):
 
 
 def _patched_new(cls, *args, **kwargs):
-    if f"{cls.__module__}.{cls.__qualname__}" not in cls._calculated:
+    if not cls.__dict__.get("_calculated_done", False):
         # Walk only user-defined classes (base-first), stopping before the
         # framework base.  Each _RestField is configured with the module of
         # the class that defined it so forward references resolve correctly.
@@ -85,13 +85,21 @@ def _patched_new(cls, *args, **kwargs):
                     v._module = mro_class.__module__
                     if not v._type:
                         v._type = v._get_deserialize_callable_from_annotation(annotations.get(k, None))
-                    if not v._rest_name_input:
-                        v._rest_name_input = k
+                    if not v._rest_name:
+                        v._rest_name = k
 
         cls._attr_to_rest_field = attr_to_rest_field
         cls._backcompat_attr_to_rest_field = {
             _Model._get_backcompat_attribute_name(cls._attr_to_rest_field, attr): rf
             for attr, rf in cls._attr_to_rest_field.items()
+        }
+
+        # Precompute the default-value dict once per class. Model.__init__ copies this
+        # per instance instead of rebuilding it from _attr_to_rest_field every call.
+        cls._defaults = {
+            rf._rest_name: rf._default
+            for rf in attr_to_rest_field.values()
+            if rf._default is not _UNSET
         }
 
         # Reverse mapping: REST wire name → Python attribute name
@@ -136,7 +144,7 @@ def _patched_new(cls, *args, **kwargs):
             cls.__setattr__ = _patched_setattr
             cls.__getattribute__ = _patched_getattribute
 
-        cls._calculated.add(f"{cls.__module__}.{cls.__qualname__}")
+        cls._calculated_done = True
 
     return object.__new__(cls)
 
