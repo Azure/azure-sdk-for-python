@@ -146,12 +146,20 @@ class verifytypes(Check):
             os.chdir(temp_dir_name)
             try:
                 subprocess.check_call(["git", "init"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+                # TEMP (revert before merge): clone from l0lawrence fork so CI simulates a
+                # post-merge 'main' that has --no-deps fix + verifytypes=true. See #46426.
+                clone_url = os.environ.get(
+                    "VERIFYTYPES_MAIN_CLONE_URL",
+                    "https://github.com/l0lawrence/azure-sdk-for-python.git",
+                )
+                main_ref = os.environ.get("VERIFYTYPES_MAIN_REF", "verifytypes-diagnostics")
+                logger.info(f"install_from_main: cloning {clone_url} (ref {main_ref})")
                 subprocess.check_call(
                     [
                         "git",
                         "clone",
                         "--no-checkout",
-                        "https://github.com/Azure/azure-sdk-for-python.git",
+                        clone_url,
                         "--depth",
                         "1",
                     ],
@@ -165,7 +173,13 @@ class verifytypes(Check):
                 subprocess.check_call(
                     ["git", "sparse-checkout", "set", subdirectory], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT
                 )
-                subprocess.check_call(["git", "checkout", "main"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+                subprocess.check_call(
+                    ["git", "fetch", "--depth", "1", "origin", main_ref],
+                    stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT,
+                )
+                subprocess.check_call(
+                    ["git", "checkout", "FETCH_HEAD"], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT
+                )
 
                 if not os.path.exists(os.path.join(os.getcwd(), subdirectory)):
                     # code is not checked into main yet, nothing to compare
