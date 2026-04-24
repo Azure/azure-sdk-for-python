@@ -9,9 +9,10 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 import time
+from collections.abc import Mapping
 from typing import Any, Callable, IO, List, Optional, Union, cast
 
-from azure.core.exceptions import ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.polling import PollingMethod, LROPoller, NoPolling
 
 from azure.confidentialledger._operations._operations import (
@@ -23,6 +24,31 @@ import azure.confidentialledger.models as _models
 __all__: List[str] = [
     "_ConfidentialLedgerClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
+
+
+# Maximum consecutive HTTP 404 responses tolerated while polling a transaction's status before
+# the LRO is surfaced as a failure. HTTP 406 responses (consensus in progress) do not count
+# against this limit and reset the counter.
+MAX_NOT_FOUND_RETRIES = 3
+
+# Maximum number of additional polling attempts (after the initial request) used by
+# ``get_ledger_entry`` to wait for a "Loading" entry to become "Ready".
+MAX_LOADING_RETRIES = 10
+
+# Default delay, in seconds, between successive ``get_ledger_entry`` loading-poll attempts.
+DEFAULT_LOADING_POLLING_INTERVAL_S = 0.5
+
+
+def _is_loading_response(response: Any) -> bool:
+    """Return True if a ``get_ledger_entry`` response represents a still-loading entry.
+
+    A response is considered "loading" when it parses as a JSON object that does NOT contain an
+    ``entry`` property (i.e. the service replied with ``{"state": "Loading"}``). Non-mapping or
+    malformed bodies are treated as terminal.
+    """
+    if not isinstance(response, Mapping):
+        return False
+    return "entry" not in response
 
 
 def patch_sdk():
@@ -101,16 +127,28 @@ class StatePollingMethod(BaseStatePollingMethod, PollingMethod):
             while not self.finished():
                 try:
                     response = self._operation()
+                    # A successful response also resets the consecutive-404 counter.
+                    self._not_found_count = 0
                     self._evaluate_response(response)
                 except ResourceNotFoundError as not_found_exception:
                     # We'll allow some instances of resource not found to account for replication
-                    # delay if session stickiness is lost.
+                    # delay if session stickiness is lost. After exceeding
+                    # ``MAX_NOT_FOUND_RETRIES`` consecutive 404s, surface the failure.
 
                     self._not_found_count += 1
 
                     not_retryable = not self._retry_not_found or self._give_up_not_found_error(not_found_exception)
 
-                    if not_retryable or self._not_found_count >= 3:
+                    if not_retryable or self._not_found_count > MAX_NOT_FOUND_RETRIES:
+                        raise
+                except HttpResponseError as http_error:
+                    # HTTP 406 indicates the node knows the transaction but consensus is still in
+                    # progress. Treat it as Pending indefinitely (no retry cap) and reset the
+                    # consecutive-404 counter.
+
+                    if http_error.response is not None and http_error.response.status_code == 406:
+                        self._not_found_count = 0
+                    else:
                         raise
                 if not self.finished():
                     time.sleep(self._polling_interval_s)
@@ -120,6 +158,48 @@ class StatePollingMethod(BaseStatePollingMethod, PollingMethod):
 
 
 class _ConfidentialLedgerClientOperationsMixin(GeneratedOperationsMixin):
+    def get_ledger_entry(
+        self, transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any
+    ) -> _models.LedgerQueryResult:
+        """Gets the ledger entry at the specified transaction id, polling automatically until the
+        entry has been committed and is in the ``Ready`` state.
+
+        A collection id may optionally be specified to indicate the collection from which to fetch
+        the value.
+
+        The first call is made immediately. While the service responds with a "Loading" body
+        (HTTP 200 with no ``entry`` property), this method sleeps for ``polling_interval`` seconds
+        and re-issues the request, up to ``MAX_LOADING_RETRIES`` additional attempts. If the entry
+        is still loading after the final attempt, the last "Loading" response is returned as-is.
+        Any non-200 response is treated as terminal and surfaced immediately as an exception.
+
+        :param transaction_id: Identifies a write transaction. Required.
+        :type transaction_id: str
+        :keyword collection_id: The collection id. Default value is None.
+        :paramtype collection_id: str
+        :keyword polling_interval: The delay, in seconds, between successive polling attempts.
+         Defaults to ``DEFAULT_LOADING_POLLING_INTERVAL_S`` (0.5 s). Set to 0 to disable sleeping
+         between attempts (useful in tests).
+        :paramtype polling_interval: float
+        :return: LedgerQueryResult. The LedgerQueryResult is compatible with MutableMapping
+        :rtype: ~azure.confidentialledger.models.LedgerQueryResult
+        :raises ValueError: If ``transaction_id`` is None or empty.
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        if not transaction_id:
+            raise ValueError("transaction_id must be a non-empty string.")
+
+        polling_interval_s = kwargs.pop("polling_interval", DEFAULT_LOADING_POLLING_INTERVAL_S)
+
+        response = super().get_ledger_entry(transaction_id, collection_id=collection_id, **kwargs)
+        for _ in range(MAX_LOADING_RETRIES):
+            if not _is_loading_response(response):
+                return response
+            if polling_interval_s:
+                time.sleep(polling_interval_s)
+            response = super().get_ledger_entry(transaction_id, collection_id=collection_id, **kwargs)
+        return response
+
     def begin_get_ledger_entry(
         self, transaction_id: str, *, collection_id: Optional[str] = None, **kwargs: Any
     ) -> LROPoller[_models.LedgerQueryResult]:

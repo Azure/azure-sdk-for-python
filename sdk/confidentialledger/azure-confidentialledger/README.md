@@ -261,6 +261,14 @@ print(
 )
 ```
 
+> **Note:** `get_ledger_entry` now polls automatically until the requested entry has been
+> committed (i.e. the response contains an `entry` property), so callers no longer need to write a
+> manual `while not loaded` loop. The call simply returns the final ready-state response:
+>
+> ```python
+> ready_entry = ledger_client.get_ledger_entry(post_transaction_id)
+> ```
+
 ### Making a ranged query
 Ledger entries may be retrieved over a range of transaction ids. Entries will only be returned from the default or specified collection.
 

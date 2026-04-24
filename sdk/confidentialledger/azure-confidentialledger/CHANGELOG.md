@@ -1,5 +1,23 @@
 # Release History
 
+## 2.0.0b3 (2026-04-23)
+
+### Features Added
+
+- `get_ledger_entry` now polls automatically until the requested entry has been committed (the
+  response body contains an `entry` property). Callers no longer need to write a manual
+  `while not loaded` loop. The number of additional polling attempts is capped at
+  `MAX_LOADING_RETRIES` (10) and the delay between attempts can be tuned via the
+  `polling_interval` keyword argument.
+
+### Bugs Fixed
+
+- The internal long-running operation polling for `begin_create_ledger_entry` /
+  `begin_wait_for_commit` now correctly handles transient HTTP 406 (`NotAcceptable`) responses by
+  treating them as `Pending` indefinitely (no retry cap) and resetting the consecutive-404
+  counter. Up to `MAX_NOT_FOUND_RETRIES` (3) consecutive HTTP 404 responses are tolerated to
+  account for replication lag; the next consecutive 404 surfaces as a failure.
+
 ## 2.0.0b2 (2026-01-29)
 
 ### Bugs Fixed
