@@ -59,7 +59,7 @@ CSV_DATA = (
 CONVERTED_CSV_DATA = (
     b"Service;Package;Version;RepoPath;MissingDocs.App Configuration;azure-data-appconfiguration;"
     b"1;appconfiguration;FALSE.Event Hubs.Event Hubs - Azure Storage CheckpointStore;"
-    b"bazure-messaging-eventhubs-checkpointstore-blob;"
+    b"azure-messaging-eventhubs-checkpointstore-blob;"
     b"'1.0.1';eventhubs;FALSE.Identity;azure-identity;'1.1.0-beta.1';identity;FALSE.Key Vault - Certificates;" 
     b"azure-security-keyvault-certificates;'4.0.0';keyvault;FALSE.Key Vault - Keys;azure-security-keyvault-keys;"
     b"'4.2.0-beta.1';keyvault;FALSE.Key Vault - Secrets;azure-security-keyvault-secrets;'4.1.0';keyvault;"
