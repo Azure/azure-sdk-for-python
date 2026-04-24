@@ -1,10 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import math
 import os
 import logging
-import re
 from typing import Dict, List, Union, TypeVar, Optional
 from typing_extensions import overload, override
 from azure.ai.evaluation._evaluators._common import PromptyEvaluatorBase
@@ -15,7 +13,7 @@ from azure.ai.evaluation._exceptions import (
     ErrorTarget,
     EvaluationException,
 )
-from ..._common.utils import check_score_is_valid
+from ..._common.utils import check_score_is_valid, reformat_conversation_history, reformat_agent_response
 from azure.ai.evaluation._common._experimental import experimental
 
 logger = logging.getLogger(__name__)
@@ -222,24 +220,6 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result.
         :rtype: Dict
         """
-        # Import helper functions from base class module
-        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
-            _is_intermediate_response,
-            _preprocess_messages,
-        )
-
-        # Check for intermediate response
-        if _is_intermediate_response(eval_input.get("response")):
-            return self._not_applicable_result(
-                "Intermediate response. Please provide the agent's final response for evaluation.",
-                self.threshold,
-                has_details=True,
-            )
-
-        # Preprocess messages if they are lists
-        if isinstance(eval_input.get("response"), list):
-            eval_input["response"] = _preprocess_messages(eval_input["response"])
-
         if eval_input.get("query") is None:
             raise EvaluationException(
                 message=("Query is a required input to the Tool Call Accuracy evaluator."),
@@ -249,8 +229,30 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
                 target=ErrorTarget.TOOL_CALL_ACCURACY_EVALUATOR,
             )
 
-        if isinstance(eval_input.get("query"), list):
-            eval_input["query"] = _preprocess_messages(eval_input["query"])
+        # Reformat conversation history for cleaner evaluation
+        eval_input["query"] = reformat_conversation_history(
+            eval_input["query"], logger, include_system_messages=True, include_tool_messages=True
+        )
+
+        # Reformat tool_calls for cleaner evaluation.
+        # Reconstruct a proper message structure from the already-extracted tool call dicts:
+        # - one assistant message per tool_call content item
+        # - one role="tool" message per tool call that has an attached tool_result
+        #   (only present when response was parsed via _parse_tools_from_response)
+        if isinstance(eval_input.get("tool_calls"), list):
+            tool_call_items = eval_input["tool_calls"]
+            messages = []
+            for tc in tool_call_items:
+                messages.append({"role": "assistant", "content": [tc]})
+                if "tool_result" in tc:
+                    messages.append(
+                        {
+                            "role": "tool",
+                            "tool_call_id": tc.get("tool_call_id"),
+                            "content": [{"type": "tool_result", "tool_result": tc["tool_result"]}],
+                        }
+                    )
+            eval_input["tool_calls"] = reformat_agent_response(messages, include_tool_messages=True)
 
         # Single LLM call for all tool calls
         prompty_output_dict = await self._flow(timeout=self._LLM_CALL_TIMEOUT, **eval_input)
@@ -307,8 +309,27 @@ class ToolCallAccuracyEvaluator(PromptyEvaluatorBase[Union[str, float]]):
         :return: The evaluation result
         :rtype: Union[DoEvalResult[T_EvalValue], AggregateResult[T_EvalValue]]
         """
+        from azure.ai.evaluation._evaluators._common._base_prompty_eval import (
+            _is_intermediate_response,
+            _preprocess_messages,
+        )
+
         # Validate input before processing
         self._validator.validate_eval_input(kwargs)
+
+        # Check for intermediate response and preprocess both response and query
+        # before parsing tool calls, so _convert_kwargs_to_eval_input operates on clean data
+        response = kwargs.get("response")
+        if _is_intermediate_response(response):
+            return self._not_applicable_result(
+                "Intermediate response. Please provide the agent's final response for evaluation.",
+                self.threshold,
+                has_details=True,
+            )
+        if isinstance(response, list):
+            kwargs["response"] = _preprocess_messages(response)
+        if isinstance(kwargs.get("query"), list):
+            kwargs["query"] = _preprocess_messages(kwargs["query"])
 
         # Convert inputs into list of evaluable inputs.
         eval_input = self._convert_kwargs_to_eval_input(**kwargs)
