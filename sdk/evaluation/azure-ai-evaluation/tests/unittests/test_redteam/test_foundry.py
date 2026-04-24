@@ -1916,7 +1916,7 @@ class TestFoundryExecutionManager:
 
     @pytest.mark.asyncio
     async def test_execute_attacks_empty_objectives(self, mock_credential, mock_azure_ai_project, mock_logger):
-        """Test execute_attacks with no objectives."""
+        """Test execute_attacks with no objectives for any risk category."""
         manager = FoundryExecutionManager(
             credential=mock_credential,
             azure_ai_project=mock_azure_ai_project,
@@ -1929,12 +1929,103 @@ class TestFoundryExecutionManager:
         result = await manager.execute_attacks(
             objective_target=mock_target,
             risk_categories=[RiskCategory.Violence],
-            attack_strategies=[AttackStrategy.Base64],
+            attack_strategies=[AttackStrategy.Baseline],
             objectives_by_risk={},  # No objectives
         )
 
-        # Should return empty dict when no objectives
-        assert result == {}
+        # When no objectives are available at all the category should be
+        # recorded as failed in red_team_info so _determine_run_status can
+        # detect the gap.
+        assert "baseline" in result
+        assert "violence" in result["baseline"]
+        entry = result["baseline"]["violence"]
+        assert entry["status"] == "failed"
+        assert entry["expected_count"] == 0
+        assert "error" in entry
+
+    @pytest.mark.asyncio
+    async def test_execute_attacks_zero_objectives_records_failed(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """When a risk category has zero objectives, it should be recorded as failed
+        in red_team_info so that _determine_run_status marks the run as failed."""
+        manager = FoundryExecutionManager(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            logger=mock_logger,
+            output_dir="/test/output",
+        )
+
+        mock_target = MagicMock()
+
+        result = await manager.execute_attacks(
+            objective_target=mock_target,
+            risk_categories=[RiskCategory.Violence, RiskCategory.SelfHarm],
+            attack_strategies=[AttackStrategy.Baseline],
+            objectives_by_risk={
+                "violence": [],  # explicitly empty
+                # self_harm not present at all
+            },
+        )
+
+        # Both risk categories should be recorded as failed
+        assert "baseline" in result
+        assert result["baseline"]["violence"]["status"] == "failed"
+        assert result["baseline"]["self_harm"]["status"] == "failed"
+
+    @pytest.mark.asyncio
+    async def test_execute_attacks_zero_objectives_records_all_strategies(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """When a risk category has zero objectives with multiple strategies,
+        failed entries should be created for every strategy, not just baseline."""
+        manager = FoundryExecutionManager(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            logger=mock_logger,
+            output_dir="/test/output",
+        )
+
+        mock_target = MagicMock()
+
+        result = await manager.execute_attacks(
+            objective_target=mock_target,
+            risk_categories=[RiskCategory.Violence],
+            attack_strategies=[AttackStrategy.Base64, AttackStrategy.Baseline],
+            objectives_by_risk={},  # No objectives
+        )
+
+        # Both base64 and baseline strategies should have a failed entry
+        assert "base64" in result
+        assert result["base64"]["violence"]["status"] == "failed"
+        assert "baseline" in result
+        assert result["baseline"]["violence"]["status"] == "failed"
+
+    def test_group_results_by_strategy_includes_expected_count(
+        self, mock_credential, mock_azure_ai_project, mock_logger
+    ):
+        """Verify _group_results_by_strategy includes expected_count in entries."""
+        manager = FoundryExecutionManager(
+            credential=mock_credential,
+            azure_ai_project=mock_azure_ai_project,
+            logger=mock_logger,
+            output_dir="/test/output",
+        )
+
+        mock_orchestrator = MagicMock()
+        mock_orchestrator.calculate_asr.return_value = 0.5
+
+        results = manager._group_results_by_strategy(
+            orchestrator=mock_orchestrator,
+            risk_value="violence",
+            output_path="/test/output.jsonl",
+            attack_strategies=[AttackStrategy.Baseline],
+            include_baseline=True,
+            num_objectives=32,
+        )
+
+        assert "baseline" in results
+        assert results["baseline"]["expected_count"] == 32
 
     @pytest.mark.asyncio
     async def test_execute_attacks_filters_multi_turn_without_adversarial(
