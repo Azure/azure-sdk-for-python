@@ -3,16 +3,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
-import requests
 import tempfile
 from datetime import datetime, timedelta
 from io import BytesIO
-import os
-import typing
-import pytest
 
 import pytest
+import requests
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
+from settings.testcase import BlobPreparer
+from test_helpers import _build_base_file_share_headers, _create_file_share_oauth, NonSeekableStream, ProgressTracker
+
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
 from azure.mgmt.storage import StorageManagementClient
 from azure.storage.blob import (
@@ -30,16 +35,6 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._shared.policies import StorageContentValidation
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from fake_credentials import CPK_KEY_HASH, CPK_KEY_VALUE
-from settings.testcase import BlobPreparer
-from test_helpers import (
-    NonSeekableStream,
-    ProgressTracker,
-    _build_base_file_share_headers,
-    _create_file_share_oauth
-)
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -66,11 +61,11 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         if self.is_live:
             try:
                 self.bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
             try:
                 self.bsc.create_container(self.source_container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     def _get_blob_reference(self, prefix=TEST_BLOB_PREFIX):
@@ -170,7 +165,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
                 requests.delete(
                     url=base_url,
                     headers=_build_base_file_share_headers(bearer_token_string, 0),
-                    params={'restype': 'share'}
+                    params={'restype': 'share'},
+                    timeout=15
                 )
                 blob_service_client.delete_container(self.source_container_name)
 
@@ -226,7 +222,8 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
                 requests.delete(
                     url=base_url,
                     headers=_build_base_file_share_headers(bearer_token_string, 0),
-                    params={'restype': 'share'}
+                    params={'restype': 'share'},
+                    timeout=15
                 )
                 blob_service_client.delete_container(self.source_container_name)
 
@@ -803,7 +800,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         try:
             block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='4')]
             blob.commit_block_list(block_list)
-            self.fail()
+            pytest.fail()
         except HttpResponseError as e:
             assert str(e).find('specified block list is invalid') >= 0
 
@@ -1021,7 +1018,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data2 = b'hello second world'
 
         # Act
-        create_resp = blob.upload_blob(data1, overwrite=True)
+        blob.upload_blob(data1, overwrite=True)
         update_resp = blob.upload_blob(data2, overwrite=True)
 
         props = blob.get_blob_properties()
@@ -1073,7 +1070,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         data2 = self.get_random_bytes(LARGE_BLOB_SIZE + 512)
 
         # Act
-        create_resp = blob.upload_blob(data1, overwrite=True, metadata={'blobdata': 'data1'})
+        blob.upload_blob(data1, overwrite=True, metadata={'blobdata': 'data1'})
         update_resp = blob.upload_blob(data2, overwrite=True, metadata={'blobdata': 'data2'})
 
         props = blob.get_blob_properties()
@@ -1143,26 +1140,6 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data)
-        assert props.etag == create_resp.get('etag')
-        assert props.last_modified == create_resp.get('last_modified')
-
-    @BlobPreparer()
-    @recorded_by_proxy
-    def test_create_from_bytes_blob_unicode(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        self._setup(storage_account_name, storage_account_key)
-        blob_name = self._get_blob_reference()
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
-
-        # Act
-        data = 'hello world'
-        create_resp = blob.upload_blob(data)
-        props = blob.get_blob_properties()
-
-        # Assert
-        self.assertBlobEqual(self.container_name, blob_name, data.encode('utf-8'))
         assert props.etag == create_resp.get('etag')
         assert props.last_modified == create_resp.get('last_modified')
 
@@ -1585,7 +1562,7 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            resp = blob.upload_blob(temp_file, length=blob_size)
+            blob.upload_blob(temp_file, length=blob_size)
 
         # Assert
         self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])

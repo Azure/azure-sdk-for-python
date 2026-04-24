@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
+
 import base64
 import random
 import tempfile
@@ -11,14 +13,15 @@ from io import BytesIO
 from math import ceil
 
 import pytest
-from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import BlobProperties, StorageErrorCode
-from azure.storage.blob.aio import BlobClient, BlobServiceClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 from test_helpers_async import ProgressTracker, NonSeekableStream
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.storage.blob import BlobProperties, StorageErrorCode
+from azure.storage.blob.aio import BlobClient, BlobServiceClient
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -41,7 +44,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
             container = self.bsc.get_container_client(self.container_name)
             try:
                 await container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
 
             if upload_blob:
@@ -354,7 +357,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         # parallel tests introduce random order of requests, can only run live
         callback_counter = {'value': 0}
 
-        def callback(response):
+        def callback(response):  # pylint: disable=unused-argument
             callback_counter['value'] += 1
             if callback_counter['value'] > 3:
                 raise ValueError()
@@ -475,7 +478,6 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
 
         # Act
         end_range = self.config.max_single_get_size
-        FILE_PATH = 'ranged_get_blob_to_path_async.temp.{}.dat'.format(str(uuid.uuid4()))
         with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(offset=1, length=end_range-1, max_concurrency=2)
             read_bytes = await downloader.readinto(temp_file)
@@ -582,7 +584,6 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         await blob.upload_blob(blob_data)
 
         # Act
-        FILE_PATH = 'path_invalid_range_parallel_async.temp.{}.dat'.format(str(uuid.uuid4()))
         end_range = 2 * self.config.max_single_get_size
         with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(offset=1, length=end_range, max_concurrency=2)
@@ -840,7 +841,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
 
             with pytest.raises(ValueError):
                 downloader = await blob.download_blob(max_concurrency=2)
-                properties = await downloader.readinto(non_seekable_stream)
+                await downloader.readinto(non_seekable_stream)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -865,7 +866,7 @@ class TestStorageGetBlobTest(AsyncStorageRecordedTestCase):
         # Act
         with tempfile.TemporaryFile() as temp_file:
             downloader = await blob.download_blob(raw_response_hook=callback, max_concurrency=2)
-            properties = await downloader.readinto(temp_file)
+            await downloader.readinto(temp_file)
 
             # Assert
             temp_file.seek(0)

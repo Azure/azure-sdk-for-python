@@ -3,20 +3,21 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
 
 import asyncio
 import tempfile
-
 from io import BytesIO
-from os import path, remove, urandom
-import uuid
+from os import urandom
 
 import pytest
-from azure.storage.blob import ContentSettings
-from azure.storage.blob.aio import BlobServiceClient
 
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
+
+from azure.core.exceptions import ResourceExistsError
+from azure.storage.blob import ContentSettings
+from azure.storage.blob.aio import BlobServiceClient
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'largeblob'
@@ -41,7 +42,7 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     # --Helpers-----------------------------------------------------------------

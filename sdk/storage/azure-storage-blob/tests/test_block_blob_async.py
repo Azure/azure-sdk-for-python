@@ -3,26 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import aiohttp
+# pylint: disabl=attribute-defined-outside-init
+
 import tempfile
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from io import BytesIO
 
+import aiohttp
 import pytest
-from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
-from azure.mgmt.storage.aio import StorageManagementClient
-from azure.storage.blob import (
-    BlobType,
-    ContentSettings,
-    BlobBlock,
-    StandardBlobTier,
-    generate_blob_sas,
-    BlobSasPermissions, CustomerProvidedEncryptionKey,
-    BlobImmutabilityPolicyMode, ImmutabilityPolicy
-)
-from azure.storage.blob.aio import BlobClient, BlobServiceClient
-from azure.storage.blob._shared.policies import StorageContentValidation
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
@@ -34,6 +23,23 @@ from test_helpers_async import (
     _build_base_file_share_headers,
     _create_file_share_oauth
 )
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
+from azure.mgmt.storage.aio import StorageManagementClient
+from azure.storage.blob import (
+    BlobBlock,
+    BlobImmutabilityPolicyMode,
+    BlobSasPermissions,
+    BlobType,
+    ContentSettings,
+    CustomerProvidedEncryptionKey,
+    generate_blob_sas,
+    ImmutabilityPolicy,
+    StandardBlobTier,
+)
+from azure.storage.blob._shared.policies import StorageContentValidation
+from azure.storage.blob.aio import BlobClient, BlobServiceClient
+
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -60,11 +66,11 @@ class TestStorageBlockBlobAsync(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
             try:
                 await self.bsc.create_container(self.source_container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     def _get_blob_reference(self, prefix=TEST_BLOB_PREFIX):

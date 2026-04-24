@@ -3,11 +3,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
 from datetime import datetime, timedelta
 
 import pytest
-from azure.core.exceptions import HttpResponseError
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from settings.testcase import BlobPreparer
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
 from azure.storage.blob import (
     AccountSasPermissions,
     BlobBlock,
@@ -22,9 +28,6 @@ from azure.storage.blob import (
     ResourceTypes,
 )
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageRecordedTestCase
-from settings.testcase import BlobPreparer
 
 # ------------------------------------------------------------------------------
 # For local testing, ensure these encryption scopes are created for your account.
@@ -49,14 +52,14 @@ class TestStorageCPKN(StorageRecordedTestCase):
         if self.is_live:
             try:
                 bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     def _teardown(self, bsc):
         if self.is_live:
             try:
                 bsc.delete_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     # --Helpers-----------------------------------------------------------------

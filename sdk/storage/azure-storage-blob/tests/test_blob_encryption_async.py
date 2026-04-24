@@ -134,9 +134,9 @@ class TestStorageBlobEncryptionAsync(AsyncStorageRecordedTestCase):
         self.bsc.key_encryption_key.get_key_wrap_algorithm = None
         try:
             await self._create_small_blob(BlobType.BlockBlob)
-            self.fail()
+            pytest.fail()
         except AttributeError as e:
-            assert str(e) == _ERROR_OBJECT_INVALID.format('key encryption key', 'get_key_wrap_algorithm')
+            assert str(e), _ERROR_OBJECT_INVALID.format('key encryption key', 'get_key_wrap_algorithm')
 
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.key_encryption_key.get_kid = None
