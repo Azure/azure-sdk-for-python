@@ -1,6 +1,7 @@
 #!/bin/bash
 # Setup script for Azure AI Content Understanding SDK users
 # This script sets up the environment for running samples
+# cspell:ignore pyver esac
 
 set -e
 
