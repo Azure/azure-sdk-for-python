@@ -1999,7 +1999,16 @@ class TestProcessCriteriaMetricsThresholdInjection:
         assert results[0]["threshold"] == 3.0
 
 
+try:
+    import opentelemetry  # noqa: F401
+
+    MISSING_OPENTELEMETRY = False
+except ImportError:
+    MISSING_OPENTELEMETRY = True
+
+
 @pytest.mark.unittest
+@pytest.mark.skipif(MISSING_OPENTELEMETRY, reason="This test requires the opentelemetry package")
 class TestLogEventsTokenUsage:
     """Tests for token usage attributes in _log_events_to_app_insights."""
 
