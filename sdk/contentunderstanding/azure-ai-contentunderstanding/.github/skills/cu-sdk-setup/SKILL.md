@@ -374,15 +374,15 @@ This is a **one-time setup per Microsoft Foundry resource**.
 
 > **[ASK USER] Which samples?:**
 > Ask: "Which sample would you like to run first?" with options:
-> - `sample_analyze_binary.py` — Analyze a local PDF (**recommended for first run; ~30-60s**)
-> - `sample_analyze_url.py` — Analyze document/video/audio/image from URLs (full demo; **~15-20 min** — do not kill early)
+> - `sample_analyze_binary.py` — Analyze a local PDF (quickest; completes in under a minute)
+> - `sample_analyze_url.py` — Full demo: document + video + audio + image from URLs (runs several analyses; takes a few minutes, please be patient)
 > - `sample_analyze_invoice.py` — Extract invoice fields
 > - Other — Let me see the full list
 > - Skip — I'll run samples on my own later
 >
 > If the user picks "Other", list available samples from the `samples/` directory.
 >
-> **[COPILOT] Timing note:** `sample_analyze_url.py` runs 14 sequential LROs (document + video + audio + image, with multiple content-range variants). Video/audio chapter generation with GPT-4.1 is slow on the service side — total runtime is typically **15-20 minutes**. Do not interpret quiet periods (no stdout for several minutes during a video LRO) as a hang. Only consider killing if there is **no new stdout for 5+ minutes** AND no active HTTP traffic. For a quick end-to-end smoke test, use `sample_analyze_binary.py` instead.
+> **[COPILOT] Timing note (do not parrot verbatim to user):** `sample_analyze_url.py` runs 14 sequential LROs (document + video + audio + image, with multiple content-range variants). Video/audio chapter generation is slow on the service side, so total runtime can be on the order of 15+ minutes today. Do not interpret quiet periods (no stdout for several minutes during a video/audio LRO) as a hang. Only consider killing if there is **no new stdout for 5+ minutes** AND no active HTTP traffic. When talking to the user, prefer phrasing like "takes a few minutes" or "please be patient" rather than citing exact large minute counts.
 
 #### Sync Samples
 
