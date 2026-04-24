@@ -21,10 +21,17 @@ from .._utils.serialization import Deserializer, Serializer
 from ._configuration import ContainerServiceClientConfiguration
 from .operations import (
     AgentPoolsOperations,
+    ContainerServiceOperations,
+    IdentityBindingsOperations,
+    JWTAuthenticatorsOperations,
+    LoadBalancersOperations,
     MachinesOperations,
     MaintenanceConfigurationsOperations,
+    ManagedClusterSnapshotsOperations,
     ManagedClustersOperations,
     ManagedNamespacesOperations,
+    MeshMembershipsOperations,
+    OperationStatusResultOperations,
     Operations,
     PrivateEndpointConnectionsOperations,
     PrivateLinkResourcesOperations,
@@ -32,6 +39,7 @@ from .operations import (
     SnapshotsOperations,
     TrustedAccessRoleBindingsOperations,
     TrustedAccessRolesOperations,
+    VmSkusOperations,
 )
 
 if TYPE_CHECKING:
@@ -59,11 +67,27 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
      azure.mgmt.containerservice.aio.operations.PrivateEndpointConnectionsOperations
     :ivar snapshots: SnapshotsOperations operations
     :vartype snapshots: azure.mgmt.containerservice.aio.operations.SnapshotsOperations
+    :ivar managed_cluster_snapshots: ManagedClusterSnapshotsOperations operations
+    :vartype managed_cluster_snapshots:
+     azure.mgmt.containerservice.aio.operations.ManagedClusterSnapshotsOperations
     :ivar trusted_access_role_bindings: TrustedAccessRoleBindingsOperations operations
     :vartype trusted_access_role_bindings:
      azure.mgmt.containerservice.aio.operations.TrustedAccessRoleBindingsOperations
+    :ivar load_balancers: LoadBalancersOperations operations
+    :vartype load_balancers: azure.mgmt.containerservice.aio.operations.LoadBalancersOperations
+    :ivar identity_bindings: IdentityBindingsOperations operations
+    :vartype identity_bindings:
+     azure.mgmt.containerservice.aio.operations.IdentityBindingsOperations
+    :ivar jwt_authenticators: JWTAuthenticatorsOperations operations
+    :vartype jwt_authenticators:
+     azure.mgmt.containerservice.aio.operations.JWTAuthenticatorsOperations
+    :ivar mesh_memberships: MeshMembershipsOperations operations
+    :vartype mesh_memberships: azure.mgmt.containerservice.aio.operations.MeshMembershipsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.containerservice.aio.operations.Operations
+    :ivar operation_status_result: OperationStatusResultOperations operations
+    :vartype operation_status_result:
+     azure.mgmt.containerservice.aio.operations.OperationStatusResultOperations
     :ivar private_link_resources: PrivateLinkResourcesOperations operations
     :vartype private_link_resources:
      azure.mgmt.containerservice.aio.operations.PrivateLinkResourcesOperations
@@ -73,6 +97,11 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
     :ivar trusted_access_roles: TrustedAccessRolesOperations operations
     :vartype trusted_access_roles:
      azure.mgmt.containerservice.aio.operations.TrustedAccessRolesOperations
+    :ivar container_service: ContainerServiceOperations operations
+    :vartype container_service:
+     azure.mgmt.containerservice.aio.operations.ContainerServiceOperations
+    :ivar vm_skus: VmSkusOperations operations
+    :vartype vm_skus: azure.mgmt.containerservice.aio.operations.VmSkusOperations
     :param credential: Credential used to authenticate requests to the service. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The ID of the target subscription. The value must be an UUID. Required.
@@ -82,9 +111,9 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
     :keyword cloud_setting: The cloud setting for which to get the ARM endpoint. Default value is
      None.
     :paramtype cloud_setting: ~azure.core.AzureClouds
-    :keyword api_version: The API version to use for this operation. Known values are "2026-02-01".
-     Default value is "2026-02-01". Note that overriding this default value may result in
-     unsupported behavior.
+    :keyword api_version: The API version to use for this operation. Known values are
+     "2026-02-02-preview". Default value is "2026-02-02-preview". Note that overriding this default
+     value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
@@ -154,10 +183,26 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
             self._client, self._config, self._serialize, self._deserialize
         )
         self.snapshots = SnapshotsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.managed_cluster_snapshots = ManagedClusterSnapshotsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.trusted_access_role_bindings = TrustedAccessRoleBindingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.load_balancers = LoadBalancersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.identity_bindings = IdentityBindingsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.jwt_authenticators = JWTAuthenticatorsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.mesh_memberships = MeshMembershipsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.operation_status_result = OperationStatusResultOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.private_link_resources = PrivateLinkResourcesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
@@ -167,6 +212,10 @@ class ContainerServiceClient:  # pylint: disable=too-many-instance-attributes
         self.trusted_access_roles = TrustedAccessRolesOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.container_service = ContainerServiceOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.vm_skus = VmSkusOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(
         self, request: HttpRequest, *, stream: bool = False, **kwargs: Any

@@ -19,17 +19,16 @@ from azure.core.pipeline import PipelineRequest, PipelineResponse
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.rest import HttpResponse
 
+from .._platform_headers import (
+    APIM_REQUEST_ID,
+    CHAT_ISOLATION_KEY,
+    CLIENT_REQUEST_ID,
+    REQUEST_ID,
+    TRACEPARENT,
+    USER_ISOLATION_KEY,
+)
+
 logger = logging.getLogger("azure.ai.agentserver")
-
-# Correlation headers to extract and log
-_CLIENT_REQUEST_ID_HEADER = "x-ms-client-request-id"
-_SERVER_REQUEST_ID_HEADER = "x-ms-request-id"
-_X_REQUEST_ID_HEADER = "x-request-id"
-_APIM_REQUEST_ID_HEADER = "apim-request-id"
-
-# Isolation headers — log presence only, never values
-_USER_ISOLATION_HEADER = "x-agent-user-isolation-key"
-_CHAT_ISOLATION_HEADER = "x-agent-chat-isolation-key"
 
 
 def _mask_storage_url(url: str) -> str:
@@ -79,7 +78,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
 
     Logs the HTTP method, masked URI (host redacted, path preserved, query
     stripped), response status code, duration in milliseconds, and correlation
-    headers (``x-ms-client-request-id``, ``x-ms-request-id``) for
+    headers (``x-ms-client-request-id``, ``traceparent``) for
     observability of storage operations.
     """
 
@@ -95,25 +94,33 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
         method = http_request.method
         url = _mask_storage_url(str(http_request.url))
 
-        client_request_id = http_request.headers.get(_CLIENT_REQUEST_ID_HEADER, "")
-        has_user_isolation_key = _USER_ISOLATION_HEADER in http_request.headers
-        has_chat_isolation_key = _CHAT_ISOLATION_HEADER in http_request.headers
+        client_request_id = http_request.headers.get(CLIENT_REQUEST_ID, "")
+        traceparent = http_request.headers.get(TRACEPARENT, "")
+        has_user_isolation_key = USER_ISOLATION_KEY in http_request.headers
+        has_chat_isolation_key = CHAT_ISOLATION_KEY in http_request.headers
+
+        logger.debug(
+            "Foundry storage %s %s starting "
+            "(x-ms-client-request-id=%s, traceparent=%s)",
+            method,
+            url,
+            client_request_id,
+            traceparent,
+        )
 
         start = time.monotonic()
         try:
             response = await self.next.send(request)
         except Exception:
             elapsed_ms = (time.monotonic() - start) * 1000
-            logger.warning(
-                "Foundry storage %s %s failed after %.1fms "
-                "(x-ms-client-request-id=%s, "
-                "has_user_isolation_key=%s, has_chat_isolation_key=%s)",
+            logger.error(
+                "Foundry storage %s %s transport failure after %.1fms "
+                "(x-ms-client-request-id=%s, traceparent=%s)",
                 method,
                 url,
                 elapsed_ms,
                 client_request_id,
-                has_user_isolation_key,
-                has_chat_isolation_key,
+                traceparent,
                 exc_info=True,
             )
             raise
@@ -121,15 +128,14 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
         elapsed_ms = (time.monotonic() - start) * 1000
         http_response = cast(HttpResponse, response.http_response)
         status_code = http_response.status_code
-        server_request_id = http_response.headers.get(_SERVER_REQUEST_ID_HEADER, "")
-        x_request_id = http_response.headers.get(_X_REQUEST_ID_HEADER, "")
-        apim_request_id = http_response.headers.get(_APIM_REQUEST_ID_HEADER, "")
+        x_request_id = http_response.headers.get(REQUEST_ID, "")
+        apim_request_id = http_response.headers.get(APIM_REQUEST_ID, "")
 
         log_level = logging.INFO if 200 <= status_code < 400 else logging.WARNING
         logger.log(
             log_level,
             "Foundry storage %s %s -> %d (%.1fms, "
-            "x-ms-client-request-id=%s, x-ms-request-id=%s, "
+            "x-ms-client-request-id=%s, traceparent=%s, "
             "x-request-id=%s, apim-request-id=%s, "
             "has_user_isolation_key=%s, has_chat_isolation_key=%s)",
             method,
@@ -137,7 +143,7 @@ class FoundryStorageLoggingPolicy(AsyncHTTPPolicy):  # type: ignore[type-arg]
             status_code,
             elapsed_ms,
             client_request_id,
-            server_request_id,
+            traceparent,
             x_request_id,
             apim_request_id,
             has_user_isolation_key,
