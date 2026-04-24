@@ -18,7 +18,7 @@ from ci_tools.environment_exclusions import is_check_enabled, is_typing_ignored
 from ci_tools.functions import get_pip_command
 from ci_tools.logging import logger
 
-PYRIGHT_VERSION = "1.1.287"
+PYRIGHT_VERSION = "1.1.407"
 REPO_ROOT = discover_repo_root()
 
 
