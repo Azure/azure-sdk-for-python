@@ -3,11 +3,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init
 
 import sys
 from datetime import datetime, timedelta
 
 import pytest
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import LogCaptured, StorageRecordedTestCase
+from settings.testcase import BlobPreparer
+
+from azure.core.exceptions import ResourceExistsError
 from azure.storage.blob import (
     BlobClient,
     BlobSasPermissions,
@@ -19,9 +26,6 @@ from azure.storage.blob import (
 )
 from azure.storage.blob._shared.shared_access_signature import QueryStringConstants
 
-from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import LogCaptured, StorageRecordedTestCase
-from settings.testcase import BlobPreparer
 
 if sys.version_info >= (3,):
     from urllib.parse import parse_qs, quote, urlparse
@@ -44,7 +48,7 @@ class TestStorageLogging(StorageRecordedTestCase):
         if self.is_live:
             try:
                 bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
             source_blob.upload_blob(self.source_blob_data, overwrite=True)
 
@@ -202,7 +206,7 @@ class TestStorageLogging(StorageRecordedTestCase):
         if self.is_live:
             try:
                 container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
 
         request_body = 'testoverridelogging'
@@ -257,7 +261,7 @@ class TestStorageLogging(StorageRecordedTestCase):
         if self.is_live:
             try:
                 container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
 
         request_body_1 = 'isolationtest1'
@@ -341,7 +345,7 @@ class TestStorageLogging(StorageRecordedTestCase):
         if self.is_live:
             try:
                 container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
 
         request_body = 'testretrylogging'

@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
+
 import base64
 import random
 import tempfile
@@ -10,13 +12,15 @@ from io import BytesIO
 from math import ceil
 
 import pytest
-from azure.core.exceptions import HttpResponseError
-from azure.storage.blob import BlobProperties, BlobServiceClient, StorageErrorCode
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 from test_helpers import NonSeekableStream, ProgressTracker
+
+from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.storage.blob import BlobProperties, BlobServiceClient, StorageErrorCode
+
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -40,7 +44,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
             container = self.bsc.get_container_client(self.container_name)
             try:
                 container.create_container()
-            except:
+            except ResourceExistsError:
                 pass
 
         self.byte_blob = self.get_resource_name('byteblob')
@@ -787,7 +791,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
 
             with pytest.raises(ValueError):
                 downloader = blob.download_blob(max_concurrency=2)
-                properties = downloader.readinto(non_seekable_stream)
+                downloader.readinto(non_seekable_stream)
 
     @BlobPreparer()
     @recorded_by_proxy
@@ -811,7 +815,7 @@ class TestStorageGetBlob(StorageRecordedTestCase):
         # Act
         with tempfile.TemporaryFile() as temp_file:
             downloader = blob.download_blob(raw_response_hook=callback, max_concurrency=2)
-            properties = downloader.readinto(temp_file)
+            downloader.readinto(temp_file)
 
             # Assert
             temp_file.seek(0)

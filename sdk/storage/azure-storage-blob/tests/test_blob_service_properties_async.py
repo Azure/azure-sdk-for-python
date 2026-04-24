@@ -3,8 +3,13 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
 from datetime import datetime, timedelta
+
+import pytest
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import BlobPreparer
 
 from azure.core.exceptions import HttpResponseError
 from azure.storage.blob import (
@@ -15,14 +20,9 @@ from azure.storage.blob import (
     Metrics,
     ResourceTypes,
     RetentionPolicy,
-    StaticWebsite
+    StaticWebsite,
 )
 from azure.storage.blob.aio import BlobServiceClient
-
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import BlobPreparer
-
 
 # ------------------------------------------------------------------------------
 
@@ -90,8 +90,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
 
         assert len(cors1) == len(cors2)
 
-        for i in range(0, len(cors1)):
-            rule1 = cors1[i]
+        for i, rule1 in enumerate(cors1):
             rule2 = cors2[i]
             assert len(rule1.allowed_origins) == len(rule2.allowed_origins)
             assert len(rule1.allowed_methods) == len(rule2.allowed_methods)
@@ -470,14 +469,8 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
 
     @BlobPreparer()
     @recorded_by_proxy_async
-    async def test_retention_no_days(self, **kwargs):
-        storage_account_name = kwargs.pop("storage_account_name")
-        storage_account_key = kwargs.pop("storage_account_key")
-
-        # Assert
-        pytest.raises(ValueError,
-                      RetentionPolicy,
-                      True, None)
+    async def test_retention_no_days(self):
+        pytest.raises(ValueError, RetentionPolicy, True, None)
 
     @BlobPreparer()
     @recorded_by_proxy_async
@@ -487,7 +480,7 @@ class TestServicePropertiesTest(AsyncStorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         cors = []
-        for i in range(0, 6):
+        for _ in range(6):
             cors.append(CorsRule(['www.xyz.com'], ['GET']))
 
         # Assert

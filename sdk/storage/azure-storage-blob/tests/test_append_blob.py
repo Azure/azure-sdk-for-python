@@ -3,34 +3,33 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
-import requests
 import tempfile
-import uuid
 from datetime import datetime, timedelta
-from os import path, remove
 
 import pytest
-from azure.core import MatchConditions
-from azure.core.exceptions import ResourceNotFoundError, ResourceModifiedError, HttpResponseError
-from azure.mgmt.storage import StorageManagementClient
-from azure.storage.blob import (
-    generate_blob_sas,
-    BlobServiceClient,
-    BlobClient,
-    BlobType,
-    BlobSasPermissions, BlobImmutabilityPolicyMode, ImmutabilityPolicy)
-from azure.storage.blob._shared.policies import StorageContentValidation
+import requests
 
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
-from test_helpers import (
-    NonSeekableStream,
-    ProgressTracker,
-    _build_base_file_share_headers,
-    _create_file_share_oauth
+from test_helpers import _build_base_file_share_headers, _create_file_share_oauth, NonSeekableStream, ProgressTracker
+
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError, ResourceNotFoundError
+from azure.mgmt.storage import StorageManagementClient
+from azure.storage.blob import (
+    BlobClient,
+    BlobImmutabilityPolicyMode,
+    BlobSasPermissions,
+    BlobServiceClient,
+    BlobType,
+    generate_blob_sas,
+    ImmutabilityPolicy,
 )
+from azure.storage.blob._shared.policies import StorageContentValidation
+
 
 # ------------------------------------------------------------------------------
 TEST_BLOB_PREFIX = 'blob'
@@ -48,11 +47,11 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         if self.is_live:
             try:
                 bsc.create_container(self.container_name)
-            except:
+            except ResourceExistsError:
                 pass
             try:
                 bsc.create_container(self.source_container_name)
-            except:
+            except ResourceExistsError:
                 pass
 
     def _get_blob_reference(self, prefix=TEST_BLOB_PREFIX):
@@ -208,7 +207,7 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         data = self.get_random_bytes(5 * 1024)
 
         # Act
-        for i in range(2):
+        for _ in range(2):
             blob.append_block(data=data)
 
         # Assert
@@ -925,22 +924,25 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = bsc.get_blob_client(
             self.container_name,
-            blob_name)
+            blob_name
+        )
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
         data2 = self.get_random_bytes(LARGE_BLOB_SIZE + 512)
 
         # Act
-        create_resp = blob.upload_blob(
+        blob.upload_blob(
             data1,
             overwrite=True,
             blob_type=BlobType.AppendBlob,
-            metadata={'blobdata': 'Data1'})
+            metadata={'blobdata': 'Data1'}
+        )
 
         update_resp = blob.upload_blob(
             data2,
             overwrite=False,
             blob_type=BlobType.AppendBlob,
-            metadata={'blobdata': 'Data2'})
+            metadata={'blobdata': 'Data2'}
+        )
 
         props = blob.get_blob_properties()
 
@@ -959,27 +961,33 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
-        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"),
-                                storage_account_key.secret, max_block_size=4 * 1024)
+        bsc = BlobServiceClient(
+            self.account_url(storage_account_name, "blob"),
+            storage_account_key.secret,
+            max_block_size=4 * 1024
+        )
         self._setup(bsc)
         blob_name = self._get_blob_reference()
         blob = bsc.get_blob_client(
             self.container_name,
-            blob_name)
+            blob_name
+        )
         data1 = self.get_random_bytes(LARGE_BLOB_SIZE)
         data2 = self.get_random_bytes(LARGE_BLOB_SIZE + 512)
 
         # Act
-        create_resp = blob.upload_blob(
+        blob.upload_blob(
             data1,
             overwrite=True,
             blob_type=BlobType.AppendBlob,
-            metadata={'blobdata': 'Data1'})
+            metadata={'blobdata': 'Data1'}
+        )
         update_resp = blob.upload_blob(
             data2,
             overwrite=True,
             blob_type=BlobType.AppendBlob,
-            metadata={'blobdata': 'Data2'})
+            metadata={'blobdata': 'Data2'}
+        )
 
         props = blob.get_blob_properties()
 
@@ -1709,7 +1717,8 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
                 requests.delete(
                     url=base_url,
                     headers=_build_base_file_share_headers(bearer_token_string, 0),
-                    params={'restype': 'share'}
+                    params={'restype': 'share'},
+                    timeout=15
                 )
                 bsc.delete_container(self.source_container_name)
 
