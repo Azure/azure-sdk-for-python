@@ -31,7 +31,7 @@ for path in (SCRIPTS_DIR, PACKAGE_DIR):
         sys.path.insert(0, path)
 
 
-SOURCE_WITH_LIST_SHADOW = textwrap.dedent(
+_SOURCE_WITH_LIST_SHADOW = textwrap.dedent(
     """
     class Client:
         def list(self):
@@ -52,7 +52,7 @@ def _make_fake_package(tmpdir, pkg_name="fakepkg_list_shadow"):
     with open(os.path.join(pkg_dir, "__init__.py"), "w") as f:
         f.write("from ._client import Client\n")
     with open(os.path.join(pkg_dir, "_client.py"), "w") as f:
-        f.write(SOURCE_WITH_LIST_SHADOW)
+        f.write(_SOURCE_WITH_LIST_SHADOW)
     return pkg_dir
 
 
