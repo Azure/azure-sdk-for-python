@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import os
 import uuid
 import functools
 
@@ -11,7 +10,7 @@ import requests
 
 from devtools_testutils.perfstress_tests import PerfStressTest
 
-from azure.storage.blob import BlockBlobService
+from azure.storage.blob import BlockBlobService  # pylint: disable=no-name-in-module
 
 
 def test_proxy_callback(proxy_policy, request):
@@ -106,7 +105,7 @@ class _LegacyServiceTest(PerfStressTest):
 class _LegacyContainerTest(_LegacyServiceTest):
     container_name = "perfstress-legacy-" + str(uuid.uuid4())
 
-    def __init__(self, arguments):
+    def __init__(self, arguments):  # pylint: disable=useless-parent-delegation
         super().__init__(arguments)
 
     async def global_setup(self):

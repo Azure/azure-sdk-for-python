@@ -2,11 +2,13 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, broad-exception-raised
 
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
+
 import aiohttp
 import requests
-from concurrent.futures import ThreadPoolExecutor
 
 from devtools_testutils.perfstress_tests import RandomStream
 

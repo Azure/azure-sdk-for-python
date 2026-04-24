@@ -3,19 +3,23 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import pytest
+# pylint: disable=attribute-defined-outside-init
+
 from datetime import datetime, timedelta
 from enum import Enum
 from time import sleep
 
-from azure.core import MatchConditions
-from azure.core.exceptions import ResourceExistsError, ResourceModifiedError, HttpResponseError
-from azure.storage.blob import BlobBlock, BlobSasPermissions, generate_blob_sas
-from azure.storage.blob.aio import BlobServiceClient
+import pytest
 
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
+
+from azure.core import MatchConditions
+from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceModifiedError
+from azure.storage.blob import BlobBlock, BlobSasPermissions, generate_blob_sas
+from azure.storage.blob.aio import BlobServiceClient
+
 
 # ------------------------------------------------------------------------------
 TEST_CONTAINER_PREFIX = 'container'
@@ -68,7 +72,7 @@ class TestStorageBlobTags(AsyncStorageRecordedTestCase):
         container_name = self.get_resource_name(prefix)
         try:
             await self.bsc.create_container(container_name)
-        except:
+        except ResourceExistsError:
             pass
         return container_name
 

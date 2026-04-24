@@ -100,7 +100,7 @@ class AvroReaderTests(unittest.TestCase):
     def test_reader(self):
         correct = 0
         nitems = 10
-        for iexample, (writer_schema, datum) in enumerate(SCHEMAS_TO_VALIDATE):
+        for iexample, (_, datum) in enumerate(SCHEMAS_TO_VALIDATE):
             for codec in CODECS_TO_VALIDATE:
                 file_path = os.path.join(AvroReaderTests._samples_dir_root, 'test_' +
                                          codec + '_' + str(iexample) + '.avro')
@@ -117,7 +117,7 @@ class AvroReaderTests(unittest.TestCase):
     def test_reader_with_bytes_io(self):
         correct = 0
         nitems = 10
-        for iexample, (writer_schema, datum) in enumerate(SCHEMAS_TO_VALIDATE):
+        for iexample, (_, datum) in enumerate(SCHEMAS_TO_VALIDATE):
             for codec in CODECS_TO_VALIDATE:
                 file_path = os.path.join(AvroReaderTests._samples_dir_root, 'test_' +
                                          codec + '_' + str(iexample) + '.avro')

@@ -5,17 +5,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import asyncio
 import inspect
 import os
+import unittest
 from io import BytesIO
 
 import pytest
-import unittest
+
 from azure.storage.blob._shared.avro.avro_io_async import AsyncDatumReader
 from azure.storage.blob._shared.avro.datafile_async import AsyncDataFileReader
-
 from .test_avro import SCHEMAS_TO_VALIDATE
+
 
 CODECS_TO_VALIDATE = ['null']
 
@@ -73,7 +73,7 @@ class AvroReaderTestsAsync(unittest.TestCase):
     async def test_reader(self):
         correct = 0
         nitems = 10
-        for iexample, (writer_schema, datum) in enumerate(SCHEMAS_TO_VALIDATE):
+        for iexample, (_, datum) in enumerate(SCHEMAS_TO_VALIDATE):
             for codec in CODECS_TO_VALIDATE:
                 file_path = os.path.join(AvroReaderTestsAsync._samples_dir_root,
                                          'test_' + codec + '_' + str(iexample) + '.avro')
