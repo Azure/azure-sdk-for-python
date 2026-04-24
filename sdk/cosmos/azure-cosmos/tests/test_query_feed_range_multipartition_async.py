@@ -201,7 +201,7 @@ class TestFeedRangeMultiPartitionAsync:
 
             oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > PAGE_SIZE]
             assert not oversized, (
-                f"page-size budget violated (max_item_count={PAGE_SIZE}); "
+                f"page-size limit violated (max_item_count={PAGE_SIZE}); "
                 f"got pages with sizes {[len(p) for p in pages]}; "
                 f"oversized pages: {oversized}.")
 
@@ -257,7 +257,7 @@ class TestFeedRangeMultiPartitionAsync:
 
             oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > PAGE_SIZE]
             assert not oversized, (
-                f"page-size budget violated; sizes={[len(p) for p in pages]}; "
+                f"page-size limit violated; sizes={[len(p) for p in pages]}; "
                 f"oversized={oversized}.")
 
             unique = set(all_ids)
@@ -339,7 +339,7 @@ class TestFeedRangeMultiPartitionAsync:
 
             oversized = [(i, len(p)) for i, p in enumerate(post_pages) if len(p) > PAGE_SIZE]
             assert not oversized, (
-                f"page-size budget violated post-split; sizes="
+                f"page-size limit violated post-split; sizes="
                 f"{[len(p) for p in post_pages]}; oversized={oversized}.")
 
             partitions_after = await _sorted_partition_ranges(container)
@@ -395,7 +395,7 @@ class TestFeedRangeMultiPartitionAsync:
 
             oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > PAGE_SIZE]
             assert not oversized, (
-                f"page-size budget violated under legacy-token resume; "
+                f"page-size limit violated under legacy-token resume; "
                 f"sizes={[len(p) for p in pages]}; oversized={oversized}")
 
             unique = set(all_ids)

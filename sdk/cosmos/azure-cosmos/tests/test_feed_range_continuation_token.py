@@ -26,6 +26,7 @@ import json
 
 import pytest
 
+from azure.cosmos import _base
 from azure.cosmos import http_constants
 from azure.cosmos._routing import routing_range
 from azure.cosmos._routing.feed_range_continuation import (
@@ -593,7 +594,7 @@ class TestNormalizeMaxItemCount:
     values to ``None`` (unbounded) and passes positive ints through unchanged.
 
     The pagination loop interprets ``None`` as "no client-side cap" and any
-    positive int as the per-page budget. A zero or negative cap would make
+    positive int as the per-page item limit. A zero or negative cap would make
     the loop exit before issuing any POST while still emitting a
     continuation token, leaving the caller in an empty-page-with-continuation
     cycle - so those cases must be normalized to ``None``."""
@@ -709,27 +710,55 @@ class TestApplyFeedrangeRequestHeaders:
 
 
 class TestBudgetCounting:
-    """Budget accounting treats aggregate partial rows as merge fragments."""
+    """Page-item counting treats aggregate partial rows as merge fragments."""
 
-    def test_standard_documents_consume_budget(self):
+    def test_standard_documents_consume_page_item_limit(self):
         partial_result = {"Documents": [{"id": "1"}, {"id": "2"}]}
         assert _count_page_items_from_partial_result(partial_result, "SELECT * FROM c") == 2
 
-    def test_object_aggregate_partial_does_not_consume_budget(self):
+    def test_object_aggregate_partial_does_not_consume_page_item_limit(self):
         partial_result = {"Documents": [{"_aggregate": {"count": 7}}]}
         assert _count_page_items_from_partial_result(partial_result, "SELECT COUNT(1) FROM c") == 0
 
-    def test_value_aggregate_partial_does_not_consume_budget(self):
+    def test_value_aggregate_partial_does_not_consume_page_item_limit(self):
         partial_result = {"Documents": [7]}
         assert _count_page_items_from_partial_result(partial_result, "SELECT VALUE COUNT(1) FROM c") == 0
 
-    def test_value_non_aggregate_numeric_row_consumes_budget(self):
+    def test_value_non_aggregate_numeric_row_consumes_page_item_limit(self):
         partial_result = {"Documents": [7]}
         assert _count_page_items_from_partial_result(partial_result, "SELECT VALUE c.value FROM c") == 1
 
-    def test_value_non_aggregate_boolean_row_consumes_budget(self):
+    def test_value_non_aggregate_boolean_row_consumes_page_item_limit(self):
         partial_result = {"Documents": [True]}
         assert _count_page_items_from_partial_result(partial_result, "SELECT VALUE c.flag FROM c") == 1
+
+
+class TestAggregateMergeConsistency:
+    """Page-item counting and merge logic should classify aggregate fragments the same way."""
+
+    def test_value_count_boolean_fragments_are_not_treated_as_numeric_aggregates(self):
+        query = "SELECT VALUE COUNT(1) > 0 FROM c"
+        partial_result = {"Documents": [True]}
+        assert _count_page_items_from_partial_result(partial_result, query) == 1
+
+        merged = _base._merge_query_results({"Documents": [True]}, {"Documents": [True]}, query)
+        assert merged["Documents"] == [True, True]
+
+    def test_value_count_numeric_fragments_are_treated_as_aggregates(self):
+        query = "SELECT VALUE COUNT(1) FROM c"
+        partial_result = {"Documents": [7]}
+        assert _count_page_items_from_partial_result(partial_result, query) == 0
+
+        merged = _base._merge_query_results({"Documents": [7]}, {"Documents": [3]}, query)
+        assert merged["Documents"] == [10]
+
+    def test_value_boolean_non_aggregate_fragments_are_concatenated(self):
+        query = "SELECT VALUE c.flag FROM c"
+        partial_result = {"Documents": [True]}
+        assert _count_page_items_from_partial_result(partial_result, query) == 1
+
+        merged = _base._merge_query_results({"Documents": [True]}, {"Documents": [True]}, query)
+        assert merged["Documents"] == [True, True]
 
 
 class TestEmptyPageStallCounter:

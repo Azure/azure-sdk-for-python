@@ -24,6 +24,7 @@ import json
 from typing import Any, List, MutableMapping, Optional, Tuple
 
 from .. import http_constants
+from .._query_aggregate_utils import _AggregatePartialClassification, _classify_aggregate_partial
 from . import routing_range
 
 
@@ -611,40 +612,6 @@ def _normalize_max_item_count(raw_max_item_count: Any) -> Optional[int]:
     return normalized
 
 
-def _extract_query_text(query: Any) -> Optional[str]:
-    """Return SQL text from either a string query or query-spec dict.
-
-    :param query: Query text or query spec dictionary.
-    :type query: Any
-    :returns: Query text when present.
-    :rtype: Optional[str]
-    """
-    if isinstance(query, str):
-        return query
-    if isinstance(query, dict):
-        query_text = query.get("query")
-        if isinstance(query_text, str):
-            return query_text
-    return None
-
-
-def _is_select_value_aggregate_query(query: Any) -> bool:
-    """Detect SELECT VALUE aggregate shapes that return scalar merge fragments.
-
-    :param query: Query text or query spec dictionary.
-    :type query: Any
-    :returns: ``True`` when query is SELECT VALUE with COUNT/SUM/MIN/MAX/AVG.
-    :rtype: bool
-    """
-    query_text = _extract_query_text(query)
-    if not query_text:
-        return False
-    normalized = " ".join(query_text.upper().split())
-    if "SELECT VALUE" not in normalized:
-        return False
-    return any(token in normalized for token in ("COUNT(", "SUM(", "MIN(", "MAX(", "AVG("))
-
-
 def _count_page_items_from_partial_result(
     partial_result: Optional[dict[str, Any]],
     query: Any,
@@ -669,18 +636,8 @@ def _count_page_items_from_partial_result(
     if len(docs) != 1:
         return len(docs)
 
-    row = docs[0]
-    # Object/scalar aggregate partials must be merged across overlaps first.
-    if isinstance(row, dict) and row.get("_aggregate") is not None:
-        return 0
-    # A SELECT VALUE COUNT/SUM/MIN/MAX/AVG query asks each partition for
-    # its piece of the answer (e.g. "how many rows do you have?"). Each
-    # partition returns one bare number, and the merge step adds those
-    # numbers together to produce the single final answer the caller will
-    # see. Treating one of those per-partition numbers as a real page row
-    # would stop the loop after the first partition and ship a half-done
-    # answer, so we count it as zero page items.
-    if isinstance(row, (int, float, bool)) and _is_select_value_aggregate_query(query):
+    # Aggregate partials must be merged across overlaps before they count as rows.
+    if _classify_aggregate_partial(docs, query) != _AggregatePartialClassification.NONE:
         return 0
     return 1
 

@@ -2127,6 +2127,7 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                                                        options.get("partitionKey", None))
         request_params.set_excluded_location_from_options(options)
         request_params.set_retry_write(options, self.connection_policy.RetryNonIdempotentWrites)
+        await base.set_session_token_header_async(self, headers, path, request_params, options)
         request_params.set_availability_strategy(options, self.availability_strategy)
         request_params.availability_strategy_max_concurrency = self.availability_strategy_max_concurrency
         result = await self.__Post(path, request_params, batch_operations, headers, **kwargs)
@@ -3302,7 +3303,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # during splits).
                 try:
                     results = base._merge_query_results(results, backend_query_result, query)
-                except Exception:  # pylint: disable=broad-exception-caught
+                except (TypeError, KeyError) as merge_error:
+                    _LOGGER.warning(
+                        "Falling back to non-aggregate merge after aggregate merge failure: %s",
+                        merge_error,
+                    )
                     results_docs = results.get("Documents") if results else None
                     partial_docs = backend_query_result.get("Documents") if backend_query_result else None
                     if isinstance(results_docs, list) and isinstance(partial_docs, list):

@@ -39,6 +39,11 @@ from azure.core import MatchConditions
 from . import documents
 from . import http_constants
 from . import _runtime_constants
+from ._query_aggregate_utils import (
+    _AggregatePartialClassification,
+    _classify_aggregate_partial,
+    _get_select_value_aggregate_function,
+)
 from ._constants import _Constants as Constants
 from .auth import _get_authorization_header
 from .offer import ThroughputProperties
@@ -129,6 +134,7 @@ def build_options(kwargs: dict[str, Any]) -> dict[str, Any]:
         options['accessCondition'] = {'type': 'IfNoneMatch', 'condition': if_none_match}
     return options
 
+
 def _merge_query_results(
         results: dict[str, Any],
         partial_result: dict[str, Any],
@@ -168,22 +174,13 @@ def _merge_query_results(
 
     results_docs = results.get("Documents")
 
-    # Check if both results are aggregate queries
-    is_partial_agg = (
-            isinstance(partial_docs, list)
-            and len(partial_docs) == 1
-            and isinstance(partial_docs[0], dict)
-            and partial_docs[0].get("_aggregate") is not None
-    )
-    is_results_agg = (
-            results_docs
-            and isinstance(results_docs, list)
-            and len(results_docs) == 1
-            and isinstance(results_docs[0], dict)
-            and results_docs[0].get("_aggregate") is not None
-    )
+    partial_aggregate_class = _classify_aggregate_partial(partial_docs, query)
+    results_aggregate_class = _classify_aggregate_partial(results_docs, query)
 
-    if is_partial_agg and is_results_agg:
+    if (
+        partial_aggregate_class == _AggregatePartialClassification.OBJECT
+        and results_aggregate_class == _AggregatePartialClassification.OBJECT
+    ):
         agg_results = results_docs[0]["_aggregate"] # type: ignore[index]
         agg_partial = partial_docs[0]["_aggregate"]
         for key in agg_partial:
@@ -201,33 +198,18 @@ def _merge_query_results(
                 agg_results[key] += agg_partial[key]
         return results
 
-    # Check if both are VALUE aggregate queries
-    is_partial_value_agg = (
-            isinstance(partial_docs, list)
-            and len(partial_docs) == 1
-            and isinstance(partial_docs[0], (int, float))
-    )
-    is_results_value_agg = (
-            results_docs
-            and isinstance(results_docs, list)
-            and len(results_docs) == 1
-            and isinstance(results_docs[0], (int, float))
-    )
-
-    if is_partial_value_agg and is_results_value_agg:
-        query_text = query.get("query") if isinstance(query, dict) else query
-        if query_text:
-            query_upper = query_text.upper()
-            # For MIN/MAX, we find the min/max of the partial results.
-            # For COUNT/SUM, we sum the partial results.
-            # Without robust query parsing, we can't distinguish them reliably.
-            # Defaulting to sum for COUNT/SUM. MIN/MAX VALUE queries are not fully supported client-side.
-            if " SELECT VALUE MIN" in query_upper:
-                results_docs[0] = min(results_docs[0], partial_docs[0]) # type: ignore[index]
-            elif " SELECT VALUE MAX" in query_upper:
-                results_docs[0] = max(results_docs[0], partial_docs[0]) # type: ignore[index]
-            else:  # For COUNT/SUM, we sum the partial results
-                results_docs[0] += partial_docs[0] # type: ignore[index]
+    if (
+        partial_aggregate_class == _AggregatePartialClassification.VALUE
+        and results_aggregate_class == _AggregatePartialClassification.VALUE
+    ):
+        aggregate_fn = _get_select_value_aggregate_function(query)
+        if aggregate_fn == "MIN":
+            results_docs[0] = min(results_docs[0], partial_docs[0]) # type: ignore[index]
+        elif aggregate_fn == "MAX":
+            results_docs[0] = max(results_docs[0], partial_docs[0]) # type: ignore[index]
+        else:
+            # COUNT/SUM are additive; VALUE AVG is not fully supported client-side yet.
+            results_docs[0] += partial_docs[0] # type: ignore[index]
         return results
 
     # Standard query, append documents

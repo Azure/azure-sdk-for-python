@@ -3519,7 +3519,11 @@ class CosmosClientConnection:  # pylint: disable=too-many-public-methods,too-man
                 # during splits).
                 try:
                     results = base._merge_query_results(results, backend_query_result, query)
-                except Exception:  # pylint: disable=broad-exception-caught
+                except (TypeError, KeyError) as merge_error:
+                    _LOGGER.warning(
+                        "Falling back to non-aggregate merge after aggregate merge failure: %s",
+                        merge_error,
+                    )
                     results_docs = results.get("Documents") if results else None
                     partial_docs = backend_query_result.get("Documents") if backend_query_result else None
                     if isinstance(results_docs, list) and isinstance(partial_docs, list):

@@ -276,7 +276,7 @@ class TestFeedRangeMultiPartition:
         # (a) every page must respect max_item_count
         oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > PAGE_SIZE]
         assert not oversized, (
-            f"page-size budget violated (max_item_count={PAGE_SIZE}); "
+            f"page-size limit violated (max_item_count={PAGE_SIZE}); "
             f"got pages with sizes {[len(p) for p in pages]}; "
             f"oversized pages (index, size): {oversized}.")
 
@@ -331,7 +331,7 @@ class TestFeedRangeMultiPartition:
 
         oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > PAGE_SIZE]
         assert not oversized, (
-            f"page-size budget violated; sizes={[len(p) for p in pages]}; "
+            f"page-size limit violated; sizes={[len(p) for p in pages]}; "
             f"oversized={oversized}.")
 
         unique = set(all_ids)
@@ -435,7 +435,7 @@ class TestFeedRangeMultiPartition:
 
         oversized = [(i, len(p)) for i, p in enumerate(post_pages) if len(p) > PAGE_SIZE]
         assert not oversized, (
-            f"page-size budget violated post-split; sizes="
+            f"page-size limit violated post-split; sizes="
             f"{[len(p) for p in post_pages]}; oversized={oversized}.")
 
         # Re-derive ground truth against the post-split routing map.
@@ -499,10 +499,10 @@ class TestFeedRangeMultiPartition:
         # (a) no exception on iteration
         pages, all_ids = _drain_pages(pager)
 
-        # (c) page-size budget respected
+        # (c) page-size limit respected
         oversized = [(i, len(p)) for i, p in enumerate(pages) if len(p) > PAGE_SIZE]
         assert not oversized, (
-            f"page-size budget violated under legacy-token resume; "
+            f"page-size limit violated under legacy-token resume; "
             f"sizes={[len(p) for p in pages]}; oversized={oversized}")
 
         # (b) full restart from offset 0 -> coverage matches ground truth,
