@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/preview/2025-02-19-preview/examples/machine/Machines_Get_LicenseProfileInstanceView.json
+# x-ms-original-file: specification/hybridcompute/resource-manager/Microsoft.HybridCompute/HybridCompute/preview/2025-09-16-preview/examples/machine/Machines_Get_LicenseProfileInstanceView.json
 if __name__ == "__main__":
     main()

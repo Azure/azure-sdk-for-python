@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from collections.abc import MutableMapping
-from typing import Any, Callable, Dict, Iterator, Optional, TypeVar, Union, cast
+from typing import Any, Callable, Iterator, Optional, TypeVar, Union, cast
 import urllib.parse
 
 from azure.core import PipelineClient
@@ -35,7 +35,8 @@ from .._configuration import HybridComputeManagementClientConfiguration
 from .._utils.serialization import Deserializer, Serializer
 
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, dict[str, Any]], Any]]
+List = list
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -47,7 +48,7 @@ def build_get_by_private_link_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-19-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-16-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -86,7 +87,7 @@ def build_list_by_private_link_scope_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-19-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-16-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -119,7 +120,7 @@ def build_reconcile_for_private_link_scope_request(  # pylint: disable=name-too-
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-02-19-preview"))
+    api_version: str = kwargs.pop("api_version", _params.pop("api-version", "2025-09-16-preview"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -225,7 +226,10 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         deserialized = self._deserialize("NetworkSecurityPerimeterConfiguration", pipeline_response.http_response)
@@ -314,7 +318,10 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+                error = self._deserialize.failsafe_deserialize(
+                    _models.ErrorResponse,
+                    pipeline_response,
+                )
                 raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
             return pipeline_response
@@ -363,7 +370,10 @@ class NetworkSecurityPerimeterConfigurationsOperations:  # pylint: disable=name-
             except (StreamConsumedError, StreamClosedError):
                 pass
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            error = self._deserialize.failsafe_deserialize(
+                _models.ErrorResponse,
+                pipeline_response,
+            )
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         response_headers = {}

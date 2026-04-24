@@ -25,7 +25,7 @@ class TestHybridComputeManagementNetworkProfileOperationsAsync(AzureMgmtRecorded
         response = await self.client.network_profile.get(
             resource_group_name=resource_group.name,
             machine_name="str",
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
 
         # please add some check logic here by yourself

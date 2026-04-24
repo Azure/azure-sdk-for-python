@@ -25,7 +25,7 @@ class TestHybridComputeManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRe
         response = self.client.private_link_resources.list_by_private_link_scope(
             resource_group_name=resource_group.name,
             scope_name="str",
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
         result = [r async for r in response]
         # please add some check logic here by yourself
@@ -38,7 +38,7 @@ class TestHybridComputeManagementPrivateLinkResourcesOperationsAsync(AzureMgmtRe
             resource_group_name=resource_group.name,
             scope_name="str",
             group_name="str",
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
 
         # please add some check logic here by yourself

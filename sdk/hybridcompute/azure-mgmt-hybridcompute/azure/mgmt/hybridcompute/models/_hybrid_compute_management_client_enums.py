@@ -331,6 +331,23 @@ class PublicNetworkAccessType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Network Security Perimeter (NSP)"""
 
 
+class ServiceExtensionPublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The network access policy to determine if the specified Azure Arc Extension can use public
+    Azure Arc Extension service endpoints.
+    """
+
+    ENABLED = "enabled"
+    """Allows Azure Arc Extension agents to communicate with Azure Arc services over both public
+    (internet) and private endpoints."""
+    DISABLED = "disabled"
+    """Does not allow Azure Arc Extension agents to communicate with Azure Arc services over public
+    (internet) endpoints. The agents must use the private link."""
+
+
+class ServiceExtensionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the Azure Arc Extension."""
+
+
 class StatusLevelTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The level code."""
 

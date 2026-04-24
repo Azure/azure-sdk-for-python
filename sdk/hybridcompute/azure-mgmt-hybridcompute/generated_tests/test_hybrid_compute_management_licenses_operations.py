@@ -50,7 +50,7 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
                 "tenantId": "str",
                 "type": "str",
             },
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -90,7 +90,7 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
                 "tenantId": "str",
                 "type": "str",
             },
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -111,7 +111,7 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
                 "target": "str",
                 "type": "str",
             },
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -123,7 +123,7 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
         response = self.client.licenses.get(
             resource_group_name=resource_group.name,
             license_name="str",
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
 
         # please add some check logic here by yourself
@@ -135,7 +135,7 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
         response = self.client.licenses.begin_delete(
             resource_group_name=resource_group.name,
             license_name="str",
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         ).result()  # call '.result()' to poll until service return final result
 
         # please add some check logic here by yourself
@@ -146,7 +146,7 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
     def test_licenses_list_by_resource_group(self, resource_group):
         response = self.client.licenses.list_by_resource_group(
             resource_group_name=resource_group.name,
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself
@@ -156,7 +156,7 @@ class TestHybridComputeManagementLicensesOperations(AzureMgmtRecordedTestCase):
     @recorded_by_proxy
     def test_licenses_list_by_subscription(self, resource_group):
         response = self.client.licenses.list_by_subscription(
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
         result = [r for r in response]
         # please add some check logic here by yourself

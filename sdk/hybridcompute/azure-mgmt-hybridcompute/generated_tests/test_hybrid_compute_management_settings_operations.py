@@ -27,7 +27,7 @@ class TestHybridComputeManagementSettingsOperations(AzureMgmtRecordedTestCase):
             base_resource_type="str",
             base_resource_name="str",
             settings_resource_name="str",
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
 
         # please add some check logic here by yourself
@@ -57,7 +57,7 @@ class TestHybridComputeManagementSettingsOperations(AzureMgmtRecordedTestCase):
                 "tenantId": "str",
                 "type": "str",
             },
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
 
         # please add some check logic here by yourself
@@ -87,7 +87,7 @@ class TestHybridComputeManagementSettingsOperations(AzureMgmtRecordedTestCase):
                 "tenantId": "str",
                 "type": "str",
             },
-            api_version="2025-02-19-preview",
+            api_version="2025-09-16-preview",
         )
 
         # please add some check logic here by yourself
