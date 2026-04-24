@@ -188,6 +188,22 @@ class ContainerNetworkLogs(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Azure monitor ingestion of container network logs is enabled."""
 
 
+class ControlPlaneScalingSize(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The scaling size of the control plane. Scaling sizes offer guaranteed capacity and predictable
+    Kubernetes performance beyond standard tier defaults. Higher H sizes provide increased
+    performance guarantees. See `https://aka.ms/aks/hyperscale <https://aka.ms/aks/hyperscale>`_
+    for performance metrics details for each size.
+    """
+
+    H2 = "H2"
+    """H2 is the smallest scaling size with guaranteed capacity and predictable performance beyond
+    standard tier defaults."""
+    H4 = "H4"
+    """H4 scaling size provides increased guaranteed performance over H2."""
+    H8 = "H8"
+    """H8 scaling size provides increased guaranteed performance over H4."""
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The kind of entity that created the resource."""
 
@@ -603,10 +619,9 @@ class ManagedGatewayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DISABLED = "Disabled"
     """Gateway API CRDs will not be reconciled on your cluster."""
     STANDARD = "Standard"
-    """The latest Gateway CRD bundle from the standard channel that is compatible with your Kubernetes
-    version will be reconciled onto your cluster. See
-    `https://gateway-api.sigs.k8s.io/concepts/versioning/
-    <https://gateway-api.sigs.k8s.io/concepts/versioning/>`_ for more details."""
+    """Gateway API CRDs from the standard release channel will be reconciled onto your cluster. See
+    `https://aka.ms/gateway-api-versions <https://aka.ms/gateway-api-versions>`_ to see which
+    bundle will be installed for your Kubernetes version."""
 
 
 class ManagementMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):

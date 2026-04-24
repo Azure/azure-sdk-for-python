@@ -4,15 +4,14 @@
 # ------------------------------------
 
 import pytest
-from azure.ai.projects.aio import AIProjectClient
+from test_base import TestBase, servicePreparer
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.ai.projects.models import (
     RedTeam,
     AzureOpenAIModelConfiguration,
     AttackStrategy,
     RiskCategory,
 )
-from test_base import TestBase, servicePreparer
-from devtools_testutils.aio import recorded_by_proxy_async
 
 
 @pytest.mark.skip(

@@ -62,8 +62,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         job_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         force: Optional[bool] = None,
@@ -85,14 +85,14 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         :param job_id: The ID of the Job to delete. Required.
         :type job_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead. Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :keyword service_timeout: The maximum time that the server can spend processing the inital request to
+         delete the Job, in seconds. The default is 30 seconds. If the value is larger than 30, the
+         default will be used instead. Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
@@ -123,8 +123,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._delete_job_internal(
                 job_id,
-                timeout=timeout,
-                ocpdate=ocpdate,
+                service_timeout=service_timeout,
+                ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
                 force=force,
@@ -144,8 +144,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         job_id: str,
         disable_options: _models.BatchJobDisableOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -168,14 +168,14 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type job_id: str
         :param disable_options: The options to use for disabling the Job. Required.
         :type disable_options: ~azure.batch.models.BatchJobDisableOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :keyword service_timeout: The maximum time that the server can spend processing the inital request to
+         disable the Job, in seconds. The default is 30 seconds. If the value is larger than 30, the
+         default will be used instead.". Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -206,8 +206,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._disable_job_internal(
                 job_id,
                 disable_options=disable_options,
-                timeout=timeout,
-                ocpdate=ocpdate,
+                service_timeout=service_timeout,
+                ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
                 etag=etag,
@@ -225,8 +225,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         job_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -244,14 +244,14 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         :param job_id: The ID of the Job to enable. Required.
         :type job_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :keyword service_timeout: The maximum time that the server can spend processing the intal request to
+         enable the Job, in seconds. The default is 30 seconds. If the value is larger than 30, the
+         default will be used instead.". Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -281,8 +281,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._enable_job_internal(
                 job_id,
-                timeout=timeout,
-                ocpdate=ocpdate,
+                service_timeout=service_timeout,
+                ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
                 etag=etag,
@@ -300,8 +300,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         job_schedule_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -320,14 +320,14 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         :param job_schedule_id: The ID of the Job Schedule to delete. Required.
         :type job_schedule_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead. Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :keyword service_timeout: The maximum time that the server can spend processing the initial request to
+         delete the Job Schedule, in seconds. The default is 30 seconds. If the value is larger than 30,
+         the default will be used instead. Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the client. The operation will be performed only if the resource on the service has
          been modified since the specified time. Default value is None.
@@ -355,8 +355,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._delete_job_schedule_internal(
                 job_schedule_id,
-                timeout=timeout,
-                ocpdate=ocpdate,
+                service_timeout=service_timeout,
+                ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
                 etag=etag,
@@ -376,8 +376,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -402,14 +402,14 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :keyword service_timeout: The maximum time that the server can spend processing the initial request
+         to delete the Pool, in seconds. The default is 30 seconds. If the value is larger than 30,
+         the default will be used instead.". Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -439,8 +439,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._delete_pool_internal(
                 pool_id,
-                timeout=timeout,
-                ocpdate=ocpdate,
+                service_timeout=service_timeout,
+                ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
                 etag=etag,
@@ -458,10 +458,10 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models.BatchNodeDeallocateOptions] = None,
+        options: Optional[_models._models.BatchNodeDeallocateOptions] = None,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         polling_interval: int = 5,
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -474,15 +474,15 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for deallocating the Compute Node. Default value is None.
-        :type options: ~azure.batch.models.BatchNodeDeallocateOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :type options: ~azure.batch.models._models.BatchNodeDeallocateOptions
+        :keyword service_timeout: The maximum time that the server can spend processing the initial request to
+         deallocate the Compute Node, in seconds. The default is 30 seconds. If the value is larger
+         than 30, the default will be used instead.". Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
         :paramtype polling_interval: int
         :return: None
@@ -499,8 +499,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 pool_id,
                 node_id,
                 options=options,
-                timeout=timeout,
-                ocpdate=ocpdate,
+                service_timeout=service_timeout,
+                ocp_date=ocp_date,
                 cls=capture_pipeline_response,
                 **kwargs,
             ),
@@ -514,10 +514,10 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models.BatchNodeRebootOptions] = None,
+        options: Optional[_models._models.BatchNodeRebootOptions] = None,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         polling_interval: int = 5,
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -530,15 +530,15 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for rebooting the Compute Node. Default value is None.
-        :type options: ~azure.batch.models.BatchNodeRebootOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :type options: ~azure.batch.models._models.BatchNodeRebootOptions
+        :keyword service_timeout: The maximum time that the server can spend processing the initial request to
+         reboot the Compute Node, in seconds. The default is 30 seconds. If the value is larger than 30,
+         the default will be used instead.". Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
         :paramtype polling_interval: int
         :return: None
@@ -555,8 +555,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 pool_id,
                 node_id,
                 options=options,
-                timeout=timeout,
-                ocpdate=ocpdate,
+                service_timeout=service_timeout,
+                ocp_date=ocp_date,
                 cls=capture_pipeline_response,
                 **kwargs,
             ),
@@ -570,10 +570,10 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         node_id: str,
-        options: Optional[_models.BatchNodeReimageOptions] = None,
+        options: Optional[_models._models.BatchNodeReimageOptions] = None,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         polling_interval: int = 5,
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -590,15 +590,15 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
         :param options: The options to use for reimaging the Compute Node. Default value is None.
-        :type options: ~azure.batch.models.BatchNodeReimageOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :type options: ~azure.batch.models._models.BatchNodeReimageOptions
+        :keyword service_timeout: The maximum time that the server can spend processing the initial request to
+         reimage the Compute Node, in seconds. The default is 30 seconds. If the value is larger than 30,
+         the default will be used instead.". Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
         :paramtype polling_interval: int
         :return: None
@@ -615,8 +615,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 pool_id,
                 node_id,
                 options=options,
-                timeout=timeout,
-                ocpdate=ocpdate,
+                service_timeout=service_timeout,
+                ocp_date=ocp_date,
                 cls=capture_pipeline_response,
                 **kwargs,
             ),
@@ -631,8 +631,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         pool_id: str,
         remove_options: _models.BatchNodeRemoveOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -649,15 +649,15 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
         :param remove_options: The options to use for removing the node. Required.
-        :type remove_options: ~azure.batch.models.BatchNodeRemoveOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :type remove_options: ~azure.batch.models._models.BatchNodeRemoveOptions
+        :keyword service_timeout: The maximum time that the server can spend processing the initial request to
+         remove the Compute Node, in seconds. The default is 30 seconds. If the value is larger than 30,
+         the default will be used instead.". Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -688,8 +688,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._remove_nodes_internal(
                 pool_id,
                 remove_options=remove_options,
-                timeout=timeout,
-                ocpdate=ocpdate,
+                service_timeout=service_timeout,
+                ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
                 etag=etag,
@@ -708,8 +708,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         pool_id: str,
         resize_options: _models.BatchPoolResizeOptions,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -731,14 +731,14 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type pool_id: str
         :param resize_options: The options to use for resizing the pool. Required.
         :type resize_options: ~azure.batch.models.BatchPoolResizeOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :keyword service_timeout: The maximum time that the server can spend processing the initial request
+         to resize the Pool, in seconds. The default is 30 seconds. If the value is larger than 30,
+         the default will be used instead.". Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -769,8 +769,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._resize_pool_internal(
                 pool_id,
                 resize_options=resize_options,
-                timeout=timeout,
-                ocpdate=ocpdate,
+                service_timeout=service_timeout,
+                ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
                 etag=etag,
@@ -789,8 +789,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         pool_id: str,
         node_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         polling_interval: int = 5,
         **kwargs: Any
     ) -> LROPoller[None]:
@@ -802,14 +802,14 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type pool_id: str
         :param node_id: The ID of the Compute Node that you want to restart. Required.
         :type node_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :keyword service_timeout: The maximum time that the server can spend processing the initial request to
+         start the Compute Node, in seconds. The default is 30 seconds. If the value is larger than 30,
+         the default will be used instead.". Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword polling_interval: The interval in seconds between polling attempts. Default value is 5.
         :paramtype polling_interval: int
         :return: None
@@ -825,8 +825,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._start_node_internal(
                 pool_id,
                 node_id,
-                timeout=timeout,
-                ocpdate=ocpdate,
+                service_timeout=service_timeout,
+                ocp_date=ocp_date,
                 cls=capture_pipeline_response,
                 **kwargs,
             ),
@@ -840,8 +840,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         pool_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         etag: Optional[str] = None,
@@ -861,14 +861,14 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         :param pool_id: The ID of the Pool to get. Required.
         :type pool_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :keyword service_timeout: The maximum time that the server can spend processing the initial request
+         to stop the Pool resize, in seconds. The default is 30 seconds. If the value is larger than
+         30, the default will be used instead.". Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -898,8 +898,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._stop_pool_resize_internal(
                 pool_id,
-                timeout=timeout,
-                ocpdate=ocpdate,
+                service_timeout=service_timeout,
+                ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
                 etag=etag,
@@ -916,10 +916,10 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
     def begin_terminate_job(
         self,
         job_id: str,
-        options: Optional[_models.BatchJobTerminateOptions] = None,
+        options: Optional[_models._models.BatchJobTerminateOptions] = None,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         force: Optional[bool] = None,
@@ -940,15 +940,15 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :param job_id: The ID of the Job to terminate. Required.
         :type job_id: str
         :param options: The options to use for terminating the Job. Default value is None.
-        :type options: ~azure.batch.models.BatchJobTerminateOptions
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :type options: ~azure.batch.models._models.BatchJobTerminateOptions
+        :keyword service_timeout: The maximum time that the server can spend processing the initial request
+         to terminate the Job, in seconds. The default is 30 seconds. If the value is larger than 30,
+         the default will be used instead.". Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -982,8 +982,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             self._terminate_job_internal(
                 job_id,
                 options=options,
-                timeout=timeout,
-                ocpdate=ocpdate,
+                service_timeout=service_timeout,
+                ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
                 force=force,
@@ -1002,8 +1002,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         job_schedule_id: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         force: Optional[bool] = None,
@@ -1016,14 +1016,14 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
 
         :param job_schedule_id: The ID of the Job Schedule to terminates. Required.
         :type job_schedule_id: str
-        :keyword timeout: The maximum time that the server can spend processing the request, in
-         seconds. The default is 30 seconds. If the value is larger than 30, the default will be used
-         instead.". Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :keyword service_timeout: The maximum time that the server can spend processing the initial request to
+         terminate the Job Schedule, in seconds. The default is 30 seconds. If the value is larger than
+         30, the default will be used instead.". Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -1057,8 +1057,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             PipelineResponse,
             self._terminate_job_schedule_internal(
                 job_schedule_id,
-                timeout=timeout,
-                ocpdate=ocpdate,
+                service_timeout=service_timeout,
+                ocp_date=ocp_date,
                 if_modified_since=if_modified_since,
                 if_unmodified_since=if_unmodified_since,
                 force=force,
@@ -1080,10 +1080,10 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         self,
         job_id: str,
         task_collection: List[_models.BatchTaskCreateOptions],
-        concurrencies: int = 0,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        max_concurrency: int = 0,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         **kwargs: Any
     ) -> _models.BatchCreateTaskCollectionResult:
         """Adds a collection of Tasks to the specified Job.
@@ -1107,35 +1107,36 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type job_id: str
         :param task_collection: The Tasks to be added. Required.
         :type task_collection: ~azure.batch.models.BatchTaskAddCollectionResult
-        :param concurrencies: number of threads to use in parallel when adding tasks. If specified
+        :keyword max_concurrency: number of threads to use in parallel when adding tasks. If specified
          and greater than 0, will start additional threads to submit requests and wait for them to finish.
          Otherwise will submit create_task_collection requests sequentially on main thread
-        :type concurrencies: int
-        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
-         applications can be returned. Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype max_concurrency: int
+        :keyword service_timeout: The maximum time that the server can spend processing the equest to
+         create the task collection, in seconds. The default is 30 seconds. If the value is larger than
+         30, the default will be used instead.". Default value is None.
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :return: BatchTaskAddCollectionResult. The BatchTaskAddCollectionResult is compatible with MutableMapping
         :rtype: ~azure.batch.models.BatchTaskAddCollectionResult
         :raises ~azure.batch.custom.CreateTasksError:
         """
 
-        kwargs.update({"timeout": timeout, "ocpdate": ocpdate})
+        kwargs.update({"service_timeout": service_timeout, "ocp_date": ocp_date})
 
         # deque operations(append/pop) are thread-safe
         results_queue: Deque[_models.BatchTaskCreateResult] = collections.deque()
         task_workflow_manager = _TaskWorkflowManager(self, job_id=job_id, task_collection=task_collection, **kwargs)
 
         # multi-threaded behavior
-        if concurrencies:
-            if concurrencies < 0:
-                raise ValueError("Concurrencies must be positive or 0")
+        if max_concurrency:
+            if max_concurrency < 0:
+                raise ValueError("max_concurrency must be positive or 0")
 
             active_threads = []
-            for _ in range(concurrencies):
+            for _ in range(max_concurrency):
                 active_threads.append(
                     threading.Thread(
                         target=task_workflow_manager.task_collection_thread_handler,
@@ -1157,7 +1158,7 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
                 task_workflow_manager.errors,
             )
         submitted_tasks = _handle_output(results_queue)
-        return _models.BatchCreateTaskCollectionResult(values_property=submitted_tasks)
+        return _models.BatchCreateTaskCollectionResult(result_values=submitted_tasks)
 
     @distributed_trace
     def get_node_file(
@@ -1166,8 +1167,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         node_id: str,
         file_path: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
@@ -1181,13 +1182,13 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type node_id: str
         :param file_path: The path to the file or directory that you want to delete. Required.
         :type file_path: str
-        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
+        :keyword service_timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -1209,8 +1210,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [pool_id, node_id, file_path]
         kwargs.update(
             {
-                "timeout": timeout,
-                "ocpdate": ocpdate,
+                "service_timeout": service_timeout,
+                "ocp_date": ocp_date,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
                 "ocp_range": ocp_range,
@@ -1226,8 +1227,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         node_id: str,
         file_path: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
@@ -1240,13 +1241,13 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type node_id: str
         :param file_path: The path to the file or directory that you want to delete. Required.
         :type file_path: str
-        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
+        :keyword service_timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -1277,8 +1278,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             pool_id,
             node_id,
             file_path,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             cls=cls,
@@ -1294,8 +1295,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         task_id: str,
         file_path: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         **kwargs: Any
@@ -1308,13 +1309,13 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
+        :keyword service_timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -1345,8 +1346,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
             job_id,
             task_id,
             file_path,
-            timeout=timeout,
-            ocpdate=ocpdate,
+            service_timeout=service_timeout,
+            ocp_date=ocp_date,
             if_modified_since=if_modified_since,
             if_unmodified_since=if_unmodified_since,
             cls=cls,
@@ -1362,8 +1363,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         task_id: str,
         file_path: str,
         *,
-        timeout: Optional[int] = None,
-        ocpdate: Optional[datetime.datetime] = None,
+        service_timeout: Optional[int] = None,
+        ocp_date: Optional[datetime.datetime] = None,
         if_modified_since: Optional[datetime.datetime] = None,
         if_unmodified_since: Optional[datetime.datetime] = None,
         ocp_range: Optional[str] = None,
@@ -1377,13 +1378,13 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         :type task_id: str
         :param file_path: The path to the Task file that you want to get the content of. Required.
         :type file_path: str
-        :keyword timeout: The maximum number of items to return in the response. A maximum of 1000
+        :keyword service_timeout: The maximum number of items to return in the response. A maximum of 1000
          applications can be returned. Default value is None.
-        :paramtype timeout: int
-        :keyword ocpdate: The time the request was issued. Client libraries typically set this to the
+        :paramtype service_timeout: int
+        :keyword ocp_date: The time the request was issued. Client libraries typically set this to the
          current system clock time; set it explicitly if you are calling the REST API
          directly. Default value is None.
-        :paramtype ocpdate: ~datetime.datetime
+        :paramtype ocp_date: ~datetime.datetime
         :keyword if_modified_since: A timestamp indicating the last modified time of the resource known
          to the
          client. The operation will be performed only if the resource on the service has
@@ -1406,8 +1407,8 @@ class _BatchClientOperationsMixin(BatchClientOperationsMixinGenerated):
         args = [job_id, task_id, file_path]
         kwargs.update(
             {
-                "timeout": timeout,
-                "ocpdate": ocpdate,
+                "service_timeout": service_timeout,
+                "ocp_date": ocp_date,
                 "if_modified_since": if_modified_since,
                 "if_unmodified_since": if_unmodified_since,
                 "ocp_range": ocp_range,
@@ -1429,16 +1430,14 @@ def patch_sdk():
 class _TaskWorkflowManager:
     """Worker class for one create_task_collection request
 
-    :param ~TaskOperations task_operations: Parent object which instantiated this
+    :param batch_client: Parent object which instantiated this
+    :type batch_client: ~_BatchClientOperationsMixin
     :param str job_id: The ID of the job to which the task collection is to be
         added.
-    :param tasks_to_add: The collection of tasks to add.
-    :type tasks_to_add: list of :class:`TaskAddParameter
-        <azure.batch.models.TaskAddParameter>`
-    :param task_create_task_collection_options: Additional parameters for the
-        operation
-    :type task_create_task_collection_options: :class:`BatchTaskAddCollectionResult
-        <azure.batch.models.BatchTaskAddCollectionResult>`
+    :param task_collection: The collection of tasks to add.
+    :type task_collection: Iterable[~azure.batch.models.BatchTaskCreateOptions]
+    :param kwargs: Additional parameters for the operation
+    :type kwargs: dict
     """
 
     def __init__(
@@ -1487,7 +1486,7 @@ class _TaskWorkflowManager:
             create_task_collection_response: _models.BatchCreateTaskCollectionResult = (
                 self._batch_client.create_task_collection(
                     job_id=self._job_id,
-                    task_collection=_models.BatchTaskGroup(values_property=chunk_tasks_to_add),
+                    task_collection=_models.BatchTaskGroup(task_values=chunk_tasks_to_add),
                     **self._kwargs,
                 )
             )
@@ -1544,8 +1543,8 @@ class _TaskWorkflowManager:
             # Unknown State - don't know if tasks failed to add or were successful
             self.errors.appendleft(e)
         else:
-            if create_task_collection_response.values_property:
-                for task_result in create_task_collection_response.values_property:  # pylint: disable=no-member
+            if create_task_collection_response.result_values:
+                for task_result in create_task_collection_response.result_values:  # pylint: disable=no-member
                     if task_result.status == _models.BatchTaskAddStatus.SERVER_ERROR:
                         # Server error will be retried
                         with self._pending_queue_lock:
