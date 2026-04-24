@@ -1,10 +1,12 @@
 import uuid
+from typing import Any, cast
 from urllib.parse import urlparse
 
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError, ResourceExistsError, ResourceNotFoundError
 from azure.mgmt.authorization import AuthorizationManagementClient, models as authorization_models
 from azure.mgmt.resource import ResourceManagementClient
+
 from azure.ai.projects.models import AgentVersionDetails
 
 AZURE_AI_USER_ROLE_DEFINITION_GUID = "53ca6127-db72-4b80-b1b0-d745d6d5456d"
@@ -71,21 +73,19 @@ def _ensure_agent_identity_rbac_with_role_id(
     except ResourceNotFoundError:
         pass
 
-    properties = authorization_models.RoleAssignmentProperties(
-        role_definition_id=role_definition_id,
-        principal_id=principal_id,
-        principal_type=authorization_models.PrincipalType.SERVICE_PRINCIPAL,
+    create_parameters_kwargs = cast(
+        dict[str, Any],
+        {
+            "role_definition_id": role_definition_id,
+            "principal_id": principal_id,
+            "principal_type": authorization_models.PrincipalType.SERVICE_PRINCIPAL,
+        },
     )
-    parameters = authorization_models.RoleAssignmentCreateParameters(properties=properties)
-    try:
-        authorization_client.role_assignments.create(scope_resource_id, role_assignment_name, parameters)
-        print(f"Assigned Azure AI User role to principal {principal_id} at scope {scope_resource_id}.")
-        return True, role_assignment_name
-    except (ResourceExistsError, HttpResponseError) as e:
-        if isinstance(e, HttpResponseError) and "RoleAssignmentExists" not in str(e):
-            raise
-        print(f"Azure AI User role already assigned to principal {principal_id} (existing assignment detected).")
-        return False, role_assignment_name
+    parameters = authorization_models.RoleAssignmentCreateParameters(**create_parameters_kwargs)
+
+    authorization_client.role_assignments.create(scope_resource_id, role_assignment_name, parameters)
+    print(f"Assigned Azure AI User role to principal {principal_id} at scope {scope_resource_id}.")
+    return True, role_assignment_name
 
 
 def ensure_agent_identity_rbac(

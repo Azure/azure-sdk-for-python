@@ -29,7 +29,7 @@ USAGE:
        page of your Microsoft Foundry portal.
     2) FOUNDRY_HOSTED_AGENT_NAME - The name of an existing Hosted Agent.
 
-    If you don't have a Hosted Agent, run `sample_create_hosted_agent.py` first
+    If you don't have a Hosted Agent, run `sample_hosted_agent_create.py` first
     to create one as a prerequisite.
 """
 
@@ -62,7 +62,9 @@ with (
         allow_preview=True,
     ) as project_client,
 ):
+
     agent = get_latest_active_agent_version(project_client, agent_name)
+
     session = project_client.beta.agents.create_session(
         agent_name=agent_name,
         isolation_key="sample-isolation-key",
