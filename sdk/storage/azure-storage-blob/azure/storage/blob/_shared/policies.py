@@ -86,9 +86,7 @@ def is_exhausted(settings):
 
 def retry_hook(settings, **kwargs):
     if settings["hook"]:
-        settings["hook"](
-            retry_count=settings["count"] - 1, location_mode=settings["mode"], **kwargs
-        )
+        settings["hook"](retry_count=settings["count"] - 1, location_mode=settings["mode"], **kwargs)
 
 
 # Is this method/status code retryable? (Based on allowlists and control
@@ -108,9 +106,7 @@ def is_retry(response, mode):  # pylint: disable=too-many-return-statements
             # Response code 408 is a timeout and should be retried.
             return True
         if status >= 400:
-            error_code = response.http_response.headers.get(
-                "x-ms-copy-source-error-code"
-            )
+            error_code = response.http_response.headers.get("x-ms-copy-source-error-code")
             if error_code in [
                 StorageErrorCode.OPERATION_TIMED_OUT,
                 StorageErrorCode.INTERNAL_ERROR,
@@ -165,9 +161,7 @@ class StorageHeadersPolicy(HeadersPolicy):
         request.http_request.headers["x-ms-date"] = current_time
 
         custom_id = request.context.options.pop("client_request_id", None)
-        request.http_request.headers["x-ms-client-request-id"] = custom_id or str(
-            uuid.uuid1()
-        )
+        request.http_request.headers["x-ms-client-request-id"] = custom_id or str(uuid.uuid1())
 
     # def on_response(self, request, response):
     #     # raise exception if the echoed client request id from the service is not identical to the one we sent
@@ -207,9 +201,7 @@ class StorageHosts(SansIOHTTPPolicy):
             # Lock retries to the specific location
             request.context.options["retry_to_secondary"] = False
             if use_location not in self.hosts:
-                raise ValueError(
-                    f"Attempting to use undefined host location {use_location}"
-                )
+                raise ValueError(f"Attempting to use undefined host location {use_location}")
             if use_location != location_mode:
                 # Update request URL to use the specified location
                 updated = parsed_url._replace(netloc=self.hosts[use_location])
@@ -227,9 +219,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
 
     def __init__(self, logging_enable: bool = False, **kwargs) -> None:
         self.logging_body = kwargs.pop("logging_body", False)
-        super(StorageLoggingPolicy, self).__init__(
-            logging_enable=logging_enable, **kwargs
-        )
+        super(StorageLoggingPolicy, self).__init__(logging_enable=logging_enable, **kwargs)
 
     def on_request(self, request: "PipelineRequest") -> None:
         http_request = request.http_request
@@ -313,9 +303,7 @@ class StorageLoggingPolicy(NetworkTraceLoggingPolicy):
                 _LOGGER.debug("Response content:")
                 pattern = re.compile(r'attachment; ?filename=["\w.]+', re.IGNORECASE)
                 header = response.http_response.headers.get("content-disposition")
-                resp_content_type = response.http_response.headers.get(
-                    "content-type", ""
-                )
+                resp_content_type = response.http_response.headers.get("content-type", "")
 
                 if header and pattern.match(header):
                     filename = header.partition("=")[2]
@@ -344,9 +332,7 @@ class StorageRequestHook(SansIOHTTPPolicy):
         super(StorageRequestHook, self).__init__()
 
     def on_request(self, request: "PipelineRequest") -> None:
-        request_callback = request.context.options.pop(
-            "raw_request_hook", self._request_callback
-        )
+        request_callback = request.context.options.pop("raw_request_hook", self._request_callback)
         if request_callback:
             request_callback(request)
 
@@ -364,50 +350,36 @@ class StorageResponseHook(HTTPPolicy):
             data_stream_total = request.context.options.pop("data_stream_total", None)
         download_stream_current = request.context.get("download_stream_current")
         if download_stream_current is None:
-            download_stream_current = request.context.options.pop(
-                "download_stream_current", None
-            )
+            download_stream_current = request.context.options.pop("download_stream_current", None)
         upload_stream_current = request.context.get("upload_stream_current")
         if upload_stream_current is None:
-            upload_stream_current = request.context.options.pop(
-                "upload_stream_current", None
-            )
+            upload_stream_current = request.context.options.pop("upload_stream_current", None)
 
-        response_callback = request.context.get(
-            "response_callback"
-        ) or request.context.options.pop("raw_response_hook", self._response_callback)
+        response_callback = request.context.get("response_callback") or request.context.options.pop(
+            "raw_response_hook", self._response_callback
+        )
 
         response = self.next.send(request)
 
-        will_retry = is_retry(
-            response, request.context.options.get("mode")
-        ) or is_checksum_retry(response)
+        will_retry = is_retry(response, request.context.options.get("mode")) or is_checksum_retry(response)
         # Auth error could come from Bearer challenge, in which case this request will be made again
         is_auth_error = response.http_response.status_code == 401
         should_update_counts = not (will_retry or is_auth_error)
 
         if should_update_counts and download_stream_current is not None:
-            download_stream_current += int(
-                response.http_response.headers.get("Content-Length", 0)
-            )
+            download_stream_current += int(response.http_response.headers.get("Content-Length", 0))
             if data_stream_total is None:
                 content_range = response.http_response.headers.get("Content-Range")
                 if content_range:
-                    data_stream_total = int(
-                        content_range.split(" ", 1)[1].split("/", 1)[1]
-                    )
+                    data_stream_total = int(content_range.split(" ", 1)[1].split("/", 1)[1])
                 else:
                     data_stream_total = download_stream_current
         elif should_update_counts and upload_stream_current is not None:
-            upload_stream_current += int(
-                response.http_request.headers.get("Content-Length", 0)
-            )
+            upload_stream_current += int(response.http_request.headers.get("Content-Length", 0))
         for pipeline_obj in [request, response]:
             if hasattr(pipeline_obj, "context"):
                 pipeline_obj.context["data_stream_total"] = data_stream_total
-                pipeline_obj.context["download_stream_current"] = (
-                    download_stream_current
-                )
+                pipeline_obj.context["download_stream_current"] = download_stream_current
                 pipeline_obj.context["upload_stream_current"] = upload_stream_current
         if response_callback:
             response_callback(response)
@@ -548,9 +520,7 @@ class StorageRetryPolicy(HTTPPolicy):
         self.retry_to_secondary = kwargs.pop("retry_to_secondary", False)
         super(StorageRetryPolicy, self).__init__()
 
-    def _set_next_host_location(
-        self, settings: Dict[str, Any], request: "PipelineRequest"
-    ) -> None:
+    def _set_next_host_location(self, settings: Dict[str, Any], request: "PipelineRequest") -> None:
         """
         A function which sets the next host location on the request, if applicable.
 
@@ -589,9 +559,7 @@ class StorageRetryPolicy(HTTPPolicy):
             "connect": options.pop("retry_connect", self.connect_retries),
             "read": options.pop("retry_read", self.read_retries),
             "status": options.pop("retry_status", self.status_retries),
-            "retry_secondary": options.pop(
-                "retry_to_secondary", self.retry_to_secondary
-            ),
+            "retry_secondary": options.pop("retry_to_secondary", self.retry_to_secondary),
             "mode": options.pop("location_mode", LocationMode.PRIMARY),
             "hosts": options.pop("hosts", None),
             "hook": options.pop("retry_hook", None),
@@ -600,9 +568,7 @@ class StorageRetryPolicy(HTTPPolicy):
             "history": [],
         }
 
-    def get_backoff_time(
-        self, settings: Dict[str, Any]
-    ) -> float:  # pylint: disable=unused-argument
+    def get_backoff_time(self, settings: Dict[str, Any]) -> float:  # pylint: disable=unused-argument
         """Formula for computing the current backoff.
         Should be calculated by child class.
 
@@ -665,9 +631,7 @@ class StorageRetryPolicy(HTTPPolicy):
             # status_forcelist and a the given method is in the allowlist
             if response:
                 settings["status"] -= 1
-                settings["history"].append(
-                    RequestHistory(request, http_response=response)
-                )
+                settings["history"].append(RequestHistory(request, http_response=response))
 
         if not is_exhausted(settings):
             if request.method not in ["PUT"] and settings["retry_secondary"]:
@@ -702,9 +666,7 @@ class StorageRetryPolicy(HTTPPolicy):
         while retries_remaining:
             try:
                 response = self.next.send(request)
-                if is_retry(response, retry_settings["mode"]) or is_checksum_retry(
-                    response
-                ):
+                if is_retry(response, retry_settings["mode"]) or is_checksum_retry(response):
                     retries_remaining = self.increment(
                         retry_settings,
                         request=request.http_request,
@@ -723,9 +685,7 @@ class StorageRetryPolicy(HTTPPolicy):
             except AzureError as err:
                 if isinstance(err, AzureSigningError):
                     raise
-                retries_remaining = self.increment(
-                    retry_settings, request=request.http_request, error=err
-                )
+                retries_remaining = self.increment(retry_settings, request=request.http_request, error=err)
                 if retries_remaining:
                     retry_hook(
                         retry_settings,
@@ -785,9 +745,7 @@ class ExponentialRetry(StorageRetryPolicy):
         self.initial_backoff = initial_backoff
         self.increment_base = increment_base
         self.random_jitter_range = random_jitter_range
-        super(ExponentialRetry, self).__init__(
-            retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs
-        )
+        super(ExponentialRetry, self).__init__(retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
     def get_backoff_time(self, settings: Dict[str, Any]) -> float:
         """
@@ -800,14 +758,8 @@ class ExponentialRetry(StorageRetryPolicy):
         :rtype: float
         """
         random_generator = random.Random()
-        backoff = self.initial_backoff + (
-            0 if settings["count"] == 0 else pow(self.increment_base, settings["count"])
-        )
-        random_range_start = (
-            backoff - self.random_jitter_range
-            if backoff > self.random_jitter_range
-            else 0
-        )
+        backoff = self.initial_backoff + (0 if settings["count"] == 0 else pow(self.increment_base, settings["count"]))
+        random_range_start = backoff - self.random_jitter_range if backoff > self.random_jitter_range else 0
         random_range_end = backoff + self.random_jitter_range
         return random_generator.uniform(random_range_start, random_range_end)
 
@@ -845,11 +797,9 @@ class LinearRetry(StorageRetryPolicy):
         """
         self.backoff = backoff
         self.random_jitter_range = random_jitter_range
-        super(LinearRetry, self).__init__(
-            retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs
-        )
+        super(LinearRetry, self).__init__(retry_total=retry_total, retry_to_secondary=retry_to_secondary, **kwargs)
 
-    def get_backoff_time(self, settings: Dict[str, Any]) -> float:
+    def get_backoff_time(self, settings: Dict[str, Any]) -> float:  # pylint: disable=unused-argument
         """
         Calculates how long to sleep before retrying.
 
@@ -862,11 +812,7 @@ class LinearRetry(StorageRetryPolicy):
         random_generator = random.Random()
         # the backoff interval normally does not change, however there is the possibility
         # that it was modified by accessing the property directly after initializing the object
-        random_range_start = (
-            self.backoff - self.random_jitter_range
-            if self.backoff > self.random_jitter_range
-            else 0
-        )
+        random_range_start = self.backoff - self.random_jitter_range if self.backoff > self.random_jitter_range else 0
         random_range_end = self.backoff + self.random_jitter_range
         return random_generator.uniform(random_range_start, random_range_end)
 
@@ -874,16 +820,10 @@ class LinearRetry(StorageRetryPolicy):
 class StorageBearerTokenCredentialPolicy(BearerTokenCredentialPolicy):
     """Custom Bearer token credential policy for following Storage Bearer challenges"""
 
-    def __init__(
-        self, credential: "TokenCredential", audience: str, **kwargs: Any
-    ) -> None:
-        super(StorageBearerTokenCredentialPolicy, self).__init__(
-            credential, audience, **kwargs
-        )
+    def __init__(self, credential: "TokenCredential", audience: str, **kwargs: Any) -> None:
+        super(StorageBearerTokenCredentialPolicy, self).__init__(credential, audience, **kwargs)
 
-    def on_challenge(
-        self, request: "PipelineRequest", response: "PipelineResponse"
-    ) -> bool:
+    def on_challenge(self, request: "PipelineRequest", response: "PipelineResponse") -> bool:
         """Handle the challenge from the service and authorize the request.
 
         :param request: The request object.

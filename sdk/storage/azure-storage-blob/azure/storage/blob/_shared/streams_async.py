@@ -184,7 +184,7 @@ class AsyncStructuredMessageDecoder(IOBase):  # pylint: disable=too-many-instanc
 
             if self._message_crc64 != int.from_bytes(message_crc, "little"):
                 raise ValueError(
-                    "CRC64 mismatch detected in message trailer. " "All data read should be considered invalid."
+                    "CRC64 mismatch detected in message trailer. All data read should be considered invalid."
                 )
 
         self._message_offset += self._message_footer_length
