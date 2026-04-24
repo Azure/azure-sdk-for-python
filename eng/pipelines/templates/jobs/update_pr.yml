@@ -17,7 +17,7 @@ steps:
 - task: UsePythonVersion@0
   displayName: 'Use Python 3.10'
   inputs:
-    versionSpec: 3.10
+    versionSpec: '3.10'
 
 - script: |
     python3 -m pip install -e $(Build.SourcesDirectory)/eng/tools/azure-sdk-tools[ghtools]
