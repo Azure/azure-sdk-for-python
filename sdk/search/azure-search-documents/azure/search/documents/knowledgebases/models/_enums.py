@@ -19,7 +19,7 @@ class KnowledgeBaseActivityRecordType(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Azure Blob retrieval activity."""
     INDEXED_SHARE_POINT = "indexedSharePoint"
     """Indexed SharePoint retrieval activity."""
-    INDEXED_ONE_LAKE = "indexedOneLake"
+    INDEXED_ONELAKE = "indexedOneLake"
     """Indexed OneLake retrieval activity."""
     WEB = "web"
     """Web retrieval activity."""

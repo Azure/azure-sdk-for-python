@@ -1674,13 +1674,21 @@ class ImageServingStatistics(_Model):
     :vartype verbalization_used: bool
     """
 
-    images_retrieved: Optional[int] = rest_field(name="imagesRetrieved", visibility=["read", "create", "update", "delete", "query"])
+    images_retrieved: Optional[int] = rest_field(
+        name="imagesRetrieved", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of images retrieved from the asset store."""
-    images_sent_to_model: Optional[int] = rest_field(name="imagesSentToModel", visibility=["read", "create", "update", "delete", "query"])
+    images_sent_to_model: Optional[int] = rest_field(
+        name="imagesSentToModel", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The number of images sent to the downstream model."""
-    total_image_size_bytes: Optional[int] = rest_field(name="totalImageSizeBytes", visibility=["read", "create", "update", "delete", "query"])
+    total_image_size_bytes: Optional[int] = rest_field(
+        name="totalImageSizeBytes", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The total size in bytes of images sent to the model."""
-    verbalization_used: Optional[bool] = rest_field(name="verbalizationUsed", visibility=["read", "create", "update", "delete", "query"])
+    verbalization_used: Optional[bool] = rest_field(
+        name="verbalizationUsed", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Indicates whether image verbalization was used instead of direct image serving."""
 
     @overload
@@ -1721,17 +1729,25 @@ class PurviewSensitivityLabelInfo(_Model):
     :vartype is_encrypted: bool
     """
 
-    display_name: Optional[str] = rest_field(name="displayName", visibility=["read", "create", "update", "delete", "query"])
+    display_name: Optional[str] = rest_field(
+        name="displayName", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The display name for the sensitivity label."""
-    sensitivity_label_id: Optional[str] = rest_field(name="sensitivityLabelId", visibility=["read", "create", "update", "delete", "query"])
+    sensitivity_label_id: Optional[str] = rest_field(
+        name="sensitivityLabelId", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The ID of the sensitivity label."""
-    tool_tip: Optional[str] = rest_field(name="toolTip", visibility=["read", "create", "update", "delete", "query"])
+    tool_tip: Optional[str] = rest_field(
+        name="toolTip", visibility=["read", "create", "update", "delete", "query"]
+    )
     """The tooltip that should be displayed for the label in a UI."""
     priority: Optional[int] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The priority in which the sensitivity label is applied."""
     color: Optional[str] = rest_field(visibility=["read", "create", "update", "delete", "query"])
     """The color that the UI should display for the label, if configured."""
-    is_encrypted: Optional[bool] = rest_field(name="isEncrypted", visibility=["read", "create", "update", "delete", "query"])
+    is_encrypted: Optional[bool] = rest_field(
+        name="isEncrypted", visibility=["read", "create", "update", "delete", "query"]
+    )
     """Indicates whether the sensitivity label enforces encryption."""
 
     @overload
