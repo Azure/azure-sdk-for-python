@@ -265,33 +265,6 @@ def _download_blob_options(
     client: "AzureBlobStorage",
     **kwargs
 ) -> Dict[str, Any]:
-    """Creates a dictionary containing the options for a download blob operation.
-
-    :param str blob_name:
-        The name of the blob.
-    :param str container_name:
-        The name of the container.
-    :param Optional[str] version_id:
-        The version id parameter is a value that, when present, specifies the version of the blob to download.
-    :param Optional[int] offset:
-        Start of byte range to use for downloading a section of the blob. Must be set if length is provided.
-    :param Optional[int] length:
-        Number of bytes to read from the stream. This is optional, but should be supplied for optimal performance.
-    :param Optional[str] encoding:
-        Encoding to decode the downloaded bytes. Default is None, i.e. no decoding.
-    :param Dict[str, Any] encryption_options:
-        The options for encryption, if enabled.
-    :param validate_content:
-        Enables checksum validation for the transfer. Already parsed via parse_validation_option.
-    :param StorageConfiguration config:
-        The Storage configuration options.
-    :param str sdk_moniker:
-        The string representing the SDK package version.
-    :param AzureBlobStorage client:
-        The generated Blob Storage client.
-    :return: A dictionary containing the download blob options.
-    :rtype: Dict[str, Any]
-    """
     if length is not None:
         if offset is None:
             raise ValueError("Offset must be provided if length is provided.")

@@ -212,7 +212,9 @@ class StorageStreamDownloader:  # pylint: disable=too-many-instance-attributes
         # If validate_content is using MD5, get only self.MAX_CHUNK_GET_SIZE for the first
         # chunk so a transactional MD5 can be retrieved.
         self._first_get_size = (
-            self._config.max_single_get_size if not is_md5_validation(self._validate_content) else self._config.max_chunk_get_size
+            self._config.max_single_get_size
+            if not is_md5_validation(self._validate_content)
+            else self._config.max_chunk_get_size
         )
 
         initial_request_start = self._start_range or 0

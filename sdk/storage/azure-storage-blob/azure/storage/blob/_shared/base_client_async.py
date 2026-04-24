@@ -40,7 +40,11 @@ from .policies import (
     StorageHosts,
     StorageRequestHook,
 )
-from .policies_async import AsyncStorageBearerTokenCredentialPolicy, AsyncContentValidationPolicy, AsyncStorageResponseHook
+from .policies_async import (
+    AsyncStorageBearerTokenCredentialPolicy,
+    AsyncContentValidationPolicy,
+    AsyncStorageResponseHook,
+)
 from .response_handlers import PartialBatchErrorException, process_storage_error
 from .._shared_access_signature import _is_credential_sastoken
 
