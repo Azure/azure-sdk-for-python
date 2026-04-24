@@ -2425,3 +2425,52 @@ class VisualFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Visual features recognized as objects."""
     TAGS = "tags"
     """Tags."""
+
+
+class McpServerAuthenticationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of authentication to use for an MCP server."""
+
+    FOUNDRY_CONNECTION = "foundryConnection"
+    """Authenticate using an Azure AI Foundry connection."""
+    STORED_HEADERS = "storedHeaders"
+    """Authenticate using stored HTTP headers."""
+
+
+class McpServerOutputParsingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of output parsing to use for an MCP server tool."""
+
+    AUTO = "auto"
+    """Automatically determine the output format."""
+    JSON = "json"
+    """Parse output as JSON."""
+    SPLIT = "split"
+    """Split output into multiple documents."""
+    NONE = "none"
+    """Return raw output without parsing."""
+
+
+class McpServerToolInclusionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controls how tools are included when calling an MCP server."""
+
+    INCLUDE_LISTED = "includeListed"
+    """Include only the listed tools."""
+    EXCLUDE_LISTED = "excludeListed"
+    """Include all tools except the listed ones."""
+
+
+class ContentUnderstandingSkillChunkingMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The chunking method to use for content understanding."""
+
+    FIXED_SIZE = "fixedSize"
+    """Use a fixed token size for chunking."""
+    SEMANTIC = "semantic"
+    """Use semantic chunking."""
+
+
+class SearchIndexPermissionFilterOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Permission filter options for a search index."""
+
+    ENABLED = "enabled"
+    """Permission filtering is enabled."""
+    DISABLED = "disabled"
+    """Permission filtering is disabled."""
