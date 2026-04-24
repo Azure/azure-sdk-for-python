@@ -31,12 +31,14 @@ import inspect
 import logging
 import os
 import platform
-import xml.etree.ElementTree as ET
 import types
 import re
 import uuid
 from typing import IO, cast, Union, Optional, AnyStr, Dict, Any, Set, MutableMapping
 import urllib.parse
+
+# ========== SECURITY PATCH: IMPORT DEFUSEDXML FOR XML DOS PROTECTION ==========
+from defusedxml import ElementTree as ET
 
 from azure.core import __version__ as azcore_version
 from azure.core.exceptions import DecodeError
@@ -646,7 +648,12 @@ class ContentDecodePolicy(SansIOHTTPPolicy[HTTPRequestType, HTTPResponseType]):
                 ) from err
         elif "xml" in (mime_type or []):
             try:
-                return ET.fromstring(data_as_str)  # nosec
+                # ========== SECURITY PATCH: USE DEFUSEDXML TO PREVENT BILLION LAUGHS XML DOS ==========
+                # Changed from: ET.fromstring(data_as_str)  # nosec
+                # To: ET.fromstring(data_as_str) using defusedxml which safely parses XML
+                # This prevents entity expansion attacks (CVE-2013-1664, OWASP A03:2025 - Injection)
+                # defusedxml automatically disables external entity resolution and limits entity expansion
+                return ET.fromstring(data_as_str)
             except ET.ParseError as err:
                 # It might be because the server has an issue, and returned JSON with
                 # content-type XML....
