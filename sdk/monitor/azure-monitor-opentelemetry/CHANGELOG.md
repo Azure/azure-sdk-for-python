@@ -3,6 +3,8 @@
 ## 1.8.8 (Unreleased)
 
 ### Features Added
+- Added `enable_code_attributes` configuration option to include log code attributes in custom dimensions
+  ([#46002](https://github.com/Azure/azure-sdk-for-python/pull/46002))
 
 ### Breaking Changes
 

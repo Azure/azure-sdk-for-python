@@ -88,6 +88,7 @@ class TestConfigurations(TestCase):
             log_record_processors=["test_log_record_processor"],
             metric_readers=["test_metric_reader"],
             enable_trace_based_sampling_for_logs=True,
+            enable_code_attributes=True,
         )
 
         self.assertEqual(configurations["connection_string"], "test_cs")
@@ -95,6 +96,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["disable_logging"], False)
         self.assertEqual(configurations["disable_metrics"], False)
         self.assertEqual(configurations["disable_tracing"], False)
+        self.assertEqual(configurations["enable_code_attributes"], True)
         self.assertEqual(configurations["resource"].attributes, TEST_MERGED_RESOURCE.attributes)
         self.assertEqual(environ[OTEL_EXPERIMENTAL_RESOURCE_DETECTORS], "azure_app_service,azure_vm")
         resource_create_mock.assert_called_once_with(TEST_CUSTOM_RESOURCE.attributes)
@@ -161,6 +163,7 @@ class TestConfigurations(TestCase):
         self.assertEqual(configurations["metric_readers"], [])
         self.assertEqual(configurations["views"], [])
         self.assertEqual(configurations[ENABLE_TRACE_BASED_SAMPLING_ARG], False)
+        self.assertEqual(configurations["enable_code_attributes"], False)
 
     @patch.dict(
         "os.environ",

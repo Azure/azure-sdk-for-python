@@ -568,6 +568,7 @@ class TestConfigure(unittest.TestCase):
             "log_record_processors": [custom_lrp],
             "logging_formatter": formatter_init_mock,
             "enable_trace_based_sampling_for_logs": False,
+            "enable_code_attributes": True,
         }
 
         # Patch all the necessary modules and imports
@@ -596,7 +597,7 @@ class TestConfigure(unittest.TestCase):
         )
         self.assertEqual(lp_init_mock.add_log_record_processor.call_count, 3)
         lp_init_mock.add_log_record_processor.assert_has_calls([call(pclp_init_mock), call(blrp_init_mock)])
-        logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock)
+        logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock, log_code_attributes=True)
         logging_handler_init_mock.setFormatter.assert_called_once_with(formatter_init_mock)
         get_logger_mock.assert_called_once_with("test")
         logger_mock.addHandler.assert_called_once_with(logging_handler_init_mock)
@@ -697,6 +698,7 @@ class TestConfigure(unittest.TestCase):
             "log_record_processors": [],
             "logging_formatter": formatter_init_mock,
             "enable_trace_based_sampling_for_logs": False,
+            "enable_code_attributes": False,
         }
 
         # Patch all the necessary modules and imports
@@ -720,7 +722,7 @@ class TestConfigure(unittest.TestCase):
         log_exporter_mock.assert_called_once_with(**configurations)
         blrp_mock.assert_called_once_with(log_exp_init_mock, {"enable_trace_based_sampling_for_logs": False})
         lp_init_mock.add_log_record_processor.assert_called_once_with(blrp_init_mock)
-        logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock)
+        logging_handler_mock.assert_called_once_with(logger_provider=lp_init_mock, log_code_attributes=False)
         logging_handler_init_mock.setFormatter.assert_called_once_with(formatter_init_mock)
         get_logger_mock.assert_called_once_with("test")
         logger_mock.addHandler.assert_called_once_with(logging_handler_init_mock)
