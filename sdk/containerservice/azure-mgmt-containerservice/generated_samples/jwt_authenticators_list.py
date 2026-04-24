@@ -38,6 +38,6 @@ def main():
         print(item)
 
 
-# x-ms-original-file: 2026-01-02-preview/JWTAuthenticators_List.json
+# x-ms-original-file: 2026-02-02-preview/JWTAuthenticators_List.json
 if __name__ == "__main__":
     main()

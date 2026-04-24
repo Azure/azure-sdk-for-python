@@ -1,4 +1,4 @@
-# pylint: disable=line-too-long,useless-suppression
+# pylint: disable=line-too-long,useless-suppression,docstring-missing-param,docstring-missing-return,docstring-missing-rtype,unused-argument
 # ------------------------------------
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
@@ -28,14 +28,13 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv azure-monitor-query
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
     2) APPINSIGHTS_RESOURCE_ID - Required (for default mode). The Azure Application Insights resource ID that stores
        agent traces. Not needed when using --agent-id or --trace-ids.
        It has the form: /subscriptions/<subscription_id>/resourceGroups/<rg_name>/providers/Microsoft.Insights/components/<resource_name>.
-    3) AGENT_ID - Required (for default mode). The agent identifier emitted by the Azure tracing integration,
-       used to filter traces. Not needed when using --agent-id or --trace-ids.
-    4) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The Azure OpenAI deployment name to use with the built-in evaluators.
+    3) AGENT_ID - Required. The agent identifier emitted by the Azure tracing integration, used to filter traces.
+    4) FOUNDRY_MODEL_NAME - Required. The Azure OpenAI deployment name to use with the built-in evaluators.
     5) TRACE_LOOKBACK_HOURS - Optional. Number of hours to look back when querying traces and in the evaluation run.
        Defaults to 1.
 """
@@ -44,38 +43,45 @@ import argparse
 import os
 import time
 from datetime import datetime, timedelta, timezone
+from pprint import pprint
 from typing import Any, Dict, List, Optional
-
 from dotenv import load_dotenv
 from azure.identity import DefaultAzureCredential
 from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.ai.projects import AIProjectClient
-
-from pprint import pprint
+from azure.ai.projects.models import (
+    AzureAIDataSourceConfig,
+    TestingCriterionAzureAIEvaluator,
+    TracesPreviewEvalRunDataSource,
+)
 
 load_dotenv()
 
 
-endpoint = os.environ["AZURE_AI_PROJECT_ENDPOINT"]
-model_deployment_name = os.environ["AZURE_AI_MODEL_DEPLOYMENT_NAME"]
+endpoint = os.environ["FOUNDRY_PROJECT_ENDPOINT"]
+appinsights_resource_id = os.environ[
+    "APPINSIGHTS_RESOURCE_ID"
+]  # Sample : /subscriptions/<subscription_id>/resourceGroups/<rg_name>/providers/Microsoft.Insights/components/<resource_name>
+agent_id = os.environ["AGENT_ID"]
+model_deployment_name = os.environ["FOUNDRY_MODEL_NAME"]
 default_lookback_hours = int(os.environ.get("TRACE_LOOKBACK_HOURS", "1"))
 
 
-def _build_evaluator_config(name: str, evaluator_name: str) -> Dict[str, Any]:
+def _build_evaluator_config(name: str, evaluator_name: str) -> TestingCriterionAzureAIEvaluator:
     """Create a standard Azure AI evaluator configuration block for trace evaluations."""
-    return {
-        "type": "azure_ai_evaluator",
-        "name": name,
-        "evaluator_name": evaluator_name,
-        "data_mapping": {
+    return TestingCriterionAzureAIEvaluator(
+        type="azure_ai_evaluator",
+        name=name,
+        evaluator_name=evaluator_name,
+        data_mapping={
             "query": "{{query}}",
             "response": "{{response}}",
             "tool_definitions": "{{tool_definitions}}",
         },
-        "initialization_parameters": {
+        initialization_parameters={
             "deployment_name": model_deployment_name,
         },
-    }
+    )
 
 
 def get_trace_ids(
@@ -93,7 +99,7 @@ def get_trace_ids(
     Returns:
         List of distinct operation IDs (trace IDs).
     """
-    query = f"""
+    query = """
 dependencies
 | where timestamp between (datetime({start_time.isoformat()}) .. datetime({end_time.isoformat()}))
 | extend agent_id = tostring(customDimensions["gen_ai.agent.id"])

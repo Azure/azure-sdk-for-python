@@ -18,15 +18,16 @@ USAGE:
     pip install "azure-ai-projects>=2.0.0" python-dotenv
 
     Set these environment variables with your own values:
-    1) AZURE_AI_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
+    1) FOUNDRY_PROJECT_ENDPOINT - Required. The Azure AI Project endpoint, as found in the overview page of your
        Microsoft Foundry project. It has the form: https://<account_name>.services.ai.azure.com/api/projects/<project_name>.
-    2) AZURE_AI_MODEL_DEPLOYMENT_NAME - Required. The name of the model deployment to use for evaluation.
+    2) FOUNDRY_MODEL_NAME - Required. The name of the model deployment to use for evaluation.
 """
 
-from dotenv import load_dotenv
 import os
-from agent_utils import run_evaluator
-from schema_mappings import evaluator_to_data_source_config, evaluator_to_data_mapping
+
+from dotenv import load_dotenv
+from agent_utils import run_evaluator  # pylint: disable=import-error
+from schema_mappings import evaluator_to_data_source_config, evaluator_to_data_mapping  # pylint: disable=import-error
 from openai.types.evals.create_eval_jsonl_run_data_source_param import SourceFileContentContent
 
 load_dotenv()
@@ -35,9 +36,8 @@ load_dotenv()
 def _get_evaluator_initialization_parameters(evaluator_name: str) -> dict[str, str]:
     if evaluator_name == "task_navigation_efficiency":
         return {"matching_mode": "exact_match"}  #  Can be "exact_match", "in_order_match", or "any_order_match"
-    else:
-        model_deployment_name = os.environ.get("AZURE_AI_MODEL_DEPLOYMENT_NAME", "")  # Sample : gpt-4o-mini
-        return {"deployment_name": model_deployment_name}
+    model_deployment_name = os.environ.get("FOUNDRY_MODEL_NAME", "")  # Sample : gpt-4o-mini
+    return {"deployment_name": model_deployment_name}
 
 
 def _get_evaluation_contents() -> list[SourceFileContentContent]:
