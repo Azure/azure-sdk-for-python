@@ -64,7 +64,7 @@ To utilize this feature, add `--isolate` to any `azpysdk` invocation:
 ## Prerequisite
 
 - You need to have Python installed
-- The monorepo requires a minimum of `python 3.9`, but `>=3.11` is required for the `sphinx` check due to compatibility constraints with external processes.
+- The monorepo requires a minimum of `python 3.10`, but `>=3.11` is required for the `sphinx` check due to compatibility constraints with external processes.
 - You may optionally use the ["uv"](https://docs.astral.sh/uv/) tool, which is fast and handles Python version and venv creation automatically.
 
 ## Initial setup
