@@ -17,10 +17,26 @@ class KnowledgeBaseActivityRecordType(str, Enum, metaclass=CaseInsensitiveEnumMe
     """Search index retrieval activity."""
     AZURE_BLOB = "azureBlob"
     """Azure Blob retrieval activity."""
+    INDEXED_SHARE_POINT = "indexedSharePoint"
+    """Indexed SharePoint retrieval activity."""
     INDEXED_ONELAKE = "indexedOneLake"
     """Indexed OneLake retrieval activity."""
     WEB = "web"
     """Web retrieval activity."""
+    REMOTE_SHARE_POINT = "remoteSharePoint"
+    """Remote SharePoint retrieval activity."""
+    WORK_IQ = "workIQ"
+    """WorkIQ retrieval activity."""
+    FABRIC_DATA_AGENT = "fabricDataAgent"
+    """Fabric Data Agent retrieval activity."""
+    FABRIC_ONTOLOGY = "fabricOntology"
+    """Fabric Ontology retrieval activity."""
+    MODEL_QUERY_PLANNING = "modelQueryPlanning"
+    """Model query planning activity."""
+    MODEL_ANSWER_SYNTHESIS = "modelAnswerSynthesis"
+    """Model answer synthesis activity."""
+    MODEL_WEB_SUMMARIZATION = "modelWebSummarization"
+    """Model web summarization activity."""
     AGENTIC_REASONING = "agenticReasoning"
     """Agentic reasoning activity."""
 
@@ -45,6 +61,16 @@ class KnowledgeBaseReferenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indexed OneLake document reference."""
     WEB = "web"
     """Web document reference."""
+    INDEXED_SHARE_POINT = "indexedSharePoint"
+    """Indexed SharePoint document reference."""
+    REMOTE_SHARE_POINT = "remoteSharePoint"
+    """Remote SharePoint document reference."""
+    WORK_IQ = "workIQ"
+    """WorkIQ document reference."""
+    FABRIC_DATA_AGENT = "fabricDataAgent"
+    """Fabric Data Agent document reference."""
+    FABRIC_ONTOLOGY = "fabricOntology"
+    """Fabric Ontology document reference."""
 
 
 class KnowledgeRetrievalIntentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -54,8 +80,21 @@ class KnowledgeRetrievalIntentType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     """A natural language semantic query intent."""
 
 
+class KnowledgeRetrievalOutputMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The output mode for knowledge retrieval."""
+
+    EXTRACTIVE_DATA = "extractiveData"
+    """Returns extracted data from the knowledge sources."""
+    ANSWER_SYNTHESIS = "answerSynthesis"
+    """Returns a synthesized answer from the knowledge sources."""
+
+
 class KnowledgeRetrievalReasoningEffortKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The amount of effort to use during retrieval."""
 
     MINIMAL = "minimal"
     """Does not perform any source selections, query planning, or iterative search."""
+    LOW = "low"
+    """Performs minimal source selections and query planning."""
+    MEDIUM = "medium"
+    """Performs moderate source selections and query planning."""

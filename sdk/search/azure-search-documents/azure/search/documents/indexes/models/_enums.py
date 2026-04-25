@@ -47,6 +47,24 @@ class AzureOpenAIModelName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gpt54Mini model."""
     GPT_5_4_NANO = "gpt-5.4-nano"
     """Gpt54Nano model."""
+    GPT5_1 = "gpt-5.1"
+    """Gpt51 model."""
+    GPT5_2 = "gpt-5.2"
+    """Gpt52 model."""
+    GPT5_4 = "gpt-5.4"
+    """Gpt54 model."""
+    GPT4_1 = "gpt-4.1"
+    """Gpt41 model."""
+    GPT4_1_MINI = "gpt-4.1-mini"
+    """Gpt41Mini model."""
+    GPT4_1_NANO = "gpt-4.1-nano"
+    """Gpt41Nano model."""
+    GPT5 = "gpt-5"
+    """Gpt5 model."""
+    GPT4O = "gpt-4o"
+    """Gpt4o model."""
+    GPT4O_MINI = "gpt-4o-mini"
+    """Gpt4oMini model."""
 
 
 class BlobIndexerDataToExtract(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -589,6 +607,22 @@ class KnowledgeSourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """A knowledge source that reads data from indexed OneLake."""
     WEB = "web"
     """A knowledge source that reads data from the web."""
+    INDEXED_SQL = "IndexedSql"
+    """A knowledge source that reads data from an indexed SQL database."""
+    WORK_IQ = "WorkIQ"
+    """A knowledge source that reads data from WorkIQ."""
+    FILE = "File"
+    """A knowledge source that reads data from files."""
+    MCP_SERVER = "McpServer"
+    """A knowledge source that reads data from an MCP server."""
+    FABRIC_DATA_AGENT = "FabricDataAgent"
+    """A knowledge source that reads data from a Fabric Data Agent."""
+    FABRIC_ONTOLOGY = "FabricOntology"
+    """A knowledge source that reads data from a Fabric Ontology."""
+    INDEXED_SHARE_POINT = "IndexedSharePoint"
+    """A knowledge source that reads data from indexed SharePoint."""
+    REMOTE_SHARE_POINT = "RemoteSharePoint"
+    """A knowledge source that reads data from remote SharePoint."""
 
 
 class KnowledgeSourceSynchronizationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -2391,3 +2425,52 @@ class VisualFeature(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Visual features recognized as objects."""
     TAGS = "tags"
     """Tags."""
+
+
+class McpServerAuthenticationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of authentication to use for an MCP server."""
+
+    FOUNDRY_CONNECTION = "foundryConnection"
+    """Authenticate using an Azure AI Foundry connection."""
+    STORED_HEADERS = "storedHeaders"
+    """Authenticate using stored HTTP headers."""
+
+
+class McpServerOutputParsingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of output parsing to use for an MCP server tool."""
+
+    AUTO = "auto"
+    """Automatically determine the output format."""
+    JSON = "json"
+    """Parse output as JSON."""
+    SPLIT = "split"
+    """Split output into multiple documents."""
+    NONE = "none"
+    """Return raw output without parsing."""
+
+
+class McpServerToolInclusionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Controls how tools are included when calling an MCP server."""
+
+    INCLUDE_LISTED = "includeListed"
+    """Include only the listed tools."""
+    EXCLUDE_LISTED = "excludeListed"
+    """Include all tools except the listed ones."""
+
+
+class ContentUnderstandingSkillChunkingMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The chunking method to use for content understanding."""
+
+    FIXED_SIZE = "fixedSize"
+    """Use a fixed token size for chunking."""
+    SEMANTIC = "semantic"
+    """Use semantic chunking."""
+
+
+class SearchIndexPermissionFilterOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Permission filter options for a search index."""
+
+    ENABLED = "enabled"
+    """Permission filtering is enabled."""
+    DISABLED = "disabled"
+    """Permission filtering is disabled."""
