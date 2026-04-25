@@ -4,10 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
-from typing import (
-    Any, Dict, IO, Iterable, Union,
-    TYPE_CHECKING
-)
+from typing import Any, Dict, IO, Iterable, Union, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from azure.storage.blob import BlobQueryReader

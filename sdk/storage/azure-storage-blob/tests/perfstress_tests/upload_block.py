@@ -17,11 +17,7 @@ class UploadBlockTest(_BlobTest):
         self.data = get_random_bytes(self.args.size)
 
     def run_sync(self):
-        self.blob_client.stage_block(
-            block_id=self.block_id,
-            data=self.data)
+        self.blob_client.stage_block(block_id=self.block_id, data=self.data)
 
     async def run_async(self):
-        await self.async_blob_client.stage_block(
-            block_id=self.block_id,
-            data=self.data)
+        await self.async_blob_client.stage_block(block_id=self.block_id, data=self.data)

@@ -20,25 +20,27 @@ from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
-TEST_DIRECTORY_PREFIX = 'directory'
-TEST_FILE_PREFIX = 'file'
-FILE_PATH = 'file_output.temp.dat'
+TEST_DIRECTORY_PREFIX = "directory"
+TEST_FILE_PREFIX = "file"
+FILE_PATH = "file_output.temp.dat"
 LARGEST_BLOCK_SIZE = 4000 * 1024 * 1024
 # ------------------------------------------------------------------------------
 
 
 class TestLargeFileAsync(AsyncStorageRecordedTestCase):
     async def _setUp(self, account_name, account_key):
-        url = self.account_url(account_name, 'dfs')
+        url = self.account_url(account_name, "dfs")
         self.payload_dropping_policy = PayloadDroppingPolicy()
         credential_policy = _format_shared_key_credential(account_name, account_key.secret)
-        self.dsc = DataLakeServiceClient(url,
-                                         credential=account_key.secret,
-                                         _additional_pipeline_policies=[self.payload_dropping_policy, credential_policy])
+        self.dsc = DataLakeServiceClient(
+            url,
+            credential=account_key.secret,
+            _additional_pipeline_policies=[self.payload_dropping_policy, credential_policy],
+        )
 
         self.config = self.dsc._config
 
-        self.file_system_name = self.get_resource_name('filesystem')
+        self.file_system_name = self.get_resource_name("filesystem")
 
         if not self.is_playback():
             file_system = self.dsc.get_file_system_client(self.file_system_name)
@@ -78,7 +80,7 @@ class TestLargeFileAsync(AsyncStorageRecordedTestCase):
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         await directory_client.create_directory()
 
-        file_client = directory_client.get_file_client('filename')
+        file_client = directory_client.get_file_client("filename")
         await file_client.create_file()
 
         data = LargeStream(LARGEST_BLOCK_SIZE)
@@ -90,7 +92,9 @@ class TestLargeFileAsync(AsyncStorageRecordedTestCase):
         assert self.payload_dropping_policy.append_counter == 1
         assert self.payload_dropping_policy.append_sizes[0] == LARGEST_BLOCK_SIZE
 
-    @pytest.mark.skipif(platform.python_implementation() == "PyPy", reason="Test failing on Pypy3 Linux, skip to investigate")
+    @pytest.mark.skipif(
+        platform.python_implementation() == "PyPy", reason="Test failing on Pypy3 Linux, skip to investigate"
+    )
     @pytest.mark.live_test_only
     @DataLakePreparer()
     async def test_upload_large_stream_without_network(self, **kwargs):
@@ -104,10 +108,10 @@ class TestLargeFileAsync(AsyncStorageRecordedTestCase):
         directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
         await directory_client.create_directory()
 
-        file_client = directory_client.get_file_client('filename')
+        file_client = directory_client.get_file_client("filename")
         await file_client.create_file()
 
-        length = 2*LARGEST_BLOCK_SIZE
+        length = 2 * LARGEST_BLOCK_SIZE
         data = LargeStream(length)
 
         # Act
@@ -158,8 +162,10 @@ class PayloadDroppingPolicy(SansIOHTTPPolicy):
     def on_request(self, request):  # type: (PipelineRequest) -> Union[None, Awaitable[None]]
         if _is_append_request(request):
             if request.http_request.body:
-                position = self.append_counter*len(self.dummy_body)
-                request.http_request.url = re.sub(r'position=\d+', "position=" + str(position), request.http_request.url)
+                position = self.append_counter * len(self.dummy_body)
+                request.http_request.url = re.sub(
+                    r"position=\d+", "position=" + str(position), request.http_request.url
+                )
                 self.append_sizes.append(_get_body_length(request))
                 replacement = self.dummy_body
                 request.http_request.body = replacement
@@ -167,7 +173,7 @@ class PayloadDroppingPolicy(SansIOHTTPPolicy):
                 self.append_counter = self.append_counter + 1
         elif _is_flush_request(request):
             position = self.append_counter * len(self.dummy_body)
-            request.http_request.url = re.sub(r'position=\d+', "position=" + str(position), request.http_request.url)
+            request.http_request.url = re.sub(r"position=\d+", "position=" + str(position), request.http_request.url)
 
 
 def _is_append_request(request):
@@ -184,7 +190,7 @@ def _get_body_length(request):
     body = request.http_request.body
     length = 0
     if hasattr(body, "read"):
-        chunk = body.read(10*1024*1024)
+        chunk = body.read(10 * 1024 * 1024)
         while chunk:
             length = length + len(chunk)
             chunk = body.read(10 * 1024 * 1024)
@@ -194,5 +200,5 @@ def _get_body_length(request):
 
 
 # ------------------------------------------------------------------------------
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
