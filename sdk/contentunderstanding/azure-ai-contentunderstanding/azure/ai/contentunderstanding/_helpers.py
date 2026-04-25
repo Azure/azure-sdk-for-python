@@ -232,10 +232,10 @@ def _get_renderable_contents(
                     length = seg.span.get("length", 0) if isinstance(seg.span, dict) else getattr(seg.span, "length", 0)
                     md = c.markdown[offset : offset + length]
                 child = DocumentContent(
-                    kind="document",
-                    markdown=md,
+                    mime_type=c.mime_type,
                     start_page_number=seg.start_page_number,
                     end_page_number=seg.end_page_number,
+                    markdown=md,
                     category=seg.category,
                 )
                 result.append(child)
@@ -245,10 +245,8 @@ def _get_renderable_contents(
     # Sort by page number so output follows document order.
     # This matters when routed segments (with fields) appear as
     # separate top-level contents after expanded parent segments.
-    from .models import DocumentContent as _DC
-
     def _sort_key(c: "AnalysisContent") -> int:
-        if isinstance(c, _DC) and c.start_page_number is not None:
+        if isinstance(c, DocumentContent) and c.start_page_number is not None:
             return c.start_page_number
         return 0
 
