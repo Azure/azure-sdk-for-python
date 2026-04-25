@@ -3,9 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
 import asyncio
-import jwt
 import os
 import tempfile
 import uuid
@@ -15,54 +15,40 @@ from io import BytesIO
 from urllib.parse import quote, urlencode
 
 import aiohttp
+import jwt
 import pytest
 import requests
+
+from devtools_testutils.aio import recorded_by_proxy_async
+from devtools_testutils.fake_credentials_async import AsyncFakeCredential
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
+from settings.testcase import BlobPreparer
+from test_helpers_async import _build_base_file_share_headers, _create_file_share_oauth, AsyncStream
+
 from azure.core import MatchConditions
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
 from azure.core.exceptions import (
-    HttpResponseError,
-    ResourceNotFoundError,
-    ResourceExistsError,
     ClientAuthenticationError,
-    ResourceModifiedError
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceModifiedError,
+    ResourceNotFoundError,
 )
-from azure.core.pipeline.transport import AioHttpTransport
+from azure.core.pipeline.transport import AioHttpTransport  # pylint: disable=no-name-in-module
 from azure.mgmt.storage.aio import StorageManagementClient
+from azure.storage.blob import (
+    AccessPolicy, AccountSasPermissions, BlobImmutabilityPolicyMode, BlobProperties, BlobSasPermissions, BlobType,
+    ContainerSasPermissions, ContentSettings, generate_account_sas, generate_blob_sas, generate_container_sas,
+    ImmutabilityPolicy, RehydratePriority, ResourceTypes, Services, StandardBlobTier, StorageErrorCode,
+)
 from azure.storage.blob.aio import (
     BlobClient,
     BlobServiceClient,
     ContainerClient,
     download_blob_from_url,
-    upload_blob_to_url
+    upload_blob_to_url,
 )
-from azure.storage.blob import (
-    AccessPolicy,
-    AccountSasPermissions,
-    BlobImmutabilityPolicyMode,
-    BlobProperties,
-    BlobSasPermissions,
-    BlobType,
-    ContainerSasPermissions,
-    ContentSettings,
-    ImmutabilityPolicy,
-    RehydratePriority,
-    ResourceTypes,
-    Services,
-    StandardBlobTier,
-    StorageErrorCode,
-    generate_account_sas,
-    generate_container_sas,
-    generate_blob_sas
-)
-from devtools_testutils.fake_credentials_async import AsyncFakeCredential
-from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
-from settings.testcase import BlobPreparer
-from test_helpers_async import (
-    AsyncStream,
-    _build_base_file_share_headers,
-    _create_file_share_oauth
-)
+
 
 # ------------------------------------------------------------------------------
 SMALL_BLOB_SIZE = 1024
@@ -111,7 +97,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         if os.path.isfile(file_path):
             try:
                 os.remove(file_path)
-            except:
+            except OSError:
                 pass
 
     def _get_container_reference(self):
@@ -343,7 +329,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         raw_data = self.get_random_bytes(3 * 1024 * 1024) + b"hello random text"
 
         def data_generator():
-            for i in range(0, 2):
+            for _ in range(2):
                 yield raw_data
 
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -725,7 +711,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         # Act
         uri = "https://en.wikipedia.org/wiki/Microsoft"
-        data = requests.get(uri, stream=True)
+        data = requests.get(uri, stream=True, timeout=15)
         blob = self.bsc.get_blob_client(self.container_name, "msft")
         resp = await blob.upload_blob(data=data.raw, overwrite=True)
 
@@ -1012,8 +998,9 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=1)
 
-        with pytest.raises(HttpResponseError) as e:
-            await blob.get_blob_properties()  # Invalid snapshot value of 1
+        with pytest.raises(HttpResponseError):
+            # Invalid snapshot value of 1
+            await blob.get_blob_properties()
 
         # Assert
         # TODO: No error code returned
@@ -1033,8 +1020,9 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=1)
-        with pytest.raises(HttpResponseError) as e:
-            (await blob.get_blob_properties()).metadata  # Invalid snapshot value of 1
+        with pytest.raises(HttpResponseError):
+            # Invalid snapshot value of 1
+            (await blob.get_blob_properties()).metadata  # pylint: disable=expression-not-assigned
 
         # Assert
         # TODO: No error code returned
@@ -1156,7 +1144,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         blob_name = await self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        lease = await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
+        await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444')
 
         # Act
         props = await blob.get_blob_properties()
@@ -1544,7 +1532,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = await self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob_snapshot_1 = await blob.create_snapshot()
-        blob_snapshot_2 = await blob.create_snapshot()
+        await blob.create_snapshot()
 
         # Soft delete blob_snapshot_1
         snapshot_1 = self.bsc.get_blob_client(
@@ -1645,8 +1633,8 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         blob_name = await self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob_snapshot_1 = await blob.create_snapshot()
-        blob_snapshot_2 = await blob.create_snapshot()
+        await blob.create_snapshot()
+        await blob.create_snapshot()
 
         # Soft delete blob and all snapshots
         await blob.delete_blob(delete_snapshots='include')
@@ -1733,7 +1721,6 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         source_tags = {"source": "source tag"}
         blob_name = await self._create_block_blob(overwrite=True, tags=source_tags)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
         tags1 = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
 
         # Act
@@ -1799,7 +1786,6 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Arrange
         await self._setup(versioned_storage_account_name, versioned_storage_account_key)
         blob_name = await self._create_block_blob()
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         sourceblob = '{0}/{1}/{2}'.format(
@@ -1827,7 +1813,6 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Arrange
         await self._setup(storage_account_name, storage_account_key)
         blob_name = await self._create_block_blob()
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         sourceblob = '{0}/{1}/{2}'.format(
@@ -1956,7 +1941,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Act
         target_blob_name = 'targetblob'
         target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
-        copy_resp = await target_blob.start_copy_from_url(blob.url)
+        await target_blob.start_copy_from_url(blob.url)
 
         # Assert
         props = await self._wait_for_async_copy(target_blob)
@@ -2068,7 +2053,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = await blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
-        resp = await blob.upload_blob(b'hello 2', length=7, lease=lease)
+        await blob.upload_blob(b'hello 2', length=7, lease=lease)
         self.sleep(20)
 
         # Assert
@@ -2497,7 +2482,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act
         sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
-        response = requests.get(sas_blob.url)
+        response = requests.get(sas_blob.url, timeout=15)
 
         # Assert
         response.raise_for_status()
@@ -2533,7 +2518,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
-        response = requests.get(sas_blob.url)
+        response = requests.get(sas_blob.url, timeout=15)
 
         # Assert
         response.raise_for_status()
@@ -2570,7 +2555,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
 
         # Act
         headers = {'x-ms-blob-type': 'BlockBlob'}
-        response = requests.put(sas_blob.url, headers=headers, data=updated_data)
+        response = requests.put(sas_blob.url, headers=headers, data=updated_data, timeout=15)
 
         # Assert
         response.raise_for_status()
@@ -2602,7 +2587,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
-        response = requests.delete(sas_blob.url)
+        response = requests.delete(sas_blob.url, timeout=15)
 
         # Assert
         response.raise_for_status()
@@ -3071,7 +3056,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         async with bsc:
             await bsc.get_service_properties()
             assert transport.session is not None
-            async with bsc.get_blob_client(container_name, blob_name) as bc:
+            async with bsc.get_blob_client(container_name, blob_name):
                 assert transport.session is not None
             await bsc.get_service_properties()
             assert transport.session is not None
@@ -3763,7 +3748,7 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         start = datetime.utcnow()
         expiry = datetime.utcnow() + timedelta(hours=1)
         token = await token_credential.get_token("https://storage.azure.com/.default")
-        decoded = jwt.decode(token.token, options={"verify_signature": False})
+        decoded = jwt.decode(token.token, options={"verify_signature": False})  # pylint: disable=no-member
         user_delegation_oid = decoded.get("oid")
         delegated_user_tid = decoded.get("tid")
         user_delegation_key = await service.get_user_delegation_key(

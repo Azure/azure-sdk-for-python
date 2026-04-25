@@ -3,8 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+# pylint: disable=attribute-defined-outside-init, too-many-public-methods
 
-import jwt
 import os
 import tempfile
 import uuid
@@ -13,50 +13,34 @@ from enum import Enum
 from io import BytesIO
 from urllib.parse import quote, urlencode
 
-from azure.mgmt.storage import StorageManagementClient
-
+import jwt
 import pytest
 import requests
-from azure.core import MatchConditions
-from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
-from azure.core.exceptions import (
-    ClientAuthenticationError,
-    HttpResponseError,
-    ResourceExistsError,
-    ResourceModifiedError,
-    ResourceNotFoundError
-)
-from azure.core.pipeline.transport import RequestsTransport
-from azure.storage.blob import (
-    AccessPolicy,
-    AccountSasPermissions,
-    BlobClient,
-    BlobImmutabilityPolicyMode,
-    BlobProperties,
-    BlobSasPermissions,
-    BlobServiceClient,
-    BlobType,
-    ContainerClient,
-    ContainerSasPermissions,
-    ContentSettings,
-    ImmutabilityPolicy,
-    LinearRetry,
-    ResourceTypes,
-    Services,
-    StandardBlobTier,
-    StorageErrorCode,
-    download_blob_from_url,
-    generate_account_sas,
-    generate_blob_sas,
-    generate_container_sas,
-    upload_blob_to_url
-)
-from azure.storage.blob._generated.models import RehydratePriority
 
 from devtools_testutils import FakeTokenCredential, recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 from test_helpers import _build_base_file_share_headers, _create_file_share_oauth
+
+from azure.core import MatchConditions
+from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceModifiedError,
+    ResourceNotFoundError,
+)
+from azure.core.pipeline.transport import RequestsTransport  # pylint: disable=no-name-in-module
+from azure.mgmt.storage import StorageManagementClient
+from azure.storage.blob import (
+    AccessPolicy, AccountSasPermissions, BlobClient, BlobImmutabilityPolicyMode, BlobProperties, BlobSasPermissions,
+    BlobServiceClient, BlobType, ContainerClient, ContainerSasPermissions, ContentSettings, download_blob_from_url,
+    generate_account_sas, generate_blob_sas, generate_container_sas, ImmutabilityPolicy, LinearRetry, ResourceTypes,
+    Services, StandardBlobTier, StorageErrorCode, upload_blob_to_url,
+)
+from azure.storage.blob._generated.models import RehydratePriority
+
 
 # ------------------------------------------------------------------------------
 SMALL_BLOB_SIZE = 1024
@@ -100,7 +84,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         if os.path.isfile(file_path):
             try:
                 os.remove(file_path)
-            except:
+            except OSError:
                 pass
 
     # --Helpers-----------------------------------------------------------------
@@ -219,7 +203,8 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
                 requests.delete(
                     url=base_url,
                     headers=_build_base_file_share_headers(bearer_token_string, 0),
-                    params={'restype': 'share'}
+                    params={'restype': 'share'},
+                    timeout=15
                 )
                 blob_service_client.delete_container(self.source_container_name)
 
@@ -465,7 +450,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         uri = blob.url + '?' + sas
-        data = requests.get(uri, stream=True)
+        data = requests.get(uri, stream=True, timeout=15)
         blob2 = self.bsc.get_blob_client(self.container_name, blob.blob_name + '_copy')
         resp = blob2.upload_blob(data=data.raw)
 
@@ -520,7 +505,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         raw_data = self.get_random_bytes(3 * 1024 * 1024) + b"hello random text"
 
         def data_generator():
-            for i in range(0, 2):
+            for _ in range(2):
                 yield raw_data
 
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
@@ -791,8 +776,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=1)
 
-        with pytest.raises(HttpResponseError) as e:
-            blob.get_blob_properties()  # Invalid snapshot value of 1
+        with pytest.raises(HttpResponseError):
+            # Invalid snapshot value of 1
+            blob.get_blob_properties()
 
         # Assert
         # TODO: No error code returned
@@ -811,8 +797,9 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name, snapshot=1)
-        with pytest.raises(HttpResponseError) as e:
-            blob.get_blob_properties().metadata  # Invalid snapshot value of 1
+        with pytest.raises(HttpResponseError):
+            # Invalid snapshot value of 1
+            blob.get_blob_properties().metadata  # pylint: disable=expression-not-assigned
 
         # Assert
         # TODO: No error code returned
@@ -1269,7 +1256,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         blob_snapshot_1 = blob.create_snapshot()
-        blob_snapshot_2 = blob.create_snapshot()
+        blob.create_snapshot()
 
         # Soft delete blob_snapshot_1
         snapshot_1 = self.bsc.get_blob_client(
@@ -1356,8 +1343,8 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._create_block_blob()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob_snapshot_1 = blob.create_snapshot()
-        blob_snapshot_2 = blob.create_snapshot()
+        blob.create_snapshot()
+        blob.create_snapshot()
 
         # Soft delete blob and all snapshots
         blob.delete_blob(delete_snapshots='include')
@@ -1456,7 +1443,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
         blob_name = self._create_block_blob()
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         sourceblob = '{0}/{1}/{2}'.format(
@@ -1535,7 +1521,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         self._setup(storage_account_name, storage_account_key)
         source_tags = {"source": "source tag"}
         blob_name = self._create_block_blob(overwrite=True, tags=source_tags)
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
         tags1 = {"tag1 name": "my tag", "tag2": "secondtag", "tag3": "thirdtag"}
 
         # Act
@@ -1585,7 +1570,6 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         self._setup(versioned_storage_account_name, versioned_storage_account_key)
         blob_name = self._create_block_blob()
-        blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Act
         sourceblob = '{0}/{1}/{2}'.format(
@@ -1707,7 +1691,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Act
         target_blob_name = 'targetblob'
         target_blob = self.bsc.get_blob_client(self.container_name, target_blob_name)
-        copy_resp = target_blob.start_copy_from_url(blob.url)
+        target_blob.start_copy_from_url(blob.url)
 
         # Assert
         props = self._wait_for_async_copy(target_blob)
@@ -1813,7 +1797,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         # Act
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         lease = blob.acquire_lease(lease_id='00000000-1111-2222-3333-444444444444', lease_duration=15)
-        resp = blob.upload_blob(b'hello 2', length=7, lease=lease)
+        blob.upload_blob(b'hello 2', length=7, lease=lease)
         self.sleep(20)
 
         # Assert
@@ -2168,7 +2152,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
     @pytest.mark.skip(reason="Temporarily skipping immutability test due to service bug")
     @BlobPreparer()
-    def test_set_immutability_policy_using_sas(self, **kwargs):
+    def test_set_immutability_policy_using_sas(self, **kwargs):  # pylint: disable=too-many-locals
         versioned_storage_account_name = kwargs.pop("versioned_storage_account_name")
         versioned_storage_account_key = kwargs.pop("versioned_storage_account_key")
         storage_resource_group_name = kwargs.pop("storage_resource_group_name")
@@ -2205,7 +2189,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
                                                  policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         resp_with_account_sas = blob.set_immutability_policy(immutability_policy=immutability_policy)
-        blob_response = requests.get(blob.url)
+        blob_response = requests.get(blob.url, timeout=15)
 
         # Assert response using account sas
         assert blob_response.ok
@@ -2492,7 +2476,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
-        response = requests.get(sas_blob.url)
+        response = requests.get(sas_blob.url, timeout=15)
 
         # Assert
         response.raise_for_status()
@@ -2527,7 +2511,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
-        response = requests.get(sas_blob.url)
+        response = requests.get(sas_blob.url, timeout=15)
 
         # Assert
         response.raise_for_status()
@@ -2563,7 +2547,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         # Act
         headers = {'x-ms-blob-type': 'BlockBlob'}
-        response = requests.put(sas_blob.url, headers=headers, data=updated_data)
+        response = requests.put(sas_blob.url, headers=headers, data=updated_data, timeout=15)
 
         # Assert
         response.raise_for_status()
@@ -2594,7 +2578,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         sas_blob = BlobClient.from_blob_url(blob.url, credential=token)
 
         # Act
-        response = requests.delete(sas_blob.url)
+        response = requests.delete(sas_blob.url, timeout=15)
 
         # Assert
         response.raise_for_status()
@@ -3068,7 +3052,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         with bsc:
             bsc.get_service_properties()
             assert transport.session is not None
-            with bsc.get_blob_client(container_name, blob_name) as bc:
+            with bsc.get_blob_client(container_name, blob_name):
                 assert transport.session is not None
             bsc.get_service_properties()
             assert transport.session is not None
@@ -3785,7 +3769,7 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         start = datetime.utcnow()
         expiry = datetime.utcnow() + timedelta(hours=1)
         token = token_credential.get_token("https://storage.azure.com/.default")
-        decoded = jwt.decode(token.token, options={"verify_signature": False})
+        decoded = jwt.decode(token.token, options={"verify_signature": False})  # pylint: disable=no-member
         user_delegation_oid = decoded.get("oid")
         delegated_user_tid = decoded.get("tid")
         user_delegation_key = service.get_user_delegation_key(
