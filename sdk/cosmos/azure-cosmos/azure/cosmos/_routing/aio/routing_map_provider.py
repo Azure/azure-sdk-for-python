@@ -235,7 +235,8 @@ class PartitionKeyRangeCache(object):
                     ranges.append(item)
 
             except CosmosHttpResponseError as e:
-                logger.error("Failed to read partition key ranges for collection '%s': %s", collection_link, e)
+                logger.error(  # pylint: disable=do-not-log-exceptions-if-not-debug,do-not-log-raised-errors
+                    "Failed to read partition key ranges for collection '%s': %s", collection_link, e)
                 raise
 
             new_etag = response_headers.get(http_constants.HttpHeaders.ETag)

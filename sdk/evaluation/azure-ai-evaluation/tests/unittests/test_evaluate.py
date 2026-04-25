@@ -44,6 +44,7 @@ from azure.ai.evaluation._evaluate._evaluate import (
     _build_internal_log_attributes,
     _extract_testing_criteria_metadata,
     _process_criteria_metrics,
+    _log_events_to_app_insights,
 )
 from azure.ai.evaluation._evaluate._utils import _convert_name_map_into_property_entries
 from azure.ai.evaluation._evaluate._utils import _apply_column_mapping, _trace_destination_from_project_scope
@@ -2087,3 +2088,194 @@ class TestProcessCriteriaMetricsThresholdInjection:
         )
         assert len(results) > 0
         assert results[0]["threshold"] == 3.0
+
+
+try:
+    import opentelemetry  # noqa: F401
+
+    MISSING_OPENTELEMETRY = False
+except ImportError:
+    MISSING_OPENTELEMETRY = True
+
+
+@pytest.mark.unittest
+@pytest.mark.skipif(MISSING_OPENTELEMETRY, reason="This test requires the opentelemetry package")
+class TestLogEventsTokenUsage:
+    """Tests for token usage attributes in _log_events_to_app_insights."""
+
+    def _make_mock_event_logger(self):
+        """Create a mock event logger that captures emitted events."""
+        emitted = []
+
+        class FakeEventLogger:
+            def emit(self, event):
+                emitted.append(event)
+
+        return FakeEventLogger(), emitted
+
+    def test_token_usage_emitted_in_standard_attributes(self):
+        """prompt_tokens and completion_tokens from sample.usage should appear as standard attributes."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [
+            {
+                "metric": "coherence",
+                "score": 4.5,
+                "sample": {
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                    }
+                },
+            }
+        ]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        attrs = emitted[0].attributes
+        assert attrs["gen_ai.evaluation.usage.input_tokens"] == "100"
+        assert attrs["gen_ai.evaluation.usage.output_tokens"] == "50"
+
+    def test_token_usage_not_in_internal_properties(self):
+        """Token usage should be in standard attributes, not inside internal_properties."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [
+            {
+                "metric": "coherence",
+                "score": 4.5,
+                "sample": {
+                    "usage": {
+                        "prompt_tokens": 100,
+                        "completion_tokens": 50,
+                    }
+                },
+            }
+        ]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        internal_props = json.loads(emitted[0].attributes["internal_properties"])
+        assert "gen_ai.evaluation.usage.input_tokens" not in internal_props
+        assert "gen_ai.evaluation.usage.output_tokens" not in internal_props
+
+    def test_token_usage_absent_when_no_sample(self):
+        """No token usage attributes when sample is missing."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [{"metric": "coherence", "score": 4.5}]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        attrs = emitted[0].attributes
+        assert "gen_ai.evaluation.usage.input_tokens" not in attrs
+        assert "gen_ai.evaluation.usage.output_tokens" not in attrs
+
+    def test_token_usage_absent_when_usage_empty(self):
+        """No token usage attributes when sample.usage is empty dict."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [{"metric": "coherence", "score": 4.5, "sample": {"usage": {}}}]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        attrs = emitted[0].attributes
+        assert "gen_ai.evaluation.usage.input_tokens" not in attrs
+        assert "gen_ai.evaluation.usage.output_tokens" not in attrs
+
+    def test_token_usage_absent_when_sample_not_dict(self):
+        """When sample is not a dict (e.g. NaN), the event fails to log entirely."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [{"metric": "coherence", "score": 4.5, "sample": float("nan")}]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        # sample=NaN causes the event to fail; no event is emitted
+        assert len(emitted) == 0
+
+    def test_token_usage_zero_values_emitted(self):
+        """Token usage of 0 should be emitted, not dropped."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [
+            {
+                "metric": "coherence",
+                "score": 4.5,
+                "sample": {
+                    "usage": {
+                        "prompt_tokens": 0,
+                        "completion_tokens": 0,
+                    }
+                },
+            }
+        ]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        attrs = emitted[0].attributes
+        assert attrs["gen_ai.evaluation.usage.input_tokens"] == "0"
+        assert attrs["gen_ai.evaluation.usage.output_tokens"] == "0"
+
+    def test_token_usage_partial_only_prompt(self):
+        """Only prompt_tokens present should emit only input_tokens."""
+        event_logger, emitted = self._make_mock_event_logger()
+        events = [
+            {
+                "metric": "coherence",
+                "score": 4.5,
+                "sample": {
+                    "usage": {
+                        "prompt_tokens": 42,
+                    }
+                },
+            }
+        ]
+        app_insights_config = {"connection_string": "fake"}
+
+        _log_events_to_app_insights(
+            event_logger=event_logger,
+            events=events,
+            log_attributes={},
+            app_insights_config=app_insights_config,
+        )
+
+        assert len(emitted) == 1
+        attrs = emitted[0].attributes
+        assert attrs["gen_ai.evaluation.usage.input_tokens"] == "42"
+        assert "gen_ai.evaluation.usage.output_tokens" not in attrs
