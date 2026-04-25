@@ -30,28 +30,36 @@ import uuid
 
 from azure.identity import DefaultAzureCredential
 
-from azure.keyvault.keys.crypto import CryptographyClient, KeyWrapAlgorithm
-from azure.keyvault.keys import KeyClient
+try:
+    from azure.keyvault.keys import KeyClient
+    from azure.keyvault.keys.crypto import CryptographyClient, KeyWrapAlgorithm
+except ImportError:
+    KeyClient = None  # type: ignore[misc,assignment]
+    CryptographyClient = None  # type: ignore[misc,assignment]
+    KeyWrapAlgorithm = None  # type: ignore[misc,assignment]
 
 from azure.storage.blob import BlobServiceClient
 
 # Environment variable keys which must be set to run this sample
-STORAGE_URL = 'STORAGE_ACCOUNT_BLOB_URL'
-KEYVAULT_URL = 'KEYVAULT_URL'
+STORAGE_URL = "STORAGE_ACCOUNT_BLOB_URL"
+KEYVAULT_URL = "KEYVAULT_URL"
+
 
 def get_env_var(key):
     try:
         return os.environ[key]
     except KeyError:
-        print('{} must be set.'.format(key))
+        print("{} must be set.".format(key))
         sys.exit(1)
 
+
 def make_resource_name(prefix):
-    return '{}{}'.format(prefix, str(uuid.uuid4()).replace('-', ''))
+    return "{}{}".format(prefix, str(uuid.uuid4()).replace("-", ""))
+
 
 class KeyWrapper:
-    """ Class that fulfills the interface used by the storage SDK's
-        automatic client-side encyrption and decryption routines. """
+    """Class that fulfills the interface used by the storage SDK's
+    automatic client-side encyrption and decryption routines."""
 
     def __init__(self, kek, credential):
         self.algorithm = KeyWrapAlgorithm.rsa_oaep_256
@@ -61,13 +69,13 @@ class KeyWrapper:
 
     def wrap_key(self, key):
         if self.algorithm != KeyWrapAlgorithm.rsa_oaep_256:
-            raise ValueError('Unknown key wrap algorithm. {}'.format(self.algorithm))
+            raise ValueError("Unknown key wrap algorithm. {}".format(self.algorithm))
         wrapped = self.client.wrap_key(key=key, algorithm=self.algorithm)
         return wrapped.encrypted_key
 
     def unwrap_key(self, key, _):
         if self.algorithm != KeyWrapAlgorithm.rsa_oaep_256:
-            raise ValueError('Unknown key wrap algorithm. {}'.format(self.algorithm))
+            raise ValueError("Unknown key wrap algorithm. {}".format(self.algorithm))
         unwrapped = self.client.unwrap_key(encrypted_key=key, algorithm=self.algorithm)
         return unwrapped.key
 
@@ -76,6 +84,7 @@ class KeyWrapper:
 
     def get_kid(self):
         return self.kid
+
 
 # Retrieve sensitive data from environment variables
 storage_url = get_env_var(STORAGE_URL)
@@ -90,15 +99,15 @@ kvk = key_client.create_rsa_key(name="symmetric-key", size=2048, key_operations=
 kek = KeyWrapper(kvk, credential)
 
 storage_client = BlobServiceClient(storage_url, credential=credential)
-container_name = make_resource_name('container')
-blob_name = make_resource_name('blob')
+container_name = make_resource_name("container")
+blob_name = make_resource_name("blob")
 
 container_client = storage_client.get_container_client(container_name)
 container_client.key_encryption_key = kek
-container_client.encryption_version = '2.0'
+container_client.encryption_version = "2.0"
 container_client.create_container()
 try:
-    container_client.upload_blob(blob_name, 'This is my blob.')
+    container_client.upload_blob(blob_name, "This is my blob.")
 
     # Download without decrypting
     container_client.key_encryption_key = None

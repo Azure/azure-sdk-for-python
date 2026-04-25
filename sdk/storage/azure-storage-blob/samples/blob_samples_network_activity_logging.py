@@ -28,7 +28,6 @@ X containers.
 """
 
 import logging
-
 import os
 import sys
 
@@ -36,15 +35,15 @@ from azure.storage.blob import BlobServiceClient
 
 # Retrieve connection string from environment variables
 # and construct a blob service client.
-connection_string = os.environ.get('STORAGE_CONNECTION_STRING', None)
+connection_string = os.environ.get("STORAGE_CONNECTION_STRING", None)
 if not connection_string:
-    print('STORAGE_CONNECTION_STRING required.')
+    print("STORAGE_CONNECTION_STRING required.")
     sys.exit(1)
 service_client = BlobServiceClient.from_connection_string(connection_string)
 
 # Retrieve a compatible logger and add a handler to send the output to console (STDOUT).
 # Compatible loggers in this case include `azure` and `azure.storage`.
-logger = logging.getLogger('azure.storage.blob')
+logger = logging.getLogger("azure.storage.blob")
 logger.addHandler(logging.StreamHandler(stream=sys.stdout))
 
 # Logging policy logs network activity at the DEBUG level. Set the level on the logger prior to the call.

@@ -4,13 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 import pytest
-
-from azure.storage.blob import BlobProperties, BlobServiceClient
-from azure.storage.blob._deserialize import deserialize_ors_policies
-
 from devtools_testutils import recorded_by_proxy
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
+
+from azure.storage.blob import BlobProperties, BlobServiceClient
+from azure.storage.blob._deserialize import deserialize_ors_policies
 
 
 class TestStorageObjectReplication(StorageRecordedTestCase):
@@ -25,12 +24,12 @@ class TestStorageObjectReplication(StorageRecordedTestCase):
     # mock a response to test the deserializer
     def test_deserialize_ors_policies(self):
         headers = {
-            'x-ms-or-111_111': 'Completed',
-            'x-ms-or-111_222': 'Failed',
-            'x-ms-or-222_111': 'Completed',
-            'x-ms-or-222_222': 'Failed',
-            'x-ms-or-policy-id': '333',  # to be ignored
-            'x-ms-not-related': 'garbage',  # to be ignored
+            "x-ms-or-111_111": "Completed",
+            "x-ms-or-111_222": "Failed",
+            "x-ms-or-222_111": "Completed",
+            "x-ms-or-222_222": "Failed",
+            "x-ms-or-policy-id": "333",  # to be ignored
+            "x-ms-not-related": "garbage",  # to be ignored
         }
 
         result = deserialize_ors_policies(headers)
@@ -39,10 +38,10 @@ class TestStorageObjectReplication(StorageRecordedTestCase):
         assert len(result[1].rules) == 2  # 2 rules for policy 222
 
         # check individual result
-        assert result[0].rules[0].status == 'Completed' if result[0].rules[0].rule_id == '111' else 'Failed'
-        assert result[0].rules[1].status == 'Failed' if result[0].rules[1].rule_id == '222' else 'Completed'
-        assert result[1].rules[0].status == 'Completed' if result[1].rules[0].rule_id == '111' else 'Failed'
-        assert result[1].rules[1].status == 'Failed' if result[1].rules[1].rule_id == '222' else 'Completed'
+        assert result[0].rules[0].status == "Completed" if result[0].rules[0].rule_id == "111" else "Failed"
+        assert result[0].rules[1].status == "Failed" if result[0].rules[1].rule_id == "222" else "Completed"
+        assert result[1].rules[0].status == "Completed" if result[1].rules[0].rule_id == "111" else "Failed"
+        assert result[1].rules[1].status == "Failed" if result[1].rules[1].rule_id == "222" else "Completed"
 
     @pytest.mark.playback_test_only
     @BlobPreparer()
@@ -52,9 +51,7 @@ class TestStorageObjectReplication(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key.secret)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         blob = bsc.get_blob_client(container=self.SRC_CONTAINER, blob=self.BLOB_NAME)
 
         # Act
@@ -64,13 +61,13 @@ class TestStorageObjectReplication(StorageRecordedTestCase):
         assert isinstance(props, BlobProperties)
         assert props.object_replication_source_properties is not None
         for replication_policy in props.object_replication_source_properties:
-            assert replication_policy.policy_id != ''
+            assert replication_policy.policy_id != ""
             assert replication_policy.rules is not None
 
             for rule in replication_policy.rules:
-                assert rule.rule_id != ''
+                assert rule.rule_id != ""
                 assert rule.status is not None
-                assert rule.status != ''
+                assert rule.status != ""
 
         # Check that the download function gives back the same result
         stream = blob.download_blob()
@@ -84,9 +81,7 @@ class TestStorageObjectReplication(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        bsc = BlobServiceClient(
-            self.account_url(storage_account_name, "blob"),
-            credential=storage_account_key.secret)
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key.secret)
         blob = bsc.get_blob_client(container=self.DST_CONTAINER, blob=self.BLOB_NAME)
 
         # Act
@@ -99,5 +94,6 @@ class TestStorageObjectReplication(StorageRecordedTestCase):
         # Check that the download function gives back the same result
         stream = blob.download_blob()
         assert stream.properties.object_replication_destination_policy == props.object_replication_destination_policy
+
 
 # ------------------------------------------------------------------------------

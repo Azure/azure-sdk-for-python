@@ -11,18 +11,18 @@ from io import BytesIO
 from os import path, remove, urandom
 
 import pytest
-from azure.storage.blob import BlobServiceClient, ContentSettings
-
 from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
+from azure.storage.blob import BlobServiceClient, ContentSettings
+
 # ------------------------------------------------------------------------------
-TEST_BLOB_PREFIX = 'largeblob'
+TEST_BLOB_PREFIX = "largeblob"
 LARGE_BLOB_SIZE = 12 * 1024 * 1024
 LARGE_BLOCK_SIZE = 6 * 1024 * 1024
 # ------------------------------------------------------------------------------
 
-if platform.python_implementation() == 'PyPy':
+if platform.python_implementation() == "PyPy":
     pytest.skip("Skip tests for Pypy", allow_module_level=True)
 
 
@@ -36,9 +36,10 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
             credential=key.secret,
             max_single_put_size=32 * 1024,
             max_block_size=2 * 1024 * 1024,
-            min_large_block_upload_threshold=1 * 1024 * 1024)
+            min_large_block_upload_threshold=1 * 1024 * 1024,
+        )
         self.config = self.bsc._config
-        self.container_name = self.get_resource_name('utcontainer')
+        self.container_name = self.get_resource_name("utcontainer")
 
         if self.is_live:
             try:
@@ -53,13 +54,14 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
     def _create_blob(self):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        blob.upload_blob(b'')
+        blob.upload_blob(b"")
         return blob
 
     def assertBlobEqual(self, container_name, blob_name, expected_data):
         blob = self.bsc.get_blob_client(container_name, blob_name)
         actual_data = blob.download_blob()
         assert b"".join(list(actual_data.chunks())) == expected_data
+
     # --------------------------------------------------------------------------
 
     @pytest.mark.live_test_only
@@ -73,12 +75,11 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
 
         # Act
         for i in range(5):
-            resp = blob.stage_block(
-                'block {0}'.format(i).encode('utf-8'), urandom(LARGE_BLOCK_SIZE))
+            resp = blob.stage_block("block {0}".format(i).encode("utf-8"), urandom(LARGE_BLOCK_SIZE))
             assert resp is not None
-            assert 'content_md5' in resp
-            assert 'content_crc64' in resp
-            assert 'request_id' in resp
+            assert "content_md5" in resp
+            assert "content_crc64" in resp
+            assert "request_id" in resp
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -92,13 +93,12 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         # Act
         for i in range(5):
             resp = blob.stage_block(
-                'block {0}'.format(i).encode('utf-8'),
-                urandom(LARGE_BLOCK_SIZE),
-                validate_content=True)
+                "block {0}".format(i).encode("utf-8"), urandom(LARGE_BLOCK_SIZE), validate_content=True
+            )
             assert resp is not None
-            assert 'content_md5' in resp
-            assert 'content_crc64' in resp
-            assert 'request_id' in resp
+            assert "content_md5" in resp
+            assert "content_crc64" in resp
+            assert "request_id" in resp
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -112,14 +112,11 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         # Act
         for i in range(5):
             stream = BytesIO(bytearray(LARGE_BLOCK_SIZE))
-            resp = resp = blob.stage_block(
-                'block {0}'.format(i).encode('utf-8'),
-                stream,
-                length=LARGE_BLOCK_SIZE)
+            resp = resp = blob.stage_block("block {0}".format(i).encode("utf-8"), stream, length=LARGE_BLOCK_SIZE)
             assert resp is not None
-            assert 'content_md5' in resp
-            assert 'content_crc64' in resp
-            assert 'request_id' in resp
+            assert "content_md5" in resp
+            assert "content_crc64" in resp
+            assert "request_id" in resp
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -134,14 +131,12 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         for i in range(5):
             stream = BytesIO(bytearray(LARGE_BLOCK_SIZE))
             resp = resp = blob.stage_block(
-                'block {0}'.format(i).encode('utf-8'),
-                stream,
-                length=LARGE_BLOCK_SIZE,
-                validate_content=True)
+                "block {0}".format(i).encode("utf-8"), stream, length=LARGE_BLOCK_SIZE, validate_content=True
+            )
             assert resp is not None
-            assert 'content_md5' in resp
-            assert 'content_crc64' in resp
-            assert 'request_id' in resp
+            assert "content_md5" in resp
+            assert "content_crc64" in resp
+            assert "request_id" in resp
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -219,9 +214,10 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
-            current = response.context['upload_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["upload_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -246,9 +242,7 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         data = bytearray(urandom(LARGE_BLOB_SIZE))
 
         # Act
-        content_settings = ContentSettings(
-            content_type='image/png',
-            content_language='spanish')
+        content_settings = ContentSettings(content_type="image/png", content_language="spanish")
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
@@ -293,9 +287,10 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
 
         # Act
         progress = []
+
         def callback(response):
-            current = response.context['upload_stream_current']
-            total = response.context['data_stream_total']
+            current = response.context["upload_stream_current"]
+            total = response.context["data_stream_total"]
             if current is not None:
                 progress.append((current, total))
 
@@ -341,9 +336,7 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         data = bytearray(urandom(LARGE_BLOB_SIZE))
 
         # Act
-        content_settings = ContentSettings(
-            content_type='image/png',
-            content_language='spanish')
+        content_settings = ContentSettings(content_type="image/png", content_language="spanish")
         blob_size = len(data) - 301
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
@@ -368,9 +361,7 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         data = bytearray(urandom(LARGE_BLOB_SIZE))
 
         # Act
-        content_settings = ContentSettings(
-            content_type='image/png',
-            content_language='spanish')
+        content_settings = ContentSettings(content_type="image/png", content_language="spanish")
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
@@ -381,5 +372,6 @@ class TestStorageLargeBlockBlob(StorageRecordedTestCase):
         properties = blob.get_blob_properties()
         assert properties.content_settings.content_type == content_settings.content_type
         assert properties.content_settings.content_language == content_settings.content_language
+
 
 # ------------------------------------------------------------------------------

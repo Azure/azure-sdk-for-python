@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from devtools_testutils.perfstress_tests import get_random_bytes, WriteStream
+from devtools_testutils.perfstress_tests import WriteStream, get_random_bytes
 
 from ._test_base_legacy import _LegacyContainerTest
 
@@ -18,9 +18,8 @@ class LegacyDownloadTest(_LegacyContainerTest):
         await super().global_setup()
         data = get_random_bytes(self.args.size)
         self.service_client.create_blob_from_bytes(
-            container_name=self.container_name,
-            blob_name=self.blob_name,
-            blob=data)
+            container_name=self.container_name, blob_name=self.blob_name, blob=data
+        )
 
     def run_sync(self):
         self.download_stream.reset()
@@ -28,7 +27,8 @@ class LegacyDownloadTest(_LegacyContainerTest):
             container_name=self.container_name,
             blob_name=self.blob_name,
             stream=self.download_stream,
-            max_connections=self.args.max_concurrency)
+            max_connections=self.args.max_concurrency,
+        )
 
     async def run_async(self):
         raise NotImplementedError("Async not supported for legacy T1 tests.")

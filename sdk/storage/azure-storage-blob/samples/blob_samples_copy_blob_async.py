@@ -15,15 +15,17 @@ USAGE: python blob_samples_copy_blob_async.py
     1) STORAGE_CONNECTION_STRING - the connection string to your storage account
 """
 
+import asyncio
 import os
 import sys
-import asyncio
 import time
+
 from azure.storage.blob.aio import BlobServiceClient
+
 
 async def main():
     try:
-        CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
+        CONNECTION_STRING = os.environ["STORAGE_CONNECTION_STRING"]
 
     except KeyError:
         print("STORAGE_CONNECTION_STRING must be set.")
@@ -33,8 +35,8 @@ async def main():
     blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
     async with blob_service_client:
         source_blob = "https://www.gutenberg.org/files/59466/59466-0.txt"
-        await blob_service_client.create_container('mycontainerasync')
-        copied_blob = blob_service_client.get_blob_client("mycontainerasync", '59466-0.txt')
+        await blob_service_client.create_container("mycontainerasync")
+        copied_blob = blob_service_client.get_blob_client("mycontainerasync", "59466-0.txt")
         # Copy started"
         await copied_blob.start_copy_from_url(source_blob)
         for i in range(10):
@@ -61,6 +63,7 @@ async def main():
                 sys.exit(1)
             props = await copied_blob.get_blob_properties()
             print(props.copy.status)
+
 
 if __name__ == "__main__":
     asyncio.run(main())

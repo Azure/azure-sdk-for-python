@@ -18,11 +18,13 @@ USAGE: python blob_samples_copy_blob.py
 import os
 import sys
 import time
+
 from azure.storage.blob import BlobServiceClient
+
 
 def main():
     try:
-        CONNECTION_STRING = os.environ['STORAGE_CONNECTION_STRING']
+        CONNECTION_STRING = os.environ["STORAGE_CONNECTION_STRING"]
 
     except KeyError:
         print("STORAGE_CONNECTION_STRING must be set.")
@@ -31,8 +33,8 @@ def main():
     status = None
     blob_service_client = BlobServiceClient.from_connection_string(CONNECTION_STRING)
     source_blob = "https://www.gutenberg.org/files/59466/59466-0.txt"
-    blob_service_client.create_container('mycontainer')
-    copied_blob = blob_service_client.get_blob_client("mycontainer", '59466-0.txt')
+    blob_service_client.create_container("mycontainer")
+    copied_blob = blob_service_client.get_blob_client("mycontainer", "59466-0.txt")
     # Copy started
     copied_blob.start_copy_from_url(source_blob)
     for i in range(10):
@@ -59,6 +61,7 @@ def main():
             sys.exit(1)
         props = copied_blob.get_blob_properties()
         print(props.copy.status)
+
 
 if __name__ == "__main__":
     main()

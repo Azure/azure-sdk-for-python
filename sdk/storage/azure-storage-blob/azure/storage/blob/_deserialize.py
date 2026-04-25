@@ -22,7 +22,7 @@ from ._models import (
     ObjectReplicationPolicy,
     ObjectReplicationRule,
     RetentionPolicy,
-    StaticWebsite
+    StaticWebsite,
 )
 from ._shared.models import get_enum_value
 from ._shared.response_handlers import deserialize_metadata
@@ -38,6 +38,7 @@ if TYPE_CHECKING:
     )
     from ._shared.models import LocationMode
 
+
 def deserialize_pipeline_response_into_cls(cls_method, response: "PipelineResponse", obj: Any, headers: Dict[str, Any]):
     try:
         deserialized_response = response.http_response
@@ -52,9 +53,9 @@ def deserialize_blob_properties(response: "PipelineResponse", obj: Any, headers:
         object_replication_source_properties=deserialize_ors_policies(response.http_response.headers),
         **headers
     )
-    if 'Content-Range' in headers:
-        if 'x-ms-blob-content-md5' in headers:
-            blob_properties.content_settings.content_md5 = headers['x-ms-blob-content-md5']
+    if "Content-Range" in headers:
+        if "x-ms-blob-content-md5" in headers:
+            blob_properties.content_settings.content_md5 = headers["x-ms-blob-content-md5"]
         else:
             blob_properties.content_settings.content_md5 = None
     return blob_properties
@@ -67,14 +68,15 @@ def deserialize_ors_policies(policy_dictionary: Optional[Dict[str, str]]) -> Opt
     # For source blobs (blobs that have policy ids and rule ids applied to them),
     # the header will be formatted as "x-ms-or-<policy_id>_<rule_id>: {Complete, Failed}".
     # The value of this header is the status of the replication.
-    or_policy_status_headers = {key: val for key, val in policy_dictionary.items()
-                                if 'or-' in key and key != 'x-ms-or-policy-id'}
+    or_policy_status_headers = {
+        key: val for key, val in policy_dictionary.items() if "or-" in key and key != "x-ms-or-policy-id"
+    }
 
     parsed_result: Dict[str, List[ObjectReplicationRule]] = {}
 
     for key, val in or_policy_status_headers.items():
         # list blobs gives or-policy_rule and get blob properties gives x-ms-or-policy_rule
-        policy_and_rule_ids = key.split('or-')[1].split('_')
+        policy_and_rule_ids = key.split("or-")[1].split("_")
         policy_id = policy_and_rule_ids[0]
         rule_id = policy_and_rule_ids[1]
 
@@ -88,9 +90,7 @@ def deserialize_ors_policies(policy_dictionary: Optional[Dict[str, str]]) -> Opt
 
 
 def deserialize_blob_stream(
-    response: "PipelineResponse",
-    obj: Any,
-    headers: Dict[str, Any]
+    response: "PipelineResponse", obj: Any, headers: Dict[str, Any]
 ) -> Tuple["LocationMode", Any]:
     blob_properties = deserialize_blob_properties(response, obj, headers)
     obj.properties = blob_properties
@@ -98,15 +98,10 @@ def deserialize_blob_stream(
 
 
 def deserialize_container_properties(
-    response: "PipelineResponse",
-    obj: Any,
-    headers: Dict[str, Any]
+    response: "PipelineResponse", obj: Any, headers: Dict[str, Any]
 ) -> ContainerProperties:
     metadata = deserialize_metadata(response, obj, headers)
-    container_properties = ContainerProperties(
-        metadata=metadata,
-        **headers
-    )
+    container_properties = ContainerProperties(metadata=metadata, **headers)
     return container_properties
 
 
@@ -114,9 +109,9 @@ def get_page_ranges_result(ranges: "PageList") -> Tuple[List[Dict[str, int]], Li
     page_range = []
     clear_range = []
     if ranges.page_range:
-        page_range = [{'start': b.start, 'end': b.end} for b in ranges.page_range]
+        page_range = [{"start": b.start, "end": b.end} for b in ranges.page_range]
     if ranges.clear_range:
-        clear_range = [{'start': b.start, 'end': b.end} for b in ranges.clear_range]
+        clear_range = [{"start": b.start, "end": b.end} for b in ranges.clear_range]
     return page_range, clear_range
 
 
@@ -126,25 +121,25 @@ def service_stats_deserialize(generated: "StorageServiceStats") -> Dict[str, Any
     if generated.geo_replication is not None:
         status = generated.geo_replication.status
         last_sync_time = generated.geo_replication.last_sync_time
-    return {
-        'geo_replication': {
-            'status': status,
-            'last_sync_time': last_sync_time
-        }
-    }
+    return {"geo_replication": {"status": status, "last_sync_time": last_sync_time}}
+
 
 def service_properties_deserialize(generated: "StorageServiceProperties") -> Dict[str, Any]:
     cors_list = None
     if generated.cors is not None:
         cors_list = [CorsRule._from_generated(cors) for cors in generated.cors]  # pylint: disable=protected-access
     return {
-        'analytics_logging': BlobAnalyticsLogging._from_generated(generated.logging),  # pylint: disable=protected-access
-        'hour_metrics': Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
-        'minute_metrics': Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
-        'cors': cors_list,
-        'target_version': generated.default_service_version,
-        'delete_retention_policy': RetentionPolicy._from_generated(generated.delete_retention_policy),  # pylint: disable=protected-access
-        'static_website': StaticWebsite._from_generated(generated.static_website),  # pylint: disable=protected-access
+        "analytics_logging": BlobAnalyticsLogging._from_generated(
+            generated.logging
+        ),  # pylint: disable=protected-access
+        "hour_metrics": Metrics._from_generated(generated.hour_metrics),  # pylint: disable=protected-access
+        "minute_metrics": Metrics._from_generated(generated.minute_metrics),  # pylint: disable=protected-access
+        "cors": cors_list,
+        "target_version": generated.default_service_version,
+        "delete_retention_policy": RetentionPolicy._from_generated(
+            generated.delete_retention_policy
+        ),  # pylint: disable=protected-access
+        "static_website": StaticWebsite._from_generated(generated.static_website),  # pylint: disable=protected-access
     }
 
 
@@ -153,7 +148,7 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
     if generated.name.encoded and generated.name.content is not None:
         blob.name = unquote(generated.name.content)
     else:
-        blob.name = generated.name.content  #type: ignore
+        blob.name = generated.name.content  # type: ignore
     blob_type = get_enum_value(generated.properties.blob_type)
     blob.blob_type = BlobType(blob_type)
     blob.etag = generated.properties.etag
@@ -190,6 +185,7 @@ def get_blob_properties_from_generated_code(generated: "BlobItemInternal") -> Bl
     blob.has_versions_only = generated.has_versions_only
     return blob
 
+
 def parse_tags(generated_tags: Optional["BlobTags"]) -> Optional[Dict[str, str]]:
     """Deserialize a list of BlobTag objects into a dict.
 
@@ -208,11 +204,7 @@ def load_single_xml_node(element: Element, name: str) -> Optional[Element]:
     return element.find(name)
 
 
-def load_many_xml_nodes(
-    element: Element,
-    name: str,
-    wrapper: Optional[str] = None
-) -> List[Optional[Element]]:
+def load_many_xml_nodes(element: Element, name: str, wrapper: Optional[str] = None) -> List[Optional[Element]]:
     found_element: Optional[Element] = element
     if wrapper:
         found_element = load_single_xml_node(element, wrapper)

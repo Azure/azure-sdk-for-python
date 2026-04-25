@@ -4,36 +4,37 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import requests
 from datetime import datetime, timezone
 from io import IOBase, UnsupportedOperation
 from typing import Any, Dict, Optional, Tuple
-from typing_extensions import Self
 
-from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
+import requests
 from azure.core.rest import HttpRequest
-from azure.storage.blob._serialize import get_api_version
 from requests import Response
+from typing_extensions import Self
 from urllib3 import HTTPResponse
+
+try:
+    from azure.core.pipeline.transport import RequestsTransport, RequestsTransportResponse
+except ImportError:
+    RequestsTransport = None  # type: ignore[misc,assignment]
+    RequestsTransportResponse = None  # type: ignore[misc,assignment]
+
+from azure.storage.blob._serialize import get_api_version
 
 
 def _build_base_file_share_headers(bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:
     return {
-        'Authorization': bearer_token_string,
-        'Content-Length': str(content_length),
-        'x-ms-date': datetime.now(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT'),
-        'x-ms-version': get_api_version({}),
-        'x-ms-file-request-intent': 'backup',
+        "Authorization": bearer_token_string,
+        "Content-Length": str(content_length),
+        "x-ms-date": datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT"),
+        "x-ms-version": get_api_version({}),
+        "x-ms-file-request-intent": "backup",
     }
 
 
 def _create_file_share_oauth(
-    share_name: str,
-    file_name: str,
-    bearer_token_string: str,
-    storage_account_name: str,
-    data: bytes,
-    is_live: bool
+    share_name: str, file_name: str, bearer_token_string: str, storage_account_name: str, data: bytes, is_live: bool
 ) -> Tuple[str, str]:
     base_url = f"https://{storage_account_name}.file.core.windows.net/{share_name}"
 
@@ -43,20 +44,18 @@ def _create_file_share_oauth(
     # Creates file share
     with requests.Session() as session:
         session.put(
-            url=base_url,
-            headers=_build_base_file_share_headers(bearer_token_string),
-            params={'restype': 'share'}
+            url=base_url, headers=_build_base_file_share_headers(bearer_token_string), params={"restype": "share"}
         )
 
         # Creates the file itself
         headers = _build_base_file_share_headers(bearer_token_string)
-        headers.update({'x-ms-content-length': '1024', 'x-ms-type': 'file'})
+        headers.update({"x-ms-content-length": "1024", "x-ms-type": "file"})
         session.put(url=base_url + "/" + file_name, headers=headers)
 
         # Upload the supplied data to the file
         headers = _build_base_file_share_headers(bearer_token_string, 1024)
-        headers.update({'x-ms-range': 'bytes=0-1023', 'x-ms-write': 'update'})
-        session.put(url=base_url + "/" + file_name, headers=headers, data=data, params={'comp': 'range'})
+        headers.update({"x-ms-range": "bytes=0-1023", "x-ms-write": "update"})
+        session.put(url=base_url + "/" + file_name, headers=headers, data=data, params={"comp": "range"})
 
     return file_name, base_url
 
@@ -98,11 +97,7 @@ class NonSeekableStream(IOBase):
 
 class MockClientResponse(Response):
     def __init__(
-        self, url: str,
-        body_bytes: bytes,
-        headers: Dict[str, Any],
-        status: int = 200,
-        reason: str = "OK"
+        self, url: str, body_bytes: bytes, headers: Dict[str, Any], status: int = 200, reason: str = "OK"
     ) -> None:
         super(MockClientResponse).__init__()
         self._url = url
@@ -122,8 +117,9 @@ class MockLegacyTransport(RequestsTransport):
     This transport returns http response objects from azure core pipelines and is
     intended only to test our backwards compatibility support.
     """
+
     def send(self, request: HttpRequest, **kwargs: Any) -> RequestsTransportResponse:
-        if request.method == 'GET':
+        if request.method == "GET":
             # download_blob
             headers = {
                 "Content-Type": "application/octet-stream",
@@ -140,9 +136,9 @@ class MockLegacyTransport(RequestsTransport):
                     request.url,
                     b"Hello World!",
                     headers,
-                )
+                ),
             )
-        elif request.method == 'HEAD':
+        elif request.method == "HEAD":
             # get_blob_properties
             rest_response = RequestsTransportResponse(
                 request=request,
@@ -153,9 +149,9 @@ class MockLegacyTransport(RequestsTransport):
                         "Content-Type": "application/octet-stream",
                         "Content-Length": "1024",
                     },
-                )
+                ),
             )
-        elif request.method == 'PUT':
+        elif request.method == "PUT":
             # upload_blob
             rest_response = RequestsTransportResponse(
                 request=request,
@@ -166,10 +162,10 @@ class MockLegacyTransport(RequestsTransport):
                         "Content-Length": "0",
                     },
                     201,
-                    "Created"
-                )
+                    "Created",
+                ),
             )
-        elif request.method == 'DELETE':
+        elif request.method == "DELETE":
             # delete_blob
             rest_response = RequestsTransportResponse(
                 request=request,
@@ -180,8 +176,8 @@ class MockLegacyTransport(RequestsTransport):
                         "Content-Length": "0",
                     },
                     202,
-                    "Accepted"
-                )
+                    "Accepted",
+                ),
             )
         else:
             raise ValueError("The request is not accepted as part of MockLegacyTransport.")

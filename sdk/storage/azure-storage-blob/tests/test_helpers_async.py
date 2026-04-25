@@ -4,38 +4,38 @@
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
-import aiohttp
 from collections import deque
 from datetime import datetime, timezone
 from io import IOBase, UnsupportedOperation
 from typing import Any, Dict, Optional, Tuple
-from unittest.mock import Mock, AsyncMock
 
-from azure.core.pipeline.transport import AioHttpTransportResponse, AsyncHttpTransport
-from azure.core.rest import HttpRequest
-from azure.storage.blob._serialize import get_api_version
+import aiohttp
 from aiohttp import ClientResponse
-from aiohttp.streams import StreamReader
 from aiohttp.client_proto import ResponseHandler
+from aiohttp.streams import StreamReader
+from azure.core.pipeline.transport import AsyncHttpTransport
+from azure.core.rest import HttpRequest
+
+try:
+    from azure.core.pipeline.transport import AioHttpTransportResponse
+except ImportError:
+    AioHttpTransportResponse = None  # type: ignore[misc,assignment]
+
+from azure.storage.blob._serialize import get_api_version
 
 
 def _build_base_file_share_headers(bearer_token_string: str, content_length: int = 0) -> Dict[str, Any]:
     return {
-        'Authorization': bearer_token_string,
-        'Content-Length': str(content_length),
-        'x-ms-date': datetime.now(timezone.utc).strftime('%a, %d %b %Y %H:%M:%S GMT'),
-        'x-ms-version': get_api_version({}),
-        'x-ms-file-request-intent': 'backup',
+        "Authorization": bearer_token_string,
+        "Content-Length": str(content_length),
+        "x-ms-date": datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S GMT"),
+        "x-ms-version": get_api_version({}),
+        "x-ms-file-request-intent": "backup",
     }
 
 
 async def _create_file_share_oauth(
-    share_name: str,
-    file_name: str,
-    bearer_token_string: str,
-    storage_account_name: str,
-    data: bytes,
-    is_live: bool
+    share_name: str, file_name: str, bearer_token_string: str, storage_account_name: str, data: bytes, is_live: bool
 ) -> Tuple[str, str]:
     base_url = f"https://{storage_account_name}.file.core.windows.net/{share_name}"
 
@@ -45,20 +45,18 @@ async def _create_file_share_oauth(
     async with aiohttp.ClientSession() as session:
         # Creates file share
         await session.put(
-            url=base_url,
-            headers=_build_base_file_share_headers(bearer_token_string),
-            params={'restype': 'share'}
+            url=base_url, headers=_build_base_file_share_headers(bearer_token_string), params={"restype": "share"}
         )
 
         # Creates the file itself
         headers = _build_base_file_share_headers(bearer_token_string)
-        headers.update({'x-ms-content-length': '1024', 'x-ms-type': 'file'})
+        headers.update({"x-ms-content-length": "1024", "x-ms-type": "file"})
         await session.put(url=base_url + "/" + file_name, headers=headers)
 
         # Upload the supplied data to the file
         headers = _build_base_file_share_headers(bearer_token_string, 1024)
-        headers.update({'x-ms-range': 'bytes=0-1023', 'x-ms-write': 'update'})
-        await session.put(url=base_url + "/" + file_name, headers=headers, data=data, params={'comp': 'range'})
+        headers.update({"x-ms-range": "bytes=0-1023", "x-ms-write": "update"})
+        await session.put(url=base_url + "/" + file_name, headers=headers, data=data, params={"comp": "range"})
 
     return file_name, base_url
 
@@ -120,11 +118,7 @@ class AsyncStream:
 
 class MockAioHttpClientResponse(ClientResponse):
     def __init__(
-        self, url: str,
-        body_bytes: bytes,
-        headers: Dict[str, Any],
-        status: int = 200,
-        reason: str = "OK"
+        self, url: str, body_bytes: bytes, headers: Dict[str, Any], status: int = 200, reason: str = "OK"
     ) -> None:
         super(MockAioHttpClientResponse).__init__()
         self._url = url
@@ -145,8 +139,9 @@ class MockLegacyTransport(AsyncHttpTransport):
     This transport returns legacy http response objects from azure core and is
     intended only to test our backwards compatibility support.
     """
+
     async def send(self, request: HttpRequest, **kwargs: Any) -> AioHttpTransportResponse:
-        if request.method == 'GET':
+        if request.method == "GET":
             # download_blob
             headers = {
                 "Content-Type": "application/octet-stream",
@@ -164,9 +159,9 @@ class MockLegacyTransport(AsyncHttpTransport):
                     b"Hello Async World!",
                     headers,
                 ),
-                decompress=False
+                decompress=False,
             )
-        elif request.method == 'HEAD':
+        elif request.method == "HEAD":
             # get_blob_properties
             rest_response = AioHttpTransportResponse(
                 request=request,
@@ -178,9 +173,9 @@ class MockLegacyTransport(AsyncHttpTransport):
                         "Content-Length": "1024",
                     },
                 ),
-                decompress=False
+                decompress=False,
             )
-        elif request.method == 'PUT':
+        elif request.method == "PUT":
             # upload_blob
             rest_response = AioHttpTransportResponse(
                 request=request,
@@ -191,11 +186,11 @@ class MockLegacyTransport(AsyncHttpTransport):
                         "Content-Length": "0",
                     },
                     201,
-                    "Created"
+                    "Created",
                 ),
-                decompress=False
+                decompress=False,
             )
-        elif request.method == 'DELETE':
+        elif request.method == "DELETE":
             # delete_blob
             rest_response = AioHttpTransportResponse(
                 request=request,
@@ -206,9 +201,9 @@ class MockLegacyTransport(AsyncHttpTransport):
                         "Content-Length": "0",
                     },
                     202,
-                    "Accepted"
+                    "Accepted",
                 ),
-                decompress=False
+                decompress=False,
             )
         else:
             raise ValueError("The request is not accepted as part of MockLegacyTransport.")

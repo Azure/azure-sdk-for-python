@@ -3,10 +3,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-from ._test_base import _BlobTest
+from devtools_testutils.perfstress_tests import AsyncRandomStream, RandomStream
 
-from devtools_testutils.perfstress_tests import RandomStream
-from devtools_testutils.perfstress_tests import AsyncRandomStream
+from ._test_base import _BlobTest
 
 
 class UploadTest(_BlobTest):
@@ -18,15 +17,11 @@ class UploadTest(_BlobTest):
     def run_sync(self):
         self.upload_stream.reset()
         self.blob_client.upload_blob(
-            self.upload_stream,
-            length=self.args.size,
-            overwrite=True,
-            max_concurrency=self.args.max_concurrency)
+            self.upload_stream, length=self.args.size, overwrite=True, max_concurrency=self.args.max_concurrency
+        )
 
     async def run_async(self):
         self.upload_stream_async.reset()
         await self.async_blob_client.upload_blob(
-            self.upload_stream_async,
-            length=self.args.size,
-            overwrite=True,
-            max_concurrency=self.args.max_concurrency)
+            self.upload_stream_async, length=self.args.size, overwrite=True, max_concurrency=self.args.max_concurrency
+        )
