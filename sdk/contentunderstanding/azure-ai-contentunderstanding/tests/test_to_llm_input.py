@@ -586,8 +586,8 @@ class TestClassificationHierarchy:
         assert "category: TypeB" in blocks[1]
         assert "category: TypeC" in blocks[2]
 
-    def test_path_based_dedup_not_category_based(self):
-        """Two segments with same category but different segment IDs — only the routed one is deduped."""
+    def test_path_based_deduplication_not_category_based(self):
+        """Two segments with same category but different segment IDs — only the routed one is deduplicated."""
         parent = DocumentContent(
             kind="document",
             path="input1",
