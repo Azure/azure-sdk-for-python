@@ -61,4 +61,4 @@ exclude = [
 pytyped = ["py.typed"]
 
 [tool.azure-sdk-build]
-breaking = false
+breaking = true
