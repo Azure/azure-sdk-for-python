@@ -17,11 +17,55 @@ Before starting, ensure you have:
 - An **Azure subscription** ([create one for free](https://azure.microsoft.com/free/))
 - A **Microsoft Foundry resource** in a [supported region](https://learn.microsoft.com/azure/ai-services/content-understanding/language-region-support)
 
+> **[COPILOT] Probe Python runtime first (before asking):**
+> Do not take the user's word for it — run these checks, then report. This prevents silent failures later in `python -m venv`.
+>
+> ```bash
+> # POSIX / WSL / macOS
+> python3 --version 2>/dev/null || python --version 2>/dev/null
+> python3 -m pip --version 2>/dev/null || python -m pip --version 2>/dev/null
+> python3 -c "import venv" 2>/dev/null && echo "venv: ok" || echo "venv: MISSING"
+> ```
+>
+> ```powershell
+> # Windows PowerShell
+> py -3 --version 2>$null; if ($LASTEXITCODE -ne 0) { python --version }
+> py -3 -m pip --version 2>$null
+> py -3 -c "import venv" 2>$null; if ($LASTEXITCODE -eq 0) { 'venv: ok' } else { 'venv: MISSING' }
+> ```
+>
+> **Decision table:**
+>
+> | Finding | Action |
+> |---|---|
+> | `Python 3.9+` and `venv: ok` and `pip` present | ✓ Good to go. Proceed to Step 1. |
+> | Python missing or `< 3.9` | Report the finding, then go to the **[ASK USER] Python install choice** block below. |
+> | `venv: MISSING` (common on Debian/Ubuntu base images) | Report the finding, then go to the **[ASK USER] Python install choice** block below. |
+> | Windows resolves to a `WindowsApps\python*.exe` stub | Report the finding, then go to the **[ASK USER] Python install choice** block below (auto-install cannot fix this — user must disable App Execution Aliases). |
+>
+> **[ASK USER] Python install choice (only when probe fails):**
+> Ask the user: "Python is missing / too old / the `venv` module is unavailable. How would you like to proceed?"
+> - **Option A: Install it for me** — Agent runs the platform-appropriate install command (see below), verifies, and continues. Requires elevated privileges on Linux (`sudo`). Not available for the Windows App Execution Alias case — that requires manual UI action.
+> - **Option B: I'll install it myself** — Agent prints the install command for the user's platform and stops. User runs it, re-opens the terminal, and tells the agent to resume.
+>
+> **Default install commands (Option A):**
+> - **macOS** → `brew install python@3.12` (requires Homebrew; if not installed, fall back to Option B)
+> - **Debian / Ubuntu / WSL** → `sudo apt update && sudo apt install -y python3.12 python3.12-venv` (will prompt for sudo password)
+> - **Debian / Ubuntu — `venv: MISSING` only** → `sudo apt install -y python3-venv` (matches the existing Python version)
+> - **Windows** → `winget install Python.Python.3.12` (run in an elevated PowerShell if needed)
+>
+> **Before running Option A, confirm with the user one more time** by restating the exact command that will execute, then proceed. After install, re-run the probe to verify `Python 3.9+` and `venv: ok` before continuing.
+>
+> **Windows gotcha — App Execution Aliases:** Even after uninstalling the Store Python stub, the `python.exe` / `python3.exe` entries under `C:\Users\<you>\AppData\Local\Microsoft\WindowsApps\` may persist as **App Execution Aliases** and shadow a real install. If the probe still reports a stub after the user confirms they installed real Python:
+>   1. Point them to **Settings → Apps → Advanced app settings → App execution aliases**, and toggle **off** `python.exe` and `python3.exe`.
+>   2. As a fallback, suggest invoking Python via the `py` launcher (`py -3 -m venv .venv`) or the explicit install path (e.g. `%LOCALAPPDATA%\Programs\Python\Python312\python.exe`). The companion `setup_user_env.ps1` script already probes well-known install paths automatically.
+>
+> Report the detected version + venv status back to the user in one sentence before the `[ASK USER]` block below.
+
 > **[ASK USER] Prerequisites Check:**
-> Before proceeding, ask the user to confirm their prerequisites:
-> 1. "Do you have **Python 3.9+** installed?" — If no, guide them to install Python first.
-> 2. "Do you already have a **Microsoft Foundry resource** set up in Azure?" — If no, jump to **Step 5** (Azure Resource Setup) first, then return here.
-> 3. "Have you already deployed the required **AI models** (GPT-4.1, GPT-4.1-mini, text-embedding-3-large) in Microsoft Foundry?" — If no, include Step 5.3 and Step 6 in the workflow.
+> After the probe above, confirm the remaining items:
+> 1. "Do you already have a **Microsoft Foundry resource** set up in Azure?" — If no, jump to **Step 5** (Azure Resource Setup) first, then return here.
+> 2. "Have you already deployed the required **AI models** (GPT-4.1, GPT-4.1-mini, text-embedding-3-large) in Microsoft Foundry?" — If no, include Step 5.3 and Step 6 in the workflow.
 
 ## Package Directory
 
@@ -58,6 +102,9 @@ else
     echo "Virtual environment created at .venv"
 fi
 ```
+
+> **[COPILOT] Existing `.venv` behavior:**
+> If `.venv` already exists, prefer reusing it. If the existing virtual environment was created with a different Python minor version than the interpreter selected in the prerequisite probe, or if the environment is incomplete/corrupted, recreate `.venv` before continuing. This avoids subtle failures when the machine later upgrades from one supported Python version to another (for example, 3.9 → 3.12).
 
 **Activate virtual environment:**
 
@@ -96,6 +143,9 @@ pip install -r dev_requirements.txt
 pip install -e .
 pip install -r dev_requirements.txt
 ```
+
+> **[COPILOT] Repeated-run behavior:**
+> On repeated runs, if the required SDK/sample dependencies are already importable from the active virtual environment, the setup scripts may skip the `pip install` step instead of reinstalling everything. Only rerun the install commands when dependencies are missing or the virtual environment was recreated.
 
 This also installs all dependencies needed to run samples:
 - `aiohttp` - Required for async operations
@@ -167,13 +217,55 @@ Open `.env` in your editor and set the following **required** variables:
 
 **For running `sample_update_defaults.py` (one-time model configuration):**
 
-> **[ASK USER] Model deployment names:**
-> Ask the user: "Do you want to configure **model deployment names** now? These are needed for `sample_update_defaults.py` (one-time setup)."
-> - If yes, ask for each deployment name one by one with sensible defaults:
+> **[COPILOT] Probe existing model defaults on the Foundry resource:**
+> Before asking the user for deployment names, probe what the resource already has configured. The venv is active and the SDK is installed, so call `get_defaults()` via a short inline Python snippet. Export `CONTENTUNDERSTANDING_ENDPOINT` (and `CONTENTUNDERSTANDING_KEY` if Option A) in the shell first so the snippet can read them.
+>
+> ```bash
+> python - <<'PY'
+> import os, sys
+> from azure.ai.contentunderstanding import ContentUnderstandingClient
+> from azure.core.credentials import AzureKeyCredential
+> from azure.identity import DefaultAzureCredential
+> from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
+>
+> ep = os.environ["CONTENTUNDERSTANDING_ENDPOINT"]
+> key = os.environ.get("CONTENTUNDERSTANDING_KEY") or None
+> cred = AzureKeyCredential(key) if key else DefaultAzureCredential()
+> try:
+>     d = ContentUnderstandingClient(ep, cred).get_defaults().model_deployments or {}
+> except ClientAuthenticationError:
+>     sys.exit(3)
+> except HttpResponseError as e:
+>     sys.exit(3 if e.status_code in (401, 403) else 1)
+> except Exception:
+>     sys.exit(1)
+>
+> keys = ["gpt-4.1", "gpt-4.1-mini", "text-embedding-3-large"]
+> vals = [d.get(k, "") for k in keys]
+> print(";".join(f"{k}={v}" for k, v in zip(keys, vals)))
+> sys.exit(0 if all(vals) else (2 if not any(vals) else 10))
+> PY
+> ```
+>
+> Branch on the exit code:
+>
+> | Exit | Meaning | Action |
+> |------|---------|--------|
+> | `0` | **ALL_SET** — all 3 deployments already mapped on the resource | Show the detected values and ask *"Detected existing defaults: gpt-4.1=`<A>`, gpt-4.1-mini=`<B>`, text-embedding-3-large=`<C>`. Use these? (Y/n)"*. On Y, prefill the 3 env vars and **skip Step 6** (defaults already configured). On n, fall through to the per-model prompts below. |
+> | `10` | **PARTIAL** — some mapped, some missing | Prefill the ones that are set. For missing models, ask per-item with the default shown below. After Step 4 completes, run Step 6 to fill the gaps. |
+> | `2` | **NONE** — resource has no defaults yet | Fall through to the per-model prompts below. Step 6 will configure them. |
+> | `3` | **AUTH_ERROR** (401/403) | Print a one-line warning: *"Probe unavailable (auth failed). If you're using DefaultAzureCredential, run `az login` and ensure the Cognitive Services User role is assigned. Continuing with manual entry."* Fall through to per-model prompts. |
+> | other | Unexpected error | Print *"Probe failed: `<error>`. Continuing with manual entry."* Fall through. |
+>
+> Only proceed to the per-model prompts below when the probe outcome requires it.
+
+> **[ASK USER] Model deployment names (only when probe did not yield all values):**
+> For each model not already prefilled from the probe, ask with a sensible default:
 >   - "What is your **GPT-4.1** deployment name?" (default: `gpt-4.1`)
 >   - "What is your **GPT-4.1-mini** deployment name?" (default: `gpt-4.1-mini`)
 >   - "What is your **text-embedding-3-large** deployment name?" (default: `text-embedding-3-large`)
-> - If no, let them know they can configure these later before running `sample_update_defaults.py`.
+>
+> If the user prefers to configure these later, let them know they can run `sample_update_defaults.py` (Step 6) anytime before using prebuilt analyzers.
 
 | Variable | Description | How to Get It |
 |----------|-------------|---------------|
@@ -203,7 +295,7 @@ Open `.env` in your editor and set the following **required** variables:
 CONTENTUNDERSTANDING_ENDPOINT=https://my-foundry-resource.services.ai.azure.com/
 
 # Optional: API key (if not set, DefaultAzureCredential is used)
-CONTENTUNDERSTANDING_KEY=abc123...
+CONTENTUNDERSTANDING_KEY=
 
 # Required for sample_update_defaults.py (model configuration)
 GPT_4_1_DEPLOYMENT=gpt-4.1
@@ -261,6 +353,9 @@ This role is required even if you own the resource:
 
 ### Step 6: Configure Model Defaults (One-Time Setup)
 
+> **[COPILOT] Skip condition:**
+> If the Step 4.2 probe returned **ALL_SET** and the user accepted the detected values, defaults are already configured on the Foundry resource — skip this step and tell the user *"Your Foundry resource already has model defaults configured; skipping Step 6."* Otherwise continue below.
+
 > **[ASK USER] Run model defaults?:**
 > Ask: "Would you like to run `sample_update_defaults.py` now to configure model defaults? This is a **one-time setup** per Microsoft Foundry resource. (Yes / Skip for now)"
 > - If yes, ensure deployment name env vars are set, then run the script.
@@ -279,13 +374,15 @@ This is a **one-time setup per Microsoft Foundry resource**.
 
 > **[ASK USER] Which samples?:**
 > Ask: "Which sample would you like to run first?" with options:
-> - `sample_analyze_url.py` — Analyze content from a URL (recommended start)
-> - `sample_analyze_binary.py` — Analyze a local file
+> - `sample_analyze_binary.py` — Analyze a local PDF (quickest; completes in under a minute)
+> - `sample_analyze_url.py` — Full demo: document + video + audio + image from URLs (runs several analyses; takes a few minutes, please be patient)
 > - `sample_analyze_invoice.py` — Extract invoice fields
 > - Other — Let me see the full list
 > - Skip — I'll run samples on my own later
 >
 > If the user picks "Other", list available samples from the `samples/` directory.
+>
+> **[COPILOT] Timing note (do not parrot verbatim to user):** `sample_analyze_url.py` runs 14 sequential LROs (document + video + audio + image, with multiple content-range variants). Video/audio chapter generation is slow on the service side, so total runtime can be on the order of 15+ minutes today. Do not interpret quiet periods (no stdout for several minutes during a video/audio LRO) as a hang. Only consider killing if there is **no new stdout for 5+ minutes** AND no active HTTP traffic. When talking to the user, prefer phrasing like "takes a few minutes" or "please be patient" rather than citing exact large minute counts.
 
 #### Sync Samples
 
