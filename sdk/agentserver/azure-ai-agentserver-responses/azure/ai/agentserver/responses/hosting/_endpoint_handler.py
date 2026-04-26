@@ -36,6 +36,13 @@ from azure.ai.agentserver.responses.models._generated import (
 
 from .._id_generator import IdGenerator
 from .._options import ResponsesServerOptions
+from .._platform_headers import (
+    CHAT_ISOLATION_KEY,
+    CLIENT_HEADER_PREFIX,
+    REQUEST_ID_ITEM_KEY,
+    SESSION_ID,
+    USER_ISOLATION_KEY,
+)
 from .._response_context import IsolationContext, ResponseContext
 from ..models._helpers import get_input_expanded, to_output_item
 from ..models.errors import RequestValidationError
@@ -126,12 +133,14 @@ def _extract_isolation(request: Request) -> IsolationContext:
     :rtype: IsolationContext
     """
     return IsolationContext(
-        user_key=request.headers.get("x-agent-user-isolation-key"),
-        chat_key=request.headers.get("x-agent-chat-isolation-key"),
+        user_key=request.headers.get(USER_ISOLATION_KEY),
+        chat_key=request.headers.get(CHAT_ISOLATION_KEY),
     )
 
 
-def _validate_response_id_format(response_id: str, headers: dict[str, str] | None = None) -> Response | None:
+def _validate_response_id_format(
+    response_id: str, headers: dict[str, str] | None = None, *, request_id: str | None = None
+) -> Response | None:
     """Validate that a response_id path parameter has the expected ID format.
 
     Returns a 400 error response if the ID is malformed, or ``None`` if valid.
@@ -142,6 +151,7 @@ def _validate_response_id_format(response_id: str, headers: dict[str, str] | Non
     :type response_id: str
     :param headers: Optional HTTP headers to include on the error response.
     :type headers: dict[str, str] | None
+    :keyword request_id: Resolved ``x-request-id`` for error enrichment.
     :return: A 400 error response if invalid, or ``None`` if valid.
     :rtype: Response | None
     """
@@ -151,7 +161,26 @@ def _validate_response_id_format(response_id: str, headers: dict[str, str] | Non
             "Malformed identifier.",
             headers or {},
             param=f"responseId{{{response_id}}}",
+            request_id=request_id,
         )
+    return None
+
+
+def _get_scope_request_id(request: Request) -> str | None:
+    """Extract the resolved ``x-request-id`` from the ASGI scope state.
+
+    The value is set by :class:`~azure.ai.agentserver.core.RequestIdMiddleware`
+    during request processing.  Returns ``None`` when the middleware is not
+    installed or the value is absent.
+
+    :param request: The Starlette HTTP request.
+    :type request: Request
+    :return: The resolved request ID, or ``None``.
+    :rtype: str | None
+    """
+    state = request.scope.get("state")
+    if isinstance(state, dict):
+        return state.get(REQUEST_ID_ITEM_KEY)
     return None
 
 
@@ -332,7 +361,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         sid = session_id or (getattr(getattr(self._host, "config", None), "session_id", "") or "")
         headers = dict(self._response_headers)
         if sid:
-            headers["x-agent-session-id"] = sid
+            headers[SESSION_ID] = sid
         return headers
 
     # ------------------------------------------------------------------
@@ -468,8 +497,8 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             agent_session_id=agent_session_id,
             span=span,
             parsed=parsed,
-            user_isolation_key=request.headers.get("x-agent-user-isolation-key"),
-            chat_isolation_key=request.headers.get("x-agent-chat-isolation-key"),
+            user_isolation_key=request.headers.get(USER_ISOLATION_KEY),
+            chat_isolation_key=request.headers.get(CHAT_ISOLATION_KEY),
         )
 
         # Derive the public ResponseContext from the execution context.
@@ -496,7 +525,9 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
         :rtype: ResponseContext
         """
         mode_flags = ResponseModeFlags(stream=ctx.stream, store=ctx.store, background=ctx.background)
-        client_headers = {k.lower(): v for k, v in request.headers.items() if k.lower().startswith("x-client-")}
+        client_headers = {
+            k.lower(): v for k, v in request.headers.items() if k.lower().startswith(CLIENT_HEADER_PREFIX)
+        }
 
         context = ResponseContext(
             response_id=ctx.response_id,
@@ -609,6 +640,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             hook=self._runtime_options.create_span_hook,
         )
         captured_error: Exception | None = None
+        scope_request_id = _get_scope_request_id(request)
 
         try:
             payload = await request.json()
@@ -618,7 +650,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             logger.error("Failed to parse/validate create request", exc_info=exc)
             captured_error = exc
             span.end(captured_error)
-            return _error_response(exc, self._session_headers())
+            return _error_response(exc, self._session_headers(), request_id=scope_request_id)
 
         try:
             response_id, agent_reference = _resolve_identity_fields(
@@ -629,7 +661,7 @@ class _ResponseEndpointHandler:  # pylint: disable=too-many-instance-attributes
             logger.error("Failed to resolve identity fields", exc_info=exc)
             captured_error = exc
             span.end(captured_error)
-            return _error_response(exc, self._session_headers())
+            return _error_response(exc, self._session_headers(), request_id=scope_request_id)
 
         # B39: Resolve session ID
         config_session_id = getattr(getattr(self._host, "config", None), "session_id", "") or ""
