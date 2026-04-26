@@ -84,7 +84,12 @@ binary_type = str
 
 
 def _raise_for_unexpected_kwargs(class_name: str, kwargs: Mapping[str, Any]) -> None:
-    """Raise a Python-style TypeError for unsupported transport options."""
+    """Raise TypeError if unexpected kwargs remain after consuming known transport options.
+
+    :param str class_name: The transport class name to use in the error message.
+    :param Mapping[str, Any] kwargs: Remaining kwargs after supported options have been removed.
+    :raises TypeError: If kwargs is non-empty.
+    """
     if kwargs:
         key = next(iter(kwargs))
         raise TypeError(f"{class_name}.send() got an unexpected keyword argument '{key}'")

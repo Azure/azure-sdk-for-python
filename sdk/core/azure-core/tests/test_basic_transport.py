@@ -16,8 +16,16 @@ from urllib3.connection import HTTPConnection as UrllibConnection
 
 from azure.core.rest._http_response_impl import HttpResponseImpl as RestHttpResponseImpl
 from azure.core.pipeline._tools import is_rest
-from azure.core.pipeline.transport import HttpRequest, HttpResponse as PipelineTransportHttpResponse, RequestsTransport
-from azure.core.pipeline.transport._base import HttpTransport, _deserialize_response, _urljoin
+from azure.core.pipeline.transport import (
+    HttpRequest,
+    HttpResponse as PipelineTransportHttpResponse,
+    RequestsTransport,
+)
+from azure.core.pipeline.transport._base import (
+    HttpTransport,
+    _deserialize_response,
+    _urljoin,
+)
 from azure.core.pipeline.policies import HeadersPolicy
 from azure.core.pipeline import Pipeline
 from azure.core.exceptions import (
@@ -145,7 +153,10 @@ def test_url_join():
     assert _urljoin("devstoreaccount1", "documentModels:build") == "devstoreaccount1/documentModels:build"
 
 
-@pytest.mark.parametrize("http_request,http_response", request_and_responses_product(HTTP_CLIENT_TRANSPORT_RESPONSES))
+@pytest.mark.parametrize(
+    "http_request,http_response",
+    request_and_responses_product(HTTP_CLIENT_TRANSPORT_RESPONSES),
+)
 def test_http_client_response(port, http_request, http_response):
     # Create a core request
     request = http_request("GET", "http://localhost:{}".format(port))
@@ -184,7 +195,10 @@ def test_response_deserialization(http_request):
 
     assert response.status_code == 202
     assert response.reason == "Accepted"
-    assert response.headers == {"x-ms-request-id": "778fdc83-801e-0000-62ff-0334671e284f", "x-ms-version": "2018-11-09"}
+    assert response.headers == {
+        "x-ms-request-id": "778fdc83-801e-0000-62ff-0334671e284f",
+        "x-ms-version": "2018-11-09",
+    }
 
     # Method + Url + Headers + Body
     request = http_request(
@@ -207,7 +221,10 @@ def test_response_deserialization(http_request):
 
     assert isinstance(response.status_code, int)
     assert response.reason == "OK"
-    assert response.headers == {"x-ms-request-id": "778fdc83-801e-0000-62ff-0334671e284f", "x-ms-version": "2018-11-09"}
+    assert response.headers == {
+        "x-ms-request-id": "778fdc83-801e-0000-62ff-0334671e284f",
+        "x-ms-version": "2018-11-09",
+    }
     assert response.text() == "I am groot"
 
 
@@ -328,11 +345,16 @@ def test_multipart_send_with_one_changeset(http_request):
 
     header_policy = HeadersPolicy({"x-ms-date": "Thu, 14 Jun 2018 16:46:54 GMT"})
 
-    requests = [http_request("DELETE", "/container0/blob0"), http_request("DELETE", "/container1/blob1")]
+    requests = [
+        http_request("DELETE", "/container0/blob0"),
+        http_request("DELETE", "/container1/blob1"),
+    ]
 
     changeset = http_request("", "")
     changeset.set_multipart_mixed(
-        *requests, policies=[header_policy], boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525"
+        *requests,
+        policies=[header_policy],
+        boundary="changeset_357de4f7-6d0b-4e02-8cd2-6361411a9525",
     )
 
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
@@ -756,7 +778,8 @@ def test_multipart_receive_with_one_changeset(http_request, mock_response):
 
     changeset = http_request(None, None)
     changeset.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"), http_request("DELETE", "/container1/blob1")
+        http_request("DELETE", "/container0/blob0"),
+        http_request("DELETE", "/container1/blob1"),
     )
 
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
@@ -792,7 +815,9 @@ def test_multipart_receive_with_one_changeset(http_request, mock_response):
     )
 
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
 
     parts = []
@@ -830,7 +855,9 @@ def test_multipart_receive_with_empty_changeset(http_request, mock_response):
     )
 
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f",
     )
     parts = []
     for part in response.parts():
@@ -849,7 +876,9 @@ def test_multipart_receive_with_empty_changeset(http_request, mock_response):
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(changeset)
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f",
     )
     parts = []
     for part in response.parts():
@@ -867,7 +896,9 @@ def test_multipart_receive_with_empty_changeset(http_request, mock_response):
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(changeset)
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f",
     )
     parts = []
     for part in response.parts():
@@ -885,7 +916,9 @@ def test_multipart_receive_with_empty_changeset(http_request, mock_response):
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(changeset)
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_b1e4a276-83db-40e9-b21f-f5bc7f7f905f",
     )
     parts = []
     for part in response.parts():
@@ -904,11 +937,13 @@ def test_multipart_receive_with_multiple_changesets(http_request, mock_response)
 
     changeset1 = http_request(None, None)
     changeset1.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"), http_request("DELETE", "/container1/blob1")
+        http_request("DELETE", "/container0/blob0"),
+        http_request("DELETE", "/container1/blob1"),
     )
     changeset2 = http_request(None, None)
     changeset2.set_multipart_mixed(
-        http_request("DELETE", "/container2/blob2"), http_request("DELETE", "/container3/blob3")
+        http_request("DELETE", "/container2/blob2"),
+        http_request("DELETE", "/container3/blob3"),
     )
 
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
@@ -968,7 +1003,9 @@ def test_multipart_receive_with_multiple_changesets(http_request, mock_response)
     )
 
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
 
     parts = []
@@ -986,7 +1023,8 @@ def test_multipart_receive_with_combination_changeset_first(http_request, mock_r
 
     changeset = http_request(None, None)
     changeset.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"), http_request("DELETE", "/container1/blob1")
+        http_request("DELETE", "/container0/blob0"),
+        http_request("DELETE", "/container1/blob1"),
     )
 
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
@@ -1031,7 +1069,9 @@ def test_multipart_receive_with_combination_changeset_first(http_request, mock_r
     )
 
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
 
     parts = []
@@ -1051,7 +1091,9 @@ def test_multipart_receive_with_combination_changeset_middle(http_request, mock_
 
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
     request.set_multipart_mixed(
-        http_request("DELETE", "/container0/blob0"), changeset, http_request("DELETE", "/container2/blob2")
+        http_request("DELETE", "/container0/blob0"),
+        changeset,
+        http_request("DELETE", "/container2/blob2"),
     )
     body_as_bytes = (
         b"--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed\r\n"
@@ -1093,7 +1135,9 @@ def test_multipart_receive_with_combination_changeset_middle(http_request, mock_
     )
 
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
 
     parts = []
@@ -1110,7 +1154,8 @@ def test_multipart_receive_with_combination_changeset_last(http_request, mock_re
 
     changeset = http_request(None, None)
     changeset.set_multipart_mixed(
-        http_request("DELETE", "/container1/blob1"), http_request("DELETE", "/container2/blob2")
+        http_request("DELETE", "/container1/blob1"),
+        http_request("DELETE", "/container2/blob2"),
     )
 
     request = http_request("POST", "http://account.blob.core.windows.net/?comp=batch")
@@ -1156,7 +1201,9 @@ def test_multipart_receive_with_combination_changeset_last(http_request, mock_re
     )
 
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
 
     parts = []
@@ -1192,7 +1239,9 @@ def test_multipart_receive_with_bom(http_request, mock_response):
     )
 
     response = mock_response(
-        request, body_as_bytes, "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed"
+        request,
+        body_as_bytes,
+        "multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed",
     )
 
     response = response.parts()
@@ -1263,7 +1312,10 @@ def test_requests_transport_rejects_unknown_kwargs():
     transport = RequestsTransport(session=mock.Mock(), session_owner=False)
     request = HttpRequest("GET", "http://localhost")
 
-    with pytest.raises(TypeError, match=r"RequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'"):
+    with pytest.raises(
+        TypeError,
+        match=r"RequestsTransport\.send\(\) got an unexpected keyword argument 'query_filter'",
+    ):
         transport.send(request, query_filter="PartitionKey eq 'pk001'")
 
     transport.session.request.assert_not_called()
